@@ -23,11 +23,12 @@ import styles from './layout.module.css';
 import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
-import React from 'react';
+import React, { useEffect, useLayoutEffect } from 'react';
 import DemoButton from './hms/demo-cta';
 import RoomCta from './hms/demo-cta/room-cta';
 import { hmsConfig } from './hms/config';
 import ViewSource from './view-source';
+import ParticleBackground from './ParticleBackground';
 
 type Props = {
   children: React.ReactNode;
@@ -47,8 +48,16 @@ export default function Layout({
   const router = useRouter();
   const activeRoute = router.asPath;
   const disableCta = ['/schedule', '/speakers', '/expo', '/jobs'];
+
+  const [particles, setParticles] = React.useState(false);
+
+  useLayoutEffect(() => {
+    setParticles(true);
+  }, []);
+
   return (
     <>
+      <ParticleBackground />
       <div className={styles.background}>
         {!hideNav && (
           <header className={cn(styles.header)}>

@@ -7,7 +7,7 @@
   "homepage": "https://demo.vercel.events",
   "license": "Apache-2.0",
   "engines": {
-    "node": "^14"
+    "node": "^16"
   },
   "scripts": {
     "dev": "next",
@@ -41,8 +41,10 @@
     "react-aria": "3.2.0",
     "react-dom": "^18.0.0-rc.0",
     "react-hot-toast": "^2.2.0",
+    "react-tsparticles": "^2.11.0",
     "smoothscroll-polyfill": "0.4.4",
     "swr": "0.3.9",
+    "tsparticles": "^2.11.0",
     "validator": "13.5.2",
     "vanilla-tilt": "1.7.0"
   },
