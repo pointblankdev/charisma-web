@@ -17,6 +17,7 @@ import { ConfUser } from '@lib/types';
 import { SAMPLE_TICKET_NUMBER } from '@lib/constants';
 
 import * as redisApi from './db-providers/redis';
+import * as kvApi from './db-providers/kv';
 import * as supabaseApi from './db-providers/supabase';
 
 let dbApi: {
@@ -28,7 +29,10 @@ let dbApi: {
   updateUserWithGitHubUser: (id: string, token: string, ticketNumber: string) => Promise<ConfUser>;
 };
 
-if (process.env.REDIS_PORT && process.env.REDIS_URL && process.env.EMAIL_TO_ID_SECRET) {
+if (process.env.KV_URL) {
+  dbApi = kvApi;
+}
+else if (process.env.REDIS_PORT && process.env.REDIS_URL && process.env.EMAIL_TO_ID_SECRET) {
   dbApi = redisApi;
 } else if (
   process.env.SUPABASE_URL &&
