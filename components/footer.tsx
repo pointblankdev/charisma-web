@@ -53,7 +53,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Source Code
+              Built on Stacks
             </a>
           </p>
           <div className={styles['footer-separator']} />
@@ -64,7 +64,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Code of Conduct
+              Secured by Bitcoin
             </a>
           </p>
           {LEGAL_URL && (

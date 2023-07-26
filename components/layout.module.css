@@ -60,7 +60,7 @@
 
 .header-right {
   margin: var(--space-2x) var(--space-4x);
-  margin-right: 5rem;
+  margin-right: 2rem;
   display: none;
 }
 
@@ -73,6 +73,7 @@
 .tabs {
   height: 100%;
   display: none;
+  margin-left: 8rem;
 }
 
 @media screen and (min-width: 1032px) {

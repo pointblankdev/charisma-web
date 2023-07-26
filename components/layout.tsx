@@ -76,7 +76,7 @@ export default function Layout({
             </div>
 
             {(hmsConfig.hmsIntegration && isLive && !disableCta.includes(activeRoute)) ||
-            activeRoute === '/' ? (
+              activeRoute === '/' ? (
               <div className={cn(styles['header-right'])}>
                 {activeRoute === '/' ? <DemoButton /> : <RoomCta />}
               </div>
@@ -85,7 +85,7 @@ export default function Layout({
             )}
           </header>
         )}
-        <ViewSource />
+        {/* <ViewSource /> */}
         <div className={styles.page}>
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />

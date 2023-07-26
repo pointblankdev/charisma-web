@@ -18,6 +18,7 @@ import cn from 'classnames';
 import styleUtils from './utils.module.css';
 import styles from './hero.module.css';
 import { BRAND_NAME, DATE, SITE_DESCRIPTION } from '@lib/constants';
+import Image from 'next/image';
 
 export default function Hero() {
   return (
@@ -32,10 +33,11 @@ export default function Hero() {
       >
         {SITE_DESCRIPTION}
       </h2>
-      <h1 className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)}>
-        Welcome to the
-        <br className={styleUtils['show-on-desktop']} /> {BRAND_NAME} conference
-      </h1>
+      <Image src="/C.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)} />{' '}
+      <span className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)}>
+        {BRAND_NAME}
+      </span>
+      <span className={cn(styleUtils.appear, styleUtils['appear-third'])}>{' '}CHA</span>
       <h2
         className={cn(
           styleUtils.appear,
@@ -50,7 +52,7 @@ export default function Hero() {
         <p>{DATE}</p>
         <div className={styles['description-separator']} />
         <p>
-          <strong>Online</strong>
+          <strong>Launching</strong>
         </p>
       </div>
     </div>
