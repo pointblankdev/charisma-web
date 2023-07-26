@@ -14,12 +14,11 @@
  * limitations under the License.
  */
 
-import { NextApiRequest, NextApiResponse } from 'next';
 import screenshot from '@lib/screenshot';
 import { SITE_URL, SAMPLE_TICKET_NUMBER } from '@lib/constants';
 import { getUserById } from '@lib/db-api';
 
-export default async function ticketImages(req: NextApiRequest, res: NextApiResponse) {
+export default async function ticketImages(req: any, res: any) {
   let url: string;
   let name: string | null | undefined;
   let ticketNumber: number | null | undefined = SAMPLE_TICKET_NUMBER;
