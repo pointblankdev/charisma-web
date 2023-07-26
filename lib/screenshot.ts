@@ -15,24 +15,24 @@
  */
 
 import chrome from 'chrome-aws-lambda';
-import puppeteer from 'puppeteer-core';
+import puppeteer from 'puppeteer-core/lib/esm/puppeteer/node';
 
 export default async function screenshot(url: string) {
   const options = process.env.AWS_REGION
     ? {
-        args: chrome.args,
-        executablePath: await chrome.executablePath,
-        headless: chrome.headless
-      }
+      args: chrome.args,
+      executablePath: await chrome.executablePath,
+      headless: chrome.headless
+    }
     : {
-        args: [],
-        executablePath:
-          process.platform === 'win32'
-            ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
-            : process.platform === 'linux'
+      args: [],
+      executablePath:
+        process.platform === 'win32'
+          ? 'C:\\Program Files (x86)\\Google\\Chrome\\Application\\chrome.exe'
+          : process.platform === 'linux'
             ? '/usr/bin/google-chrome'
             : '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
-      };
+    };
   const browser = await puppeteer.launch(options);
   const page = await browser.newPage();
   await page.setViewport({ width: 2000, height: 1000 });
