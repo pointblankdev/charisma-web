@@ -17,7 +17,7 @@
 import { useState, useRef } from 'react';
 import { scrollTo } from '@lib/smooth-scroll';
 import cn from 'classnames';
-import GithubIcon from '@components/icons/icon-github';
+import StacksIcon from '@components/icons/icon-stacks';
 import CheckIcon from '@components/icons/icon-check';
 import { REPO, SITE_ORIGIN, TicketGenerationState } from '@lib/constants';
 import isMobileOrTablet from '@lib/is-mobile-or-tablet';
@@ -152,7 +152,7 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
             new Image().src = `https://github.com/${usernameFromResponse}.png`;
 
             // Prefetch the twitter share URL to eagerly generate the page
-            fetch(`/tickets/${usernameFromResponse}`).catch(_ => {});
+            fetch(`/tickets/${usernameFromResponse}`).catch(_ => { });
           })
           .catch(err => {
             // eslint-disable-next-line no-console
@@ -164,12 +164,12 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
       }}
     >
       <div className={cn(formStyles['form-row'], ticketFormStyles['form-row'])}>
-        <div className={cn(formStyles['github-wrapper'])}>
+        <div className={cn(formStyles['stacks-wrapper'])}>
           <button
             type="submit"
             className={cn(
               formStyles.submit,
-              formStyles['generate-with-github'],
+              formStyles['generate-with-stacks'],
               formStyles[formState],
               {
                 [formStyles['not-allowed']]: !githubEnabled
@@ -186,14 +186,14 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
               }
             }}
           >
-            <div className={ticketFormStyles.generateWithGithub}>
-              <span className={ticketFormStyles.githubIcon}>
-                <GithubIcon color="#fff" size={24} />
+            <div className={ticketFormStyles.generateWithStacks}>
+              <span className={ticketFormStyles.stacksIcon}>
+                <StacksIcon color="#fff" size={24} />
               </span>
               {formState === 'loading' ? (
                 <LoadingDots size={4} />
               ) : (
-                username || 'Generate with GitHub'
+                username || 'Connect with Stacks'
               )}
             </div>
             {username ? (
@@ -220,22 +220,6 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
             )}
           </p>
         </div>
-        <div className={formStyles['or-divider']}>OR</div>
-        <a
-          href="/stage/a"
-          className={cn(
-            formStyles.submit,
-            formStyles['generate-with-github'],
-            formStyles['stage-btn']
-          )}
-        >
-          <div className={ticketFormStyles.generateWithGithub}>
-            <span className={ticketFormStyles.githubIcon}>
-              <InviteStageIcon />
-            </span>
-            Go to Live Stage
-          </div>
-        </a>
       </div>
     </form>
   );

@@ -33,11 +33,13 @@ export default function Hero() {
       >
         {SITE_DESCRIPTION}
       </h2>
-      <Image src="/C.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)} />{' '}
-      <span className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)}>
-        {BRAND_NAME}
-      </span>
-      <span className={cn(styleUtils.appear, styleUtils['appear-third'])}>{' '}CHA</span>
+      <div className={styles.heroContainer}>
+        <Image src="/C.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'])} />{' '}
+        <span className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)}>
+          {BRAND_NAME}
+        </span>
+        <span className={cn(styleUtils.appear, styleUtils['appear-third'])}>{' '}CHA</span>
+      </div>
       <h2
         className={cn(
           styleUtils.appear,

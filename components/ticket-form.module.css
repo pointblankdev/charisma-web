@@ -20,6 +20,12 @@
   display: inline-flex;
 }
 
+.stacksIcon {
+  margin-left: 12px;
+  margin-right: var(--space-4x);
+  display: inline-flex;
+}
+
 .checkIcon {
   position: absolute;
   right: var(--space-4x);
@@ -27,6 +33,12 @@
 }
 
 .generateWithGithub {
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.generateWithStacks {
   display: flex;
   align-items: center;
   font-weight: 500;
@@ -67,6 +79,10 @@
   }
 
   .generateWithGithub {
+    width: 100%;
+  }
+
+  .generateWithStacks {
     width: 100%;
   }
 }

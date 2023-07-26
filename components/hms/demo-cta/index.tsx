@@ -14,7 +14,7 @@ const DemoButton = () => {
       el?.classList.add('show-overlay');
       const tooltip = document.getElementById('cta-tooltip');
       tooltip?.classList.add('fade-in');
-    }, 3000);
+    }, 10000);
   }, []);
   const ctaRef = React.useRef(null);
   const clickedOutside = () => {

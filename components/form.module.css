@@ -111,10 +111,21 @@
   justify-content: center;
 }
 
-.submit.generate-with-github {
+.submit.generate-with-github,
+.submit.generate-with-stacks {
   display: flex;
   margin-bottom: 12px;
   position: relative;
+}
+
+.submit.generate-with-stacks {
+  background: #5444fc;
+  border: 1px solid #5444fc;
+}
+
+
+.submit.generate-with-stacks:hover{
+  color: #fff;
 }
 
 @media (min-width: 768px) {
@@ -137,6 +148,12 @@
 .submit.default:focus {
   background: black;
   color: var(--brand);
+}
+
+.submit.default.generate-with-stacks:hover,
+.submit.default.generate-with-stacks:focus {
+  background: black;
+  color: #5444fc;
 }
 
 .submit.default.generate-with-github:hover path,
@@ -163,11 +180,15 @@
 
 .submit.default.generate-with-github:disabled path,
 .submit.default.generate-with-github:disabled:hover path,
-.submit.default.generate-with-github:disabled:focus path {
+.submit.default.generate-with-github:disabled:focus path,
+.submit.default.generate-with-stacks:disabled path,
+.submit.default.generate-with-stacks:disabled:hover path,
+.submit.default.generate-with-stacks:disabled:focus path {
   fill: #fff;
 }
 
-.submit.default.generate-with-github.not-allowed:disabled {
+.submit.default.generate-with-github.not-allowed:disabled,
+.submit.default.generate-with-stacks.not-allowed:disabled {
   cursor: not-allowed;
 }
 
@@ -176,9 +197,11 @@
     margin: 0;
   }
 
-  .submit.generate-with-github {
+  .submit.generate-with-github,
+  .submit.generate-with-stacks {
     width: 240px;
   }
+
 }
 
 .stage-btn {
@@ -186,7 +209,8 @@
   border: 2px solid #8465cb;
 }
 
-.github-wrapper {
+.github-wrapper,
+.stacks-wrapper {
   display: flex;
   align-items: center;
   flex-direction: column;
@@ -200,7 +224,8 @@
 }
 
 @media (min-width: 1200px) {
-  .github-wrapper {
+  .github-wrapper,
+  .stacks-wrapper {
     flex-direction: row;
   }
   .or-divider {

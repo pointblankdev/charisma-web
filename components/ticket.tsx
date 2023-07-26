@@ -78,7 +78,7 @@ export default function Ticket({ username, name, ticketNumber, sharePage }: Prop
               )
             ) : (
               <>
-                You're in. <br /> Make it unique.
+                You're in. <br /> Want Whitelist?
               </>
             )}
           </h2>
@@ -89,8 +89,8 @@ export default function Ticket({ username, name, ticketNumber, sharePage }: Prop
               </>
             ) : (
               <>
-                Generate a unique ticket image with <br className={styleUtils['hide-on-mobile']} />
-                your GitHub profile.
+                Connect with your favorite Stacks <br className={styleUtils['hide-on-mobile']} />
+                wallet to claim your spot.
               </>
             )}
           </p>

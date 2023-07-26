@@ -59,7 +59,8 @@ export default function Layout({
     <>
       <ParticleBackground />
       <div className={styles.background}>
-        {!hideNav && (
+        {/* Disabled the navbar with the false logic */}
+        {!hideNav && false && (
           <header className={cn(styles.header)}>
             <div className={styles['header-logos']}>
               <MobileMenu key={router.asPath} />

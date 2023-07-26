@@ -7,7 +7,7 @@ import styles from '../styles/Home.module.css';
 const ParticlesConfig = {
     "particles": {
         "number": {
-            "value": 80,
+            "value": 20,
             "density": {
                 "enable": true,
                 "value_area": 800
@@ -60,7 +60,7 @@ const ParticlesConfig = {
         },
         "move": {
             "enable": true,
-            "speed": 6,
+            "speed": 4,
             "direction": "none" as any,
             "random": false,
             "straight": false,

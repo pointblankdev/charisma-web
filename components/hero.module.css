@@ -18,6 +18,15 @@
   margin-top: var(--space-12x);
 }
 
+.heroContainer {
+  text-align: center;
+}
+
+.heroLogo {
+  height: 50px;
+  width: 50px;
+}
+
 .hero {
   font-size: 52px;
   line-height: 1.15;
