@@ -31,13 +31,14 @@ import { DATE, SITE_NAME } from '@lib/constants';
 import Form from './form';
 
 type Props = {
+  id: UserData['id'];
   username: UserData['username'];
   ticketNumber: UserData['ticketNumber'];
   name: UserData['name'];
   sharePage?: boolean;
 };
 
-export default function Ticket({ username, name, ticketNumber, sharePage }: Props) {
+export default function Ticket({ id, username, name, ticketNumber, sharePage }: Props) {
   const ticketRef = useRef<HTMLDivElement>(null);
   const [ticketGenerationState, setTicketGenerationState] = useState<TicketGenerationState>(
     'default'
@@ -120,13 +121,13 @@ export default function Ticket({ username, name, ticketNumber, sharePage }: Prop
         </div>
         {!sharePage && (
           <>
-            {username ? (
+            {name ? (
               <div>
                 <div className={styles['ticket-actions']}>
-                  <TicketActions username={username} />
+                  <TicketActions id={id} />
                 </div>
                 <div className={styles['ticket-copy']}>
-                  <TicketCopy username={username} />
+                  <TicketCopy id={id} />
                 </div>
               </div>
             ) : (

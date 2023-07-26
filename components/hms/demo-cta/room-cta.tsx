@@ -6,6 +6,7 @@ import InviteIcon from '@components/icons/icon-invite';
 import { useHMSStore, selectLocalPeerRole } from '@100mslive/react-sdk';
 import { useRouter } from 'next/router';
 import Button from '../Button';
+import { userSession } from 'pages/_app';
 
 const RoomCta = () => {
   const role = useHMSStore(selectLocalPeerRole);
@@ -28,7 +29,10 @@ const RoomCta = () => {
   };
   return (
     <div className="flex items-center space-x-4">
-      <div className="relative">
+      <Button className='className="h-[40px]"' variant="secondary" onClick={() => userSession.signUserOut('/')}>
+        Sign Out
+      </Button>
+      {/* <div className="relative">
         {copied ? (
           <p className="absolute top-12 left-0 flex bg-gray-600 justify-center  rounded-lg w-48 p-2">
             Copied to clipboard!
@@ -45,7 +49,7 @@ const RoomCta = () => {
           <PersonIcon height={20} className="mr-2" />
           Change Role
         </Button>
-      </ChangeRoleDialog>
+      </ChangeRoleDialog> */}
     </div>
   );
 };

@@ -50,14 +50,14 @@ export default function TicketVisual({
         </div>
         <div className={styles.profile}>
           <TicketProfile
-            name={name}
-            username={username}
+            name={!!name ? `${name?.slice(0, 4)}...${name?.slice(-4)}` : name}
+            username={!!username ? `${username?.slice(0, 4)}...${username?.slice(-4)}` : username}
             size={size}
             ticketGenerationState={ticketGenerationState}
           />
         </div>
         <div className={styles.info}>
-          <TicketInfo logoTextSecondaryColor={ticketNumber ? 'var(--brand)' : undefined} />
+          <TicketInfo text={username && 'Whitelisted Address'} logoTextSecondaryColor={ticketNumber ? 'var(--brand)' : undefined} />
         </div>
         {ticketNumber && (
           <div className={styles['ticket-number-wrapper']}>

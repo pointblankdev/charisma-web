@@ -18,11 +18,11 @@ import { GetStaticProps, GetStaticPaths } from 'next';
 import Error from 'next/error';
 import Head from 'next/head';
 import { SkipNavContent } from '@reach/skip-nav';
-import { getUserByUsername } from '@lib/db-api';
 
 import Page from '@components/page';
 import ConfContent from '@components/index';
 import { SITE_URL, SITE_NAME, META_DESCRIPTION, SAMPLE_TICKET_NUMBER } from '@lib/constants';
+import { getUserById } from '@lib/db-api';
 
 type Props = {
   username: string | null;
@@ -38,17 +38,17 @@ export default function TicketShare({ username, ticketNumber, name, usernameFrom
 
   const meta = username
     ? {
-        title: `${name}’s ${SITE_NAME} Ticket`,
-        description: META_DESCRIPTION,
-        image: `/api/ticket-images/${username}`,
-        url: `${SITE_URL}/tickets/${username}`
-      }
+      title: `${name}’s ${SITE_NAME} Ticket`,
+      description: META_DESCRIPTION,
+      image: `/api/ticket-images/${username}`,
+      url: `${SITE_URL}/tickets/${username}`
+    }
     : {
-        title: 'Ticket Demo - Virtual Event Starter Kit',
-        description: META_DESCRIPTION,
-        image: `/api/ticket-images/${usernameFromParams}`,
-        url: `${SITE_URL}/tickets/${usernameFromParams}`
-      };
+      title: 'Ticket Demo - Virtual Event Starter Kit',
+      description: META_DESCRIPTION,
+      image: `/api/ticket-images/${usernameFromParams}`,
+      url: `${SITE_URL}/tickets/${usernameFromParams}`
+    };
 
   return (
     <Page meta={meta}>
@@ -69,20 +69,20 @@ export default function TicketShare({ username, ticketNumber, name, usernameFrom
 }
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
-  const username = params?.username?.toString() || null;
+  const id = params?.id?.toString() || null;
   let name: string | null | undefined;
   let ticketNumber: number | null | undefined;
 
-  if (username) {
-    const user = await getUserByUsername(username);
+  if (id) {
+    const user = await getUserById(id);
     name = user.name ?? user.username;
     ticketNumber = user.ticketNumber;
   }
   return {
     props: {
-      username: ticketNumber ? username : null,
-      usernameFromParams: username || null,
-      name: ticketNumber ? name || username || null : null,
+      username: ticketNumber ? id : null,
+      usernameFromParams: id || null,
+      name: ticketNumber ? name || id || null : null,
       ticketNumber: ticketNumber || SAMPLE_TICKET_NUMBER
     },
     revalidate: 5

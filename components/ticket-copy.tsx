@@ -22,17 +22,17 @@ import IconCopy from './icons/icon-copy';
 import styles from './ticket-copy.module.css';
 
 type Props = {
-  username: string;
+  id?: string;
 };
 
-export default function TicketCopy({ username }: Props) {
+export default function TicketCopy({ id }: Props) {
   const [fadeOpacity, setFadeOpacity] = useState(1);
   const [scrolling, setScrolling] = useState(false);
   const [copyEnabled, setCopyEnabled] = useState(false);
   const [copied, setCopied] = useState(false);
   const scrollRef = useRef<HTMLSpanElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
-  const url = `${SITE_URL}/tickets/${username}`;
+  const url = `${SITE_URL}/tickets/${id}`;
   useEffect(() => {
     if (navigator.clipboard) {
       setCopyEnabled(true);

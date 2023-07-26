@@ -23,12 +23,17 @@ import styles from './layout.module.css';
 import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
-import React, { useEffect, useLayoutEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import DemoButton from './hms/demo-cta';
 import RoomCta from './hms/demo-cta/room-cta';
 import { hmsConfig } from './hms/config';
-import ViewSource from './view-source';
 import ParticleBackground from './ParticleBackground';
+import { useConnect, UserData } from "@stacks/connect-react";
+import { userSession, appDetails } from 'pages/_app';
+import { SignInWithStacksMessage } from '@lib/stacks/signInWithStacksMessage';
+import { getCsrfToken, signIn } from "next-auth/react";
+import SignIn from './hms/stacks-session';
+import SignOut from './hms/stacks-session/sign-out';
 
 type Props = {
   children: React.ReactNode;
@@ -49,11 +54,56 @@ export default function Layout({
   const activeRoute = router.asPath;
   const disableCta = ['/schedule', '/speakers', '/expo', '/jobs'];
 
-  const [particles, setParticles] = React.useState(false);
 
-  useLayoutEffect(() => {
-    setParticles(true);
-  }, []);
+  const { sign, authenticate } = useConnect();
+  const [stacksUser, setStacksUser] = useState<UserData | null>(null);
+
+  useEffect(() => {
+    if (userSession.isSignInPending()) {
+      userSession.handlePendingSignIn().then((userData) => {
+        setStacksUser(userData);
+      });
+    } else if (userSession.isUserSignedIn()) {
+      setStacksUser(userSession.loadUserData());
+    }
+  }, [userSession]);
+
+  const handleLogin = useCallback(() => {
+    authenticate({
+      appDetails,
+      onFinish: ({ userSession }) => setStacksUser(userSession.loadUserData()),
+    });
+  }, [authenticate]);
+
+  const handleSign = async () => {
+    if (!stacksUser) return;
+
+    const callbackUrl = "/protected";
+    const stacksMessage = new SignInWithStacksMessage({
+      domain: `${window.location.protocol}//${window.location.host}`,
+      address: stacksUser.profile.stxAddress.mainnet,
+      statement: "Sign in with Stacks to the app.",
+      uri: window.location.origin,
+      version: "1",
+      chainId: 1,
+      nonce: (await getCsrfToken()) as string,
+    });
+
+    const message = stacksMessage.prepareMessage();
+
+    sign({
+      message,
+      onFinish: ({ signature }) => {
+        signIn("credentials", {
+          message: message,
+          redirect: false,
+          signature,
+          callbackUrl,
+        });
+      },
+    });
+  };
+
 
   return (
     <>
@@ -88,14 +138,13 @@ export default function Layout({
             {(hmsConfig.hmsIntegration && isLive && !disableCta.includes(activeRoute)) ||
               activeRoute === '/' ? (
               <div className={cn(styles['header-right'])}>
-                {activeRoute === '/' ? <DemoButton /> : <RoomCta />}
+                {!stacksUser ? <SignIn handleLogin={handleLogin} /> : <SignOut />}
               </div>
             ) : (
               <div />
             )}
           </header>
         )}
-        {/* <ViewSource /> */}
         <div className={styles.page}>
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />

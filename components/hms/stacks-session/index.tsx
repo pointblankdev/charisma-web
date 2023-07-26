@@ -2,12 +2,9 @@ import styles from './index.module.css';
 import cn from 'classnames';
 import React, { ElementRef } from 'react';
 import useClickOutside from '@lib/hooks/use-click-outside';
-import * as Dialog from '@radix-ui/react-dialog';
-import { CrossIcon } from '@100mslive/react-icons';
 import InfoIcon from '@components/icons/icon-info';
-import DemoModal from '../demo-modal';
 
-const DemoButton = ({ handleLogin }: any) => {
+const SignIn = ({ handleLogin }: any) => {
   React.useEffect(() => {
     setTimeout(() => {
       const el = document.getElementById('cta-btn');
@@ -25,27 +22,16 @@ const DemoButton = ({ handleLogin }: any) => {
   };
   useClickOutside(ctaRef, clickedOutside);
   return (
-    <Dialog.Root>
-      <Dialog.Overlay className={cn(styles['overlay'])} />
-      <Dialog.Trigger asChild>
-        <button ref={ctaRef} id="cta-btn" className={cn(styles['cta-btn'])} onClick={handleLogin}>
-          Connect Wallet
-        </button>
-      </Dialog.Trigger>
+    <div>
+      <button ref={ctaRef} id="cta-btn" className={cn(styles['cta-btn'])} onClick={handleLogin}>
+        Connect Wallet
+      </button>
       <div id="cta-tooltip" className={cn(styles['tooltip'])}>
         <InfoIcon />
         Click here to connect your Stacks wallet
       </div>
-      <Dialog.Content className={cn(styles['content'], 'dialog-animation')}>
-        <Dialog.Close asChild className={cn(styles['close-btn'])}>
-          <button>
-            <CrossIcon />
-          </button>
-        </Dialog.Close>
-        <DemoModal />
-      </Dialog.Content>
-    </Dialog.Root>
+    </div >
   );
 };
 
-export default DemoButton;
+export default SignIn;

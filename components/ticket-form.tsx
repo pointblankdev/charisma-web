@@ -19,15 +19,15 @@ import { scrollTo } from '@lib/smooth-scroll';
 import cn from 'classnames';
 import StacksIcon from '@components/icons/icon-stacks';
 import CheckIcon from '@components/icons/icon-check';
-import { REPO, SITE_ORIGIN, TicketGenerationState } from '@lib/constants';
+import { TicketGenerationState } from '@lib/constants';
 import isMobileOrTablet from '@lib/is-mobile-or-tablet';
 import useConfData from '@lib/hooks/use-conf-data';
 import LoadingDots from './loading-dots';
 import formStyles from './form.module.css';
 import ticketFormStyles from './ticket-form.module.css';
-import { saveGithubToken } from '@lib/user-api';
-import { GitHubOAuthData } from '@lib/types';
-import { InviteStageIcon } from '@100mslive/react-icons';
+import { linkWallet } from '@lib/user-api';
+import { useConnect } from "@stacks/connect-react";
+import { appDetails } from 'pages/_app';
 
 type FormState = 'default' | 'loading' | 'error';
 
@@ -44,6 +44,41 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
   const [errorMsg, setErrorMsg] = useState('');
   const { userData, setUserData } = useConfData();
   const formRef = useRef<HTMLFormElement>(null);
+
+
+  const { sign, authenticate } = useConnect();
+
+  const handleLogin = () => {
+    authenticate({
+      appDetails,
+      onFinish: async ({ userSession }) => {
+        if (!userSession) {
+          setFormState('default');
+          setTicketGenerationState('default');
+          return;
+        }
+
+        const user = userSession.loadUserData()
+
+        document.body.classList.add('ticket-generated');
+        const name = user.profile.stxAddress.mainnet
+        setUserData({ ...userData, username: name, name: name });
+        setUsername(name);
+        setFormState('default');
+        setTicketGenerationState('default');
+
+        // Prefetch GitHub avatar
+        new Image().src = `https://github.com/${name}.png`;
+
+        // Prefetch the twitter share URL to eagerly generate the page
+        fetch(`/tickets/${userData.id}`).catch(_ => { });
+
+        if (userData.id && user.decentralizedID && userData.ticketNumber) {
+          await linkWallet({ wallet: user, user: userData })
+        }
+      },
+    });
+  };
 
   return formState === 'error' ? (
     <div>
@@ -69,101 +104,16 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
       onSubmit={e => {
         e.preventDefault();
 
-        alert('You caught me- I\'m still working on whitelist signup. Please check back soon.')
-        return
+        if (formState !== 'default') {
+          setTicketGenerationState('default');
+          setFormState('default');
+          return;
+        }
 
-        // if (formState !== 'default') {
-        //   setTicketGenerationState('default');
-        //   setFormState('default');
-        //   return;
-        // }
+        setFormState('loading');
+        setTicketGenerationState('loading');
 
-        // setFormState('loading');
-        // setTicketGenerationState('loading');
-
-        // if (!process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID) {
-        //   setFormState('error');
-        //   setErrorMsg('GitHub OAuth App must be set up.');
-        //   return;
-        // }
-
-        // const windowWidth = 600;
-        // const windowHeight = 700;
-        // // https://stackoverflow.com/a/32261263/114157
-        // const windowTop = window.top.outerHeight / 2 + window.top.screenY - 700 / 2;
-        // const windowLeft = window.top.outerWidth / 2 + window.top.screenX - 600 / 2;
-
-        // const openedWindow = window.open(
-        //   `https://github.com/login/oauth/authorize?client_id=${encodeURIComponent(
-        //     process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID
-        //   )}`,
-        //   'githubOAuth',
-        //   `resizable,scrollbars,status,width=${windowWidth},height=${windowHeight},top=${windowTop},left=${windowLeft}`
-        // );
-
-        // new Promise<GitHubOAuthData | undefined>(resolve => {
-        //   const interval = setInterval(() => {
-        //     if (!openedWindow || openedWindow.closed) {
-        //       clearInterval(interval);
-        //       resolve(undefined);
-        //     }
-        //   }, 250);
-
-        //   window.addEventListener('message', function onMessage(msgEvent) {
-        //     // When devtools is opened the message may be received multiple times
-        //     if (SITE_ORIGIN !== msgEvent.origin || !msgEvent.data.type) {
-        //       return;
-        //     }
-        //     clearInterval(interval);
-        //     if (openedWindow) {
-        //       openedWindow.close();
-        //     }
-        //     resolve(msgEvent.data);
-        //   });
-        // })
-        //   .then(async data => {
-        //     if (!data) {
-        //       setFormState('default');
-        //       setTicketGenerationState('default');
-        //       return;
-        //     }
-
-        //     let usernameFromResponse: string;
-        //     let name: string;
-        //     if (data.type === 'token') {
-        //       const res = await saveGithubToken({ id: userData.id, token: data.token });
-
-        //       if (!res.ok) {
-        //         throw new Error('Failed to store oauth result');
-        //       }
-
-        //       const responseJson = await res.json();
-        //       usernameFromResponse = responseJson.username;
-        //       name = responseJson.name;
-        //     } else {
-        //       usernameFromResponse = data.login;
-        //       name = data.name;
-        //     }
-
-        //     document.body.classList.add('ticket-generated');
-        //     setUserData({ ...userData, username: usernameFromResponse, name });
-        //     setUsername(usernameFromResponse);
-        //     setFormState('default');
-        //     setTicketGenerationState('default');
-
-        //     // Prefetch GitHub avatar
-        //     new Image().src = `https://github.com/${usernameFromResponse}.png`;
-
-        //     // Prefetch the twitter share URL to eagerly generate the page
-        //     fetch(`/tickets/${usernameFromResponse}`).catch(_ => { });
-        //   })
-        //   .catch(err => {
-        //     // eslint-disable-next-line no-console
-        //     console.error(err);
-        //     setFormState('error');
-        //     setErrorMsg('Error! Please try again.');
-        //     setTicketGenerationState('default');
-        //   });
+        handleLogin()
       }}
     >
       <div className={cn(formStyles['form-row'], ticketFormStyles['form-row'])}>
@@ -196,7 +146,7 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
               {formState === 'loading' ? (
                 <LoadingDots size={4} />
               ) : (
-                username || 'Connect with Stacks'
+                !!username ? `${username.slice(0, 4)}...${username.slice(-4)}` : 'Connect with Stacks'
               )}
             </div>
             {username ? (
@@ -206,21 +156,7 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
             ) : null}
           </button>
           <p className={ticketFormStyles.description}>
-            {githubEnabled ? (
-              'Only public info will be used.'
-            ) : (
-              <>
-                GitHub OAuth app is required.{' '}
-                <a
-                  href={`${REPO}#authentication`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className={ticketFormStyles['learn-more']}
-                >
-                  Learn more.
-                </a>
-              </>
-            )}
+            Only public info will be used.
           </p>
         </div>
       </div>

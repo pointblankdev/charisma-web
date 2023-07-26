@@ -55,6 +55,7 @@ export default function Conf({
             </>
           ) : (
             <Ticket
+              id={userData.id}
               username={userData.username}
               name={userData.name}
               ticketNumber={userData.ticketNumber}

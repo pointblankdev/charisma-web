@@ -1,11 +1,5 @@
 import { ConfUser } from "@lib/types";
-import { nanoid } from 'nanoid';
 import { kv } from "@vercel/kv";
-
-export async function getUserByUsername(username: string): Promise<ConfUser> {
-    const { name, ticketNumber } = await kv.hmget(`user:${username}`, 'name', 'ticketNumber') as ConfUser;
-    return { name, ticketNumber };
-}
 
 export async function getUserById(id: string): Promise<ConfUser> {
     const { name, username, createdAt } = await kv.hmget(
@@ -31,7 +25,7 @@ export async function createUser(id: string, email: string): Promise<ConfUser> {
     // add email to subscribers list
     await kv.lpush(
         'subscribers',
-        email,
+        `${id}, ${email}, ${ticketNumber}, ${createdAt}`,
     );
     return { id, email, ticketNumber, createdAt };
 }
@@ -40,39 +34,35 @@ export async function getTicketNumberByUserId(id: string): Promise<string | null
     return await kv.hget(`id:${id}`, 'ticketNumber');
 }
 
-export async function createGitHubUser(user: any): Promise<string> {
-    const token = nanoid();
-    const key = `github-user:${token}`;
+
+export async function createWallet(data: any, did: string): Promise<string> {
+    const key = `wallet:${did}`;
 
     await kv
         .multi()
-        .hmset(key, { 'id': user.id, 'login': user.login, 'name': user.name || '' })
+        .hmset(key, data)
         .expire(key, 60 * 10) // 10m TTL
         .exec();
-    return token;
+    return did;
 }
 
-export async function updateUserWithGitHubUser(
+export async function updateUserWithWallet(
     id: string,
-    token: string,
-    ticketNumber: string
+    did: string,
+    ticketNumber: number
 ): Promise<ConfUser> {
-    const { name, username } = await kv.hmget(`github-user:${token}`, 'login', 'name') as ConfUser;
-    if (!username) {
+    const data = await kv.hgetall(`wallet:${did}`) as ConfUser;
+    if (!data) {
         throw new Error('Invalid or expired token');
     }
 
     const key = `id:${id}`;
-    const userKey = `user:${username}`;
 
     await kv
         .multi()
-        .hsetnx(key, 'username', username)
-        .hsetnx(key, 'name', name || '')
-        // Also save username → data pair
-        .hsetnx(userKey, 'name', name || '')
-        .hsetnx(userKey, 'ticketNumber', ticketNumber)
+        .hsetnx(key, 'wallet', data)
+        .hsetnx(key, 'ticketNumber', ticketNumber)
         .exec();
 
-    return { username, name };
+    return data;
 }

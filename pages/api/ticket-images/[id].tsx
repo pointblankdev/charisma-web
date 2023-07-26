@@ -17,20 +17,20 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import screenshot from '@lib/screenshot';
 import { SITE_URL, SAMPLE_TICKET_NUMBER } from '@lib/constants';
-import { getUserByUsername } from '@lib/db-api';
+import { getUserById } from '@lib/db-api';
 
 export default async function ticketImages(req: NextApiRequest, res: NextApiResponse) {
   let url: string;
   let name: string | null | undefined;
   let ticketNumber: number | null | undefined = SAMPLE_TICKET_NUMBER;
-  const { username } = req.query || {};
-  if (username) {
-    const usernameString = username.toString();
-    const user = await getUserByUsername(usernameString);
+  const { id } = req.query || {};
+  if (id) {
+    const idString = id.toString();
+    const user = await getUserById(idString);
     name = user.name;
     ticketNumber = user.ticketNumber;
-    url = `${SITE_URL}/ticket-image?username=${encodeURIComponent(
-      usernameString
+    url = `${SITE_URL}/ticket-image?id=${encodeURIComponent(
+      idString
     )}&ticketNumber=${encodeURIComponent(ticketNumber ?? SAMPLE_TICKET_NUMBER)}`;
     if (name) {
       url = `${url}&name=${encodeURIComponent(name)}`;

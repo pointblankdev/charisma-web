@@ -23,18 +23,41 @@ import NProgress from '@components/nprogress';
 import ResizeHandler from '@components/resize-handler';
 import { useEffect } from 'react';
 import { HMSRoomProvider } from '@100mslive/react-sdk';
+import {
+  Connect,
+  AuthOptions,
+  AppConfig,
+  UserSession,
+} from "@stacks/connect-react";
+
+
+export const appConfig = new AppConfig(["store_write", "publish_data"]);
+export const userSession = new UserSession({ appConfig });
+export const appDetails = {
+  name: "Charisma",
+  icon: "https://charisma.rocks/C.png",
+};
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     document.body.classList?.remove('loading');
   }, []);
+
+  const authOptions: AuthOptions = {
+    redirectTo: "/",
+    appDetails,
+    userSession,
+  };
+
   return (
     <SSRProvider>
       <OverlayProvider>
         <HMSRoomProvider>
-          <Component {...pageProps} />
-          <ResizeHandler />
-          <NProgress />
+          <Connect authOptions={authOptions}>
+            <Component {...pageProps} />
+            <ResizeHandler />
+            <NProgress />
+          </Connect>
         </HMSRoomProvider>
       </OverlayProvider>
     </SSRProvider>

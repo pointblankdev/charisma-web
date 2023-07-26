@@ -25,15 +25,15 @@ export async function register(email: string, token?: string) {
   });
 }
 
-export async function saveGithubToken({ id, token }: { id?: string; token: string }) {
-  return await fetch('/api/save-github-token', {
+export async function linkWallet({ wallet, user }: { wallet: any; user: any }) {
+  return await fetch('/api/link-wallet', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      id,
-      token
+      wallet,
+      user
     })
   });
 }
