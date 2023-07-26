@@ -21,7 +21,7 @@ export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
-  'This is an open source demo that Next.js developers can clone, deploy, and fully customize for events. Created through collaboration of marketers, designers, and developers at Vercel.';
+  'Empowering the future of finance with our new digital asset on the Stacks ecosystem - decentralizing transactions, democratizing access, and redefining economic inclusivity.';
 export const SITE_DESCRIPTION =
   'New Stacks SIP-010 fungible token';
 export const DATE = '31 October 2023';
