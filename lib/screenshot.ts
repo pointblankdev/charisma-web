@@ -15,7 +15,7 @@
  */
 
 import chrome from 'chrome-aws-lambda';
-import puppeteer from 'puppeteer-core/lib/esm/puppeteer/node';
+import puppeteer from 'puppeteer-core';
 
 export default async function screenshot(url: string) {
   const options = process.env.AWS_REGION

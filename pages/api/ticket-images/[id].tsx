@@ -15,36 +15,36 @@
  */
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import screenshot from '@lib/screenshot';
-import { SITE_URL, SAMPLE_TICKET_NUMBER } from '@lib/constants';
-import { getUserById } from '@lib/db-api';
+// import screenshot from '@lib/screenshot';
+// import { SITE_URL, SAMPLE_TICKET_NUMBER } from '@lib/constants';
+// import { getUserById } from '@lib/db-api';
 
-export default async function ticketImages(req: NextApiRequest, res: NextApiResponse) {
-  let url: string;
-  let name: string | null | undefined;
-  let ticketNumber: number | null | undefined = SAMPLE_TICKET_NUMBER;
+export default function ticketImages(req: NextApiRequest, res: NextApiResponse) {
+  // let url: string;
+  // let name: string | null | undefined;
+  // let ticketNumber: number | null | undefined = SAMPLE_TICKET_NUMBER;
   const { id } = req.query || {};
   if (id) {
-    const idString = id.toString();
-    const user = await getUserById(idString);
-    name = user.name;
-    ticketNumber = user.ticketNumber;
-    url = `${SITE_URL}/ticket-image?id=${encodeURIComponent(
-      idString
-    )}&ticketNumber=${encodeURIComponent(ticketNumber ?? SAMPLE_TICKET_NUMBER)}`;
-    if (name) {
-      url = `${url}&name=${encodeURIComponent(name)}`;
-    }
+    //   const idString = id.toString();
+    //   const user = await getUserById(idString);
+    //   name = user.name;
+    //   ticketNumber = user.ticketNumber;
+    //   url = `${SITE_URL}/ticket-image?id=${encodeURIComponent(
+    //     idString
+    //   )}&ticketNumber=${encodeURIComponent(ticketNumber ?? SAMPLE_TICKET_NUMBER)}`;
+    //   if (name) {
+    //     url = `${url}&name=${encodeURIComponent(name)}`;
+    //   }
 
-    const file = await screenshot(url);
-    res.setHeader('Content-Type', `image/png`);
-    res.setHeader(
-      'Cache-Control',
-      `public, immutable, no-transform, s-maxage=31536000, max-age=31536000`
-    );
-    res.statusCode = 200;
-    res.end(file);
-  } else {
+    //   const file = await screenshot(url);
+    //   res.setHeader('Content-Type', `image/png`);
+    //   res.setHeader(
+    //     'Cache-Control',
+    //     `public, immutable, no-transform, s-maxage=31536000, max-age=31536000`
+    //   );
+    //   res.statusCode = 200;
+    //   res.end(file);
+    // } else {
     res.status(404).send('Not Found');
   }
 }
