@@ -34,7 +34,7 @@ const DemoButton = () => {
       </Dialog.Trigger>
       <div id="cta-tooltip" className={cn(styles['tooltip'])}>
         <InfoIcon />
-        Click here to demo a live webinar powered by 100ms
+        Click here to connect your Stacks wallet
       </div>
       <Dialog.Content className={cn(styles['content'], 'dialog-animation')}>
         <Dialog.Close asChild className={cn(styles['close-btn'])}>
