@@ -69,6 +69,9 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
       onSubmit={e => {
         e.preventDefault();
 
+        alert('You caught me- I\'m still working on whitelist signup. Please check back soon.')
+        return
+
         if (formState !== 'default') {
           setTicketGenerationState('default');
           setFormState('default');

@@ -180,11 +180,14 @@
 
 .submit.default.generate-with-github:disabled path,
 .submit.default.generate-with-github:disabled:hover path,
-.submit.default.generate-with-github:disabled:focus path,
+.submit.default.generate-with-github:disabled:focus path {
+  fill: #fff;
+}
+
 .submit.default.generate-with-stacks:disabled path,
 .submit.default.generate-with-stacks:disabled:hover path,
 .submit.default.generate-with-stacks:disabled:focus path {
-  fill: #fff;
+  background: #5444fc;
 }
 
 .submit.default.generate-with-github.not-allowed:disabled,

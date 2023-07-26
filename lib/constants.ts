@@ -16,12 +16,12 @@
 
 export const SITE_URL = 'https://charisma.rocks';
 export const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_ORIGIN || new URL(SITE_URL).origin;
-export const TWITTER_USER_NAME = 'vercel';
+export const TWITTER_USER_NAME = 'lordrozar';
 export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
-  'Empowering the future of finance with our new digital asset on the Stacks ecosystem - decentralizing transactions, democratizing access, and redefining economic inclusivity.';
+  'Empowering the future of finance with a new digital asset on the Stacks ecosystem - decentralizing transactions, democratizing access, and redefining economic inclusivity.';
 export const SITE_DESCRIPTION =
   'New Stacks SIP-010 fungible token';
 export const DATE = '31 October 2023';
@@ -35,9 +35,8 @@ export const COOKIE = 'user-id';
 export const LEGAL_URL = process.env.NEXT_PUBLIC_PRIVACY_POLICY_URL;
 export const COPYRIGHT_HOLDER = process.env.NEXT_PUBLIC_COPYRIGHT_HOLDER;
 
-export const CODE_OF_CONDUCT =
-  'https://www.notion.so/vercel/Code-of-Conduct-Example-7ddd8d0e9c354bb597a0faed87310a78';
-export const REPO = 'https://github.com/vercel/virtual-event-starter-kit';
+export const CODE_OF_CONDUCT = 'https://bitcoin.org/en/';
+export const REPO = 'https://stacks.org/';
 export const SAMPLE_TICKET_NUMBER = 1234;
 export const NAVIGATION = [
   {
