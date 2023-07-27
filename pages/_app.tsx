@@ -34,7 +34,7 @@ import {
 export const appConfig = new AppConfig(["store_write", "publish_data"]);
 export const userSession = new UserSession({ appConfig });
 export const appDetails = {
-  name: "Charisma",
+  name: "Charisma - Degen DeFi",
   icon: "https://charisma.rocks/C.png",
 };
 
