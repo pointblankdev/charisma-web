@@ -23,7 +23,7 @@ export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
   'Charisma is a new digital asset in the Stacks DeFi ecosystem, snatching power from the clutches of the centralized few and returning it to the true heroes of our tale - the daring degens. We\'re setting the stage for a new era of economic revolution, and you\'re part of it. Join us.';
 export const SITE_DESCRIPTION =
-  'New Stacks SIP-010 fungible token';
+  'Powered by number-go-up technology';
 export const DATE = '31 October 2023';
 export const SHORT_DATE = 'Jan 1 - 9:00am PST';
 export const FULL_DATE = 'Jan 1st 9am Pacific Time (GMT-7)';
