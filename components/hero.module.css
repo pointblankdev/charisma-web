@@ -52,6 +52,16 @@
   max-width: 355px;
 }
 
+.about {
+  font-weight: 300;
+  font-size: 16px;
+  line-height: 1.4;
+  text-align: center;
+  margin: auto auto 30px;
+  color: var(--secondary-color);
+  max-width: 555px;
+}
+
 .description-separator {
   height: 24px;
   width: 1px;
@@ -73,7 +83,7 @@
 
   .info {
     font-size: 24px;
-    margin-bottom: 80px;
+    margin-bottom: 0px;
   }
 
   .description {

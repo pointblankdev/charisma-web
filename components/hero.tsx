@@ -35,11 +35,11 @@ export default function Hero() {
         {SITE_DESCRIPTION}
       </h2>
       <div className={styles.heroContainer}>
-        <Image src="/charisma.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-sixth'])} />{' '}
-        <span className={cn(styleUtils.appear, styleUtils['appear-sixth'], styles.hero)}>
+        <Image src="/charisma.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'])} />{' '}
+        <span className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)}>
           {BRAND_NAME}
         </span>
-        <span className={cn(styleUtils.appear, styleUtils['appear-sixth'])}>{' '}CHA</span>
+        <span className={cn(styleUtils.appear, styleUtils['appear-third'])}>{' '}CHA</span>
       </div>
       <h2
         className={cn(
@@ -52,12 +52,15 @@ export default function Hero() {
       >
         {SITE_DESCRIPTION}
       </h2>
-      <div className={cn(styleUtils.appear, styleUtils['appear-sixth'], styles.info)}>
+      <div className={cn(styleUtils.appear, styleUtils['appear-third'], styles.info)}>
         <p>{DATE}</p>
         <div className={styles['description-separator']} />
         <p>
           <strong>Launching</strong>
         </p>
+      </div>
+      <div className={cn(styleUtils.appear, styleUtils['appear-seventh'], styles.about)}>
+        <p>Charisma is a digital growth DAO that equips project teams with data-driven strategies and questing funnels to target, engage, and convert users effectively in today's evolving bitcoin ecosystem.</p>
       </div>
     </div>
   );

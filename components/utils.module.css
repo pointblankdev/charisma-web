@@ -43,6 +43,10 @@
   animation-delay: 2.4s;
 }
 
+.appear-seventh {
+  animation-delay: 2.8s;
+}
+
 @keyframes appear {
   to {
     opacity: 1;
