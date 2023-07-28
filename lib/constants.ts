@@ -21,9 +21,9 @@ export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
-  'Target and attract more users with Charisma';
+  'Discover and attract more users with Charisma';
 export const SITE_DESCRIPTION =
-  'Target and attract more users';
+  'Discover and attract more users';
 export const DATE = '31 October 2023';
 export const SHORT_DATE = 'Jan 1 - 9:00am PST';
 export const FULL_DATE = 'Jan 1st 9am Pacific Time (GMT-7)';
