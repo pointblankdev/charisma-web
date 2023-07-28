@@ -26,31 +26,33 @@ export default function Hero() {
       <h2
         className={cn(
           styleUtils.appear,
-          styleUtils['appear-third'],
-          styleUtils['show-on-mobile'],
-          styles.description
+          styleUtils['appear-first'],
+          styles.description,
+          styleUtils['hide-on-mobile'],
+          styleUtils['hide-on-tablet'],
         )}
       >
         {SITE_DESCRIPTION}
       </h2>
       <div className={styles.heroContainer}>
-        <Image src="/C.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'])} />{' '}
-        <span className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)}>
+        <Image src="/charisma.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-sixth'])} />{' '}
+        <span className={cn(styleUtils.appear, styleUtils['appear-sixth'], styles.hero)}>
           {BRAND_NAME}
         </span>
-        <span className={cn(styleUtils.appear, styleUtils['appear-third'])}>{' '}CHA</span>
+        <span className={cn(styleUtils.appear, styleUtils['appear-sixth'])}>{' '}CHA</span>
       </div>
       <h2
         className={cn(
           styleUtils.appear,
-          styleUtils['appear-third'],
+          styleUtils['appear-first'],
+          styles.description,
+          styleUtils['show-on-mobile'],
           styleUtils['show-on-tablet'],
-          styles.description
         )}
       >
         {SITE_DESCRIPTION}
       </h2>
-      <div className={cn(styleUtils.appear, styleUtils['appear-fourth'], styles.info)}>
+      <div className={cn(styleUtils.appear, styleUtils['appear-sixth'], styles.info)}>
         <p>{DATE}</p>
         <div className={styles['description-separator']} />
         <p>

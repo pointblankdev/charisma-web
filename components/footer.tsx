@@ -17,6 +17,7 @@
 import cn from 'classnames';
 import VercelLogo from '@components/icons/icon-platform';
 import styles from './footer.module.css';
+import styleUtils from './utils.module.css';
 import { COPYRIGHT_HOLDER, SITE_NAME, CODE_OF_CONDUCT, LEGAL_URL, REPO } from '@lib/constants';
 
 export function HostedByVercel() {
@@ -37,11 +38,7 @@ export default function Footer() {
   return (
     <footer className={cn(styles.footer)}>
       <div className={styles['footer-legal']}>
-        <div className={styles['footer-hostedby']}>
-          <HostedByVercel />
-          <div className={styles['footer-separator']} />
-        </div>
-        <div className={styles['footer-copyright']}>
+        <div className={cn(styles['footer-copyright'], styleUtils['hide-on-mobile'])}>
           Copyright © {`${new Date().getFullYear()} `} {COPYRIGHT_HOLDER || `${SITE_NAME}.`} All
           rights reserved.
         </div>
@@ -53,7 +50,7 @@ export default function Footer() {
               target="_blank"
               rel="noopener noreferrer"
             >
-              Built on Stacks
+              Powered by Stacks
             </a>
           </p>
           <div className={styles['footer-separator']} />

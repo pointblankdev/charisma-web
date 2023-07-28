@@ -77,7 +77,7 @@
   }
 
   .description {
-    font-size: var(--space-6x);
+    font-size: var(--space-8x);
     max-width: 531px;
     margin: 40px auto;
   }

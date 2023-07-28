@@ -155,7 +155,7 @@ export default function Form({ sharePage }: Props) {
       className={cn(styles.form, {
         [styles['share-page']]: sharePage,
         [styleUtils.appear]: !errorTryAgain,
-        [styleUtils['appear-fifth']]: !errorTryAgain && !sharePage,
+        [styleUtils['appear-sixth']]: !errorTryAgain && !sharePage,
         [styleUtils['appear-third']]: !errorTryAgain && sharePage
       })}
       onSubmit={onSubmit}
@@ -176,7 +176,7 @@ export default function Form({ sharePage }: Props) {
             onChange={e => setEmail(e.target.value)}
             onFocus={() => setFocused(true)}
             onBlur={() => setFocused(false)}
-            placeholder="Enter your email for the sauce 🍝"
+            placeholder="Enter your email for weekly tech updates"
             aria-label="Your email address"
             required
           />

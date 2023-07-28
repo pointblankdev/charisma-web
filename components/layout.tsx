@@ -20,6 +20,7 @@ import { useRouter } from 'next/router';
 import { SkipNavContent } from '@reach/skip-nav';
 import { NAVIGATION } from '@lib/constants';
 import styles from './layout.module.css';
+import styleUtils from './utils.module.css';
 import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
@@ -52,57 +53,35 @@ export default function Layout({
 }: Props) {
   const router = useRouter();
   const activeRoute = router.asPath;
-  const disableCta = ['/schedule', '/speakers', '/expo', '/jobs'];
 
+  // const handleSign = async () => {
+  //   if (!stacksUser) return;
 
-  const { sign, authenticate } = useConnect();
-  const [stacksUser, setStacksUser] = useState<UserData | null>(null);
+  //   const callbackUrl = "/protected";
+  //   const stacksMessage = new SignInWithStacksMessage({
+  //     domain: `${window.location.protocol}//${window.location.host}`,
+  //     address: stacksUser.profile.stxAddress.mainnet,
+  //     statement: "Sign in with Stacks to the app.",
+  //     uri: window.location.origin,
+  //     version: "1",
+  //     chainId: 1,
+  //     nonce: (await getCsrfToken()) as string,
+  //   });
 
-  useEffect(() => {
-    if (userSession.isSignInPending()) {
-      userSession.handlePendingSignIn().then((userData) => {
-        setStacksUser(userData);
-      });
-    } else if (userSession.isUserSignedIn()) {
-      setStacksUser(userSession.loadUserData());
-    }
-  }, [userSession]);
+  //   const message = stacksMessage.prepareMessage();
 
-  const handleLogin = useCallback(() => {
-    authenticate({
-      appDetails,
-      onFinish: ({ userSession }) => setStacksUser(userSession.loadUserData()),
-    });
-  }, [authenticate]);
-
-  const handleSign = async () => {
-    if (!stacksUser) return;
-
-    const callbackUrl = "/protected";
-    const stacksMessage = new SignInWithStacksMessage({
-      domain: `${window.location.protocol}//${window.location.host}`,
-      address: stacksUser.profile.stxAddress.mainnet,
-      statement: "Sign in with Stacks to the app.",
-      uri: window.location.origin,
-      version: "1",
-      chainId: 1,
-      nonce: (await getCsrfToken()) as string,
-    });
-
-    const message = stacksMessage.prepareMessage();
-
-    sign({
-      message,
-      onFinish: ({ signature }) => {
-        signIn("credentials", {
-          message: message,
-          redirect: false,
-          signature,
-          callbackUrl,
-        });
-      },
-    });
-  };
+  //   sign({
+  //     message,
+  //     onFinish: ({ signature }) => {
+  //       signIn("credentials", {
+  //         message: message,
+  //         redirect: false,
+  //         signature,
+  //         callbackUrl,
+  //       });
+  //     },
+  //   });
+  // };
 
 
   return (
@@ -110,39 +89,35 @@ export default function Layout({
       <ParticleBackground />
       <div className={styles.background}>
         {/* Disabled the navbar with the false logic */}
-        {!hideNav && false && (
+        {!hideNav && (
           <header className={cn(styles.header)}>
             <div className={styles['header-logos']}>
               <MobileMenu key={router.asPath} />
-              <Link href="/">
-                {/* eslint-disable-next-line */}
-                <a className={styles.logo}>
-                  <Logo />
-                </a>
-              </Link>
+              <div className={cn(styleUtils['hide-on-mobile'], styleUtils['hide-on-tablet'])}>
+                <Link href="/">
+                  {/* eslint-disable-next-line */}
+                  <a className={cn(styles.logo)}>
+                    <Logo />
+                  </a>
+                </Link>
+              </div>
             </div>
             <div className={styles.tabs}>
               {NAVIGATION.map(({ name, route }) => (
-                <a
-                  key={name}
-                  href={route}
-                  className={cn(styles.tab, {
-                    [styles['tab-active']]: activeRoute.startsWith(route)
-                  })}
-                >
-                  {name}
-                </a>
+                <Link
+                  href={route}>
+                  <a
+                    key={name}
+                    className={cn(styles.tab, {
+                      [styles['tab-active']]: activeRoute.startsWith(route)
+                    })}
+                  >
+                    {name}
+                  </a>
+                </Link>
               ))}
             </div>
-
-            {(hmsConfig.hmsIntegration && isLive && !disableCta.includes(activeRoute)) ||
-              activeRoute === '/' ? (
-              <div className={cn(styles['header-right'])}>
-                {!stacksUser ? <SignIn handleLogin={handleLogin} /> : <SignOut />}
-              </div>
-            ) : (
-              <div />
-            )}
+            <div className={styles['header-right']}>&nbsp;</div>
           </header>
         )}
         <div className={styles.page}>

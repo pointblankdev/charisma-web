@@ -34,8 +34,8 @@ import {
 export const appConfig = new AppConfig(["store_write", "publish_data"]);
 export const userSession = new UserSession({ appConfig });
 export const appDetails = {
-  name: "Charisma - Degen DeFi",
-  icon: "https://charisma.rocks/C.png",
+  name: "Charisma | Bitcoin Growth Marketing",
+  icon: "https://charisma.rocks/charisma.png",
 };
 
 export default function App({ Component, pageProps }: AppProps) {

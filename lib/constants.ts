@@ -21,9 +21,9 @@ export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
-  'Charisma is a new digital asset in the Stacks DeFi ecosystem, snatching power from the clutches of the centralized few and returning it to the true heroes of our tale - the daring degens. We\'re setting the stage for a new era of economic revolution, and you\'re part of it. Join us.';
+  'Target and attract more users with Charisma';
 export const SITE_DESCRIPTION =
-  'The 0% premine, DAO run, number-go-up tokenomics you\'ve been waiting for.';
+  'Target and attract more users';
 export const DATE = '31 October 2023';
 export const SHORT_DATE = 'Jan 1 - 9:00am PST';
 export const FULL_DATE = 'Jan 1st 9am Pacific Time (GMT-7)';
@@ -40,29 +40,25 @@ export const REPO = 'https://stacks.org/';
 export const SAMPLE_TICKET_NUMBER = 1234;
 export const NAVIGATION = [
   {
-    name: 'About',
+    name: 'Charisma',
     route: '/about'
   },
   {
-    name: 'Faucet',
-    route: '/faucet'
+    name: 'Quests',
+    route: '/quests'
   },
   {
-    name: 'Stake',
-    route: '/stake'
+    name: 'Solutions',
+    route: '/solutions'
   },
   {
-    name: 'Pool',
-    route: '/pool'
+    name: 'Governance',
+    route: '/governance'
   },
   {
-    name: 'Farm',
-    route: '/farm'
+    name: 'Press',
+    route: '/press'
   },
-  {
-    name: 'Jobs',
-    route: '/jobs'
-  }
 ];
 
 export type TicketGenerationState = 'default' | 'loading';

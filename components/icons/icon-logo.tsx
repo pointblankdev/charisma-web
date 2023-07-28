@@ -22,6 +22,6 @@ export default function IconLogo({
   ...props
 }) {
   return (
-    <Image src="/C.png" alt="Logo" width="64" height="64" {...props} />
+    <Image src="/charisma.png" alt="Logo" width="64" height="64" {...props} />
   );
 }

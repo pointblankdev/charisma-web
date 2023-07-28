@@ -21,7 +21,7 @@ import { REPO } from '@lib/constants';
 
 export default function LearnMore() {
   return (
-    <div className={cn(styleUtils.appear, styleUtils['appear-fifth'], styles.contact)}>
+    <div className={cn(styleUtils.appear, styleUtils['appear-sixth'], styles.contact)}>
       A Bitcoin Startup Lab pre-accelerator project.
     </div>
   );
