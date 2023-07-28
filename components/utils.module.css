@@ -47,6 +47,10 @@
   animation-delay: 2.8s;
 }
 
+.appear-eighth {
+  animation-delay: 3.2s;
+}
+
 @keyframes appear {
   to {
     opacity: 1;
