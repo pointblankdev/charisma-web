@@ -55,11 +55,11 @@ export const useDevices = (): useDevicesResult => {
     [DeviceType.videoInput]: sdkSelectedDevices.videoInputDeviceId
   };
 
-  if (!isAllowedToPublish.video && allDevices.videoInput === []) {
+  if (!isAllowedToPublish.video && allDevices.videoInput?.length === 0) {
     delete allDevices[DeviceType.videoInput];
     delete selectedDeviceIDs[DeviceType.videoInput];
   }
-  if (!isAllowedToPublish.audio && allDevices.audioInput === []) {
+  if (!isAllowedToPublish.audio && allDevices.audioInput?.length === 0) {
     delete allDevices[DeviceType.audioInput];
     delete selectedDeviceIDs[DeviceType.audioInput];
   }
@@ -78,7 +78,7 @@ export const useDevices = (): useDevicesResult => {
             hmsActions.setAudioOutputDevice(deviceId);
             break;
         }
-      } catch (err) {}
+      } catch (err) { }
     },
     [hmsActions]
   );
