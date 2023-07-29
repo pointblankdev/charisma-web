@@ -24,17 +24,8 @@ import styleUtils from './utils.module.css';
 import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
-import React, { useCallback, useEffect, useState } from 'react';
-import DemoButton from './hms/demo-cta';
-import RoomCta from './hms/demo-cta/room-cta';
-import { hmsConfig } from './hms/config';
-import ParticleBackground from './ParticleBackground';
-import { useConnect, UserData } from "@stacks/connect-react";
-import { userSession, appDetails } from 'pages/_app';
-import { SignInWithStacksMessage } from '@lib/stacks/signInWithStacksMessage';
-import { getCsrfToken, signIn } from "next-auth/react";
-import SignIn from './hms/stacks-session';
-import SignOut from './hms/stacks-session/sign-out';
+import React from 'react';
+import ConnectWallet from './hms/stacks-session/connect';
 
 type Props = {
   children: React.ReactNode;
@@ -86,7 +77,6 @@ export default function Layout({
 
   return (
     <>
-      <ParticleBackground />
       <div className={styles.background}>
         {/* Disabled the navbar with the false logic */}
         {!hideNav && (
@@ -117,7 +107,9 @@ export default function Layout({
                 </Link>
               ))}
             </div>
-            <div className={styles['header-right']}>&nbsp;</div>
+            <div className={styles['header-right']}>
+              <ConnectWallet />
+            </div>
           </header>
         )}
         <div className={styles.page}>

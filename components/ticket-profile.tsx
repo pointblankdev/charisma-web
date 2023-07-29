@@ -55,7 +55,7 @@ export default function TicketProfile({ name, username, size = 1, ticketGenerati
               [styles.show]: ticketGenerationState === 'loading'
             })}
           >
-            {name || username || 'Your BNS Name'}
+            {name || username || 'Your Address'}
           </span>
         </p>
         <p className={styles.username}>

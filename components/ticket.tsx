@@ -24,9 +24,6 @@ import { scrollTo } from '@lib/smooth-scroll';
 import styles from './ticket.module.css';
 import styleUtils from './utils.module.css';
 import TicketForm from './ticket-form';
-import TicketVisual from './ticket-visual';
-import TicketActions from './ticket-actions';
-import TicketCopy from './ticket-copy';
 import { DATE, SITE_NAME } from '@lib/constants';
 import Form from './form';
 
@@ -90,51 +87,21 @@ export default function Ticket({ id, username, name, ticketNumber, sharePage }: 
               </>
             ) : (
               <>
-                Connect with your favorite Stacks <br className={styleUtils['hide-on-mobile']} />
-                wallet to claim your spot.
+                Connect with your Stacks wallet to claim your spot for early access.
               </>
             )}
           </p>
         </div>
         <div className={cn(styleUtils.appear, styleUtils['appear-third'])}>
           {!sharePage ? (
-            <TicketForm
-              defaultUsername={username}
-              setTicketGenerationState={setTicketGenerationState}
-            />
+            <TicketForm />
           ) : (
             <Form sharePage />
           )}
         </div>
       </div>
       <div className={styles['ticket-visual-wrapper']}>
-        <div
-          ref={ticketRef}
-          className={cn(styles['ticket-visual'], styleUtils.appear, styleUtils['appear-fourth'])}
-        >
-          <TicketVisual
-            username={username}
-            name={name}
-            ticketNumber={ticketNumber}
-            ticketGenerationState={ticketGenerationState}
-          />
-        </div>
-        {!sharePage && (
-          <>
-            {name ? (
-              <div>
-                <div className={styles['ticket-actions']}>
-                  <TicketActions id={id} />
-                </div>
-                <div className={styles['ticket-copy']}>
-                  <TicketCopy id={id} />
-                </div>
-              </div>
-            ) : (
-              <div className={styles['ticket-actions-placeholder']} />
-            )}
-          </>
-        )}
+
       </div>
     </div>
   );

@@ -14,15 +14,22 @@
  * limitations under the License.
  */
 
+import { GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
+import { DataTable } from '@components/quest-table/data-table';
+import { columns } from '@components/quest-table/columns';
 
-export default function Conf() {
+type Props = {
+  data: any[];
+};
+
+export default function Earn({ data }: Props) {
   const meta = {
-    title: 'Charisma | Complete Quests to Earn Rewards',
+    title: 'Charisma | Quest to Earn',
     description: META_DESCRIPTION
   };
 
@@ -30,8 +37,28 @@ export default function Conf() {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-
+        <div className="container mx-auto py-10">
+          <DataTable columns={columns} data={data} />
+        </div>
       </Layout>
     </Page>
   );
 }
+
+export const getStaticProps: GetStaticProps<Props> = () => {
+  const data = [
+    {
+      id: "001",
+      amount: 1,
+      name: "Charisma Faucet",
+      description: "Use the Faucet to earn 1 Charisma token",
+    }
+  ]
+
+  return {
+    props: {
+      data
+    },
+    revalidate: 60
+  };
+};

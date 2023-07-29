@@ -14,71 +14,54 @@
  * limitations under the License.
  */
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { scrollTo } from '@lib/smooth-scroll';
 import cn from 'classnames';
 import StacksIcon from '@components/icons/icon-stacks';
 import CheckIcon from '@components/icons/icon-check';
-import { TicketGenerationState } from '@lib/constants';
 import isMobileOrTablet from '@lib/is-mobile-or-tablet';
 import useConfData from '@lib/hooks/use-conf-data';
 import LoadingDots from './loading-dots';
 import formStyles from './form.module.css';
 import ticketFormStyles from './ticket-form.module.css';
 import { linkWallet } from '@lib/user-api';
-import { useConnect } from "@stacks/connect-react";
-import { appDetails } from 'pages/_app';
+import { showConnect } from "@stacks/connect-react";
+import { appDetails, userSession } from 'pages/_app';
 
 type FormState = 'default' | 'loading' | 'error';
 
-type Props = {
-  defaultUsername?: string;
-  setTicketGenerationState: React.Dispatch<React.SetStateAction<TicketGenerationState>>;
-};
-
-const githubEnabled = Boolean(process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID);
-
-export default function Form({ defaultUsername = '', setTicketGenerationState }: Props) {
-  const [username, setUsername] = useState(defaultUsername);
+export default function Form() {
+  const [username, setUsername] = useState('');
   const [formState, setFormState] = useState<FormState>('default');
   const [errorMsg, setErrorMsg] = useState('');
   const { userData, setUserData } = useConfData();
   const formRef = useRef<HTMLFormElement>(null);
 
-
-  const { sign, authenticate } = useConnect();
-
-  const handleLogin = () => {
-    authenticate({
+  function authenticate() {
+    showConnect({
       appDetails,
+      redirectTo: "/",
       onFinish: async ({ userSession }) => {
         if (!userSession) {
-          setFormState('default');
-          setTicketGenerationState('default');
           return;
         }
-
-        const user = userSession.loadUserData()
-
-        document.body.classList.add('ticket-generated');
-        const name = user.profile.stxAddress.mainnet
+        const wallet = userSession.loadUserData()
+        const name = wallet.profile.stxAddress.mainnet
         setUserData({ ...userData, username: name, name: name });
         setUsername(name);
         setFormState('default');
-        setTicketGenerationState('default');
-
-        // Prefetch GitHub avatar
-        new Image().src = `https://github.com/${name}.png`;
-
-        // Prefetch the twitter share URL to eagerly generate the page
-        fetch(`/tickets/${userData.id}`).catch(_ => { });
-
-        if (userData.id && user.decentralizedID && userData.ticketNumber) {
-          await linkWallet({ wallet: user, user: userData })
-        }
+        await linkWallet({ wallet: wallet, user: userData })
       },
+      userSession,
     });
-  };
+  }
+
+  function disconnect() {
+    userSession.signUserOut("/");
+  }
+
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
 
   return formState === 'error' ? (
     <div>
@@ -90,7 +73,6 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
             className={cn(formStyles.submit, formStyles.error)}
             onClick={() => {
               setFormState('default');
-              setTicketGenerationState('default');
             }}
           >
             Try Again
@@ -105,18 +87,16 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
         e.preventDefault();
 
         if (formState !== 'default') {
-          setTicketGenerationState('default');
           setFormState('default');
           return;
         }
 
         setFormState('loading');
-        setTicketGenerationState('loading');
 
-        handleLogin()
+        authenticate()
       }}
     >
-      <div className={cn(formStyles['form-row'], ticketFormStyles['form-row'])}>
+      {mounted && <div className={cn(formStyles['form-row'], ticketFormStyles['form-row'])}>
         <div className={cn(formStyles['stacks-wrapper'])}>
           <button
             type="submit"
@@ -124,9 +104,6 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
               formStyles.submit,
               formStyles['generate-with-stacks'],
               formStyles[formState],
-              {
-                [formStyles['not-allowed']]: !githubEnabled
-              }
             )}
             disabled={
               !process.env.NEXT_PUBLIC_GITHUB_OAUTH_CLIENT_ID ||
@@ -155,11 +132,8 @@ export default function Form({ defaultUsername = '', setTicketGenerationState }:
               </span>
             ) : null}
           </button>
-          <p className={ticketFormStyles.description}>
-            Only public info will be used.
-          </p>
         </div>
-      </div>
+      </div>}
     </form>
   );
 }

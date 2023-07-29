@@ -60,7 +60,7 @@ export default function Hero() {
         </p>
       </div>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <p>Charisma is a digital growth DAO that equips project teams with data-driven strategies and questing funnels to target, engage, and convert users effectively in today's evolving bitcoin ecosystem.</p>
+        <p>Charisma is a decentralized Quest-to-Earn platform that rewards users for completing small tasks in the bitcoin ecosystem.</p>
       </div>
     </div>
   );

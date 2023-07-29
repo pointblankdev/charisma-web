@@ -18,32 +18,26 @@ import { useRouter } from 'next/router';
 import { SkipNavContent } from '@reach/skip-nav';
 
 import Page from '@components/page';
-import ConfContent from '@components/index';
 import { META_DESCRIPTION } from '@lib/constants';
 import ParticleBackground from '@components/ParticleBackground';
+import Layout from '@components/layout';
 
 export default function Conf() {
   const { query } = useRouter();
   const meta = {
-    title: 'Charisma | Bitcoin Growth Marketing',
+    title: 'Charisma | Faucet',
     description: META_DESCRIPTION
-  };
-  const ticketNumber = query.ticketNumber?.toString();
-  const defaultUserData = {
-    id: query.id?.toString(),
-    ticketNumber: ticketNumber ? parseInt(ticketNumber, 10) : undefined,
-    name: query.name?.toString(),
-    username: query.username?.toString()
   };
 
   return (
     <Page meta={meta} fullViewport>
       <ParticleBackground />
       <SkipNavContent />
-      <ConfContent
-        defaultUserData={defaultUserData}
-        defaultPageState={query.ticketNumber ? 'ticket' : 'registration'}
-      />
+      <Layout>
+        <h1 className="container mx-auto py-10 text-center text-5xl font-thin my-auto">
+          Coming Soon...
+        </h1>
+      </Layout>
     </Page>
   );
 }
