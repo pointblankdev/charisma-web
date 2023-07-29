@@ -1,7 +1,7 @@
 {
   "name": "Charisma",
   "description": "We're setting the stage for a new era of economic revolution, and you're part of it.",
-  "previewImage": "https://charisma.rocks/deploy.png",
+  "previewImage": "https://charisma.rocks/lp-ss.png",
   "datocmsProjectId": "37685",
   "deploymentType": "vercel",
   "vercelIntegrationIds": [
