@@ -25,7 +25,7 @@ import ParticleBackground from '@components/ParticleBackground';
 export default function Conf() {
   const { query } = useRouter();
   const meta = {
-    title: 'Charisma | Bitcoin Growth Marketing',
+    title: 'Charisma | Quest-to-Earn',
     description: META_DESCRIPTION
   };
   const ticketNumber = query.ticketNumber?.toString();

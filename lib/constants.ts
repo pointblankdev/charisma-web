@@ -21,7 +21,7 @@ export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
-  'Discover and attract more users with Charisma';
+  'Charisma is a decentralized Quest-to-Earn platform that rewards users for completing small tasks in the bitcoin ecosystem';
 export const SITE_DESCRIPTION =
   'Discover and attract more users';
 export const DATE = '31 October 2023';
