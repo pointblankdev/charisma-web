@@ -14,6 +14,7 @@ import {
 } from "@components/ui/dropdown-menu"
 import Logo from "@components/logo"
 import IconLogo from "@components/icons/icon-logo"
+import Link from "next/link"
 
 
 // This type is used to define the shape of our data.
@@ -51,7 +52,7 @@ export const columns: ColumnDef<Quest>[] = [
         cell: ({ row }) => {
             const amount = parseFloat(row.getValue("amount"))
 
-            return <div className="flex items-center space-x-6 justify-end"><span className="text-right font-medium mr-1"> {amount}x</span><IconLogo height={16} width={16} /></div>
+            return <div className="flex items-center space-x-1 justify-end"><span className="text-right font-medium mr-1">{amount}x</span><IconLogo height={16} width={16} /></div>
         },
 
     },
@@ -61,9 +62,11 @@ export const columns: ColumnDef<Quest>[] = [
             const quest = row.original
 
             return (
-                <Button variant="ghost" onClick={() => window.open('https://charisma.rocks/faucet')}>
-                    Accept
-                </Button>
+                <Link passHref href='/faucet'>
+                    <Button variant="ghost">
+                        Accept
+                    </Button>
+                </Link>
             )
         },
     },
