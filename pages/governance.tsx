@@ -43,8 +43,8 @@ export default function Governance({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="container mx-auto py-10 space-y-6">
-          <div className='flex sm:space-x-1 flex-wrap'>
+        <div className="container mx-auto py-10">
+          <div className='flex sm:space-x-1 space-y-6 sm:space-y-0 flex-wrap justify-evenly'>
             <Link href="https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet" className={cn('w-64', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
               <div className="overflow-hidden rounded-md">
                 <Image
@@ -121,6 +121,7 @@ export default function Governance({ data }: Props) {
               </div>
             </Link>
           </div>
+          <h1 className='text-xl text-left mt-8 mb-2 text-gray-200'>Proposals</h1>
           <DataTable columns={columns} data={data} />
         </div>
       </Layout >

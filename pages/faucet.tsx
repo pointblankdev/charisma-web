@@ -22,6 +22,7 @@ import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
 import IconLogo from '@components/icons/icon-logo';
 import ClaimFaucetButton from '@components/faucet/claim';
+import Image from 'next/image';
 
 export default function Conf() {
   const meta = {
@@ -33,8 +34,9 @@ export default function Conf() {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="mx-auto py-10 max-w-xl justify-center flex-col text-5xl font-thin my-auto flex container text-lg">
-          <h1 className="text-2xl font-bold mb-4">Charisma Token Faucet </h1>
+        <div className="mx-auto py-10 max-w-xl justify-center flex-col text-5xl font-thin flex container text-lg">
+          <Image alt='Dungeon Scene' src="/dungeon-scene.png" width="1080" height="605" />
+          <h1 className="text-2xl font-bold my-4">Charisma Token Faucet </h1>
           <h1 className="text-lg font-bold mb-2">How It Works</h1>
 
           <p className="mb-8">
