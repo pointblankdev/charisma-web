@@ -50,7 +50,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     {
       id: "001",
       amount: 1,
-      name: "Charisma Faucet",
+      name: "The Charisma Token Faucet",
       description: "Use the Charisma Faucet to claim token(s)",
     }
   ]
