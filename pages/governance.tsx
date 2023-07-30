@@ -103,7 +103,7 @@ export default function Governance({ data }: Props) {
             </Link>
             {/* proposals card */}
             <Link href="https://explorer.hiro.so/txid/0x8e5362eef7c1490304495827d1948389ef01ba776c0ee4edb3450ce6eb1c2380?chain=mainnet" className={cn('w-64', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
-              <div div className="overflow-hidden rounded-md" >
+              <div className="overflow-hidden rounded-md" >
                 <Image
                   src={'/proposal-v2.png'}
                   alt={'Proposal Submission Extention Image'}
