@@ -35,7 +35,7 @@ const ConnectWallet = () => {
   if (mounted && userSession.isUserSignedIn()) {
     return (
       <div>
-        <Button className='text-gray-300' variant="ghost" onClick={disconnect}>
+        <Button className='text-gray-300 whitespace-nowrap' variant="ghost" onClick={disconnect}>
           Disconnect Wallet
         </Button>
       </div>
@@ -43,7 +43,7 @@ const ConnectWallet = () => {
   }
 
   return (
-    <Button onClick={authenticate} id="cta-btn" className={cn(styles['cta-btn'])}>
+    <Button onClick={authenticate} id="cta-btn" className={cn(styles['cta-btn'], 'whitespace-nowrap')}>
       Connect Wallet
     </Button>
   );

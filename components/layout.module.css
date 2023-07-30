@@ -52,17 +52,15 @@
 }
 
 .header-logos {
-  max-width: 200px;
+  width: 100px;
   display: flex;
   align-items: center;
   margin: var(--space-2x) var(--space-4x);
-  margin-right: 6rem;
 }
 
 .header-right {
   margin: var(--space-2x) var(--space-4x);
   margin-right: 1rem;
-  display: none;
 }
 
 @media screen and (min-width: 770px) {

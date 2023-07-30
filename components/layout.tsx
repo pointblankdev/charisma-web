@@ -78,7 +78,6 @@ export default function Layout({
   return (
     <>
       <div className={styles.background}>
-        {/* Disabled the navbar with the false logic */}
         {!hideNav && (
           <header className={cn(styles.header)}>
             <div className={styles['header-logos']}>
@@ -87,7 +86,6 @@ export default function Layout({
                 <Link href="/"
                   className={cn(styles.logo)}>
                   <Logo />
-
                 </Link>
               </div>
             </div>
