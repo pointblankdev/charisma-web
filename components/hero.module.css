@@ -88,7 +88,7 @@
   }
 
   .description {
-    font-size: var(--space-8x);
+    font-size: var(--space-6x);
     max-width: 531px;
     margin: 40px auto;
   }

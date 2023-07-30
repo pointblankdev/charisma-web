@@ -23,7 +23,7 @@ export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
   'Charisma is a decentralized Quest-to-Earn platform that rewards users for completing small tasks in the bitcoin ecosystem';
 export const SITE_DESCRIPTION =
-  'Discover and attract more users';
+  'Quest-to-Earn for Bitcoin, Ordinals, and Stacks';
 export const DATE = '31 October 2023';
 export const SHORT_DATE = 'Jan 1 - 9:00am PST';
 export const FULL_DATE = 'Jan 1st 9am Pacific Time (GMT-7)';

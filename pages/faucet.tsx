@@ -19,11 +19,11 @@ import { SkipNavContent } from '@reach/skip-nav';
 
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
-import ParticleBackground from '@components/ParticleBackground';
 import Layout from '@components/layout';
+import IconLogo from '@components/icons/icon-logo';
+import ClaimFaucetButton from '@components/faucet/claim';
 
 export default function Conf() {
-  const { query } = useRouter();
   const meta = {
     title: 'Charisma | Faucet',
     description: META_DESCRIPTION
@@ -31,12 +31,11 @@ export default function Conf() {
 
   return (
     <Page meta={meta} fullViewport>
-      <ParticleBackground />
       <SkipNavContent />
       <Layout>
-        <h1 className="container mx-auto py-10 text-center text-5xl font-thin my-auto">
-          Coming Soon...
-        </h1>
+        <div className="mx-auto py-10 max-w-xl justify-center flex-col space-y-8 items-center text-5xl font-thin my-auto flex">
+          <ClaimFaucetButton />
+        </div>
       </Layout>
     </Page>
   );
