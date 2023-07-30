@@ -51,7 +51,7 @@ const ClaimFaucetButton = () => {
       <h1 className="text-lg font-bold mb-2">How It Works</h1>
 
       <p className="mb-8">
-        The Charisma Token Faucet is a contract (a piece of blockchain code) that automatically releases ("drips") Charisma tokens over time, a process similar to how a real-world faucet drips water. This process is also known as "token minting". The rate of these drips, i.e., the number of tokens released per blockchain block, is called the "drip amount".
+        The Charisma Token Faucet is a contract (a piece of blockchain code) that automatically releases ("drips") Charisma tokens over time, a process similar to how a real-world faucet drips water. This process is also known as "token minting". The rate of these drips, i.e., the number of tokens released per Bitcoin block, is called the "drip amount".
       </p>
 
       <h2 className="text-lg font-bold mb-2">Interacting with the faucet:</h2>
@@ -74,7 +74,7 @@ const ClaimFaucetButton = () => {
       </p>
 
       <p className="mb-4">
-        The goal of the Charisma Token Faucet is to maintain a steady and controlled issuance of tokens. It also promotes transparency as all transactions and balances can be publicly tracked on the blockchain.
+        The goal of the Charisma Token Faucet is to maintain a slow, steady and controlled issuance of tokens. It also promotes transparency as all transactions and balances can be publicly tracked on-chain.
       </p>
 
       <Button className='text-md w-full my-8' onClick={claim}>Claim </Button>
