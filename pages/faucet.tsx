@@ -34,7 +34,7 @@ export default function Conf() {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="mx-auto py-10 max-w-xl justify-center flex-col text-5xl font-thin flex container text-lg">
+        <div className="mx-auto py-10 max-w-2xl justify-center flex-col text-5xl font-thin flex container text-lg">
           <Image alt='Dungeon Scene' src="/dungeon-scene.png" width="1080" height="605" />
           <h1 className="text-2xl font-bold my-4">Charisma Token Faucet </h1>
           <h1 className="text-lg font-bold mb-2">How It Works</h1>
@@ -63,7 +63,7 @@ export default function Conf() {
           </p>
 
           <p className="mb-4">
-            The goal of the Charisma Token Faucet is to maintain a slow, steady and controlled issuance of tokens.
+            The goal of the Charisma Token Faucet is to maintain a slow, steady and fair issuance of tokens.
           </p>
           <ClaimFaucetButton />
         </div>
