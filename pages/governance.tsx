@@ -60,7 +60,7 @@ export default function Governance({ data }: Props) {
               </div>
               <div className='absolute bottom-0 m-2'>
                 <h1 className="font-semibold">dungeon-master</h1>
-                <h2 className='text-sm'>Core DAO Executor</h2>
+                <h2 className='text-sm'>Executor DAO</h2>
               </div>
             </Link>
             {/* gov token card */}

@@ -38,7 +38,7 @@ export const columns: ColumnDef<Proposal>[] = [
                     variant="ghost"
                     onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
                 >
-                    Proposal Name
+                    Contract Address
                     <ArrowUpDown className="ml-2 h-4 w-4" />
                 </Button>
             )
@@ -46,11 +46,21 @@ export const columns: ColumnDef<Proposal>[] = [
     },
     {
         accessorKey: "amount",
-        header: () => <div className="text-right">Votes in Favor</div>,
+        header: () => <div className="text-right">Votes For</div>,
         cell: ({ row }) => {
             const amount = parseFloat(row.getValue("amount"))
 
             return <div className="text-right font-medium">{amount}</div>
+        },
+
+    },
+    {
+        accessorKey: "against",
+        header: () => <div className="text-right">Votes Against</div>,
+        cell: ({ row }) => {
+            const against = parseFloat(row.getValue("against"))
+
+            return <div className="text-right font-medium">0</div>
         },
 
     },
