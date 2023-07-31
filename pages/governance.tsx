@@ -136,14 +136,18 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       amount: 1,
       status: "Voting Active",
       name: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp001-token-faucet",
-      url: "https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp001-token-faucet?chain=mainnet"
+      url: "https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp001-token-faucet?chain=mainnet",
+      startBlockHeight: 114840,
+      endBlockHeight: 116280,
     },
     {
       id: "002",
       amount: 1,
       status: "Voting Active",
       name: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp002-token-metadata",
-      url: "https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp002-token-metadata?chain=mainnet"
+      url: "https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp002-token-metadata?chain=mainnet",
+      startBlockHeight: 114840,
+      endBlockHeight: 116280,
     }
   ]
 

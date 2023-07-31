@@ -45,6 +45,26 @@ export const columns: ColumnDef<Proposal>[] = [
         },
     },
     {
+        accessorKey: "startBlockHeight",
+        header: () => <div className="text-right">start-block-height</div>,
+        cell: ({ row }) => {
+            const startBlockHeight = parseFloat(row.getValue("startBlockHeight"))
+
+            return <div className="text-right font-medium">{startBlockHeight}</div>
+        },
+
+    },
+    {
+        accessorKey: "endBlockHeight",
+        header: () => <div className="text-right">end-block-height</div>,
+        cell: ({ row }) => {
+            const endBlockHeight = parseFloat(row.getValue("endBlockHeight"))
+
+            return <div className="text-right font-medium">{endBlockHeight}</div>
+        },
+
+    },
+    {
         accessorKey: "amount",
         header: () => <div className="text-right">Votes For</div>,
         cell: ({ row }) => {
