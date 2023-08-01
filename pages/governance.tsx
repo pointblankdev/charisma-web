@@ -1,19 +1,3 @@
-/**
- * Copyright 2020 Vercel Inc.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 import { GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 
@@ -26,6 +10,31 @@ import cn from 'classnames';
 import Image from 'next/image';
 import Link from 'next/link';
 
+type CardProps = {
+  href: string;
+  src: string;
+  alt: string;
+  title: string;
+  subtitle: string;
+};
+
+const Card: React.FC<CardProps> = ({ href, src, alt, title, subtitle }) => (
+  <Link href={href} className={cn('w-64', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
+    <div className="overflow-hidden rounded-md">
+      <Image
+        src={src}
+        alt={alt}
+        height={600}
+        width={600}
+        className={cn("h-auto w-auto object-cover transition-all hover:scale-105", "aspect-[3/4]")}
+      />
+    </div>
+    <div className='absolute bottom-0 m-2'>
+      <h1 className="font-semibold">{title}</h1>
+      <h2 className='text-sm'>{subtitle}</h2>
+    </div>
+  </Link>
+);
 
 type Props = {
   data: any[];
@@ -37,7 +46,36 @@ export default function Governance({ data }: Props) {
     description: META_DESCRIPTION
   };
 
-  const aspectRatio = "portrait";
+  const cards = [
+    {
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: '/dm-logo.png',
+      alt: 'Dungeon Master Image',
+      title: 'dungeon-master',
+      subtitle: 'Executor DAO',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0x290c36921ad381c678fdb899afef196d9fbd911ed60c2e43f0df5cbab9fe805a?chain=mainnet",
+      src: '/cha-token.png',
+      alt: 'Governance Token Image',
+      title: 'governance-token',
+      subtitle: 'Charisma SIP-10 Token',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting?chain=mainnet",
+      src: '/voting.png',
+      alt: 'Voting Extention Image',
+      title: 'proposal-voting',
+      subtitle: 'Vote For/Against Proposals',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0x8e5362eef7c1490304495827d1948389ef01ba776c0ee4edb3450ce6eb1c2380?chain=mainnet",
+      src: '/proposal-v2.png',
+      alt: 'Proposal Submission Extention Image',
+      title: 'proposal-submission',
+      subtitle: 'Submit New Proposals',
+    }
+  ];
 
   return (
     <Page meta={meta} fullViewport>
@@ -45,87 +83,15 @@ export default function Governance({ data }: Props) {
       <Layout>
         <div className="container mx-auto py-10">
           <div className='flex sm:space-x-1 space-y-6 sm:space-y-0 flex-wrap justify-evenly'>
-            <Link href="https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet" className={cn('w-64', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
-              <div className="overflow-hidden rounded-md">
-                <Image
-                  src={'/dm-logo.png'}
-                  alt={'Dungeon Master Image'}
-                  height={250}
-                  width={250}
-                  className={cn(
-                    "h-auto w-auto object-cover transition-all hover:scale-105",
-                    aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
-                  )}
-                />
-              </div>
-              <div className='absolute bottom-0 m-2'>
-                <h1 className="font-semibold">dungeon-master</h1>
-                <h2 className='text-sm'>Executor DAO</h2>
-              </div>
-            </Link>
-            {/* gov token card */}
-            <Link href="https://explorer.hiro.so/txid/0x290c36921ad381c678fdb899afef196d9fbd911ed60c2e43f0df5cbab9fe805a?chain=mainnet" className={cn('w-64', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
-              <div className="overflow-hidden rounded-md">
-                <Image
-                  src={'/cha-token.png'}
-                  alt={'Governance Token Image'}
-                  height={600}
-                  width={600}
-                  className={cn(
-                    "h-auto w-auto object-cover transition-all hover:scale-105",
-                    aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
-                  )}
-                />
-              </div>
-              <div className='absolute bottom-0 m-2'>
-                <h1 className="font-semibold">governance-token</h1>
-                <h2 className='text-sm'>Charisma SIP-10 Token</h2>
-              </div>
-            </Link>
-            {/* voting card */}
-            <Link href="https://explorer.hiro.so/txid/SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting?chain=mainnet" className={cn('w-64', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
-              <div className="overflow-hidden rounded-md">
-                <Image
-                  src={'/voting.png'}
-                  alt={'Voting Extention Image'}
-                  height={600}
-                  width={600}
-                  className={cn(
-                    "h-auto w-auto object-cover transition-all hover:scale-105",
-                    aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
-                  )}
-                />
-              </div>
-              <div className='absolute bottom-0 m-2'>
-                <h1 className="font-semibold">proposal-voting</h1>
-                <h2 className='text-sm'>Vote For/Against Proposals</h2>
-              </div>
-            </Link>
-            {/* proposals card */}
-            <Link href="https://explorer.hiro.so/txid/0x8e5362eef7c1490304495827d1948389ef01ba776c0ee4edb3450ce6eb1c2380?chain=mainnet" className={cn('w-64', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
-              <div className="overflow-hidden rounded-md" >
-                <Image
-                  src={'/proposal-v2.png'}
-                  alt={'Proposal Submission Extention Image'}
-                  height={600}
-                  width={600}
-                  className={cn(
-                    "h-auto w-auto object-cover transition-all hover:scale-105",
-                    aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
-                  )}
-                />
-              </div>
-              <div className='absolute bottom-0 m-2'>
-                <h1 className="font-semibold">proposal-submission</h1>
-                <h2 className='text-sm'>Submit New Proposals</h2>
-              </div>
-            </Link>
+            {cards.map((card, index) => (
+              <Card key={index} {...card} />
+            ))}
           </div>
           <h1 className='text-xl text-left mt-8 mb-2 text-gray-200'>Proposals</h1>
           <DataTable columns={columns} data={data} />
         </div>
-      </Layout >
-    </Page >
+      </Layout>
+    </Page>
   );
 }
 

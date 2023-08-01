@@ -7,8 +7,6 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../hms/stacks-session/connect";
 import Button from "@components/hms/Button";
-import { Container, HandIcon, Wallet } from "lucide-react";
-import IconLogo from "@components/icons/icon-logo";
 
 const ClaimFaucetButton = () => {
   const { doContractCall } = useConnect();
@@ -46,7 +44,7 @@ const ClaimFaucetButton = () => {
   }
 
   return (
-    <Button className='text-md w-full' onClick={claim}>Claim </Button>
+    <Button disabled className='text-md w-full' onClick={claim}>Activates on Block 116280 </Button>
   );
 };
 
