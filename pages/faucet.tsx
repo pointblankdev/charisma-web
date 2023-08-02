@@ -23,6 +23,7 @@ import Layout from '@components/layout';
 import IconLogo from '@components/icons/icon-logo';
 import ClaimFaucetButton from '@components/faucet/claim';
 import Image from 'next/image';
+import { Button } from '@components/ui/button';
 
 export default function Conf() {
   const meta = {
@@ -66,6 +67,7 @@ export default function Conf() {
             The goal of the Charisma Token Faucet is to maintain a slow, steady and fair issuance of tokens.
           </p>
           <ClaimFaucetButton />
+          <Button variant='ghost'>hello</Button>
         </div>
       </Layout>
     </Page>
