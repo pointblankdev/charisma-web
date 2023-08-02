@@ -21,16 +21,16 @@ import StacksIcon from '@components/icons/icon-stacks';
 import CheckIcon from '@components/icons/icon-check';
 import isMobileOrTablet from '@lib/is-mobile-or-tablet';
 import useConfData from '@lib/hooks/use-conf-data';
-import LoadingDots from './loading-dots';
+import LoadingDots from '@components/loading-dots';
 import formStyles from './form.module.css';
-import ticketFormStyles from './ticket-form.module.css';
+import ticketFormStyles from './whitelist-form.module.css';
 import { linkWallet } from '@lib/user-api';
 import { showConnect } from "@stacks/connect-react";
 import { appDetails, userSession } from 'pages/_app';
 
 type FormState = 'default' | 'loading' | 'error';
 
-export default function Form() {
+export default function WhitelistForm() {
   const [username, setUsername] = useState('');
   const [formState, setFormState] = useState<FormState>('default');
   const [errorMsg, setErrorMsg] = useState('');

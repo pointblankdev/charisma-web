@@ -16,12 +16,12 @@
 
 import { useState } from 'react';
 import { PageState, ConfDataContext, UserData } from '@lib/hooks/use-conf-data';
-import Ticket from './ticket';
-import Layout from './layout';
-import ConfContainer from './conf-container';
+import Whitelist from './whitelist';
+import Layout from '../layout';
 import Hero from './hero';
 import Form from './form';
 import LearnMore from './learn-more';
+import styleUtils from '@components/utils.module.css';
 
 type Props = {
   defaultUserData: UserData;
@@ -29,9 +29,8 @@ type Props = {
   defaultPageState?: PageState;
 };
 
-export default function Conf({
+export default function LandingPage({
   defaultUserData,
-  sharePage,
   defaultPageState = 'registration'
 }: Props) {
   const [userData, setUserData] = useState<UserData>(defaultUserData);
@@ -46,23 +45,18 @@ export default function Conf({
       }}
     >
       <Layout>
-        <ConfContainer>
-          {pageState === 'registration' && !sharePage ? (
+        <div className={styleUtils.container}>
+          {pageState === 'registration' ? (
             <>
               <Hero />
               <Form />
               <LearnMore />
             </>
           ) : (
-            <Ticket
-              id={userData.id}
-              username={userData.username}
-              name={userData.name}
-              ticketNumber={userData.ticketNumber}
-              sharePage={sharePage}
-            />
+            <Whitelist />
           )}
-        </ConfContainer>
+
+        </div>
       </Layout>
     </ConfDataContext.Provider>
   );

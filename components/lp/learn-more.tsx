@@ -15,9 +15,8 @@
  */
 
 import cn from 'classnames';
-import styleUtils from './utils.module.css';
+import styleUtils from '@components/utils.module.css';
 import styles from './contact.module.css';
-import { REPO } from '@lib/constants';
 
 export default function LearnMore() {
   return (

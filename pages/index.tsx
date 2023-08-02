@@ -18,9 +18,9 @@ import { useRouter } from 'next/router';
 import { SkipNavContent } from '@reach/skip-nav';
 
 import Page from '@components/page';
-import ConfContent from '@components/index';
 import { META_DESCRIPTION } from '@lib/constants';
-import ParticleBackground from '@components/ParticleBackground';
+import ParticleBackground from '@components/lp/ParticleBackground';
+import LandingPage from '@components/lp';
 
 export default function Conf() {
   const { query } = useRouter();
@@ -40,7 +40,7 @@ export default function Conf() {
     <Page meta={meta} fullViewport>
       <ParticleBackground />
       <SkipNavContent />
-      <ConfContent
+      <LandingPage
         defaultUserData={defaultUserData}
         defaultPageState={query.ticketNumber ? 'ticket' : 'registration'}
       />

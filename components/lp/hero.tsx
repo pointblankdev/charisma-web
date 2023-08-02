@@ -15,7 +15,7 @@
  */
 
 import cn from 'classnames';
-import styleUtils from './utils.module.css';
+import styleUtils from '@components/utils.module.css';
 import styles from './hero.module.css';
 import { BRAND_NAME, DATE, SITE_DESCRIPTION } from '@lib/constants';
 import Image from 'next/image';

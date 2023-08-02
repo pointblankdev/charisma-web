@@ -32,7 +32,6 @@ type Props = {
   className?: string;
   hideNav?: boolean;
   layoutStyles?: any;
-  isLive?: boolean;
 };
 
 export default function Layout({
@@ -40,40 +39,9 @@ export default function Layout({
   className,
   hideNav,
   layoutStyles,
-  isLive = false
 }: Props) {
   const router = useRouter();
   const activeRoute = router.asPath;
-
-  // const handleSign = async () => {
-  //   if (!stacksUser) return;
-
-  //   const callbackUrl = "/protected";
-  //   const stacksMessage = new SignInWithStacksMessage({
-  //     domain: `${window.location.protocol}//${window.location.host}`,
-  //     address: stacksUser.profile.stxAddress.mainnet,
-  //     statement: "Sign in with Stacks to the app.",
-  //     uri: window.location.origin,
-  //     version: "1",
-  //     chainId: 1,
-  //     nonce: (await getCsrfToken()) as string,
-  //   });
-
-  //   const message = stacksMessage.prepareMessage();
-
-  //   sign({
-  //     message,
-  //     onFinish: ({ signature }) => {
-  //       signIn("credentials", {
-  //         message: message,
-  //         redirect: false,
-  //         signature,
-  //         callbackUrl,
-  //       });
-  //     },
-  //   });
-  // };
-
 
   return (
     <>
