@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { AppConfig, showConnect, UserSession } from "@stacks/connect";
 import styles from './index.module.css';
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import { Button } from "@components/ui/button";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);

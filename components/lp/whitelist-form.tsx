@@ -16,7 +16,7 @@
 
 import { useState, useRef, useEffect } from 'react';
 import { scrollTo } from '@lib/smooth-scroll';
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import StacksIcon from '@components/icons/icon-stacks';
 import CheckIcon from '@components/icons/icon-check';
 import isMobileOrTablet from '@lib/is-mobile-or-tablet';

@@ -1,5 +1,5 @@
 import styles from './index.module.css';
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import React, { ElementRef } from 'react';
 import useClickOutside from '@lib/hooks/use-click-outside';
 import InfoIcon from '@components/icons/icon-info';

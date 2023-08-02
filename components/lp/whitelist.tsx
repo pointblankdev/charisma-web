@@ -1,4 +1,4 @@
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import styles from './whitelist.module.css';
 import styleUtils from '@components/utils.module.css';
 import WhitelistForm from './whitelist-form';

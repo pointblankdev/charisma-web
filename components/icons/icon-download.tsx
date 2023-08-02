@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import styles from './icon-transition.module.css';
 
 type Props = { width: number | string };

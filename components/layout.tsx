@@ -15,7 +15,7 @@
  */
 
 import Link from 'next/link';
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import { useRouter } from 'next/router';
 import { SkipNavContent } from '@reach/skip-nav';
 import { NAVIGATION } from '@lib/constants';

@@ -17,7 +17,7 @@
 import { useRef } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import { NAVIGATION } from '@lib/constants';
 import { useOverlayTriggerState } from '@react-stately/overlays';
 import { useOverlay, usePreventScroll, useModal, OverlayContainer } from '@react-aria/overlays';

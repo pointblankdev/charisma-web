@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import styleUtils from '@components/utils.module.css';
 import styles from './hero.module.css';
 import { BRAND_NAME, DATE, SITE_DESCRIPTION } from '@lib/constants';

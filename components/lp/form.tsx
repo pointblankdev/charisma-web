@@ -15,7 +15,7 @@
  */
 
 import { useState, useCallback } from 'react';
-import cn from 'classnames';
+import { cn } from '@lib/utils';
 import useConfData from '@lib/hooks/use-conf-data';
 import { useRouter } from 'next/router';
 import FormError from '@lib/form-error';

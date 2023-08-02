@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { SSRProvider, OverlayProvider } from 'react-aria';
+import { OverlayProvider } from 'react-aria';
 import '@styles/global.css';
 import '@styles/nprogress.css';
 import '@styles/chrome-bug.css';
@@ -22,7 +22,6 @@ import type { AppProps } from 'next/app';
 import NProgress from '@components/nprogress';
 import ResizeHandler from '@components/resize-handler';
 import { useEffect } from 'react';
-import { HMSRoomProvider } from '@100mslive/react-sdk';
 import {
   Connect,
   AuthOptions,
@@ -50,16 +49,12 @@ export default function App({ Component, pageProps }: AppProps) {
   };
 
   return (
-    <SSRProvider>
-      <OverlayProvider>
-        <HMSRoomProvider>
-          <Connect authOptions={authOptions}>
-            <Component {...pageProps} />
-            <ResizeHandler />
-            <NProgress />
-          </Connect>
-        </HMSRoomProvider>
-      </OverlayProvider>
-    </SSRProvider>
+    <OverlayProvider>
+      <Connect authOptions={authOptions}>
+        <Component {...pageProps} />
+        <ResizeHandler />
+        <NProgress />
+      </Connect>
+    </OverlayProvider>
   );
 }

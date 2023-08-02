@@ -14,11 +14,11 @@
  * limitations under the License.
  */
 
-import cn from 'classnames';
 import VercelLogo from '@components/icons/icon-platform';
 import styles from './footer.module.css';
 import styleUtils from './utils.module.css';
 import { COPYRIGHT_HOLDER, SITE_NAME, CODE_OF_CONDUCT, LEGAL_URL, REPO } from '@lib/constants';
+import { cn } from '@lib/utils';
 
 export function HostedByVercel() {
   return (
