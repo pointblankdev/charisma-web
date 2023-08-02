@@ -14,18 +14,15 @@
  * limitations under the License.
  */
 
-import { useRouter } from 'next/router';
 import { SkipNavContent } from '@reach/skip-nav';
 
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
-import IconLogo from '@components/icons/icon-logo';
 import ClaimFaucetButton from '@components/faucet/claim';
 import Image from 'next/image';
-import { Button } from '@components/ui/button';
 
-export default function Conf() {
+export default function Faucet() {
   const meta = {
     title: 'Charisma | Faucet',
     description: META_DESCRIPTION
@@ -67,7 +64,6 @@ export default function Conf() {
             The goal of the Charisma Token Faucet is to maintain a slow, steady and fair issuance of tokens.
           </p>
           <ClaimFaucetButton />
-          <Button variant='ghost'>hello</Button>
         </div>
       </Layout>
     </Page>

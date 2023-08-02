@@ -25,6 +25,7 @@ import styles from './form.module.css';
 import useEmailQueryParam from '@lib/hooks/use-email-query-param';
 import { register } from '@lib/user-api';
 import Captcha, { useCaptcha } from './captcha';
+import { Button } from '@components/ui/button';
 
 type FormState = 'default' | 'loading' | 'error';
 
@@ -140,13 +141,13 @@ export default function Form({ sharePage }: Props) {
       <div className={styles['form-row']}>
         <div className={cn(styles['input-label'], styles.error)}>
           <div className={cn(styles.input, styles['input-text'])}>{errorMsg}</div>
-          <button
+          <Button
             type="button"
             className={cn(styles.submit, styles.register, styles.error)}
             onClick={onTryAgainClick}
           >
             Try Again
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -181,13 +182,13 @@ export default function Form({ sharePage }: Props) {
             required
           />
         </label>
-        <button
+        <Button
           type="submit"
           className={cn(styles.submit, styles.register, styles[formState])}
           disabled={formState === 'loading'}
         >
           {formState === 'loading' ? <LoadingDots size={4} /> : <>Subscribe</>}
-        </button>
+        </Button>
       </div>
       <Captcha ref={captchaRef} onVerify={handleRegister} />
     </form>

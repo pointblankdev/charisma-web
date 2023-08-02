@@ -27,6 +27,7 @@ import ticketFormStyles from './whitelist-form.module.css';
 import { linkWallet } from '@lib/user-api';
 import { showConnect } from "@stacks/connect-react";
 import { appDetails, userSession } from 'pages/_app';
+import { Button } from '@components/ui/button';
 
 type FormState = 'default' | 'loading' | 'error';
 
@@ -68,7 +69,7 @@ export default function WhitelistForm() {
       <div className={cn(formStyles['form-row'], ticketFormStyles['form-row'])}>
         <div className={cn(formStyles['input-label'], formStyles.error)}>
           <div className={cn(formStyles.input, formStyles['input-text'])}>{errorMsg}</div>
-          <button
+          <Button
             type="button"
             className={cn(formStyles.submit, formStyles.error)}
             onClick={() => {
@@ -76,7 +77,7 @@ export default function WhitelistForm() {
             }}
           >
             Try Again
-          </button>
+          </Button>
         </div>
       </div>
     </div>
@@ -98,7 +99,7 @@ export default function WhitelistForm() {
     >
       {mounted && <div className={cn(formStyles['form-row'], ticketFormStyles['form-row'])}>
         <div className={cn(formStyles['stacks-wrapper'])}>
-          <button
+          <Button
             type="submit"
             className={cn(
               formStyles.submit,
@@ -131,7 +132,7 @@ export default function WhitelistForm() {
                 <CheckIcon color="#fff" size={24} />
               </span>
             ) : null}
-          </button>
+          </Button>
         </div>
       </div>}
     </form>

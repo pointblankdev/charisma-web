@@ -1,19 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { useConnect } from "@stacks/connect-react";
-import { StacksTestnet, StacksMainnet } from "@stacks/network";
+import { StacksMainnet } from "@stacks/network";
 import {
   AnchorMode,
   PostConditionMode,
-  stringUtf8CV,
   uintCV,
   boolCV,
   principalCV,
-  makeStandardFungiblePostCondition,
-  FungibleConditionCode,
   Pc
 } from "@stacks/transactions";
-import { userSession } from "../hms/stacks-session/connect";
 import { DropdownMenuItem } from "@components/ui/dropdown-menu";
+import { userSession } from "@components/stacks-session/connect";
 
 const ContractCallVote = ({ proposalPrincipal }: any) => {
   const { doContractCall } = useConnect();

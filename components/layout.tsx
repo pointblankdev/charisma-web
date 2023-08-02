@@ -25,7 +25,7 @@ import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
 import React from 'react';
-import ConnectWallet from './hms/stacks-session/connect';
+import ConnectWallet from './stacks-session/connect';
 
 type Props = {
   children: React.ReactNode;

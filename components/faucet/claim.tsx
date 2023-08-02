@@ -5,8 +5,8 @@ import {
   AnchorMode,
   PostConditionMode,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../hms/stacks-session/connect";
-import Button from "@components/hms/Button";
+import ConnectWallet, { userSession } from "../stacks-session/connect";
+import { Button } from "@components/ui/button";
 
 const ClaimFaucetButton = () => {
   const { doContractCall } = useConnect();
@@ -44,7 +44,7 @@ const ClaimFaucetButton = () => {
   }
 
   return (
-    <Button disabled className='text-md w-full' onClick={claim}>Activates on Block 116280 </Button>
+    <Button disabled className='text-md w-full' onClick={claim}>Activates on Stacks block 116280</Button>
   );
 };
 

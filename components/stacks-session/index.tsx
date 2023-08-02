@@ -3,6 +3,7 @@ import cn from 'classnames';
 import React, { ElementRef } from 'react';
 import useClickOutside from '@lib/hooks/use-click-outside';
 import InfoIcon from '@components/icons/icon-info';
+import { Button } from '@components/ui/button';
 
 const SignIn = ({ handleLogin }: any) => {
   React.useEffect(() => {
@@ -23,9 +24,9 @@ const SignIn = ({ handleLogin }: any) => {
   useClickOutside(ctaRef, clickedOutside);
   return (
     <div>
-      <button ref={ctaRef} id="cta-btn" className={cn(styles['cta-btn'])} onClick={handleLogin}>
+      <Button ref={ctaRef} id="cta-btn" className={cn(styles['cta-btn'])} onClick={handleLogin}>
         Connect Wallet
-      </button>
+      </Button>
       <div id="cta-tooltip" className={cn(styles['tooltip'])}>
         <InfoIcon />
         Click here to connect your Stacks wallet
