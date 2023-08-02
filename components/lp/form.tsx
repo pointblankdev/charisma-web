@@ -55,13 +55,11 @@ export default function Form({ sharePage }: Props) {
           if (!res.ok) {
             throw new FormError(res);
           }
-
           const data = await res.json();
+
           const params = {
             id: data.id,
-            ticketNumber: data.ticketNumber,
             name: data.name,
-            username: data.username
           };
 
           if (sharePage) {
@@ -80,6 +78,7 @@ export default function Form({ sharePage }: Props) {
           }
         })
         .catch(async err => {
+          console.log(err)
           let message = 'Error! Please try again.';
 
           if (err instanceof FormError) {

@@ -95,13 +95,19 @@ export type ConfUser = {
   createdAt?: number | null;
 };
 
+export type User = {
+  id: string;
+  email?: string | null;
+  name: string | null;
+};
+
 export type GitHubOAuthData =
   | {
-      type: 'token';
-      token: string;
-    }
+    type: 'token';
+    token: string;
+  }
   | {
-      type: 'user';
-      name: string;
-      login: string;
-    };
+    type: 'user';
+    name: string;
+    login: string;
+  };

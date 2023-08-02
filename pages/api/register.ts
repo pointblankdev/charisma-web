@@ -15,14 +15,12 @@
  */
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { nanoid } from 'nanoid';
 import { ConfUser } from '@lib/types';
 import validator from 'validator';
 import { COOKIE } from '@lib/constants';
 import cookie from 'cookie';
 import ms from 'ms';
-import { getTicketNumberByUserId, getUserById, createUser } from '@lib/db-api';
-import { emailToId } from '@lib/user-api';
+import { createUser } from '@lib/db-api';
 import { validateCaptchaResult, IS_CAPTCHA_ENABLED } from '@lib/captcha';
 
 type ErrorResponse = {
@@ -69,34 +67,22 @@ export default async function register(
     }
   }
 
-  let id = nanoid();
-  let ticketNumber: number;
-  let createdAt: number = Date.now();
-  let statusCode = 200;
-  let name: string | null | undefined = undefined;
-  let username: string | null | undefined = undefined;
+  let statusCode, user;
 
-  id = emailToId(email);
-  const existingTicketNumberString = await getTicketNumberByUserId(id);
-
-  if (existingTicketNumberString) {
-    const user = await getUserById(id);
-    name = user.name;
-    username = user.username;
-    ticketNumber = parseInt(existingTicketNumberString, 10);
-    createdAt = user.createdAt!;
-    statusCode = 200;
-  } else {
-    const newUser = await createUser(id, email);
-    ticketNumber = newUser.ticketNumber!;
-    createdAt = newUser.createdAt!;
+  try {
+    user = await createUser({ email });
     statusCode = 201;
+  } catch (error) {
+    console.log('User already subscribed');
+    user = {}
+    statusCode = 200;
   }
+
 
   // Save `key` in a httpOnly cookie
   res.setHeader(
     'Set-Cookie',
-    cookie.serialize(COOKIE, id, {
+    cookie.serialize(COOKIE, user?.id, {
       httpOnly: true,
       sameSite: 'strict',
       secure: process.env.NODE_ENV === 'production',
@@ -105,12 +91,5 @@ export default async function register(
     })
   );
 
-  return res.status(statusCode).json({
-    id,
-    email,
-    ticketNumber,
-    createdAt,
-    name,
-    username
-  });
+  return res.status(statusCode).json(user);
 }

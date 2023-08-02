@@ -15,15 +15,8 @@
  */
 
 import { NextApiRequest, NextApiResponse } from 'next';
-import { nanoid } from 'nanoid';
 import { ConfUser } from '@lib/types';
-import validator from 'validator';
-import { COOKIE } from '@lib/constants';
-import cookie from 'cookie';
-import ms from 'ms';
-import { getTicketNumberByUserId, getUserById, createUser, createWallet, updateUserWithWallet } from '@lib/db-api';
-import { emailToId } from '@lib/user-api';
-import { validateCaptchaResult, IS_CAPTCHA_ENABLED } from '@lib/captcha';
+import { createWallet, updateUserWithWallet } from '@lib/db-api';
 
 type ErrorResponse = {
   error: {
@@ -44,11 +37,13 @@ export default async function linkWallet(
       }
     });
   }
-  const wallet: any = req.body.wallet;
-  const user: any = req.body.user;
 
-  await createWallet(wallet, wallet.decentralizedID)
-  await updateUserWithWallet(user.id, wallet.decentralizedID, user.ticketNumber)
+  try {
+    const wallet = await createWallet({ log: JSON.stringify(req.body.wallet) })
+    await updateUserWithWallet(req.body.user.id, wallet.id)
+  } catch (error) {
+    console.error(error)
+  }
 
   return res.status(200).json({});
 }
