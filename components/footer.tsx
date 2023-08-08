@@ -52,7 +52,7 @@ export default function Footer() {
     <footer className={cn(styles.footer)}>
       <div className={styles['footer-legal']}>
         <div className={cn(styles['footer-copyright'], styleUtils['hide-on-mobile'])}>
-          <IconStacks size={16} /> <span>Block {blockHeight}</span>
+          <IconStacks size={16} /> <div>Block {blockHeight}</div>
         </div>
         <div className={styles['footer-center-group']}>
           <p className={styles['footer-paragraph']}>
