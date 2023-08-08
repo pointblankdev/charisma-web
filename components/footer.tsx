@@ -17,8 +17,11 @@
 import VercelLogo from '@components/icons/icon-platform';
 import styles from './footer.module.css';
 import styleUtils from './utils.module.css';
-import { COPYRIGHT_HOLDER, SITE_NAME, CODE_OF_CONDUCT, LEGAL_URL, REPO } from '@lib/constants';
+import { CODE_OF_CONDUCT, LEGAL_URL, REPO } from '@lib/constants';
 import { cn } from '@lib/utils';
+import { useEffect, useState } from 'react';
+import { blocksApi } from '@lib/stacks-api';
+import IconStacks from './icons/icon-stacks';
 
 export function HostedByVercel() {
   return (
@@ -35,12 +38,21 @@ export function HostedByVercel() {
 }
 
 export default function Footer() {
+
+  const [blockHeight, setBlockHeight] = useState<number>(0);
+
+  useEffect(() => {
+    blocksApi.getBlockList({ limit: 1 }).then((res) => {
+      const latestBlock = res.results[0]
+      setBlockHeight(latestBlock.height);
+    })
+  }, [])
+
   return (
     <footer className={cn(styles.footer)}>
       <div className={styles['footer-legal']}>
         <div className={cn(styles['footer-copyright'], styleUtils['hide-on-mobile'])}>
-          Copyright © {`${new Date().getFullYear()} `} {COPYRIGHT_HOLDER || `${SITE_NAME}.`} All
-          rights reserved.
+          <IconStacks size={16} /> <span>Block {blockHeight}</span>
         </div>
         <div className={styles['footer-center-group']}>
           <p className={styles['footer-paragraph']}>

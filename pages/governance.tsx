@@ -9,6 +9,7 @@ import { columns } from '@components/vote-table/columns';
 import { cn } from '@lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
+import { accountsApi, scApi } from '@lib/stacks-api';
 
 type CardProps = {
   href: string;
@@ -95,11 +96,62 @@ export default function Governance({ data }: Props) {
   );
 }
 
-export const getStaticProps: GetStaticProps<Props> = () => {
+function updateVoteData(data: any[], inputStrings: string[]) {
+
+  inputStrings.forEach(inputStr => {
+    const namePattern = /(proposal\s'+([^']+)\))/gm;
+    const amountPattern = /(amount\s+u(\d+))/gm;
+    const forPattern = /(for\s+(true|false))/gm;
+
+    const nameMatch = namePattern.exec(inputStr);
+    const amountMatch = amountPattern.exec(inputStr);
+    const forMatch = forPattern.exec(inputStr);
+
+
+    if (!amountMatch && !forMatch) {
+      // throw new Error("Unable to parse the string");
+      return
+    }
+
+    const name = nameMatch?.[2];
+    const amount = Number(amountMatch?.[2]);
+    const vote = forMatch?.[2];
+
+    // Find the entry in the data array that matches the name
+    const dataEntry = data.find(entry => entry.name === name);
+    if (!dataEntry) return; // skip if not found
+
+    if (vote === 'true') {
+      dataEntry.amount += amount;
+    } else {
+      dataEntry.against += amount;
+    }
+
+  });
+
+  return data;
+}
+
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
+    principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
+  })
+
+  // console.log(accountsResp.results.map(r => r.tx.contract_call?.function_args))
+  // todo: convert this into the intial data
+
+  const resp: any = await scApi.getContractEventsById({
+    contractId: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting',
+    limit: 50,
+    unanchored: true
+  })
+
   const data = [
     {
       id: "001",
-      amount: 1,
+      amount: 0,
+      against: 0,
       status: "Voting Active",
       name: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp001-token-faucet",
       url: "https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp001-token-faucet?chain=mainnet",
@@ -108,7 +160,8 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     },
     {
       id: "002",
-      amount: 1,
+      amount: 0,
+      against: 0,
       status: "Voting Active",
       name: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp002-token-metadata",
       url: "https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp002-token-metadata?chain=mainnet",
@@ -117,9 +170,14 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     }
   ]
 
+  const inputStrings = resp.results.map((r: any) => r.contract_log.value.repr)
+
+
+  const updatedData = updateVoteData(data, inputStrings);
+
   return {
     props: {
-      data
+      data: updatedData
     },
     revalidate: 60
   };

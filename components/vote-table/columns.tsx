@@ -80,7 +80,7 @@ export const columns: ColumnDef<Proposal>[] = [
         cell: ({ row }) => {
             const against = parseFloat(row.getValue("against"))
 
-            return <div className="text-right font-medium">0</div>
+            return <div className="text-right font-medium">{against}</div>
         },
 
     },

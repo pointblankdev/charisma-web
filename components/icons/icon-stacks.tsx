@@ -15,11 +15,10 @@
  */
 
 type Props = {
-  color: string;
-  size: number;
+  size?: number;
 };
 
-export default function IconStacks({ color = '#111111', size = 22 }: Props) {
+export default function IconStacks({ size = 22 }: Props) {
   return (
     <svg xmlns="http://www.w3.org/2000/svg"
       width={size}
