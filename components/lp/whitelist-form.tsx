@@ -119,7 +119,7 @@ export default function WhitelistForm() {
           >
             <div className={ticketFormStyles.generateWithStacks}>
               <span className={ticketFormStyles.stacksIcon}>
-                <StacksIcon color="#fff" size={24} />
+                <StacksIcon size={24} />
               </span>
               {formState === 'loading' ? (
                 <LoadingDots size={4} />

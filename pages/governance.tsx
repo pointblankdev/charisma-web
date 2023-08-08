@@ -148,6 +148,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   })
 
   const data = [
+    // ...accountsResp.results.map(r => ({ ...r.tx.contract_call })),
     {
       id: "001",
       amount: 0,
