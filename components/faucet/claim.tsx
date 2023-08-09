@@ -44,7 +44,7 @@ const ClaimFaucetButton = () => {
   }
 
   return (
-    <Button disabled className='text-md w-full' onClick={claim}>Activates on Stacks block 116280</Button>
+    <Button className='text-md w-full' onClick={claim}>Claim</Button>
   );
 };
 
