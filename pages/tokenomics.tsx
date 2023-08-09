@@ -28,14 +28,14 @@ export default function Tokenomics() {
             <Card className='bg-black text-primary-foreground border-accent-foreground'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Unique Wallet Addresses
+                  New Unique Wallet Addresses
                 </CardTitle>
-                <div className="text-2xl font-bold">16</div>
+                <div className="text-2xl font-bold">6</div>
               </CardHeader>
               <CardContent>
 
                 <p className="text-xs font-semibold text-muted-foreground">
-                  +1500% from last month
+                  +500% from yesterday
                 </p>
               </CardContent>
             </Card>
