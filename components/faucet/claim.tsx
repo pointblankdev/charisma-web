@@ -7,6 +7,7 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
+import { newWallet } from "@lib/user-api";
 
 const ClaimFaucetButton = () => {
   const { doContractCall } = useConnect();
@@ -15,6 +16,12 @@ const ClaimFaucetButton = () => {
   useEffect(() => { setMounted(true) }, []);
 
   function claim() {
+    try {
+      const profile = userSession.loadUserData().profile
+      newWallet({ wallet: profile })
+    } catch (error) {
+      console.error(error)
+    }
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,

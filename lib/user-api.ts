@@ -38,6 +38,18 @@ export async function linkWallet({ wallet, user }: { wallet: any; user: any }) {
   });
 }
 
+export async function newWallet({ wallet }: { wallet: any }) {
+  return await fetch('/api/new-wallet', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      wallet
+    })
+  });
+}
+
 export function emailToId(email: string) {
   if (process.env.EMAIL_TO_ID_SECRET) {
     const hmac = crypto.createHmac('sha1', process.env.EMAIL_TO_ID_SECRET);
