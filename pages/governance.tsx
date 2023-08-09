@@ -9,7 +9,8 @@ import { columns } from '@components/vote-table/columns';
 import { cn } from '@lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { accountsApi, scApi } from '@lib/stacks-api';
+import { accountsApi, blocksApi, scApi } from '@lib/stacks-api';
+import { start } from 'nprogress';
 
 type CardProps = {
   href: string;
@@ -127,6 +128,15 @@ function updateVoteData(data: any[], inputStrings: string[]) {
       dataEntry.against += amount;
     }
 
+    if (dataEntry.status !== 'Voting Active' && dataEntry.status !== 'Pending') {
+
+      if (dataEntry.amount > dataEntry.against) {
+        dataEntry.status = 'Passed';
+      } else {
+        dataEntry.status = 'Failed';
+      }
+    }
+
   });
 
   return data;
@@ -134,12 +144,42 @@ function updateVoteData(data: any[], inputStrings: string[]) {
 
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
+
+
+  const { results } = await blocksApi.getBlockList({ limit: 1 })
+  const latestBlock = Number(results[0])
+
   const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
     principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
   })
 
-  // console.log(accountsResp.results.map(r => r.tx.contract_call?.function_args))
-  // todo: convert this into the intial data
+  const proposals: any[] = []
+
+  accountsResp.results.forEach((r: any) => {
+    const args = r.tx.contract_call?.function_args
+    if (args) {
+      const startBlockHeight = Number(args[1].repr.slice(1))
+      const endBlockHeight = startBlockHeight + 1440
+      let status = ''
+      if (latestBlock < startBlockHeight) {
+        status = 'Pending'
+      } else if (latestBlock < endBlockHeight) {
+        status = 'Voting Active'
+      } else {
+        status = 'Voting Ended'
+      }
+      proposals.push({
+        id: args[0].repr.split('.')[1],
+        name: args[0].repr.slice(1),
+        startBlockHeight,
+        endBlockHeight: endBlockHeight,
+        amount: 0,
+        against: 0,
+        status,
+        url: `https://explorer.hiro.so/txid/${args[0].repr.slice(1)}?chain=mainnet`,
+      })
+    }
+  })
 
   const resp: any = await scApi.getContractEventsById({
     contractId: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting',
@@ -147,34 +187,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     unanchored: true
   })
 
-  const data = [
-    // ...accountsResp.results.map(r => ({ ...r.tx.contract_call })),
-    {
-      id: "001",
-      amount: 0,
-      against: 0,
-      status: "Passed",
-      name: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp001-token-faucet",
-      url: "https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp001-token-faucet?chain=mainnet",
-      startBlockHeight: 114840,
-      endBlockHeight: 116280,
-    },
-    {
-      id: "002",
-      amount: 0,
-      against: 0,
-      status: "Passed",
-      name: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp002-token-metadata",
-      url: "https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp002-token-metadata?chain=mainnet",
-      startBlockHeight: 114840,
-      endBlockHeight: 116280,
-    }
-  ]
-
   const inputStrings = resp.results.map((r: any) => r.contract_log.value.repr)
 
 
-  const updatedData = updateVoteData(data, inputStrings);
+  const updatedData = updateVoteData(proposals, inputStrings);
 
   return {
     props: {
