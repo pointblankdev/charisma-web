@@ -93,7 +93,7 @@ export default function Faucet() {
               <TooltipTrigger><div className='flex items-center mb-2 gap-1'><h1 className="text-lg font-bold text-left">How It Works </h1><Info size={15} color='#948f8f' /></div></TooltipTrigger>
               <TooltipContent className='max-w-2xl bg-black text-white border-primary leading-tight'>
                 <h2 className="text-lg font-bold mb-2">Interacting with the faucet:</h2>
-                <ul className="list-disc pl-5 mb-4 text-md space-y-2">
+                <ul className="list-disc pl-5 mb-4 text-md space-y-2 font-extralight">
                   <li>
                     <b>Claim Tokens</b>: As a user, you can claim tokens. The amount you'll receive is determined by multiplying the drip amount by the number of blocks that have passed since the last claim was made. For example, if the drip amount is 2 tokens per block, and 10 blocks have passed since the last claim, you could claim 20 tokens. However, this can only happen if there are enough tokens available in the faucet at that moment.
                   </li>
