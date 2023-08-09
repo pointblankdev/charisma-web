@@ -32,50 +32,19 @@ import {
   TooltipTrigger,
 } from "@components/ui/tooltip"
 import { Info } from 'lucide-react';
+import { GetStaticProps } from 'next';
 
 
-export default function Faucet() {
+export default function Faucet({ data }: Props) {
   const meta = {
     title: 'Charisma | Faucet',
     description: META_DESCRIPTION
   };
 
-  const [blockHeight, setBlockHeight] = useState<number>(0);
-  const [lastClaimBlockHeight, setLastClaimBlockHeight] = useState<number>(0);
-  const [dripAmount, setDripAmount] = useState<number>(0);
-
-  useEffect(() => {
-    blocksApi.getBlockList({ limit: 1 }).then((res) => {
-      const latestBlock = res.results[0]
-      setBlockHeight(latestBlock.height);
-    })
-    callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "dme005-token-faucet-v0",
-      functionName: "get-last-claim",
-      functionArgs: [],
-      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-    }).then((r: any) => {
-
-      setLastClaimBlockHeight(Number(r.value.value));
-
-    });
-    callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "dme005-token-faucet-v0",
-      functionName: "get-drip-amount",
-      functionArgs: [],
-      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-    }).then((r: any) => {
-
-      setDripAmount(Number(r.value.value));
-
-    });
-  }, [])
-
+  const blockHeight = data.latestBlock
+  const lastClaimBlockHeight = data.lastClaim
   const unclaimedBlocks = blockHeight - lastClaimBlockHeight
+  const dripAmount = data.dripAmount
 
   return (
     <Page meta={meta} fullViewport>
@@ -124,3 +93,42 @@ export default function Faucet() {
     </Page>
   );
 }
+
+type Props = {
+  data: any;
+};
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+  const { results } = await blocksApi.getBlockList({ limit: 1 })
+
+  const lc: any = await callReadOnlyFunction({
+    network: new StacksMainnet(),
+    contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    contractName: "dme005-token-faucet-v0",
+    functionName: "get-last-claim",
+    functionArgs: [],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+  })
+
+
+  const d: any = await callReadOnlyFunction({
+    network: new StacksMainnet(),
+    contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    contractName: "dme005-token-faucet-v0",
+    functionName: "get-drip-amount",
+    functionArgs: [],
+    senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
+  })
+
+  const data = {
+    lastClaim: Number(lc.value.value),
+    dripAmount: Number(d.value.value),
+    latestBlock: results[0].height
+  }
+
+  return {
+    props: { data },
+    revalidate: 60
+  };
+};
