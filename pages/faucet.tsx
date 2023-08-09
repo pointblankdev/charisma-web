@@ -82,6 +82,7 @@ export default function Faucet() {
       <SkipNavContent />
       <Layout>
         <div className="mx-auto py-10 max-w-2xl justify-center flex-col text-5xl font-thin flex container text-lg">
+
           <Image alt='Dungeon Scene' src="/token-faucet-2.png" width="1080" height="605" />
           <div className='flex justify-between'>
             <h1 className="text-md sm:text-2xl font-bold my-4 self-center">Charisma Token Faucet </h1>

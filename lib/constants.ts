@@ -39,13 +39,13 @@ export const CODE_OF_CONDUCT = 'https://bitcoin.org/en/';
 export const REPO = 'https://stacks.org/';
 export const SAMPLE_TICKET_NUMBER = 1234;
 export const NAVIGATION = [
-  // {
-  //   name: 'Earn',
-  //   route: '/earn'
-  // },
   {
     name: 'Faucet',
     route: '/faucet'
+  },
+  {
+    name: 'Tokenomics',
+    route: '/tokenomics'
   },
   {
     name: 'Governance',
