@@ -61,11 +61,12 @@
 .header-right {
   margin: var(--space-2x) var(--space-4x);
   margin-right: 1rem;
+  display: flex;
 }
 
 @media screen and (min-width: 770px) {
   .header-right {
-    display: initial;
+    display: flex;
   }
 }
 

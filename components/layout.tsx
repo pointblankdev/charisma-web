@@ -25,6 +25,7 @@ import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
 import React from 'react';
+import { BsDiscord, BsTwitter } from 'react-icons/bs';
 import ConnectWallet from './stacks-session/connect';
 
 type Props = {
@@ -70,7 +71,9 @@ export default function Layout({
                 </Link>
               ))}
             </div>
-            <div className={styles['header-right']}>
+            <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
+              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300' /></Link>
+              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300' /></Link>
               <ConnectWallet />
             </div>
           </header>
@@ -80,7 +83,7 @@ export default function Layout({
             <SkipNavContent />
             <div className={cn(styles.full, className)}>{children}</div>
           </main>
-          {!activeRoute.startsWith('/stage') && <Footer />}
+          <Footer />
         </div>
       </div>
     </>
