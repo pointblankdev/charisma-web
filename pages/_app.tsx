@@ -28,6 +28,7 @@ import {
   AppConfig,
   UserSession,
 } from "@stacks/connect-react";
+import { Analytics } from '@vercel/analytics/react';
 
 
 export const appConfig = new AppConfig(["store_write", "publish_data"]);
@@ -54,6 +55,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <Component {...pageProps} />
         <ResizeHandler />
         <NProgress />
+        <Analytics />
       </Connect>
     </OverlayProvider>
   );
