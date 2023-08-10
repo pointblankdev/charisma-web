@@ -28,7 +28,7 @@ export type Proposal = {
     id: string
     source: string
     amount: number
-    status: "pending" | "processing" | "success" | "failed"
+    status: "Pending" | "Passed" | "Voting Active" | "Voting Ended"
     name: string
     url: string
 }
@@ -37,6 +37,19 @@ export const columns: ColumnDef<Proposal>[] = [
     {
         accessorKey: "status",
         header: "Status",
+        cell: ({ row }) => {
+            let style;
+            if (row.original.status === 'Pending') {
+                style = 'text-yellow-500 animate-pulse'
+            } else if (row.original.status === 'Passed') {
+                style = 'text-green-500'
+            } else if (row.original.status === 'Voting Active') {
+                style = 'text-orange-500'
+            } else {
+                style = 'text-red-500'
+            }
+            return <div className={style}>{row.original.status}</div>
+        }
     },
     {
         accessorKey: "name",
@@ -55,9 +68,8 @@ export const columns: ColumnDef<Proposal>[] = [
             return (
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger><div className='flex items-center mb-2 gap-1'><div className="text-left hover:text-muted-foreground">{row.getValue("name")}</div></div></TooltipTrigger>
-                        <TooltipContent className='max-w-[99vw] bg-black text-white border-primary leading-tight shadow-2xl'>
-
+                        <TooltipTrigger><div className='flex items-center gap-1'><div className={`text-left hover:text-muted-foreground`}>{row.getValue("name")}</div></div></TooltipTrigger>
+                        <TooltipContent className={`max-w-[99vw] bg-black text-white border-primary leading-tight shadow-2xl`}>
                             <SyntaxHighlighter language="lisp" customStyle={{ background: 'black' }} wrapLongLines={true}>
                                 {row.original.source}
                             </SyntaxHighlighter>
@@ -112,21 +124,22 @@ export const columns: ColumnDef<Proposal>[] = [
         cell: ({ row }) => {
             const proposal = row.original
 
-            return (
-                <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                        <Button variant="ghost">
-                            Vote
-                        </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                        <DropdownMenuLabel>Cast Vote</DropdownMenuLabel>
-                        <ContractCallVote proposalPrincipal={proposal.name} />
-                        <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => window.open(proposal.url)}>View proposal</DropdownMenuItem>
-                    </DropdownMenuContent>
-                </DropdownMenu>
-            )
+            return proposal.status !== 'Voting Active' ? <></> :
+                (
+                    <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                            <Button variant="ghost">
+                                Vote
+                            </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                            <DropdownMenuLabel>Cast Vote</DropdownMenuLabel>
+                            <ContractCallVote proposalPrincipal={proposal.name} />
+                            <DropdownMenuSeparator />
+                            <DropdownMenuItem onClick={() => window.open(proposal.url)}>View proposal</DropdownMenuItem>
+                        </DropdownMenuContent>
+                    </DropdownMenu>
+                )
         },
     },
 ]

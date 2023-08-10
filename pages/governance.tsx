@@ -158,7 +158,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 
   const { results } = await blocksApi.getBlockList({ limit: 1 })
-  const latestBlock = Number(results[0])
+  const latestBlock = Number(results[0].height)
 
   const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
     principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
