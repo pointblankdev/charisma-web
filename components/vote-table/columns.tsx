@@ -44,7 +44,7 @@ export const columns: ColumnDef<Proposal>[] = [
             } else if (row.original.status === 'Passed') {
                 style = 'text-green-500'
             } else if (row.original.status === 'Voting Active') {
-                style = 'text-orange-500'
+                style = 'text-orange-500 animate-ping'
             } else {
                 style = 'text-red-500'
             }
