@@ -35,7 +35,7 @@ export default function Hero() {
         {SITE_DESCRIPTION}
       </h2>
       <div className={cn(styles.heroContainer, 'space-x-1')}>
-        <Image src="/charisma.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'])} />{' '}
+        <Image src="https://www.datocms-assets.com/104417/1690346330-c.png" alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'])} />{' '}
         <span className={cn(styleUtils.appear, styleUtils['appear-third'], styles.hero)}>
           {BRAND_NAME}
         </span>

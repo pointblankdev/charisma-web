@@ -50,21 +50,21 @@ export default function Governance({ data }: Props) {
   const cards = [
     {
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-      src: '/dm-logo.png',
+      src: 'https://www.datocms-assets.com/104417/1691625221-dm-logo.png',
       alt: 'Dungeon Master Image',
       title: 'dungeon-master',
       subtitle: 'Executor DAO',
     },
     {
       href: "https://explorer.hiro.so/txid/0x290c36921ad381c678fdb899afef196d9fbd911ed60c2e43f0df5cbab9fe805a?chain=mainnet",
-      src: '/cha-token.png',
+      src: 'https://www.datocms-assets.com/104417/1691625201-cha-token.png',
       alt: 'Governance Token Image',
       title: 'governance-token',
       subtitle: 'Charisma SIP-10 Token',
     },
     {
       href: "https://explorer.hiro.so/txid/SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting?chain=mainnet",
-      src: '/voting.png',
+      src: 'https://www.datocms-assets.com/104417/1691625257-voting.png',
       alt: 'Voting Extention Image',
       title: 'proposal-voting',
       subtitle: 'Vote For/Against Proposals',

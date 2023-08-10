@@ -22,6 +22,6 @@ export default function IconLogo({
   ...props
 }) {
   return (
-    <Image src="/charisma.png" alt="Logo" width="64" height="64" {...props} />
+    <Image src="https://www.datocms-assets.com/104417/1690346330-c.png" alt="Logo" width="64" height="64" {...props} />
   );
 }
