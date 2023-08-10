@@ -10,7 +10,6 @@ import { cn } from '@lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { accountsApi, blocksApi, scApi } from '@lib/stacks-api';
-import { start } from 'nprogress';
 
 type CardProps = {
   href: string;
@@ -21,7 +20,7 @@ type CardProps = {
 };
 
 const Card: React.FC<CardProps> = ({ href, src, alt, title, subtitle }) => (
-  <Link href={href} className={cn('w-64', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
+  <Link href={href} className={cn('w-full', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
     <div className="overflow-hidden rounded-md">
       <Image
         src={src}
@@ -72,10 +71,17 @@ export default function Governance({ data }: Props) {
     },
     {
       href: "https://explorer.hiro.so/txid/0x8e5362eef7c1490304495827d1948389ef01ba776c0ee4edb3450ce6eb1c2380?chain=mainnet",
-      src: '/proposal-v2.png',
+      src: 'https://www.datocms-assets.com/104417/1691625022-ext-proposal.png',
       alt: 'Proposal Submission Extention Image',
       title: 'proposal-submission',
       subtitle: 'Submit New Proposals',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0x29c81fe813b62e5ee04d416ad3c2f713823e2eddc04da56745787cdd708cfaf5?chain=mainnet",
+      src: 'https://www.datocms-assets.com/104417/1691625660-token-faucet-3.png',
+      alt: 'Token Faucet Extention Image',
+      title: 'token-faucet-v0',
+      subtitle: 'Token Faucet',
     }
   ];
 
@@ -84,7 +90,7 @@ export default function Governance({ data }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="container mx-auto py-10">
-          <div className='flex sm:space-x-1 space-y-6 sm:space-y-0 flex-wrap justify-evenly'>
+          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-5'>
             {cards.map((card, index) => (
               <Card key={index} {...card} />
             ))}
@@ -155,7 +161,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const proposals: any[] = []
 
-  accountsResp.results.forEach((r: any) => {
+  for (const r of accountsResp.results) {
     const args = r.tx.contract_call?.function_args
     if (args) {
       const startBlockHeight = Number(args[1].repr.slice(1))
@@ -168,18 +174,25 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       } else {
         status = 'Voting Ended'
       }
+
+      const [contractAddress, contractName] = args[0].repr.slice(1).split('.')
+
+      const proposalSourceResp: any = await scApi.getContractSource({ contractAddress, contractName })
+
+      const contractPrincipal = `${contractAddress}.${contractName}`
       proposals.push({
         id: args[0].repr.split('.')[1],
-        name: args[0].repr.slice(1),
+        name: contractPrincipal,
+        source: proposalSourceResp.source,
         startBlockHeight,
         endBlockHeight: endBlockHeight,
         amount: 0,
         against: 0,
         status,
-        url: `https://explorer.hiro.so/txid/${args[0].repr.slice(1)}?chain=mainnet`,
+        url: `https://explorer.hiro.so/txid/${contractPrincipal}?chain=mainnet`,
       })
     }
-  })
+  }
 
   const resp: any = await scApi.getContractEventsById({
     contractId: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting',

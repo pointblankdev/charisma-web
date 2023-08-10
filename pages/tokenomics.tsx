@@ -11,7 +11,6 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui/card"
-import { useEffect } from 'react';
 import { GetStaticProps } from 'next';
 import { callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";

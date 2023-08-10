@@ -23,7 +23,6 @@ import ClaimFaucetButton from '@components/faucet/claim';
 import Image from 'next/image';
 import { StacksMainnet } from "@stacks/network";
 import { callReadOnlyFunction } from '@stacks/transactions';
-import { useEffect, useState } from 'react';
 import { blocksApi } from '@lib/stacks-api';
 import {
   Tooltip,

@@ -1,7 +1,7 @@
 "use client"
 
 import { ColumnDef } from "@tanstack/react-table"
-import { ArrowUpDown, MoreHorizontal } from "lucide-react"
+import { ArrowUpDown, Info, MoreHorizontal } from "lucide-react"
 
 import { Button } from "@components/ui/button"
 import {
@@ -13,12 +13,20 @@ import {
     DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu"
 import ContractCallVote from "./voting"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@components/ui/tooltip"
+import SyntaxHighlighter from 'react-syntax-highlighter';
 
 
 // This type is used to define the shape of our data.
 // You can use a Zod schema here if you want.
 export type Proposal = {
     id: string
+    source: string
     amount: number
     status: "pending" | "processing" | "success" | "failed"
     name: string
@@ -43,6 +51,23 @@ export const columns: ColumnDef<Proposal>[] = [
                 </Button>
             )
         },
+        cell: ({ row }) => {
+            console.log(row.original.source)
+
+            return (
+                <TooltipProvider>
+                    <Tooltip>
+                        <TooltipTrigger><div className='flex items-center mb-2 gap-1'><div className="text-left hover:text-muted-foreground">{row.getValue("name")}</div></div></TooltipTrigger>
+                        <TooltipContent className='max-w-[99vw] bg-black text-white border-primary leading-tight shadow-2xl'>
+
+                            <SyntaxHighlighter language="lisp" customStyle={{ background: 'black' }} wrapLongLines={true}>
+                                {row.original.source}
+                            </SyntaxHighlighter>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            )
+        }
     },
     {
         accessorKey: "startBlockHeight",
