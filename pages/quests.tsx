@@ -148,7 +148,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       title: "The Charisma Token Faucet",
       subtitle: "Claim tokens from the Charisma Faucet to completed this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-      src: f3,
+      src: f6,
     },
     {
       id: "001",
@@ -213,14 +213,6 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: x5,
-    },
-    {
-      id: "001",
-      amount: 100,
-      title: "The Charisma Token Faucet",
-      subtitle: "Claim tokens from the Charisma Faucet to completed this quest",
-      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-      src: f6,
     },
     {
       id: "001",
