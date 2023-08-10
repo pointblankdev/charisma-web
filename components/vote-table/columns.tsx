@@ -52,8 +52,6 @@ export const columns: ColumnDef<Proposal>[] = [
             )
         },
         cell: ({ row }) => {
-            console.log(row.original.source)
-
             return (
                 <TooltipProvider>
                     <Tooltip>

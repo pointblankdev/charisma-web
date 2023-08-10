@@ -27,6 +27,9 @@
       ],
       "@styles/*": [
         "styles/*"
+      ],
+      "@public/*": [
+        "public/*"
       ]
     },
     "incremental": true

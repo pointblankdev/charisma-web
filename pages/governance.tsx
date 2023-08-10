@@ -10,10 +10,15 @@ import { cn } from '@lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import { accountsApi, blocksApi, scApi } from '@lib/stacks-api';
+import dmlogo from '@public/dm-logo.png'
+import chatoken from '@public/cha-token.png'
+import voting from '@public/voting.png'
+import extproposal from '@public/ext-proposal.png'
+import tokenfaucet3 from '@public/token-faucet-3.png'
 
 type CardProps = {
   href: string;
-  src: string;
+  src: any;
   alt: string;
   title: string;
   subtitle: string;
@@ -50,35 +55,35 @@ export default function Governance({ data }: Props) {
   const cards = [
     {
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-      src: 'https://www.datocms-assets.com/104417/1691625221-dm-logo.png',
+      src: dmlogo,
       alt: 'Dungeon Master Image',
       title: 'dungeon-master',
       subtitle: 'Executor DAO',
     },
     {
       href: "https://explorer.hiro.so/txid/0x290c36921ad381c678fdb899afef196d9fbd911ed60c2e43f0df5cbab9fe805a?chain=mainnet",
-      src: 'https://www.datocms-assets.com/104417/1691625201-cha-token.png',
+      src: chatoken,
       alt: 'Governance Token Image',
       title: 'governance-token',
       subtitle: 'Charisma SIP-10 Token',
     },
     {
       href: "https://explorer.hiro.so/txid/SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting?chain=mainnet",
-      src: 'https://www.datocms-assets.com/104417/1691625257-voting.png',
+      src: voting,
       alt: 'Voting Extention Image',
       title: 'proposal-voting',
       subtitle: 'Vote For/Against Proposals',
     },
     {
       href: "https://explorer.hiro.so/txid/0x8e5362eef7c1490304495827d1948389ef01ba776c0ee4edb3450ce6eb1c2380?chain=mainnet",
-      src: 'https://www.datocms-assets.com/104417/1691625022-ext-proposal.png',
+      src: extproposal,
       alt: 'Proposal Submission Extention Image',
       title: 'proposal-submission',
       subtitle: 'Submit New Proposals',
     },
     {
       href: "https://explorer.hiro.so/txid/0x29c81fe813b62e5ee04d416ad3c2f713823e2eddc04da56745787cdd708cfaf5?chain=mainnet",
-      src: 'https://www.datocms-assets.com/104417/1691625660-token-faucet-3.png',
+      src: tokenfaucet3,
       alt: 'Token Faucet Extention Image',
       title: 'token-faucet-v0',
       subtitle: 'Token Faucet',
