@@ -227,7 +227,7 @@ export default function QuestDetail(props: any) {
                             <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                                 {quest?.guildImg ?
                                     <Image src={quest?.guildImg as any} alt='alex-lab-logo' className='bg-white rounded-full border w-full z-30' />
-                                    : <div className='h-20 w-20 bg-white rounded-full border z-30' />
+                                    : <div className='h-16 w-16 bg-white rounded-full border z-30' />
                                 }
                             </div>
                         </div>
