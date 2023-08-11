@@ -76,6 +76,10 @@ export default function Quests({ data }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
+          {/* text letting user know quests are in preview mode and are non-functional and for demonstration purposes only */}
+          <div className='text-center text-sm sm:text-xl font-fine text-yellow-200 mb-4'>
+            Quests are in preview mode, and are for demonstration purposes only. For questions or comments, join Discord.
+          </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => (
               <Card key={quest.id} className='bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'>

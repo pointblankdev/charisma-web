@@ -216,6 +216,10 @@ export default function QuestDetail(props: any) {
     return (
         <Page meta={meta} fullViewport>
             <Layout className='m-2 sm:container sm:mx-auto sm:py-10 items-center'>
+                {/* text letting user know quests are in preview mode and are non-functional and for demonstration purposes only */}
+                <div className='text-center text-sm sm:text-xl font-fine text-yellow-200 mb-4'>
+                    Quests are in preview mode, and are for demonstration purposes only. For questions or comments, join Discord.
+                </div>
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
                     <CardHeader className='p-4 z-20 '>
                         <CardTitle className='text-xl font-semibold z-30'>{quest?.title}</CardTitle>
