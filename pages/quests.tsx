@@ -51,6 +51,7 @@ import {
   CardTitle,
 } from "@components/ui/card"
 import { Button } from '@components/ui/button';
+import Link from 'next/link';
 
 type Props = {
   data: any[];
@@ -70,37 +71,39 @@ export default function Quests({ data }: Props) {
           <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => (
               <Card key={quest.id} className='bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'>
-                <CardContent className='p-0'>
-                  <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
-                    <div className='flex gap-2'>
+                <Link href={`quests/${quest.id}`}>
+                  <CardContent className='p-0'>
+                    <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
+                      <div className='flex gap-2'>
 
-                      <div className='min-w-max'>
-                        {quest.guildImg ?
-                          <Image src={quest.guildImg} alt='alex-lab-logo' className='h-10 w-10 bg-white rounded-full border grow' />
-                          : <div className='h-10 w-10 bg-white rounded-full border' />
-                        }
-                      </div>
-                      <div className=''>
-                        <div className='text-sm font-semibold text-secondary leading-none'>
-                          {quest.title}
+                        <div className='min-w-max'>
+                          {quest.guildImg ?
+                            <Image src={quest.guildImg} alt='alex-lab-logo' className='h-10 w-10 bg-white rounded-full border grow' />
+                            : <div className='h-10 w-10 bg-white rounded-full border' />
+                          }
                         </div>
-                        <div className='text-xs font-fine text-secondary leading-tight mt-1'>
-                          {quest.subtitle}
+                        <div className=''>
+                          <div className='text-sm font-semibold text-secondary leading-none'>
+                            {quest.title}
+                          </div>
+                          <div className='text-xs font-fine text-secondary leading-tight mt-1'>
+                            {quest.subtitle}
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                  </CardHeader>
-                  <Image
-                    src={quest.src}
-                    alt={quest.alt}
-                    className={cn("w-auto object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-75', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
-                  />
-                  <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-30 z-0' />
-                  <CardFooter className='z-20 absolute inset-0 top-auto flex justify-end p-2'>
+                    </CardHeader>
+                    <Image
+                      src={quest.src}
+                      alt={quest.alt}
+                      className={cn("w-auto object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-75', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
+                    />
+                    <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-30 z-0' />
+                    <CardFooter className='z-20 absolute inset-0 top-auto flex justify-end p-2'>
 
-                  </CardFooter>
-                </CardContent>
+                    </CardFooter>
+                  </CardContent>
+                </Link>
               </Card>
             ))}
           </div>
@@ -113,7 +116,7 @@ export default function Quests({ data }: Props) {
 export const getStaticProps: GetStaticProps<Props> = () => {
   const data = [
     {
-      id: "001",
+      id: 1,
       amount: 100,
       title: "Use the Charisma token faucet",
       subtitle: "Claim tokens from the Charisma faucet to complete this quest",
@@ -122,7 +125,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: charismaGuildLogo,
     },
     {
-      id: "001",
+      id: 2,
       amount: 100,
       title: "Create an LP token on ALEX",
       subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
@@ -131,7 +134,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: "001",
+      id: 3,
       amount: 100,
       title: "Send BTC with Hiro wallet",
       subtitle: "Send bitcoin using the Hiro wallet to complete this quest",
@@ -140,7 +143,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: '',
     },
     {
-      id: "001",
+      id: 4,
       amount: 100,
       title: "Use the Charisma token faucet",
       subtitle: "Claim tokens from the Charisma faucet to complete this quest",
@@ -149,7 +152,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: charismaGuildLogo,
     },
     {
-      id: "001",
+      id: 5,
       amount: 100,
       title: "Create an LP token on ALEX",
       subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
@@ -158,7 +161,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: "001",
+      id: 6,
       amount: 100,
       title: "Mint a BRC-20 Token on Unisat",
       subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
@@ -167,7 +170,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: '',
     },
     {
-      id: "001",
+      id: 7,
       amount: 100,
       title: "Use the Charisma token faucet",
       subtitle: "Claim tokens from the Charisma faucet to complete this quest",
@@ -176,7 +179,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: charismaGuildLogo,
     },
     {
-      id: "001",
+      id: 8,
       amount: 100,
       title: "Create an LP token on ALEX",
       subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
@@ -185,7 +188,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: "001",
+      id: 9,
       amount: 100,
       title: "Mint a BRC-20 Token on Unisat",
       subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
@@ -194,7 +197,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: '',
     },
     {
-      id: "001",
+      id: 10,
       amount: 100,
       title: "Use the Charisma token faucet",
       subtitle: "Claim tokens from the Charisma faucet to complete this quest",
@@ -203,7 +206,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: charismaGuildLogo,
     },
     {
-      id: "001",
+      id: 11,
       amount: 100,
       title: "Create an LP token on ALEX",
       subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
@@ -212,7 +215,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: "001",
+      id: 12,
       amount: 100,
       title: "Swap a SIP-10 token on ALEX",
       subtitle: "Swap a SIP-10 token on ALEX Lab to complete this quest",
@@ -221,7 +224,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: "001",
+      id: 13,
       amount: 100,
       title: "Use the Charisma token faucet",
       subtitle: "Claim tokens from the Charisma faucet to complete this quest",
@@ -230,7 +233,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: charismaGuildLogo,
     },
     {
-      id: "001",
+      id: 14,
       amount: 100,
       title: "Create an LP token on ALEX",
       subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
@@ -239,7 +242,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: "001",
+      id: 15,
       amount: 100,
       title: "Swap a SIP-10 token on ALEX",
       subtitle: "Swap a SIP-10 token on ALEX Lab to complete this quest",
@@ -248,7 +251,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: "001",
+      id: 16,
       amount: 100,
       title: "Create an LP token on ALEX",
       subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
@@ -257,7 +260,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: "001",
+      id: 17,
       amount: 100,
       title: "Send BTC using Hiro wallet",
       subtitle: "Send bitcoin using the Hiro wallet to complete this quest",

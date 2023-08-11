@@ -51,9 +51,8 @@ export default function Layout({
           <header className={cn(styles.header)}>
             <div className={styles['header-logos']}>
               <MobileMenu key={router.asPath} />
-              <div className={cn(styleUtils['hide-on-mobile'], styleUtils['hide-on-tablet'])}>
-                <Link href="/"
-                  className={cn(styles.logo)}>
+              <div className={cn(styleUtils['hide-on-mobile'])}>
+                <Link href="/" className={cn(styles.logo)}>
                   <Logo />
                 </Link>
               </div>
@@ -75,8 +74,8 @@ export default function Layout({
               ))}
             </div>
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
-              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300' /></Link>
-              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300' /></Link>
+              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100' /></Link>
+              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100' /></Link>
               <ConnectWallet />
             </div>
           </header>
