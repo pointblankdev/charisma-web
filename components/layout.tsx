@@ -67,7 +67,10 @@ export default function Layout({
                     [styles['tab-active']]: activeRoute.startsWith(route)
                   })}
                 >
-                  {name}
+                  <div className='flex flex-col items-center justify-center relative'>
+                    <div>{name}</div>
+                    {name === 'Quests' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>preview</div>}
+                  </div>
                 </Link>
               ))}
             </div>

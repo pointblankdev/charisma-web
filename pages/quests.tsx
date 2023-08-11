@@ -40,6 +40,8 @@ import x3 from '@public/quests/x3.png'
 import x4 from '@public/quests/x4.png'
 import x5 from '@public/quests/x5.png'
 import x6 from '@public/quests/x6.png'
+import charismaGuildLogo from '@public/charisma.png'
+import alexlabGuildLogo from '@public/ALEX_Token.webp'
 import {
   Card,
   CardContent,
@@ -48,6 +50,7 @@ import {
   CardHeader,
   CardTitle,
 } from "@components/ui/card"
+import { Button } from '@components/ui/button';
 
 type Props = {
   data: any[];
@@ -64,24 +67,39 @@ export default function Quests({ data }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="container mx-auto py-10">
-          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-4'>
+          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => (
-              <Card key={quest.id} className='bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md'>
+              <Card key={quest.id} className='bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'>
                 <CardContent className='p-0'>
-                  <div className="z-20 absolute inset-0 h-min backdrop-blur-sm p-2">
-                    <div className='text-sm font-semibold text-secondary '>
-                      {quest.title}
+                  <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
+                    <div className='flex gap-2'>
+
+                      <div className='min-w-max'>
+                        {quest.guildImg ?
+                          <Image src={quest.guildImg} alt='alex-lab-logo' className='h-10 w-10 bg-white rounded-full border grow' />
+                          : <div className='h-10 w-10 bg-white rounded-full border' />
+                        }
+                      </div>
+                      <div className=''>
+                        <div className='text-sm font-semibold text-secondary leading-none'>
+                          {quest.title}
+                        </div>
+                        <div className='text-xs font-fine text-secondary leading-tight mt-1'>
+                          {quest.subtitle}
+                        </div>
+                      </div>
                     </div>
-                    <div className='text-xs font-fine text-secondary leading-tight mt-1'>
-                      {quest.subtitle}
-                    </div>
-                  </div>
+
+                  </CardHeader>
                   <Image
                     src={quest.src}
                     alt={quest.alt}
-                    className={cn("w-auto object-cover transition-all hover:scale-105", "aspect-[1/2]", 'opacity-75', 'hover:opacity-100', 'flex', 'z-10', 'relative')}
+                    className={cn("w-auto object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-75', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
                   />
                   <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-30 z-0' />
+                  <CardFooter className='z-20 absolute inset-0 top-auto flex justify-end p-2'>
+
+                  </CardFooter>
                 </CardContent>
               </Card>
             ))}
@@ -97,138 +115,155 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     {
       id: "001",
       amount: 100,
-      title: "Use the Charisma Token Faucet",
-      subtitle: "Claim tokens from the Charisma Faucet to completed this quest",
+      title: "Use the Charisma token faucet",
+      subtitle: "Claim tokens from the Charisma faucet to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: f1,
+      guildImg: charismaGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Create an LP token on ALEX",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: a1,
+      guildImg: alexlabGuildLogo,
     },
     {
       id: "001",
       amount: 100,
-      title: "Send Bitcoin using Hiro Wallet",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      title: "Send BTC with Hiro wallet",
+      subtitle: "Send bitcoin using the Hiro wallet to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: x1,
+      guildImg: '',
     },
     {
       id: "001",
       amount: 100,
-      title: "The Charisma Token Faucet",
-      subtitle: "Claim tokens from the Charisma Faucet to completed this quest",
+      title: "Use the Charisma token faucet",
+      subtitle: "Claim tokens from the Charisma faucet to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: f2,
+      guildImg: charismaGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Create an LP token on ALEX",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: a2,
+      guildImg: alexlabGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Mint a BRC-20 Token on Unisat",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: x2,
+      guildImg: '',
     },
     {
       id: "001",
       amount: 100,
-      title: "The Charisma Token Faucet",
-      subtitle: "Claim tokens from the Charisma Faucet to completed this quest",
+      title: "Use the Charisma token faucet",
+      subtitle: "Claim tokens from the Charisma faucet to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: f6,
+      guildImg: charismaGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Create an LP token on ALEX",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: a3,
+      guildImg: alexlabGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Mint a BRC-20 Token on Unisat",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: x3,
+      guildImg: '',
     },
     {
       id: "001",
       amount: 100,
-      title: "The Charisma Token Faucet",
-      subtitle: "Claim tokens from the Charisma Faucet to completed this quest",
+      title: "Use the Charisma token faucet",
+      subtitle: "Claim tokens from the Charisma faucet to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: f4,
+      guildImg: charismaGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Create an LP token on ALEX",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: a4,
+      guildImg: alexlabGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Swap a SIP-10 token on ALEX",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Swap a SIP-10 token on ALEX Lab to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: x4,
+      guildImg: alexlabGuildLogo,
     },
     {
       id: "001",
       amount: 100,
-      title: "The Charisma Token Faucet",
-      subtitle: "Claim tokens from the Charisma Faucet to completed this quest",
+      title: "Use the Charisma token faucet",
+      subtitle: "Claim tokens from the Charisma faucet to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: f5,
+      guildImg: charismaGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Create an LP token on ALEX",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: a5,
+      guildImg: alexlabGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Swap a SIP-10 token on ALEX",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Swap a SIP-10 token on ALEX Lab to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: x5,
+      guildImg: alexlabGuildLogo,
     },
     {
       id: "001",
       amount: 100,
       title: "Create an LP token on ALEX",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: a6,
+      guildImg: alexlabGuildLogo,
     },
     {
       id: "001",
       amount: 100,
-      title: "Send Bitcoin using Hiro Wallet",
-      subtitle: "Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.",
+      title: "Send BTC using Hiro wallet",
+      subtitle: "Send bitcoin using the Hiro wallet to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: x6,
+      guildImg: '',
     },
   ]
 
