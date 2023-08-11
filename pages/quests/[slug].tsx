@@ -219,11 +219,11 @@ export default function QuestDetail(props: any) {
             <Layout className='m-2 sm:container sm:mx-auto sm:py-10 items-center'>
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
                     <CardHeader className='p-4 z-20 '>
-                        <CardTitle className='text-xl font-semibold'>{quest?.title}</CardTitle>
-                        <CardDescription className='text-sm font-fine text-foreground'>{quest?.subtitle}</CardDescription>
-                        <div className=''>
-                            <CardTitle className='text-xl font-semibold'>Rewards</CardTitle>
-                            <CardDescription className='text-sm font-fine text-foreground mb-4'>You will recieve:</CardDescription>
+                        <CardTitle className='text-xl font-semibold z-30'>{quest?.title}</CardTitle>
+                        <CardDescription className='text-sm font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
+                        <div className='z-20'>
+                            <CardTitle className='text-xl font-semibold z-30'>Rewards</CardTitle>
+                            <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>
                             <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                                 {quest?.guildImg ?
                                     <Image src={quest?.guildImg as any} alt='alex-lab-logo' className='bg-white rounded-full border w-full z-30' />
@@ -253,7 +253,7 @@ export default function QuestDetail(props: any) {
                         alt={'alex-lab-quest'}
                         className={cn("w-auto object-cover", "aspect-[1/2]", 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
                     />
-                    <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-30 z-0 pointer-events-none' />
+                    <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-10 z-0 pointer-events-none' />
                 </Card>
             </Layout>
 
