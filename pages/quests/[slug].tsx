@@ -41,8 +41,16 @@ import x3 from '@public/quests/x3.png'
 import x4 from '@public/quests/x4.png'
 import x5 from '@public/quests/x5.png'
 import x6 from '@public/quests/x6.png'
+import h1 from '@public/quests/h1.png'
+import h2 from '@public/quests/h2.png'
+import h3 from '@public/quests/h3.png'
+import h4 from '@public/quests/h4.png'
+import h5 from '@public/quests/h5.png'
+import h6 from '@public/quests/h6.png'
 import charismaGuildLogo from '@public/charisma.png'
 import alexlabGuildLogo from '@public/ALEX_Token.webp'
+import xverseLogo from '@public/xverseLogo.png'
+import unisatLogo from '@public/unisatLogo.jpg'
 import { cn } from '@lib/utils';
 import React from 'react';
 
@@ -68,11 +76,11 @@ const data = [
     {
         id: 3,
         amount: 100,
-        title: "Send BTC with Hiro wallet",
-        subtitle: "Send bitcoin using the Hiro wallet to complete this quest",
+        title: "Send BTC with Xverse wallet",
+        subtitle: "Send bitcoin using the Xverse wallet to complete this quest",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: x1,
-        guildImg: '',
+        src: h1,
+        guildImg: xverseLogo,
     },
     {
         id: 4,
@@ -99,7 +107,7 @@ const data = [
         subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
         src: x2,
-        guildImg: '',
+        guildImg: unisatLogo,
     },
     {
         id: 7,
@@ -126,7 +134,7 @@ const data = [
         subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
         src: x3,
-        guildImg: '',
+        guildImg: unisatLogo,
     },
     {
         id: 10,
@@ -136,15 +144,6 @@ const data = [
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
         src: f4,
         guildImg: charismaGuildLogo,
-    },
-    {
-        id: 11,
-        amount: 100,
-        title: "Create an LP token on ALEX",
-        subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
-        href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: a4,
-        guildImg: alexlabGuildLogo,
     },
     {
         id: 12,
@@ -194,11 +193,11 @@ const data = [
     {
         id: 17,
         amount: 100,
-        title: "Send BTC using Hiro wallet",
-        subtitle: "Send bitcoin using the Hiro wallet to complete this quest",
+        title: "Send BTC using Xverse wallet",
+        subtitle: "Send bitcoin using the Xverse wallet to complete this quest",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: x6,
-        guildImg: '',
+        src: h3,
+        guildImg: xverseLogo,
     },
 ]
 
