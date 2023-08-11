@@ -71,11 +71,10 @@ export default function Quests({ data }: Props) {
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => (
               <Card key={quest.id} className='bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'>
-                <Link href={`quests/${quest.id}`}>
-                  <CardContent className='p-0'>
+                <Link href={`quests/${quest.id}`} className='w-full'>
+                  <CardContent className='p-0 w-full'>
                     <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
                       <div className='flex gap-2'>
-
                         <div className='min-w-max'>
                           {quest.guildImg ?
                             <Image src={quest.guildImg} alt='alex-lab-logo' className='h-10 w-10 bg-white rounded-full border grow' />
@@ -91,16 +90,14 @@ export default function Quests({ data }: Props) {
                           </div>
                         </div>
                       </div>
-
                     </CardHeader>
                     <Image
                       src={quest.src}
                       alt={quest.alt}
-                      className={cn("w-auto object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-75', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
+                      className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-75', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
                     />
                     <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-30 z-0' />
                     <CardFooter className='z-20 absolute inset-0 top-auto flex justify-end p-2'>
-
                     </CardFooter>
                   </CardContent>
                 </Link>
