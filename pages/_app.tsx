@@ -29,7 +29,10 @@ import {
   UserSession,
 } from "@stacks/connect-react";
 import { Analytics } from '@vercel/analytics/react';
+import { Ysabeau_Infant } from 'next/font/google'
 
+// If loading a variable font, you don't need to specify the font weight
+const font = Ysabeau_Infant({ subsets: ['latin'] })
 
 export const appConfig = new AppConfig(["store_write", "publish_data"]);
 export const userSession = new UserSession({ appConfig });
@@ -52,7 +55,9 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <OverlayProvider>
       <Connect authOptions={authOptions}>
-        <Component {...pageProps} />
+        <main className={font.className}>
+          <Component {...pageProps} />
+        </main>
         <ResizeHandler />
         <NProgress />
         <Analytics />

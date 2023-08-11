@@ -61,7 +61,7 @@ export default function Hero() {
         </p>
       </div>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <p>Charisma is a decentralized Quest-to-Earn platform that rewards users for completing small tasks in the bitcoin ecosystem.</p>
+        <p>Charisma is a decentralized quest-to-earn platform that rewards users for completing small tasks in the bitcoin ecosystem.</p>
       </div>
     </div>
   );

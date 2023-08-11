@@ -52,7 +52,7 @@
 }
 
 .header-logos {
-  width: 100px;
+  width: 200px;
   display: flex;
   align-items: center;
   margin: var(--space-2x) var(--space-4x);
