@@ -203,7 +203,6 @@ const data = [
 
 export default function QuestDetail(props: any) {
     const { query } = useRouter();
-    console.log(query.slug)
     const meta = {
         title: 'Charisma | Quest-to-Earn',
         description: META_DESCRIPTION
