@@ -159,6 +159,7 @@ body {
   background-color: var(--accents-8);
 }
 ::selection {
+  background-color: hsl(var(--accent-foreground));
   color: var(--foreground);
 }
 [role='grid']:focus {
