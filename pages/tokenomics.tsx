@@ -24,7 +24,7 @@ export default function Tokenomics({ data }: Props) {
   };
 
   const totalSupplyWithDecimals = data.totalSupply / 1000000
-  const dripAmountPerDayWithDecimals = (data.dripAmount / 1000000 * 1440).toFixed(6)
+  const dripAmountPerDayWithDecimals = (data.dripAmount / 1000000 * 144).toFixed(6)
   const uniqueAddresses = data.uniqueAddresses
   const uniqueAddressesIncreaseSinceLastMonth = `${data.uniqueAddresses.length - 1}`
 
@@ -44,7 +44,7 @@ export default function Tokenomics({ data }: Props) {
               <CardContent>
 
                 <p className="text-xs font-semibold text-muted-foreground">
-                  {`+${uniqueAddressesIncreaseSinceLastMonth}00% from last month`}
+                  {`+${uniqueAddressesIncreaseSinceLastMonth}00% in last 7 days`}
                 </p>
               </CardContent>
             </Card>
