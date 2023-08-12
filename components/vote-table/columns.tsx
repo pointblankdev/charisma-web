@@ -81,7 +81,7 @@ export const columns: ColumnDef<Proposal>[] = [
     },
     {
         accessorKey: "startBlockHeight",
-        header: () => <div className="text-right">start-block-height</div>,
+        header: () => <div className="text-right">Voting Starts</div>,
         cell: ({ row }) => {
             const startBlockHeight = parseFloat(row.getValue("startBlockHeight"))
 
@@ -91,7 +91,7 @@ export const columns: ColumnDef<Proposal>[] = [
     },
     {
         accessorKey: "endBlockHeight",
-        header: () => <div className="text-right">end-block-height</div>,
+        header: () => <div className="text-right">Voting Ends</div>,
         cell: ({ row }) => {
             const endBlockHeight = parseFloat(row.getValue("endBlockHeight"))
 
