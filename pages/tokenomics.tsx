@@ -32,7 +32,7 @@ export default function Tokenomics({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="container mx-auto py-10 space-y-4">
+        <div className="m-2 sm:container sm:mx-auto sm:py-10 space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             <Card className='bg-black text-primary-foreground border-accent-foreground'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">

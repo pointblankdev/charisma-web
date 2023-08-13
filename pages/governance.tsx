@@ -94,7 +94,7 @@ export default function Governance({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="container mx-auto py-10">
+        <div className="m-2 sm:container sm:mx-auto sm:py-10">
           <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-5'>
             {cards.map((card, index) => (
               <Card key={index} {...card} />
