@@ -20,6 +20,7 @@ import {
     TooltipTrigger,
 } from "@components/ui/tooltip"
 import SyntaxHighlighter from 'react-syntax-highlighter';
+import ReclaimVotes from "./reclaim-votes"
 
 
 // This type is used to define the shape of our data.
@@ -124,8 +125,10 @@ export const columns: ColumnDef<Proposal>[] = [
         cell: ({ row }) => {
             const proposal = row.original
 
-            return proposal.status !== 'Voting Active' ? <></> :
-                (
+            if (proposal.status === 'Passed' || proposal.status === 'Voting Ended') {
+                return <ReclaimVotes proposalPrincipal={proposal.name} />
+            } else if (proposal.status === 'Voting Active') {
+                return (
                     <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                             <Button variant="ghost">
@@ -140,6 +143,7 @@ export const columns: ColumnDef<Proposal>[] = [
                         </DropdownMenuContent>
                     </DropdownMenu>
                 )
+            }
         },
     },
 ]

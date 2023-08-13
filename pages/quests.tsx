@@ -46,6 +46,7 @@ import h3 from '@public/quests/h3.png'
 import h4 from '@public/quests/h4.png'
 import h5 from '@public/quests/h5.png'
 import h6 from '@public/quests/h6.png'
+// add uwu logo
 import charismaGuildLogo from '@public/charisma.png'
 import alexlabGuildLogo from '@public/ALEX_Token.webp'
 import xverseLogo from '@public/xverseLogo.png'

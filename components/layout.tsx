@@ -74,8 +74,8 @@ export default function Layout({
               ))}
             </div>
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
-              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100' /></Link>
-              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100' /></Link>
+              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
+              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
               <ConnectWallet />
             </div>
           </header>

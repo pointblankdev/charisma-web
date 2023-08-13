@@ -16,7 +16,7 @@
 
 export const SITE_URL = 'https://charisma.rocks';
 export const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_ORIGIN || new URL(SITE_URL).origin;
-export const TWITTER_USER_NAME = 'lordrozar';
+export const TWITTER_USER_NAME = 'CharismaBTC';
 export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
@@ -30,13 +30,8 @@ export const FULL_DATE = 'Jan 1st 9am Pacific Time (GMT-7)';
 export const TWEET_TEXT = META_DESCRIPTION;
 export const COOKIE = 'user-id';
 
-// Remove process.env.NEXT_PUBLIC_... below and replace them with
-// strings containing your own privacy policy URL and copyright holder name
-export const LEGAL_URL = process.env.NEXT_PUBLIC_PRIVACY_POLICY_URL;
-export const COPYRIGHT_HOLDER = process.env.NEXT_PUBLIC_COPYRIGHT_HOLDER;
-
-export const CODE_OF_CONDUCT = 'https://bitcoin.org/en/';
-export const REPO = 'https://stacks.org/';
+export const BITCOIN_LEARN_MORE_URL = 'https://bitcoin.org/en/';
+export const STACKS_LEARN_MORE_URL = 'https://stacks.org/';
 export const NAVIGATION = [
   {
     name: 'Quests',

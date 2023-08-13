@@ -16,12 +16,13 @@
 
 import VercelLogo from '@components/icons/icon-platform';
 import styles from './footer.module.css';
-import styleUtils from './utils.module.css';
-import { CODE_OF_CONDUCT, LEGAL_URL, REPO } from '@lib/constants';
 import { cn } from '@lib/utils';
 import { useEffect, useState } from 'react';
 import { blocksApi } from '@lib/stacks-api';
 import IconStacks from './icons/icon-stacks';
+import Link from 'next/link';
+import { BsDiscord, BsTwitter } from 'react-icons/bs';
+import { BITCOIN_LEARN_MORE_URL, STACKS_LEARN_MORE_URL } from '@lib/constants';
 
 export function HostedByVercel() {
   return (
@@ -50,14 +51,19 @@ export default function Footer() {
 
   return (
     <footer className={cn(styles.footer)}>
-      <div className={styles['footer-legal']}>
-        <div className={cn(styles['footer-copyright'])}>
-          <IconStacks size={16} /> <div>Block {blockHeight}</div>
+      <div className={cn('flex', 'items-center', 'justify-between', 'w-full', 'm-2')}>
+        <div className={cn(styles['footer-block-height'])}>
+          <IconStacks size={16} /><div>Block {blockHeight}</div>
         </div>
-        <div className={styles['footer-center-group']}>
+
+        <div className={cn('items-center', 'gap-4', 'flex', 'mx-2')}>
+          <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' size={16} /></Link>
+          <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' size={16} /></Link>
+        </div>
+        <div className={cn('hidden', 'sm:flex')}>
           <p className={styles['footer-paragraph']}>
             <a
-              href={REPO}
+              href={STACKS_LEARN_MORE_URL}
               className={styles['footer-link']}
               target="_blank"
               rel="noopener noreferrer"
@@ -68,7 +74,7 @@ export default function Footer() {
           <div className={styles['footer-separator']} />
           <p className={styles['footer-paragraph']}>
             <a
-              href={CODE_OF_CONDUCT}
+              href={BITCOIN_LEARN_MORE_URL}
               className={styles['footer-link']}
               target="_blank"
               rel="noopener noreferrer"
@@ -78,6 +84,6 @@ export default function Footer() {
           </p>
         </div>
       </div>
-    </footer>
+    </footer >
   );
 }
