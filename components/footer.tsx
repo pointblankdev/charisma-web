@@ -71,7 +71,7 @@ export default function Footer() {
               Powered by Stacks
             </a>
           </p>
-          <div className={styles['footer-separator']} />
+          <p className={cn(styles['footer-paragraph'], 'px-1')}>|</p>
           <p className={styles['footer-paragraph']}>
             <a
               href={BITCOIN_LEARN_MORE_URL}
