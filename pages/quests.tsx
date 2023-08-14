@@ -46,11 +46,19 @@ import h3 from '@public/quests/h3.png'
 import h4 from '@public/quests/h4.png'
 import h5 from '@public/quests/h5.png'
 import h6 from '@public/quests/h6.png'
+import nome1 from '@public/quests/nome1.png'
+import nome2 from '@public/quests/nome2.png'
+import nome3 from '@public/quests/nome3.png'
+import nome4 from '@public/quests/nome4.png'
+import nome5 from '@public/quests/nome5.png'
+import nome6 from '@public/quests/nome6.png'
+import nome7 from '@public/quests/nome7.png'
 // add uwu logo
 import charismaGuildLogo from '@public/charisma.png'
 import alexlabGuildLogo from '@public/ALEX_Token.webp'
 import xverseLogo from '@public/xverseLogo.png'
 import unisatLogo from '@public/unisatLogo.jpg'
+import nomeLogo from '@public/nomeLogo.jpg'
 import {
   Card,
   CardContent,
@@ -144,6 +152,15 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
+      id: 101,
+      amount: 100,
+      title: "Mint a NōME Block",
+      subtitle: "100 blocks = 100 fractions of one canvas",
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: nome7,
+      guildImg: nomeLogo,
+    },
+    {
       id: 3,
       amount: 100,
       title: "Send BTC with Xverse wallet",
@@ -151,6 +168,15 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: h1,
       guildImg: xverseLogo,
+    },
+    {
+      id: 102,
+      amount: 100,
+      title: "Mint a NōME Block",
+      subtitle: "100 blocks = 100 fractions of one canvas",
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: nome4,
+      guildImg: nomeLogo,
     },
     {
       id: 4,
@@ -207,6 +233,15 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: unisatLogo,
     },
     {
+      id: 103,
+      amount: 100,
+      title: "Mint a NōME Block",
+      subtitle: "100 blocks = 100 fractions of one canvas",
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: nome5,
+      guildImg: nomeLogo,
+    },
+    {
       id: 10,
       amount: 100,
       title: "Use the Charisma token faucet",
@@ -223,6 +258,15 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: x4,
       guildImg: alexlabGuildLogo,
+    },
+    {
+      id: 104,
+      amount: 100,
+      title: "Mint a NōME Block",
+      subtitle: "100 blocks = 100 fractions of one canvas",
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: nome6,
+      guildImg: nomeLogo,
     },
     {
       id: 14,
