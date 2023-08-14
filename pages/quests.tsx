@@ -284,12 +284,12 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: 'uwu3',
+      id: 'uwu2',
       amount: 100,
       title: "Borrow stablecoins on UWU",
       subtitle: "Borrow against your STX collateral at 0% interest to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-      src: uwu3,
+      src: uwu2,
       guildImg: uwuLogo,
     },
     {
