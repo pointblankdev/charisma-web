@@ -24,41 +24,24 @@ import { cn } from '@lib/utils';
 import Image from 'next/image';
 import f1 from '@public/quests/f1.png'
 import f2 from '@public/quests/f2.png'
-import f3 from '@public/quests/f3.png'
 import f4 from '@public/quests/f4.png'
 import f5 from '@public/quests/f5.png'
-import f6 from '@public/quests/f6.png'
 import a1 from '@public/quests/a1.png'
-import a2 from '@public/quests/a2.png'
 import a3 from '@public/quests/a3.png'
-import a4 from '@public/quests/a4.png'
 import a5 from '@public/quests/a5.png'
 import a6 from '@public/quests/a6.png'
-import x1 from '@public/quests/x1.png'
 import x2 from '@public/quests/x2.png'
-import x3 from '@public/quests/x3.png'
 import x4 from '@public/quests/x4.png'
 import x5 from '@public/quests/x5.png'
-import x6 from '@public/quests/x6.png'
 import h1 from '@public/quests/h1.png'
-import h2 from '@public/quests/h2.png'
 import h3 from '@public/quests/h3.png'
-import h4 from '@public/quests/h4.png'
-import h5 from '@public/quests/h5.png'
-import h6 from '@public/quests/h6.png'
-import nome1 from '@public/quests/nome1.png'
-import nome2 from '@public/quests/nome2.png'
-import nome3 from '@public/quests/nome3.png'
 import nome4 from '@public/quests/nome4.png'
 import nome5 from '@public/quests/nome5.png'
 import nome6 from '@public/quests/nome6.png'
 import nome7 from '@public/quests/nome7.png'
 import uwu1 from '@public/quests/uwu1.png'
 import uwu2 from '@public/quests/uwu2.png'
-import uwu3 from '@public/quests/uwu3.png'
-import uwu4 from '@public/quests/uwu4.png'
-import uwu5 from '@public/quests/uwu5.png'
-import uwu6 from '@public/quests/uwu6.png'
+import uwu7 from '@public/quests/uwu7.png'
 import uwuLogo from '@public/uwuLogo.png'
 import charismaGuildLogo from '@public/charisma.png'
 import alexlabGuildLogo from '@public/ALEX_Token.webp'
@@ -68,12 +51,9 @@ import nomeLogo from '@public/nomeLogo.jpg'
 import {
   Card,
   CardContent,
-  CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
 } from "@components/ui/card"
-import { Button } from '@components/ui/button';
 import Link from 'next/link';
 
 type Props = {
@@ -212,12 +192,12 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: 'uwu6',
+      id: 'uwu7',
       amount: 100,
       title: "Borrow stablecoins on UWU",
       subtitle: "Borrow against your STX collateral at 0% interest to complete this quest",
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-      src: uwu6,
+      src: uwu7,
       guildImg: uwuLogo,
     },
     {
