@@ -51,11 +51,18 @@ import nome4 from '@public/quests/nome4.png'
 import nome5 from '@public/quests/nome5.png'
 import nome6 from '@public/quests/nome6.png'
 import nome7 from '@public/quests/nome7.png'
+import uwu1 from '@public/quests/uwu1.png'
+import uwu2 from '@public/quests/uwu2.png'
+import uwu3 from '@public/quests/uwu3.png'
+import uwu4 from '@public/quests/uwu4.png'
+import uwu5 from '@public/quests/uwu5.png'
+import uwu6 from '@public/quests/uwu6.png'
 import charismaGuildLogo from '@public/charisma.png'
 import alexlabGuildLogo from '@public/ALEX_Token.webp'
 import xverseLogo from '@public/xverseLogo.png'
 import unisatLogo from '@public/unisatLogo.jpg'
 import nomeLogo from '@public/nomeLogo.jpg'
+import uwuLogo from '@public/uwuLogo.png'
 import { cn } from '@lib/utils';
 import React from 'react';
 
@@ -77,6 +84,15 @@ const data = [
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
         src: a1,
         guildImg: alexlabGuildLogo,
+    },
+    {
+        id: 'uwu1',
+        amount: 100,
+        title: "Borrow stablecoins on UWU",
+        subtitle: "Borrow against your STX collateral at 0% interest to complete this quest",
+        href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+        src: uwu1,
+        guildImg: uwuLogo,
     },
     {
         id: 101,
@@ -115,31 +131,22 @@ const data = [
         guildImg: charismaGuildLogo,
     },
     {
-        id: 5,
+        id: 15,
         amount: 100,
-        title: "Create an LP token on ALEX",
-        subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
+        title: "Swap a SIP-10 token on ALEX",
+        subtitle: "Swap a SIP-10 token on ALEX Lab to complete this quest",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: a2,
+        src: x5,
         guildImg: alexlabGuildLogo,
     },
     {
-        id: 6,
+        id: 'uwu6',
         amount: 100,
-        title: "Mint a BRC-20 Token on Unisat",
-        subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
+        title: "Borrow stablecoins on UWU",
+        subtitle: "Borrow against your STX collateral at 0% interest to complete this quest",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: x2,
-        guildImg: unisatLogo,
-    },
-    {
-        id: 7,
-        amount: 100,
-        title: "Use the Charisma token faucet",
-        subtitle: "Claim tokens from the Charisma faucet to complete this quest",
-        href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: f6,
-        guildImg: charismaGuildLogo,
+        src: uwu6,
+        guildImg: uwuLogo,
     },
     {
         id: 8,
@@ -151,12 +158,12 @@ const data = [
         guildImg: alexlabGuildLogo,
     },
     {
-        id: 9,
+        id: 6,
         amount: 100,
         title: "Mint a BRC-20 Token on Unisat",
         subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: x3,
+        src: x2,
         guildImg: unisatLogo,
     },
     {
@@ -205,13 +212,13 @@ const data = [
         guildImg: alexlabGuildLogo,
     },
     {
-        id: 15,
+        id: 'uwu3',
         amount: 100,
-        title: "Swap a SIP-10 token on ALEX",
-        subtitle: "Swap a SIP-10 token on ALEX Lab to complete this quest",
+        title: "Borrow stablecoins on UWU",
+        subtitle: "Borrow against your STX collateral at 0% interest to complete this quest",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: x5,
-        guildImg: alexlabGuildLogo,
+        src: uwu3,
+        guildImg: uwuLogo,
     },
     {
         id: 16,
