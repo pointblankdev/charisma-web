@@ -47,10 +47,15 @@ import h3 from '@public/quests/h3.png'
 import h4 from '@public/quests/h4.png'
 import h5 from '@public/quests/h5.png'
 import h6 from '@public/quests/h6.png'
+import nome4 from '@public/quests/nome4.png'
+import nome5 from '@public/quests/nome5.png'
+import nome6 from '@public/quests/nome6.png'
+import nome7 from '@public/quests/nome7.png'
 import charismaGuildLogo from '@public/charisma.png'
 import alexlabGuildLogo from '@public/ALEX_Token.webp'
 import xverseLogo from '@public/xverseLogo.png'
 import unisatLogo from '@public/unisatLogo.jpg'
+import nomeLogo from '@public/nomeLogo.jpg'
 import { cn } from '@lib/utils';
 import React from 'react';
 
@@ -74,6 +79,15 @@ const data = [
         guildImg: alexlabGuildLogo,
     },
     {
+        id: 101,
+        amount: 100,
+        title: "Mint a NōME Block",
+        subtitle: "100 blocks = 100 fractions of one canvas",
+        href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+        src: nome7,
+        guildImg: nomeLogo,
+    },
+    {
         id: 3,
         amount: 100,
         title: "Send BTC with Xverse wallet",
@@ -81,6 +95,15 @@ const data = [
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
         src: h1,
         guildImg: xverseLogo,
+    },
+    {
+        id: 102,
+        amount: 100,
+        title: "Mint a NōME Block",
+        subtitle: "100 blocks = 100 fractions of one canvas",
+        href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+        src: nome4,
+        guildImg: nomeLogo,
     },
     {
         id: 4,
@@ -137,6 +160,15 @@ const data = [
         guildImg: unisatLogo,
     },
     {
+        id: 103,
+        amount: 100,
+        title: "Mint a NōME Block",
+        subtitle: "100 blocks = 100 fractions of one canvas",
+        href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+        src: nome5,
+        guildImg: nomeLogo,
+    },
+    {
         id: 10,
         amount: 100,
         title: "Use the Charisma token faucet",
@@ -155,13 +187,13 @@ const data = [
         guildImg: alexlabGuildLogo,
     },
     {
-        id: 13,
+        id: 104,
         amount: 100,
-        title: "Use the Charisma token faucet",
-        subtitle: "Claim tokens from the Charisma faucet to complete this quest",
+        title: "Mint a NōME Block",
+        subtitle: "100 blocks = 100 fractions of one canvas",
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-        src: f5,
-        guildImg: charismaGuildLogo,
+        src: nome6,
+        guildImg: nomeLogo,
     },
     {
         id: 14,
@@ -198,6 +230,15 @@ const data = [
         href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
         src: h3,
         guildImg: xverseLogo,
+    },
+    {
+        id: 13,
+        amount: 100,
+        title: "Use the Charisma token faucet",
+        subtitle: "Claim tokens from the Charisma faucet to complete this quest",
+        href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+        src: f5,
+        guildImg: charismaGuildLogo,
     },
 ]
 
