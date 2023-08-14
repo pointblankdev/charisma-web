@@ -51,7 +51,7 @@ const ClaimFaucetButton = () => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-white hover:text-primary' onClick={claim}>Claim</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={claim}>Claim</Button>
   );
 };
 
