@@ -51,12 +51,12 @@ export default function Footer() {
 
   return (
     <footer className={cn(styles.footer)}>
-      <div className={cn('flex', 'items-center', 'justify-between', 'w-full', 'm-2')}>
+      <div className={cn('flex', 'items-center', 'justify-between', 'w-full', 'm-4')}>
         <div className={cn(styles['footer-block-height'])}>
           <IconStacks size={16} /><div>Block {blockHeight}</div>
         </div>
 
-        <div className={cn('items-center', 'gap-4', 'flex', 'mx-2')}>
+        <div className={cn('items-center', 'gap-4', 'flex')}>
           <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' size={16} /></Link>
           <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' size={16} /></Link>
         </div>
