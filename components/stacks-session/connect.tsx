@@ -34,16 +34,14 @@ const ConnectWallet = () => {
 
   if (mounted && userSession.isUserSignedIn()) {
     return (
-      <div>
-        <Button className='text-gray-300 whitespace-nowrap' variant="ghost" onClick={disconnect}>
-          Disconnect Wallet
-        </Button>
-      </div>
+      <Button className='text-gray-300 whitespace-nowrap' variant="ghost" onClick={disconnect}>
+        Disconnect Wallet
+      </Button>
     );
   }
 
   return (
-    <Button onClick={authenticate} id="cta-btn" className={cn(styles['cta-btn'], 'whitespace-nowrap')}>
+    <Button onClick={authenticate} id="cta-btn" className={cn(styles['cta-btn'], 'whitespace-nowrap', 'w-full')}>
       Connect Wallet
     </Button>
   );
