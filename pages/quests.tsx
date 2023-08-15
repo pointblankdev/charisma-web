@@ -48,6 +48,10 @@ import alexlabGuildLogo from '@public/ALEX_Token.webp'
 import xverseLogo from '@public/xverseLogo.png'
 import unisatLogo from '@public/unisatLogo.jpg'
 import nomeLogo from '@public/nomeLogo.jpg'
+import liquidium4 from '@public/quests/liquidium4.png'
+import liquidium5 from '@public/quests/liquidium5.png'
+import liquidium6 from '@public/quests/liquidium6.png'
+import liquidiumLogo from '@public/liquidiumLogo.jpeg'
 import {
   Card,
   CardContent,
@@ -174,6 +178,15 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: nomeLogo,
     },
     {
+      id: 993,
+      amount: 100,
+      title: "Borrow bitcoin on Liquidium",
+      subtitle: "Use your ordinals as collateral to borrow native BTC to complete this quest",
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: liquidium6,
+      guildImg: liquidiumLogo,
+    },
+    {
       id: 4,
       amount: 100,
       title: "Use the Charisma token faucet",
@@ -219,6 +232,15 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: unisatLogo,
     },
     {
+      id: 991,
+      amount: 100,
+      title: "Borrow bitcoin on Liquidium",
+      subtitle: "Use your ordinals as collateral to borrow native BTC to complete this quest",
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: liquidium4,
+      guildImg: liquidiumLogo,
+    },
+    {
       id: 103,
       amount: 100,
       title: "Mint a NōME Block",
@@ -246,15 +268,6 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       guildImg: alexlabGuildLogo,
     },
     {
-      id: 104,
-      amount: 100,
-      title: "Mint a NōME Block",
-      subtitle: "100 blocks = 100 fractions of one canvas",
-      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-      src: nome6,
-      guildImg: nomeLogo,
-    },
-    {
       id: 14,
       amount: 100,
       title: "Create an LP token on ALEX",
@@ -271,6 +284,15 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: uwu2,
       guildImg: uwuLogo,
+    },
+    {
+      id: 992,
+      amount: 100,
+      title: "Borrow bitcoin on Liquidium",
+      subtitle: "Use your ordinals as collateral to borrow native BTC to complete this quest",
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: liquidium5,
+      guildImg: liquidiumLogo,
     },
     {
       id: 16,
@@ -298,6 +320,15 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
       src: f5,
       guildImg: charismaGuildLogo,
+    },
+    {
+      id: 104,
+      amount: 100,
+      title: "Mint a NōME Block",
+      subtitle: "100 blocks = 100 fractions of one canvas",
+      href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+      src: nome6,
+      guildImg: nomeLogo,
     },
   ]
 
