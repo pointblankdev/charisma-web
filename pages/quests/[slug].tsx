@@ -59,7 +59,7 @@ export default function QuestDetail(props: any) {
                     <CardHeader className='p-4 z-20'>
                         <CardTitle className='text-xl font-semibold z-30'>{quest?.title}</CardTitle>
                         <CardDescription className='text-base font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
-                        {quest?.objectives?.map((o) => <p className='text-md font-fine text-foreground z-30'>{o.text}: {o.metric}</p>)}
+                        {quest?.objectives?.map((o, k) => <p key={k} className='text-md font-fine text-foreground z-30'>{o.text}: {o.metric}</p>)}
                         <div className='z-20'>
                             <CardTitle className='text-xl font-semibold z-30'>Rewards</CardTitle>
                             <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>
@@ -94,11 +94,11 @@ export default function QuestDetail(props: any) {
                         </div>
                     </CardContent>}
                     {questAccepted && <CardFooter className="p-4 flex justify-between z-20">
-                        <Button variant="ghost" className='z-30' onClick={() => setQuestAccepted(false)}>Cancel</Button>
+                        <Link href='/quests'><Button variant="ghost" className='z-30'>Back</Button></Link>
                         <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={!questCompleted}>Claim Rewards</Button>
                     </CardFooter>}
                     <Image
-                        src={quest?.src as any}
+                        src={quest?.src}
                         alt={'alex-lab-quest'}
                         className={cn("object-cover", "aspect-[1/2]", 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
                     />

@@ -30,7 +30,10 @@ import a1 from '@public/quests/a1.png'
 import a3 from '@public/quests/a3.png'
 import a5 from '@public/quests/a5.png'
 import a6 from '@public/quests/a6.png'
+// dwarves
 import x2 from '@public/quests/x2.png'
+import x3 from '@public/quests/x3.png'
+// male alchemist
 import x4 from '@public/quests/x4.png'
 import x5 from '@public/quests/x5.png'
 import h1 from '@public/quests/h1.png'
@@ -63,6 +66,12 @@ import Link from 'next/link';
 type Props = {
   data: any[];
 };
+
+function getRandomImage(images: any[]) {
+  const randomIndex = Math.floor(Math.random() * images.length);
+  return images[randomIndex];
+}
+
 
 export default function Quests({ data }: Props) {
   const meta = {
@@ -127,58 +136,55 @@ export const data = [
     id: 1,
     amount: 100,
     title: "Charismatic Flow",
-    subtitle: "Claim tokens from the Charisma faucet to complete this quest",
+    subtitle: "A quest of allure, magic, and the promise of brighter future",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: f1,
+    src: getRandomImage([f1, f2, f4, f5]),
     guildImg: charismaGuildLogo,
     objectives: [{
       text: 'Claim Charisma Tokens from the Faucet',
       metric: '0/1'
     }],
     description: [
-      `Greetings, champion!`,
-      ` In the ever-expanding realm of bitcoin, a new power emerges - the Charisma Token.`,
-      ` A mystical faucet hidden in the caverns of the Stacks Mountains is said to grant these tokens to those worthy of its power.`,
-      ` We have chosen you to embark on this adventure and claim the tokens from the Charisma Faucet. But tread lightly; the path is treacherous, and many adventurers seek the same prize.`
+      `The city awakens to a golden dawn, and with it comes murmurs of an ethereal gift nestled amidst the peaks of the Stacks Mountains. The Charisma Token, a blend of magic and bitcoin brilliance, is no mere currency. It embodies the very essence of allure and power. And the source of this treasure? A legendary fountain, veiled in mists and myth, known to many as the Charisma Faucet.`,
+      ` At the heart of the city square, a monument stands - adorned with the emblem of the Charisma Guild. Below this sigil flows a stream of pure crystal water, with a shimmer suggesting untold magic within. Beside it, a robed sage, with wisdom etched on his features, narrates tales of champions who've ventured into the mountains, driven by dreams of Charisma Tokens.`,
+      ` His gaze fixes upon you, and with a gentle nod, he whispers, "The fountain awaits. Will you rise to the challenge and bring back the tokens of Charisma?`,
     ],
   },
   {
     id: 2,
     amount: 100,
     title: "Alchemical Fusion at ALEX Lab",
-    subtitle: "Combine two tokens to create a liquidity pair token in ALEX Lab",
+    subtitle: "Venture into the realm of alchemy and forge liquidity anew",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: a1,
+    src: getRandomImage([a1, a3, a5, a6]),
     guildImg: alexlabGuildLogo,
     objectives: [{
-      text: 'Liquidity Pair Tokens Created in ALEX Lab',
+      text: 'Create Liquidity Pair Tokens in ALEX Lab',
       metric: '0/1'
     }],
     description: [
-      `Within the vast expanse of the Bitcoin ecosystem, lies a powerful and innovative domain called ALEX Lab.`,
-      ` Whispers within the blockchain community tell of their latest breakthrough: the alchemy of fusing two distinct tokens to birth a potent Liquidity Pair Token.`,
-      ` Such pioneering techniques could revolutionize decentralized finance and reshape our understanding of liquidity itself.`,
-      ` Do you possess the ambition and skill to delve into ALEX Lab\'s intricacies and manifest this novel creation?`
+      `In a realm where the pulse of Bitcoin illuminates every shadow, ALEX Lab stands as a beacon of innovation and wonder. Nestled at the intersection of magic and logic, this sanctuary is often cloaked in mystery, known only to the select few with a thirst for alchemical pursuits.`,
+      ` A siren's song resonates through the alleys and marketplaces, a melody imbued with the power of two tokens becoming one. A fusion, they say, more profound than mere combination. It's the alchemy of liquidity, a dance of elements led by the grand alchemists of ALEX Lab.`,
+      ` As you navigate the bustling streets, a sigil marked with an X – the emblem of ALEX Lab – catches your gaze. An enigmatic figure, draped in robes that shimmer like the night sky, beckons. "Do you seek the secrets of the Liquidity Pair Token?" she inquires with a knowing smile, offering you a chance to be a part of this transcendent fusion.`,
     ]
   },
   {
     id: 'uwu1',
     amount: 100,
     title: "Whispers of the Celestial Muse",
-    subtitle: "Unravel mysteries where old legends and new frontiers converge",
+    subtitle: "Dance in the rhythm of ancient ledgers and new promises",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: uwu1,
+    src: getRandomImage([uwu1, uwu2, uwu7]),
     guildImg: uwuLogo,
     objectives: [{
       text: 'Borrow stablecoins from UWU',
       metric: '0/10'
     }],
     description: [
-      `In the heart of a grand city festival, amidst the laughter and joy of the revelers, a singular figure commands your attention.Drenched in hues of dark orange and radiant gold, she moves with the elegance of a bygone era.`,
-      ` Her pink garments flow seamlessly with her ethereal gestures, reminiscent of ancient and revered dances.`,
-      ` As her performance draws to its zenith, the crowd erupts in applause.Sensing a kindred spirit in you, she graciously extends an invitation to converse.In the tranquility of a nearby garden, the celestial muse reveals herself as the Ethereal Dreamweaver, guardian of forgotten realms and keeper of arcane wisdom.`,
-      ` With an allure only beings of her stature possess, she beckons you to embark on a quest – a journey where ancient legends meet new age mysteries.`,
-      ` Intrigued, will you embrace the Dreamweaver's call and set forth to unveil the enigmas of this boundless realm?`
+      `Amidst the vibrant festivities of a grand city celebration, a dance of elegance and allure unfolds. At its center, a figure, resplendent in hues of dark orange and radiant gold, gracefully moves with the finesse reminiscent of ancient sages. Her pink garments, dancing with every gust of wind, tell tales of old-world charm and wisdom.`,
+      ` As the crowd stands mesmerized, hanging onto every swirl, every gesture of her performance, she catches your eye. This isn't a mere glance; it's a call. When the applause resonates through the streets, she motions you towards her.`,
+      ` In the serenity of a lush garden nearby, she identifies herself as the Ethereal Dreamweaver, not just a guardian of forgotten realms but also a curator of cryptic ledgers. With a voice as soft as silk, she speaks of the balance in the universe, stability in all things. She introduces you to U'wu, a celestial ledger that keeps the balance of the cosmos.`,
+      ` She entrusts you with a challenge, "Take from U'wu– and become a part of the eternal balance. Are you ready to engage in this dance of trust and responsibility?"`,
     ]
   },
   {
@@ -187,7 +193,7 @@ export const data = [
     title: "Echoes of the Fragmented Canvas",
     subtitle: "Unearth the artistry and contribute to the canvas of legends",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: nome7,
+    src: getRandomImage([nome4, nome5, nome6, nome7]),
     guildImg: nomeLogo,
     objectives: [{
       text: 'Mint a NōME Block Ordinal and add to the masterpiece',
@@ -195,180 +201,83 @@ export const data = [
     }],
     description: [
       `In a realm where artistry merges with the pulse of blockchain, an ancient riddle echoes – a canvas, vast and untouched, waits to be unveiled. Each block, a fragment; each fragment, a story waiting to be told. This is the world of NōME, where the tangible meets the ethereal.`,
-      `Amidst the galleries of creation, a fabled artist, renowned for her ethereal strokes painted in hues of starlight and dusk, beckons you closer. Her attire, reminiscent of galaxies far away, swirls as she presents a challenge only the truly dedicated can undertake.`,
-      `"Complete the Canvas," she whispers, her voice laden with the magic of forgotten realms. "A Canvas of 100 blocks, each carrying a sliver of the grand tapestry. Will you contribute your vision and be part of this timeless creation?"`
+      ` Amidst the galleries of creation, a fabled artist, renowned for her ethereal strokes painted in hues of starlight and dusk, beckons you closer. Her attire, reminiscent of galaxies far away, swirls as she presents a challenge only the truly dedicated can undertake.`,
+      ` "Complete the Canvas," she whispers, her voice laden with the magic of forgotten realms. "A Canvas of 100 blocks, each carrying a sliver of the grand tapestry. Will you contribute your vision and be part of this timeless creation?"`
     ]
   },
   {
     id: 3,
     amount: 100,
-    title: "Send BTC with Xverse wallet",
-    subtitle: "Send bitcoin using the Xverse wallet to complete this quest",
+    title: "The Luminous Ledger of Xverse",
+    subtitle: "A beacon of innovation beckons you to transact in bitcoin",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: h1,
+    src: getRandomImage([h1, h3]),
     guildImg: xverseLogo,
-  },
-  {
-    id: 102,
-    amount: 100,
-    title: "Mint a NōME Block",
-    subtitle: "100 blocks = 100 fractions of one canvas",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: nome4,
-    guildImg: nomeLogo,
+    objectives: [{
+      text: 'Use the Xverse wallet to send bitcoin',
+      metric: '0/1'
+    }],
+    description: [
+      `As dawn's first light graces the city, whispers rise among its citizens about a novel means of trading their most precious asset - bitcoin. A magnificent vessel, radiant in its design and teeming with innovation, has anchored itself in the town's center. Emblazoned on its mast is the emblem of the Xverse Guild, a name synonymous with pioneering strides in the bitcoin domain.`,
+      ` Near this ship, an elegant merchant, adorned in lavish robes embroidered with gold and silver threads, extends an invitation to all. She speaks of the Xverse wallet, a tool of the future, designed to handle bitcoin transactions with unparalleled ease and security.`,
+      ` Captivated by her tales and the promise of a new dawn in trading, she turns to you, handing over a gleaming device, the very Xverse wallet she praised. "Champion," she begins, "Would you demonstrate its might by sending bitcoin? Show the city that the future of transactions is here."`
+    ]
   },
   {
     id: 993,
     amount: 100,
-    title: "Borrow bitcoin on Liquidium",
-    subtitle: "Use your ordinals as collateral to borrow native BTC to complete this quest",
+    title: "Dance of the Luminous Depths",
+    subtitle: "Engage in a mystical communion with the Majestic Luminance",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: liquidium6,
+    src: getRandomImage([liquidium4, liquidium5, liquidium6]),
     guildImg: liquidiumLogo,
-  },
-  {
-    id: 4,
-    amount: 100,
-    title: "Use the Charisma token faucet",
-    subtitle: "Claim tokens from the Charisma faucet to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: f2,
-    guildImg: charismaGuildLogo,
+    objectives: [{
+      text: 'Borrow bitcoin with ordinals on Liquidium',
+      metric: '0/1'
+    }],
+    description: [
+      `Amidst the vast, digital seas, a vision of ethereal beauty emerges from the silent abyss. A colossal jellyfish, its body pulsating with the mysteries of the moonlit night and the first blush of dawn. Its tentacles, tendrils of liquid light, weave a mesmerizing dance, beckoning those who dare to approach its grandeur.`,
+      ` Within the Liquidium reefs, elders speak of the Majestic Luminance - a guardian jellyfish believed to be the living embodiment of Liquidium's legacy. Legend holds that the glow of this otherworldly creature can guide souls to the enigmatic depths where they can pledge their cherished ordinals. In return, the Majestic Luminance blesses them with the pure essence of the digital realm's most treasured possession – native bitcoin.`,
+      ` As you draw nearer to the Majestic Luminance, a harmonious hum envelops you, whispering promises of ancient secrets and bounties from the depths. "Pledge, and the abyss shall reward thee." Do you dare to heed the call of the Dance of the Luminous Depths?`
+    ]
   },
   {
     id: 15,
     amount: 100,
-    title: "Swap a SIP-10 token on ALEX",
-    subtitle: "Swap a SIP-10 token on ALEX Lab to complete this quest",
+    title: "The Alchemist's Conundrum",
+    subtitle: "Engage in the ancient rite of the token swap",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: x5,
+    src: getRandomImage([x4, x5]),
     guildImg: alexlabGuildLogo,
-  },
-  {
-    id: 'uwu7',
-    amount: 100,
-    title: "Borrow stablecoins on UWU",
-    subtitle: "Borrow against your STX collateral at 0% interest to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: uwu7,
-    guildImg: uwuLogo,
-  },
-  {
-    id: 8,
-    amount: 100,
-    title: "Create an LP token on ALEX",
-    subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: a3,
-    guildImg: alexlabGuildLogo,
+    objectives: [{
+      text: 'Perform a token swap on ALEX Lab',
+      metric: '0/1'
+    }],
+    description: [
+      `In the heart of the bustling digital agora, the figure of a seasoned alchemist emerges from the swirling mists of time. Cloaked in garments resonating with ancient sigils and forgotten runes, he is a bridge between the world of alchemical lore and the modern realm of blockchain alchemy.`,
+      ` Master Aleron, as he introduces himself, is a custodian of ALEX Lab, a crucible where digital elements morph and fuse under his experienced hands. He's revered for his uncanny ability to discern the true essence of any token, guiding it through transmutations unknown to the average trader.`,
+      ` As you engage with him, Master Aleron presents a challenge, an alchemical riddle intertwined with the very fabric of blockchain. "Can you master the ritual of the swap?" he asks, his eyes gleaming with curiosity. "Dare you trade old for new, known for unknown, in the arcane dance of digital metamorphosis?"`,
+      ` The gauntlet has been thrown. Will you rise to the alchemist's challenge and prove your mastery over the token swap?`
+    ]
   },
   {
     id: 6,
     amount: 100,
-    title: "Mint a BRC-20 Token on Unisat",
-    subtitle: "Mint a BRC-20 ordinal on Unisat to complete this quest",
+    title: "Secrets of the Deepforge",
+    subtitle: "Forge your destiny in the fires of Unisat's digital crucible",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: x2,
+    src: getRandomImage([x2, x3]),
     guildImg: unisatLogo,
-  },
-  {
-    id: 991,
-    amount: 100,
-    title: "Borrow bitcoin on Liquidium",
-    subtitle: "Use your ordinals as collateral to borrow native BTC to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: liquidium4,
-    guildImg: liquidiumLogo,
-  },
-  {
-    id: 103,
-    amount: 100,
-    title: "Mint a NōME Block",
-    subtitle: "100 blocks = 100 fractions of one canvas",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: nome5,
-    guildImg: nomeLogo,
-  },
-  {
-    id: 10,
-    amount: 100,
-    title: "Use the Charisma token faucet",
-    subtitle: "Claim tokens from the Charisma faucet to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: f4,
-    guildImg: charismaGuildLogo,
-  },
-  {
-    id: 12,
-    amount: 100,
-    title: "Swap a SIP-10 token on ALEX",
-    subtitle: "Swap a SIP-10 token on ALEX Lab to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: x4,
-    guildImg: alexlabGuildLogo,
-  },
-  {
-    id: 14,
-    amount: 100,
-    title: "Create an LP token on ALEX",
-    subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: a5,
-    guildImg: alexlabGuildLogo,
-  },
-  {
-    id: 'uwu2',
-    amount: 100,
-    title: "Borrow stablecoins on UWU",
-    subtitle: "Borrow against your STX collateral at 0% interest to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: uwu2,
-    guildImg: uwuLogo,
-  },
-  {
-    id: 992,
-    amount: 100,
-    title: "Borrow bitcoin on Liquidium",
-    subtitle: "Use your ordinals as collateral to borrow native BTC to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: liquidium5,
-    guildImg: liquidiumLogo,
-  },
-  {
-    id: 16,
-    amount: 100,
-    title: "Create an LP token on ALEX",
-    subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: a6,
-    guildImg: alexlabGuildLogo,
-  },
-  {
-    id: 17,
-    amount: 100,
-    title: "Send BTC using Xverse wallet",
-    subtitle: "Send bitcoin using the Xverse wallet to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: h3,
-    guildImg: xverseLogo,
-  },
-  {
-    id: 13,
-    amount: 100,
-    title: "Use the Charisma token faucet",
-    subtitle: "Claim tokens from the Charisma faucet to complete this quest",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: f5,
-    guildImg: charismaGuildLogo,
-  },
-  {
-    id: 104,
-    amount: 100,
-    title: "Mint a NōME Block",
-    subtitle: "100 blocks = 100 fractions of one canvas",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
-    src: nome6,
-    guildImg: nomeLogo,
+    objectives: [{
+      text: 'Mint a BRC-20 ordinal in Unisat',
+      metric: '0/1'
+    }],
+    description: [
+      `The hustle and clatter of the marketplace fade as you stumble upon a vivid tapestry depicting the Deepforge clan, a venerable line of dwarves known for their unmatched mining prowess and insatiable thirst for unearthing the hidden treasures of the earth. The heart of the tapestry pulsates with a moment of discovery: a cadre of determined dwarves, lanterns aglow, unveiling a luminescent artifact that radiates with the very essence of the blockchain.`,
+      ` Word in the winding alleyways is that these dwarves, under the banner of the Unisat Guild, have unearthed a technique to crystallize these digital treasures into coveted ordinals.`,
+      ` Elder Durim, the venerable leader of this discovery expedition, extends a hand of invitation to those daring enough to venture into the digital deep and mold the raw essence of the blockchain into the pristine form of a fungible token.`,
+      ` The mines beckon. Do you possess the mettle to follow in the footsteps of the Deepforge clan and mint your own legacy from the blockchain?`
+    ]
   },
 ]
 
