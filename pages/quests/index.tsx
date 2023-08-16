@@ -172,12 +172,12 @@ export const data = [
     id: 'uwu1',
     amount: 100,
     title: "Whispers of the Celestial Muse",
-    subtitle: "Dance in the rhythm of ancient ledgers and new promises",
+    subtitle: "Dance in the rhythm of ancient ledgers and unbroken promises",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
     src: getRandomImage([uwu1, uwu2, uwu7]),
     guildImg: uwuLogo,
     objectives: [{
-      text: 'Borrow stablecoins from UWU',
+      text: 'Provide collateral and borrow UWU tokens',
       metric: '0/10'
     }],
     description: [
