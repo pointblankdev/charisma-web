@@ -87,7 +87,7 @@ export default function QuestDetail(props: any) {
                             <p className='text-base z-30'>
                                 <Typewriter
                                     options={{
-                                        delay: 2,
+                                        delay: 25,
                                     }}
                                     onInit={(typewriter) => {
                                         typewriter.pauseFor(1500)
