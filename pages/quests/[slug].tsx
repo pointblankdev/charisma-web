@@ -54,6 +54,7 @@ export default function QuestDetail(props: any) {
         visible: { opacity: 1 }
     };
 
+
     return (
         <Page meta={meta} fullViewport>
             <Layout className='m-2 sm:container sm:mx-auto sm:py-10 items-center'>
