@@ -26,6 +26,11 @@ import Link from 'next/link';
 import { cn } from '@lib/utils';
 import React from 'react';
 import { data } from 'pages/quests/index';
+import charismaToken from '@public/charisma.png'
+import { GetStaticProps } from 'next';
+import { StacksMainnet } from "@stacks/network";
+import { callReadOnlyFunction, principalCV, uintCV } from '@stacks/transactions';
+import Typewriter from 'typewriter-effect';
 
 export default function QuestDetail(props: any) {
     const { query } = useRouter();
@@ -35,8 +40,13 @@ export default function QuestDetail(props: any) {
     };
 
     const [questAccepted, setQuestAccepted] = React.useState(false)
+    const [questCompleted, setQuestCompleted] = React.useState(false)
 
     const quest = data.find(p => String(p.id) === query.slug)
+
+    const claimRewards = () => {
+        console.log('Claim')
+    }
 
     return (
         <Page meta={meta} fullViewport>
@@ -46,35 +56,46 @@ export default function QuestDetail(props: any) {
                     Quests are in preview mode, and are for demonstration purposes only. For questions or comments, join Discord.
                 </div>
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
-                    <CardHeader className='p-4 z-20 '>
+                    <CardHeader className='p-4 z-20'>
                         <CardTitle className='text-xl font-semibold z-30'>{quest?.title}</CardTitle>
-                        <CardDescription className='text-sm font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
+                        <CardDescription className='text-base font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
+                        {quest?.objectives?.map((o) => <p className='text-md font-fine text-foreground z-30'>{o.text}: {o.metric}</p>)}
                         <div className='z-20'>
                             <CardTitle className='text-xl font-semibold z-30'>Rewards</CardTitle>
                             <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>
                             <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
-                                {quest?.guildImg ?
-                                    <Image src={quest?.guildImg as any} alt='alex-lab-logo' className='bg-white rounded-full border w-full z-30' />
-                                    : <div className='h-16 w-16 bg-white rounded-full border z-30' />
-                                }
+                                <div className='relative'>
+                                    <Image src={charismaToken} alt='charisma-token' className='bg-white rounded-full border w-full z-30' />
+                                    <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{quest?.amount}</div>
+                                </div>
                             </div>
                         </div>
                     </CardHeader>
-                    {!questAccepted && <CardFooter className="p-4 flex justify-between z-30">
-                        <Link href='/quests'><Button variant="ghost">Cancel</Button></Link>
-                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary' onClick={() => setQuestAccepted(true)}>Accept</Button>
+                    {!questAccepted && <CardFooter className="p-4 flex justify-between z-20">
+                        <Link href='/quests'><Button variant="ghost" className='z-30'>Back</Button></Link>
+                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={() => setQuestAccepted(true)}>Start</Button>
                     </CardFooter>}
 
                     {questAccepted && <CardContent className='p-0 z-20'>
-                        <div className=''>
-                            {/* blog post from DatoCMS goes here */}
-                            <div className='h-[384px] sm:h-[800px] border border-dashed border-gray-900'>
-                            </div>
+                        <div className='p-4 z-20'>
+                            <CardTitle className='text-xl font-semibold z-30'>Description</CardTitle>
+                            <p className='text-base z-30'>
+                                <Typewriter
+                                    options={{
+                                        delay: 25,
+                                    }}
+                                    onInit={(typewriter) => {
+                                        typewriter.pauseFor(1500)
+                                        quest?.description?.forEach(s => typewriter.typeString(s).pauseFor(1000))
+                                        typewriter.start()
+                                    }}
+                                />
+                            </p>
                         </div>
                     </CardContent>}
                     {questAccepted && <CardFooter className="p-4 flex justify-between z-20">
-                        <Link href='/quests'><Button variant="ghost">Back</Button></Link>
-                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary'>Claim Rewards</Button>
+                        <Button variant="ghost" className='z-30' onClick={() => setQuestAccepted(false)}>Cancel</Button>
+                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={!questCompleted}>Claim Rewards</Button>
                     </CardFooter>}
                     <Image
                         src={quest?.src as any}
@@ -87,4 +108,43 @@ export default function QuestDetail(props: any) {
 
         </Page >
     );
+}
+
+
+type Props = {
+    data: any;
+};
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+    const isCompleteResponse: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme006-quest-completion",
+        functionName: "is-complete",
+        functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), uintCV(1)],
+        senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
+    })
+
+    const data = {
+        completed: isCompleteResponse.value.value === 'true'
+    }
+
+    return {
+        props: { data },
+        revalidate: 60
+    };
+};
+
+export const getStaticPaths = () => {
+    return {
+        paths: [
+            {
+                params: {
+                    slug: '1',
+                },
+            }
+        ],
+        fallback: true
+    };
 }

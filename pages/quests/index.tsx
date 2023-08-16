@@ -126,38 +126,78 @@ export const data = [
   {
     id: 1,
     amount: 100,
-    title: "Use the Charisma token faucet",
+    title: "Charismatic Flow",
     subtitle: "Claim tokens from the Charisma faucet to complete this quest",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
     src: f1,
     guildImg: charismaGuildLogo,
+    objectives: [{
+      text: 'Claim Charisma Tokens from the Faucet',
+      metric: '0/1'
+    }],
+    description: [
+      `Greetings, champion!`,
+      ` In the ever-expanding realm of bitcoin, a new power emerges - the Charisma Token.`,
+      ` A mystical faucet hidden in the caverns of the Stacks Mountains is said to grant these tokens to those worthy of its power.`,
+      ` We have chosen you to embark on this adventure and claim the tokens from the Charisma Faucet. But tread lightly; the path is treacherous, and many adventurers seek the same prize.`
+    ],
   },
   {
     id: 2,
     amount: 100,
-    title: "Create an LP token on ALEX",
-    subtitle: "Combine two tokens to create a liquidity pair token on ALEX Lab",
+    title: "Alchemical Fusion at ALEX Lab",
+    subtitle: "Combine two tokens to create a liquidity pair token in ALEX Lab",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
     src: a1,
     guildImg: alexlabGuildLogo,
+    objectives: [{
+      text: 'Liquidity Pair Tokens Created in ALEX Lab',
+      metric: '0/1'
+    }],
+    description: [
+      `Within the vast expanse of the Bitcoin ecosystem, lies a powerful and innovative domain called ALEX Lab.`,
+      ` Whispers within the blockchain community tell of their latest breakthrough: the alchemy of fusing two distinct tokens to birth a potent Liquidity Pair Token.`,
+      ` Such pioneering techniques could revolutionize decentralized finance and reshape our understanding of liquidity itself.`,
+      ` Do you possess the ambition and skill to delve into ALEX Lab\'s intricacies and manifest this novel creation?`
+    ]
   },
   {
     id: 'uwu1',
     amount: 100,
-    title: "Borrow stablecoins on UWU",
-    subtitle: "Borrow against your STX collateral at 0% interest to complete this quest",
+    title: "Whispers of the Celestial Muse",
+    subtitle: "Unravel mysteries where old legends and new frontiers converge",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
     src: uwu1,
     guildImg: uwuLogo,
+    objectives: [{
+      text: 'Borrow stablecoins from UWU',
+      metric: '0/10'
+    }],
+    description: [
+      `In the heart of a grand city festival, amidst the laughter and joy of the revelers, a singular figure commands your attention.Drenched in hues of dark orange and radiant gold, she moves with the elegance of a bygone era.`,
+      ` Her pink garments flow seamlessly with her ethereal gestures, reminiscent of ancient and revered dances.`,
+      ` As her performance draws to its zenith, the crowd erupts in applause.Sensing a kindred spirit in you, she graciously extends an invitation to converse.In the tranquility of a nearby garden, the celestial muse reveals herself as the Ethereal Dreamweaver, guardian of forgotten realms and keeper of arcane wisdom.`,
+      ` With an allure only beings of her stature possess, she beckons you to embark on a quest – a journey where ancient legends meet new age mysteries.`,
+      ` Intrigued, will you embrace the Dreamweaver's call and set forth to unveil the enigmas of this boundless realm?`
+    ]
   },
   {
     id: 101,
     amount: 100,
-    title: "Mint a NōME Block",
-    subtitle: "100 blocks = 100 fractions of one canvas",
+    title: "Echoes of the Fragmented Canvas",
+    subtitle: "Unearth the artistry and contribute to the canvas of legends",
     href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
     src: nome7,
     guildImg: nomeLogo,
+    objectives: [{
+      text: 'Mint a NōME Block Ordinal and add to the masterpiece',
+      metric: '0/1'
+    }],
+    description: [
+      `In a realm where artistry merges with the pulse of blockchain, an ancient riddle echoes – a canvas, vast and untouched, waits to be unveiled. Each block, a fragment; each fragment, a story waiting to be told. This is the world of NōME, where the tangible meets the ethereal.`,
+      `Amidst the galleries of creation, a fabled artist, renowned for her ethereal strokes painted in hues of starlight and dusk, beckons you closer. Her attire, reminiscent of galaxies far away, swirls as she presents a challenge only the truly dedicated can undertake.`,
+      `"Complete the Canvas," she whispers, her voice laden with the magic of forgotten realms. "A Canvas of 100 blocks, each carrying a sliver of the grand tapestry. Will you contribute your vision and be part of this timeless creation?"`
+    ]
   },
   {
     id: 3,

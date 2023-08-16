@@ -12,5 +12,8 @@ module.exports = {
         pathname: '/**',
       },
     ],
-  }
+  },
+  experimental: {
+    scrollRestoration: true,
+  },
 };

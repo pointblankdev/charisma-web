@@ -57,6 +57,7 @@
     "tailwind-merge": "^1.14.0",
     "tailwindcss-animate": "^1.0.6",
     "tsparticles": "^2.11.0",
+    "typewriter-effect": "^2.20.1",
     "valid-url": "^1.0.9",
     "validator": "^13.9.0",
     "vanilla-tilt": "1.7.0"
