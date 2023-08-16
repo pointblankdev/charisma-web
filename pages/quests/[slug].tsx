@@ -25,7 +25,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@lib/utils';
 import React from 'react';
-import { data } from 'pages/quests';
+import { data } from 'pages/quests/index';
 
 export default function QuestDetail(props: any) {
     const { query } = useRouter();

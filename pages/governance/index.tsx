@@ -15,6 +15,7 @@ import chatoken from '@public/cha-token.png'
 import voting from '@public/voting.png'
 import extproposal from '@public/ext-proposal.png'
 import tokenfaucet3 from '@public/token-faucet-3.png'
+import { Button } from '@components/ui/button';
 
 type CardProps = {
   href: string;
@@ -100,7 +101,10 @@ export default function Governance({ data }: Props) {
               <Card key={index} {...card} />
             ))}
           </div>
-          <h1 className='text-xl text-left mt-8 mb-2 text-gray-200'>Proposals</h1>
+          <div className='flex justify-between items-end'>
+            <h1 className='text-xl text-left mt-8 mb-2 text-gray-200'>Proposals</h1>
+            <Link href='/governance/guide'><Button variant={'link'} className='my-2 px-0'>DAO Contributer Guide 📕</Button></Link>
+          </div>
           <DataTable columns={columns} data={data} />
         </div>
       </Layout>
