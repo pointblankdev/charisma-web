@@ -58,7 +58,7 @@ export default function QuestDetail(props: any) {
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
                     <CardHeader className='p-4 z-20'>
                         <CardTitle className='text-xl font-semibold z-30'>{quest?.title}</CardTitle>
-                        <CardDescription className='text-base font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
+                        <CardDescription className='text-sm font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
                         {quest?.objectives?.map((o, k) => <p key={k} className='text-md font-fine text-foreground z-30'>{o.text}: {o.metric}</p>)}
                         <div className='z-20'>
                             <CardTitle className='text-xl font-semibold z-30'>Rewards</CardTitle>
@@ -100,9 +100,9 @@ export default function QuestDetail(props: any) {
                     <Image
                         src={quest?.src}
                         alt={'alex-lab-quest'}
-                        className={cn("object-cover", "aspect-[1/2]", 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
+                        className={cn("object-cover", "sm:aspect-[1/2]", 'aspect-[1/3]', 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
                     />
-                    <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-10 z-0 pointer-events-none' />
+                    <div className='absolute inset-0 bg-gradient-to-b from-white to-black opacity-10 z-0 pointer-events-none' />
                 </Card>
             </Layout>
 
