@@ -165,7 +165,7 @@ export const data = [
     description: [
       `In a realm where the pulse of bitcoin illuminates every shadow, one guild stands as a beacon of innovation and wonder. Nestled at the intersection of magic and logic, this sanctuary is often cloaked in mystery, known only to the select few with a thirst for alchemical pursuits.`,
       ` Whispers of a mystic fusion echo through the alleys and marketplaces, like the gentle release of vapors from an alchemist's vial, signaling the melding of two tokens into one. A fusion, they say, more profound than mere combination. It's the alchemy of liquidity, a dance of elements led by the grand alchemists of ALEX Lab.`,
-      ` As you navigate the bustling streets, a sigil marked with an X – the emblem of ALEX Lab – catches your gaze. An enigmatic figure, draped in robes that shimmer like the night sky, beckons. "Do you seek the secrets of the Liquidity Pair Token?" she inquires with a knowing smile, offering you a chance to be a part of this transcendent fusion.`,
+      ` As you navigate the bustling streets, a sigil marked with an X – catches your gaze. An enigmatic figure, draped in robes that shimmer like the night sky, beckons. "Do you seek the secrets of the Liquidity Pair Token?" she inquires with a knowing smile, offering you a chance to be a part of this transcendent fusion.`,
     ]
   },
   {
