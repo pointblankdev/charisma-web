@@ -35,6 +35,7 @@
     "clsx": "^2.0.0",
     "cookie": "0.4.1",
     "date-fns": "2.16.1",
+    "framer-motion": "^10.15.2",
     "htmlescape": "1.1.1",
     "intersection-observer": "0.12.0",
     "lucide-react": "^0.263.1",

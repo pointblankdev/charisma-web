@@ -31,6 +31,7 @@ import { GetStaticProps } from 'next';
 import { StacksMainnet } from "@stacks/network";
 import { callReadOnlyFunction, principalCV, uintCV } from '@stacks/transactions';
 import Typewriter from 'typewriter-effect';
+import { motion } from "framer-motion"
 
 export default function QuestDetail(props: any) {
     const { query } = useRouter();
@@ -40,6 +41,7 @@ export default function QuestDetail(props: any) {
     };
 
     const [questAccepted, setQuestAccepted] = React.useState(false)
+    const [objectivesVisible, setObjectivesVisible] = React.useState(false)
     const [questCompleted, setQuestCompleted] = React.useState(false)
 
     const quest = data.find(p => String(p.id) === query.slug)
@@ -47,6 +49,10 @@ export default function QuestDetail(props: any) {
     const claimRewards = () => {
         console.log('Claim')
     }
+    const fadeIn = {
+        hidden: { opacity: 0 },
+        visible: { opacity: 1 }
+    };
 
     return (
         <Page meta={meta} fullViewport>
@@ -58,10 +64,9 @@ export default function QuestDetail(props: any) {
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
                     <CardHeader className='p-4 z-20'>
                         <CardTitle className='text-xl font-semibold z-30'>{quest?.title}</CardTitle>
-                        <CardDescription className='text-sm font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
-                        {quest?.objectives?.map((o, k) => <p key={k} className='text-md font-fine text-foreground z-30'>{o.text}: {o.metric}</p>)}
+                        <CardDescription className='text-md font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
                         <div className='z-20'>
-                            <CardTitle className='text-xl font-semibold z-30'>Rewards</CardTitle>
+                            <CardTitle className='text-xl font-semibold mt-2 z-30'>Rewards</CardTitle>
                             <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>
                             <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                                 <div className='relative'>
@@ -82,15 +87,23 @@ export default function QuestDetail(props: any) {
                             <p className='text-base z-30'>
                                 <Typewriter
                                     options={{
-                                        delay: 25,
+                                        delay: 2,
                                     }}
                                     onInit={(typewriter) => {
                                         typewriter.pauseFor(1500)
                                         quest?.description?.forEach(s => typewriter.typeString(s).pauseFor(1000))
-                                        typewriter.start()
+
+                                        typewriter.start().callFunction(() => setObjectivesVisible(true))
                                     }}
                                 />
                             </p>
+
+                            {objectivesVisible && <motion.div initial="hidden" animate="visible" variants={fadeIn} className='text-xl font-semibold mt-4 z-30'>Objectives</motion.div>}
+                            {objectivesVisible && quest?.objectives?.map((o, k) =>
+                                <motion.p key={k} initial="hidden" animate="visible" variants={fadeIn} className={`text-md font-fine text-foreground z-30 duration-200 ease-out transition transform `}>
+                                    {o.text}: {o.metric}
+                                </motion.p>
+                            )}
                         </div>
                     </CardContent>}
                     {questAccepted && <CardFooter className="p-4 flex justify-between z-20">
