@@ -79,7 +79,7 @@ export default function QuestDetail(props: any) {
                     <Image
                         src={quest?.src as any}
                         alt={'alex-lab-quest'}
-                        className={cn("w-auto object-cover", "aspect-[1/2]", 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
+                        className={cn("object-cover", "aspect-[1/2]", 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
                     />
                     <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-10 z-0 pointer-events-none' />
                 </Card>
