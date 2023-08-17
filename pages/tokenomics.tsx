@@ -23,8 +23,8 @@ export default function Tokenomics({ data }: Props) {
     description: META_DESCRIPTION
   };
 
-  const totalSupplyWithDecimals = data.totalSupply / 1000000
-  const dripAmountPerDayWithDecimals = (data.dripAmount / 1000000 * 144).toFixed(6)
+  const totalSupplyWithDecimals = data.totalSupply
+  const dripAmountPerDayWithDecimals = (data.dripAmount * 144)
   const uniqueAddresses = data.uniqueAddresses
   const uniqueAddressesIncreaseSinceLastMonth = `${data.uniqueAddresses.length - 1}`
 
