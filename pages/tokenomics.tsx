@@ -15,6 +15,7 @@ import { GetStaticProps } from 'next';
 import { callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import { accountsApi } from '@lib/stacks-api';
+import Logo from '@components/logo';
 
 
 export default function Tokenomics({ data }: Props) {
@@ -24,9 +25,10 @@ export default function Tokenomics({ data }: Props) {
   };
 
   const totalSupplyWithDecimals = data.totalSupply
-  const dripAmountPerDayWithDecimals = (data.dripAmount * 144)
+  const dripAmount = data.dripAmount
+  const dripAmountPerDayWithDecimals = (dripAmount * 144)
   const uniqueAddresses = data.uniqueAddresses
-  const uniqueAddressesIncreaseSinceLastMonth = `${data.uniqueAddresses.length - 1}`
+  const percentChange = data.percentChange
 
   return (
     <Page meta={meta} fullViewport>
@@ -39,12 +41,26 @@ export default function Tokenomics({ data }: Props) {
                 <CardTitle className="text-sm font-medium">
                   Unique Wallet Addresses
                 </CardTitle>
-                <div className="text-2xl font-bold">{uniqueAddresses.length}</div>
+                <div className="text-2xl font-bold">{uniqueAddresses}</div>
               </CardHeader>
               <CardContent>
 
                 <p className="text-xs font-semibold text-muted-foreground">
-                  {`+${uniqueAddressesIncreaseSinceLastMonth}00% in last 7 days`}
+                  {`+${percentChange.toFixed(2)}% in last 7 days`}
+                </p>
+              </CardContent>
+            </Card>
+            <Card className='bg-black text-primary-foreground border-accent-foreground'>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Drip Amount
+                </CardTitle>
+                <div className="text-2xl font-bold">{dripAmount}</div>
+              </CardHeader>
+              <CardContent>
+
+                <p className="text-xs font-semibold text-muted-foreground">
+                  Charisma tokens emitted per block
                 </p>
               </CardContent>
             </Card>
@@ -62,12 +78,6 @@ export default function Tokenomics({ data }: Props) {
                 </p>
               </CardContent>
             </Card>
-            {/* <Card className='bg-black text-primary-foreground border-accent-foreground'>
-
-            </Card>
-            <Card className='bg-black text-primary-foreground border-accent-foreground'>
-
-            </Card> */}
           </div>
 
           <p className="mb-4 font-light">
@@ -105,7 +115,11 @@ export default function Tokenomics({ data }: Props) {
 async function fetchAllClaims() {
   let offset = 0;
   const limit = 50;
-  const uniqueWallets: Set<string> = new Set(); // This will keep track of unique wallets
+  const uniqueWallets: Set<string> = new Set();
+  const oneWeekAgo = new Date();
+  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+
+  let uniqueWalletsLast7Days = 0;
 
   while (true) {
     const f: any = await accountsApi.getAccountTransactionsWithTransfers({
@@ -119,8 +133,11 @@ async function fetchAllClaims() {
     }
 
     f.results.forEach((r: any) => {
-      // console.log(r.tx.sender_address);
+      const txDate = new Date(r.tx.burn_block_time_iso);
       if (r.tx.contract_call?.function_name === 'claim' && r.tx.tx_result.repr === '(ok true)') {
+        if (txDate > oneWeekAgo) {
+          uniqueWalletsLast7Days++;
+        }
         uniqueWallets.add(r.tx.sender_address);
       }
     });
@@ -128,8 +145,16 @@ async function fetchAllClaims() {
     offset += limit; // increment the offset for the next page
   }
 
-  console.log(`Total unique wallets that claimed the token: ${uniqueWallets.size}`);
-  return uniqueWallets;
+  const totalUniqueWallets = uniqueWallets.size;
+  const percentChange = (uniqueWalletsLast7Days / totalUniqueWallets) * 100;
+
+  console.log(`Total unique wallets that claimed the token: ${totalUniqueWallets}`);
+  console.log(`Percentage of new unique wallets in the last 7 days: ${percentChange.toFixed(2)}%`);
+
+  return {
+    totalUniqueWallets: totalUniqueWallets,
+    percentChange: percentChange
+  };
 }
 
 
@@ -161,7 +186,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 
 
-  const uniqueAddresses = await fetchAllClaims()
+  const { totalUniqueWallets, percentChange } = await fetchAllClaims()
 
 
   return {
@@ -169,7 +194,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       data: {
         totalSupply: Number(r.value.value),
         dripAmount: Number(d.value.value),
-        uniqueAddresses: [...uniqueAddresses]
+        uniqueAddresses: totalUniqueWallets,
+        percentChange: percentChange
       }
     },
     revalidate: 60
