@@ -22,11 +22,11 @@ export default function chainhooks(
   }
 
   try {
-    console.log(req.body)
+    // console.log(req.body)
 
     req.body.apply.forEach((a: any) => {
       a.transactions.forEach((tx: any) => {
-        console.log(tx)
+        console.log(tx.metadata)
       })
     })
   } catch (error: any) {
