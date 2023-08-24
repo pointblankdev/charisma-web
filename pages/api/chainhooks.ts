@@ -23,6 +23,10 @@ export default function chainhooks(
 
   try {
     console.log(req.body)
+
+    req.body.apply.forEach((tx: any) => {
+      console.log(tx)
+    })
   } catch (error: any) {
     console.error(error.message)
   }
