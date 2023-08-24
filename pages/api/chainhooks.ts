@@ -27,7 +27,7 @@ export default function chainhooks(
     req.body.apply.forEach((a: any) => {
       a.transactions.forEach((tx: any) => {
         const payload = {
-          kind: tx.metadata.kind,
+          ...tx.metadata.kind.data,
           sender: tx.metadata.sender,
           success: tx.metadata.success,
         }
