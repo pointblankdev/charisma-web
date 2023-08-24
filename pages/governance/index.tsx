@@ -9,7 +9,7 @@ import { columns } from '@components/vote-table/columns';
 import { cn } from '@lib/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { accountsApi, blocksApi, scApi } from '@lib/stacks-api';
+import { fetchAllContractTransactions, getProposals, updateVoteData } from '@lib/stacks-api';
 import dmlogo from '@public/dm-logo.png'
 import chatoken from '@public/cha-token.png'
 import voting from '@public/voting.png'
@@ -112,111 +112,18 @@ export default function Governance({ data }: Props) {
   );
 }
 
-function updateVoteData(data: any[], inputStrings: string[]) {
-
-  inputStrings.forEach(inputStr => {
-    const namePattern = /(proposal\s'+([^']+)\))/gm;
-    const amountPattern = /(amount\s+u(\d+))/gm;
-    const forPattern = /(for\s+(true|false))/gm;
-
-    const nameMatch = namePattern.exec(inputStr);
-    const amountMatch = amountPattern.exec(inputStr);
-    const forMatch = forPattern.exec(inputStr);
-
-
-    if (!amountMatch && !forMatch) {
-      // throw new Error("Unable to parse the string");
-      return
-    }
-
-    const name = nameMatch?.[2];
-    const amount = Number(amountMatch?.[2]);
-    const vote = forMatch?.[2];
-
-    // Find the entry in the data array that matches the name
-    const dataEntry = data.find(entry => entry.name === name);
-    if (!dataEntry) return; // skip if not found
-
-    if (vote === 'true') {
-      dataEntry.amount += amount;
-    } else {
-      dataEntry.against += amount;
-    }
-
-    if (dataEntry.status !== 'Voting Active' && dataEntry.status !== 'Pending') {
-
-      if (dataEntry.amount > dataEntry.against) {
-        dataEntry.status = 'Passed';
-      } else {
-        dataEntry.status = 'Failed';
-      }
-    }
-
-  });
-
-  return data;
-}
-
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
+  const proposals = await getProposals();
 
-  const { results } = await blocksApi.getBlockList({ limit: 1 })
-  const latestBlock = Number(results[0].height)
+  const transactions = await fetchAllContractTransactions('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting')
 
-  const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
-    principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
-  })
-
-  const proposals: any[] = []
-
-  for (const r of accountsResp.results) {
-    const args = r.tx.contract_call?.function_args
-    if (args) {
-      const startBlockHeight = Number(args[1].repr.slice(1))
-      const endBlockHeight = startBlockHeight + 1440
-      let status = ''
-      if (latestBlock < startBlockHeight) {
-        status = 'Pending'
-      } else if (latestBlock < endBlockHeight) {
-        status = 'Voting Active'
-      } else {
-        status = 'Voting Ended'
-      }
-
-      const [contractAddress, contractName] = args[0].repr.slice(1).split('.')
-
-      const proposalSourceResp: any = await scApi.getContractSource({ contractAddress, contractName })
-
-      const contractPrincipal = `${contractAddress}.${contractName}`
-      proposals.push({
-        id: args[0].repr.split('.')[1],
-        name: contractPrincipal,
-        source: proposalSourceResp.source,
-        startBlockHeight,
-        endBlockHeight: endBlockHeight,
-        amount: 0,
-        against: 0,
-        status,
-        url: `https://explorer.hiro.so/txid/${contractPrincipal}?chain=mainnet`,
-      })
-    }
-  }
-
-  const resp: any = await scApi.getContractEventsById({
-    contractId: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting',
-    limit: 50,
-    unanchored: true
-  })
-
-  const inputStrings = resp.results.map((r: any) => r.contract_log.value.repr)
-
-
-  const updatedData = updateVoteData(proposals, inputStrings);
+  const updatedProposals = updateVoteData(proposals, transactions);
 
   return {
     props: {
-      data: updatedData
+      data: updatedProposals
     },
     revalidate: 60
   };

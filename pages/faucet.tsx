@@ -34,6 +34,7 @@ import { Info } from 'lucide-react';
 import { GetStaticProps } from 'next';
 import tokenfaucet2 from '@public/token-faucet-2.png'
 import { Card } from '@components/ui/card';
+import { clamp } from 'framer-motion';
 
 
 export default function Faucet({ data }: Props) {
@@ -44,7 +45,7 @@ export default function Faucet({ data }: Props) {
 
   const blockHeight = data.latestBlock
   const lastClaimBlockHeight = data.lastClaim
-  const unclaimedBlocks = blockHeight - lastClaimBlockHeight
+  const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
   const dripAmount = data.dripAmount
 
   return (

@@ -12,9 +12,7 @@ import {
   CardTitle,
 } from "@components/ui/card"
 import { GetStaticProps } from 'next';
-import { callReadOnlyFunction } from '@stacks/transactions';
-import { StacksMainnet } from "@stacks/network";
-import { accountsApi } from '@lib/stacks-api';
+import { accountsApi, fetchAllClaims, getTokenStats } from '@lib/stacks-api';
 import Logo from '@components/logo';
 
 
@@ -112,88 +110,20 @@ export default function Tokenomics({ data }: Props) {
   );
 }
 
-async function fetchAllClaims() {
-  let offset = 0;
-  const limit = 50;
-  const uniqueWallets: Set<string> = new Set();
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  let uniqueWalletsLast7Days = 0;
-
-  while (true) {
-    const f: any = await accountsApi.getAccountTransactionsWithTransfers({
-      principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0',
-      limit: limit,
-      offset: offset
-    });
-
-    if (!f.results.length) {
-      break; // exit the loop if there are no more results
-    }
-
-    f.results.forEach((r: any) => {
-      const txDate = new Date(r.tx.burn_block_time_iso);
-      if (r.tx.contract_call?.function_name === 'claim' && r.tx.tx_result.repr === '(ok true)') {
-        if (txDate > oneWeekAgo) {
-          uniqueWalletsLast7Days++;
-        }
-        uniqueWallets.add(r.tx.sender_address);
-      }
-    });
-
-    offset += limit; // increment the offset for the next page
-  }
-
-  const totalUniqueWallets = uniqueWallets.size;
-  const percentChange = (uniqueWalletsLast7Days / totalUniqueWallets) * 100;
-
-  console.log(`Total unique wallets that claimed the token: ${totalUniqueWallets}`);
-  console.log(`Percentage of new unique wallets in the last 7 days: ${percentChange.toFixed(2)}%`);
-
-  return {
-    totalUniqueWallets: totalUniqueWallets,
-    percentChange: percentChange
-  };
-}
-
-
 type Props = {
   data: any;
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
-
-  const r: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
-    contractName: "dme000-governance-token",
-    functionName: "get-total-supply",
-    functionArgs: [],
-    senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-  })
-
-
-  const d: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    contractName: "dme005-token-faucet-v0",
-    functionName: "get-drip-amount",
-    functionArgs: [],
-    senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-  })
-
-
-
+  const { totalSupply, dripAmount } = await getTokenStats();
   const { totalUniqueWallets, percentChange } = await fetchAllClaims()
-
 
   return {
     props: {
       data: {
-        totalSupply: Number(r.value.value),
-        dripAmount: Number(d.value.value),
+        totalSupply: totalSupply,
+        dripAmount: dripAmount,
         uniqueAddresses: totalUniqueWallets,
         percentChange: percentChange
       }
