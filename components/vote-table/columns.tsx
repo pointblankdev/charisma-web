@@ -70,7 +70,7 @@ export const columns: ColumnDef<Proposal>[] = [
                 <TooltipProvider>
                     <Tooltip>
                         <TooltipTrigger><div className='flex items-center gap-1'><div className={`text-left hover:text-muted-foreground`}>{row.getValue("name")}</div></div></TooltipTrigger>
-                        <TooltipContent className={`max-w-[99vw] bg-black text-white border-primary leading-tight shadow-2xl`}>
+                        <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                             <SyntaxHighlighter language="lisp" customStyle={{ background: 'black' }} wrapLongLines={true}>
                                 {row.original.source}
                             </SyntaxHighlighter>

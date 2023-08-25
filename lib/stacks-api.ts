@@ -60,6 +60,8 @@ export async function fetchAllClaims() {
     console.log(`Total unique wallets that claimed the token: ${totalUniqueWallets}`);
     console.log(`Percentage of new unique wallets in the last 7 days: ${percentChange.toFixed(2)}%`);
 
+    console.log(uniqueWallets)
+
     return {
         totalUniqueWallets: totalUniqueWallets,
         percentChange: percentChange
