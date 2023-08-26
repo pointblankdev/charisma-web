@@ -22,8 +22,9 @@ export default function chainhooks(
 
   try {
     console.log(req)
+    return res.status(200).json({ type: 1 });
 
-    if (req.headers.type === '1') {
+    if (req.headers.Type === 'request') {
       return res.status(200).json({ type: 1 });
     } else {
       return res.status(200).json({});
