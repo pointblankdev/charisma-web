@@ -21,11 +21,11 @@ export default function chainhooks(
   }
 
   try {
-    console.log(req.body)
+    console.log(req.body === 1)
 
   } catch (error: any) {
     console.error(error.message)
   }
 
-  return res.status(200).json({});
+  return res.status(200).json({ type: 1 });
 }
