@@ -21,11 +21,15 @@ export default function chainhooks(
   }
 
   try {
-    console.log(req.body === 1)
+    console.log(req.body)
 
+    if (req.body.type === 1) {
+      return res.status(200).json({ type: 1 });
+    } else {
+      return res.status(200).json({});
+    }
   } catch (error: any) {
     console.error(error.message)
+    return res.status(500).json({ error: { code: 500, message: 'Internal server error' } });
   }
-
-  return res.status(200).json({ type: 1 });
 }
