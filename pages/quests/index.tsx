@@ -147,7 +147,7 @@ export const data = [
     description: [
       `The city awakens to a golden dawn, and with it comes murmurs of an ethereal gift nestled amidst the peaks of the Stacks Mountains. The Charisma Token, a blend of magic and bitcoin brilliance, is no mere currency. It embodies the very essence of allure and power. And the source of this treasure? A legendary fountain, veiled in mists and myth, known to many as the Charisma Faucet.`,
       ` At the heart of the city square, a monument stands - adorned with the emblem of the Charisma Guild. Below this sigil flows a stream of pure crystal water, with a shimmer suggesting untold magic within. Beside it, a robed sage, with wisdom etched on his features, narrates tales of champions who've ventured into the mountains, driven by dreams of Charisma Tokens.`,
-      ` His gaze fixes upon you, and with a gentle nod, he whispers, "The fountain awaits. Will you rise to the challenge and bring back the tokens of Charisma?`,
+      ` His gaze fixes upon you, and with a gentle nod, he whispers, "The fountain awaits. Will you rise to the challenge and bring back the tokens of Charisma?"`,
     ],
   },
   {
