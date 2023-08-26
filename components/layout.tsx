@@ -25,7 +25,7 @@ import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
 import React from 'react';
-import { BsDiscord, BsTwitter } from 'react-icons/bs';
+import { BsBookHalf, BsDiscord, BsTwitter } from 'react-icons/bs';
 import ConnectWallet from './stacks-session/connect';
 
 type Props = {
@@ -76,6 +76,7 @@ export default function Layout({
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
               <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
               <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
+              <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
               <ConnectWallet />
             </div>
           </header>

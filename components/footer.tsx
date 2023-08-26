@@ -21,7 +21,7 @@ import { useEffect, useState } from 'react';
 import { blocksApi } from '@lib/stacks-api';
 import IconStacks from './icons/icon-stacks';
 import Link from 'next/link';
-import { BsDiscord, BsTwitter } from 'react-icons/bs';
+import { BsDiscord, BsTwitter, BsBookHalf } from 'react-icons/bs';
 import { BITCOIN_LEARN_MORE_URL, STACKS_LEARN_MORE_URL } from '@lib/constants';
 
 export function HostedByVercel() {
@@ -59,6 +59,7 @@ export default function Footer() {
         <div className={cn('items-center', 'gap-4', 'flex')}>
           <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' size={16} /></Link>
           <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' size={16} /></Link>
+          <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' /></Link>
         </div>
         <div className={cn('hidden', 'sm:flex')}>
           <p className={styles['footer-paragraph']}>
