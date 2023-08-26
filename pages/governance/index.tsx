@@ -31,19 +31,19 @@ type CardProps = {
 };
 
 const Card: React.FC<CardProps> = ({ href, src, alt, title, subtitle }) => (
-  <Link href={href} className={cn('w-full', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer')}>
+  <Link href={href} className={cn('w-full', 'm-0', 'bg-transparent', 'text-gray-200', 'border-accent-foreground', 'border', 'rounded-md', 'relative', 'cursor-pointer', 'group/card', 'overflow-hidden')}>
     <div className="overflow-hidden rounded-md">
       <Image
         src={src}
         alt={alt}
         height={600}
         width={600}
-        className={cn("h-auto w-auto object-cover transition-all hover:scale-105", "aspect-[3/4]")}
+        className={cn("h-auto w-auto object-cover transition-all group-hover/card:scale-[120%]", "aspect-[3/4]")}
       />
     </div>
-    <div className='absolute bottom-0 m-2'>
-      <h1 className="font-semibold">{title}</h1>
-      <h2 className='text-sm' style={{ fontFeatureSettings: 'unset' }}>{subtitle}</h2>
+    <div className='absolute left-0 right-0 bottom-0 p-2 h-min hidden group-hover/card:block group-hover/card:backdrop-blur-3xl'>
+      <h1 className="font-semibold leading-none md:leading-6">{title}</h1>
+      <h2 className='text-sm leading-none md:leading-6'>{subtitle}</h2>
     </div>
   </Link>
 );
@@ -136,7 +136,7 @@ export default function Governance({ data }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
-          <div className='grid gap-4 md:grid-cols-2 lg:grid-cols-5'>
+          <div className='grid gap-1 sm:gap-4 grid-cols-5'>
             {cards.map((card, index) => (
               <Card key={index} {...card} />
             ))}
