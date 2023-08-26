@@ -8,6 +8,7 @@ import { DataTable } from '@components/vote-table/data-table';
 import { columns } from '@components/vote-table/columns';
 import { cn } from '@lib/utils';
 import Image from 'next/image';
+import { Button } from '@components/ui/button';
 import Link from 'next/link';
 import { fetchAllContractTransactions, getProposals, updateVoteData } from '@lib/stacks-api';
 import dmlogo from '@public/dm-logo.png'
@@ -15,7 +16,11 @@ import chatoken from '@public/cha-token.png'
 import voting from '@public/voting.png'
 import extproposal from '@public/ext-proposal.png'
 import tokenfaucet3 from '@public/token-faucet-3.png'
-import { Button } from '@components/ui/button';
+import treasurechest from '@public/governance/treasure-chest.png'
+import questmap from '@public/governance/quest-map.png'
+import locked from '@public/governance/locked.png'
+import questhelper from '@public/governance/quest-helper.png'
+import oracle from '@public/governance/oracle.png'
 
 type CardProps = {
   href: string;
@@ -38,7 +43,7 @@ const Card: React.FC<CardProps> = ({ href, src, alt, title, subtitle }) => (
     </div>
     <div className='absolute bottom-0 m-2'>
       <h1 className="font-semibold">{title}</h1>
-      <h2 className='text-sm'>{subtitle}</h2>
+      <h2 className='text-sm' style={{ fontFeatureSettings: 'unset' }}>{subtitle}</h2>
     </div>
   </Link>
 );
@@ -86,8 +91,43 @@ export default function Governance({ data }: Props) {
       href: "https://explorer.hiro.so/txid/0x29c81fe813b62e5ee04d416ad3c2f713823e2eddc04da56745787cdd708cfaf5?chain=mainnet",
       src: tokenfaucet3,
       alt: 'Token Faucet Extention Image',
-      title: 'token-faucet-v0',
+      title: 'token-faucet',
       subtitle: 'Token Faucet',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0xc05db7eb16e3745c4d82884e120be4f2fe4af660f295e1450abf1beeca24c034?chain=mainnet",
+      src: locked,
+      alt: 'Quest Completion Extention Image',
+      title: 'quest-completion',
+      subtitle: 'Quest Completion State',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0xe746ec5258c7b7342b337ec7e1bc529a4e0926d1c7998cf19710d6448176b0a7?chain=mainnet",
+      src: oracle,
+      alt: 'Centralized Quest Oracle Extention Image',
+      title: 'quest-completion-oracle',
+      subtitle: 'Centralized Quest Oracle',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0xef3f3eadc18d5240bb6f76eabb9215f13cc94924ac4f318dbdb8412d8660e8df?chain=mainnet",
+      src: questmap,
+      alt: 'Quest Metadata Extention Image',
+      title: 'quest-metadata',
+      subtitle: 'Quest Details and Information',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0x0fd98f76b0eab5edcd618cadc5b310b38c7fbec6fa104d079cd931573117cb81?chain=mainnet",
+      src: treasurechest,
+      alt: 'Charisma Rewards Extention Image',
+      title: 'charisma-rewards',
+      subtitle: 'Rewards for Quest Completion',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0x580ed0b7902319403be4e43feb73eceaa5f7d875fc84bf4730e5a34ca20b33e4?chain=mainnet",
+      src: questhelper,
+      alt: 'Quest Reward Helper Extention Image',
+      title: 'quest-reward-helper',
+      subtitle: 'Utility for Quest Rewards',
     }
   ];
 

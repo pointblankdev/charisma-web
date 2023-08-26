@@ -22,8 +22,6 @@ export default function chainhooks(
   }
 
   try {
-    // console.log(req.body)
-
     req.body.apply.forEach((a: any) => {
       a.transactions.forEach((tx: any) => {
         const payload = {

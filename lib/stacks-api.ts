@@ -1,6 +1,9 @@
 import { AccountsApi, BlocksApi, Configuration, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
-import { callReadOnlyFunction } from "@stacks/transactions";
+import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
+import { generateWallet } from "@stacks/wallet-sdk";
+
+const network = new StacksMainnet();
 
 const apiConfig: Configuration = new Configuration({
     fetchApi: fetch,
@@ -59,8 +62,6 @@ export async function fetchAllClaims() {
 
     console.log(`Total unique wallets that claimed the token: ${totalUniqueWallets}`);
     console.log(`Percentage of new unique wallets in the last 7 days: ${percentChange.toFixed(2)}%`);
-
-    console.log(uniqueWallets)
 
     return {
         totalUniqueWallets: totalUniqueWallets,
@@ -209,4 +210,49 @@ export async function getProposals() {
         }
     }
     return proposals;
+}
+
+// set quest complete
+export async function setQuestComplete(address: string, questId: number, complete: boolean) {
+
+    const password = String(process.env.STACKS_ORACLE_PASSWORD);
+    const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY)
+
+    const wallet = await generateWallet({ secretKey, password });
+
+    const account = wallet.accounts[0];
+
+    const txOptions = {
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'dme007-quest-completion-oracle',
+        functionName: 'set-complete',
+        functionArgs: [principalCV(address), uintCV(questId), boolCV(complete)],
+        senderKey: account.stxPrivateKey,
+        validateWithAbi: true,
+        network,
+        postConditions: [],
+        fee: 225, // set a tx fee if you don't want the builder to estimate
+        anchorMode: AnchorMode.Any,
+    };
+
+    const transaction = await makeContractCall(txOptions);
+
+    const broadcastResponse = await broadcastTransaction(transaction, network);
+
+    return broadcastResponse
+}
+
+// check if quest is complete
+export async function checkQuestComplete(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme006-quest-completion",
+        functionName: "is-complete",
+        functionArgs: [principalCV(address), uintCV(questId)],
+        senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
+    });
+
+    return response.value
 }

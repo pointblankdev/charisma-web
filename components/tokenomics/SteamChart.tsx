@@ -38,9 +38,6 @@ export default function SteamChart() {
         []
     );
 
-
-    console.log(data)
-
     return (
         <ResizableBox
             style={{
