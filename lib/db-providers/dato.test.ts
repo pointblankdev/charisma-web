@@ -1,4 +1,7 @@
-import { createUser, getUserById, updateUserWithWallet } from "./dato";
+import { getAllWallets } from "../cms-api";
+import { createUser, getUserById, updateUserWithWallet, updateWalletAmount } from "./dato";
+import { callReadOnlyFunction, principalCV } from "@stacks/transactions";
+import _ from 'lodash'
 
 describe('getUserById function', () => {
     it('should return a user for a valid id', async () => {
@@ -42,4 +45,36 @@ describe('getUserById function', () => {
 
         console.log(wallet)
     });
+});
+import { StacksMainnet } from "@stacks/network";
+
+describe('updateWalletAmount function', () => {
+    it('should update wallets', async () => {
+
+        const wallets = await getAllWallets()
+        let count = 0
+
+        for (const wallet of _.shuffle(wallets)) {
+            count++
+
+            const getBalanceResponse: any = await callReadOnlyFunction({
+                network: new StacksMainnet(),
+                contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
+                contractName: "dme000-governance-token",
+                functionName: "get-balance",
+                functionArgs: [principalCV(wallet.stxaddress)],
+                senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
+            });
+            const amount = Number(getBalanceResponse.value.value)
+
+            const resp = await updateWalletAmount(wallet.id, amount)
+
+            expect(resp.charisma).toBeGreaterThanOrEqual(0)
+
+            if (count > 49) {
+                break;
+            }
+        }
+    }, 100000)
+
 });

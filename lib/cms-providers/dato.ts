@@ -26,6 +26,19 @@ async function fetchCmsAPI(query: string, { variables }: { variables?: Record<st
   return json.data;
 }
 
+export async function getAllWallets(): Promise<any[]> {
+  const data = await fetchCmsAPI(`
+      {
+        allWallets(first: 100, filter: {stxaddress: {isPresent: true}}) {
+          id
+          stxaddress
+          charisma
+        }
+      }
+    `);
+  return data.allWallets;
+}
+
 export async function getAllSpeakers(): Promise<Speaker[]> {
   const data = await fetchCmsAPI(`
      {

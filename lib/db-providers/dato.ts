@@ -30,3 +30,7 @@ export async function updateUserWithWallet(userId: string, walletId: string): Pr
         user: userId
     })
 }
+
+export async function updateWalletAmount(walletId: string, charisma: number): Promise<any> {
+    return client.items.update(walletId, { charisma })
+}

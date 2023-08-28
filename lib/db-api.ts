@@ -5,6 +5,7 @@ let dbApi: {
   getUserById: (id: string) => Promise<any>;
   createWallet: (wallet: any) => Promise<any>;
   updateUserWithWallet: (userId: string, walletId: string) => Promise<any>;
+  updateWalletAmount: (walletId: string, charisma: number) => Promise<any>;
 };
 
 if (process.env.DATOCMS_FULL_ACCESS_API_TOKEN) {
@@ -25,4 +26,8 @@ export async function createWallet(wallet: any): Promise<any> {
 
 export async function updateUserWithWallet(userId: string, walletId: string): Promise<any> {
   return dbApi.updateUserWithWallet(userId, walletId);
+}
+
+export async function updateWalletAmount(walletId: string, charisma: number): Promise<any> {
+  return dbApi.updateWalletAmount(walletId, charisma);
 }

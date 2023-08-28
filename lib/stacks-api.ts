@@ -2,6 +2,7 @@ import { AccountsApi, BlocksApi, Configuration, SmartContractsApi, TransactionsA
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
+import { getAllWallets } from "./cms-api";
 
 const network = new StacksMainnet();
 
@@ -60,10 +61,14 @@ export async function fetchAllClaims() {
     const totalUniqueWallets = uniqueWallets.size;
     const percentChange = (uniqueWalletsLast7Days / totalUniqueWallets) * 100;
 
+    const wallets = await getAllWallets()
+    const walletBalances = wallets.map((wallet) => ({ primary: wallet.stxaddress, secondary: wallet.charisma }))
+
     console.log(`Total unique wallets that claimed the token: ${totalUniqueWallets}`);
     console.log(`Percentage of new unique wallets in the last 7 days: ${percentChange.toFixed(2)}%`);
 
     return {
+        walletBalances: walletBalances.sort((a, b) => b.secondary - a.secondary),
         totalUniqueWallets: totalUniqueWallets,
         percentChange: percentChange
     };

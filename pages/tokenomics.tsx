@@ -13,8 +13,12 @@ import {
 } from "@components/ui/card"
 import { GetStaticProps } from 'next';
 import { accountsApi, fetchAllClaims, getTokenStats } from '@lib/stacks-api';
-import Logo from '@components/logo';
+import HoldersChart from '@components/tokenomics/HoldersChart';
 
+
+type Props = {
+  data: any;
+};
 
 export default function Tokenomics({ data }: Props) {
   const meta = {
@@ -27,6 +31,14 @@ export default function Tokenomics({ data }: Props) {
   const dripAmountPerDayWithDecimals = (dripAmount * 144)
   const uniqueAddresses = data.uniqueAddresses
   const percentChange = data.percentChange
+  const walletBalances = data.walletBalances
+
+  const chartData = [
+    {
+      data: walletBalances,
+      label: "Charisma Tokens"
+    }
+  ]
 
   return (
     <Page meta={meta} fullViewport>
@@ -104,26 +116,24 @@ export default function Tokenomics({ data }: Props) {
             In essence, this approach emphasizes a stable growth model, transparency, and user-centric distribution, aiming to build trust, value, and a strong community foundation.
           </p>
 
+          <HoldersChart data={chartData} />
+
         </div>
       </Layout>
     </Page>
   );
 }
 
-type Props = {
-  data: any;
-};
-
 export const getStaticProps: GetStaticProps<Props> = async () => {
-
   const { totalSupply, dripAmount } = await getTokenStats();
-  const { totalUniqueWallets, percentChange } = await fetchAllClaims()
+  const { walletBalances, totalUniqueWallets, percentChange } = await fetchAllClaims()
 
   return {
     props: {
       data: {
         totalSupply: totalSupply,
         dripAmount: dripAmount,
+        walletBalances: walletBalances,
         uniqueAddresses: totalUniqueWallets,
         percentChange: percentChange
       }
