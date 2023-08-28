@@ -116,6 +116,7 @@ export default function Tokenomics({ data }: Props) {
             In essence, this approach emphasizes a stable growth model, transparency, and user-centric distribution, aiming to build trust, value, and a strong community foundation.
           </p>
 
+          <h1 className='text-xl text-left mt-8 mb-2 text-gray-200'>Top 20 Addresses</h1>
           <HoldersChart data={chartData} />
 
         </div>

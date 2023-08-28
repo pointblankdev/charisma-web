@@ -68,7 +68,7 @@ export async function fetchAllClaims() {
     console.log(`Percentage of new unique wallets in the last 7 days: ${percentChange.toFixed(2)}%`);
 
     return {
-        walletBalances: walletBalances.sort((a, b) => b.secondary - a.secondary),
+        walletBalances: walletBalances.sort((a, b) => b.secondary - a.secondary).slice(0, 20),
         totalUniqueWallets: totalUniqueWallets,
         percentChange: percentChange
     };
