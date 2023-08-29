@@ -1,6 +1,7 @@
 import { getAllWallets } from "../cms-api";
 import { createUser, getUserById, updateUserWithWallet, updateWalletAmount } from "./dato";
 import { callReadOnlyFunction, principalCV } from "@stacks/transactions";
+import { StacksMainnet } from "@stacks/network";
 import _ from 'lodash'
 
 describe('getUserById function', () => {
@@ -46,7 +47,6 @@ describe('getUserById function', () => {
         console.log(wallet)
     });
 });
-import { StacksMainnet } from "@stacks/network";
 
 describe('updateWalletAmount function', () => {
     it('should update wallets', async () => {
