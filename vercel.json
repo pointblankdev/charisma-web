@@ -2,7 +2,7 @@
     "crons": [
         {
             "path": "/api/update-wallet-data",
-            "schedule": "*/10 * * * *"
+            "schedule": "0 * * * *"
         }
     ]
 }
