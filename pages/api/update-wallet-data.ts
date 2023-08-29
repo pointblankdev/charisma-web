@@ -37,7 +37,7 @@ export default async function updateWalletData(
 
             const resp = await updateWalletAmount(wallet.id, amount)
 
-            console.log(resp)
+            console.log(`${resp.stxaddress}: ${resp.charisma} CHA`)
 
             if (count > 49) {
                 break;
