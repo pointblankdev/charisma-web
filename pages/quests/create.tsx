@@ -48,7 +48,6 @@ export default function CreateQuest({ }: Props) {
                                                 <SelectContent>
                                                     <SelectItem value="stacks">Stacks</SelectItem>
                                                     <SelectItem value="bitcoin" disabled>Bitcoin</SelectItem>
-                                                    <SelectItem value="ordinals" disabled>Ordinals</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -125,7 +124,6 @@ export default function CreateQuest({ }: Props) {
                                                 <SelectContent>
                                                     <SelectItem value="stacks">Stacks</SelectItem>
                                                     <SelectItem value="bitcoin" disabled>Bitcoin</SelectItem>
-                                                    <SelectItem value="ordinals" disabled>Ordinals</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
