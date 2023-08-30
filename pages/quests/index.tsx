@@ -82,7 +82,7 @@ export default function Quests({ data }: Props) {
                       <div className='flex gap-2'>
                         <div className='min-w-max'>
                           {quest.guildImg ?
-                            <Image src={quest.guildImg} alt='alex-lab-logo' className='h-10 w-10 border-white border rounded-full grow' />
+                            <Image src={quest.guildImg} alt='alex-lab-logo' className='h-10 w-10 border-white border rounded-full grow ' />
                             : <div className='h-10 w-10 bg-white rounded-full border border-white' />
                           }
                         </div>
