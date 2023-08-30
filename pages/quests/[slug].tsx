@@ -56,7 +56,7 @@ export default function QuestDetail(props: any) {
                             <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>
                             <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                                 <div className='relative'>
-                                    <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30' />
+                                    <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30 ' />
                                     <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{quest?.amount}</div>
                                 </div>
                             </div>
