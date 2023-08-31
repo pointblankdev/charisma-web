@@ -39,6 +39,21 @@ export async function getAllWallets(): Promise<any[]> {
   return data.allWallets;
 }
 
+export async function getAllQuests(): Promise<any[]> {
+  const data = await fetchCmsAPI(`
+      {
+        allQuests(first: 100, orderBy: id_ASC) {
+          id
+          slug
+          title
+          subtitle
+          questid
+        }
+      }
+    `);
+  return data.allQuests;
+}
+
 export async function getAllSpeakers(): Promise<Speaker[]> {
   const data = await fetchCmsAPI(`
      {

@@ -47,6 +47,7 @@ import {
   CardHeader,
 } from "@components/ui/card"
 import Link from 'next/link';
+import { getAllQuests } from '@lib/cms-api';
 
 type Props = {
   data: any[];
@@ -76,13 +77,13 @@ export default function Quests({ data }: Props) {
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => (
               <Card key={quest.id} className='bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'>
-                <Link href={`quests/${quest.id}`} className='w-full'>
+                <Link href={`quests/${quest.slug}`} className='w-full'>
                   <CardContent className='p-0 w-full'>
                     <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
                       <div className='flex gap-2'>
                         <div className='min-w-max'>
                           {quest.guildImg ?
-                            <Image src={quest.guildImg} alt='alex-lab-logo' className='h-10 w-10 border-white border rounded-full grow' />
+                            <Image src={quest.guildImg} alt='guild-logo' className='h-10 w-10 border-white border rounded-full grow' />
                             : <div className='h-10 w-10 bg-white rounded-full border border-white' />
                           }
                         </div>
@@ -98,7 +99,7 @@ export default function Quests({ data }: Props) {
                     </CardHeader>
                     <Image
                       src={quest.src}
-                      alt={quest.alt}
+                      alt='quest-featured-image'
                       className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-75', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
                     />
                     <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-30 z-0' />
@@ -118,11 +119,7 @@ export default function Quests({ data }: Props) {
 
 export const data = [
   {
-    id: 1,
-    amount: 100,
-    title: "Charismatic Flow",
-    subtitle: "A quest of allure, magic, and the promise of brighter future",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+    slug: 'charismatic-flow',
     src: getRandomImage([f1, f2, f4, f5]),
     guildImg: charismaGuildLogo,
     objectives: [{
@@ -136,11 +133,7 @@ export const data = [
     ],
   },
   {
-    id: 2,
-    amount: 100,
-    title: "Alchemical Fusion at ALEX Lab",
-    subtitle: "Venture into the realm of alchemy and forge liquidity anew",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+    slug: 'alchemical-fusion-at-alex-lab',
     src: getRandomImage([a1, a3, a5, a6]),
     guildImg: alexlabGuildLogo,
     objectives: [{
@@ -154,11 +147,7 @@ export const data = [
     ]
   },
   {
-    id: 'uwu1',
-    amount: 100,
-    title: "Whispers of the Celestial Muse",
-    subtitle: "Dance in the rhythm of ancient ledgers and unbroken promises",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+    slug: "whispers-of-the-celestial-muse",
     src: getRandomImage([uwu1, uwu2, uwu7]),
     guildImg: uwuLogo,
     objectives: [{
@@ -173,11 +162,7 @@ export const data = [
     ]
   },
   {
-    id: 101,
-    amount: 100,
-    title: "Echoes of the Fragmented Canvas",
-    subtitle: "Unearth the artistry and contribute to the canvas of legends",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+    slug: "echoes-of-the-fragmented-canvas",
     src: getRandomImage([nome4, nome5, nome6, nome7]),
     guildImg: nomeLogo,
     objectives: [{
@@ -191,11 +176,7 @@ export const data = [
     ]
   },
   {
-    id: 3,
-    amount: 100,
-    title: "The Luminous Ledger of Xverse",
-    subtitle: "A beacon of innovation beckons you to transact in bitcoin",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+    slug: "the-luminous-ledger-of-xverse",
     src: getRandomImage([h1, h3]),
     guildImg: xverseLogo,
     objectives: [{
@@ -209,11 +190,7 @@ export const data = [
     ]
   },
   {
-    id: 993,
-    amount: 100,
-    title: "Dance of the Luminous Depths",
-    subtitle: "Engage in a mystical communion with the Majestic Luminance",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+    slug: "dance-of-the-luminous-depths",
     src: getRandomImage([liquidium4, liquidium5, liquidium6]),
     guildImg: liquidiumLogo,
     objectives: [{
@@ -227,11 +204,7 @@ export const data = [
     ]
   },
   {
-    id: 15,
-    amount: 100,
-    title: "The Alchemist's Conundrum",
-    subtitle: "Engage in the ancient rite of the token swap",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
+    slug: "the-alchemist-s-conundrum",
     src: getRandomImage([x4, x5]),
     guildImg: alexlabGuildLogo,
     objectives: [{
@@ -246,11 +219,8 @@ export const data = [
     ]
   },
   {
-    id: 6,
-    amount: 100,
-    title: "Secrets of the Deepforge",
+    slug: "secrets-of-the-deepforge",
     subtitle: "Forge your destiny in the fires of Unisat's digital crucible",
-    href: "https://explorer.hiro.so/txid/0xfbd5310da4aa15578e3c35857c0b526e60d291466ddc52dea7584ee35589d985?chain=mainnet",
     src: getRandomImage([x2, x3]),
     guildImg: unisatLogo,
     objectives: [{
@@ -266,11 +236,21 @@ export const data = [
   },
 ]
 
-export const getStaticProps: GetStaticProps<Props> = () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+  const quests = await getAllQuests()
+
+  // loop through all quests look for a matching quest in data, if found, merge the data quest into the current one
+  quests.forEach((quest) => {
+    const match = data.find((d) => d.slug === quest.slug)
+    if (match) {
+      Object.assign(quest, match)
+    }
+  })
 
   return {
     props: {
-      data
+      data: quests
     },
     revalidate: 60
   };
