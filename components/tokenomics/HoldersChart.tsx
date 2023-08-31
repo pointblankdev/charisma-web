@@ -33,6 +33,7 @@ export default function HoldersChart({ data }: Props) {
     return (
 
         <Chart
+            className='hidden xl:block'
             height={1600}
             options={{
                 defaultColors: ["#c1121f"],
