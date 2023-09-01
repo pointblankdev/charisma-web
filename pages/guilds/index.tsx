@@ -22,7 +22,7 @@ type Props = {
 
 export default function Governance({ data }: Props) {
     const meta = {
-        title: 'Charisma | Platform Governance',
+        title: 'Charisma | Guilds',
         description: META_DESCRIPTION
     };
     return (
