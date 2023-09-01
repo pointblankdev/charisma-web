@@ -34,6 +34,10 @@ export const NAVIGATION = [
     name: 'Governance',
     route: '/governance'
   },
+  // {
+  //   name: 'For NPC',
+  //   route: '/for-npc'
+  // },
 ];
 
 export type TicketGenerationState = 'default' | 'loading';

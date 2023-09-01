@@ -1,0 +1,15 @@
+
+.contact {
+  text-align: center;
+  color: var(--secondary-color);
+  margin-bottom: var(--space-12x);
+}
+
+.contact-email {
+  color: #fff;
+}
+
+.contact-email:hover {
+  text-decoration: underline;
+  color: #fff;
+}
