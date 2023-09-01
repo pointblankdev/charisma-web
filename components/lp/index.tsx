@@ -21,6 +21,8 @@ export default function LandingPage({
   const [userData, setUserData] = useState<UserData>(defaultUserData);
   const [pageState, setPageState] = useState<PageState>(defaultPageState);
 
+  console.log(pageState)
+
   return (
     <ConfDataContext.Provider
       value={{
