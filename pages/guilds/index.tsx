@@ -104,7 +104,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
             logo: unisatLogo,
             alt: 'Unisat Guild Logo',
             name: 'Unisat',
-            description: 'UniSat Wallet is an open-source Chrome extension for Bitcoin Ordinals & BRC-20 decentralized finance',
+            description: 'UniSat Wallet is an open-source Chrome extension for Bitcoin Ordinals & BRC-20 decentralized finance.',
             quests: 1,
         },
     ];
