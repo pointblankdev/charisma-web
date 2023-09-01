@@ -58,13 +58,13 @@ export const columns: ColumnDef<Guild>[] = [
         },
 
     },
-    {
-        accessorKey: "quests",
-        header: () => <div className="text-center">Quests</div>,
-        cell: ({ row }) => {
-            const quests = row.getValue("quests")
-            return <div className="text-center font-medium">{quests}</div>
-        },
+    // {
+    //     accessorKey: "quests",
+    //     header: () => <div className="text-center">Quests</div>,
+    //     cell: ({ row }) => {
+    //         const quests = row.getValue("quests")
+    //         return <div className="text-center font-medium">{quests}</div>
+    //     },
 
-    },
+    // },
 ]
