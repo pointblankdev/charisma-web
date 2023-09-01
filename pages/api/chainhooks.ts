@@ -45,7 +45,7 @@ export default async function chainhooks(
           const charismaTokenFaucetQuestId = 0
           const response = await checkQuestComplete(payload.sender, charismaTokenFaucetQuestId)
           console.log(response)
-          if (response.value === 'false') {
+          if (response.value === 'false' || Number(response.value) === 2001) {
             // mark the quest as complete
             console.log('marking quest as complete')
             // setQuestComplete(payload.sender, charismaTokenFaucetQuestId, true)
