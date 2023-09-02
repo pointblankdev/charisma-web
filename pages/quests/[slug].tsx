@@ -21,7 +21,10 @@ import {
     callReadOnlyFunction,
     uintCV,
 } from "@stacks/transactions";
-import { getAllQuests } from '@lib/cms-api';
+import { getQuestBySlug } from '@lib/cms-providers/dato';
+
+
+type Props = any
 
 export default function QuestDetail(props: Props) {
     const meta = {
@@ -29,10 +32,15 @@ export default function QuestDetail(props: Props) {
         description: META_DESCRIPTION
     };
 
-    const quest = props.data
+    const quest = props
+
     const charismaRewards = quest?.charismaRewards || 0
     const showCommunityRewards = charismaRewards > 0
     const randomImage = quest.randomImage;
+
+
+    console.log({ quest })
+    console.log({ randomImage })
 
     const { doContractCall } = useConnect();
     const [questAccepted, setQuestAccepted] = React.useState(false)
@@ -130,7 +138,7 @@ export default function QuestDetail(props: Props) {
                         <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={!questCompleted}>Claim Rewards</Button>
                     </CardFooter>}
                     <Image
-                        src={randomImage.url}
+                        src={randomImage?.url}
                         width={800}
                         height={1600}
                         alt={'quest-background-image'}
@@ -144,15 +152,9 @@ export default function QuestDetail(props: Props) {
     );
 }
 
-
-type Props = {
-    data: any;
-};
-
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
-    const quests = await getAllQuests()
-    const quest = quests.find(p => String(p.slug) === params?.slug)
+    const quest = await getQuestBySlug(String(params?.slug))
 
     const getCharismaRewards: any = await callReadOnlyFunction({
         network: new StacksMainnet(),
@@ -163,17 +165,14 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
         senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
     })
 
-    const randomIndex = Math.floor(Math.random() * quest.images.length);
-    const randomImage = quest.images[randomIndex];
-
-    const data = {
-        ...quest,
-        randomImage: randomImage,
-        charismaRewards: Number(getCharismaRewards.value.value)
-    }
+    // pick a random image
+    quest.randomImage = quest.images[Math.floor(Math.random() * quest.images.length)]
 
     return {
-        props: { data },
+        props: {
+            ...quest,
+            charismaRewards: Number(getCharismaRewards.value.value)
+        },
         revalidate: 60
     };
 };

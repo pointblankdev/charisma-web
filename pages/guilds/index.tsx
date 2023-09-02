@@ -7,7 +7,7 @@ import { Button } from '@components/ui/button';
 import Link from 'next/link';
 import { DataTable } from '@components/guilds-table/data-table';
 import { columns } from '@components/guilds-table/columns';
-import { getAllGuilds } from '@lib/cms-api';
+import { getAllGuilds } from '@lib/cms-providers/dato';
 
 type Props = {
     data: any[];

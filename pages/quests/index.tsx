@@ -14,17 +14,24 @@ import {
   CardHeader,
 } from "@components/ui/card"
 import Link from 'next/link';
-import { getAllQuests } from '@lib/cms-api';
+import { getAllQuests } from '@lib/cms-providers/dato';
+
 
 type Props = {
   data: any[];
 };
 
-function getRandomImage(images: any[]) {
-  const randomIndex = Math.floor(Math.random() * images.length);
-  return images[randomIndex];
-}
+export const getStaticProps: GetStaticProps<Props> = async () => {
 
+  const quests = await getAllQuests()
+
+  return {
+    props: {
+      data: quests
+    },
+    revalidate: 60
+  };
+};
 
 export default function Quests({ data }: Props) {
   const meta = {
@@ -88,15 +95,3 @@ export default function Quests({ data }: Props) {
     </Page>
   );
 }
-
-export const getStaticProps: GetStaticProps<Props> = async () => {
-
-  const quests = await getAllQuests()
-
-  return {
-    props: {
-      data: quests
-    },
-    revalidate: 60
-  };
-};

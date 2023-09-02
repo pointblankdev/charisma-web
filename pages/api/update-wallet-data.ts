@@ -1,10 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ConfUser } from '@lib/types';
-import { getAllWallets } from '@lib/cms-api';
 import { updateWalletAmount } from '@lib/db-api';
 import { callReadOnlyFunction, principalCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import _ from 'lodash';
+import { getAllWallets } from '@lib/cms-providers/dato';
 
 type ErrorResponse = {
     error: {

@@ -5,7 +5,7 @@ import Layout from '@components/layout';
 import { GetStaticProps } from 'next';
 import { Card } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@components/ui/form';
+import { Form, FormControl, FormDescription, FormItem, FormLabel, FormMessage } from '@components/ui/form';
 import { Input } from '@components/ui/input';
 import { useForm } from 'react-hook-form';
 import {
@@ -15,21 +15,32 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@components/ui/select"
-import Link from 'next/link';
 import { Label } from "@components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@components/ui/radio-group"
-import { getAllGuilds } from '@lib/cms-api';
 import Image from 'next/image';
+import { getAllGuilds } from '@lib/cms-providers/dato';
 
+type Props = {
+    guilds: any[];
+};
 
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+    const guilds = await getAllGuilds()
+
+    return {
+        props: {
+            guilds
+        },
+        revalidate: 60
+    };
+};
 
 export default function CreateQuest({ guilds }: Props) {
     const meta = {
         title: 'Charisma | Create a Quest',
         description: META_DESCRIPTION
     };
-
-    console.log(guilds)
 
     const form = useForm()
     return (
@@ -202,19 +213,3 @@ export default function CreateQuest({ guilds }: Props) {
         </Page>
     );
 }
-
-type Props = {
-    guilds: any[];
-};
-
-export const getStaticProps: GetStaticProps<Props> = async () => {
-
-    const guilds = await getAllGuilds()
-
-    return {
-        props: {
-            guilds
-        },
-        revalidate: 60
-    };
-};
