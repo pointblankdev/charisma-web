@@ -122,7 +122,7 @@ export default function CreateQuest({ guilds, networks }: Props) {
                                                 <FormControl>
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <SelectTrigger className="w-[160px]">
-                                                            <SelectValue placeholder="Select a project" />
+                                                            <SelectValue placeholder="Select a guild" />
                                                         </SelectTrigger>
                                                         <SelectContent>
                                                             {guilds.map((guild: any) => {
