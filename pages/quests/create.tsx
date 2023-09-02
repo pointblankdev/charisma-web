@@ -1,6 +1,6 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import { BITCOIN_NETWORK_ID, META_DESCRIPTION, STACKS_NETWORK_ID } from '@lib/constants';
+import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
 import { GetStaticProps } from 'next';
 import { Card } from '@components/ui/card';
