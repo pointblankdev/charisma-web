@@ -118,7 +118,7 @@ export default function CreateQuest({ guilds, networks }: Props) {
                                         name="guild"
                                         render={({ field }) => (
                                             <FormItem className='p-2'>
-                                                <FormLabel>Project</FormLabel>
+                                                <FormLabel>Guild</FormLabel>
                                                 <FormControl>
                                                     <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                         <SelectTrigger className="w-[160px]">
