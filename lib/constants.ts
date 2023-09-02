@@ -18,11 +18,6 @@ export const COOKIE = 'user-id';
 export const BITCOIN_LEARN_MORE_URL = 'https://bitcoin.org/en/';
 export const STACKS_LEARN_MORE_URL = 'https://stacks.org/';
 
-export const STACKS_NETWORK_ID = '170009648'
-export const BITCOIN_NETWORK_ID = '170009825'
-
-export const CHARISMA_GUILD_ID = '169364816'
-
 export const NAVIGATION = [
   {
     name: 'Quests',
