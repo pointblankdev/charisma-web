@@ -34,6 +34,10 @@ export const NAVIGATION = [
     name: 'Governance',
     route: '/governance'
   },
+  {
+    name: 'Leaderboard',
+    route: '/leaderboard'
+  },
 ];
 
 export type TicketGenerationState = 'default' | 'loading';

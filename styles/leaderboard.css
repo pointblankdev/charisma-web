@@ -1,0 +1,64 @@
+.leaderboard {
+    background-color: #333;
+    border-radius: 10px;
+    padding: 20px;
+    color: white;
+  }
+  
+  .leaderboard table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0; 
+  }
+  
+  .leaderboard th,
+  .leaderboard td {
+    text-align: center;
+    padding: 10px;
+    border: none; 
+    border-bottom: 1px solid red; 
+  }
+  
+  .leaderboard th {
+    background-color: #555;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+  }
+  
+  .leaderboard tr:hover {
+    background-color: #444;
+  }
+  
+  .leaderboard .name-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  
+  .leaderboard img {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+  }
+  
+  .leaderboard .copy-icon {
+    background: none;
+    border: none;
+    color: #007bff;
+    cursor: pointer;
+    outline: none;
+  }
+  
+  .leaderboard .copy-icon:hover {
+    text-decoration: underline;
+  }
+  
+  .leaderboard a {
+    text-decoration: none;
+    color: #007bff;
+  }
+  
+  .leaderboard a:hover {
+    text-decoration: underline;
+  }
+  
