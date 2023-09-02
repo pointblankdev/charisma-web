@@ -15,6 +15,7 @@ import {
 } from "@components/ui/card"
 import Link from 'next/link';
 import { getAllQuests } from '@lib/cms-providers/dato';
+import { Button } from '@components/ui/button';
 
 
 type Props = {
@@ -45,8 +46,11 @@ export default function Quests({ data }: Props) {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
           {/* text letting user know quests are in preview mode and are non-functional and for demonstration purposes only */}
-          <div className='text-center text-sm sm:text-xl font-fine text-yellow-200 mb-4'>
-            Quests are in preview mode, and are for demonstration purposes only. For questions or comments, join Discord.
+          <div className='flex justify-between items-end'>
+            <div className='text-center text-xs sm:text-xl font-fine text-yellow-200 mb-4'>
+              Quests are in preview mode. For questions and comments, join Discord.
+            </div>
+            <Link href='/quests/create' className='whitespace-nowrap'><Button className='mb-4'>Create a Quest 📜</Button></Link>
           </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => {

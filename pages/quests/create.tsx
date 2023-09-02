@@ -1,11 +1,11 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import { META_DESCRIPTION } from '@lib/constants';
+import { BITCOIN_NETWORK_ID, META_DESCRIPTION, STACKS_NETWORK_ID } from '@lib/constants';
 import Layout from '@components/layout';
 import { GetStaticProps } from 'next';
 import { Card } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { Form, FormControl, FormDescription, FormItem, FormLabel, FormMessage } from '@components/ui/form';
+import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@components/ui/form';
 import { Input } from '@components/ui/input';
 import { useForm } from 'react-hook-form';
 import {
@@ -18,108 +18,194 @@ import {
 import { Label } from "@components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@components/ui/radio-group"
 import Image from 'next/image';
-import { getAllGuilds } from '@lib/cms-providers/dato';
+import { getAllGuilds, getAllNetworks } from '@lib/cms-providers/dato';
+import { Textarea } from "@components/ui/textarea"
+import { createQuestDraft } from '@lib/user-api';
+import { useToast } from "@components/ui/use-toast"
 
 type Props = {
     guilds: any[];
+    networks: any[];
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
     const guilds = await getAllGuilds()
+    const networks = await getAllNetworks()
 
     return {
         props: {
-            guilds
+            guilds,
+            networks
         },
         revalidate: 60
     };
 };
 
-export default function CreateQuest({ guilds }: Props) {
+export default function CreateQuest({ guilds, networks }: Props) {
     const meta = {
         title: 'Charisma | Create a Quest',
         description: META_DESCRIPTION
     };
 
     const form = useForm()
+    const { toast } = useToast()
+
+    const submitQuest = async () => {
+        const quest = form.getValues()
+        quest.objectives = JSON.stringify([
+            {
+                "text": quest.objectives,
+                "metric": "0/1"
+            }
+        ])
+        quest.description = JSON.stringify(quest.description?.split('\n'))
+        const resp = await createQuestDraft(quest)
+        console.log(resp)
+
+        let title = 'Quest Submitted'
+        let description = 'Your quest has been submitted for review. You will be notified when it is approved.'
+        let variant = 'default' as any
+        if (resp.status !== 200) {
+            title = 'Error Submitting Quest'
+            description = 'There was an error submitting your quest. Please check your quest details and try again.'
+            variant = 'destructive'
+        }
+        toast({ title, description, variant })
+    }
+
     return (
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <div className="m-2 sm:mx-auto sm:py-10 space-y-4">
-                    <Form {...form}>
+                <Form {...form}>
+                    <div className="m-2 sm:mx-auto sm:py-10 gap-4 grid grid-cols-1 md:grid-cols-2">
                         <section className='space-y-2'>
-                            <div>Select Quest Type</div>
+                            <div>Select Quest Mechanics</div>
                             <Card className='min-h-[200px] px-1'>
                                 <div className='flex'>
-                                    <FormItem className='p-2'>
-                                        <FormLabel>Network</FormLabel>
-                                        <FormControl>
-                                            <Select>
-                                                <SelectTrigger className="w-[160px]">
-                                                    <SelectValue placeholder="Select a network" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    <SelectItem value="stacks">Stacks</SelectItem>
-                                                    <SelectItem value="bitcoin" disabled>Bitcoin</SelectItem>
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        {/* <FormDescription>This is your public display name.</FormDescription> */}
-                                        <FormMessage />
-                                    </FormItem>
-                                    <FormItem className='p-2'>
-                                        <FormLabel>Project</FormLabel>
-                                        <FormControl>
-                                            <Select>
-                                                <SelectTrigger className="w-[160px]">
-                                                    <SelectValue placeholder="Select a project" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {guilds.map((guild) => {
-
-                                                        return (
-
-                                                            <SelectItem value={guild.name}>
-                                                                <div className='flex space-x-2'>
-                                                                    <Image src={guild.logo.url} width={24} height={24} alt={'Guild logo'} className="rounded-full" />
-                                                                    <div>{guild.name}</div>
-                                                                </div>
-                                                            </SelectItem>
-                                                        )
-                                                    })
-                                                    }
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        {/* <FormDescription>This is your public display name.</FormDescription> */}
-                                        <FormMessage />
-                                    </FormItem>
+                                    <FormField
+                                        control={form.control}
+                                        name="network"
+                                        render={({ field }) => (
+                                            <FormItem className='p-2'>
+                                                <FormLabel>Network</FormLabel>
+                                                <FormControl>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <SelectTrigger className="w-[160px]">
+                                                            <SelectValue placeholder="Select a network" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {networks.map((network: any) => {
+                                                                return (
+                                                                    <SelectItem value={network.id} key={network.id}>
+                                                                        <div className='flex space-x-2'>
+                                                                            <Image src={network.icon.url} width={24} height={24} alt={'Network logo'} className="rounded-full" />
+                                                                            <div>{network.name}</div>
+                                                                        </div>
+                                                                    </SelectItem>
+                                                                )
+                                                            })}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="guild"
+                                        render={({ field }) => (
+                                            <FormItem className='p-2'>
+                                                <FormLabel>Project</FormLabel>
+                                                <FormControl>
+                                                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                        <SelectTrigger className="w-[160px]">
+                                                            <SelectValue placeholder="Select a project" />
+                                                        </SelectTrigger>
+                                                        <SelectContent>
+                                                            {guilds.map((guild: any) => {
+                                                                return (
+                                                                    <SelectItem value={guild.id} key={guild.id}>
+                                                                        <div className='flex space-x-2'>
+                                                                            <Image src={guild.logo.url} width={24} height={24} alt={'Guild logo'} className="rounded-full" />
+                                                                            <div>{guild.name}</div>
+                                                                        </div>
+                                                                    </SelectItem>
+                                                                )
+                                                            })}
+                                                        </SelectContent>
+                                                    </Select>
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
                                 </div>
-
-                                <FormItem className='p-2'>
-                                    <FormLabel>Action</FormLabel>
-                                    <FormControl>
-                                        <Select>
-                                            <SelectTrigger className="w-[336px]">
-                                                <SelectValue placeholder="Select an action" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                <SelectItem value="claim">Claim</SelectItem>
-                                                <SelectItem value="vote" disabled>Vote</SelectItem>
-                                            </SelectContent>
-                                        </Select>
-                                    </FormControl>
-                                    <FormMessage />
-                                </FormItem>
-
-                                <FormDescription className='p-2'>
-                                    Don't see your project? Check our docs to get it added.
+                                <FormField
+                                    control={form.control}
+                                    name="objectives"
+                                    render={({ field }) => (
+                                        <FormItem className='p-2'>
+                                            <FormLabel>Objective</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="What's the goal of the quest?" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormDescription className='p-2 my-11'>
+                                    Don't see your project? Check our docs for getting listed.
                                 </FormDescription>
                             </Card>
                         </section>
                         <section className='space-y-2'>
+                            <div>Create Quest Lore</div>
+                            <Card className='min-h-[200px] px-1'>
+                                <FormField
+                                    control={form.control}
+                                    name="title"
+                                    render={({ field }) => (
+                                        <FormItem className='p-2'>
+                                            <FormLabel>Title</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="Enter a title" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="subtitle"
+                                    render={({ field }) => (
+                                        <FormItem className='p-2'>
+                                            <FormLabel>Subtitle</FormLabel>
+                                            <FormControl>
+                                                <Input placeholder="One sentence description" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={form.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem className='p-2'>
+                                            <FormLabel>Description</FormLabel>
+                                            <FormControl>
+                                                <Textarea placeholder='Design the questline' {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </Card>
+                        </section>
+                        {/* <section className='space-y-2'>
                             <div>Choose Participants</div>
                             <Card className='px-1'>
                                 <FormItem className='p-2'>
@@ -135,8 +221,8 @@ export default function CreateQuest({ guilds }: Props) {
                                     </RadioGroup>
                                 </FormItem>
                             </Card>
-                        </section>
-                        <section className='space-y-2'>
+                        </section> */}
+                        {/* <section className='space-y-2'>
                             <div>Choose & Allocate Reward</div>
                             <Card className='px-1'>
                                 <div className='flex'>
@@ -153,7 +239,6 @@ export default function CreateQuest({ guilds }: Props) {
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
-                                        {/* <FormDescription>This is your public display name.</FormDescription> */}
                                         <FormMessage />
                                     </FormItem>
                                     <FormItem className='p-2'>
@@ -185,8 +270,8 @@ export default function CreateQuest({ guilds }: Props) {
                                     Total Cost of Quest: 0.000000 STX
                                 </FormDescription>
                             </Card>
-                        </section>
-                        <section className='space-y-2'>
+                        </section> */}
+                        {/* <section className='space-y-2'>
                             <div>Set Duration</div>
                             <Card className='px-1'>
                                 <div className='flex'>
@@ -205,11 +290,11 @@ export default function CreateQuest({ guilds }: Props) {
                                 </FormDescription>
 
                             </Card>
-                        </section>
-                        <Button className='w-full'>Deploy Quest</Button>
-                    </Form>
-                </div>
+                        </section> */}
+                    </div>
+                    <Button className='m-2 self-center' onClick={submitQuest}>Submit Quest for Preview ✨</Button>
+                </Form>
             </Layout>
-        </Page>
+        </Page >
     );
 }

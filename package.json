@@ -26,6 +26,7 @@
     "@radix-ui/react-select": "^1.2.2",
     "@radix-ui/react-slot": "^1.0.2",
     "@radix-ui/react-tabs": "0.1.4",
+    "@radix-ui/react-toast": "^1.1.4",
     "@radix-ui/react-tooltip": "^1.0.6",
     "@reach/skip-nav": "0.12.1",
     "@stacks/blockchain-api-client": "^7.3.0",

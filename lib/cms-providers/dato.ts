@@ -116,6 +116,22 @@ export async function getAllGuilds(): Promise<any[]> {
   return data.allGuilds;
 }
 
+export async function getAllNetworks(): Promise<any[]> {
+  const data = await fetchCmsAPI(`
+      {
+        allNetworks(first: 100) {
+          id
+          name
+          icon {
+            url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
+            blurDataURL: blurUpThumb
+          }
+        }
+      }
+    `);
+  return data.allNetworks;
+}
+
 export async function getAllSpeakers(): Promise<Speaker[]> {
   const data = await fetchCmsAPI(`
      {

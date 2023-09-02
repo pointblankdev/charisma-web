@@ -32,15 +32,9 @@ export default function QuestDetail(props: Props) {
         description: META_DESCRIPTION
     };
 
-    const quest = props
-
-    const charismaRewards = quest?.charismaRewards || 0
+    const charismaRewards = props?.charismaRewards || 0
     const showCommunityRewards = charismaRewards > 0
-    const randomImage = quest.randomImage;
-
-
-    console.log({ quest })
-    console.log({ randomImage })
+    const randomImage = props.randomImage;
 
     const { doContractCall } = useConnect();
     const [questAccepted, setQuestAccepted] = React.useState(false)
@@ -50,12 +44,12 @@ export default function QuestDetail(props: Props) {
 
     useEffect(() => {
         const profile = userSession.loadUserData().profile
-        checkQuestComplete(profile.stxAddress.mainnet, Number(quest?.questid || 0)).then((res) => {
+        checkQuestComplete(profile.stxAddress.mainnet, Number(props?.questid || 0)).then((res) => {
             if (res.value === 'true') {
                 setQuestCompleted(true)
             }
         })
-    }, [quest])
+    }, [props])
 
     const claimRewards = () => {
         doContractCall({
@@ -64,7 +58,7 @@ export default function QuestDetail(props: Props) {
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "dme010-quest-reward-helper",
             functionName: "claim-quest-reward",
-            functionArgs: [uintCV(Number(quest?.questid))],
+            functionArgs: [uintCV(Number(props?.questid))],
             postConditionMode: PostConditionMode.Deny,
             postConditions: [],
             onFinish: (data) => {
@@ -85,13 +79,13 @@ export default function QuestDetail(props: Props) {
         <Page meta={meta} fullViewport>
             <Layout className='m-2 sm:container sm:mx-auto sm:py-10 items-center'>
                 {/* text letting user know quests are in preview mode and are non-functional and for demonstration purposes only */}
-                <div className='text-center text-sm sm:text-xl font-fine text-yellow-200 mb-4'>
+                <div className='text-center text-sm sm:text-lg font-fine text-yellow-200 mb-4'>
                     Quests are in preview mode, and are for demonstration purposes only. For questions or comments, join Discord.
                 </div>
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
                     <CardHeader className='p-4 z-20'>
-                        <CardTitle className='text-xl font-semibold z-30'>{quest?.title}</CardTitle>
-                        <CardDescription className='text-md font-fine text-foreground z-30'>{quest?.subtitle}</CardDescription>
+                        <CardTitle className='text-xl font-semibold z-30'>{props?.title}</CardTitle>
+                        <CardDescription className='text-md font-fine text-foreground z-30'>{props?.subtitle}</CardDescription>
                         <div className='z-20'>
                             <CardTitle className='text-xl font-semibold mt-2 z-30'>Rewards</CardTitle>
                             {showCommunityRewards && <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>}
@@ -118,7 +112,7 @@ export default function QuestDetail(props: Props) {
                                     }}
                                     onInit={(typewriter) => {
                                         typewriter.pauseFor(1500)
-                                        quest?.description?.forEach((s: string) => typewriter.typeString(s).pauseFor(1000))
+                                        props?.description?.forEach((s: string) => typewriter.typeString(s).pauseFor(1000))
 
                                         typewriter.start().callFunction(() => setObjectivesVisible(true))
                                     }}
@@ -126,7 +120,7 @@ export default function QuestDetail(props: Props) {
                             </p>
 
                             {objectivesVisible && <motion.div initial="hidden" animate="visible" variants={fadeIn} className='text-xl font-semibold mt-4 z-30'>Objectives</motion.div>}
-                            {objectivesVisible && quest?.objectives?.map((o: any, k: any) =>
+                            {objectivesVisible && props?.objectives?.map((o: any, k: any) =>
                                 <motion.p key={k} initial="hidden" animate="visible" variants={fadeIn} className={`text-md font-fine text-foreground z-30 duration-200 ease-out transition transform `}>
                                     {o.text}: {o.metric}
                                 </motion.p>

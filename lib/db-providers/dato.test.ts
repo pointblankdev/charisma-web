@@ -1,8 +1,8 @@
-import { getAllWallets } from "../cms-api";
 import { createUser, getUserById, updateUserWithWallet, updateWalletAmount } from "./dato";
 import { callReadOnlyFunction, principalCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import _ from 'lodash'
+import { getAllWallets } from "@lib/cms-providers/dato";
 
 describe('getUserById function', () => {
     it('should return a user for a valid id', async () => {
