@@ -48,6 +48,18 @@ export async function getAllQuests(): Promise<any[]> {
           title
           subtitle
           questid
+          images {
+            url(imgixParams: {fm: jpg, fit: crop, w: 600, h: 1200})
+            blurDataURL: blurUpThumb
+          }
+          guild {
+            logo {
+              url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
+              blurDataURL: blurUpThumb
+            }
+          }
+          description
+          objectives
         }
       }
     `);

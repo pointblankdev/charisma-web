@@ -1,6 +1,3 @@
-
-import { useRouter } from 'next/router';
-
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
@@ -10,7 +7,6 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { cn } from '@lib/utils';
 import React, { useEffect } from 'react';
-import { data as staticQuestData } from 'pages/quests/index';
 import charismaToken from '@public/charisma.png'
 import { GetStaticProps } from 'next';
 import Typewriter from 'typewriter-effect';
@@ -26,7 +22,6 @@ import {
     uintCV,
 } from "@stacks/transactions";
 import { getAllQuests } from '@lib/cms-api';
-// import { GiScrollQuill } from 'react-icons/gi';
 
 export default function QuestDetail(props: Props) {
     const meta = {
@@ -37,6 +32,7 @@ export default function QuestDetail(props: Props) {
     const quest = props.data
     const charismaRewards = quest?.charismaRewards || 0
     const showCommunityRewards = charismaRewards > 0
+    const randomImage = quest.randomImage;
 
     const { doContractCall } = useConnect();
     const [questAccepted, setQuestAccepted] = React.useState(false)
@@ -77,7 +73,6 @@ export default function QuestDetail(props: Props) {
         visible: { opacity: 1 }
     };
 
-
     return (
         <Page meta={meta} fullViewport>
             <Layout className='m-2 sm:container sm:mx-auto sm:py-10 items-center'>
@@ -96,7 +91,6 @@ export default function QuestDetail(props: Props) {
                                 <div className='relative'>
                                     <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30 ' />
                                     <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{charismaRewards}</div>
-                                    {/* <div className='absolute -top-1.5 -left-3 text-md md:text-base lg:text-xs font-bold text-accent rounded-full px-1'><GiScrollQuill size={24} /></div> */}
                                 </div>
                             </div> : <div className='text-sm font-fine text-foreground z-30'>No rewards have been set for this quest yet</div>}
                         </div>
@@ -136,7 +130,9 @@ export default function QuestDetail(props: Props) {
                         <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={!questCompleted}>Claim Rewards</Button>
                     </CardFooter>}
                     <Image
-                        src={quest?.src}
+                        src={randomImage.url}
+                        width={800}
+                        height={1600}
                         alt={'quest-background-image'}
                         className={cn("object-cover", "sm:aspect-[1/2]", 'aspect-[1/3]', 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
                     />
@@ -158,12 +154,6 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     const quests = await getAllQuests()
     const quest = quests.find(p => String(p.slug) === params?.slug)
 
-    // look for a matching quest in data, if found, merge the data quest into the current one
-    const match = staticQuestData.find((d) => d.slug === quest.slug)
-    if (match) {
-        Object.assign(quest, match)
-    }
-
     const getCharismaRewards: any = await callReadOnlyFunction({
         network: new StacksMainnet(),
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -173,8 +163,12 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
         senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
     })
 
+    const randomIndex = Math.floor(Math.random() * quest.images.length);
+    const randomImage = quest.images[randomIndex];
+
     const data = {
         ...quest,
+        randomImage: randomImage,
         charismaRewards: Number(getCharismaRewards.value.value)
     }
 
