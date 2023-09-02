@@ -18,14 +18,18 @@ import {
 import Link from 'next/link';
 import { Label } from "@components/ui/label"
 import { RadioGroup, RadioGroupItem } from "@components/ui/radio-group"
+import { getAllGuilds } from '@lib/cms-api';
+import Image from 'next/image';
 
 
 
-export default function CreateQuest({ }: Props) {
+export default function CreateQuest({ guilds }: Props) {
     const meta = {
         title: 'Charisma | Create a Quest',
         description: META_DESCRIPTION
     };
+
+    console.log(guilds)
 
     const form = useForm()
     return (
@@ -62,8 +66,19 @@ export default function CreateQuest({ }: Props) {
                                                     <SelectValue placeholder="Select a project" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    <SelectItem value="charisma">Charisma</SelectItem>
-                                                    <SelectItem value="alex-lab" disabled>ALEX Lab</SelectItem>
+                                                    {guilds.map((guild) => {
+
+                                                        return (
+
+                                                            <SelectItem value={guild.name}>
+                                                                <div className='flex space-x-2'>
+                                                                    <Image src={guild.logo.url} width={24} height={24} alt={'Guild logo'} className="rounded-full" />
+                                                                    <div>{guild.name}</div>
+                                                                </div>
+                                                            </SelectItem>
+                                                        )
+                                                    })
+                                                    }
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
@@ -189,15 +204,16 @@ export default function CreateQuest({ }: Props) {
 }
 
 type Props = {
-    data: any;
+    guilds: any[];
 };
 
-export const getStaticProps: GetStaticProps<Props> = () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+    const guilds = await getAllGuilds()
 
     return {
         props: {
-            data: {
-            }
+            guilds
         },
         revalidate: 60
     };

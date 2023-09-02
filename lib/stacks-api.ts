@@ -48,10 +48,14 @@ export async function fetchAllClaims() {
         f.results.forEach((r: any) => {
             const txDate = new Date(r.tx.burn_block_time_iso);
             if (r.tx.contract_call?.function_name === 'claim' && r.tx.tx_result.repr === '(ok true)') {
-                if (txDate > oneWeekAgo) {
-                    uniqueWalletsLast7Days++;
-                }
+                const size = uniqueWallets.size;
                 uniqueWallets.add(r.tx.sender_address);
+                // if the size of the set has changed, then a new wallet has been added
+                if (size !== uniqueWallets.size) {
+                    if (txDate > oneWeekAgo) {
+                        uniqueWalletsLast7Days++;
+                    }
+                }
             }
         });
 
