@@ -54,6 +54,24 @@ export async function getAllQuests(): Promise<any[]> {
   return data.allQuests;
 }
 
+export async function getAllGuilds(): Promise<any[]> {
+  const data = await fetchCmsAPI(`
+      {
+        allGuilds(first: 100, orderBy: id_ASC) {
+          id
+          name
+          description
+          url
+          logo {
+            url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
+            blurDataURL: blurUpThumb
+          }
+        }
+      }
+    `);
+  return data.allGuilds;
+}
+
 export async function getAllSpeakers(): Promise<Speaker[]> {
   const data = await fetchCmsAPI(`
      {

@@ -22,9 +22,9 @@ export const columns: ColumnDef<Guild>[] = [
         accessorKey: "logo",
         header: () => <div className="text-left">Crest</div>,
         cell: ({ row }) => {
-            const logo = row.getValue("logo")
+            const logo: any = row.getValue("logo")
 
-            return <Image src={logo as StaticImport} width={48} height={48} alt={'Guild logo'} className="rounded-full border border-white" />
+            return <Image src={logo.url} width={48} height={48} alt={'Guild logo'} className="rounded-full border border-white" />
         },
 
     },

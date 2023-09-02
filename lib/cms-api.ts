@@ -5,6 +5,7 @@ import * as datoCmsApi from './cms-providers/dato';
 let cmsApi: {
   getAllWallets: () => Promise<any[]>;
   getAllQuests: () => Promise<any[]>;
+  getAllGuilds: () => Promise<any[]>;
 };
 
 if (process.env.DATOCMS_READ_ONLY_API_TOKEN) {
@@ -17,4 +18,8 @@ export async function getAllWallets(): Promise<any[]> {
 
 export async function getAllQuests(): Promise<any[]> {
   return cmsApi.getAllQuests();
+}
+
+export async function getAllGuilds(): Promise<any[]> {
+  return cmsApi.getAllGuilds();
 }
