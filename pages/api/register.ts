@@ -5,8 +5,8 @@ import validator from 'validator';
 import { COOKIE } from '@lib/constants';
 import cookie from 'cookie';
 import ms from 'ms';
-import { createUser } from '@lib/db-api';
 import { validateCaptchaResult, IS_CAPTCHA_ENABLED } from '@lib/captcha';
+import { createUser } from '@lib/db-providers/dato';
 
 type ErrorResponse = {
   error: {

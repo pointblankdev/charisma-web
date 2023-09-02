@@ -1,7 +1,7 @@
 
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ConfUser } from '@lib/types';
-import { createWallet, updateUserWithWallet } from '@lib/db-api';
+import { createWallet, updateUserWithWallet } from '@lib/db-providers/dato';
 
 type ErrorResponse = {
   error: {
