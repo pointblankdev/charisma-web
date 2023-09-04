@@ -1,64 +1,123 @@
+#lead{
+  margin: 20px;
+  margin-top: 50px;
+  margin-left: 40px;
+  margin-right: 40px;
+  display: flex;
+  flex-direction: column;
+}
+
 .leaderboard {
-    background-color: #333;
-    border-radius: 10px;
-    padding: 20px;
-    color: white;
-  }
+  background-color: transparent;
+  border: 1px solid red;
+  /* background-color: #333; */
+  border-radius: 10px;
+  padding: 20px;
+  color: white;
+  margin-top: 25px;
+  display: flex;
+  flex-direction: column;
+}
+/* Search bar */
+.search-bar {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+}
+
+.search-bar input {
+  border: 1px solid red;
+  border-radius: 5px;
+  background-color: transparent;
+  padding: 5px;
+  margin-right: 10px;
+}
+
+.search-bar button {
+  border: 1px solid red;
+  border-radius: 5px;
+  background-color: transparent;
+  cursor: pointer;
+}
+
+/* Filter bar */
+.filter-bar {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+  border: 1px solid red;
+  border-radius: 5px;
+}
+
+.filter-bar button {
   
-  .leaderboard table {
-    width: 100%;
-    border-collapse: separate;
-    border-spacing: 0; 
-  }
-  
-  .leaderboard th,
-  .leaderboard td {
-    text-align: center;
-    padding: 10px;
-    border: none; 
-    border-bottom: 1px solid red; 
-  }
-  
-  .leaderboard th {
-    background-color: #555;
-    border-top-left-radius: 10px;
-    border-top-right-radius: 10px;
-  }
-  
-  .leaderboard tr:hover {
-    background-color: #444;
-  }
-  
-  .leaderboard .name-wrapper {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .leaderboard img {
-    width: 30px;
-    height: 30px;
-    border-radius: 50%;
-  }
-  
-  .leaderboard .copy-icon {
-    background: none;
-    border: none;
-    color: #007bff;
-    cursor: pointer;
-    outline: none;
-  }
-  
-  .leaderboard .copy-icon:hover {
-    text-decoration: underline;
-  }
-  
-  .leaderboard a {
-    text-decoration: none;
-    color: #007bff;
-  }
-  
-  .leaderboard a:hover {
-    text-decoration: underline;
-  }
-  
+  border-radius: 5px;
+  background-color: transparent;
+  color: rgb(255, 255, 255);
+  cursor: pointer;
+  padding: 5px 10px;
+  margin-left: 10px;
+}
+
+.filter-bar button.active {
+  border: 1px solid red;
+  background-color: rgb(65, 62, 62);
+  color: white;
+}
+
+.leaderboard table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.leaderboard th,
+.leaderboard td {
+  text-align: center;
+  padding: 10px;
+  border: none;
+  border-bottom: 1px solid red;
+}
+
+.leaderboard th {
+  background-color: #555;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+}
+
+.leaderboard tr:hover {
+  background-color: #444;
+}
+
+.leaderboard .name-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.leaderboard img {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+}
+
+.leaderboard .copy-icon {
+  background: none;
+  border: none;
+  color: #007bff;
+  cursor: pointer;
+  outline: none;
+}
+
+.leaderboard .copy-icon:hover {
+  text-decoration: underline;
+}
+
+.leaderboard a {
+  text-decoration: none;
+  color: #007bff;
+}
+
+.leaderboard a:hover {
+  text-decoration: underline;
+}
