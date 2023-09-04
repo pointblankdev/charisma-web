@@ -74,13 +74,12 @@ export default function Leaderboard() {
   const [searchedText, setSearchedText] = useState('');
   const [activeFilter, setActiveFilter] = useState('All-time');
 
-  // Simulated API call to fetch data (replace with actual API call)
+  // Simulated API call to fetch data
   useEffect(() => {
     // Replace this with your actual API call logic
-    // For demonstration, we're using dummy data here
     const fetchData = async () => {
       try {
-        const response = await fetch('your-api-endpoint-here');
+        const response = await fetch('https://');
         if (response.ok) {
           const result = await response.json();
           setData(result);
