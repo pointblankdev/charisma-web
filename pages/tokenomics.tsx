@@ -14,6 +14,8 @@ import {
 import { GetStaticProps } from 'next';
 import { accountsApi, fetchAllClaims, getTokenStats } from '@lib/stacks-api';
 import HoldersChart from '@components/tokenomics/HoldersChart';
+import { getAllWallets } from "@lib/cms-providers/dato";
+import _ from 'lodash';
 
 
 type Props = {
@@ -32,10 +34,27 @@ export default function Tokenomics({ data }: Props) {
   const uniqueAddresses = data.uniqueAddresses
   const percentChange = data.percentChange
   const walletBalances = data.walletBalances
+  const wallets = data.wallets
+
+  const mergedWalletBalances = _.map(walletBalances, obj1 => {
+    const obj2 = _.find(wallets, { stxaddress: obj1.primary });
+
+    if (obj2) {
+      // If bns is non-blank, update the primary field
+      if (obj2.bns && obj2.bns.trim() !== '') {
+        obj1.primary = obj2.bns;
+      }
+
+      // Merge the two objects
+      return _.merge({}, obj1, obj2);
+    } else {
+      return obj1;
+    }
+  });
 
   const chartData = [
     {
-      data: walletBalances,
+      data: mergedWalletBalances,
       label: "Charisma Tokens"
     }
   ]
@@ -128,6 +147,8 @@ export default function Tokenomics({ data }: Props) {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const { totalSupply, dripAmount } = await getTokenStats();
   const { walletBalances, totalUniqueWallets, percentChange } = await fetchAllClaims()
+  const wallets = await getAllWallets()
+
 
   return {
     props: {
@@ -136,7 +157,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         dripAmount: dripAmount,
         walletBalances: walletBalances,
         uniqueAddresses: totalUniqueWallets,
-        percentChange: percentChange
+        percentChange: percentChange,
+        wallets: wallets
       }
     },
     revalidate: 60

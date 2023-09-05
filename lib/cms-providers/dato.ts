@@ -33,6 +33,7 @@ export async function getAllWallets(): Promise<any[]> {
           id
           stxaddress
           charisma
+          bns
         }
       }
     `);
