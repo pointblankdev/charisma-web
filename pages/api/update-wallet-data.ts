@@ -4,7 +4,8 @@ import { callReadOnlyFunction, principalCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import _ from 'lodash';
 import { getAllWallets } from '@lib/cms-providers/dato';
-import { updateWalletAmount } from '@lib/db-providers/dato';
+import { updateWalletAmount, updateWalletBNS } from '@lib/db-providers/dato';
+import { getNameFromAddress } from "@lib/stacks-api";
 
 type ErrorResponse = {
     error: {
@@ -38,6 +39,13 @@ export default async function updateWalletData(
             const resp = await updateWalletAmount(wallet.id, amount)
 
             console.log(`${resp.stxaddress}: ${resp.charisma} CHA`)
+
+            const { names } = await getNameFromAddress(wallet.stxaddress)
+
+            console.log(`Names: ${names.join(', ')}`)
+            if (names?.[0]) {
+                await updateWalletBNS(wallet.id, names[0])
+            }
 
             if (count > 49) {
                 break;

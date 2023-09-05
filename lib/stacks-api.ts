@@ -1,4 +1,4 @@
-import { AccountsApi, BlocksApi, Configuration, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
+import { AccountsApi, BlocksApi, Configuration, NamesApi, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
@@ -16,12 +16,19 @@ const scApi = new SmartContractsApi(apiConfig);
 const blocksApi = new BlocksApi(apiConfig);
 const txApi = new TransactionsApi(apiConfig);
 const accountsApi = new AccountsApi(apiConfig);
+const namesApi = new NamesApi(apiConfig);
 
 export {
     scApi,
     blocksApi,
     txApi,
-    accountsApi
+    accountsApi,
+    namesApi
+}
+
+export async function getNameFromAddress(address: string) {
+    const nameInfo = await namesApi.getNamesOwnedByAddress({ blockchain: 'stacks', address: address });
+    return nameInfo;
 }
 
 

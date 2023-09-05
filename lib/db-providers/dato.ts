@@ -36,6 +36,10 @@ export async function updateWalletAmount(walletId: string, charisma: number): Pr
     return client.items.update(walletId, { charisma })
 }
 
+export async function updateWalletBNS(walletId: string, bns: string): Promise<any> {
+    return client.items.update(walletId, { bns })
+}
+
 export async function createQuestDraft(args: any): Promise<any> {
     return client.items.create({
         item_type: { type: 'item_type', id: QUEST_TYPE_ID },

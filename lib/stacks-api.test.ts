@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, getNameFromAddress, setQuestComplete } from "./stacks-api";
 
 const network = new StacksMainnet();
 
@@ -44,6 +44,16 @@ describe('Stacks API', () => {
         console.log(broadcastResponse)
 
         expect(broadcastResponse.error).not.toBeDefined()
+
+    })
+
+    it('should lookup a BNS name given an address', async () => {
+        const address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+
+        const { names } = await getNameFromAddress(address)
+
+        console.log(names)
+
 
     })
 })
