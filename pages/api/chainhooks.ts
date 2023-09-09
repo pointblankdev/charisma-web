@@ -9,7 +9,7 @@ type ErrorResponse = {
   };
 };
 
-export default function chainhooks(
+export default async function chainhooks(
   req: NextApiRequest,
   res: NextApiResponse<ConfUser | ErrorResponse>
 ) {
@@ -23,8 +23,8 @@ export default function chainhooks(
   }
 
   try {
-    req.body.apply.forEach((a: any) => {
-      a.transactions.forEach(async (tx: any) => {
+    for (const a of req.body.apply) {
+      for (const tx of a.transactions) {
         const payload = {
           ...tx.metadata.kind.data,
           sender: tx.metadata.sender,
@@ -45,14 +45,14 @@ export default function chainhooks(
           const charismaTokenFaucetQuestId = 0
           const response = await checkQuestComplete(payload.sender, charismaTokenFaucetQuestId)
           console.log(response)
-          if (response.value === 'false') {
+          if (response.value === 'false' || Number(response.value) === 2001) {
             // mark the quest as complete
             console.log('marking quest as complete')
             // setQuestComplete(payload.sender, charismaTokenFaucetQuestId, true)
           }
         }
-      })
-    })
+      }
+    }
   } catch (error: any) {
     console.error(error.message)
   }

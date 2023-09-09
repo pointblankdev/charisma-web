@@ -18,7 +18,7 @@ export default function Hero() {
           styleUtils['hide-on-tablet'],
         )}
       >
-        {SITE_DESCRIPTION}
+        Attract, reward, and build your community
       </h2>
       <div className={cn(styles.heroContainer, 'space-x-1')}>
         <Image src={charisma} alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'])} />{' '}
@@ -36,7 +36,7 @@ export default function Hero() {
           styleUtils['show-on-tablet'],
         )}
       >
-        {SITE_DESCRIPTION}
+        Attract, reward, and build your community
       </h2>
       <div className={cn(styleUtils.appear, styleUtils['appear-third'], styles.info)}>
         <p>{DATE}</p>
@@ -46,7 +46,7 @@ export default function Hero() {
         </p>
       </div>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <p>Complete Quests. Claim Rewards. Explore Bitcoin.</p>
+        <p>Attract users. Reward activity. Build loyality.</p>
       </div>
     </div>
   );

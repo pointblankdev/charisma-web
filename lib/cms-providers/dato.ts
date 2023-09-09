@@ -26,6 +26,113 @@ async function fetchCmsAPI(query: string, { variables }: { variables?: Record<st
   return json.data;
 }
 
+export async function getAllWallets(): Promise<any[]> {
+  const data = await fetchCmsAPI(`
+      {
+        allWallets(first: 100, filter: {stxaddress: {isPresent: true}}) {
+          id
+          stxaddress
+          charisma
+          bns
+        }
+      }
+    `);
+  return data.allWallets;
+}
+
+export async function getAllQuests(): Promise<any[]> {
+  const data = await fetchCmsAPI(`
+      {
+        allQuests(first: 100, orderBy: id_ASC) {
+          id
+          slug
+          title
+          subtitle
+          questid
+          images {
+            url(imgixParams: {fm: jpg, fit: crop, w: 600, h: 1200})
+            blurDataURL: blurUpThumb
+          }
+          guild {
+            logo {
+              url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
+              blurDataURL: blurUpThumb
+            }
+          }
+          description
+          objectives
+        }
+      }
+    `);
+  return data.allQuests;
+}
+
+export async function getQuestBySlug(slug: string): Promise<any> {
+  const data = await fetchCmsAPI(`
+      query QuestBySlug($slug: String) {
+        quest(filter: {slug: {eq: $slug}}) {
+          id
+          slug
+          title
+          subtitle
+          questid
+          images {
+            url(imgixParams: {fm: jpg, fit: crop, w: 600, h: 1200})
+            blurDataURL: blurUpThumb
+          }
+          guild {
+            logo {
+              url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
+              blurDataURL: blurUpThumb
+            }
+          }
+          description
+          objectives
+        }
+      }
+    `, {
+    variables: {
+      slug
+    }
+  });
+  return data.quest;
+}
+
+
+export async function getAllGuilds(): Promise<any[]> {
+  const data = await fetchCmsAPI(`
+      {
+        allGuilds(first: 100, orderBy: id_ASC) {
+          id
+          name
+          description
+          url
+          logo {
+            url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
+            blurDataURL: blurUpThumb
+          }
+        }
+      }
+    `);
+  return data.allGuilds;
+}
+
+export async function getAllNetworks(): Promise<any[]> {
+  const data = await fetchCmsAPI(`
+      {
+        allNetworks(first: 100) {
+          id
+          name
+          icon {
+            url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
+            blurDataURL: blurUpThumb
+          }
+        }
+      }
+    `);
+  return data.allNetworks;
+}
+
 export async function getAllSpeakers(): Promise<Speaker[]> {
   const data = await fetchCmsAPI(`
      {

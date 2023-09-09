@@ -13,8 +13,14 @@ import {
 } from "@components/ui/card"
 import { GetStaticProps } from 'next';
 import { accountsApi, fetchAllClaims, getTokenStats } from '@lib/stacks-api';
-import Logo from '@components/logo';
+import HoldersChart from '@components/tokenomics/HoldersChart';
+import { getAllWallets } from "@lib/cms-providers/dato";
+import _ from 'lodash';
 
+
+type Props = {
+  data: any;
+};
 
 export default function Tokenomics({ data }: Props) {
   const meta = {
@@ -27,6 +33,31 @@ export default function Tokenomics({ data }: Props) {
   const dripAmountPerDayWithDecimals = (dripAmount * 144)
   const uniqueAddresses = data.uniqueAddresses
   const percentChange = data.percentChange
+  const walletBalances = data.walletBalances
+  const wallets = data.wallets
+
+  const mergedWalletBalances = _.map(walletBalances, obj1 => {
+    const obj2 = _.find(wallets, { stxaddress: obj1.primary });
+
+    if (obj2) {
+      // If bns is non-blank, update the primary field
+      if (obj2.bns && obj2.bns.trim() !== '') {
+        obj1.primary = obj2.bns;
+      }
+
+      // Merge the two objects
+      return _.merge({}, obj1, obj2);
+    } else {
+      return obj1;
+    }
+  });
+
+  const chartData = [
+    {
+      data: mergedWalletBalances,
+      label: "Charisma Tokens"
+    }
+  ]
 
   return (
     <Page meta={meta} fullViewport>
@@ -104,28 +135,30 @@ export default function Tokenomics({ data }: Props) {
             In essence, this approach emphasizes a stable growth model, transparency, and user-centric distribution, aiming to build trust, value, and a strong community foundation.
           </p>
 
+          <h1 className='text-xl text-left mt-8 mb-2 text-gray-200 hidden xl:block'>Top 20 Addresses by Charisma Tokens</h1>
+          <HoldersChart data={chartData} />
+
         </div>
       </Layout>
     </Page>
   );
 }
 
-type Props = {
-  data: any;
-};
-
 export const getStaticProps: GetStaticProps<Props> = async () => {
-
   const { totalSupply, dripAmount } = await getTokenStats();
-  const { totalUniqueWallets, percentChange } = await fetchAllClaims()
+  const { walletBalances, totalUniqueWallets, percentChange } = await fetchAllClaims()
+  const wallets = await getAllWallets()
+
 
   return {
     props: {
       data: {
         totalSupply: totalSupply,
         dripAmount: dripAmount,
+        walletBalances: walletBalances,
         uniqueAddresses: totalUniqueWallets,
-        percentChange: percentChange
+        percentChange: percentChange,
+        wallets: wallets
       }
     },
     revalidate: 60

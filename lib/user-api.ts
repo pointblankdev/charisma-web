@@ -45,3 +45,13 @@ export function emailToId(email: string) {
     throw new Error('EMAIL_TO_ID_SECRET is missing');
   }
 }
+
+export async function createQuestDraft(args: any) {
+  return await fetch('/api/create-quest-draft', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(args)
+  });
+}

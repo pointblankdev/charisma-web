@@ -1,7 +1,8 @@
-import { AccountsApi, BlocksApi, Configuration, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
+import { AccountsApi, BlocksApi, Configuration, NamesApi, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
+import { getAllWallets } from "./cms-providers/dato";
 
 const network = new StacksMainnet();
 
@@ -15,12 +16,19 @@ const scApi = new SmartContractsApi(apiConfig);
 const blocksApi = new BlocksApi(apiConfig);
 const txApi = new TransactionsApi(apiConfig);
 const accountsApi = new AccountsApi(apiConfig);
+const namesApi = new NamesApi(apiConfig);
 
 export {
     scApi,
     blocksApi,
     txApi,
-    accountsApi
+    accountsApi,
+    namesApi
+}
+
+export async function getNameFromAddress(address: string) {
+    const nameInfo = await namesApi.getNamesOwnedByAddress({ blockchain: 'stacks', address: address });
+    return nameInfo;
 }
 
 
@@ -47,10 +55,14 @@ export async function fetchAllClaims() {
         f.results.forEach((r: any) => {
             const txDate = new Date(r.tx.burn_block_time_iso);
             if (r.tx.contract_call?.function_name === 'claim' && r.tx.tx_result.repr === '(ok true)') {
-                if (txDate > oneWeekAgo) {
-                    uniqueWalletsLast7Days++;
-                }
+                const size = uniqueWallets.size;
                 uniqueWallets.add(r.tx.sender_address);
+                // if the size of the set has changed, then a new wallet has been added
+                if (size !== uniqueWallets.size) {
+                    if (txDate > oneWeekAgo) {
+                        uniqueWalletsLast7Days++;
+                    }
+                }
             }
         });
 
@@ -60,10 +72,11 @@ export async function fetchAllClaims() {
     const totalUniqueWallets = uniqueWallets.size;
     const percentChange = (uniqueWalletsLast7Days / totalUniqueWallets) * 100;
 
-    console.log(`Total unique wallets that claimed the token: ${totalUniqueWallets}`);
-    console.log(`Percentage of new unique wallets in the last 7 days: ${percentChange.toFixed(2)}%`);
+    const wallets = await getAllWallets()
+    const walletBalances = wallets.map((wallet) => ({ primary: wallet.stxaddress, secondary: wallet.charisma }))
 
     return {
+        walletBalances: walletBalances.sort((a, b) => b.secondary - a.secondary).slice(0, 20),
         totalUniqueWallets: totalUniqueWallets,
         percentChange: percentChange
     };
