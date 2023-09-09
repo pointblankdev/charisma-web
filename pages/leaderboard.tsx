@@ -10,6 +10,7 @@ import Link from 'next/link';
 import { fetchAllContractTransactions, getProposals, updateVoteData } from '@lib/stacks-api';
 import dmlogo from '@public/dm-logo.png';
 
+
 // SearchBar component
 const SearchBar = ({ onSearch }) => {
   const [searchText, setSearchText] = useState('');
@@ -27,13 +28,13 @@ const SearchBar = ({ onSearch }) => {
         onChange={e => setSearchText(e.target.value)}
         style={{
           borderRadius: '5px',
-          borderColor: 'red',
+          borderColor: '#780000',
           backgroundColor: 'transparent',
           padding: '5px'
         }}
       />
-      <button onClick={handleSearch} style={{ borderColor: 'red', backgroundColor: 'transparent' }}>
-        <i className="fas fa-search" style={{ color: 'red' }}></i>
+      <button onClick={handleSearch} style={{ borderColor: '#780000', backgroundColor: 'transparent' }}>
+        <i className="fas fa-search" style={{ color: '#780000' }}></i>
       </button>
     </div>
   );
@@ -52,7 +53,7 @@ const FilterBar = ({ activeFilter, onFilterChange }) => {
           className={activeFilter === filter ? 'active' : ''}
           style={{
             borderRadius: '5px',
-            borderColor: 'red',
+            borderColor: '#780000',
             backgroundColor: activeFilter === filter ? 'rgb(65, 62, 62)' : 'black',
             color: activeFilter === filter ? 'white' : 'white'
           }}

@@ -1,16 +1,16 @@
-#lead{
-  margin: 20px;
-  margin-top: 50px;
-  margin-left: 40px;
-  margin-right: 40px;
+#lead {
+  margin: 0.5rem;
+  margin-top: 2.5rem;
+  margin-bottom: 2.5rem;
+  margin-left: 2rem;
+  margin-right: 2rem;
   display: flex;
   flex-direction: column;
 }
 
 .leaderboard {
   background-color: transparent;
-  border: 1px solid red;
-  /* background-color: #333; */
+  border: 1px solid #780000;
   border-radius: 10px;
   padding: 20px;
   color: white;
@@ -18,7 +18,7 @@
   display: flex;
   flex-direction: column;
 }
-/* Search bar */
+
 .search-bar {
   display: flex;
   align-items: center;
@@ -26,7 +26,7 @@
 }
 
 .search-bar input {
-  border: 1px solid red;
+  border: 1px solid #780000;
   border-radius: 5px;
   background-color: transparent;
   padding: 5px;
@@ -34,23 +34,21 @@
 }
 
 .search-bar button {
-  border: 1px solid red;
+  border: 1px solid #780000;
   border-radius: 5px;
   background-color: transparent;
   cursor: pointer;
 }
 
-/* Filter bar */
 .filter-bar {
   display: flex;
   justify-content: flex-end;
   margin-bottom: 20px;
-  border: 1px solid red;
+  border: 1px solid #780000;
   border-radius: 5px;
 }
 
 .filter-bar button {
-  
   border-radius: 5px;
   background-color: transparent;
   color: rgb(255, 255, 255);
@@ -60,7 +58,7 @@
 }
 
 .filter-bar button.active {
-  border: 1px solid red;
+  border: 1px solid #780000;
   background-color: rgb(65, 62, 62);
   color: white;
 }
@@ -76,7 +74,7 @@
   text-align: center;
   padding: 10px;
   border: none;
-  border-bottom: 1px solid red;
+  border-bottom: 1px solid #780000;
 }
 
 .leaderboard th {
@@ -120,4 +118,50 @@
 
 .leaderboard a:hover {
   text-decoration: underline;
+}
+
+/* Adding a media query for smaller screens */
+@media screen and (max-width: 768px) {
+  #lead {
+    margin-left: 1rem;
+    margin-right: 1rem;
+  }
+
+  .leaderboard {
+    padding: 10px;
+  }
+
+  .leaderboard th,
+  .leaderboard td {
+    padding: 5px;
+    font-size: 14px;
+  }
+
+  .leaderboard th {
+    display: none;
+  }
+
+  .leaderboard tbody tr {
+    display: block;
+    margin-bottom: 10px;
+    border: 1px solid #780000;
+    border-radius: 10px;
+  }
+
+  .leaderboard tbody td {
+    text-align: center;
+    border-radius: 0;
+  }
+
+  .leaderboard .copy-icon {
+    display: none;
+  }
+
+  .leaderboard .name-wrapper {
+    gap: 5px;
+  }
+
+  .leaderboard table {
+    overflow-x: auto;
+  }
 }
