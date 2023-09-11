@@ -59,7 +59,7 @@
 
 .filter-bar button.active {
   border: 1px solid #780000;
-  background-color: rgb(65, 62, 62);
+  background-color: #323332;
   color: white;
 }
 
@@ -78,13 +78,13 @@
 }
 
 .leaderboard th {
-  background-color: #555;
+  background-color: #323332;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
 
 .leaderboard tr:hover {
-  background-color: #444;
+  background-color: #323332;
 }
 
 .leaderboard .name-wrapper {

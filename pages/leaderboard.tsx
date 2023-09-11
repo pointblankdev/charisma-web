@@ -1,15 +1,18 @@
 import React, { useEffect, useState } from 'react';
-import { GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
+import Image from 'next/image';
 
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
-import { Button } from '@components/ui/button';
-import Link from 'next/link';
-import { fetchAllContractTransactions, getProposals, updateVoteData } from '@lib/stacks-api';
-import dmlogo from '@public/dm-logo.png';
 
+import searchIcon from '../components/icons/leaderboard/search.png';
+import clipboardIcon from '../components/icons/leaderboard/clipboard.png';
+import linkIcon from '../components/icons/leaderboard/Goto.png';
+
+import goldMedal from '../components/icons/leaderboard/first-medal.png';
+import silverMedal from '../components/icons/leaderboard/second-medal.png';
+import bronzeMedal from '../components/icons/leaderboard/third-medal.png';
 
 // SearchBar component
 const SearchBar = ({ onSearch }) => {
@@ -30,11 +33,24 @@ const SearchBar = ({ onSearch }) => {
           borderRadius: '5px',
           borderColor: '#780000',
           backgroundColor: 'transparent',
-          padding: '5px'
+          padding: '5px',
+          paddingLeft: '30px', // Add left padding for the icon
+          background: `url(${searchIcon}) 5px center no-repeat`, // Add the search icon as a background image
+          backgroundSize: '20px 20px' // Set the size of the background image
         }}
       />
-      <button onClick={handleSearch} style={{ borderColor: '#780000', backgroundColor: 'transparent' }}>
-        <i className="fas fa-search" style={{ color: '#780000' }}></i>
+      <button
+        onClick={handleSearch}
+        style={{
+          borderColor: '#780000',
+          backgroundColor: 'transparent',
+          position: 'absolute',
+          top: '5px', // Adjust the vertical position as needed
+          left: '5px' // Adjust the horizontal position as needed
+        }}
+      >
+        {/* You can use an empty span to create space for the icon */}
+        <span style={{ width: '20px', height: '20px', display: 'block' }}></span>
       </button>
     </div>
   );
@@ -54,7 +70,7 @@ const FilterBar = ({ activeFilter, onFilterChange }) => {
           style={{
             borderRadius: '5px',
             borderColor: '#780000',
-            backgroundColor: activeFilter === filter ? 'rgb(65, 62, 62)' : 'black',
+            backgroundColor: activeFilter === filter ? '#323332' : 'black',
             color: activeFilter === filter ? 'white' : 'white'
           }}
         >
@@ -103,8 +119,11 @@ export default function Leaderboard() {
     setActiveFilter(filter);
   };
 
+  // Sort the data by Power Score in descending order
+  const sortedData = [...data].sort((a, b) => b.powerScore - a.powerScore);
+
   // Filter and search data here based on 'searchedText' and 'activeFilter'
-  const filteredData = data.filter(entry =>
+  const filteredData = sortedData.filter(entry =>
     entry.address.toLowerCase().includes(searchedText.toLowerCase())
   );
 
@@ -113,57 +132,69 @@ export default function Leaderboard() {
       <SkipNavContent />
       <Layout>
         <div id="lead">
-        <div className="flex justify-between items-end">
-          <SearchBar onSearch={handleSearch} />
-          <FilterBar activeFilter={activeFilter} onFilterChange={handleFilterChange} />
-        </div>
-        <div className="leaderboard">
-          <table>
-            <thead>
-              <tr>
-                <th>Rank</th>
-                <th>Name</th>
-                <th>Power Score</th>
-                <th>Quests Completed</th>
-                <th></th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredData.map((entry, index) => (
-                <tr key={index}>
-                  <td>{entry.num}</td>
-                  <td>
-                    <div className="name-wrapper">
-                      <img src={entry.image} alt="Avatar" />
-                      <span>{entry.address}</span>
-                      <button
-                        onClick={() => {
-                          // Handle copy address logic here
-                          const textarea = document.createElement('textarea');
-                          textarea.value = entry.address;
-                          document.body.appendChild(textarea);
-                          textarea.select();
-                          document.execCommand('copy');
-                          document.body.removeChild(textarea);
-                        }}
-                        className="copy-icon"
-                      >
-                        Copy
-                      </button>
-                    </div>
-                  </td>
-                  <td>{entry.powerScore}</td>
-                  <td>{entry.questsCompleted}</td>
-                  <td>
-                    <a href={entry.link}>
-                      <i className="fas fa-external-link-alt"></i>
-                    </a>
-                  </td>
+          <div className="flex justify-between items-end">
+            <SearchBar onSearch={handleSearch} />
+            <FilterBar activeFilter={activeFilter} onFilterChange={handleFilterChange} />
+          </div>
+          <div className="leaderboard">
+            <table>
+              <thead>
+                <tr>
+                  <th>Rank</th>
+                  <th>Name</th>
+                  <th>Power Score</th>
+                  <th>Quests Completed</th>
+                  <th></th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {filteredData.map((entry, index) => (
+                  <tr key={index}>
+                    <td>
+                      {index < 3 ? (
+                        // Display medal images for the first three ranks
+                        <img
+                          src={index === 0 ? goldMedal : index === 1 ? silverMedal : bronzeMedal}
+                          alt={`Rank ${index + 1}`}
+                          style={{ width: '50px', height: '50px' }}
+                        />
+                      ) : (
+                        // Display rank number for other ranks
+                        index + 1
+                      )}
+                    </td>
+                    <td>
+                      <div className="name-wrapper">
+                        <img src={entry.image} alt="Avatar" />
+                        <span>{entry.address}</span>
+                        <button
+                          onClick={() => {
+                            // Handle copy address logic here
+                            const textarea = document.createElement('textarea');
+                            textarea.value = entry.address;
+                            document.body.appendChild(textarea);
+                            textarea.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(textarea);
+                          }}
+                          className="copy-icon"
+                        >
+                          <Image src={clipboardIcon} alt="Copy" width={20} height={20} />
+                        </button>
+                      </div>
+                    </td>
+                    <td>{entry.powerScore}</td>
+                    <td>{entry.questsCompleted}</td>
+                    <td>
+                      <a href={entry.link}>
+                        <Image src={linkIcon} alt="Link" width={20} height={20} />
+                      </a>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         </div>
       </Layout>
     </Page>
