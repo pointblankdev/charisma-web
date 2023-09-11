@@ -36,6 +36,10 @@ export const NAVIGATION = [
     route: '/governance'
   },
   {
+    name: 'Leaderboard',
+    route: '/leaderboard'
+  },
+  {
     name: 'Guilds',
     route: '/guilds'
   },
