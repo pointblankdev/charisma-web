@@ -244,7 +244,7 @@ export async function setQuestComplete(address: string, questId: number, complet
         validateWithAbi: true,
         network,
         postConditions: [],
-        fee: 225, // set a tx fee if you don't want the builder to estimate
+        fee: 250, // set a tx fee if you don't want the builder to estimate
         anchorMode: AnchorMode.Any,
     };
 
@@ -264,8 +264,24 @@ export async function checkQuestComplete(address: string, questId: number) {
         contractName: "dme006-quest-completion",
         functionName: "is-complete",
         functionArgs: [principalCV(address), uintCV(questId)],
-        senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
+        senderAddress: address
     });
+    console.log(response)
+
+    return response.value
+}
+
+export async function checkQuestLocked(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme009-charisma-rewards",
+        functionName: "is-locked",
+        functionArgs: [principalCV(address), uintCV(questId)],
+        senderAddress: address
+    });
+    console.log(response)
 
     return response.value
 }

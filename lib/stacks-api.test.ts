@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, getNameFromAddress, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getNameFromAddress, setQuestComplete } from "./stacks-api";
 
 const network = new StacksMainnet();
 
@@ -27,9 +27,22 @@ describe('Stacks API', () => {
 
         const response = await checkQuestComplete(address, questId)
 
-        console.log(response)
+        console.log(response.type)
 
-        expect(response.value).toBe('true')
+        expect(response.type).toEqual(3)
+
+    })
+
+    it('should check if a quest is locked', async () => {
+
+        const address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+        const questId = 0
+
+        const response = await checkQuestLocked(address, questId)
+
+        console.log(response.type)
+
+        expect(response.type).toEqual(3)
 
     })
 

@@ -11,7 +11,7 @@ import charismaToken from '@public/charisma.png'
 import { GetStaticProps } from 'next';
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion"
-import { checkQuestComplete } from '@lib/stacks-api';
+import { checkQuestComplete, checkQuestLocked } from '@lib/stacks-api';
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
@@ -40,15 +40,23 @@ export default function QuestDetail(props: Props) {
     const [questAccepted, setQuestAccepted] = React.useState(false)
     const [objectivesVisible, setObjectivesVisible] = React.useState(false)
     const [questCompleted, setQuestCompleted] = React.useState(false)
+    const [questLocked, setQuestLocked] = React.useState(false)
 
 
     useEffect(() => {
         const profile = userSession.loadUserData().profile
-        checkQuestComplete(profile.stxAddress.mainnet, Number(props?.questid || 0)).then((res) => {
-            if (res.value === 'true') {
-                setQuestCompleted(true)
-            }
-        })
+        checkQuestComplete(profile.stxAddress.mainnet, Number(props?.questid || 0))
+            .then((res) => {
+                if (res.type === 3) {
+                    setQuestCompleted(true)
+                }
+            })
+        checkQuestLocked(profile.stxAddress.mainnet, Number(props?.questid || 0))
+            .then((res) => {
+                if (res.type === 3) {
+                    setQuestLocked(true)
+                }
+            })
     }, [props])
 
     const claimRewards = () => {
@@ -122,14 +130,15 @@ export default function QuestDetail(props: Props) {
                             {objectivesVisible && <motion.div initial="hidden" animate="visible" variants={fadeIn} className='text-xl font-semibold mt-4 z-30'>Objectives</motion.div>}
                             {objectivesVisible && props?.objectives?.map((o: any, k: any) =>
                                 <motion.p key={k} initial="hidden" animate="visible" variants={fadeIn} className={`text-md font-fine text-foreground z-30 duration-200 ease-out transition transform `}>
-                                    {o.text}: {o.metric}
+                                    {/* TODO: fix this hacky solution */}
+                                    {o.text}: {questCompleted ? "1/1" : o.metric}
                                 </motion.p>
                             )}
                         </div>
                     </CardContent>}
                     {questAccepted && <CardFooter className="p-4 flex justify-between z-20">
                         <Link href='/quests'><Button variant="ghost" className='z-30'>Back</Button></Link>
-                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={!questCompleted}>Claim Rewards</Button>
+                        {!questLocked && <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={!questCompleted}>Claim Rewards</Button>}
                     </CardFooter>}
                     <Image
                         src={randomImage?.url}
