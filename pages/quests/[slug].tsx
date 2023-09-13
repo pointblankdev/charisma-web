@@ -107,14 +107,19 @@ export default function QuestDetail(props: Props) {
                     </CardHeader>
                     {!questAccepted && <CardFooter className="p-4 flex justify-between z-20">
                         <Link href='/quests'><Button variant="ghost" className='z-30'>Back</Button></Link>
-                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={() => setQuestAccepted(true)}>Start</Button>
+                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={() => {
+                            setQuestAccepted(true)
+                            if (questLocked) {
+                                setObjectivesVisible(true)
+                            }
+                        }}>View</Button>
                     </CardFooter>}
 
                     {questAccepted && <CardContent className='p-0 z-20'>
                         <div className='p-4 z-30'>
                             <CardTitle className='text-xl font-semibold z-30'>Description</CardTitle>
                             <p className='text-base z-30'>
-                                <Typewriter
+                                {questLocked ? props?.description?.map((s: string) => <span key={s}>{s}</span>) : <Typewriter
                                     options={{
                                         delay: 25,
                                     }}
@@ -124,7 +129,7 @@ export default function QuestDetail(props: Props) {
 
                                         typewriter.start().callFunction(() => setObjectivesVisible(true))
                                     }}
-                                />
+                                />}
                             </p>
 
                             {objectivesVisible && <motion.div initial="hidden" animate="visible" variants={fadeIn} className='text-xl font-semibold mt-4 z-30'>Objectives</motion.div>}
