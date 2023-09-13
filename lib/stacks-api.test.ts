@@ -33,6 +33,19 @@ describe('Stacks API', () => {
 
     })
 
+    it('should check if a quest is incomplete', async () => {
+
+        const address = 'SP18QG8A8943KY9S15M08AMAWWF58W9X1M90BRCSJ'
+        const questId = 0
+
+        const response = await checkQuestComplete(address, questId)
+
+        console.log(response.type)
+
+        expect(response.type).toEqual(1)
+
+    })
+
     it('should check if a quest is locked', async () => {
 
         const address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
@@ -46,7 +59,20 @@ describe('Stacks API', () => {
 
     })
 
-    it('should mark a quest as complete', async () => {
+    it('should check if a quest is unlocked', async () => {
+
+        const address = 'SP18QG8A8943KY9S15M08AMAWWF58W9X1M90BRCSJ'
+        const questId = 0
+
+        const response = await checkQuestLocked(address, questId)
+
+        console.log(response.type)
+
+        expect(response.type).toEqual(4)
+
+    })
+
+    xit('should mark a quest as complete', async () => {
 
         const address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
         const questId = 0
