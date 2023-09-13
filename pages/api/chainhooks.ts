@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ConfUser } from '@lib/types';
-import { checkQuestComplete, checkQuestLocked, setQuestComplete } from '@lib/stacks-api';
+import { checkQuestComplete, setQuestComplete } from '@lib/stacks-api';
 
 type ErrorResponse = {
   error: {
@@ -43,16 +43,12 @@ export default async function chainhooks(
           console.log('token faucet claim transaction detected')
           // and the sender has not completed the quest
           const charismaTokenFaucetQuestId = 0
-          const completeResponse = await checkQuestComplete(payload.sender, charismaTokenFaucetQuestId)
-          console.log(completeResponse)
-          if (Number(completeResponse.value) === 2001) {
-            const lockedResponse = await checkQuestLocked(payload.sender, charismaTokenFaucetQuestId)
-            console.log(lockedResponse)
-            if (lockedResponse.type === 4) {
-              // mark the quest as complete
-              console.log('marking quest as complete')
-              // setQuestComplete(payload.sender, charismaTokenFaucetQuestId, true)
-            }
+          const response = await checkQuestComplete(payload.sender, charismaTokenFaucetQuestId)
+          console.log(response)
+          if (Number(response.value) === 2001) {
+            // mark the quest as complete
+            console.log('marking quest as complete')
+            // setQuestComplete(payload.sender, charismaTokenFaucetQuestId, true)
           }
         }
       }
