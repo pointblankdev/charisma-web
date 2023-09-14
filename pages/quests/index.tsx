@@ -45,10 +45,9 @@ export default function Quests({ data }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
-          {/* text letting user know quests are in preview mode and are non-functional and for demonstration purposes only */}
           <div className='flex justify-between items-end'>
             <div className='text-center text-xs sm:text-xl font-fine text-yellow-200 mb-4'>
-              Quests are in preview mode. For questions and comments, join Discord.
+              Quests are in closed beta. For questions and comments, join Discord.
             </div>
             <Link href='/quests/create' className='whitespace-nowrap'><Button className='mb-4'>Create a Quest 📜</Button></Link>
           </div>

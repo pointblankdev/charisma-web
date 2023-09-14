@@ -21,7 +21,8 @@ import {
     callReadOnlyFunction,
     uintCV,
 } from "@stacks/transactions";
-import { getQuestBySlug } from '@lib/cms-providers/dato';
+import { getAllWallets, getQuestBySlug } from '@lib/cms-providers/dato';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 
 
 type Props = any
@@ -35,16 +36,18 @@ export default function QuestDetail(props: Props) {
     const charismaRewards = props?.charismaRewards || 0
     const showCommunityRewards = charismaRewards > 0
     const randomImage = props.randomImage;
+    const wallets = props.wallets
 
     const { doContractCall } = useConnect();
     const [questAccepted, setQuestAccepted] = React.useState(false)
     const [objectivesVisible, setObjectivesVisible] = React.useState(false)
     const [questCompleted, setQuestCompleted] = React.useState(false)
     const [questLocked, setQuestLocked] = React.useState(false)
-
+    const [isWhitelisted, setWhitelisted] = React.useState(false)
 
     useEffect(() => {
         const profile = userSession.loadUserData().profile
+        setWhitelisted(wallets.some((w: any) => w.stxaddress === profile.stxAddress.mainnet))
         checkQuestComplete(profile.stxAddress.mainnet, Number(props?.questid || 0))
             .then((res) => {
                 if (res.type === 3) {
@@ -57,7 +60,7 @@ export default function QuestDetail(props: Props) {
                     setQuestLocked(true)
                 }
             })
-    }, [props])
+    }, [props, wallets])
 
     const claimRewards = () => {
         doContractCall({
@@ -86,9 +89,8 @@ export default function QuestDetail(props: Props) {
     return (
         <Page meta={meta} fullViewport>
             <Layout className='m-2 sm:container sm:mx-auto sm:py-10 items-center'>
-                {/* text letting user know quests are in preview mode and are non-functional and for demonstration purposes only */}
                 <div className='text-center text-sm sm:text-lg font-fine text-yellow-200 mb-4'>
-                    Quests are in preview mode, and are for demonstration purposes only. For questions or comments, join Discord.
+                    Quests are in closed beta. For questions or comments, join Discord.
                 </div>
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
                     <CardHeader className='p-4 z-20'>
@@ -143,7 +145,14 @@ export default function QuestDetail(props: Props) {
                     </CardContent>}
                     {questAccepted && <CardFooter className="p-4 flex justify-between z-20">
                         <Link href='/quests'><Button variant="ghost" className='z-30'>Back</Button></Link>
-                        {!questLocked && <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={!questCompleted}>Claim Rewards</Button>}
+                        <TooltipProvider>
+                            <Tooltip>
+                                <TooltipTrigger>{<Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={questLocked || !isWhitelisted}>Claim Rewards</Button>}</TooltipTrigger>
+                                <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                                    {!isWhitelisted ? 'You are not whitelisted for this quest' : questLocked ? 'You have already claimed rewards for this quest' : questCompleted ? 'Click to claim quest rewards' : 'Completed the quest objects to claim the reward'}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
                     </CardFooter>}
                     <Image
                         src={randomImage?.url}
@@ -162,6 +171,8 @@ export default function QuestDetail(props: Props) {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
+
+    const wallets = await getAllWallets()
     const quest = await getQuestBySlug(String(params?.slug))
 
     const getCharismaRewards: any = await callReadOnlyFunction({
@@ -179,7 +190,8 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     return {
         props: {
             ...quest,
-            charismaRewards: Number(getCharismaRewards.value.value)
+            charismaRewards: Number(getCharismaRewards.value.value),
+            wallets
         },
         revalidate: 60
     };
