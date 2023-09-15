@@ -23,6 +23,7 @@ import {
 } from "@stacks/transactions";
 import { getAllWallets, getQuestBySlug } from '@lib/cms-providers/dato';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
+import { createQuestSession } from '@lib/user-api';
 
 
 type Props = any
@@ -44,9 +45,12 @@ export default function QuestDetail(props: Props) {
     const [questCompleted, setQuestCompleted] = React.useState(false)
     const [questLocked, setQuestLocked] = React.useState(false)
     const [isWhitelisted, setWhitelisted] = React.useState(false)
+    const [user, setUser] = React.useState<any>(null)
+
 
     useEffect(() => {
         const profile = userSession.loadUserData().profile
+        setUser(wallets.find((w: any) => w.stxaddress === profile.stxAddress.mainnet))
         setWhitelisted(wallets.some((w: any) => w.stxaddress === profile.stxAddress.mainnet))
         checkQuestComplete(profile.stxAddress.mainnet, Number(props?.questid || 0))
             .then((res) => {
@@ -81,6 +85,16 @@ export default function QuestDetail(props: Props) {
         });
     }
 
+    const handleViewQuest = () => {
+        setQuestAccepted(true)
+        if (questLocked) {
+            setObjectivesVisible(true)
+        }
+        const quest = props?.id
+        const wallet = user?.id
+        createQuestSession({ quest, wallet, instance: `${quest}${wallet}` })
+    }
+
     const fadeIn = {
         hidden: { opacity: 0 },
         visible: { opacity: 1 }
@@ -109,12 +123,7 @@ export default function QuestDetail(props: Props) {
                     </CardHeader>
                     {!questAccepted && <CardFooter className="p-4 flex justify-between z-20">
                         <Link href='/quests'><Button variant="ghost" className='z-30'>Back</Button></Link>
-                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={() => {
-                            setQuestAccepted(true)
-                            if (questLocked) {
-                                setObjectivesVisible(true)
-                            }
-                        }}>View</Button>
+                        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={handleViewQuest}>View</Button>
                     </CardFooter>}
 
                     {questAccepted && <CardContent className='p-0 z-20'>

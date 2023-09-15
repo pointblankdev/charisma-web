@@ -7,6 +7,7 @@ const client = buildClient({ apiToken: API_TOKEN });
 const USER_TYPE_ID = '2089918';
 const WALLET_TYPE_ID = '2089919';
 const QUEST_TYPE_ID = '2152523';
+const SESSION_TYPE_ID = '2161208';
 
 export function getUserById(id: string): Promise<any> {
     return client.items.find(id)
@@ -43,6 +44,13 @@ export async function updateWalletBNS(walletId: string, bns: string): Promise<an
 export async function createQuestDraft(args: any): Promise<any> {
     return client.items.create({
         item_type: { type: 'item_type', id: QUEST_TYPE_ID },
+        ...args
+    })
+}
+
+export async function createQuestSession(args: any): Promise<any> {
+    return client.items.create({
+        item_type: { type: 'item_type', id: SESSION_TYPE_ID },
         ...args
     })
 }

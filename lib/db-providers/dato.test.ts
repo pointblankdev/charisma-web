@@ -1,7 +1,7 @@
-import { createUser, getUserById, updateUserWithWallet, updateWalletAmount } from "./dato";
+import { createQuestSession, createUser, getUserById, updateUserWithWallet, updateWalletAmount } from "./dato";
 import { callReadOnlyFunction, principalCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
-import _ from 'lodash'
+import _, { create } from 'lodash'
 import { getAllWallets } from "../cms-providers/dato";
 
 describe('getUserById function', () => {
@@ -78,3 +78,13 @@ describe('updateWalletAmount function', () => {
     }, 100000)
 
 });
+
+describe('create quest session', () => {
+    it('should create a quest session', async () => {
+        const quest = '169311427'
+        const wallet = '160946537'
+        const response = await createQuestSession({ quest, wallet, instance: quest + wallet })
+
+        console.log(response)
+    })
+})
