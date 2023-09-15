@@ -47,15 +47,6 @@ export default function QuestDetail(props: Props) {
     const [isWhitelisted, setWhitelisted] = React.useState(false)
     const [user, setUser] = React.useState<any>(null)
 
-    console.log({
-        questAccepted,
-        objectivesVisible,
-        questCompleted,
-        questLocked,
-        isWhitelisted
-    })
-
-
     useEffect(() => {
         const profile = userSession.loadUserData().profile
         setUser(wallets.find((w: any) => w.stxaddress === profile.stxAddress.mainnet))
