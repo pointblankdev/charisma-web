@@ -19,10 +19,10 @@ export const BITCOIN_LEARN_MORE_URL = 'https://bitcoin.org/en/';
 export const STACKS_LEARN_MORE_URL = 'https://stacks.org/';
 
 export const NAVIGATION = [
-  // {
-  //   name: 'Quests',
-  //   route: '/quests'
-  // },
+  {
+    name: 'Quests',
+    route: '/quests'
+  },
   {
     name: 'Faucet',
     route: '/faucet'
