@@ -47,6 +47,14 @@ export default function QuestDetail(props: Props) {
     const [isWhitelisted, setWhitelisted] = React.useState(false)
     const [user, setUser] = React.useState<any>(null)
 
+    console.log({
+        questAccepted,
+        objectivesVisible,
+        questCompleted,
+        questLocked,
+        isWhitelisted
+    })
+
 
     useEffect(() => {
         const profile = userSession.loadUserData().profile
@@ -156,9 +164,9 @@ export default function QuestDetail(props: Props) {
                         <Link href='/quests'><Button variant="ghost" className='z-30'>Back</Button></Link>
                         <TooltipProvider>
                             <Tooltip>
-                                <TooltipTrigger>{<Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={questLocked || !isWhitelisted}>Claim Rewards</Button>}</TooltipTrigger>
+                                <TooltipTrigger>{<Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claimRewards} disabled={questLocked || !isWhitelisted || !questCompleted}>Claim Rewards</Button>}</TooltipTrigger>
                                 <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                                    {!isWhitelisted ? 'You are not whitelisted for this quest' : questLocked ? 'You have already claimed rewards for this quest' : questCompleted ? 'Click to claim quest rewards' : 'Completed the quest objects to claim the reward'}
+                                    {!isWhitelisted ? 'You are not whitelisted for this quest' : questLocked ? 'You have already claimed rewards for this quest' : questCompleted ? 'Click to claim quest rewards' : 'Complete the quest objective to claim the rewards'}
                                 </TooltipContent>
                             </Tooltip>
                         </TooltipProvider>
