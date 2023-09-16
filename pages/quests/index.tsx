@@ -56,7 +56,7 @@ export default function Quests({ data }: Props) {
             {data.map((quest) => {
               const randomIndex = Math.floor(Math.random() * quest.images.length);
               const randomImage = quest.images[randomIndex];
-              const isCompleted = !quest.completed; // Assuming there's a 'completed' property on the quest. Adjust as needed.
+              const isCompleted = quest.completed; // Assuming there's a 'completed' property on the quest. Adjust as needed.
               return (
                 <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-50')}>
                   <Link href={`quests/${quest.slug}`} className='w-full'>

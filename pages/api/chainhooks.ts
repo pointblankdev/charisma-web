@@ -23,6 +23,7 @@ export default async function chainhooks(
     });
   }
 
+  console.log('chainhooks called');
   const quests = await getAllQuests();
 
   try {
