@@ -16,6 +16,7 @@ import {
 import Link from 'next/link';
 import { getAllQuests } from '@lib/cms-providers/dato';
 import { Button } from '@components/ui/button';
+import { FaCheck } from 'react-icons/fa';
 
 
 type Props = {
@@ -55,10 +56,12 @@ export default function Quests({ data }: Props) {
             {data.map((quest) => {
               const randomIndex = Math.floor(Math.random() * quest.images.length);
               const randomImage = quest.images[randomIndex];
+              const isCompleted = !quest.completed; // Assuming there's a 'completed' property on the quest. Adjust as needed.
               return (
-                <Card key={quest.id} className='bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'>
+                <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-50')}>
                   <Link href={`quests/${quest.slug}`} className='w-full'>
                     <CardContent className='p-0 w-full'>
+                      {isCompleted && <div className='absolute top-1 right-2 z-30'><FaCheck size={24} className="text-green-500" /></div>}
                       <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
                         <div className='flex gap-2'>
                           <div className='min-w-max'>

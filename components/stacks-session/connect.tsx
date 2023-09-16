@@ -30,12 +30,16 @@ function disconnect() {
 
 const ConnectWallet = () => {
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const [address, setAddress] = useState('');
+  useEffect(() => {
+    setMounted(true)
+    setAddress(`${userSession.loadUserData().profile.stxAddress.mainnet.slice(0, 4)}...${userSession.loadUserData().profile.stxAddress.mainnet.slice(-4)}`)
+  }, []);
 
   if (mounted && userSession.isUserSignedIn()) {
     return (
       <Button className='text-gray-300 whitespace-nowrap' variant="ghost" onClick={disconnect}>
-        Disconnect Wallet
+        {address}
       </Button>
     );
   }
