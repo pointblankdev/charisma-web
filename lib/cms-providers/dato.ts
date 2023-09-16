@@ -61,7 +61,7 @@ export async function getAllQuests(): Promise<any[]> {
           }
           description
           objectives
-          contractidentifier
+          contractIdentifier
           method
         }
       }
