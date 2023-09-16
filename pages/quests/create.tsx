@@ -143,6 +143,34 @@ export default function CreateQuest({ guilds, networks }: Props) {
                                         )}
                                     />
                                 </div>
+                                <div className='flex'>
+                                    <FormField
+                                        control={form.control}
+                                        name="contract_identifier"
+                                        render={({ field }) => (
+                                            <FormItem className='p-2 w-[180px]'>
+                                                <FormLabel>Contract Identifier</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="SP2Z...Z55KS.faucet" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="method"
+                                        render={({ field }) => (
+                                            <FormItem className='p-2 w-[170px]'>
+                                                <FormLabel>Method</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder="claim" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
                                 <FormField
                                     control={form.control}
                                     name="objectives"
@@ -150,13 +178,13 @@ export default function CreateQuest({ guilds, networks }: Props) {
                                         <FormItem className='p-2'>
                                             <FormLabel>Objective</FormLabel>
                                             <FormControl>
-                                                <Input placeholder="What's the goal of the quest?" {...field} />
+                                                <Input placeholder="What's the quest goal? (e.g. Claim from the faucet)" {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
-                                <FormDescription className='p-2 my-11'>
+                                <FormDescription className='p-2'>
                                     Don't see your project? Check our docs for getting listed.
                                 </FormDescription>
                             </Card>

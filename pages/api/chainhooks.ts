@@ -33,9 +33,8 @@ export default async function chainhooks(
           sender: tx.metadata.sender,
           success: tx.metadata.success,
         };
-        console.log(payload);
 
-        const matchingQuest = quests.find(q => q.contract_identifier === payload.contract_identifier && q.method === payload.method);
+        const matchingQuest = quests.find(q => q.contractIdentifier === payload.contract_identifier && q.method === payload.method);
 
         if (matchingQuest) {
           console.log('Matching quest found:', matchingQuest);
