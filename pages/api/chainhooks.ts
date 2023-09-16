@@ -1,6 +1,7 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ConfUser } from '@lib/types';
 import { checkQuestComplete, setQuestComplete } from '@lib/stacks-api';
+import { getAllQuests } from '@lib/cms-providers/dato';
 
 type ErrorResponse = {
   error: {
@@ -22,6 +23,8 @@ export default async function chainhooks(
     });
   }
 
+  const quests = await getAllQuests();
+
   try {
     for (const a of req.body.apply) {
       for (const tx of a.transactions) {
@@ -29,32 +32,25 @@ export default async function chainhooks(
           ...tx.metadata.kind.data,
           sender: tx.metadata.sender,
           success: tx.metadata.success,
-        }
-        console.log(payload)
-        // if payload looks like...
-        // {
-        //   args: [],
-        //   contract_identifier: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0',
-        //   method: 'claim',
-        //   sender: 'SP18QG8A8943KY9S15M08AMAWWF58W9X1M90BRCSJ',
-        //   success: true
-        // }
-        if (payload.contract_identifier === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0' && payload.method === 'claim') {
-          console.log('token faucet claim transaction detected')
-          // and the sender has not completed the quest
-          const charismaTokenFaucetQuestId = 0
-          const response = await checkQuestComplete(payload.sender, charismaTokenFaucetQuestId)
-          console.log(response)
+        };
+        console.log(payload);
+
+        const matchingQuest = quests.find(q => q.contract_identifier === payload.contract_identifier && q.method === payload.method);
+
+        if (matchingQuest) {
+          console.log('Matching quest found:', matchingQuest);
+
+          const response = await checkQuestComplete(payload.sender, matchingQuest.id);
+          console.log(response);
           if (Number(response.value) === 2001) {
-            // mark the quest as complete
-            console.log('marking quest as complete')
-            await setQuestComplete(payload.sender, charismaTokenFaucetQuestId, true)
+            console.log('marking quest as complete');
+            await setQuestComplete(payload.sender, matchingQuest.id, true);
           }
         }
       }
     }
   } catch (error: any) {
-    console.error(error.message)
+    console.error(error.message);
   }
 
   return res.status(200).json({});
