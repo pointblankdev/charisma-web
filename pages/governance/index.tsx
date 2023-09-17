@@ -21,6 +21,8 @@ import questmap from '@public/governance/quest-map.png'
 import locked from '@public/governance/locked.png'
 import questhelper from '@public/governance/quest-helper.png'
 import oracle from '@public/governance/oracle.png'
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs"
+
 
 type CardProps = {
   href: string;
@@ -136,16 +138,26 @@ export default function Governance({ data }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
-          <div className='grid gap-1 sm:gap-4 grid-cols-5'>
-            {cards.map((card, index) => (
-              <Card key={index} {...card} />
-            ))}
-          </div>
-          <div className='flex justify-between items-end'>
-            <h1 className='text-xl text-left mt-8 mb-2 text-gray-200'>Proposals</h1>
-            <Link href='/governance/guide'><Button variant={'link'} className='my-2 px-0'>DAO Contributer Guide 📕</Button></Link>
-          </div>
-          <DataTable columns={columns} data={data} />
+          <Tabs defaultValue="proposals" className="">
+            <TabsList>
+              <TabsTrigger value="proposals">Proposals</TabsTrigger>
+              <TabsTrigger value="extentions">DAO Extentions</TabsTrigger>
+            </TabsList>
+            <TabsContent value="proposals">
+              <div className='flex justify-between items-end'>
+                <h1 className='text-xl text-left text-gray-200'>Proposals</h1>
+                <Link href='/governance/guide'><Button variant={'link'} className='p-0'>DAO Contributer Guide 📕</Button></Link>
+              </div>
+              <DataTable columns={columns} data={data} />
+            </TabsContent>
+            <TabsContent value="extentions">
+              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-5'>
+                {cards.map((card, index) => (
+                  <Card key={index} {...card} />
+                ))}
+              </div>
+            </TabsContent>
+          </Tabs>
         </div>
       </Layout>
     </Page>
