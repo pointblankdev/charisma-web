@@ -143,11 +143,8 @@ export default function Governance({ data }: Props) {
               <TabsTrigger value="proposals">Proposals</TabsTrigger>
               <TabsTrigger value="extentions">DAO Extentions</TabsTrigger>
             </TabsList>
+            <Link href='/governance/guide' className='float-right'><Button variant={'link'} className='p-0'>Contributer Guide 📕</Button></Link>
             <TabsContent value="proposals">
-              <div className='flex justify-between items-end'>
-                <h1 className='text-xl text-left text-gray-200'>Proposals</h1>
-                <Link href='/governance/guide'><Button variant={'link'} className='p-0'>DAO Contributer Guide 📕</Button></Link>
-              </div>
               <DataTable columns={columns} data={data} />
             </TabsContent>
             <TabsContent value="extentions">
