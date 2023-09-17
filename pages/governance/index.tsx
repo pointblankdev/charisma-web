@@ -139,7 +139,7 @@ export default function Governance({ data }: Props) {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
           <Tabs defaultValue="proposals" className="">
-            <TabsList>
+            <TabsList className='mb-2'>
               <TabsTrigger value="proposals">Proposals</TabsTrigger>
               <TabsTrigger value="extentions">DAO Extentions</TabsTrigger>
             </TabsList>
