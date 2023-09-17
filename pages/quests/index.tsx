@@ -17,10 +17,13 @@ import Link from 'next/link';
 import { getAllQuests } from '@lib/cms-providers/dato';
 import { Button } from '@components/ui/button';
 import { FaCheck } from 'react-icons/fa';
+import { useEffect, useState } from 'react';
+import { checkQuestComplete } from '@lib/stacks-api';
+import { userSession } from '@components/stacks-session/connect';
 
 
 type Props = {
-  data: any[];
+  quests: any[];
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
@@ -29,17 +32,38 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   return {
     props: {
-      data: quests
+      quests
     },
     revalidate: 60
   };
 };
 
-export default function Quests({ data }: Props) {
+export default function Quests({ quests }: Props) {
   const meta = {
     title: 'Charisma | Quest to Earn',
     description: META_DESCRIPTION
   };
+
+  const [data, setData] = useState(quests);
+
+  useEffect(() => {
+    const address = userSession.loadUserData().profile.stxAddress.mainnet;
+
+    const checkQuests = async () => {
+      // Deep clone the quests array to prevent mutations on the original data
+      const updatedQuests = JSON.parse(JSON.stringify(quests));
+
+      for (const quest of updatedQuests) {
+        const response = await checkQuestComplete(address, quest.questid);
+        quest.completed = response.type === 3;
+      }
+
+      // Functional update form of setState
+      setData(() => updatedQuests);
+    }
+
+    checkQuests();
+  }, [quests]);
 
   return (
     <Page meta={meta} fullViewport>

@@ -33,7 +33,9 @@ const ConnectWallet = () => {
   const [address, setAddress] = useState('');
   useEffect(() => {
     setMounted(true)
-    setAddress(`${userSession.loadUserData().profile.stxAddress.mainnet.slice(0, 4)}...${userSession.loadUserData().profile.stxAddress.mainnet.slice(-4)}`)
+    if (userSession.isUserSignedIn()) {
+      setAddress(`${userSession.loadUserData().profile.stxAddress.mainnet.slice(0, 4)}...${userSession.loadUserData().profile.stxAddress.mainnet.slice(-4)}`)
+    }
   }, []);
 
   if (mounted && userSession.isUserSignedIn()) {

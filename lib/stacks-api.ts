@@ -3,6 +3,7 @@ import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeCon
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
 import { getAllWallets } from "./cms-providers/dato";
+import { cvToJSON, hexToCV } from '@stacks/transactions';
 
 const network = new StacksMainnet();
 
@@ -266,7 +267,8 @@ export async function checkQuestComplete(address: string, questId: number) {
         functionArgs: [principalCV(address), uintCV(questId)],
         senderAddress: address
     });
-    console.log(response)
+
+    // console.log(cvToJSON(response))
 
     return response.value
 }
@@ -281,7 +283,6 @@ export async function checkQuestLocked(address: string, questId: number) {
         functionArgs: [principalCV(address), uintCV(questId)],
         senderAddress: address
     });
-    console.log(response)
 
     return response.value
 }
