@@ -164,7 +164,7 @@ export default function CreateQuest({ guilds, networks }: Props) {
                                             <FormItem className='p-2 w-[170px]'>
                                                 <FormLabel>Method</FormLabel>
                                                 <FormControl>
-                                                    <Input placeholder="claim" {...field} />
+                                                    <Input placeholder="claim, mint, etc." {...field} />
                                                 </FormControl>
                                                 <FormMessage />
                                             </FormItem>
