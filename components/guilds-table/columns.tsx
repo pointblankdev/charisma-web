@@ -48,16 +48,16 @@ export const columns: ColumnDef<Guild>[] = [
         },
 
     },
-    {
-        accessorKey: "url",
-        header: () => <div className="text-center">Website</div>,
-        cell: ({ row }) => {
-            const url = row.getValue("url")
+    // {
+    //     accessorKey: "url",
+    //     header: () => <div className="text-center">Website</div>,
+    //     cell: ({ row }) => {
+    //         const url = row.getValue("url")
 
-            return <Link href={url as string} target='_blank' className="flex justify-center font-medium"><Button className="text-center font-medium" variant={'link'}>{url}</Button></Link>
-        },
+    //         return <Link href={url as string} target='_blank' className="flex justify-center font-medium"><Button className="text-center font-medium" variant={'link'}>{url}</Button></Link>
+    //     },
 
-    },
+    // },
     // {
     //     accessorKey: "quests",
     //     header: () => <div className="text-center">Quests</div>,
