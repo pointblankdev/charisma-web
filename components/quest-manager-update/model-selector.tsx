@@ -43,15 +43,15 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps) {
     <div className="grid gap-2">
       <HoverCard openDelay={200}>
         <HoverCardTrigger asChild>
-          <Label htmlFor="model">Model</Label>
+          <Label htmlFor="model">Network</Label>
         </HoverCardTrigger>
         <HoverCardContent
           align="start"
           className="w-[260px] text-sm"
           side="left"
         >
-          The model which will generate the completion. Some models are suitable
-          for natural language tasks, others specialize in code. Learn more.
+          The network which will track the quest completion.
+          You can issue rewards on any network regardless of your choice here.
         </HoverCardContent>
       </HoverCard>
       <Popover open={open} onOpenChange={setOpen} {...props}>
@@ -62,6 +62,7 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps) {
             aria-expanded={open}
             aria-label="Select a model"
             className="w-full justify-between"
+            disabled
           >
             {selectedModel ? selectedModel.name : "Select a model..."}
             <SortAscIcon className="ml-2 h-4 w-4 shrink-0 opacity-50" />

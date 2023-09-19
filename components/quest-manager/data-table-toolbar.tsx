@@ -7,10 +7,9 @@ import { Button } from "@components/ui/button"
 import { Input } from "@components/ui/input"
 import { DataTableViewOptions } from "./data-table-view-options"
 
-import { priorities, statuses } from "../../lib/data/data"
+import { priorities, statuses } from "@lib/data/data"
 import { DataTableFacetedFilter } from "./data-table-faceted-filter"
 import { DialogDemo } from "./create-quest-dialog"
-import { createQuestDraft } from "@lib/user-api"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>

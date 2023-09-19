@@ -83,8 +83,8 @@ const ConnectWallet = () => {
                     className={cn("w-full object-cover transition-all", "aspect-[1/2]", 'flex', 'z - 0', 'absolute', 'inset-0')}
                   />
                 </li>
-                <ListItem href="/governance" title="Governance">
-                  Vote on the latest proposals and view the state of the Charisma DAO.
+                <ListItem href="/quest-manager" title="Quest Manager">
+                  Create, manage, and track your quests all from one place.
                 </ListItem>
                 <ListItem href="/tokenomics" title="Tokenomics">
                   View stats and metrics on the Charisma token's distribution.

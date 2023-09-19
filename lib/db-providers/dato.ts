@@ -58,3 +58,17 @@ export async function createQuestSession(args: any): Promise<any> {
 export function getQuestById(id: string): Promise<any> {
     return client.items.find(id)
 }
+
+export async function getQuestsByOwner(address: string) {
+    const query = {
+        filter: {
+            type: 'quest',
+            fields: {
+                owner: { eq: address }
+            },
+        },
+    };
+
+    const records = await client.items.list(query);
+    return records;
+}

@@ -74,3 +74,12 @@ export async function getQuestById(args: any) {
     }
   });
 }
+
+export async function getQuestsByOwner(address: string) {
+  return await fetch(`/api/get-quests-by-owner/${address}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}

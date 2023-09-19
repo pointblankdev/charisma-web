@@ -20,6 +20,7 @@ import {
 
 import { labels } from "@lib/data/data"
 import { taskSchema } from "@lib/data/schema"
+import { useRouter } from "next/router"
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
@@ -29,6 +30,8 @@ export function DataTableRowActions<TData>({
   row,
 }: DataTableRowActionsProps<TData>) {
   const task = taskSchema.parse(row.original)
+
+  const router = useRouter()
 
   return (
     <DropdownMenu>
@@ -42,8 +45,8 @@ export function DataTableRowActions<TData>({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => router.push(`/quest-manager/${row.getValue('id')}`)}>Edit</DropdownMenuItem>
+        {/* <DropdownMenuItem>Make a copy</DropdownMenuItem>
         <DropdownMenuItem>Favorite</DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuSub>
@@ -62,7 +65,7 @@ export function DataTableRowActions<TData>({
         <DropdownMenuItem>
           Delete
           <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        </DropdownMenuItem> */}
       </DropdownMenuContent>
     </DropdownMenu>
   )

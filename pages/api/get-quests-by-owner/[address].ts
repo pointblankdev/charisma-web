@@ -1,4 +1,4 @@
-import { getQuestById } from '@lib/db-providers/dato';
+import { getQuestsByOwner } from '@lib/db-providers/dato';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -8,14 +8,14 @@ type ErrorResponse = {
     };
 };
 
-export default async function getQuest(
+export default async function getQuests(
     req: NextApiRequest,
     res: NextApiResponse<any | ErrorResponse>
 ) {
 
     let response, code = 200
     try {
-        response = await getQuestById(req.query.id as string)
+        response = await getQuestsByOwner(req.query.address as string)
     } catch (error: any) {
         console.error(error)
         response = new Object(error)

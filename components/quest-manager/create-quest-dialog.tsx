@@ -1,3 +1,4 @@
+import { userSession } from "@components/stacks-session/connect"
 import { Button } from "@components/ui/button"
 import {
     Dialog,
@@ -11,7 +12,6 @@ import {
 import { Input } from "@components/ui/input"
 import { Label } from "@components/ui/label"
 import { createQuestDraft } from "@lib/user-api"
-import Link from "next/link"
 import { useRouter } from "next/router"
 import React from "react"
 
@@ -45,11 +45,12 @@ export function DialogDemo() {
                     </div>
                 </div>
                 <DialogFooter>
-                    <Button variant="secondary" size='sm' onClick={() => createQuestDraft({ title: name })
-                        .then(async (r) => {
-                            const id = (await r.json()).id
-                            router.push(`/quest-manager/${id}/update`)
-                        })}>Create</Button>
+                    <Button variant="secondary" size='sm' onClick={async () => {
+                        const address = userSession.loadUserData().profile.stxAddress.mainnet
+                        const response = await createQuestDraft({ title: name, owner: address })
+                        const id = (await response.json()).id
+                        router.push(`/quest-manager/${id}`)
+                    }}>Create</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog >
