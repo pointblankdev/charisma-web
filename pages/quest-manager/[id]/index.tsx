@@ -38,6 +38,12 @@ export const metadata: Metadata = {
 }
 
 export default function QuestEditor(quest: any) {
+
+  let questDescription;
+  try {
+    questDescription = JSON.parse(quest.description).join('\n\n')
+  } catch (error) { }
+
   return (
     <Layout>
       <div className="h-full flex-col flex">
@@ -248,7 +254,7 @@ export default function QuestEditor(quest: any) {
                     <Textarea
                       placeholder="Write an epic backstory for your quest."
                       className="min-h-[400px] flex-1 p-4"
-                      value={JSON.parse(quest.description).join('\n\n')}
+                      value={questDescription}
                     />
                     <div className="flex items-center space-x-2">
                       {/* <Button>Save</Button> */}
