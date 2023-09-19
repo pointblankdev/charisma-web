@@ -1,8 +1,8 @@
-import { createQuestSession, createUser, getUserById, updateUserWithWallet, updateWalletAmount } from "./dato";
+import { createQuestDraft, createQuestSession, createUser, getQuestById, getUserById, updateUserWithWallet, updateWalletAmount } from "./dato";
 import { callReadOnlyFunction, principalCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
-import _, { create } from 'lodash'
-import { getAllWallets } from "../cms-providers/dato";
+import _ from 'lodash'
+import { getAllWallets, getQuestBySlug } from "../cms-providers/dato";
 
 describe('getUserById function', () => {
     it('should return a user for a valid id', async () => {
@@ -84,6 +84,33 @@ describe('create quest session', () => {
         const quest = '169311427'
         const wallet = '160946537'
         const response = await createQuestSession({ quest, wallet, instance: quest + wallet })
+
+        console.log(response)
+    })
+})
+
+
+describe('create quest draft', () => {
+    it('should create a quest draft', async () => {
+        const quest = '169311427'
+        const wallet = '160946537'
+        const response = await createQuestDraft({ title: 'testasda' })
+
+        console.log(response)
+    })
+})
+
+describe('get quest by slug', () => {
+    it('should get a quest by slug', async () => {
+        const response = await getQuestBySlug('charismatic-flow')
+
+        console.log(response)
+    })
+})
+
+describe('get quest by id', () => {
+    it('should get a quest by id', async () => {
+        const response = await getQuestById("169311427")
 
         console.log(response)
     })

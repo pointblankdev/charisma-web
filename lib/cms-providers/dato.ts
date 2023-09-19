@@ -100,6 +100,37 @@ export async function getQuestBySlug(slug: string): Promise<any> {
   return data.quest;
 }
 
+export async function getQuestById(id: string | number): Promise<any> {
+  const data = await fetchCmsAPI(`
+      query QuestById($id: ItemId) {
+        allQuests(filter: {id: {eq: $id}}) {
+          id
+          slug
+          title
+          subtitle
+          questid
+          images {
+            url(imgixParams: {fm: jpg, fit: crop, w: 600, h: 1200})
+            blurDataURL: blurUpThumb
+          }
+          guild {
+            logo {
+              url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
+              blurDataURL: blurUpThumb
+            }
+          }
+          description
+          objectives
+        }
+      }
+    `, {
+    variables: {
+      id
+    }
+  });
+  return data.quest;
+}
+
 
 export async function getAllGuilds(): Promise<any[]> {
   const data = await fetchCmsAPI(`

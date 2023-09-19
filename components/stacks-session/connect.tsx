@@ -59,9 +59,8 @@ const ConnectWallet = () => {
           <NavigationMenuItem>
             <NavigationMenuTrigger>{address}</NavigationMenuTrigger>
             <NavigationMenuContent>
-              {/* <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]"> */}
-              <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr]">
-                {/* <li className="row-span-3 relative overflow-hidden rounded-md">
+              <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
+                <li className="row-span-3 relative overflow-hidden rounded-md">
                   <NavigationMenuLink asChild className="z-20 absolute inset-0">
                     <Link
                       className="flex h-full w-full select-none flex-col justify-end bg-gradient-to-b from-accent-foreground/25 to-black/90 p-6 no-underline outline-none focus:shadow-md"
@@ -83,7 +82,7 @@ const ConnectWallet = () => {
                     alt='profile background'
                     className={cn("w-full object-cover transition-all", "aspect-[1/2]", 'flex', 'z - 0', 'absolute', 'inset-0')}
                   />
-                </li> */}
+                </li>
                 <ListItem href="/governance" title="Governance">
                   Vote on the latest proposals and view the state of the Charisma DAO.
                 </ListItem>

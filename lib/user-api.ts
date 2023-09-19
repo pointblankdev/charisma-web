@@ -65,3 +65,12 @@ export async function createQuestSession(args: any) {
     body: JSON.stringify(args)
   });
 }
+
+export async function getQuestById(args: any) {
+  return await fetch(`/api/get-quest-by-id/${args.id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+}

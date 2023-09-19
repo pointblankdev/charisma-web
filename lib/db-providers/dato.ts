@@ -54,3 +54,7 @@ export async function createQuestSession(args: any): Promise<any> {
         ...args
     })
 }
+
+export function getQuestById(id: string): Promise<any> {
+    return client.items.find(id)
+}

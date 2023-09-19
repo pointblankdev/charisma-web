@@ -26,9 +26,11 @@ import {
 import { Textarea } from "@components/ui/textarea"
 import { toast } from "@components/ui/use-toast"
 import { Button } from "@components/ui/button"
+import { userSession } from "@components/stacks-session/connect"
+import { useEffect, useState } from "react"
 
 const profileFormSchema = z.object({
-  username: z
+  stxaddress: z
     .string()
     .min(2, {
       message: "Username must be at least 2 characters.",
@@ -85,27 +87,35 @@ export function ProfileForm() {
     })
   }
 
+  const [address, setAddress] = useState("")
+
+  useEffect(() => {
+    if (userSession.isUserSignedIn()) {
+      setAddress(userSession.loadUserData().profile.stxAddress.mainnet)
+    }
+  }, [])
+
+
   return (
     <Form {...form}>
       <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
         <FormField
           control={form.control}
-          name="username"
+          name="stxaddress"
           render={({ field }) => (
             <FormItem>
-              <FormLabel>Username</FormLabel>
+              <FormLabel>Stacks Address</FormLabel>
               <FormControl>
-                <Input placeholder="shadcn" {...field} />
+                <Input placeholder={address} {...field} disabled />
               </FormControl>
               <FormDescription>
-                This is your public display name. It can be your real name or a
-                pseudonym. You can only change this once every 30 days.
+                This is your public display name unless you have a BNS handle setup.
               </FormDescription>
               <FormMessage />
             </FormItem>
           )}
         />
-        <FormField
+        {/* <FormField
           control={form.control}
           name="email"
           render={({ field }) => (
@@ -184,7 +194,7 @@ export function ProfileForm() {
             Add URL
           </Button>
         </div>
-        <Button type="submit">Update profile</Button>
+        <Button type="submit">Update profile</Button> */}
       </form>
     </Form>
   )
