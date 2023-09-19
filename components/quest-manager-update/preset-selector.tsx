@@ -19,7 +19,7 @@ import {
   PopoverTrigger,
 } from "@components/ui/popover"
 
-import { Preset } from "../data/presets"
+import { Preset } from "@lib/data/presets"
 import { CheckIcon, SortAscIcon } from "lucide-react"
 
 interface PresetSelectorProps extends PopoverProps {

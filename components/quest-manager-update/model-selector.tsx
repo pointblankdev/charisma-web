@@ -25,9 +25,9 @@ import {
   PopoverTrigger,
 } from "@components/ui/popover"
 
-import { Model, ModelType } from "../data/models"
 import { CheckIcon, SortAscIcon } from "lucide-react"
 import { useMutationObserver } from "@lib/hooks/use-mutation-observer"
+import { Model, ModelType } from "@lib/data/models"
 
 interface ModelSelectorProps extends PopoverProps {
   types: readonly ModelType[]

@@ -17,17 +17,17 @@ import {
 } from "@components/ui/tabs"
 import { Textarea } from "@components/ui/textarea"
 
-import { CodeViewer } from "./components/code-viewer"
-import { MaxLengthSelector } from "./components/maxlength-selector"
-import { ModelSelector } from "./components/model-selector"
-import { PresetActions } from "./components/preset-actions"
-import { PresetSave } from "./components/preset-save"
-import { PresetSelector } from "./components/preset-selector"
-import { PresetShare } from "./components/preset-share"
-import { TemperatureSelector } from "./components/temperature-selector"
-import { TopPSelector } from "./components/top-p-selector"
-import { models, types } from "./data/models"
-import { presets } from "./data/presets"
+import { CodeViewer } from "@components/quest-manager-update/code-viewer"
+import { MaxLengthSelector } from "@components/quest-manager-update/maxlength-selector"
+import { ModelSelector } from "@components/quest-manager-update/model-selector"
+import { PresetActions } from "@components/quest-manager-update/preset-actions"
+import { PresetSave } from "@components/quest-manager-update/preset-save"
+import { PresetSelector } from "@components/quest-manager-update/preset-selector"
+import { PresetShare } from "@components/quest-manager-update/preset-share"
+import { TemperatureSelector } from "@components/quest-manager-update/temperature-selector"
+import { TopPSelector } from "@components/quest-manager-update/top-p-selector"
+import { models, types } from "@lib/data/models"
+import { presets } from "@lib/data/presets"
 import { BsArrowCounterclockwise } from "react-icons/bs"
 import Layout from "@components/layout"
 import { getQuestById } from "@lib/db-providers/dato"
@@ -349,7 +349,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 export const getStaticPaths = () => {
   return {
     paths: [
-      { params: { id: '176696311' } },
+      { params: { id: '169311427' } },
     ],
     fallback: true
   };

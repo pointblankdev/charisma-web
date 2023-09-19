@@ -1,8 +1,8 @@
 import Image from "next/image"
 
 import { Separator } from "@components/ui/separator"
-import { SidebarNav } from "./components/sidebar-nav"
-import { ProfileForm } from "./profile-form"
+import { SidebarNav } from "@components/settings/sidebar-nav"
+import ProfileForm from "./profile-form"
 import Layout from "@components/layout"
 import Page from "@components/page"
 import { META_DESCRIPTION } from "@lib/constants"

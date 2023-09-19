@@ -1,13 +1,6 @@
-import path from "path"
-import { Metadata } from "next"
-import Image from "next/image"
-import { z } from "zod"
-
-import { columns } from "./components/columns"
-import { DataTable } from "./components/data-table"
-import { UserNav } from "./components/user-nav"
-import { taskSchema } from "./data/schema"
-import data from './data/tasks.json'
+import { columns } from "@components/quest-manager/columns"
+import { DataTable } from "@components/quest-manager/data-table"
+import tasks from '@lib/data/tasks.json'
 import Layout from "@components/layout"
 
 // export const metadata: Metadata = {
@@ -16,7 +9,6 @@ import Layout from "@components/layout"
 // }
 
 export default function TaskPage() {
-  const tasks = data
 
   return (
     <Layout>

@@ -1,13 +1,7 @@
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
-import { Button } from '@components/ui/button';
-import Image from 'next/image';
-import Link from 'next/link';
-import { cn } from '@lib/utils';
-import React, { useEffect } from 'react';
-import charismaToken from '@public/charisma.png'
+import React from 'react';
 import { GetStaticProps } from 'next';
 import { getQuestById } from '@lib/db-providers/dato';
 
@@ -47,7 +41,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 export const getStaticPaths = () => {
     return {
         paths: [
-            { params: { id: '176696311' } },
+            { params: { id: '169311427' } },
         ],
         fallback: true
     };
