@@ -72,14 +72,15 @@ export default function Quests({ quests }: Props) {
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => {
-              const randomIndex = Math.floor(Math.random() * quest.images.length);
-              const randomImage = quest.images[randomIndex];
+              // const randomIndex = Math.floor(Math.random() * quest.images.length);
+              const randomImage = quest.images[2] || quest.images[1] || quest.images[0];
+              // const randomImage = quest.images[randomIndex];
               const isCompleted = quest.completed; // Assuming there's a 'completed' property on the quest. Adjust as needed.
               return (
-                <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-50')}>
+                <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-75 hover:opacity-90')}>
                   <Link href={`quests/${quest.slug}`} className='w-full'>
                     <CardContent className='p-0 w-full'>
-                      {isCompleted && <div className='absolute top-1 right-2 z-30'><FaCheck size={24} className="text-green-500" /></div>}
+                      {isCompleted && <div className='absolute top-1 right-2 z-30'><FaCheck size={24} className="text-green-500 group-hover/card:scale-110 transition-all" /></div>}
                       <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
                         <div className='flex gap-2'>
                           <div className='min-w-max'>
