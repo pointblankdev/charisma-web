@@ -102,9 +102,6 @@ export default function QuestDetail(props: Props) {
     return (
         <Page meta={meta} fullViewport>
             <Layout className='m-2 sm:container sm:mx-auto sm:py-10 items-center'>
-                <div className='text-center text-sm sm:text-lg font-fine text-yellow-200 mb-4'>
-                    Quests are in closed beta. For questions or comments, join Discord.
-                </div>
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
                     <CardHeader className='p-4 z-20'>
                         <CardTitle className='text-xl font-semibold z-30'>{props?.title}</CardTitle>

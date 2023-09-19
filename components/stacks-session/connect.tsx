@@ -3,6 +3,20 @@ import { AppConfig, showConnect, UserSession } from "@stacks/connect";
 import styles from './index.module.css';
 import { cn } from '@lib/utils';
 import { Button } from "@components/ui/button";
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuIndicator,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger,
+  NavigationMenuViewport,
+} from "@components/ui/navigation-menu"
+import Link from "next/link";
+import { BiSolidUserPin } from "react-icons/bi";
+import Image from "next/image";
+import charisma from "@public/quests/a1.png";
 
 const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -40,9 +54,50 @@ const ConnectWallet = () => {
 
   if (mounted && userSession.isUserSignedIn()) {
     return (
-      <Button className='text-gray-300 whitespace-nowrap' variant="ghost" onClick={disconnect}>
-        {address}
-      </Button>
+      <NavigationMenu className="hidden sm:block">
+        <NavigationMenuList>
+          <NavigationMenuItem>
+            <NavigationMenuTrigger>{address}</NavigationMenuTrigger>
+            <NavigationMenuContent>
+              {/* <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]"> */}
+              <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[1fr]">
+                {/* <li className="row-span-3 relative overflow-hidden rounded-md">
+                  <NavigationMenuLink asChild className="z-20 absolute inset-0">
+                    <Link
+                      className="flex h-full w-full select-none flex-col justify-end bg-gradient-to-b from-accent-foreground/25 to-black/90 p-6 no-underline outline-none focus:shadow-md"
+                      href="/settings"
+                    >
+                      <BiSolidUserPin className="h-6 w-6" />
+                      <div className="mb-2 mt-4 text-lg font-medium">
+                        {address}
+                      </div>
+                      <p className="text-sm leading-tight text-muted-foreground">
+                        Manage your account profile and settings.
+                      </p>
+                    </Link>
+                  </NavigationMenuLink>
+                  <Image
+                    src={charisma}
+                    height={1200}
+                    width={600}
+                    alt='profile background'
+                    className={cn("w-full object-cover transition-all", "aspect-[1/2]", 'flex', 'z - 0', 'absolute', 'inset-0')}
+                  />
+                </li> */}
+                <ListItem href="/governance" title="Governance">
+                  Vote on the latest proposals and view the state of the Charisma DAO.
+                </ListItem>
+                <ListItem href="/tokenomics" title="Tokenomics">
+                  View stats and metrics on the Charisma token's distribution.
+                </ListItem>
+                <ListItem title="Sign Out" onClick={disconnect} className="cursor-pointer">
+                  Securely disconnect your wallet.
+                </ListItem>
+              </ul>
+            </NavigationMenuContent>
+          </NavigationMenuItem>
+        </NavigationMenuList>
+      </NavigationMenu>
     );
   }
 
@@ -54,3 +109,30 @@ const ConnectWallet = () => {
 };
 
 export default ConnectWallet;
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <Link
+          href="#"
+          ref={ref}
+          className={cn(
+            "text-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </Link>
+      </NavigationMenuLink>
+    </li>
+  )
+})
+ListItem.displayName = "ListItem"

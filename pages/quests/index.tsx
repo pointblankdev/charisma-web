@@ -70,12 +70,6 @@ export default function Quests({ quests }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
-          <div className='flex justify-between items-end'>
-            <div className='text-center text-xs sm:text-xl font-fine text-yellow-200 mb-4'>
-              Quests are in closed beta. For questions and comments, join Discord.
-            </div>
-            <Link href='/quests/create' className='whitespace-nowrap'><Button className='mb-4'>Create a Quest 📜</Button></Link>
-          </div>
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => {
               const randomIndex = Math.floor(Math.random() * quest.images.length);
