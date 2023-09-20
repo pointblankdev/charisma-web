@@ -1,7 +1,8 @@
-import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
+import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getNameFromAddress, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getNameFromAddress, getQuestRewards, setQuestComplete } from "./stacks-api";
+import { get } from "lodash";
 
 const network = new StacksMainnet();
 
@@ -27,9 +28,10 @@ describe('Stacks API', () => {
 
         const response = await checkQuestComplete(address, questId)
 
-        console.log(response.type)
+        const result = cvToJSON(response)
+        console.log(result)
 
-        expect(response.type).toEqual(3)
+        expect(result.value).toEqual(true)
 
     })
 
@@ -93,6 +95,19 @@ describe('Stacks API', () => {
 
         console.log(names)
 
+
+    })
+
+    // test get quest rewards for a specific quest
+    it('should get quest rewards', async () => {
+
+        const questId = 0
+
+        const result = await getQuestRewards(questId)
+
+        console.log(result)
+
+        expect(result.value).toEqual({ type: 'uint', value: '100' })
 
     })
 })

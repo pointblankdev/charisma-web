@@ -3,7 +3,7 @@ import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeCon
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
 import { getAllWallets } from "./cms-providers/dato";
-import { cvToJSON, hexToCV } from '@stacks/transactions';
+import { cvToJSON } from '@stacks/transactions';
 
 const network = new StacksMainnet();
 
@@ -285,4 +285,18 @@ export async function checkQuestLocked(address: string, questId: number) {
     });
 
     return response.value
+}
+
+export async function getQuestRewards(questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme009-charisma-rewards",
+        functionName: "get-rewards",
+        functionArgs: [uintCV(questId)],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
 }

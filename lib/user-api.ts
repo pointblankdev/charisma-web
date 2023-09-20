@@ -56,6 +56,16 @@ export async function createQuestDraft(args: any) {
   });
 }
 
+export async function updateQuest(args: any) {
+  return await fetch('/api/update-quest', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(args)
+  });
+}
+
 export async function createQuestSession(args: any) {
   return await fetch('/api/create-quest-session', {
     method: 'POST',

@@ -1,13 +1,6 @@
 import { GetStaticProps, Metadata } from "next"
 import Image from "next/image"
-
 import { Button } from "@components/ui/button"
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@components/ui/hover-card"
-import { Label } from "@components/ui/label"
 import { Separator } from "@components/ui/separator"
 import {
   Tabs,
@@ -15,309 +8,223 @@ import {
   TabsList,
   TabsTrigger,
 } from "@components/ui/tabs"
-import { Textarea } from "@components/ui/textarea"
-
-import { CodeViewer } from "@components/quest-manager-update/code-viewer"
-import { MaxLengthSelector } from "@components/quest-manager-update/maxlength-selector"
-import { ModelSelector } from "@components/quest-manager-update/model-selector"
-import { PresetActions } from "@components/quest-manager-update/preset-actions"
-import { PresetSave } from "@components/quest-manager-update/preset-save"
-import { PresetSelector } from "@components/quest-manager-update/preset-selector"
-import { PresetShare } from "@components/quest-manager-update/preset-share"
-import { TemperatureSelector } from "@components/quest-manager-update/temperature-selector"
-import { TopPSelector } from "@components/quest-manager-update/top-p-selector"
-import { models, types } from "@lib/data/models"
-import { presets } from "@lib/data/presets"
-import { BsArrowCounterclockwise } from "react-icons/bs"
 import Layout from "@components/layout"
 import { getQuestById } from "@lib/db-providers/dato"
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form"
+import { Input } from "@components/ui/input"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import * as z from "zod"
+import { getAllNetworks } from "@lib/cms-providers/dato"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select"
+import { updateQuest } from "@lib/user-api"
 
-export const metadata: Metadata = {
-  title: "Playground",
-  description: "The OpenAI Playground built using the components.",
-}
+const questFormSchema = z.object({
+  id: z.string(),
+  contract_identifier: z.string(),
+  method: z.string(),
+  activation: z.coerce.number(),
+  expiration: z.coerce.number(),
+  maxcompletions: z.coerce.number(),
+  reward_stx: z.coerce.number(),
+  // reward_charisma: z.coerce.number(),
+  network: z.string(),
+})
 
-export default function QuestEditor(quest: any) {
+type QuestFormValues = z.infer<typeof questFormSchema>
 
-  let questDescription;
-  try {
-    questDescription = JSON.parse(quest.description).join('\n\n')
-  } catch (error) { }
+export default function QuestEditor({ quest, networks }: any) {
+
+  // let questDescription;
+  // try {
+  //   questDescription = JSON.parse(quest.description).join('\n\n')
+  // } catch (error) { }
+
+  const defaultValues: Partial<QuestFormValues> = {
+    ...quest,
+    // description: questDescription,
+    reward_stx: quest?.reward_stx || 0,
+    maxcompletions: quest?.maxcompletions || 0,
+  }
+
+
+  const form = useForm<QuestFormValues>({
+    resolver: zodResolver(questFormSchema),
+    defaultValues,
+    mode: "onChange",
+  })
+
+  const onSubmit = async (data: QuestFormValues) => {
+    const response = await updateQuest(data)
+    console.log(response)
+  };
+
 
   return (
     <Layout>
-      <div className="h-full flex-col flex">
-        <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-          <div className="flex justify-between w-full">
-            <h2 className="text-lg font-semibold whitespace-nowrap">{quest.title}</h2>
-            <p className="text-sm pt-1.5 text-yellow-500">Under active development. Feedback? Join Discord</p>
-          </div>
-          {/* <div className="ml-auto flex w-full space-x-2 sm:justify-end">
-            <PresetSelector presets={presets} />
-            <PresetSave />
-            <div className="hidden space-x-2 md:flex">
-              <CodeViewer />
-              <PresetShare />
-            </div>
-            <PresetActions />
-          </div> */}
-        </div>
-        <Separator />
-        <Tabs defaultValue="complete" className="flex-1">
-          <div className="container h-full py-6">
-            <div className="grid h-full items-stretch gap-6 md:grid-cols-[1fr_200px]">
-              <div className="hidden flex-col space-y-4 sm:flex md:order-2">
-                <div className="grid gap-2">
-                  <HoverCard openDelay={200}>
-                    <HoverCardTrigger asChild>
-                      <span className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
-                        Mode
-                      </span>
-                    </HoverCardTrigger>
-                    <HoverCardContent className="w-[320px] text-sm" side="left">
-                      Choose the format that best suits your task. The options are:
-                      an advanced mode where you input the contracts and methods directly,
-                      or a simplied mode, where you select from curated contract events.
-                    </HoverCardContent>
-                  </HoverCard>
-                  <TabsList className="grid grid-cols-3">
-                    <TabsTrigger value="complete">
-                      <span className="sr-only">Complete</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        className="h-5 w-5"
-                      >
-                        <rect
-                          x="4"
-                          y="3"
-                          width="12"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="4"
-                          y="7"
-                          width="12"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="4"
-                          y="11"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="4"
-                          y="15"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="8.5"
-                          y="11"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="8.5"
-                          y="15"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="13"
-                          y="11"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                      </svg>
-                    </TabsTrigger>
-                    <TabsTrigger value="insert" disabled>
-                      <span className="sr-only">Insert</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        className="h-5 w-5"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M14.491 7.769a.888.888 0 0 1 .287.648.888.888 0 0 1-.287.648l-3.916 3.667a1.013 1.013 0 0 1-.692.268c-.26 0-.509-.097-.692-.268L5.275 9.065A.886.886 0 0 1 5 8.42a.889.889 0 0 1 .287-.64c.181-.17.427-.267.683-.269.257-.002.504.09.69.258L8.903 9.87V3.917c0-.243.103-.477.287-.649.183-.171.432-.268.692-.268.26 0 .509.097.692.268a.888.888 0 0 1 .287.649V9.87l2.245-2.102c.183-.172.432-.269.692-.269.26 0 .508.097.692.269Z"
-                          fill="currentColor"
-                        ></path>
-                        <rect
-                          x="4"
-                          y="15"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="8.5"
-                          y="15"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="13"
-                          y="15"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                      </svg>
-                    </TabsTrigger>
-                    <TabsTrigger value="edit" disabled>
-                      <span className="sr-only">Edit</span>
-                      <svg
-                        xmlns="http://www.w3.org/2000/svg"
-                        viewBox="0 0 20 20"
-                        fill="none"
-                        className="h-5 w-5"
-                      >
-                        <rect
-                          x="4"
-                          y="3"
-                          width="12"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="4"
-                          y="7"
-                          width="12"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="4"
-                          y="11"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="4"
-                          y="15"
-                          width="4"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <rect
-                          x="8.5"
-                          y="11"
-                          width="3"
-                          height="2"
-                          rx="1"
-                          fill="currentColor"
-                        ></rect>
-                        <path
-                          d="M17.154 11.346a1.182 1.182 0 0 0-1.671 0L11 15.829V17.5h1.671l4.483-4.483a1.182 1.182 0 0 0 0-1.671Z"
-                          fill="currentColor"
-                        ></path>
-                      </svg>
-                    </TabsTrigger>
-                  </TabsList>
+      <div className="my-4 space-y-4">
+        <Form {...form}>
+          <form onSubmit={form.handleSubmit(onSubmit)}>
+            <Tabs defaultValue="Objectives" className="flex-1">
+              <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
+                <div className="flex justify-between w-full">
+                  <h2 className="text-lg font-semibold whitespace-nowrap">{quest?.title}</h2>
+                  <div className="grid gap-2">
+                    <TabsList>
+                      <TabsTrigger value="Objectives">
+                        <span className="sr-only">Objectives</span>
+                        Objectives
+                      </TabsTrigger>
+                      <TabsTrigger value="Rewards">
+                        <span className="sr-only">Rewards</span>
+                        Rewards
+                      </TabsTrigger>
+                    </TabsList>
+                  </div>
                 </div>
-                <ModelSelector types={types} models={models} />
-                <TemperatureSelector defaultValue={[0.56]} />
-                <MaxLengthSelector defaultValue={[256]} />
-                <TopPSelector defaultValue={[0.9]} />
               </div>
-              <div className="md:order-1">
-                <TabsContent value="complete" className="mt-0 border-0 p-0">
-                  <div className="flex h-full flex-col space-y-4">
-                    <Textarea
-                      placeholder="Write an epic backstory for your quest."
-                      className="min-h-[400px] flex-1 p-4"
-                      value={questDescription}
-                    />
-                    <div className="flex items-center space-x-2">
-                      {/* <Button>Save</Button> */}
-                      {/* <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <BsArrowCounterclockwise className="h-4 w-4" />
-                      </Button> */}
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="insert" className="mt-0 border-0 p-0">
-                  <div className="flex flex-col space-y-4">
-                    <div className="grid h-full grid-rows-2 gap-6 lg:grid-cols-2 lg:grid-rows-1">
-                      <Textarea
-                        placeholder="We're writing to [inset]. Congrats from OpenAI!"
-                        className="h-full min-h-[300px] lg:min-h-[700px] xl:min-h-[700px]"
-                      />
-                      <div className="rounded-md border bg-muted"></div>
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {/* <Button>Save</Button> */}
-                      {/* <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <BsArrowCounterclockwise className="h-4 w-4" />
-                      </Button> */}
-                    </div>
-                  </div>
-                </TabsContent>
-                <TabsContent value="edit" className="mt-0 border-0 p-0">
-                  <div className="flex flex-col space-y-4">
-                    <div className="grid h-full gap-6 lg:grid-cols-2">
-                      <div className="flex flex-col space-y-4">
-                        <div className="flex flex-1 flex-col space-y-2">
-                          <Label htmlFor="input">Input</Label>
-                          <Textarea
-                            id="input"
-                            placeholder="We is going to the market."
-                            className="flex-1 lg:min-h-[580px]"
-                          />
-                        </div>
-                        <div className="flex flex-col space-y-2">
-                          <Label htmlFor="instructions">Instructions</Label>
-                          <Textarea
-                            id="instructions"
-                            placeholder="Fix the grammar."
-                          />
-                        </div>
-                      </div>
-                      <div className="mt-[21px] min-h-[400px] rounded-md border bg-muted lg:min-h-[700px]" />
-                    </div>
-                    <div className="flex items-center space-x-2">
-                      {/* <Button>Save</Button> */}
-                      {/* <Button variant="secondary">
-                        <span className="sr-only">Show history</span>
-                        <BsArrowCounterclockwise className="h-4 w-4" />
-                      </Button> */}
-                    </div>
-                  </div>
-                </TabsContent>
-              </div>
+              <Separator />
+              <TabsContent value="Objectives" className="mt-0 border-0 p-0">
+                <div className="container my-4 space-y-4">
+                  <FormField
+                    control={form.control}
+                    name="network"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Network</FormLabel>
+                        <FormControl>
+                          <Select {...field}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a network" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {networks?.map((network: any) => {
+                                return (
+                                  <SelectItem value={network.id} key={network.id}>
+                                    <div className='flex space-x-2'>
+                                      <Image src={network.icon.url} width={24} height={24} alt={'Network logo'} className="rounded-full" />
+                                      <div>{network.name}</div>
+                                    </div>
+                                  </SelectItem>
+                                )
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="contract_identifier"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Contract Identifier</FormLabel>
+                        <FormControl>
+                          <Input placeholder={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="method"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Method</FormLabel>
+                        <FormControl>
+                          <Input placeholder={'claim'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="activation"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Activation Block</FormLabel>
+                        <FormControl>
+                          <Input placeholder={'Block height the quest will start'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="expiration"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Expiration Block</FormLabel>
+                        <FormControl>
+                          <Input placeholder={'Block height the quest will end'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                </div>
+              </TabsContent>
+              <TabsContent value="Rewards" className="mt-0 border-0 p-0">
+                <div className="container my-4 space-y-4">
+
+                  <FormField
+                    control={form.control}
+                    name="reward_stx"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Token Rewards (STX)</FormLabel>
+                        <FormControl>
+                          <Input disabled placeholder={'Amount of STX tokens a user will get for completing the quest'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  {/* <FormField
+                control={form.control}
+                name="reward_charisma"
+                render={({ field }) => (
+                  <FormItem className="w-full">
+                    <FormLabel>Token Rewards (Charisma)</FormLabel>
+                    <FormControl>
+                      <Input placeholder={'Amount of Charisma tokens a user will get for completing the quest'} {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              /> */}
+
+                  <FormField
+                    control={form.control}
+                    name="maxcompletions"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Maximum Number of Completions</FormLabel>
+                        <FormControl>
+                          <Input disabled placeholder={'Total amount of times can be completed by all users. Individually, users can only complete the quest once.'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                </div>
+              </TabsContent>
+            </Tabs>
+            <div className="container flex justify-end">
+              <Button type="submit" className="my-4">
+                Update Quest
+              </Button>
             </div>
-          </div>
-        </Tabs>
+          </form>
+        </Form>
       </div>
     </Layout>
   )
@@ -328,10 +235,12 @@ type Props = any
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   const quest = await getQuestById(params?.id as string)
+  const networks = await getAllNetworks()
 
   return {
     props: {
-      ...quest
+      quest,
+      networks
     },
     revalidate: 60
   };
@@ -345,3 +254,4 @@ export const getStaticPaths = () => {
     fallback: true
   };
 }
+

@@ -34,7 +34,7 @@ interface ModelSelectorProps extends PopoverProps {
   models: Model[]
 }
 
-export function ModelSelector({ models, types, ...props }: ModelSelectorProps) {
+export function QuestNetworkSelector({ models, types, ...props }: ModelSelectorProps) {
   const [open, setOpen] = React.useState(false)
   const [selectedModel, setSelectedModel] = React.useState<Model>(models[0])
   const [peekedModel, setPeekedModel] = React.useState<Model>(models[0])
@@ -43,7 +43,7 @@ export function ModelSelector({ models, types, ...props }: ModelSelectorProps) {
     <div className="grid gap-2">
       <HoverCard openDelay={200}>
         <HoverCardTrigger asChild>
-          <Label htmlFor="model">Network</Label>
+          <Label htmlFor="model">Quest Network</Label>
         </HoverCardTrigger>
         <HoverCardContent
           align="start"

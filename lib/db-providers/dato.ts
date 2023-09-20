@@ -55,6 +55,10 @@ export async function createQuestSession(args: any): Promise<any> {
     })
 }
 
+export async function updateQuest(args: any): Promise<any> {
+    return client.items.update(args.id, args)
+}
+
 export function getQuestById(id: string): Promise<any> {
     return client.items.find(id)
 }

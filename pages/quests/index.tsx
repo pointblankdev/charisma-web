@@ -18,7 +18,7 @@ import { getAllQuests } from '@lib/cms-providers/dato';
 import { Button } from '@components/ui/button';
 import { FaCheck } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
-import { checkQuestComplete } from '@lib/stacks-api';
+import { checkQuestComplete, getQuestRewards } from '@lib/stacks-api';
 import { userSession } from '@components/stacks-session/connect';
 
 
@@ -29,6 +29,12 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const quests = await getAllQuests()
+
+  // loop through all quests and get rewards
+  for (const quest of quests) {
+    const result = await getQuestRewards(quest.questid)
+    quest.rewardCharisma = Number(result.value.value)
+  }
 
   return {
     props: {
@@ -108,6 +114,19 @@ export default function Quests({ quests }: Props) {
                       />
                       <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-30 z-0' />
                       <CardFooter className='z-20 absolute inset-0 top-auto flex justify-end p-2'>
+                        {/* {quest.rewardCharisma > 0 ?
+                          <div className='flex gap-2 items-center'>
+                            <div className='text-md font-semibold text-secondary leading-none'>
+                              {quest.rewardCharisma} Charisma
+                            </div>
+                            <div className='text-sm font-fine text-secondary leading-tight mt-1'>
+                              Reward
+                            </div>
+                          </div>
+                          : <div className='text-md font-semibold text-secondary leading-none'>
+                            No Reward
+                          </div>
+                        } */}
                       </CardFooter>
                     </CardContent>
                   </Link>
