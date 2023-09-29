@@ -6,13 +6,11 @@ import Layout from '@components/layout';
 import {
   Card,
   CardContent,
-  CardDescription,
-  CardFooter,
   CardHeader,
   CardTitle,
 } from "@components/ui/card"
 import { GetStaticProps } from 'next';
-import { accountsApi, fetchAllClaims, getTokenStats } from '@lib/stacks-api';
+import { fetchAllClaims, getTokenStats } from '@lib/stacks-api';
 import HoldersChart from '@components/tokenomics/HoldersChart';
 import { getAllWallets } from "@lib/cms-providers/dato";
 import _ from 'lodash';
@@ -35,6 +33,7 @@ export default function Tokenomics({ data }: Props) {
   const percentChange = data.percentChange
   const walletBalances = data.walletBalances
   const wallets = data.wallets
+  const maxSupply = 1000000 // one million max supply (tentitive)
 
   const mergedWalletBalances = _.map(walletBalances, obj1 => {
     const obj2 = _.find(wallets, { stxaddress: obj1.primary });
@@ -96,7 +95,7 @@ export default function Tokenomics({ data }: Props) {
             <Card className='bg-black text-primary-foreground border-accent-foreground'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
-                  Total Supply
+                  Circulating Supply
                 </CardTitle>
                 <div className="text-2xl font-bold">{totalSupplyWithDecimals}</div>
               </CardHeader>
@@ -104,6 +103,20 @@ export default function Tokenomics({ data }: Props) {
 
                 <p className="text-xs font-semibold text-muted-foreground">
                   ~{dripAmountPerDayWithDecimals} tokens minted per day
+                </p>
+              </CardContent>
+            </Card>
+            <Card className='bg-black text-primary-foreground border-accent-foreground'>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">
+                  Max Supply
+                </CardTitle>
+                <div className="text-2xl font-bold">{maxSupply}</div>
+              </CardHeader>
+              <CardContent>
+
+                <p className="text-xs font-semibold text-muted-foreground">
+                  {(totalSupplyWithDecimals / maxSupply * 100).toFixed(2)}% of max supply minted
                 </p>
               </CardContent>
             </Card>
