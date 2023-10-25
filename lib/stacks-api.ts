@@ -256,6 +256,21 @@ export async function setQuestComplete(address: string, questId: number, complet
     return broadcastResponse
 }
 
+// check if quest is complete and unlocked
+export async function checkQuestCompleteAndUnlocked(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme015-quest-reward-helper",
+        functionName: "is-completed-and-unlocked",
+        functionArgs: [uintCV(questId)],
+        senderAddress: address
+    });
+
+    return cvToJSON(response)
+}
+
 // check if quest is complete
 export async function checkQuestComplete(address: string, questId: number) {
 

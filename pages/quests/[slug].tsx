@@ -11,7 +11,7 @@ import charismaToken from '@public/charisma.png'
 import { GetStaticProps } from 'next';
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion"
-import { checkQuestComplete, checkQuestLocked } from '@lib/stacks-api';
+import { checkQuestComplete, checkQuestCompleteAndUnlocked, checkQuestLocked } from '@lib/stacks-api';
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
@@ -51,18 +51,42 @@ export default function QuestDetail(props: Props) {
         const profile = userSession.loadUserData().profile
         setUser(wallets.find((w: any) => w.stxaddress === profile.stxAddress.mainnet))
         setWhitelisted(wallets.some((w: any) => w.stxaddress === profile.stxAddress.mainnet))
-        checkQuestComplete(profile.stxAddress.mainnet, Number(props?.questid || 0))
+        checkQuestCompleteAndUnlocked(profile.stxAddress.mainnet, Number(props?.questid || 0))
             .then((res) => {
-                if (res.type === 3) {
+                if (!res.success) {
+
+                    console.warn(res.value.value)
+
+                    if (Number(res.value.value) === 3101) {
+                        console.warn('Quest Not Complete')
+                        setQuestCompleted(false)
+                        setQuestLocked(false)
+                    }
+                    if (Number(res.value.value) === 3102) {
+                        console.warn('Rewards Locked')
+                        setQuestLocked(true)
+                        setQuestCompleted(true)
+                    }
+                } else {
+
+                    console.log(res)
                     setQuestCompleted(true)
+                    setQuestLocked(false)
                 }
             })
-        checkQuestLocked(profile.stxAddress.mainnet, Number(props?.questid || 0))
-            .then((res) => {
-                if (res.type === 3) {
-                    setQuestLocked(true)
-                }
-            })
+
+        // checkQuestComplete(profile.stxAddress.mainnet, Number(props?.questid || 0))
+        //     .then((res) => {
+        //         if (res.type === 3) {
+        //             setQuestCompleted(true)
+        //         }
+        //     })
+        // checkQuestLocked(profile.stxAddress.mainnet, Number(props?.questid || 0))
+        //     .then((res) => {
+        //         if (res.type === 3) {
+        //             setQuestLocked(true)
+        //         }
+        //     })
     }, [props, wallets])
 
     const claimRewards = () => {
@@ -70,7 +94,7 @@ export default function QuestDetail(props: Props) {
             network: new StacksMainnet(),
             anchorMode: AnchorMode.Any,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: "dme010-quest-reward-helper",
+            contractName: "dme015-quest-reward-helper",
             functionName: "claim-quest-reward",
             functionArgs: [uintCV(Number(props?.questid))],
             postConditionMode: PostConditionMode.Deny,

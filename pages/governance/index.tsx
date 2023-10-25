@@ -21,6 +21,12 @@ import questmap from '@public/governance/quest-map.png'
 import locked from '@public/governance/locked.png'
 import questhelper from '@public/governance/quest-helper.png'
 import oracle from '@public/governance/oracle.png'
+import hourglass from '@public/governance/hourglass.png'
+import startingFlag from '@public/governance/starting-flag.png'
+import stxRewards from '@public/governance/stx-rewards-2.png'
+import wantedPosters from '@public/governance/wanted-posters.png'
+import courthouse from '@public/governance/courthouse.png'
+import innkeeper from '@public/governance/innkeeper.png'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs"
 
 
@@ -125,12 +131,56 @@ export default function Governance({ data }: Props) {
       subtitle: 'Rewards for Quest Completion',
     },
     {
-      href: "https://explorer.hiro.so/txid/0x580ed0b7902319403be4e43feb73eceaa5f7d875fc84bf4730e5a34ca20b33e4?chain=mainnet",
+      href: "https://explorer.hiro.so/txid/0x36a45ef4f999840c2e2d200018feffd2452872647d5b5180f3a5174ab71be4c4?chain=mainnet",
       src: questhelper,
       alt: 'Quest Reward Helper Extention Image',
       title: 'quest-reward-helper',
       subtitle: 'Utility for Quest Rewards',
-    }
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0x129a38ebc010cc4effdbcc2aa809dbc0f72392cc7c6b5ab1f38ab88cc911d9b7?chain=mainnet",
+      src: hourglass,
+      alt: 'Quest Expiration Extention Image',
+      title: 'quest-expiration',
+      subtitle: 'Quest Expiration State',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0xc92771238fc644061978ddaf9ab0c3371048aa6af410bce28b76abf13d87c520?chain=mainnet",
+      src: startingFlag,
+      alt: 'Quest Activation Extention Image',
+      title: 'quest-activation',
+      subtitle: 'Quest Activation State',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0x29cd63daee13b536ebf2a7b6a27847aa3beb87d361090a1b0df271e050257997?chain=mainnet",
+      src: wantedPosters,
+      alt: 'Quest Max Completions Extention Image',
+      title: 'quest-max-completions',
+      subtitle: 'Quest Max Completions State',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0x9dc11777ade6802bed2c19efd5b2896e2adddcf997a2dda790af3b9bd5c96aca?chain=mainnet",
+      src: stxRewards,
+      alt: 'Quest STX Rewards Extention Image',
+      title: 'quest-stx-rewards',
+      subtitle: 'Quest STX Rewards',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0xe209e5a4dfb558ba379ab1c0abafad1867af3ff7ec9bd6f11098e3941bfd6b02?chain=mainnet",
+      src: courthouse,
+      alt: 'Quest Ownership Extention Image',
+      title: 'quest-ownership',
+      subtitle: 'Quest Ownership State',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0xe693a752b92c97db141ed784a1d7ff0e0605bd737ce5e38de998f402658ddcd3?chain=mainnet",
+      src: innkeeper,
+      alt: 'Quest Helper Extention Image',
+      title: 'quest-helper',
+      subtitle: 'Utility for Quest Creators',
+    },
+
+
   ];
 
   return (
@@ -148,7 +198,7 @@ export default function Governance({ data }: Props) {
               <DataTable columns={columns} data={data} />
             </TabsContent>
             <TabsContent value="extentions">
-              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-5'>
+              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-6'>
                 {cards.map((card, index) => (
                   <Card key={index} {...card} />
                 ))}
