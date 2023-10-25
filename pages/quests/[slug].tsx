@@ -74,19 +74,6 @@ export default function QuestDetail(props: Props) {
                     setQuestLocked(false)
                 }
             })
-
-        // checkQuestComplete(profile.stxAddress.mainnet, Number(props?.questid || 0))
-        //     .then((res) => {
-        //         if (res.type === 3) {
-        //             setQuestCompleted(true)
-        //         }
-        //     })
-        // checkQuestLocked(profile.stxAddress.mainnet, Number(props?.questid || 0))
-        //     .then((res) => {
-        //         if (res.type === 3) {
-        //             setQuestLocked(true)
-        //         }
-        //     })
     }, [props, wallets])
 
     const claimRewards = () => {
