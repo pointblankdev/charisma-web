@@ -17,8 +17,8 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { getAllNetworks } from "@lib/cms-providers/dato"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select"
-import { useEffect } from "react"
-import { checkQuestStxRewards, getQuestActivationBlock, getQuestExpirationBlock, getQuestMaxCompletions } from "@lib/stacks-api"
+import { useEffect, useState } from "react"
+import { checkQuestStxRewards, getQuestActivationBlock, getQuestExpirationBlock, getQuestMaxCompletions, getStxProtocolFeePercentage, getStxQuestRewardsDeposited } from "@lib/stacks-api"
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from "@stacks/connect-react"
 import {
@@ -45,6 +45,9 @@ const questFormSchema = z.object({
 type QuestFormValues = z.infer<typeof questFormSchema>
 
 export default function QuestEditor({ quest, networks }: any) {
+
+  const [feePercentage, setFeePercentage] = useState(0)
+  const [questRewardsDeposited, setQuestRewardsDeposited] = useState(0)
 
   const defaultValues: Partial<QuestFormValues> = {
     ...quest,
@@ -115,7 +118,7 @@ export default function QuestEditor({ quest, networks }: any) {
       functionName: "deposit-quest-rewards",
       functionArgs: [uintCV(Number(quest?.questid || 0))],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal(profile.stxAddress.mainnet).willSendLte(1).ustx()],
+      postConditions: [Pc.principal(profile.stxAddress.mainnet).willSendLte(form.getValues().reward_stx * form.getValues().maxcompletions * feePercentage).ustx()],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -193,6 +196,24 @@ export default function QuestEditor({ quest, networks }: any) {
         form.setValue('maxcompletions', res.value.value)
       }
     })
+    typeof quest?.questid === 'number' && getStxProtocolFeePercentage(profile.stxAddress.mainnet).then(res => {
+      if (!res.success) {
+
+        console.warn(res)
+      } else {
+
+        setFeePercentage(1 + (res.value.value / 100))
+      }
+    })
+    typeof quest?.questid === 'number' && getStxQuestRewardsDeposited(profile.stxAddress.mainnet, Number(quest?.questid)).then(res => {
+      if (!res.success) {
+
+        console.warn(res)
+      } else {
+
+        setQuestRewardsDeposited(res.value.value / 1000000)
+      }
+    })
   }, [form, quest?.questid])
 
 
@@ -203,13 +224,14 @@ export default function QuestEditor({ quest, networks }: any) {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs defaultValue="Objectives" className="flex-1">
               <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-                <div className="block sm:justify-between sm:w-full sm:flex">
-                  <div className="flex items-center">
+                <div className="block sm:justify-between sm:w-full sm:flex w-full">
+                  <div className="flex items-center w-full">
                     <h2 className="text-lg font-semibold whitespace-nowrap">{quest?.title}</h2>
-                    {typeof quest?.questid === 'number' ? <div className="text-red-900 mx-2 text-sm"> #{quest?.questid}</div> : <Button type="button" className="text-sm text-primary-foreground h-5 px-2 mx-2" onClick={claimQuestId}>Create Quest ID</Button>}
+                    {typeof quest?.questid === 'number' ? <div className="text-muted-foreground mx-2 text-sm"> #{quest?.questid}</div> : <Button type="button" className="text-sm text-primary-foreground h-5 px-2 mx-2" onClick={claimQuestId}>Create Quest ID</Button>}
+                    <div className="w-full mx-6 text-sm text-right whitespace-nowrap"><span className="text-muted-foreground">Total Deposits:</span> {questRewardsDeposited} STX</div>
                   </div>
                   <div className="grid gap-2 mt-2 sm:mt-0 ">
-                    <TabsList>
+                    <TabsList className="justify-between">
                       <TabsTrigger value="Objectives">
                         <span className="sr-only">Objectives</span>
                         Objectives
@@ -347,7 +369,7 @@ export default function QuestEditor({ quest, networks }: any) {
                       )}
                     />
                     <Button type="button" className="text-sm text-primary-foreground" onClick={updateQuestStxRewards}>Update</Button>
-                    <Button type="button" className="text-sm text-primary-foreground" onClick={depositQuestRewards}>Deposit</Button>
+                    <Button type="button" className="text-sm text-primary-foreground whitespace-nowrap" onClick={depositQuestRewards}>Deposit {(form.watch().reward_stx * form.watch().maxcompletions * feePercentage) / 1000000} STX</Button>
                   </div>
 
                   <div className="flex items-end space-x-4">
@@ -366,6 +388,10 @@ export default function QuestEditor({ quest, networks }: any) {
                     />
                     <Button type="button" className="text-sm text-primary-foreground" onClick={updateQuestMaxCompletions}>Update</Button>
                   </div>
+
+                  <p className="text-sm font-medium">Total cost to fund quest:
+                    <span>{(form.watch().reward_stx * form.watch().maxcompletions * feePercentage) / 1000000} STX</span>
+                  </p>
 
                 </div>
               </TabsContent>

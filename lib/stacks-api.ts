@@ -256,6 +256,34 @@ export async function setQuestComplete(address: string, questId: number, complet
     return broadcastResponse
 }
 
+export async function getStxQuestRewardsDeposited(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme016-quest-ownership",
+        functionName: "get-quest-rewards-deposited",
+        functionArgs: [uintCV(questId)],
+        senderAddress: address
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getStxProtocolFeePercentage(address: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme014-stx-rewards",
+        functionName: "get-fee-percentage",
+        functionArgs: [],
+        senderAddress: address
+    });
+
+    return cvToJSON(response)
+}
+
 export async function getQuestActivationBlock(address: string, questId: number) {
 
     const response: any = await callReadOnlyFunction({
