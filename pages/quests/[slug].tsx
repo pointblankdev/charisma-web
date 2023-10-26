@@ -8,10 +8,11 @@ import Link from 'next/link';
 import { cn } from '@lib/utils';
 import React, { useEffect } from 'react';
 import charismaToken from '@public/charisma.png'
+import stxToken from '@public/stacks-stx-logo.png'
 import { GetStaticProps } from 'next';
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion"
-import { checkQuestComplete, checkQuestCompleteAndUnlocked, checkQuestLocked } from '@lib/stacks-api';
+import { checkQuestActivatedAndUnexpired, checkQuestCompleteAndUnlocked, checkQuestStxRewards } from '@lib/stacks-api';
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
@@ -44,6 +45,8 @@ export default function QuestDetail(props: Props) {
     const [objectivesVisible, setObjectivesVisible] = React.useState(false)
     const [questCompleted, setQuestCompleted] = React.useState(false)
     const [questLocked, setQuestLocked] = React.useState(false)
+    const [questActive, setQuestActive] = React.useState(false)
+    const [questSTXRewards, setQuestSTXRewards] = React.useState(0)
     const [isWhitelisted, setWhitelisted] = React.useState(false)
     const [user, setUser] = React.useState<any>(null)
 
@@ -68,10 +71,28 @@ export default function QuestDetail(props: Props) {
                         setQuestCompleted(true)
                     }
                 } else {
-
-                    console.log(res)
                     setQuestCompleted(true)
                     setQuestLocked(false)
+                }
+            })
+
+        checkQuestActivatedAndUnexpired(profile.stxAddress.mainnet, Number(props?.questid || 0))
+            .then((res) => {
+                if (!res.success) {
+                    console.warn(res.value.value)
+                    setQuestActive(false)
+                } else {
+                    setQuestActive(true)
+                }
+            })
+
+        checkQuestStxRewards(profile.stxAddress.mainnet, Number(props?.questid || 0))
+            .then((res) => {
+                if (!res.success) {
+                    console.warn(res.value.value)
+                } else {
+                    console.log(res.value.value)
+                    setQuestSTXRewards(res.value.value / 1000000)
                 }
             })
     }, [props, wallets])
@@ -115,7 +136,10 @@ export default function QuestDetail(props: Props) {
             <Layout className='m-2 sm:container sm:mx-auto sm:py-10 items-center'>
                 <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
                     <CardHeader className='p-4 z-20'>
-                        <CardTitle className='text-xl font-semibold z-30'>{props?.title}</CardTitle>
+                        <div className='flex justify-between items-center'>
+                            <CardTitle className='text-xl font-semibold z-30'>{props?.title}</CardTitle>
+                            <ActiveQuestIndicator active={questActive} />
+                        </div>
                         <CardDescription className='text-md font-fine text-foreground z-30'>{props?.subtitle}</CardDescription>
                         <div className='z-20'>
                             <CardTitle className='text-xl font-semibold mt-2 z-30'>Rewards</CardTitle>
@@ -125,6 +149,10 @@ export default function QuestDetail(props: Props) {
                                     <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30 ' />
                                     <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{charismaRewards}</div>
                                 </div>
+                                {questSTXRewards > 0 && <div className='relative'>
+                                    <Image src={stxToken} alt='stx-token' className='border-white rounded-full border w-full z-30 ' />
+                                    <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{questSTXRewards}</div>
+                                </div>}
                             </div> : <div className='text-sm font-fine text-foreground z-30'>No rewards have been set for this quest yet</div>}
                         </div>
                     </CardHeader>
@@ -220,4 +248,24 @@ export const getStaticPaths = () => {
         ],
         fallback: true
     };
+}
+
+// active quest indicator pings green circle when active, red when not active
+// tooltip on hover shows "active" or "not active"
+const ActiveQuestIndicator = ({ active }: { active: boolean }) => {
+    return (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger className='cursor-default'>
+                    <div className='relative w-4 h-4'>
+                        <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-red-500'}`} />
+                        <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500'}`} />
+                    </div>
+                </TooltipTrigger>
+                <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                    {active ? 'Quest is active' : 'Quest is not active'}
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    )
 }

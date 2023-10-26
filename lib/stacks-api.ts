@@ -256,6 +256,64 @@ export async function setQuestComplete(address: string, questId: number, complet
     return broadcastResponse
 }
 
+export async function getQuestActivationBlock(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme012-quest-activation",
+        functionName: "get-activation",
+        functionArgs: [uintCV(questId)],
+        senderAddress: address
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getQuestExpirationBlock(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme011-quest-expiration",
+        functionName: "get-expiration",
+        functionArgs: [uintCV(questId)],
+        senderAddress: address
+    });
+
+    return cvToJSON(response)
+}
+
+// check quest max completions
+export async function getQuestMaxCompletions(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme013-quest-max-completions",
+        functionName: "get-max-completions",
+        functionArgs: [uintCV(questId)],
+        senderAddress: address
+    });
+
+    return cvToJSON(response)
+}
+
+// check quest STX rewards
+export async function checkQuestStxRewards(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme014-stx-rewards",
+        functionName: "get-rewards",
+        functionArgs: [uintCV(questId)],
+        senderAddress: address
+    });
+
+    return cvToJSON(response)
+}
+
 // check if quest is complete and unlocked
 export async function checkQuestCompleteAndUnlocked(address: string, questId: number) {
 
@@ -264,6 +322,21 @@ export async function checkQuestCompleteAndUnlocked(address: string, questId: nu
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
         contractName: "dme015-quest-reward-helper",
         functionName: "is-completed-and-unlocked",
+        functionArgs: [uintCV(questId)],
+        senderAddress: address
+    });
+
+    return cvToJSON(response)
+}
+
+// check if quest is activated and not expired
+export async function checkQuestActivatedAndUnexpired(address: string, questId: number) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme015-quest-reward-helper",
+        functionName: "is-activated-and-unexpired",
         functionArgs: [uintCV(questId)],
         senderAddress: address
     });

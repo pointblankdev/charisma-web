@@ -1,4 +1,4 @@
-import { GetStaticProps, Metadata } from "next"
+import { GetStaticProps } from "next"
 import Image from "next/image"
 import { Button } from "@components/ui/button"
 import { Separator } from "@components/ui/separator"
@@ -17,6 +17,18 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { getAllNetworks } from "@lib/cms-providers/dato"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select"
+import { useEffect } from "react"
+import { checkQuestStxRewards, getQuestActivationBlock, getQuestExpirationBlock, getQuestMaxCompletions } from "@lib/stacks-api"
+import { userSession } from '@components/stacks-session/connect';
+import { useConnect } from "@stacks/connect-react"
+import {
+  AnchorMode,
+  Pc,
+  PostConditionMode,
+  principalCV,
+  uintCV,
+} from "@stacks/transactions";
+import { StacksMainnet } from "@stacks/network";
 import { updateQuest } from "@lib/user-api"
 
 const questFormSchema = z.object({
@@ -27,7 +39,6 @@ const questFormSchema = z.object({
   expiration: z.coerce.number(),
   maxcompletions: z.coerce.number(),
   reward_stx: z.coerce.number(),
-  // reward_charisma: z.coerce.number(),
   network: z.string(),
 })
 
@@ -35,16 +46,11 @@ type QuestFormValues = z.infer<typeof questFormSchema>
 
 export default function QuestEditor({ quest, networks }: any) {
 
-  // let questDescription;
-  // try {
-  //   questDescription = JSON.parse(quest.description).join('\n\n')
-  // } catch (error) { }
-
   const defaultValues: Partial<QuestFormValues> = {
     ...quest,
     // description: questDescription,
-    reward_stx: quest?.reward_stx || 0,
-    maxcompletions: quest?.maxcompletions || 0,
+    // reward_stx: quest?.reward_stx,
+    // maxcompletions: quest?.maxcompletions,
   }
 
 
@@ -59,6 +65,136 @@ export default function QuestEditor({ quest, networks }: any) {
     console.log(response)
   };
 
+  const { doContractCall } = useConnect();
+
+  const updateQuestMaxCompletions = () => {
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "dme017-quest-helper",
+      functionName: "set-quest-max-completion",
+      functionArgs: [uintCV(Number(quest?.questid || 0)), uintCV(Number(form.getValues().maxcompletions))],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
+  const updateQuestStxRewards = () => {
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "dme017-quest-helper",
+      functionName: "set-quest-stx-rewards",
+      functionArgs: [uintCV(Number(quest?.questid || 0)), uintCV(Number(form.getValues().reward_stx))],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
+  const depositQuestRewards = () => {
+    const profile = userSession.loadUserData().profile
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "dme017-quest-helper",
+      functionName: "deposit-quest-rewards",
+      functionArgs: [uintCV(Number(quest?.questid || 0))],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [Pc.principal(profile.stxAddress.mainnet).willSendLte(1).ustx()],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
+  // function to create random number between 100 and 999
+  const randomQuestId = () => {
+    return Math.floor(Math.random() * 999) + 100;
+  }
+
+  const claimQuestId = () => {
+    const profile = userSession.loadUserData().profile
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "dme016-quest-ownership",
+      functionName: "set-owner",
+      functionArgs: [uintCV(Number(randomQuestId())), principalCV(profile.stxAddress.mainnet)],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
+  useEffect(() => {
+    const profile = userSession.loadUserData().profile
+    typeof quest?.questid === 'number' && getQuestActivationBlock(profile.stxAddress.mainnet, Number(quest?.questid)).then(res => {
+      if (!res.success) {
+
+        console.warn(res)
+      } else {
+
+        // console.log(res)
+        form.setValue('activation', res.value.value)
+      }
+    })
+    typeof quest?.questid === 'number' && getQuestExpirationBlock(profile.stxAddress.mainnet, Number(quest?.questid)).then(res => {
+      if (!res.success) {
+
+        console.warn(res)
+      } else {
+
+        // console.log(res)
+        form.setValue('expiration', res.value.value)
+      }
+    })
+
+    typeof quest?.questid === 'number' && checkQuestStxRewards(profile.stxAddress.mainnet, Number(quest?.questid)).then(res => {
+      if (!res.success) {
+
+        console.warn(res)
+      } else {
+
+        console.log(res)
+        form.setValue('reward_stx', res.value.value)
+      }
+    })
+    typeof quest?.questid === 'number' && getQuestMaxCompletions(profile.stxAddress.mainnet, Number(quest?.questid)).then(res => {
+      if (!res.success) {
+
+        console.warn(res)
+      } else {
+
+        // console.log(res)
+        form.setValue('maxcompletions', res.value.value)
+      }
+    })
+  }, [form, quest?.questid])
+
 
   return (
     <Layout>
@@ -67,13 +203,20 @@ export default function QuestEditor({ quest, networks }: any) {
           <form onSubmit={form.handleSubmit(onSubmit)}>
             <Tabs defaultValue="Objectives" className="flex-1">
               <div className="container flex flex-col items-start justify-between space-y-2 py-4 sm:flex-row sm:items-center sm:space-y-0 md:h-16">
-                <div className="flex justify-between w-full">
-                  <h2 className="text-lg font-semibold whitespace-nowrap">{quest?.title}</h2>
-                  <div className="grid gap-2">
+                <div className="block sm:justify-between sm:w-full sm:flex">
+                  <div className="flex items-center">
+                    <h2 className="text-lg font-semibold whitespace-nowrap">{quest?.title}</h2>
+                    {typeof quest?.questid === 'number' ? <div className="text-red-900 mx-2 text-sm"> #{quest?.questid}</div> : <Button type="button" className="text-sm text-primary-foreground h-5 px-2 mx-2" onClick={claimQuestId}>Create Quest ID</Button>}
+                  </div>
+                  <div className="grid gap-2 mt-2 sm:mt-0 ">
                     <TabsList>
                       <TabsTrigger value="Objectives">
                         <span className="sr-only">Objectives</span>
                         Objectives
+                      </TabsTrigger>
+                      <TabsTrigger value="Duration">
+                        <span className="sr-only">Duration</span>
+                        Duration
                       </TabsTrigger>
                       <TabsTrigger value="Rewards">
                         <span className="sr-only">Rewards</span>
@@ -90,7 +233,7 @@ export default function QuestEditor({ quest, networks }: any) {
                     control={form.control}
                     name="network"
                     render={({ field }) => (
-                      <FormItem>
+                      <FormItem className="grow">
                         <FormLabel>Network</FormLabel>
                         <FormControl>
                           <Select {...field}>
@@ -141,88 +284,92 @@ export default function QuestEditor({ quest, networks }: any) {
                       </FormItem>
                     )}
                   />
-                  <FormField
-                    control={form.control}
-                    name="activation"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Activation Block</FormLabel>
-                        <FormControl>
-                          <Input placeholder={'Block height the quest will start'} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
-                  <FormField
-                    control={form.control}
-                    name="expiration"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Expiration Block</FormLabel>
-                        <FormControl>
-                          <Input placeholder={'Block height the quest will end'} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+
+                </div>
+                <div className="container flex justify-end">
+                  <Button type="submit" className="my-4">
+                    Update Quest
+                  </Button>
+                </div>
+              </TabsContent>
+              <TabsContent value="Duration" className="mt-0 border-0 p-0">
+                <div className="container my-4 space-y-4">
+                  <div className="flex items-end space-x-4">
+                    <FormField
+                      control={form.control}
+                      name="activation"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Activation Block</FormLabel>
+                          <FormControl>
+                            <Input placeholder={'Block height the quest will start.'} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="button" className="text-sm text-primary-foreground">Update</Button>
+                  </div>
+                  <div className="flex items-end space-x-4">
+                    <FormField
+                      control={form.control}
+                      name="expiration"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Expiration Block</FormLabel>
+                          <FormControl>
+                            <Input placeholder={'Block height the quest will end. Leave as default value for unlimited duration.'} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="button" className="text-sm text-primary-foreground">Update</Button>
+                  </div>
 
                 </div>
               </TabsContent>
               <TabsContent value="Rewards" className="mt-0 border-0 p-0">
                 <div className="container my-4 space-y-4">
 
-                  <FormField
-                    control={form.control}
-                    name="reward_stx"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Token Rewards (STX)</FormLabel>
-                        <FormControl>
-                          <Input disabled placeholder={'Amount of STX tokens a user will get for completing the quest'} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="flex items-end space-x-4">
+                    <FormField
+                      control={form.control}
+                      name="reward_stx"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Token Rewards (µSTX)</FormLabel>
+                          <FormControl>
+                            <Input placeholder={'Amount of STX tokens a user will get for completing the quest. Units are in micro-STX. There are 1,000,000 µSTX per 1 STX.'} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="button" className="text-sm text-primary-foreground" onClick={updateQuestStxRewards}>Update</Button>
+                    <Button type="button" className="text-sm text-primary-foreground" onClick={depositQuestRewards}>Deposit</Button>
+                  </div>
 
-                  {/* <FormField
-                control={form.control}
-                name="reward_charisma"
-                render={({ field }) => (
-                  <FormItem className="w-full">
-                    <FormLabel>Token Rewards (Charisma)</FormLabel>
-                    <FormControl>
-                      <Input placeholder={'Amount of Charisma tokens a user will get for completing the quest'} {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              /> */}
-
-                  <FormField
-                    control={form.control}
-                    name="maxcompletions"
-                    render={({ field }) => (
-                      <FormItem className="w-full">
-                        <FormLabel>Maximum Number of Completions</FormLabel>
-                        <FormControl>
-                          <Input disabled placeholder={'Total amount of times can be completed by all users. Individually, users can only complete the quest once.'} {...field} />
-                        </FormControl>
-                        <FormMessage />
-                      </FormItem>
-                    )}
-                  />
+                  <div className="flex items-end space-x-4">
+                    <FormField
+                      control={form.control}
+                      name="maxcompletions"
+                      render={({ field }) => (
+                        <FormItem className="w-full">
+                          <FormLabel>Maximum Number of Completions</FormLabel>
+                          <FormControl>
+                            <Input placeholder={'Total amount of times can be completed by all users. Individually, users can only complete the quest once.'} {...field} />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+                    <Button type="button" className="text-sm text-primary-foreground" onClick={updateQuestMaxCompletions}>Update</Button>
+                  </div>
 
                 </div>
               </TabsContent>
             </Tabs>
-            <div className="container flex justify-end">
-              <Button type="submit" className="my-4">
-                Update Quest
-              </Button>
-            </div>
           </form>
         </Form>
       </div>

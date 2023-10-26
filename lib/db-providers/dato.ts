@@ -73,6 +73,7 @@ export async function getQuestsByOwner(address: string) {
         },
     };
 
+
     const records = await client.items.list(query);
     return records;
 }
