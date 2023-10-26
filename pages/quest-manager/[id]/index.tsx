@@ -128,24 +128,27 @@ export default function QuestEditor({ quest, networks }: any) {
     });
   }
 
-  // function to create random number between 100 and 999
+  // function to create random number between 1000 and 9999
   const randomQuestId = () => {
-    return Math.floor(Math.random() * 999) + 100;
+    return Math.floor(Math.random() * 9999) + 1000;
   }
 
   const claimQuestId = () => {
     const profile = userSession.loadUserData().profile
+    const newQuestId = randomQuestId()
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "dme016-quest-ownership",
       functionName: "set-owner",
-      functionArgs: [uintCV(Number(randomQuestId())), principalCV(profile.stxAddress.mainnet)],
+      functionArgs: [uintCV(newQuestId), principalCV(profile.stxAddress.mainnet)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [],
-      onFinish: (data) => {
+      onFinish: async (data) => {
         console.log("onFinish:", data);
+        const response = await updateQuest({ id: quest.id, questid: newQuestId })
+        console.log(response)
       },
       onCancel: () => {
         console.log("onCancel:", "Transaction was canceled");
