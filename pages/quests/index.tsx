@@ -10,16 +10,20 @@ import Image from 'next/image';
 import {
   Card,
   CardContent,
+  CardDescription,
   CardFooter,
   CardHeader,
+  CardTitle,
 } from "@components/ui/card"
 import Link from 'next/link';
 import { getAllQuests } from '@lib/cms-providers/dato';
 import { Button } from '@components/ui/button';
 import { FaCheck } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
-import { checkQuestComplete, getQuestRewards } from '@lib/stacks-api';
+import { checkQuestComplete, checkQuestStxRewards, getQuestRewards } from '@lib/stacks-api';
 import { userSession } from '@components/stacks-session/connect';
+import charismaToken from '@public/charisma.png'
+import stxToken from '@public/stacks-stx-logo.png'
 
 
 type Props = {
@@ -62,6 +66,15 @@ export default function Quests({ quests }: Props) {
       for (const quest of updatedQuests) {
         const response = await checkQuestComplete(address, quest.questid);
         quest.completed = response.type === 3;
+
+        const profile = userSession.loadUserData().profile
+        const stxRewardResponse = await checkQuestStxRewards(profile.stxAddress.mainnet, Number(quest.questid || 0))
+        if (!stxRewardResponse.success) {
+          console.warn(stxRewardResponse.value.value)
+        } else {
+          console.log(stxRewardResponse.value.value)
+          quest.rewardSTX = stxRewardResponse.value.value / 1000000
+        }
       }
 
       // Functional update form of setState
@@ -82,6 +95,10 @@ export default function Quests({ quests }: Props) {
               const randomImage = quest.images[2] || quest.images[1] || quest.images[0];
               // const randomImage = quest.images[randomIndex];
               const isCompleted = quest.completed; // Assuming there's a 'completed' property on the quest. Adjust as needed.
+              const charismaRewards = quest?.rewardCharisma || 0
+              const showCommunityRewards = charismaRewards > 0
+
+              console.log(quest)
               return (
                 <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-75 hover:opacity-90')}>
                   <Link href={`quests/${quest.slug}`} className='w-full'>
@@ -110,23 +127,25 @@ export default function Quests({ quests }: Props) {
                         height={1200}
                         width={600}
                         alt='quest-featured-image'
-                        className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-75', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
+                        className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-80', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
                       />
-                      <div className='absolute inset-0 bg-gradient-to-b from-white to-transparent opacity-30 z-0' />
-                      <CardFooter className='z-20 absolute inset-0 top-auto flex justify-end p-2'>
-                        {/* {quest.rewardCharisma > 0 ?
-                          <div className='flex gap-2 items-center'>
-                            <div className='text-md font-semibold text-secondary leading-none'>
-                              {quest.rewardCharisma} Charisma
+                      <div className='absolute inset-0 bg-gradient-to-b from-white/50 to-transparent opacity-30 z-0' />
+                      {showCommunityRewards && <div className='absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/90 to-69% opacity-90 z-20' />}
+                      <CardFooter className='z-20 absolute inset-0 top-auto flex p-0 mb-1'>
+                        <div className='z-20 p-2'>
+                          <CardTitle className='text-lg font-semibold mt-2 z-30 text-white leading-none'>Rewards</CardTitle>
+                          {showCommunityRewards && <CardDescription className='text-sm font-fine text-white mb-4 z-30'>You will recieve:</CardDescription>}
+                          {showCommunityRewards ? <div className='grid gap-4 grid-cols-5 z-30'>
+                            <div className='relative z-30'>
+                              <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30' />
+                              <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{charismaRewards}</div>
                             </div>
-                            <div className='text-sm font-fine text-secondary leading-tight mt-1'>
-                              Reward
-                            </div>
-                          </div>
-                          : <div className='text-md font-semibold text-secondary leading-none'>
-                            No Reward
-                          </div>
-                        } */}
+                            {quest.rewardSTX > 0 && <div className='relative'>
+                              <Image src={stxToken} alt='stx-token' className='border-white rounded-full border w-full z-30 ' />
+                              <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{quest.rewardSTX}</div>
+                            </div>}
+                          </div> : <div className='text-sm font-fine text-white/90 z-30'>No rewards have been set for this quest yet</div>}
+                        </div>
                       </CardFooter>
                     </CardContent>
                   </Link>
