@@ -56,6 +56,8 @@ export default function Quests({ quests }: Props) {
 
   const [data, setData] = useState(quests);
 
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
     const address = userSession.loadUserData().profile.stxAddress.mainnet;
 
@@ -81,7 +83,7 @@ export default function Quests({ quests }: Props) {
       setData(() => updatedQuests);
     }
 
-    checkQuests();
+    checkQuests().then(() => setLoading(false));
   }, [quests]);
 
   return (
@@ -96,14 +98,11 @@ export default function Quests({ quests }: Props) {
               // const randomImage = quest.images[randomIndex];
               const isCompleted = quest.completed; // Assuming there's a 'completed' property on the quest. Adjust as needed.
               const charismaRewards = quest?.rewardCharisma || 0
-              const showCommunityRewards = charismaRewards > 0
-
-              console.log(quest)
+              const showCommunityRewards = charismaRewards > 0 || quest.rewardSTX > 0
               return (
                 <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-75 hover:opacity-90')}>
                   <Link href={`quests/${quest.slug}`} className='w-full'>
                     <CardContent className='p-0 w-full'>
-                      {isCompleted && <div className='absolute top-1 right-2 z-30'><FaCheck size={24} className="text-green-500 group-hover/card:scale-110 transition-all" /></div>}
                       <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
                         <div className='flex gap-2'>
                           <div className='min-w-max'>
@@ -131,8 +130,8 @@ export default function Quests({ quests }: Props) {
                       />
                       <div className='absolute inset-0 bg-gradient-to-b from-white/50 to-transparent opacity-30 z-0' />
                       {showCommunityRewards && <div className='absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/90 to-69% opacity-90 z-20' />}
-                      <CardFooter className='z-20 absolute inset-0 top-auto flex p-0 mb-1'>
-                        <div className='z-20 p-2'>
+                      <CardFooter className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all', loading && 'opacity-0')}>
+                        {!isCompleted ? <div className='z-20 p-2'>
                           <CardTitle className='text-lg font-semibold mt-2 z-30 text-white leading-none'>Rewards</CardTitle>
                           {showCommunityRewards && <CardDescription className='text-sm font-fine text-white mb-4 z-30'>You will recieve:</CardDescription>}
                           {showCommunityRewards ? <div className='grid gap-4 grid-cols-5 z-30'>
@@ -145,7 +144,7 @@ export default function Quests({ quests }: Props) {
                               <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{quest.rewardSTX}</div>
                             </div>}
                           </div> : <div className='text-sm font-fine text-white/90 z-30'>No rewards have been set for this quest yet</div>}
-                        </div>
+                        </div> : <div className='flex items-center justify-center w-full'><div className='z-20 p-2 text-white/90 text-lg'>Quest Completed</div><div className='z-30'><FaCheck size={16} className="text-green-500" /></div></div>}
                       </CardFooter>
                     </CardContent>
                   </Link>

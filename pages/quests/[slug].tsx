@@ -36,7 +36,6 @@ export default function QuestDetail(props: Props) {
     };
 
     const charismaRewards = props?.charismaRewards || 0
-    const showCommunityRewards = charismaRewards > 0
     const randomImage = props.randomImage;
     const wallets = props.wallets
 
@@ -49,6 +48,8 @@ export default function QuestDetail(props: Props) {
     const [questSTXRewards, setQuestSTXRewards] = React.useState(0)
     const [isWhitelisted, setWhitelisted] = React.useState(false)
     const [user, setUser] = React.useState<any>(null)
+
+    const showCommunityRewards = charismaRewards > 0 || questSTXRewards > 0
 
     useEffect(() => {
         const profile = userSession.loadUserData().profile
