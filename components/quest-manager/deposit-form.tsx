@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState } from "react";
+import { SetStateAction, useState } from "react";
 import { bytesToHex, hexToBytes } from "@noble/hashes/utils";
 import * as btc from "@scure/btc-signer";
 import { userSession } from "@components/stacks-session/connect";
@@ -19,11 +20,11 @@ export default function DepositForm() {
     const userData = userSession.loadUserData()
     const [satoshis, setSatoshis] = useState("");
 
-    const handleInputChange = (event) => {
+    const handleInputChange = (event: { target: { value: SetStateAction<string>; }; }) => {
         setSatoshis(event.target.value);
     };
 
-    const buildTransaction = async (e) => {
+    const buildTransaction = async (e: { preventDefault: () => void; }) => {
         e.preventDefault();
         // Helper for working with various API and RPC endpoints and getting and processing data
         // Change this depending on what network you are working with
@@ -59,9 +60,9 @@ export default function DepositForm() {
         const tx = await sbtcDepositHelper({
             // comment this line out if working via devnet
             network: TESTNET,
-            sbtcWalletAddress,
+            // sbtcWalletAddress,
             stacksAddress: userData.profile.stxAddress.testnet,
-            amountSats: satoshis,
+            amountSats: satoshis as any,
             // we can use the helper to get an estimated fee for our transaction
             feeRate: await testnet.estimateFeeRate("low"),
             // the helper will automatically parse through these and use one or some as inputs
@@ -77,7 +78,7 @@ export default function DepositForm() {
             hex: bytesToHex(psbt),
         };
         // Call Leather API to sign the PSBT and finalize it
-        const txResponse = await window.btc.request("signPsbt", requestParams);
+        const txResponse = await (window as any).btc.request("signPsbt", requestParams);
         const formattedTx = btc.Transaction.fromPSBT(
             hexToBytes(txResponse.result.hex)
         );
