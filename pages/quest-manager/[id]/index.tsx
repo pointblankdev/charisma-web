@@ -30,6 +30,7 @@ import {
 } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { updateQuest } from "@lib/user-api"
+import DepositForm from "@components/quest-manager/deposit-form"
 
 const questFormSchema = z.object({
   id: z.string(),
@@ -374,6 +375,8 @@ export default function QuestEditor({ quest, networks }: any) {
                     <Button type="button" className="text-sm text-primary-foreground" onClick={updateQuestStxRewards}>Update</Button>
                     <Button type="button" className="text-sm text-primary-foreground whitespace-nowrap" onClick={depositQuestRewards}>Deposit {(form.watch().reward_stx * form.watch().maxcompletions * feePercentage) / 1000000} STX</Button>
                   </div>
+
+                  {/* <DepositForm /> */}
 
                   <div className="flex items-end space-x-4">
                     <FormField
