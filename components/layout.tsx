@@ -53,7 +53,7 @@ export default function Layout({
                 >
                   <div className='flex flex-col items-center justify-center relative'>
                     <div>{name}</div>
-                    {name === 'Quests' && <div className='text-xxs absolute top-4 text-green-500 animate-pulse'>beta</div>}
+                    {name === 'Quests' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
                     {name === 'Faucet' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
                   </div>
                 </Link>
