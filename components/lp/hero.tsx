@@ -38,13 +38,6 @@ export default function Hero() {
       >
         {SITE_DESCRIPTION}
       </h2>
-      <div className={cn(styleUtils.appear, styleUtils['appear-third'], styles.info)}>
-        <p>{DATE}</p>
-        <div className={styles['description-separator']} />
-        <p>
-          <strong>Launching</strong>
-        </p>
-      </div>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
         <p>Complete Quests. Claim Rewards. Explore Bitcoin.</p>
       </div>

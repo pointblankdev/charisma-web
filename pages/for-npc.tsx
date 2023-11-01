@@ -22,7 +22,7 @@ export default function ForNpcPage() {
       <Layout>
         <div className={cn(styleUtils.container, 'flex flex-col')}>
           <Hero />
-          <Button type="submit" className={cn('self-center', styleUtils.appear, styleUtils['appear-eighth'], 'mb-4')}>Join Discord to Get Started</Button>
+          <Button size={'lg'} type="submit" className={cn('text-lg', 'self-center', styleUtils.appear, styleUtils['appear-eighth'], 'mb-4', 'p-8')}>Join Discord to Learn More</Button>
         </div>
       </Layout>
     </Page>

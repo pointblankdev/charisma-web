@@ -40,12 +40,12 @@
 }
 
 .about {
-  font-weight: 300;
-  font-size: 16px;
+  font-weight: 600;
+  font-size: 20px;
   line-height: 1.4;
   text-align: center;
-  margin: 24px auto;
-  color: var(--secondary-color);
+  margin: 0px auto 48px;
+  color: var(--brand);
   max-width: 555px;
 }
 
