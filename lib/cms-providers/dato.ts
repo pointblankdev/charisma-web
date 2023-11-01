@@ -1,4 +1,3 @@
-import { Job, Sponsor, Stage, Speaker } from '@lib/types';
 
 const API_URL = 'https://graphql.datocms.com/';
 const API_TOKEN = process.env.DATOCMS_READ_ONLY_API_TOKEN;
@@ -148,6 +147,26 @@ export async function getAllGuilds(): Promise<any[]> {
       }
     `);
   return data.allGuilds;
+}
+
+export async function getQuestImageUrls(id: string | number): Promise<any> {
+  const data = await fetchCmsAPI(`
+      query QuestById($id: ItemId) {
+        allQuests(filter: {id: {eq: $id}}) {
+          cardImage {
+            url
+          }
+          questBgImage {
+            url
+          }
+        }
+      }
+    `, {
+    variables: {
+      id
+    }
+  });
+  return data.allQuests[0];
 }
 
 export async function getAllNetworks(): Promise<any[]> {

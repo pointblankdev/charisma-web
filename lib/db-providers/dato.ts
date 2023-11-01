@@ -1,4 +1,5 @@
 import { buildClient } from '@datocms/cma-client-node';
+import { CreateUploadFromLocalFileSchema, CreateUploadFromUrlSchema } from '@datocms/cma-client-node/dist/types/resources/Upload';
 
 const API_TOKEN = String(process.env.DATOCMS_FULL_ACCESS_API_TOKEN);
 
@@ -56,7 +57,17 @@ export async function createQuestSession(args: any): Promise<any> {
 }
 
 export async function updateQuest(args: any): Promise<any> {
-    return client.items.update(args.id, args)
+    const updateResponse = client.items.update(args.id, args)
+    await client.items.publish(args.id)
+    return updateResponse
+}
+
+export async function createFromUrl(args: CreateUploadFromUrlSchema): Promise<any> {
+    return client.uploads.createFromUrl(args);
+}
+
+export async function createFromLocalFile(args: CreateUploadFromLocalFileSchema): Promise<any> {
+    return client.uploads.createFromLocalFile(args);
 }
 
 export function getQuestById(id: string): Promise<any> {

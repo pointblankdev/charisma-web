@@ -15,7 +15,7 @@ import { Input } from "@components/ui/input"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { getAllNetworks } from "@lib/cms-providers/dato"
+import { getAllGuilds, getAllNetworks, getQuestImageUrls } from "@lib/cms-providers/dato"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select"
 import { useEffect, useState } from "react"
 import { checkQuestStxRewards, getQuestActivationBlock, getQuestExpirationBlock, getQuestMaxCompletions, getStxProtocolFeePercentage, getStxQuestRewardsDeposited } from "@lib/stacks-api"
@@ -30,10 +30,18 @@ import {
 } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { updateQuest } from "@lib/user-api"
-import DepositForm from "@components/quest-manager/deposit-form"
+import { Textarea } from "@components/ui/textarea"
+// import DepositForm from "@components/quest-manager/deposit-form"
 
 const questFormSchema = z.object({
   id: z.string(),
+  title: z.string(),
+  subtitle: z.string(),
+  description: z.string(),
+  objectives: z.string(),
+  cardImage: z.string().optional(),
+  questBgImage: z.string().optional(),
+  guild: z.string(),
   contract_identifier: z.string(),
   method: z.string(),
   activation: z.coerce.number(),
@@ -45,18 +53,14 @@ const questFormSchema = z.object({
 
 type QuestFormValues = z.infer<typeof questFormSchema>
 
-export default function QuestEditor({ quest, networks }: any) {
+export default function QuestEditor({ quest, networks, guilds, cardImage, questBgImage }: any) {
 
   const [feePercentage, setFeePercentage] = useState(0)
   const [questRewardsDeposited, setQuestRewardsDeposited] = useState(0)
 
   const defaultValues: Partial<QuestFormValues> = {
     ...quest,
-    // description: questDescription,
-    // reward_stx: quest?.reward_stx,
-    // maxcompletions: quest?.maxcompletions,
   }
-
 
   const form = useForm<QuestFormValues>({
     resolver: zodResolver(questFormSchema),
@@ -65,9 +69,17 @@ export default function QuestEditor({ quest, networks }: any) {
   })
 
   const onSubmit = async (data: QuestFormValues) => {
+    // convert quest.description from a single string with line breaks to an array of strings
+    data.description = JSON.stringify(data.description.split('\n\n'))
+    data.objectives = JSON.stringify([{ text: data.objectives, metric: '0/1' }])
     const response = await updateQuest(data)
     console.log(response)
   };
+
+  const uploadImage = async () => {
+    const response = await updateQuest({ id: form.getValues().id, cardImage: form.getValues().cardImage })
+    console.log(response)
+  }
 
   const { doContractCall } = useConnect();
 
@@ -310,12 +322,137 @@ export default function QuestEditor({ quest, networks }: any) {
                       </FormItem>
                     )}
                   />
+                  <FormField
+                    control={form.control}
+                    name="title"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Title</FormLabel>
+                        <FormControl>
+                          <Input placeholder={'title'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="subtitle"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Subtitle</FormLabel>
+                        <FormControl>
+                          <Input placeholder={'subtitle'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="guild"
+                    render={({ field }) => (
+                      <FormItem className="grow">
+                        <FormLabel>Guild</FormLabel>
+                        <FormControl>
+                          <Select {...field}>
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select a guild" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {guilds?.map((guild: any) => {
+                                return (
+                                  <SelectItem value={guild.id} key={guild.id}>
+                                    <div className='flex space-x-2'>
+                                      <Image src={guild.logo.url} width={24} height={24} alt={'Guild logo'} className="rounded-full" />
+                                      <div>{guild.name}</div>
+                                    </div>
+                                  </SelectItem>
+                                )
+                              })}
+                            </SelectContent>
+                          </Select>
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Description</FormLabel>
+                        <FormControl>
+                          <Textarea placeholder={'description'} {...field} className="h-48" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="objectives"
+                    render={({ field }) => (
+                      <FormItem className="w-full">
+                        <FormLabel>Objective</FormLabel>
+                        <FormControl>
+                          <Input placeholder={'objectives'} {...field} />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                    <div>
 
-                </div>
-                <div className="container flex justify-end">
-                  <Button type="submit" className="my-4">
-                    Update Quest
-                  </Button>
+                      <div className="flex items-end space-x-4">
+                        <FormField
+                          control={form.control}
+                          name="cardImage"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>Card Image</FormLabel>
+                              <FormControl>
+                                <Input placeholder={'Publicly available URL of image to upload'} {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="button" onClick={uploadImage} className="text-sm text-primary-foreground">Upload</Button>
+                      </div>
+                      {cardImage && <Image src={cardImage.url} width={400} height={400} alt={cardImage.alt} className="w-full rounded-lg cursor-pointer border mt-4" />}
+
+                    </div>
+                    <div>
+
+                      <div className="flex items-end space-x-4">
+                        <FormField
+                          control={form.control}
+                          name="questBgImage"
+                          render={({ field }) => (
+                            <FormItem className="w-full">
+                              <FormLabel>Background Image</FormLabel>
+                              <FormControl>
+                                <Input placeholder={'Publicly available URL of image to upload'} {...field} />
+                              </FormControl>
+                              <FormMessage />
+                            </FormItem>
+                          )}
+                        />
+                        <Button type="button" onClick={uploadImage} className="text-sm text-primary-foreground">Upload</Button>
+                      </div>
+                      {questBgImage && <Image src={questBgImage.url} width={400} height={400} alt={cardImage.alt} className="w-full rounded-lg cursor-pointer border mt-4" />}
+
+                    </div>
+                    <div className="container flex justify-end">
+                      <Button type="submit" className="my-4 w-full h-16">
+                        Update Quest
+                      </Button>
+                    </div>
+                  </div>
+
                 </div>
               </TabsContent>
               <TabsContent value="Duration" className="mt-0 border-0 p-0">
@@ -415,11 +552,21 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   const quest = await getQuestById(params?.id as string)
   const networks = await getAllNetworks()
+  const guilds = await getAllGuilds()
+  const imageUrls = await getQuestImageUrls(params?.id as string)
+
+  // convert quest.description from a array of string to a single string with line breaks
+  quest.description = JSON.parse(quest.description).join('\n\n')
+
+  quest.objectives = JSON.parse(quest.objectives)[0].text
+
 
   return {
     props: {
       quest,
-      networks
+      networks,
+      guilds,
+      ...imageUrls
     },
     revalidate: 60
   };

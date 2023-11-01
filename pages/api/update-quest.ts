@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ConfUser } from '@lib/types';
-import { updateQuest } from '@lib/db-providers/dato';
+import { createFromUrl, updateQuest } from '@lib/db-providers/dato';
 
 type ErrorResponse = {
     error: {
@@ -14,9 +14,20 @@ export default async function updateQuestApi(
     res: NextApiResponse<ConfUser | ErrorResponse>
 ) {
 
-    let response, code = 200
+    let response, uploadResponse, updateResponse, code = 200
     try {
-        response = await updateQuest(req.body)
+
+        if (req.body.cardImage) {
+
+            uploadResponse = await createFromUrl({ url: req.body.cardImage })
+            console.log({ uploadResponse })
+            delete req.body.cardImage
+
+            updateResponse = await updateQuest({ id: req.body.id, card_image: { upload_id: uploadResponse.id } })
+            console.log({ updateResponse })
+        }
+
+        response = await updateQuest({ ...req.body })
     } catch (error: any) {
         console.error(error)
         response = new Object(error)
