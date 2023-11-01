@@ -42,7 +42,7 @@ export async function getAllWallets(): Promise<any[]> {
 export async function getAllQuests(): Promise<any[]> {
   const data = await fetchCmsAPI(`
       {
-        allQuests(first: 100, orderBy: id_ASC) {
+        allQuests(first: 100, orderBy: id_ASC, filter: {visible: {eq: true}}) {
           id
           slug
           title
@@ -51,6 +51,12 @@ export async function getAllQuests(): Promise<any[]> {
           images {
             url(imgixParams: {fm: jpg, fit: crop, w: 600, h: 1200})
             blurDataURL: blurUpThumb
+          }
+          cardImage {
+            url
+          }
+          questBgImage {
+            url
           }
           guild {
             logo {
@@ -62,6 +68,7 @@ export async function getAllQuests(): Promise<any[]> {
           objectives
           contractIdentifier
           method
+          visible
         }
       }
     `);
@@ -81,6 +88,12 @@ export async function getQuestBySlug(slug: string): Promise<any> {
             url(imgixParams: {fm: jpg, fit: crop, w: 600, h: 1200})
             blurDataURL: blurUpThumb
           }
+          cardImage {
+            url
+          }
+          questBgImage {
+            url
+          }
           guild {
             logo {
               url(imgixParams: {fm: jpg, fit: crop, w: 400, h: 400})
@@ -89,6 +102,7 @@ export async function getQuestBySlug(slug: string): Promise<any> {
           }
           description
           objectives
+          visible
         }
       }
     `, {
@@ -120,6 +134,7 @@ export async function getQuestById(id: string | number): Promise<any> {
           }
           description
           objectives
+          visible
         }
       }
     `, {

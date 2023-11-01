@@ -27,6 +27,17 @@ export default async function updateQuestApi(
             console.log({ updateResponse })
         }
 
+        if (req.body.questBgImage) {
+
+            uploadResponse = await createFromUrl({ url: req.body.questBgImage })
+            console.log({ uploadResponse })
+            delete req.body.questBgImage
+
+            updateResponse = await updateQuest({ id: req.body.id, quest_bg_image: { upload_id: uploadResponse.id } })
+            console.log({ updateResponse })
+        }
+
+
         response = await updateQuest({ ...req.body })
     } catch (error: any) {
         console.error(error)

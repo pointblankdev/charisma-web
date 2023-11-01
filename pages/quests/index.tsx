@@ -17,7 +17,6 @@ import {
 } from "@components/ui/card"
 import Link from 'next/link';
 import { getAllQuests } from '@lib/cms-providers/dato';
-import { Button } from '@components/ui/button';
 import { FaCheck } from 'react-icons/fa';
 import { useEffect, useState } from 'react';
 import { checkQuestComplete, checkQuestStxRewards, getQuestRewards } from '@lib/stacks-api';
@@ -34,7 +33,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const quests = await getAllQuests()
 
-  // loop through all quests and get rewards
+  // loop through all quests and get rewards, activation, expiration, max completions
   for (const quest of quests) {
     const result = await getQuestRewards(quest.questid)
     quest.rewardCharisma = Number(result.value.value)
@@ -93,9 +92,6 @@ export default function Quests({ quests }: Props) {
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
             {data.map((quest) => {
-              // const randomIndex = Math.floor(Math.random() * quest.images.length);
-              const randomImage = quest.images[2] || quest.images[1] || quest.images[0];
-              // const randomImage = quest.images[randomIndex];
               const isCompleted = quest.completed; // Assuming there's a 'completed' property on the quest. Adjust as needed.
               const charismaRewards = quest?.rewardCharisma || 0
               const showCommunityRewards = charismaRewards > 0 || quest.rewardSTX > 0
@@ -122,7 +118,7 @@ export default function Quests({ quests }: Props) {
                         </div>
                       </CardHeader>
                       <Image
-                        src={randomImage.url}
+                        src={quest.cardImage.url}
                         height={1200}
                         width={600}
                         alt='quest-featured-image'

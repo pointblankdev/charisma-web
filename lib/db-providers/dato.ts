@@ -57,10 +57,11 @@ export async function createQuestSession(args: any): Promise<any> {
 }
 
 export async function updateQuest(args: any): Promise<any> {
-    const updateResponse = client.items.update(args.id, args)
+    const updateResponse = await client.items.update(args.id, args)
     await client.items.publish(args.id)
     return updateResponse
 }
+
 
 export async function createFromUrl(args: CreateUploadFromUrlSchema): Promise<any> {
     return client.uploads.createFromUrl(args);

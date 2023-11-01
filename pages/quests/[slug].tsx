@@ -36,7 +36,6 @@ export default function QuestDetail(props: Props) {
     };
 
     const charismaRewards = props?.charismaRewards || 0
-    const randomImage = props.randomImage;
     const wallets = props.wallets
 
     const { doContractCall } = useConnect();
@@ -200,7 +199,7 @@ export default function QuestDetail(props: Props) {
                         </TooltipProvider>
                     </CardFooter>}
                     <Image
-                        src={randomImage?.url}
+                        src={props?.questBgImage?.url}
                         width={800}
                         height={1600}
                         alt={'quest-background-image'}
@@ -228,9 +227,6 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
         functionArgs: [uintCV(Number(quest?.questid))],
         senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
     })
-
-    // pick a random image
-    quest.randomImage = quest.images[Math.floor(Math.random() * quest.images.length)]
 
     return {
         props: {

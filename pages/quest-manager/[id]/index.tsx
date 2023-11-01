@@ -77,7 +77,7 @@ export default function QuestEditor({ quest, networks, guilds, cardImage, questB
   };
 
   const uploadImage = async () => {
-    const response = await updateQuest({ id: form.getValues().id, cardImage: form.getValues().cardImage })
+    const response = await updateQuest({ id: form.getValues().id, cardImage: form.getValues().cardImage, questBgImage: form.getValues().questBgImage })
     console.log(response)
   }
 
