@@ -86,6 +86,7 @@ const ConnectWallet = () => {
                 <ListItem href="/quest-manager" title="Quest Manager">
                   Create, manage, and track your quests all from one place.
                 </ListItem>
+                <div className='text-sm absolute right-[8.2rem] top-8 text-green-500 animate-pulse'>BETA</div>
                 <ListItem href="/tokenomics" title="Tokenomics">
                   View stats and metrics on the Charisma token's distribution.
                 </ListItem>
