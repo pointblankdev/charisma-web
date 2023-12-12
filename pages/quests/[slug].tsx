@@ -51,50 +51,52 @@ export default function QuestDetail(props: Props) {
     const showCommunityRewards = charismaRewards > 0 || questSTXRewards > 0
 
     useEffect(() => {
-        const profile = userSession.loadUserData().profile
-        setUser(wallets.find((w: any) => w.stxaddress === profile.stxAddress.mainnet))
-        setWhitelisted(wallets.some((w: any) => w.stxaddress === profile.stxAddress.mainnet))
-        checkQuestCompleteAndUnlocked(profile.stxAddress.mainnet, Number(props?.questid || 0))
-            .then((res) => {
-                if (!res.success) {
+        if (userSession.isUserSignedIn()) {
+            const profile = userSession.loadUserData().profile
+            setUser(wallets.find((w: any) => w.stxaddress === profile.stxAddress.mainnet))
+            setWhitelisted(wallets.some((w: any) => w.stxaddress === profile.stxAddress.mainnet))
+            checkQuestCompleteAndUnlocked(profile.stxAddress.mainnet, Number(props?.questid || 0))
+                .then((res) => {
+                    if (!res.success) {
 
-                    console.warn(res.value.value)
+                        console.warn(res.value.value)
 
-                    if (Number(res.value.value) === 3101) {
-                        console.warn('Quest Not Complete')
-                        setQuestCompleted(false)
+                        if (Number(res.value.value) === 3101) {
+                            console.warn('Quest Not Complete')
+                            setQuestCompleted(false)
+                            setQuestLocked(false)
+                        }
+                        if (Number(res.value.value) === 3102) {
+                            console.warn('Rewards Locked')
+                            setQuestLocked(true)
+                            setQuestCompleted(true)
+                        }
+                    } else {
+                        setQuestCompleted(true)
                         setQuestLocked(false)
                     }
-                    if (Number(res.value.value) === 3102) {
-                        console.warn('Rewards Locked')
-                        setQuestLocked(true)
-                        setQuestCompleted(true)
+                })
+
+            checkQuestActivatedAndUnexpired(profile.stxAddress.mainnet, Number(props?.questid || 0))
+                .then((res) => {
+                    if (!res.success) {
+                        console.warn(res.value.value)
+                        setQuestActive(false)
+                    } else {
+                        setQuestActive(true)
                     }
-                } else {
-                    setQuestCompleted(true)
-                    setQuestLocked(false)
-                }
-            })
+                })
 
-        checkQuestActivatedAndUnexpired(profile.stxAddress.mainnet, Number(props?.questid || 0))
-            .then((res) => {
-                if (!res.success) {
-                    console.warn(res.value.value)
-                    setQuestActive(false)
-                } else {
-                    setQuestActive(true)
-                }
-            })
-
-        checkQuestStxRewards(profile.stxAddress.mainnet, Number(props?.questid || 0))
-            .then((res) => {
-                if (!res.success) {
-                    console.warn(res.value.value)
-                } else {
-                    console.log(res.value.value)
-                    setQuestSTXRewards(res.value.value / 1000000)
-                }
-            })
+            checkQuestStxRewards(profile.stxAddress.mainnet, Number(props?.questid || 0))
+                .then((res) => {
+                    if (!res.success) {
+                        console.warn(res.value.value)
+                    } else {
+                        console.log(res.value.value)
+                        setQuestSTXRewards(res.value.value / 1000000)
+                    }
+                })
+        }
     }, [props, wallets])
 
     const claimRewards = () => {

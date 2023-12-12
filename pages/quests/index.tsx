@@ -58,31 +58,33 @@ export default function Quests({ quests }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const address = userSession.loadUserData().profile.stxAddress.mainnet;
+    if (userSession.isUserSignedIn()) {
+      const address = userSession.loadUserData().profile.stxAddress.mainnet;
 
-    const checkQuests = async () => {
-      // Deep clone the quests array to prevent mutations on the original data
-      const updatedQuests = JSON.parse(JSON.stringify(quests));
+      const checkQuests = async () => {
+        // Deep clone the quests array to prevent mutations on the original data
+        const updatedQuests = JSON.parse(JSON.stringify(quests));
 
-      for (const quest of updatedQuests) {
-        const response = await checkQuestComplete(address, quest.questid);
-        quest.completed = response.type === 3;
+        for (const quest of updatedQuests) {
+          const response = await checkQuestComplete(address, quest.questid);
+          quest.completed = response.type === 3;
 
-        const profile = userSession.loadUserData().profile
-        const stxRewardResponse = await checkQuestStxRewards(profile.stxAddress.mainnet, Number(quest.questid || 0))
-        if (!stxRewardResponse.success) {
-          console.warn(stxRewardResponse.value.value)
-        } else {
-          console.log(stxRewardResponse.value.value)
-          quest.rewardSTX = stxRewardResponse.value.value / 1000000
+          const profile = userSession.loadUserData().profile
+          const stxRewardResponse = await checkQuestStxRewards(profile.stxAddress.mainnet, Number(quest.questid || 0))
+          if (!stxRewardResponse.success) {
+            console.warn(stxRewardResponse.value.value)
+          } else {
+            console.log(stxRewardResponse.value.value)
+            quest.rewardSTX = stxRewardResponse.value.value / 1000000
+          }
         }
+
+        // Functional update form of setState
+        setData(() => updatedQuests);
       }
 
-      // Functional update form of setState
-      setData(() => updatedQuests);
+      checkQuests().then(() => setLoading(false));
     }
-
-    checkQuests().then(() => setLoading(false));
   }, [quests]);
 
   return (
