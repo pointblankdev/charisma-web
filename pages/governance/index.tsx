@@ -230,11 +230,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     };
 
   } catch (error) {
-    // redirect to home page if error occurs
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        data: []
       },
     }
   }

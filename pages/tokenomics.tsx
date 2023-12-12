@@ -58,6 +58,8 @@ export default function Tokenomics({ data }: Props) {
     }
   ]
 
+  if (!percentChange) return <></>
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -164,7 +166,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const { walletBalances, totalUniqueWallets, percentChange } = await fetchAllClaims()
     const wallets = await getAllWallets()
 
-
     return {
       props: {
         data: {
@@ -180,11 +181,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     };
 
   } catch (error) {
-    // redirect to home page if error occurs
     return {
-      redirect: {
-        destination: '/',
-        permanent: false,
+      props: {
+        data: {}
       },
     }
   }
