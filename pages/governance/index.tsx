@@ -214,16 +214,28 @@ export default function Governance({ data }: Props) {
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
-  const proposals = await getProposals();
+  try {
 
-  const transactions = await fetchAllContractTransactions('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting')
+    const proposals = await getProposals();
 
-  const updatedProposals = updateVoteData(proposals, transactions);
+    const transactions = await fetchAllContractTransactions('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting')
 
-  return {
-    props: {
-      data: updatedProposals
-    },
-    revalidate: 60
-  };
+    const updatedProposals = updateVoteData(proposals, transactions);
+
+    return {
+      props: {
+        data: updatedProposals
+      },
+      revalidate: 60
+    };
+
+  } catch (error) {
+    // redirect to home page if error occurs
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
 };

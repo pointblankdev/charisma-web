@@ -158,22 +158,34 @@ export default function Tokenomics({ data }: Props) {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const { totalSupply, dripAmount } = await getTokenStats();
-  const { walletBalances, totalUniqueWallets, percentChange } = await fetchAllClaims()
-  const wallets = await getAllWallets()
+
+  try {
+    const { totalSupply, dripAmount } = await getTokenStats();
+    const { walletBalances, totalUniqueWallets, percentChange } = await fetchAllClaims()
+    const wallets = await getAllWallets()
 
 
-  return {
-    props: {
-      data: {
-        totalSupply: totalSupply,
-        dripAmount: dripAmount,
-        walletBalances: walletBalances,
-        uniqueAddresses: totalUniqueWallets,
-        percentChange: percentChange,
-        wallets: wallets
-      }
-    },
-    revalidate: 60
-  };
+    return {
+      props: {
+        data: {
+          totalSupply: totalSupply,
+          dripAmount: dripAmount,
+          walletBalances: walletBalances,
+          uniqueAddresses: totalUniqueWallets,
+          percentChange: percentChange,
+          wallets: wallets
+        }
+      },
+      revalidate: 60
+    };
+
+  } catch (error) {
+    // redirect to home page if error occurs
+    return {
+      redirect: {
+        destination: '/',
+        permanent: false,
+      },
+    }
+  }
 };
