@@ -20,7 +20,7 @@ type Props = {
 
 export default function Page({ meta, children, fullViewport = false }: Props) {
   const router = useRouter();
-  const image = meta.image || '/charisma-lp-og.png';
+  const image = meta.image || '/token-faucet.png';
   const title = meta.title || SITE_NAME;
   const url = meta.url || `${SITE_URL}${router.asPath}`;
   const description = meta.description || SITE_NAME;
