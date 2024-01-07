@@ -81,7 +81,7 @@ export default function Faucet({ data }: Props) {
                 The Charisma Token Faucet is a contract (a piece of blockchain code) that automatically releases ("drips") Charisma tokens over time, a process similar to how a real-world faucet drips water. This process is also known as "token minting". The rate of these drips, i.e., the number of tokens released per Bitcoin block, is called the "drip amount". These tokens are used for governance and voting purposes within the Charisma DAO.
               </p>
 
-              <ClaimFaucetButton />
+              <ClaimFaucetButton tokensToClaim={unclaimedBlocks * dripAmount} />
             </div>
           </Card>
         </div>

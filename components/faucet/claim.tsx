@@ -9,7 +9,7 @@ import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import { newWallet } from "@lib/user-api";
 
-const ClaimFaucetButton = () => {
+const ClaimFaucetButton = ({ tokensToClaim }: { tokensToClaim: number }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -51,7 +51,7 @@ const ClaimFaucetButton = () => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={claim}>Claim</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={claim}>Claim {tokensToClaim} CHA tokens</Button>
   );
 };
 
