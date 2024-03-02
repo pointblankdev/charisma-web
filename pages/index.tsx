@@ -44,46 +44,46 @@ type Props = {
   data: any;
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+// export const getStaticProps: GetStaticProps<Props> = async () => {
 
-  try {
-    const { results } = await blocksApi.getBlockList({ limit: 1 })
+//   try {
+//     const { results } = await blocksApi.getBlockList({ limit: 1 })
 
-    const lc: any = await callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "dme005-token-faucet-v0",
-      functionName: "get-last-claim",
-      functionArgs: [],
-      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-    })
+//     const lc: any = await callReadOnlyFunction({
+//       network: new StacksMainnet(),
+//       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+//       contractName: "dme005-token-faucet-v0",
+//       functionName: "get-last-claim",
+//       functionArgs: [],
+//       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+//     })
 
 
-    const d: any = await callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "dme005-token-faucet-v0",
-      functionName: "get-drip-amount",
-      functionArgs: [],
-      senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-    })
+//     const d: any = await callReadOnlyFunction({
+//       network: new StacksMainnet(),
+//       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+//       contractName: "dme005-token-faucet-v0",
+//       functionName: "get-drip-amount",
+//       functionArgs: [],
+//       senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
+//     })
 
-    const data = {
-      lastClaim: Number(lc.value.value),
-      dripAmount: Number(d.value.value),
-      latestBlock: results[0].height
-    }
+//     const data = {
+//       lastClaim: Number(lc.value.value),
+//       dripAmount: Number(d.value.value),
+//       latestBlock: results[0].height
+//     }
 
-    return {
-      props: { data },
-      revalidate: 60
-    };
+//     return {
+//       props: { data },
+//       revalidate: 60
+//     };
 
-  } catch (error) {
-    return {
-      props: {
-        data: {}
-      },
-    }
-  }
-};
+//   } catch (error) {
+//     return {
+//       props: {
+//         data: {}
+//       },
+//     }
+//   }
+// };

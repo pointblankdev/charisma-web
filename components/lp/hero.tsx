@@ -18,7 +18,7 @@ export default function Hero() {
           styleUtils['hide-on-tablet'],
         )}
       >
-        {/* {SITE_DESCRIPTION} */}
+        {SITE_DESCRIPTION}
       </h2>
       <div className={cn(styles.heroContainer, 'space-x-1')}>
         <Image src={charisma} alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'])} />{' '}
@@ -39,7 +39,7 @@ export default function Hero() {
         {SITE_DESCRIPTION}
       </h2>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <p>Tokens unlocked every block</p>
+        <p>The largest community-run DAO on Stacks</p>
       </div>
     </div>
   );

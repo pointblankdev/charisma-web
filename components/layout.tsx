@@ -32,7 +32,7 @@ export default function Layout({
   return (
     <>
       <div className={styles.background}>
-        {/* {!hideNav && (
+        {!hideNav && (
           <header className={cn(styles.header)}>
             <div className={styles['header-logos']}>
               <MobileMenu key={router.asPath} />
@@ -66,7 +66,7 @@ export default function Layout({
               <ConnectWallet />
             </div>
           </header>
-        )} */}
+        )}
         <div className={styles.page}>
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />

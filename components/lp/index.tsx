@@ -29,10 +29,10 @@ export default function LandingPage({
   const [userData, setUserData] = useState<UserData>(defaultUserData);
   const [pageState, setPageState] = useState<PageState>(defaultPageState);
 
-  const blockHeight = data.latestBlock
-  const lastClaimBlockHeight = data.lastClaim
-  const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
-  const dripAmount = data.dripAmount
+  // const blockHeight = data.latestBlock
+  // const lastClaimBlockHeight = data.lastClaim
+  // const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
+  // const dripAmount = data.dripAmount
 
   return (
     <ConfDataContext.Provider
@@ -48,18 +48,7 @@ export default function LandingPage({
             <>
               <Hero />
               {/* <Form /> */}
-              {/* <LearnMore /> */}
-              <h2
-                className={cn(
-                  styleUtils.appear,
-                  styleUtils['appear-eighth'],
-                  styles.description,
-                )}
-              >
-                <div className='m-2'>
-                  <ClaimFaucetButton tokensToClaim={unclaimedBlocks * dripAmount} />
-                </div>
-              </h2>
+              <LearnMore />
             </>
           ) : (
             <Whitelist />
