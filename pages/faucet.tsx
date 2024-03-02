@@ -78,7 +78,7 @@ export default function Faucet({ data }: Props) {
                 </Tooltip>
               </TooltipProvider>
               <p className="mb-8 text-xs sm:text-sm leading-tight font-thin">
-                The Charisma Token Faucet is a contract (a piece of blockchain code) that automatically releases ("drips") Charisma tokens over time, a process similar to how a real-world faucet drips water. This process is also known as "token minting". The rate of these drips, i.e., the number of tokens released per Bitcoin block, is called the "drip amount". These tokens are used for governance and voting purposes within the Charisma DAO.
+                The Charisma Token Faucet is a contract (a piece of blockchain code) that automatically releases ("drips") Charisma tokens over time, a process similar to how a real-world faucet drips water. This process is also known as "token minting". The rate of these drips, i.e., the number of tokens released per Bitcoin block, is called the "drip amount". These tokens are used for governance and voting purposes within the Dungeon Master DAO.
               </p>
 
               <ClaimFaucetButton tokensToClaim={unclaimedBlocks * dripAmount} />

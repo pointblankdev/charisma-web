@@ -14,8 +14,8 @@ export default function GovernanceGuidePage() {
     return (
         <Page meta={meta} fullViewport>
             <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
-                <h1 className="text-4xl font-bold mb-4">How to Contribute to Charisma DAO</h1>
-                <p className="text-lg mb-6">Welcome to the Charisma DAO contribution guide. By following the steps below, you can seamlessly contribute by proposing and enabling extensions.</p>
+                <h1 className="text-4xl font-bold mb-4">How to Contribute to Dungeon Master DAO</h1>
+                <p className="text-lg mb-6">Welcome to the Dungeon Master DAO contribution guide. By following the steps below, you can seamlessly contribute by proposing and enabling extensions.</p>
 
                 <div className="mb-6">
                     <h2 className="text-2xl font-semibold mb-3">Step 1: Create an "extension" contract that does cool stuff</h2>
@@ -49,7 +49,7 @@ export default function GovernanceGuidePage() {
                     <p className="text-lg">If your proposal garners enough votes and passes, you can use the "conclude" function on the <code className="bg-gray-900 p-1 rounded">dme001-proposal-voting</code> contract. This will execute your contract and enable the extension.</p>
                 </div>
 
-                <p className="mb-6 text-lg">Thank you for your interest in contributing to Charisma DAO. Your involvement ensures a dynamic and evolving platform for all users!</p>
+                <p className="mb-6 text-lg">Thank you for your interest in contributing to Dungeon Master DAO. Your involvement ensures a dynamic and evolving platform for all users!</p>
                 <Link href='/governance'><Button variant='secondary'>Back</Button></Link>
             </div>
         </Page>
