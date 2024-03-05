@@ -83,12 +83,11 @@ const ConnectWallet = () => {
                     className={cn("w-full object-cover transition-all", "aspect-[1/2]", 'flex', 'z - 0', 'absolute', 'inset-0')}
                   />
                 </li>
-                <ListItem href="/quest-manager" title="Quest Manager">
-                  Create, manage, and track your quests all from one place.
+                <ListItem href="/faucet" title="Faucet">
+                  Collect Charisma tokens from the faucet. Supply increases every block.
                 </ListItem>
-                <div className='text-sm absolute right-[8.2rem] top-8 text-green-500 animate-pulse'>BETA</div>
-                <ListItem href="/tokenomics" title="Tokenomics">
-                  View stats and metrics on the Charisma token's distribution.
+                <ListItem href="/governance" title="Governance">
+                  Participate in governance proposals and voting for the Charisma token.
                 </ListItem>
                 <ListItem title="Sign Out" onClick={disconnect} className="cursor-pointer">
                   Securely disconnect your wallet.

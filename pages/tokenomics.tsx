@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@components/ui/card"
 import { GetStaticProps } from 'next';
-import { fetchAllClaims, getTokenStats } from '@lib/stacks-api';
+import { fetchAllClaimsParallel, getTokenStats } from '@lib/stacks-api';
 import HoldersChart from '@components/tokenomics/HoldersChart';
 import { getAllWallets } from "@lib/cms-providers/dato";
 import _ from 'lodash';
@@ -66,7 +66,7 @@ export default function Tokenomics({ data }: Props) {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10 space-y-4">
           <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-            <Card className='bg-black text-primary-foreground border-accent-foreground'>
+            {/* <Card className='bg-black text-primary-foreground border-accent-foreground'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Unique Wallet Addresses
@@ -79,7 +79,7 @@ export default function Tokenomics({ data }: Props) {
                   {`+${percentChange.toFixed(2)}% in last 7 days`}
                 </p>
               </CardContent>
-            </Card>
+            </Card> */}
             <Card className='bg-black text-primary-foreground border-accent-foreground'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
@@ -108,7 +108,7 @@ export default function Tokenomics({ data }: Props) {
                 </p>
               </CardContent>
             </Card>
-            <Card className='bg-black text-primary-foreground border-accent-foreground'>
+            {/* <Card className='bg-black text-primary-foreground border-accent-foreground'>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">
                   Max Supply
@@ -121,7 +121,7 @@ export default function Tokenomics({ data }: Props) {
                   {(totalSupplyWithDecimals / maxSupply * 100).toFixed(2)}% of max supply minted
                 </p>
               </CardContent>
-            </Card>
+            </Card> */}
           </div>
 
           <p className="mb-4 font-light">
@@ -163,8 +163,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
     const { totalSupply, dripAmount } = await getTokenStats();
-    const { walletBalances, totalUniqueWallets, percentChange } = await fetchAllClaims()
+
+    const { walletBalances, totalUniqueWallets, percentChange } = await fetchAllClaimsParallel()
+
     const wallets = await getAllWallets()
+
 
     return {
       props: {
@@ -173,7 +176,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           dripAmount: dripAmount,
           walletBalances: walletBalances,
           uniqueAddresses: totalUniqueWallets,
-          percentChange: percentChange,
+          percentChange: 1, //percentChange,
           wallets: wallets
         }
       },

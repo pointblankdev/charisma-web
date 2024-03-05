@@ -102,85 +102,83 @@ export default function Governance({ data }: Props) {
       title: 'token-faucet',
       subtitle: 'Token Faucet',
     },
-    {
-      href: "https://explorer.hiro.so/txid/0xc05db7eb16e3745c4d82884e120be4f2fe4af660f295e1450abf1beeca24c034?chain=mainnet",
-      src: locked,
-      alt: 'Quest Completion Extention Image',
-      title: 'quest-completion',
-      subtitle: 'Quest Completion State',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0xe746ec5258c7b7342b337ec7e1bc529a4e0926d1c7998cf19710d6448176b0a7?chain=mainnet",
-      src: oracle,
-      alt: 'Centralized Quest Oracle Extention Image',
-      title: 'quest-completion-oracle',
-      subtitle: 'Centralized Quest Oracle',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0xef3f3eadc18d5240bb6f76eabb9215f13cc94924ac4f318dbdb8412d8660e8df?chain=mainnet",
-      src: questmap,
-      alt: 'Quest Metadata Extention Image',
-      title: 'quest-metadata',
-      subtitle: 'Quest Details and Information',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0x0fd98f76b0eab5edcd618cadc5b310b38c7fbec6fa104d079cd931573117cb81?chain=mainnet",
-      src: treasurechest,
-      alt: 'Charisma Rewards Extention Image',
-      title: 'charisma-rewards',
-      subtitle: 'Rewards for Quest Completion',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0x36a45ef4f999840c2e2d200018feffd2452872647d5b5180f3a5174ab71be4c4?chain=mainnet",
-      src: questhelper,
-      alt: 'Quest Reward Helper Extention Image',
-      title: 'quest-reward-helper',
-      subtitle: 'Utility for Quest Rewards',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0x129a38ebc010cc4effdbcc2aa809dbc0f72392cc7c6b5ab1f38ab88cc911d9b7?chain=mainnet",
-      src: hourglass,
-      alt: 'Quest Expiration Extention Image',
-      title: 'quest-expiration',
-      subtitle: 'Quest Expiration State',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0xc92771238fc644061978ddaf9ab0c3371048aa6af410bce28b76abf13d87c520?chain=mainnet",
-      src: startingFlag,
-      alt: 'Quest Activation Extention Image',
-      title: 'quest-activation',
-      subtitle: 'Quest Activation State',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0x29cd63daee13b536ebf2a7b6a27847aa3beb87d361090a1b0df271e050257997?chain=mainnet",
-      src: wantedPosters,
-      alt: 'Quest Max Completions Extention Image',
-      title: 'quest-max-completions',
-      subtitle: 'Quest Max Completions State',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0x9dc11777ade6802bed2c19efd5b2896e2adddcf997a2dda790af3b9bd5c96aca?chain=mainnet",
-      src: stxRewards,
-      alt: 'Quest STX Rewards Extention Image',
-      title: 'quest-stx-rewards',
-      subtitle: 'Quest STX Rewards',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0xe209e5a4dfb558ba379ab1c0abafad1867af3ff7ec9bd6f11098e3941bfd6b02?chain=mainnet",
-      src: courthouse,
-      alt: 'Quest Ownership Extention Image',
-      title: 'quest-ownership',
-      subtitle: 'Quest Ownership State',
-    },
-    {
-      href: "https://explorer.hiro.so/txid/0xe693a752b92c97db141ed784a1d7ff0e0605bd737ce5e38de998f402658ddcd3?chain=mainnet",
-      src: innkeeper,
-      alt: 'Quest Helper Extention Image',
-      title: 'quest-helper',
-      subtitle: 'Utility for Quest Creators',
-    },
-
-
+    // {
+    //   href: "https://explorer.hiro.so/txid/0xc05db7eb16e3745c4d82884e120be4f2fe4af660f295e1450abf1beeca24c034?chain=mainnet",
+    //   src: locked,
+    //   alt: 'Quest Completion Extention Image',
+    //   title: 'quest-completion',
+    //   subtitle: 'Quest Completion State',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0xe746ec5258c7b7342b337ec7e1bc529a4e0926d1c7998cf19710d6448176b0a7?chain=mainnet",
+    //   src: oracle,
+    //   alt: 'Centralized Quest Oracle Extention Image',
+    //   title: 'quest-completion-oracle',
+    //   subtitle: 'Centralized Quest Oracle',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0xef3f3eadc18d5240bb6f76eabb9215f13cc94924ac4f318dbdb8412d8660e8df?chain=mainnet",
+    //   src: questmap,
+    //   alt: 'Quest Metadata Extention Image',
+    //   title: 'quest-metadata',
+    //   subtitle: 'Quest Details and Information',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0x0fd98f76b0eab5edcd618cadc5b310b38c7fbec6fa104d079cd931573117cb81?chain=mainnet",
+    //   src: treasurechest,
+    //   alt: 'Charisma Rewards Extention Image',
+    //   title: 'charisma-rewards',
+    //   subtitle: 'Rewards for Quest Completion',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0x36a45ef4f999840c2e2d200018feffd2452872647d5b5180f3a5174ab71be4c4?chain=mainnet",
+    //   src: questhelper,
+    //   alt: 'Quest Reward Helper Extention Image',
+    //   title: 'quest-reward-helper',
+    //   subtitle: 'Utility for Quest Rewards',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0x129a38ebc010cc4effdbcc2aa809dbc0f72392cc7c6b5ab1f38ab88cc911d9b7?chain=mainnet",
+    //   src: hourglass,
+    //   alt: 'Quest Expiration Extention Image',
+    //   title: 'quest-expiration',
+    //   subtitle: 'Quest Expiration State',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0xc92771238fc644061978ddaf9ab0c3371048aa6af410bce28b76abf13d87c520?chain=mainnet",
+    //   src: startingFlag,
+    //   alt: 'Quest Activation Extention Image',
+    //   title: 'quest-activation',
+    //   subtitle: 'Quest Activation State',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0x29cd63daee13b536ebf2a7b6a27847aa3beb87d361090a1b0df271e050257997?chain=mainnet",
+    //   src: wantedPosters,
+    //   alt: 'Quest Max Completions Extention Image',
+    //   title: 'quest-max-completions',
+    //   subtitle: 'Quest Max Completions State',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0x9dc11777ade6802bed2c19efd5b2896e2adddcf997a2dda790af3b9bd5c96aca?chain=mainnet",
+    //   src: stxRewards,
+    //   alt: 'Quest STX Rewards Extention Image',
+    //   title: 'quest-stx-rewards',
+    //   subtitle: 'Quest STX Rewards',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0xe209e5a4dfb558ba379ab1c0abafad1867af3ff7ec9bd6f11098e3941bfd6b02?chain=mainnet",
+    //   src: courthouse,
+    //   alt: 'Quest Ownership Extention Image',
+    //   title: 'quest-ownership',
+    //   subtitle: 'Quest Ownership State',
+    // },
+    // {
+    //   href: "https://explorer.hiro.so/txid/0xe693a752b92c97db141ed784a1d7ff0e0605bd737ce5e38de998f402658ddcd3?chain=mainnet",
+    //   src: innkeeper,
+    //   alt: 'Quest Helper Extention Image',
+    //   title: 'quest-helper',
+    //   subtitle: 'Utility for Quest Creators',
+    // },
   ];
 
   return (
@@ -198,7 +196,7 @@ export default function Governance({ data }: Props) {
               <DataTable columns={columns} data={data} />
             </TabsContent>
             <TabsContent value="extentions">
-              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-6'>
+              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-5'>
                 {cards.map((card, index) => (
                   <Card key={index} {...card} />
                 ))}

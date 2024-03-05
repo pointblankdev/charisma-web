@@ -31,7 +31,7 @@ export default function Footer() {
     blocksApi.getBlockList({ limit: 1 }).then((res) => {
       const latestBlock = res.results[0]
       setBlockHeight(latestBlock.height);
-    })
+    }).catch(console.error)
   }, [])
 
   return (

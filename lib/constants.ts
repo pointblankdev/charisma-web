@@ -27,10 +27,10 @@ export const NAVIGATION = [
     name: 'Faucet',
     route: '/faucet'
   },
-  // {
-  //   name: 'Tokenomics',
-  //   route: '/tokenomics'
-  // },
+  {
+    name: 'Tokenomics',
+    route: '/tokenomics'
+  },
   {
     name: 'Governance',
     route: '/governance'

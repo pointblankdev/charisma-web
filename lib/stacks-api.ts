@@ -11,6 +11,7 @@ const apiConfig: Configuration = new Configuration({
     fetchApi: fetch,
     // for mainnet, replace `testnet` with `mainnet`
     basePath: 'https://api.mainnet.hiro.so', // defaults to http://localhost:3999
+    apiKey: process.env.STACKS_API_KEY,
 });
 
 const scApi = new SmartContractsApi(apiConfig);
@@ -32,6 +33,68 @@ export async function getNameFromAddress(address: string) {
     return nameInfo;
 }
 
+export async function fetchAllClaimsParallel() {
+    const limit = 50;
+    const uniqueWallets: Set<string> = new Set();
+    const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+
+    let transactionsFetched = true;
+    let offset = 0;
+    let uniqueWalletsLast7Days = 0;
+
+    while (transactionsFetched) {
+        const fetchPromises = [];
+        for (let i = 0; i < 10; i++) { // Adjust parallelism degree as needed
+            fetchPromises.push(accountsApi.getAccountTransactionsWithTransfers({
+                principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0',
+                limit,
+                offset: offset + i * limit,
+            }));
+        }
+
+        const results = await Promise.allSettled(fetchPromises);
+        transactionsFetched = false; // Assume no more transactions until found
+
+        results.forEach(result => {
+            if (result.status === 'fulfilled' && result.value.results.length > 0) {
+                transactionsFetched = true; // Transactions found, continue loop
+                result.value.results.forEach((r: any) => {
+                    uniqueWalletsLast7Days += processTransaction(r, uniqueWallets, uniqueWalletsLast7Days, oneWeekAgo);
+                });
+            }
+        });
+
+        offset += limit * 10; // Increment offset by the total number processed in this batch
+    }
+
+    const totalUniqueWallets = uniqueWallets.size;
+    const percentChange = (uniqueWalletsLast7Days / totalUniqueWallets) * 100;
+
+    const wallets = await getAllWallets();
+    const walletBalances = wallets.map(wallet => ({
+        primary: wallet.stxaddress,
+        secondary: wallet.charisma
+    }));
+
+    return {
+        walletBalances: walletBalances.sort((a, b) => b.secondary - a.secondary).slice(0, 20),
+        totalUniqueWallets,
+        percentChange
+    };
+}
+
+function processTransaction(transaction: any, uniqueWallets: Set<string>, uniqueWalletsLast7Days: number, oneWeekAgo: Date) {
+    const txDate = new Date(transaction.tx.burn_block_time_iso);
+    if (transaction.tx.contract_call?.function_name === 'claim' && transaction.tx.tx_result.repr === '(ok true)') {
+        const sizeBefore = uniqueWallets.size;
+        uniqueWallets.add(transaction.tx.sender_address);
+        if (sizeBefore !== uniqueWallets.size && txDate > oneWeekAgo) {
+            uniqueWalletsLast7Days++;
+        }
+    }
+    return uniqueWalletsLast7Days
+}
+
 
 export async function fetchAllClaims() {
     let offset = 0;
@@ -48,6 +111,8 @@ export async function fetchAllClaims() {
             limit: limit,
             offset: offset
         });
+
+        console.log(f.length)
 
         if (!f.results.length) {
             break; // exit the loop if there are no more results
