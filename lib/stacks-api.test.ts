@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getNameFromAddress, getQuestRewards, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getNameFromAddress, getProposals, getQuestRewards, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 
 const network = new StacksMainnet();
@@ -110,4 +110,13 @@ describe('Stacks API', () => {
         expect(result.value).toEqual({ type: 'uint', value: '100' })
 
     })
+
+    // test get proposals
+    it('should get proposals', async () => {
+
+        const result = await getProposals()
+        console.log(result)
+        expect(result).toBeDefined()
+
+    }, 20000)
 })

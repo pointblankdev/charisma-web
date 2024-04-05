@@ -21,6 +21,7 @@ import {
 } from "@components/ui/tooltip"
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import ReclaimVotes from "./reclaim-votes"
+import Conclude from "./conclude"
 
 
 // This type is used to define the shape of our data.
@@ -126,7 +127,7 @@ export const columns: ColumnDef<Proposal>[] = [
             const proposal = row.original
 
             if (proposal.status === 'Passed' || proposal.status === 'Voting Ended') {
-                return <ReclaimVotes proposalPrincipal={proposal.name} />
+                return <><Conclude proposalPrincipal={proposal.name} /><ReclaimVotes proposalPrincipal={proposal.name} /></>
             } else if (proposal.status === 'Voting Active') {
                 return (
                     <DropdownMenu>

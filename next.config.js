@@ -15,5 +15,6 @@ module.exports = {
   },
   experimental: {
     scrollRestoration: true,
-  }
+  },
+  staticPageGenerationTimeout: 120, // Increase timeout to 120 seconds
 };

@@ -214,9 +214,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
 
-    const proposals = await getProposals();
-
-    const transactions = await fetchAllContractTransactions('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting')
+    const [proposals, transactions] = await Promise.all([
+      getProposals(),
+      fetchAllContractTransactions('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting')
+    ]);
 
     const updatedProposals = updateVoteData(proposals, transactions);
 
