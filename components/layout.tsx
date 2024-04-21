@@ -55,6 +55,8 @@ export default function Layout({
                     <div>{name}</div>
                     {name === 'Quests' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
                     {name === 'Faucet' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Liquid Staked Welsh' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
+                    {name === 'Wishing Well' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
                   </div>
                 </Link>
               ))}
