@@ -17,6 +17,10 @@ import { Card } from '@components/ui/card';
 import StakeWelshButton from '@components/stake/stake';
 import UnstakeWelshButton from '@components/stake/unstake';
 import liquidWelsh from '@public/liquid-welsh.png'
+import { GetStaticProps } from 'next';
+import { blocksApi } from '@lib/stacks-api';
+import { callReadOnlyFunction } from '@stacks/transactions';
+import { StacksMainnet } from "@stacks/network";
 
 export default function Stake({ data }: Props) {
   const meta = {
@@ -34,9 +38,9 @@ export default function Stake({ data }: Props) {
             <Image alt='Dungeon Scene' src={liquidWelsh} width="1080" height="605" className='border-b border-accent-foreground' />
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
-                <h1 className="text-md sm:text-2xl font-bold self-center">Liquid Staked Welshcorgicoin</h1>
+                <h1 className="text-md sm:text-2xl font-bold self-center">Liquid Staked Welsh</h1>
                 <div className="sm:text-lg text-xs my-1 rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">
-                  <Image alt='Staking Dashboard Scene' src={liquidStakedWelsh} width="1080" height="605" className='h-12 w-12' />
+                  <div className="sm:text-lg text-xs my-1 bg-primary rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">1 sWELSH = {Number(data.exchangeRate) / 1000000} WELSH</div>
                 </div>
               </div>
 
@@ -86,3 +90,34 @@ type Props = {
   data: any;
 };
 
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+  try {
+    const { results } = await blocksApi.getBlockList({ limit: 1 })
+
+    const lc: any = await callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "liquid-staked-welsh",
+      functionName: "get-exchange-rate",
+      functionArgs: [],
+      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    })
+
+    const data = {
+      exchangeRate: Number(lc.value.value),
+    }
+
+    return {
+      props: { data },
+      revalidate: 60
+    };
+
+  } catch (error) {
+    return {
+      props: {
+        data: {}
+      },
+    }
+  }
+};
