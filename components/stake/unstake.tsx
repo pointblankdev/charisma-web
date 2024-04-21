@@ -49,7 +49,7 @@ const UnstakeWelshButton = () => {
   }
 
   return (
-    <Button variant={'ghost'} className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={unstake}>Unstake 1000 tokens</Button>
+    <Button variant={'ghost'} className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={unstake}>Unstake 1000 sWELSH</Button>
   );
 };
 

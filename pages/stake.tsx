@@ -56,10 +56,10 @@ export default function Stake({ data }: Props) {
                     <h2 className="text-lg font-bold mb-2">Interacting with the Staking Dashboard:</h2>
                     <ul className="list-disc pl-5 mb-4 text-md space-y-2">
                       <li>
-                        <b>Stake Tokens</b>: Stake your Welsh tokens to receive Liquid Staked Welsh (LSW). The amount of LSW you receive is calculated based on the current inverse exchange rate.
+                        <b>Stake Tokens</b>: Stake your Welsh tokens to receive Liquid Staked Welsh (sWELSH). The amount of sWELSH you receive is calculated based on the current inverse exchange rate.
                       </li>
                       <li>
-                        <b>Unstake Tokens</b>: Redeem your LSW for Welsh tokens based on the current exchange rate.
+                        <b>Unstake Tokens</b>: Redeem your sWELSH for Welsh tokens based on the current exchange rate.
                       </li>
                     </ul>
                     <p className="mb-4">

@@ -50,7 +50,7 @@ const StakeWelshButton = () => {
   }
 
   return (
-    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={stake}>Stake 1000 tokens</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={stake}>Stake 1000 WELSH</Button>
   );
 };
 

@@ -49,7 +49,7 @@ const Deposit = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>{amount} WELSH</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>{amount} WELSH</Button>
   );
 };
 

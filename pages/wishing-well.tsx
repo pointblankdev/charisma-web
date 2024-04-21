@@ -51,7 +51,7 @@ export default function Stake({ data }: Props) {
                     <h2 className="text-lg font-bold mb-2">How the Wishing Well Works:</h2>
                     <ul className="list-disc pl-5 mb-4 text-md space-y-2">
                       <li>
-                        <b>Donate Tokens</b>: Contribute Welsh tokens to the Wishing Well. These contributions are pooled and distributed among all stakers, increasing the overall liquidity and price of LSW.
+                        <b>Donate Tokens</b>: Contribute Welsh tokens to the Wishing Well. These contributions are pooled and distributed among all stakers, increasing the overall liquidity and price of sWELSH.
                       </li>
                       <li>
                         <b>Support the Community</b>: Your donations help sustain the ecosystem, benefiting all participants by enhancing the value of their staked assets.
@@ -64,7 +64,7 @@ export default function Stake({ data }: Props) {
                 </Tooltip>
               </TooltipProvider>
               <p className="mb-8 text-xs sm:text-sm leading-tight font-thin">
-                The Wishing Well is not just a donation mechanism; it's an investment in the future of the Welshcorgicoin network. Each donation helps enhance the liquidity and market stability of LSW, making it a more attractive asset for current and future stakers.
+                The Wishing Well is not just a donation mechanism; it's an investment in the future of the Welshcorgicoin network. Each donation helps enhance the liquidity and market stability of sWELSH, making it a more attractive asset for current and future stakers.
               </p>
               <div className='space-x-1 flex'>
                 <Deposit amount={1} />
