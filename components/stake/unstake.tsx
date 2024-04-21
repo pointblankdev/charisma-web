@@ -27,8 +27,7 @@ const UnstakeWelshButton = () => {
       functionArgs: [uintCV(1000000000)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(1000000000).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh", 'liquid-staked-welsh'),
-        // todo: contract will send 1000 tokens to the sender
+        // todo: contract will send ~1000 tokens to the sender
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
