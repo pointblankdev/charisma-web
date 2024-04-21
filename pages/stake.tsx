@@ -16,7 +16,7 @@ import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import { Card } from '@components/ui/card';
 import StakeWelshButton from '@components/stake/stake';
 import UnstakeWelshButton from '@components/stake/unstake';
-
+import liquidWelsh from '@public/liquid-welsh.png'
 
 export default function Stake({ data }: Props) {
   const meta = {
@@ -31,7 +31,7 @@ export default function Stake({ data }: Props) {
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
 
           <Card className='bg-black text-primary-foreground border-accent-foreground p-0 rounded-xl overflow-hidden'>
-
+            <Image alt='Dungeon Scene' src={liquidWelsh} width="1080" height="605" className='border-b border-accent-foreground' />
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
                 <h1 className="text-md sm:text-2xl font-bold self-center">Liquid Staked Welshcorgicoin</h1>
