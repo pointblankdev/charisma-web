@@ -66,15 +66,17 @@ export default function Stake({ data }: Props) {
               <p className="mb-8 text-xs sm:text-sm leading-tight font-thin">
                 The Wishing Well is not just a donation mechanism; it's an investment in the future of the Welshcorgicoin network. Each donation helps enhance the liquidity and market stability of sWELSH, making it a more attractive asset for current and future stakers.
               </p>
-              <div className='space-x-1 flex'>
-                <Deposit amount={1} />
-                <Deposit amount={10} />
-                <Deposit amount={100} />
-              </div>
-              <div className='space-x-1 flex'>
-                <Deposit amount={1000} />
-                <Deposit amount={5000} />
-                <Deposit amount={10000} />
+              <div className='space-y-2'>
+                <div className='space-x-1 flex'>
+                  <Deposit amount={1} />
+                  <Deposit amount={10} />
+                  <Deposit amount={100} />
+                </div>
+                <div className='space-x-1 flex'>
+                  <Deposit amount={1000} />
+                  <Deposit amount={5000} />
+                  <Deposit amount={10000} />
+                </div>
               </div>
             </div>
           </Card>
