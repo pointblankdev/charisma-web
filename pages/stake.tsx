@@ -88,8 +88,8 @@ export default function Stake({ data }: Props) {
               <div className='space-y-2'>
                 <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-center text-lg" />
                 <div className='space-x-1 flex'>
-                  <StakeWelshButton tokens={tokenAmount} />
-                  <UnstakeWelshButton tokens={tokenAmount} />
+                  {/* <StakeWelshButton tokens={tokenAmount} />
+                  <UnstakeWelshButton tokens={tokenAmount} /> */}
                 </div>
               </div>
             </div>

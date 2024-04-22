@@ -57,7 +57,7 @@ const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
       disabled={tokens <= 0}>
-      Unstake {Number(tokens)} sWELSH
+      Unstake {tokens && Number(tokens)} sWELSH
     </Button>
   );
 };

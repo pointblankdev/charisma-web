@@ -67,7 +67,7 @@ const StakeWelshButton: React.FC<StakeWelshButtonProps> = ({ tokens }) => {
       onClick={stake}
       disabled={tokens <= 0}
     >
-      Stake {Number(tokens)} WELSH
+      Stake {tokens && Number(tokens)} WELSH
     </Button>
   );
 };
