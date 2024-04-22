@@ -1,6 +1,4 @@
-
 import { SkipNavContent } from '@reach/skip-nav';
-
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
@@ -12,20 +10,33 @@ import {
   TooltipTrigger,
 } from "@components/ui/tooltip"
 import { Info } from 'lucide-react';
-import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import { Card } from '@components/ui/card';
 import StakeWelshButton from '@components/stake/stake';
 import UnstakeWelshButton from '@components/stake/unstake';
 import liquidWelsh from '@public/liquid-welsh.png'
 import { GetStaticProps } from 'next';
-import { blocksApi } from '@lib/stacks-api';
 import { callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
+import { useState } from 'react';
+import { Input } from '@components/ui/input';
+import { Button } from '@components/ui/button';
+import { Decimal } from '@scure/btc-signer';
+import { toNumber } from 'lodash';
 
 export default function Stake({ data }: Props) {
+  const [tokenAmount, setTokenAmount] = useState();
+
   const meta = {
     title: 'Welshcorgicoin | Stake Welsh Tokens',
     description: META_DESCRIPTION
+  };
+
+  const handleTokenAmountChange = (event: any) => {
+    const { value } = event.target;
+    // Limit input to only allow numbers and to 6 decimal places
+    if (/^\d*\.?\d{0,6}$/.test(value)) {
+      setTokenAmount(value);
+    }
   };
 
   return (
@@ -35,7 +46,7 @@ export default function Stake({ data }: Props) {
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
 
           <Card className='bg-black text-primary-foreground border-accent-foreground p-0 rounded-xl overflow-hidden'>
-            <Image alt='Dungeon Scene' src={liquidWelsh} width="1080" height="605" className='border-b border-accent-foreground' />
+            <Image alt='Liquid Welsh' src={liquidWelsh} width="1080" height="605" className='border-b border-accent-foreground' />
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
                 <h1 className="text-md sm:text-2xl font-bold self-center">Liquid Staked Welsh</h1>
@@ -74,9 +85,12 @@ export default function Stake({ data }: Props) {
               <p className="mb-8 text-xs sm:text-sm leading-tight font-thin">
                 Welshcorgicoin Staking is a crucial part of the network's financial ecosystem, providing a way for token holders to earn passive income while contributing to the token's number-go-up mechanism.
               </p>
-              <div className='space-x-1 flex'>
-                <StakeWelshButton />
-                <UnstakeWelshButton />
+              <div className='space-y-2'>
+                <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-center text-lg" />
+                <div className='space-x-1 flex'>
+                  <StakeWelshButton tokens={tokenAmount} />
+                  <UnstakeWelshButton tokens={tokenAmount} />
+                </div>
               </div>
             </div>
           </Card>
@@ -93,8 +107,6 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
-    const { results } = await blocksApi.getBlockList({ limit: 1 })
-
     const lc: any = await callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -114,6 +126,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     };
 
   } catch (error) {
+    console.error(error)
     return {
       props: {
         data: {}

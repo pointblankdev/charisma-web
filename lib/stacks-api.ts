@@ -188,7 +188,6 @@ export async function fetchAllContractTransactions(principal: string) {
 
         resp.results.forEach((result: any) => {
             if (result.contract_call && result.tx_status === 'success') {
-                console.log(result)
                 // only add contract_call transactions
                 const newTx: any = { args: {} }
                 newTx.sender = result.sender_address
@@ -222,22 +221,28 @@ export function updateVoteData(proposals: any[], transactions: any[]) {
     const votes = transactions.filter((tx) => tx.event === 'vote')
 
     votes.forEach(vote => {
-        // Find the entry in the proposals array that matches the name
-        const proposal = proposals.find(proposal => proposal.name === vote.args.proposal);
+        try {
+            // Find the entry in the proposals array that matches the name
+            const proposal = proposals.find(proposal => proposal.name === vote.args.proposal);
 
-        if (vote.args.for) {
-            proposal.amount += vote.args.amount;
-        } else {
-            proposal.against += vote.args.amount;
-        }
-
-        if (proposal.status !== 'Voting Active' && proposal.status !== 'Pending') {
-
-            if (proposal.amount > proposal.against) {
-                proposal.status = 'Passed';
+            if (vote.args.for) {
+                proposal.amount += vote.args.amount;
             } else {
-                proposal.status = 'Failed';
+                proposal.against += vote.args.amount;
             }
+
+            if (proposal.status !== 'Voting Active' && proposal.status !== 'Pending') {
+
+
+                if (proposal.amount > proposal.against) {
+                    proposal.status = 'Passed';
+                } else {
+                    proposal.status = 'Failed';
+                }
+            }
+
+        } catch (error) {
+            console.log('Error updating vote data', error)
         }
 
     });
@@ -252,15 +257,17 @@ export async function getProposals() {
 
     const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
         principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
+        limit: 50,
     });
 
     const proposals: any[] = [];
 
     for (const r of accountsResp.results) {
+        if (r.tx.tx_status !== 'success') continue;
         const args = r.tx.contract_call?.function_args;
         if (args) {
             const startBlockHeight = Number(args[1].repr.slice(1));
-            const endBlockHeight = startBlockHeight + 1440; // update 1440 to use the parameter from the contract
+            const endBlockHeight = startBlockHeight + 720; // update 720 to use the parameter from the contract
             let status = '';
             if (latestBlock < startBlockHeight) {
                 status = 'Pending';

@@ -15,15 +15,15 @@ export default function TaskPage() {
 
   const [data, setData] = useState([])
 
-  useEffect(() => {
-    const address = userSession.loadUserData().profile.stxAddress.mainnet
+  // useEffect(() => {
+  //   const address = userSession.loadUserData().profile.stxAddress.mainnet
 
-    getQuestsByOwner(address).then(async r => {
-      const quests = await r.json()
-      setData(quests)
-    })
+  //   getQuestsByOwner(address).then(async r => {
+  //     const quests = await r.json()
+  //     setData(quests)
+  //   })
 
-  }, [])
+  // }, [])
 
   return (
     <Layout>

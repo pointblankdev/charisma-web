@@ -21,8 +21,6 @@ const Conclude = ({ proposalPrincipal }: Props) => {
   useEffect(() => setMounted(true), []);
 
   function conclude() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
-    console.log(sender)
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,

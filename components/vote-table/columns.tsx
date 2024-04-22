@@ -127,7 +127,10 @@ export const columns: ColumnDef<Proposal>[] = [
             const proposal = row.original
 
             if (proposal.status === 'Passed' || proposal.status === 'Voting Ended') {
-                return <><Conclude proposalPrincipal={proposal.name} /><ReclaimVotes proposalPrincipal={proposal.name} /></>
+                return <>
+                    {/* <Conclude proposalPrincipal={proposal.name} /> */}
+                    <ReclaimVotes proposalPrincipal={proposal.name} />
+                </>
             } else if (proposal.status === 'Voting Active') {
                 return (
                     <DropdownMenu>

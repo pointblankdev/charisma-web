@@ -10,25 +10,28 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const UnstakeWelshButton = () => {
+interface UnstakeWelshButtonProps {
+  tokens: any;
+}
+
+const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
+  const tokens6Dec = tokens * (10 ^ 6)
+
   function unstake() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "liquid-staked-welsh",
       functionName: "unstake",
-      functionArgs: [uintCV(1000000000)],
+      functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Allow,
-      postConditions: [
-        // todo: contract will send 1000 tokens to the sender
-      ],
+      postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
         (window as any)
@@ -49,7 +52,13 @@ const UnstakeWelshButton = () => {
   }
 
   return (
-    <Button variant={'ghost'} className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={unstake}>Unstake 1000 sWELSH</Button>
+    <Button
+      variant={'ghost'}
+      className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
+      onClick={unstake}
+      disabled={tokens <= 0}>
+      Unstake {Number(tokens)} sWELSH
+    </Button>
   );
 };
 

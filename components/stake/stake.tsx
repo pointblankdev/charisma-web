@@ -10,25 +10,37 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const StakeWelshButton = () => {
+interface StakeWelshButtonProps {
+  tokens: any;
+}
+
+const StakeWelshButton: React.FC<StakeWelshButtonProps> = ({ tokens }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  const tokens6Dec = tokens * (10 ^ 6)
 
   function stake() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "liquid-staked-welsh",
       functionName: "stake",
-      functionArgs: [uintCV(1000000000)],
+      functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(1000000000).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
-        // todo: contract will send 1000 tokens to the sender
+        Pc.principal(sender)
+          .willSendEq(tokens6Dec)
+          .ft(
+            "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
+            "welshcorgicoin"
+          ),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -50,7 +62,13 @@ const StakeWelshButton = () => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={stake}>Stake 1000 WELSH</Button>
+    <Button
+      className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
+      onClick={stake}
+      disabled={tokens <= 0}
+    >
+      Stake {Number(tokens)} WELSH
+    </Button>
   );
 };
 
