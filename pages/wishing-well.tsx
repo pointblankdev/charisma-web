@@ -33,7 +33,7 @@ export default function Stake({ data }: Props) {
             <Image alt='Dungeon Scene' src={wishingWell} width="1080" height="605" className='border-b border-accent-foreground' />
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
-                <h1 className="text-md sm:text-2xl font-bold self-center">The Corgi Wishing Well</h1>
+                <h1 className="text-md sm:text-2xl font-bold self-center">Donate to the Corgi Wishing Well</h1>
                 <div className="sm:text-lg text-xs my-1 rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">
                   <Image alt='Liquid Staked Welshcorgicoin' src={liquidStakedWelsh} width="1080" height="605" className='h-12 w-12' />
                 </div>
