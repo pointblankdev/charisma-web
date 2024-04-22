@@ -9,9 +9,10 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
+import { toInteger } from "lodash";
 
 interface StakeWelshButtonProps {
-  tokens: any;
+  tokens: string;
 }
 
 const StakeWelshButton: React.FC<StakeWelshButtonProps> = ({ tokens }) => {
@@ -22,7 +23,7 @@ const StakeWelshButton: React.FC<StakeWelshButtonProps> = ({ tokens }) => {
     setMounted(true);
   }, []);
 
-  const tokens6Dec = tokens * (10 ^ 6)
+  const tokens6Dec = Number(tokens) * 1000000
 
   function stake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
@@ -44,12 +45,6 @@ const StakeWelshButton: React.FC<StakeWelshButtonProps> = ({ tokens }) => {
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
-        (window as any)
-          .open(
-            `https://explorer.hiro.so/txid/${data.txId}?chain=mainnet`,
-            "_blank"
-          )
-          .focus();
       },
       onCancel: () => {
         console.log("onCancel:", "Transaction was canceled");
@@ -65,9 +60,9 @@ const StakeWelshButton: React.FC<StakeWelshButtonProps> = ({ tokens }) => {
     <Button
       className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
       onClick={stake}
-      disabled={tokens <= 0}
+      disabled={toInteger(tokens) <= 0}
     >
-      Stake {tokens && Number(tokens)} WELSH
+      Stake {tokens && toInteger(tokens) > 0 ? tokens : 0} WELSH
     </Button>
   );
 };

@@ -9,9 +9,10 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
+import { toInteger } from "lodash";
 
 interface UnstakeWelshButtonProps {
-  tokens: any;
+  tokens: string;
 }
 
 const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
@@ -20,7 +21,7 @@ const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  const tokens6Dec = tokens * (10 ^ 6)
+  const tokens6Dec = Number(tokens) * 1000000
 
   function unstake() {
     doContractCall({
@@ -34,12 +35,6 @@ const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
       postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
-        (window as any)
-          .open(
-            `https://explorer.hiro.so/txid/${data.txId}?chain=mainnet`,
-            "_blank"
-          )
-          .focus();
       },
       onCancel: () => {
         console.log("onCancel:", "Transaction was canceled");
@@ -56,8 +51,8 @@ const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
       variant={'ghost'}
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
-      disabled={tokens <= 0}>
-      Unstake {tokens && Number(tokens)} sWELSH
+      disabled={toInteger(tokens) <= 0}>
+      Unstake {tokens && toInteger(tokens) > 0 ? tokens : 0} sWELSH
     </Button>
   );
 };

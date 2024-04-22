@@ -19,12 +19,9 @@ import { callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import { useState } from 'react';
 import { Input } from '@components/ui/input';
-import { Button } from '@components/ui/button';
-import { Decimal } from '@scure/btc-signer';
-import { toNumber } from 'lodash';
 
 export default function Stake({ data }: Props) {
-  const [tokenAmount, setTokenAmount] = useState();
+  const [tokenAmount, setTokenAmount] = useState('');
 
   const meta = {
     title: 'Welshcorgicoin | Stake Welsh Tokens',
@@ -88,8 +85,8 @@ export default function Stake({ data }: Props) {
               <div className='space-y-2'>
                 <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-center text-lg" />
                 <div className='space-x-1 flex'>
-                  {/* <StakeWelshButton tokens={tokenAmount} />
-                  <UnstakeWelshButton tokens={tokenAmount} /> */}
+                  <StakeWelshButton tokens={tokenAmount} />
+                  <UnstakeWelshButton tokens={tokenAmount} />
                 </div>
               </div>
             </div>
