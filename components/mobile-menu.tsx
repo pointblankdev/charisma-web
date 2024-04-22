@@ -10,6 +10,7 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
+import { userSession } from 'pages/_app';
 
 function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof useDialog>[0]) {
   const router = useRouter();
@@ -35,9 +36,10 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
               {name}
             </Link>
           ))}
+          {userSession.isUserSignedIn() && <Link href='/' className={cn(styles['nav-item'])} onClick={() => userSession.signUserOut('/')}>Sign out</Link>}
         </nav>
       </FocusScope>
-    </div>
+    </div >
   );
 }
 
