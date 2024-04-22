@@ -229,6 +229,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     };
 
   } catch (error) {
+    console.error(error)
     return {
       props: {
         data: []

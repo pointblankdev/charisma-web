@@ -188,7 +188,7 @@ export async function fetchAllContractTransactions(principal: string) {
 
         resp.results.forEach((result: any) => {
             if (result.contract_call && result.tx_status === 'success') {
-                // console.log(result)
+                console.log(result)
                 // only add contract_call transactions
                 const newTx: any = { args: {} }
                 newTx.sender = result.sender_address
@@ -260,7 +260,7 @@ export async function getProposals() {
         const args = r.tx.contract_call?.function_args;
         if (args) {
             const startBlockHeight = Number(args[1].repr.slice(1));
-            const endBlockHeight = startBlockHeight + 1440;
+            const endBlockHeight = startBlockHeight + 1440; // update 1440 to use the parameter from the contract
             let status = '';
             if (latestBlock < startBlockHeight) {
                 status = 'Pending';
