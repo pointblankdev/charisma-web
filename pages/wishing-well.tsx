@@ -71,6 +71,11 @@ export default function Stake({ data }: Props) {
                 <Deposit amount={10} />
                 <Deposit amount={100} />
               </div>
+              <div className='space-x-1 flex'>
+                <Deposit amount={1000} />
+                <Deposit amount={5000} />
+                <Deposit amount={10000} />
+              </div>
             </div>
           </Card>
         </div>
