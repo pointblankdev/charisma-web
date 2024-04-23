@@ -109,7 +109,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "liquid-staked-roo",
-      functionName: "get-inverse-rate",
+      functionName: "get-exchange-rate",
       functionArgs: [],
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
     })
@@ -120,7 +120,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
     return {
       props: { data },
-      revalidate: 60
+      revalidate: 600
     };
 
   } catch (error) {
