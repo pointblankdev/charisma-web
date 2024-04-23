@@ -19,7 +19,7 @@ import wishingWell from '@public/wishing-well.png'
 
 export default function Stake({ data }: Props) {
   const meta = {
-    title: 'Welshcorgicoin | Wishing Well',
+    title: 'Charisma | Wishing Well',
     description: META_DESCRIPTION
   };
 
