@@ -10,7 +10,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const Deposit = ({ amount }: { amount: number }) => {
+const DepositRoo = ({ amount }: { amount: number }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -22,12 +22,12 @@ const Deposit = ({ amount }: { amount: number }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-welsh",
+      contractName: "liquid-staked-roo",
       functionName: "deposit",
       functionArgs: [uintCV(amount * 1000000)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(amount * 1000000).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
+        Pc.principal(sender).willSendEq(amount * 1000000).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -43,8 +43,8 @@ const Deposit = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>{amount} WELSH</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>{amount} ROO</Button>
   );
 };
 
-export default Deposit;
+export default DepositRoo;

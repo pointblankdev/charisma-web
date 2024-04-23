@@ -39,14 +39,18 @@ export const NAVIGATION = [
   //   name: 'Liquid Staked Roo',
   //   route: '/stake-roo'
   // },
-  {
-    name: 'Tokenomics',
-    route: '/tokenomics'
-  },
-  {
-    name: 'Governance',
-    route: '/governance'
-  },
+  // {
+  //   name: 'Kangaroo Burrow',
+  //   route: '/kangaroo-burrow'
+  // },
+  // {
+  //   name: 'Tokenomics',
+  //   route: '/tokenomics'
+  // },
+  // {
+  //   name: 'Governance',
+  //   route: '/governance'
+  // },
   // {
   //   name: 'Guilds',
   //   route: '/guilds'

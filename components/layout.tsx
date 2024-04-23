@@ -48,15 +48,17 @@ export default function Layout({
                   href={route}
                   key={name}
                   className={cn(styles.tab, {
-                    [styles['tab-active']]: activeRoute.startsWith(route)
+                    [styles['tab-active']]: activeRoute.endsWith(route)
                   })}
                 >
                   <div className='flex flex-col items-center justify-center relative'>
                     <div>{name}</div>
                     {name === 'Quests' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
                     {name === 'Faucet' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'Liquid Staked Welsh' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
-                    {name === 'Wishing Well' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
+                    {name === 'Liquid Staked Welsh' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Wishing Well' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Liquid Staked Roo' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>live</div>}
+                    {name === 'Kangaroo Burrow' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>live</div>}
                   </div>
                 </Link>
               ))}
