@@ -25,7 +25,8 @@ export default function Stake({ data }: Props) {
 
   const meta = {
     title: 'Charisma | Stake Welsh Tokens',
-    description: META_DESCRIPTION
+    description: META_DESCRIPTION,
+    image: '/liquid-welsh.png'
   };
 
   const handleTokenAmountChange = (event: any) => {
@@ -42,27 +43,27 @@ export default function Stake({ data }: Props) {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
 
-          <Card className='bg-black text-primary-foreground border-accent-foreground p-0 rounded-xl overflow-hidden'>
+          <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
             <Image alt='Liquid Welsh' src={liquidWelsh} width="1080" height="605" className='border-b border-accent-foreground' />
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
-                <h1 className="text-md sm:text-2xl font-bold self-center">Liquid Staked Welsh</h1>
-                <div className="sm:text-lg text-xs my-1 rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">
-                  <div className="sm:text-lg text-xs my-1 bg-primary rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">1 sWELSH = {Number(data.exchangeRate) / 1000000} WELSH</div>
+                <h1 className="self-center font-bold text-md sm:text-2xl">Liquid Staked Welsh</h1>
+                <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
+                  <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg bg-primary sm:p-0 sm:px-4">1 sWELSH = {Number(data.exchangeRate) / 1000000} WELSH</div>
                 </div>
               </div>
 
               <TooltipProvider>
                 <Tooltip>
                   <TooltipTrigger>
-                    <div className='flex items-center mb-2 gap-1'>
-                      <h1 className="text-md font-bold text-left">How Staking Works</h1>
+                    <div className='flex items-center gap-1 mb-2'>
+                      <h1 className="font-bold text-left text-md">How Staking Works</h1>
                       <Info size={16} color='#948f8f' />
                     </div>
                   </TooltipTrigger>
-                  <TooltipContent className='max-w-2xl bg-black text-white border-primary leading-tight'>
-                    <h2 className="text-lg font-bold mb-2">Interacting with the Staking Dashboard:</h2>
-                    <ul className="list-disc pl-5 mb-4 text-md space-y-2">
+                  <TooltipContent className='max-w-2xl leading-tight text-white bg-black border-primary'>
+                    <h2 className="mb-2 text-lg font-bold">Interacting with the Staking Dashboard:</h2>
+                    <ul className="pl-5 mb-4 space-y-2 list-disc text-md">
                       <li>
                         <b>Stake Tokens</b>: Stake your Welsh tokens to receive Liquid Staked Welsh (sWELSH). The amount of sWELSH you receive is calculated based on the current inverse exchange rate.
                       </li>
@@ -79,12 +80,12 @@ export default function Stake({ data }: Props) {
                   </TooltipContent>
                 </Tooltip>
               </TooltipProvider>
-              <p className="mb-8 text-xs sm:text-sm leading-tight font-thin">
+              <p className="mb-8 text-xs font-thin leading-tight sm:text-sm">
                 Welshcorgicoin Staking is a crucial part of the network's financial ecosystem, providing a way for token holders to earn passive income while contributing to the token's number-go-up mechanism.
               </p>
               <div className='space-y-2'>
-                <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-center text-lg" />
-                <div className='space-x-1 flex'>
+                <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-lg text-center" />
+                <div className='flex space-x-1'>
                   <StakeWelshButton tokens={tokenAmount} />
                   <UnstakeWelshButton tokens={tokenAmount} />
                 </div>
