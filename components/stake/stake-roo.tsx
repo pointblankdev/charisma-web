@@ -31,7 +31,7 @@ const StakeRooButton: React.FC<StakeRooButtonProps> = ({ tokens }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-welsh",
+      contractName: "liquid-staked-roo",
       functionName: "stake",
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Deny,
@@ -39,8 +39,8 @@ const StakeRooButton: React.FC<StakeRooButtonProps> = ({ tokens }) => {
         Pc.principal(sender)
           .willSendEq(tokens6Dec)
           .ft(
-            "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
-            "welshcorgicoin"
+            "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo",
+            "kangaroo"
           ),
       ],
       onFinish: (data) => {
@@ -62,7 +62,7 @@ const StakeRooButton: React.FC<StakeRooButtonProps> = ({ tokens }) => {
       onClick={stake}
       disabled={toInteger(tokens) <= 0}
     >
-      Stake {tokens && toInteger(tokens) > 0 ? tokens : 0} WELSH
+      Stake {tokens && toInteger(tokens) > 0 ? tokens : 0} ROO
     </Button>
   );
 };

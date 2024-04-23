@@ -28,7 +28,7 @@ const UnstakeRooButton: React.FC<UnstakeRooButtonProps> = ({ tokens }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-welsh",
+      contractName: "liquid-staked-roo",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Allow,
@@ -52,7 +52,7 @@ const UnstakeRooButton: React.FC<UnstakeRooButtonProps> = ({ tokens }) => {
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
       disabled={toInteger(tokens) <= 0}>
-      Unstake {tokens && toInteger(tokens) > 0 ? tokens : 0} sWELSH
+      Unstake {tokens && toInteger(tokens) > 0 ? tokens : 0} sROO
     </Button>
   );
 };
