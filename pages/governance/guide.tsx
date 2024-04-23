@@ -16,6 +16,7 @@ export default function GovernanceGuidePage() {
             <div className="max-w-7xl mx-auto p-4 sm:p-6 lg:p-8">
                 <h1 className="text-4xl font-bold mb-4">How to Contribute to Dungeon Master DAO</h1>
                 <p className="text-lg mb-6">Welcome to the Dungeon Master DAO contribution guide. By following the steps below, you can seamlessly contribute by proposing and enabling extensions.</p>
+                <p className="text-lg mb-6">Note, that extensions are executed by users. These contracts are the public facing interface. In contrast, proposals are executed by extensions only, they must not have any effect if called by users directly.</p>
 
                 <div className="mb-6">
                     <h2 className="text-2xl font-semibold mb-3">Step 1: Create an "extension" contract that does cool stuff</h2>
