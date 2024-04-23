@@ -24,10 +24,10 @@ const DepositRoo = ({ amount }: { amount: number }) => {
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "liquid-staked-roo",
       functionName: "deposit",
-      functionArgs: [uintCV(amount)],
+      functionArgs: [uintCV(amount * 1000000)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(amount).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
+        Pc.principal(sender).willSendEq(amount * 1000000).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

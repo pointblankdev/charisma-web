@@ -12,9 +12,8 @@ import {
   TooltipTrigger,
 } from "@components/ui/tooltip"
 import { Info } from 'lucide-react';
-import liquidStakedWelsh from '@public/liquid-staked-roo.png'
+import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import { Card } from '@components/ui/card';
-import Deposit from '@components/wishing-well/deposit';
 import kangarooBurrow from '@public/kangaroo-burrow.png'
 import DepositRoo from '@components/wishing-well/deposit-roo';
 
@@ -36,9 +35,9 @@ export default function Stake({ data }: Props) {
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
                 <h1 className="self-center font-bold text-md sm:text-2xl">Donate to the Kangaroo Burrow</h1>
-                {/* <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
-                  <Image alt='Liquid Staked Welshcorgicoin' src={liquidStakedWelsh} width="1080" height="605" className='w-12 h-12' />
-                </div> */}
+                <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
+                  <Image alt='Liquid Staked ROO' src={liquidStakedRoo} width="1080" height="605" className='w-12 h-12' />
+                </div>
               </div>
 
               <TooltipProvider>
@@ -74,11 +73,11 @@ export default function Stake({ data }: Props) {
                   <DepositRoo amount={10} />
                   <DepositRoo amount={100} />
                 </div>
-                {/* <div className='flex space-x-1'>
+                <div className='flex space-x-1'>
                   <DepositRoo amount={1000} />
                   <DepositRoo amount={5000} />
                   <DepositRoo amount={10000} />
-                </div> */}
+                </div>
               </div>
             </div>
           </Card>

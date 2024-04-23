@@ -35,14 +35,14 @@ export const NAVIGATION = [
     name: 'Wishing Well',
     route: '/wishing-well'
   },
-  // {
-  //   name: 'Liquid Staked Roo',
-  //   route: '/stake-roo'
-  // },
-  // {
-  //   name: 'Kangaroo Burrow',
-  //   route: '/kangaroo-burrow'
-  // },
+  {
+    name: 'Liquid Staked Roo',
+    route: '/stake-roo'
+  },
+  {
+    name: 'Kangaroo Burrow',
+    route: '/kangaroo-burrow'
+  },
   // {
   //   name: 'Tokenomics',
   //   route: '/tokenomics'

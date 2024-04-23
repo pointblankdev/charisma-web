@@ -109,13 +109,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "liquid-staked-roo",
-      functionName: "get-exchange-rate",
+      functionName: "get-inverse-rate",
       functionArgs: [],
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
     })
 
     const data = {
-      exchangeRate: Number(lc.value.value),
+      exchangeRate: Number(lc.value),
     }
 
     return {
