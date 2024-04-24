@@ -43,10 +43,10 @@ export const NAVIGATION = [
     name: 'Kangaroo Burrow',
     route: '/kangaroo-burrow'
   },
-  // {
-  //   name: 'Woooooo!',
-  //   route: '/woooooo'
-  // },
+  {
+    name: 'Woooooo!',
+    route: '/woooooo'
+  },
   // {
   //   name: 'Tokenomics',
   //   route: '/tokenomics'
