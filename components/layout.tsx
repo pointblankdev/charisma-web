@@ -51,22 +51,22 @@ export default function Layout({
                     [styles['tab-active']]: activeRoute.endsWith(route)
                   })}
                 >
-                  <div className='flex flex-col items-center justify-center relative'>
+                  <div className='relative flex flex-col items-center justify-center'>
                     <div>{name}</div>
-                    {name === 'Quests' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'Faucet' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'Liquid Staked Welsh' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'Wishing Well' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'Liquid Staked Roo' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>live</div>}
-                    {name === 'Kangaroo Burrow' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>live</div>}
+                    {name === 'Quests' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Faucet' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Liquid Staked Welsh' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Wishing Well' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Liquid Staked Roo' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
+                    {name === 'Kangaroo Burrow' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
                   </div>
                 </Link>
               ))}
             </div>
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
-              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
-              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
-              {/* <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link> */}
+              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link>
+              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link>
+              {/* <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link> */}
               <ConnectWallet />
             </div>
           </header>
