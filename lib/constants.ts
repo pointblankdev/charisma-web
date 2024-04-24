@@ -44,6 +44,10 @@ export const NAVIGATION = [
     route: '/kangaroo-burrow'
   },
   // {
+  //   name: 'Woooooo!',
+  //   route: '/woooooo'
+  // },
+  // {
   //   name: 'Tokenomics',
   //   route: '/tokenomics'
   // },
