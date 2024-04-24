@@ -78,16 +78,17 @@ export default function Woooooo({ data }: Props) {
               </p>
               <div className='space-y-2'>
                 <div className='flex space-x-2'>
+                  <div className='text-xs text-center font-fine'>Costs: 10 sWELSH + 0.042 sROO</div>
                   <div className='w-full'>
                     <MintWoo amount={1000} />
-                    <div className='text-xs text-center font-fine'>Costs: 10 sWELSH + 0.042 sROO</div>
+                    {/* <div className='text-xs text-center font-fine'>Costs: 10 sWELSH + 0.042 sROO</div> */}
                   </div>
-                  <div className='w-full'>
+                  {/* <div className='w-full'>
                     <MintWoo amount={10000} />
                     <div className='text-xs text-center font-fine'>Costs: 100 sWELSH + 0.42 sROO</div>
-                  </div>
+                  </div> */}
                 </div>
-                <div className='flex space-x-2'>
+                {/* <div className='flex space-x-2'>
                   <div className='w-full'>
                     <MintWoo amount={100000} />
                     <div className='text-xs text-center font-fine'>Costs: 1k sWELSH + 4.2 sROO</div>
@@ -96,10 +97,10 @@ export default function Woooooo({ data }: Props) {
                     <MintWoo amount={1000000} />
                     <div className='text-xs text-center font-fine'>Costs: 10k sWELSH + 42 sROO</div>
                   </div>
-                </div>
+                </div> */}
               </div>
               <p className="my-8 text-sm font-thin leading-tight text-center sm:text-md">
-                ⚠️ Warning: Woooooo! is an experimental token designed to bring together the best of two great memecoin communities. Don't ape in with anything you're not willing to lose, but do have fun and enjoy the ride. Woooooo!
+                ⚠️ Warning: Woooooo! is an experimental token designed to bring together the best of two great memecoin communities. Large mint sizes will be unlocked next week when the DAO approves Charisma token rewards for this contract. Have fun, mint a few, and enjoy the ride. Woooooo!
               </p>
             </div>
           </Card>
