@@ -17,11 +17,11 @@ import { Card } from '@components/ui/card';
 import woooooo from '@public/woooooo.webp'
 import MintWoo from '@components/mint/mint-woo';
 
-export default function Stake({ data }: Props) {
+export default function Woooooo({ data }: Props) {
   const meta = {
-    title: 'Charisma | Kangaroo Burrow',
+    title: 'Charisma | Woooooo!',
     description: META_DESCRIPTION,
-    image: '/kangaroo-burrow.png'
+    image: '/woooooo.webp'
   };
 
   return (
