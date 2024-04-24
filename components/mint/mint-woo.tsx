@@ -10,6 +10,7 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
+import millify from "millify";
 
 const MintWoo = ({ amount }: { amount: number }) => {
   const { doContractCall } = useConnect();
@@ -47,7 +48,7 @@ const MintWoo = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={mint}>{amount} WOO</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={mint}>Mint {millify(amount)} WOO</Button>
   );
 };
 

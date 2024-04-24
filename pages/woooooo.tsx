@@ -74,15 +74,33 @@ export default function Woooooo({ data }: Props) {
                 </Tooltip>
               </TooltipProvider>
               <p className="mb-8 text-xs font-thin leading-tight sm:text-sm">
-                Woooooo! is a unique fungible token on Stacks, featuring strategic fee mechanisms for minting, burning, and transferring tokens. Designed to empower decentralized finance (DeFi) applications, it employs a game-theoretic fee distribution model that benefits early participants by increasing the intrinsic value of sWELSH and sROO, the tokens required for minting, through micro-transaction deposits to their liquid staking pools.
+                Woooooo! is "minted" through a specific process that involves combining a fixed supply two distinct tokens: sWELSH and sROO. This method ensures that WOO Tokens can only be created by merging these predetermined components and cannot be produced by any other means. This creation mechanism is intended to align both communities' incentives, while combining the liquidity of the two memecoins into one. Additionally, the WOO Token can be "burned" back into it's base tokens, sWELSH and sROO, whenever desired.
               </p>
-              <div className='space-y-1'>
-                <div className='flex space-x-1'>
-                  <MintWoo amount={1} />
-                  <MintWoo amount={10} />
-                  <MintWoo amount={100} />
+              <div className='space-y-2'>
+                <div className='flex space-x-2'>
+                  <div className='w-full'>
+                    <MintWoo amount={1000} />
+                    <div className='text-xs text-center font-fine'>Costs: 10 sWELSH + 0.042 sROO</div>
+                  </div>
+                  <div className='w-full'>
+                    <MintWoo amount={10000} />
+                    <div className='text-xs text-center font-fine'>Costs: 100 sWELSH + 0.42 sROO</div>
+                  </div>
+                </div>
+                <div className='flex space-x-2'>
+                  <div className='w-full'>
+                    <MintWoo amount={100000} />
+                    <div className='text-xs text-center font-fine'>Costs: 1k sWELSH + 4.2 sROO</div>
+                  </div>
+                  <div className='w-full'>
+                    <MintWoo amount={1000000} />
+                    <div className='text-xs text-center font-fine'>Costs: 10k sWELSH + 42 sROO</div>
+                  </div>
                 </div>
               </div>
+              <p className="my-8 text-sm font-thin leading-tight text-center sm:text-md">
+                ⚠️ Warning: Woooooo! is an experimental token designed to bring together the best of two great memecoin communities. Don't ape in with your life savings, but do have fun and enjoy the ride. Woooooo!
+              </p>
             </div>
           </Card>
         </div>
