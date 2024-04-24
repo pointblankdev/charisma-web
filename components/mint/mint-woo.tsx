@@ -30,9 +30,9 @@ const MintWoo = ({ amount }: { amount: number }) => {
       // postConditionMode: PostConditionMode.Deny,
       postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        // Pc.principal(sender).willSendEq(amount).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
-        // Pc.principal(sender).willSendEq(amount).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
-        // Pc.principal(sender).willSendEq(amount).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
+        Pc.principal(sender).willSendLte(amount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme020-woooooo-token", 'woooooo'),
+        Pc.principal(sender).willSendLte(amount * 10000).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh", 'liquid-staked-welsh'),
+        Pc.principal(sender).willSendLte(amount * 42).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo", 'liquid-staked-roo'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
