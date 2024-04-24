@@ -27,10 +27,9 @@ const MintWoo = ({ amount }: { amount: number }) => {
       contractName: "dme020-woooooo-token",
       functionName: "mint",
       functionArgs: [uintCV(amount), principalCV(sender)],
-      // postConditionMode: PostConditionMode.Deny,
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
+      // postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        Pc.principal(sender).willSendLte(amount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme020-woooooo-token", 'woooooo'),
         Pc.principal(sender).willSendLte(amount * 10000).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh", 'liquid-staked-welsh'),
         Pc.principal(sender).willSendLte(amount * 42).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo", 'liquid-staked-roo'),
       ],

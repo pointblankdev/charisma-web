@@ -50,7 +50,7 @@ export default function Woooooo({ data }: Props) {
                   <TooltipContent className='max-w-2xl leading-tight text-white bg-black border-primary'>
                     <h2 className="mb-2 text-lg font-bold">Woooooo! Explained:</h2>
                     <p className="mb-4">
-                      <strong>How WOO is Made:</strong> WOO tokens are made by mixing sWELSH and sROO, and that's the only way to make them. This locks up the liquidity of both tokens into one, sort of like an LP token but the weights are fixed by supply, not dollar amount.
+                      <strong>How WOO is Made:</strong> WOO tokens are made by mixing sWELSH and sROO, and that's the only way to make them. This locks up the liquidity of both tokens into one, sort of like an LP token but the weights are fixed by supply, not dollar amount, so there's no risk of impermanent loss.
                     </p>
                     <p className="mb-4">
                       <strong>Splitting Tokens:</strong> You can split your WOO back into sWELSH and sROO whenever you want. This makes it easy to switch up your strategy without any hassle.
