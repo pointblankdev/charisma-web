@@ -59,7 +59,7 @@ export default function Layout({
                     {name === 'Wishing Well' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
                     {name === 'Liquid Staked Roo' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
                     {name === 'Kangaroo Burrow' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
-                    {name === 'Kangaroo Burrow' && <div className='text-xxs absolute top-4 text-[yellow] animate-pulse'>WTF</div>}
+                    {name === 'Woooooo!' && <div className='text-xxs absolute top-4 text-[yellow] animate-pulse'>WTF</div>}
                   </div>
                 </Link>
               ))}
