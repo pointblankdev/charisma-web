@@ -56,7 +56,7 @@ export default function Woooooo({ data }: Props) {
                       <strong>Splitting Tokens:</strong> You can split your WOO back into sWELSH and sROO whenever you want. This makes it easy to switch up your strategy without any hassle.
                     </p>
                     <p className="mb-4">
-                      <strong>Fees on Transactions:</strong> Whether you're minting, burning, or transferring WOO, there's a small fee. These fees feed right back into the sWELSH and sROO liquid staking pools, increasing the value of all tokens involved and giving you a direct benefit for being active in the game.
+                      <strong>Fees on Transactions:</strong> Whether you're minting, burning, or transferring WOO, there's a micro-transaction fee of less than 0.1%. These fees feed right back into the sWELSH and sROO liquid staking pools, increasing the value of all tokens involved and giving you a direct benefit for being active in the game.
                     </p>
                     <p className="mb-4">
                       <strong>Governance with Charisma Tokens:</strong> If you hold Charisma Tokens, you can create and vote on proposals to change the rules of this token, including the fees and rewards. This keeps the power in the hands of the community, ensuring that the people actually using the token decide where it's headed.
@@ -99,7 +99,7 @@ export default function Woooooo({ data }: Props) {
                 </div>
               </div>
               <p className="my-8 text-sm font-thin leading-tight text-center sm:text-md">
-                ⚠️ Warning: Woooooo! is an experimental token designed to bring together the best of two great memecoin communities. Don't ape in with your life savings, but do have fun and enjoy the ride. Woooooo!
+                ⚠️ Warning: Woooooo! is an experimental token designed to bring together the best of two great memecoin communities. Don't ape in with anything you're not willing to lose, but do have fun and enjoy the ride. Woooooo!
               </p>
             </div>
           </Card>
