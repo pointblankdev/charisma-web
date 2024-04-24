@@ -12,14 +12,13 @@ import {
   TooltipTrigger,
 } from "@components/ui/tooltip"
 import { Info } from 'lucide-react';
-import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import { Card } from '@components/ui/card';
 import woooooo from '@public/woooooo.webp'
 import MintWoo from '@components/mint/mint-woo';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
-    title: 'Charisma | Woooooo!',
+    title: 'Charisma | WELSH + ROO = Woooooo!',
     description: META_DESCRIPTION,
     image: '/woooooo.webp'
   };
@@ -34,7 +33,7 @@ export default function Woooooo({ data }: Props) {
             <Image alt='Dungeon Scene' src={woooooo} width="1080" height="605" className='border-b border-accent-foreground' />
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
-                <h1 className="self-center font-bold text-md sm:text-2xl">Introducing the Woooooo! Token</h1>
+                <h1 className="self-center font-bold text-md sm:text-2xl">WELSH + ROO = Woooooo!</h1>
                 {/* <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
                   <Image alt='Liquid Staked ROO' src={liquidStakedRoo} width="1080" height="605" className='w-12 h-12' />
                 </div> */}
