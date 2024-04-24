@@ -48,9 +48,9 @@ export default function Stake({ data }: Props) {
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
                 <h1 className="self-center font-bold text-md sm:text-2xl">Liquid Staked Welsh</h1>
-                <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
+                {data.exchangeRate && <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
                   <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg bg-primary sm:p-0 sm:px-4">1 sWELSH = {Number(data.exchangeRate) / 1000000} WELSH</div>
-                </div>
+                </div>}
               </div>
 
               <TooltipProvider>
