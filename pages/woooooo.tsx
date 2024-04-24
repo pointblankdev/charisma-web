@@ -20,7 +20,7 @@ export default function Woooooo({ data }: Props) {
   const meta = {
     title: 'Charisma | WELSH + ROO = Woooooo!',
     description: META_DESCRIPTION,
-    image: '/woooooo.webp'
+    image: '/woo-og.png'
   };
 
   return (
