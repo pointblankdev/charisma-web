@@ -25,31 +25,52 @@ import charismaToken from '@public/charisma.png'
 import stxToken from '@public/stacks-stx-logo.png'
 
 
+
 type Props = {
   quests: any[];
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getStaticProps: GetStaticProps<Props> = () => {
 
-  const quests = await getAllQuests()
-
-  // const quests = []
-
-  // loop through all quests and get rewards, activation, expiration, max completions
-  for (const quest of quests) {
-    const result = await getQuestRewards(quest.questid)
-    quest.rewardCharisma = Number(result.value.value)
-  }
+  const quests = [
+    {
+      guild: {
+        logo: {
+          url: '/liquid-staked-welshcorgicoin.png'
+        }
+      },
+      title: 'Welshcorgicoin',
+      subtitle: 'Liquid Staked Welsh',
+      cardImage: {
+        url: '/liquid-welsh-21.png'
+      },
+      slug: 'stake'
+    },
+    {
+      guild: {
+        logo: {
+          url: '/liquid-staked-roo.png'
+        }
+      },
+      title: 'Kangaroo',
+      subtitle: 'Liquid Staked Roo',
+      cardImage: {
+        url: '/liquid-roo-21.png'
+      },
+      slug: 'stake-roo'
+    }
+  ]
 
   return {
     props: {
       quests
     },
-    revalidate: 60
+    // revalidate: 60
   };
 };
 
 export default function Quests({ quests }: Props) {
+
   const meta = {
     title: 'Charisma | Quest to Earn',
     description: META_DESCRIPTION
@@ -58,35 +79,6 @@ export default function Quests({ quests }: Props) {
   const [data, setData] = useState(quests);
 
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const address = userSession.loadUserData().profile.stxAddress.mainnet;
-
-    const checkQuests = async () => {
-      // Deep clone the quests array to prevent mutations on the original data
-      const updatedQuests = JSON.parse(JSON.stringify(quests));
-
-      for (const quest of updatedQuests) {
-        const response = await checkQuestComplete(address, quest.questid);
-        quest.completed = response.type === 3;
-
-        const profile = userSession.loadUserData().profile
-        const stxRewardResponse = await checkQuestStxRewards(profile.stxAddress.mainnet, Number(quest.questid || 0))
-        if (!stxRewardResponse.success) {
-          console.warn(stxRewardResponse.value.value)
-        } else {
-          console.log(stxRewardResponse.value.value)
-          quest.rewardSTX = stxRewardResponse.value.value / 1000000
-        }
-      }
-
-      // Functional update form of setState
-      setData(() => updatedQuests);
-    }
-
-    checkQuests().then(() => setLoading(false));
-  }, [quests]);
-
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -99,7 +91,7 @@ export default function Quests({ quests }: Props) {
               const showCommunityRewards = charismaRewards > 0 || quest.rewardSTX > 0
               return (
                 <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-75 hover:opacity-90')}>
-                  <Link href={`quests/${quest.slug}`} className='w-full'>
+                  <Link href={`${quest.slug}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
                         <div className='flex gap-2'>

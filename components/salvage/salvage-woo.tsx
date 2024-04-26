@@ -12,26 +12,26 @@ import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
 
-const MintWoo = ({ amount }: { amount: number }) => {
+const SalvageWoo = ({ amount }: { amount: number }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  function mint() {
+  function salvage() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "dme020-woooooo-token",
-      functionName: "mint",
+      contractName: "dme021-wooo-token",
+      functionName: "salvage",
       functionArgs: [uintCV(amount), principalCV(sender)],
-      postConditionMode: PostConditionMode.Deny,
-      // postConditionMode: PostConditionMode.Allow,
+      // postConditionMode: PostConditionMode.Deny,
+      postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        Pc.principal(sender).willSendLte(amount * 10000).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh", 'liquid-staked-welsh'),
-        Pc.principal(sender).willSendLte(amount * 42).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo", 'liquid-staked-roo'),
+        // Pc.principal(sender).willSendLte(amount * 100).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
+        // Pc.principal(sender).willSendLte(amount * 0.42).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -47,8 +47,8 @@ const MintWoo = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={mint}>Mint {millify(amount / 10000)} WOO</Button>
+    <Button variant='ghost' className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={salvage}>Salvage {(amount / 10000)} WOO</Button>
   );
 };
 
-export default MintWoo;
+export default SalvageWoo;

@@ -27,9 +27,9 @@ const ContractCallVote = ({ proposalPrincipal }: any) => {
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: "dme001-proposal-voting",
       functionName: "vote",
-      functionArgs: [uintCV(1), boolCV(pick), principalCV(proposalPrincipal)],
+      functionArgs: [uintCV(100), boolCV(pick), principalCV(proposalPrincipal)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal(sender).willSendEq(1).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma')],
+      postConditions: [Pc.principal(sender).willSendEq(100).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma')],
       onFinish: (data) => {
         console.log("onFinish:", data);
         (window as any)
