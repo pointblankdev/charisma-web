@@ -72,8 +72,9 @@ export const getStaticProps: GetStaticProps<Props> = () => {
 export default function Quests({ quests }: Props) {
 
   const meta = {
-    title: 'Charisma | Quest to Earn',
-    description: META_DESCRIPTION
+    title: 'Charisma | Liquid Staking',
+    description: META_DESCRIPTION,
+    image: '/liquid-welsh.png'
   };
 
   const [data, setData] = useState(quests);
