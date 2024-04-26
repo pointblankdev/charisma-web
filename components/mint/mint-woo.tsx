@@ -47,7 +47,7 @@ const MintWoo = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={mint}>Mint {millify(amount / 10000)} WOO</Button>
+    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={mint}>Mint {millify(amount / 10000)} WOO</Button>
   );
 };
 
