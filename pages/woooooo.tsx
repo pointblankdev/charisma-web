@@ -100,7 +100,7 @@ export default function Woooooo({ data }: Props) {
                 </div> */}
               </div>
               <p className="my-8 text-sm font-thin leading-tight text-center sm:text-md">
-                ⚠️ Warning: Woooooo! is an experimental token designed to bring together the best of two great memecoin communities. Large mint sizes will be unlocked next week when the DAO approves Charisma token rewards for this contract. Have fun, mint a few, and enjoy the ride. Woooooo!
+                ⚠️ Warning: Woooooo! is an experimental token designed to bring together the best of two great memecoin communities. Minting will be unlocked next week when the DAO approves Charisma token rewards for this contract. Enjoy the ride. Woooooo!
               </p>
             </div>
           </Card>
