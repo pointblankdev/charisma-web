@@ -10,7 +10,6 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
-import millify from "millify";
 
 const CraftWoo = ({ amount }: { amount: number }) => {
   const { doContractCall } = useConnect();
@@ -31,8 +30,8 @@ const CraftWoo = ({ amount }: { amount: number }) => {
       postConditions: [
         Pc.principal(sender).willSendLte(amount * 10000).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh", 'liquid-staked-welsh'),
         Pc.principal(sender).willSendLte(amount * 42).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo", 'liquid-staked-roo'),
-        Pc.principal(sender).willSendLte(amount * 1).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
-        Pc.principal(sender).willSendLte(amount * 0.0042).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
+        Pc.principal(sender).willSendLte(amount * 10).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
+        Pc.principal(sender).willSendLte(amount * 0.042).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
