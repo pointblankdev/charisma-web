@@ -17,7 +17,7 @@ import woooooo from '@public/woooooo.webp'
 import SalvageWoo from '@components/salvage/salvage-woo';
 import CraftWoo from '@components/mint/craft-woo';
 import { Button } from '@components/ui/button';
-import { getAccountBalance, getNameFromAddress, getTitleBeltHolder, getWooTitleBeltContractEvents, getWoooTitleRecord } from '@lib/stacks-api';
+import { getAccountBalance, getNameFromAddress, getWooTitleBeltContractEvents } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { userSession } from '@components/stacks-session/connect';
@@ -25,7 +25,6 @@ import millify from 'millify';
 import { StacksMainnet } from "@stacks/network";
 import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
-import { toInteger } from 'lodash';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
