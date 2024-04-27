@@ -131,7 +131,7 @@ export default function Woooooo({ data }: Props) {
                 </div>
                 <div className='px-2'>
                   {/* <div className='text-xs whitespace-nowrap'>ARE YOU READY TO RUMBLE?</div> */}
-                  <Button disabled className='w-full' variant={'secondary'}>🥊 Challenge Title Holder</Button>
+                  <Button className='w-full' variant={'secondary'}>🥊 Challenge Title Holder</Button>
                   <div className='pt-1 mt-1 text-xs leading-snug text-center'>Current Title Belt Holder</div>
                   <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{titleBeltHolder}</div>
                   <div className='w-full'>
