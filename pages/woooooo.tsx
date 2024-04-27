@@ -167,7 +167,7 @@ export default function Woooooo({ data }: Props) {
                 </div>
               </div>
               <div className='my-16 space-y-2'>
-                <div className='flex space-x-2'>
+                <div className='flex flex-wrap space-x-2 space-y-8 sm:space-y-0 sm:flex-nowrap'>
                   <div className='w-full'>
                     <div className='flex justify-center space-x-1'>
                       <div className='text-xs text-center font-fine'>Crafting Costs:</div>
@@ -224,14 +224,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const response = await getTitleBeltHolder();
     const bns = await getNameFromAddress(response?.value?.value?.value)
-    const woooRecord = await getWoooTitleRecord()
+    // const woooRecord = await getWoooTitleRecord()
 
     return {
       props: {
         data: {
           titleBeltHolder: response.value.value.value,
           bns: bns.names[0],
-          woooRecord: woooRecord
+          // woooRecord: woooRecord
         }
       },
       revalidate: 60
