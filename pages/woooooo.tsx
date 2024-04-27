@@ -48,9 +48,8 @@ export default function Woooooo({ data }: Props) {
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "dme022-wooo-title-belt-nft",
-      functionName: "challenge",
+      functionName: "challenge-title-holder",
       functionArgs: [],
-      // postConditionMode: PostConditionMode.Deny,
       postConditionMode: PostConditionMode.Deny,
       postConditions: [],
       onFinish: (data) => {
@@ -62,10 +61,7 @@ export default function Woooooo({ data }: Props) {
     });
   }
 
-
-
   useEffect(() => {
-
     const profile = userSession.loadUserData().profile
     console.log(profile.stxAddress.mainnet)
     getAccountBalance(profile.stxAddress.mainnet).then(balance => {
