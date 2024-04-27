@@ -171,23 +171,23 @@ export default function Woooooo({ data }: Props) {
                   <div className='w-full'>
                     <div className='flex justify-center space-x-1'>
                       <div className='text-xs text-center font-fine'>Crafting Costs:</div>
-                      <div className='text-xs text-center font-fine'>100 sWELSH +  0.42 sROO</div>
+                      <div className='text-xs text-center font-fine'>1k sWELSH +  4.2 sROO</div>
                     </div>
-                    <CraftWoo amount={10000} />
+                    <CraftWoo amount={100000} />
                     <div className='flex justify-center space-x-1'>
                       <div className='text-xs text-center font-fine'>You'll Receive:</div>
-                      <div className='text-xs text-center font-fine'>0.999 WOOO</div>
+                      <div className='text-xs text-center font-fine'>9.99 WOOO</div>
                     </div>
                   </div>
                   <div className='w-full'>
                     <div className='flex justify-center space-x-1'>
                       <div className='text-xs text-center font-fine'>Salvage Costs:</div>
-                      <div className='text-xs text-center font-fine'>1 WOOO</div>
+                      <div className='text-xs text-center font-fine'>10 WOOO</div>
                     </div>
-                    <SalvageWoo amount={10000} />
+                    <SalvageWoo amount={100000} />
                     <div className='flex justify-center space-x-1'>
                       <div className='text-xs text-center font-fine'>You'll Receive:</div>
-                      <div className='text-xs text-center font-fine'>99 sWELSH +  0.4158 sROO</div>
+                      <div className='text-xs text-center font-fine'>999 sWELSH +  4.158 sROO</div>
                     </div>
                   </div>
                 </div>
