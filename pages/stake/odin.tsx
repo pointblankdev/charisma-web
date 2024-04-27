@@ -86,8 +86,8 @@ export default function StakeOdin({ data }: Props) {
               <div className='space-y-2'>
                 <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-lg text-center" />
                 <div className='flex space-x-1'>
-                  <StakeOdinButton tokens={tokenAmount} />
-                  <UnstakeOdinButton tokens={tokenAmount} />
+                  {/* <StakeOdinButton tokens={tokenAmount} />
+                  <UnstakeOdinButton tokens={tokenAmount} /> */}
                 </div>
               </div>
             </div>
