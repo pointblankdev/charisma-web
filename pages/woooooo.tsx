@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react';
 import { userSession } from '@components/stacks-session/connect';
 import millify from 'millify';
 import { StacksMainnet } from "@stacks/network";
-import { AnchorMode, PostConditionMode, uintCV } from '@stacks/transactions';
+import { AnchorMode, PostConditionMode } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
 
 export default function Woooooo({ data }: Props) {
@@ -62,20 +62,23 @@ export default function Woooooo({ data }: Props) {
   }
 
   useEffect(() => {
-    const profile = userSession.loadUserData().profile
-    console.log(profile.stxAddress.mainnet)
-    getAccountBalance(profile.stxAddress.mainnet).then(balance => {
-      setSWelshBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'].balance)
-      setSRooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo'].balance)
-      setWoooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
-    })
+    try {
+      const profile = userSession.loadUserData().profile
+      console.log(profile.stxAddress.mainnet)
+      getAccountBalance(profile.stxAddress.mainnet).then(balance => {
+        setSWelshBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'].balance)
+        setSRooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo'].balance)
+        setWoooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
+      })
 
-    getAccountBalance(data.titleBeltHolder).then(balance => {
-      setWoooRecord(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
-    })
+      getAccountBalance(data.titleBeltHolder).then(balance => {
+        setWoooRecord(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
+      })
+    } catch (error) {
+      console.error(error)
+    }
 
-
-  }, [])
+  }, [userSession])
 
   return (
     <Page meta={meta} fullViewport>
