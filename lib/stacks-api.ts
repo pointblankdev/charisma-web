@@ -488,3 +488,35 @@ export async function getQuestRewards(questId: number) {
 
     return cvToJSON(response)
 }
+
+export async function getTitleBeltHolder() {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme022-wooo-title-belt-nft",
+        functionName: "get-owner",
+        functionArgs: [uintCV(0)],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getAccountAssets(principal: string) {
+
+    const response: any = await accountsApi.getAccountAssets({
+        principal
+    })
+    return response
+}
+
+export async function getAccountBalance(principal: string) {
+
+    const response: any = await accountsApi.getAccountBalance({
+        principal
+    })
+    return response
+}
+
+

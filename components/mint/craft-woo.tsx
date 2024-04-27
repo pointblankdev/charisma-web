@@ -48,7 +48,8 @@ const CraftWoo = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={craft}>Craft {(amount / 10000)} WOOO</Button>
+    // <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={craft}>Craft {(amount / 10000)} WOOO</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={craft}>🔨 Craft</Button>
   );
 };
 

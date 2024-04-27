@@ -17,6 +17,12 @@ import woooooo from '@public/woooooo.webp'
 import SalvageWoo from '@components/salvage/salvage-woo';
 import CraftWoo from '@components/mint/craft-woo';
 import { Button } from '@components/ui/button';
+import { getAccountBalance, getNameFromAddress, getTitleBeltHolder } from '@lib/stacks-api';
+import { GetStaticProps } from 'next';
+import { useEffect, useState } from 'react';
+import { userSession } from '@components/stacks-session/connect';
+import millify from 'millify';
+import { Input } from '@components/ui/input';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
@@ -24,6 +30,31 @@ export default function Woooooo({ data }: Props) {
     description: META_DESCRIPTION,
     image: '/woo-og.png'
   };
+
+  const titleBeltHolder = data.bns || data.titleBeltHolder
+
+  const [sWelshBalance, setSWelshBalance] = useState(0)
+  const [sRooBalance, setSRooBalance] = useState(0)
+  const [woooBalance, setWoooBalance] = useState(0)
+  const [woooRecord, setWoooRecord] = useState(0)
+
+
+  useEffect(() => {
+
+    const profile = userSession.loadUserData().profile
+    console.log(profile.stxAddress.mainnet)
+    getAccountBalance(profile.stxAddress.mainnet).then(balance => {
+      setSWelshBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'].balance)
+      setSRooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo'].balance)
+      setWoooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
+    })
+
+    getAccountBalance(data.titleBeltHolder).then(balance => {
+      setWoooRecord(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
+    })
+
+
+  }, [])
 
   return (
     <Page meta={meta} fullViewport>
@@ -76,40 +107,62 @@ export default function Woooooo({ data }: Props) {
                 </Tooltip>
               </TooltipProvider>
               <div className='flex justify-around space-x-2'>
-
                 <p className="w-full mb-8 text-xs leading-tight font-md sm:text-sm">
                   Do you have what it takes to be a champion? Whoever claims the title for the most WOOO tokens, can "challenge" the champion. If they win, they claim the Wooo! Champion's Title Belt NFT and get a huge reward of Charisma tokens. Competition begins on 5/1.
                 </p>
+              </div>
+              <div className='flex flex-wrap justify-around my-8 space-x-2'>
                 <div className='px-2'>
-                  <div className='text-xs whitespace-nowrap'>ARE YOU READY TO RUMBLE?</div>
-                  <Button disabled className='w-full' variant={'secondary'}>Challenge Title Holder</Button>
+                  <div className='text-xl text-center whitespace-nowrap'>Your Account Balances</div>
+                  <div className='flex space-x-2'>
+                    <div className='w-36'>
+                      <div className='pt-1 mt-1 text-xs leading-snug text-center'>sWELSH</div>
+                      <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{millify(sWelshBalance / 1000000)}</div>
+                    </div>
+                    <div className='w-36'>
+                      <div className='pt-1 mt-1 text-xs leading-snug text-center'>sROO</div>
+                      <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{millify(sRooBalance / 1000000)}</div>
+                    </div>
+                  </div>
+                  <div className='w-full'>
+                    <div className='pt-1 mt-1 text-xs leading-snug text-center'>WOOO</div>
+                    <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{millify(woooBalance / 10000)}</div>
+                  </div>
+                </div>
+                <div className='px-2'>
+                  {/* <div className='text-xs whitespace-nowrap'>ARE YOU READY TO RUMBLE?</div> */}
+                  <Button disabled className='w-full' variant={'secondary'}>🥊 Challenge Title Holder</Button>
+                  <div className='pt-1 mt-1 text-xs leading-snug text-center'>Current Title Belt Holder</div>
+                  <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{titleBeltHolder}</div>
+                  <div className='w-full'>
+                    <div className='pt-1 mt-1 text-xs leading-snug text-center'>WOOO Record</div>
+                    <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{millify(woooRecord / 10000)}</div>
+                  </div>
                 </div>
               </div>
-              <div className='space-y-2'>
-                <div className=''>
-                  <div className='text-xs text-center font-fine'>Components:</div>
-                  <div className='text-xs text-center font-fine'>sWELSH + sROO</div>
-                </div>
+              <div className='my-16 space-y-2'>
                 <div className='flex space-x-2'>
                   <div className='w-full'>
+                    <div className='flex justify-center space-x-1'>
+                      <div className='text-xs text-center font-fine'>Crafting Costs:</div>
+                      <div className='text-xs text-center font-fine'>100 sWELSH +  0.42 sROO</div>
+                    </div>
                     <CraftWoo amount={10000} />
+                    <div className='flex justify-center space-x-1'>
+                      <div className='text-xs text-center font-fine'>You'll Receive:</div>
+                      <div className='text-xs text-center font-fine'>0.999 WOOO</div>
+                    </div>
                   </div>
                   <div className='w-full'>
-                    <CraftWoo amount={100000} />
-                  </div>
-                  <div className='w-full'>
-                    <CraftWoo amount={1000000} />
-                  </div>
-                </div>
-                <div className='flex space-x-2'>
-                  <div className='w-full'>
+                    <div className='flex justify-center space-x-1'>
+                      <div className='text-xs text-center font-fine'>Salvage Costs:</div>
+                      <div className='text-xs text-center font-fine'>1 WOOO</div>
+                    </div>
                     <SalvageWoo amount={10000} />
-                  </div>
-                  <div className='w-full'>
-                    <SalvageWoo amount={100000} />
-                  </div>
-                  <div className='w-full'>
-                    <SalvageWoo amount={1000000} />
+                    <div className='flex justify-center space-x-1'>
+                      <div className='text-xs text-center font-fine'>You'll Receive:</div>
+                      <div className='text-xs text-center font-fine'>99 sWELSH +  0.4158 sROO</div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -124,7 +177,7 @@ export default function Woooooo({ data }: Props) {
                   Transfer Fee: 0.1%
                 </p>
                 <p className="text-sm leading-tight text-center sm:text-md">
-                  Salvage Fee: 0.1%
+                  Salvage Fee: 1%
                 </p>
               </div>
             </div>
@@ -139,3 +192,28 @@ type Props = {
   data: any;
 };
 
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+  try {
+    const response = await getTitleBeltHolder();
+    const bns = await getNameFromAddress(response?.value?.value?.value)
+
+    return {
+      props: {
+        data: {
+          titleBeltHolder: response.value.value.value,
+          bns: bns.names[0]
+        }
+      },
+      revalidate: 60
+    };
+
+  } catch (error) {
+    return {
+      props: {
+        data: {}
+      },
+    }
+  }
+};

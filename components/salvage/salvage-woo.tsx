@@ -47,7 +47,8 @@ const SalvageWoo = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button variant='ghost' className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={salvage}>Salvage {(amount / 10000)} WOO</Button>
+    // <Button variant='outline' className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={salvage}>Salvage {(amount / 10000)} WOO</Button>
+    <Button variant='outline' className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={salvage}>⛏️ Salvage</Button>
   );
 };
 

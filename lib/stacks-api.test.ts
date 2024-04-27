@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getNameFromAddress, getProposals, getQuestRewards, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 
 const network = new StacksMainnet();
@@ -116,6 +116,36 @@ describe('Stacks API', () => {
 
         const result = await getProposals()
         console.log(result)
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // test get title belt holder
+    it('should get title belt holder', async () => {
+
+        const result = await getTitleBeltHolder()
+        console.log(result)
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // test get account assets
+    it('should get account assets', async () => {
+
+        const result = await getAccountAssets('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result)
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // test get account balance
+    it('should get account balance', async () => {
+
+        const result = await getAccountBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result.fungible_tokens)
+        // SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh
+        // SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo
+        // .balance
         expect(result).toBeDefined()
 
     }, 20000)

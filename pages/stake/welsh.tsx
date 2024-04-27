@@ -21,7 +21,6 @@ import { useState } from 'react';
 import { Input } from '@components/ui/input';
 
 export default function StakeWelsh({ data }: Props) {
-  const [tokenAmount, setTokenAmount] = useState('');
 
   const meta = {
     title: 'Charisma | Stake Welsh Tokens',
@@ -29,6 +28,7 @@ export default function StakeWelsh({ data }: Props) {
     image: '/liquid-welsh.png'
   };
 
+  const [tokenAmount, setTokenAmount] = useState('');
   const handleTokenAmountChange = (event: any) => {
     const { value } = event.target;
     // Limit input to only allow numbers and to 6 decimal places
