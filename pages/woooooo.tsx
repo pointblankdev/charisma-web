@@ -17,7 +17,7 @@ import woooooo from '@public/woooooo.webp'
 import SalvageWoo from '@components/salvage/salvage-woo';
 import CraftWoo from '@components/mint/craft-woo';
 import { Button } from '@components/ui/button';
-import { getAccountBalance, getNameFromAddress, getTitleBeltHolder, getWoooTitleRecord } from '@lib/stacks-api';
+import { getAccountBalance, getNameFromAddress, getTitleBeltHolder, getWooTitleBeltContractEvents, getWoooTitleRecord } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { userSession } from '@components/stacks-session/connect';
@@ -25,6 +25,7 @@ import millify from 'millify';
 import { StacksMainnet } from "@stacks/network";
 import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
+import { toInteger } from 'lodash';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
@@ -42,7 +43,7 @@ export default function Woooooo({ data }: Props) {
   const [sWelshBalance, setSWelshBalance] = useState(0)
   const [sRooBalance, setSRooBalance] = useState(0)
   const [woooBalance, setWoooBalance] = useState(0)
-  const [woooRecord, setWoooRecord] = useState(0)
+  const [woooRecord, setWoooRecord] = useState(data.woooRecord)
 
   function challenge() {
     doContractCall({
@@ -73,10 +74,6 @@ export default function Woooooo({ data }: Props) {
         setSWelshBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'].balance)
         setSRooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo'].balance)
         setWoooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
-      })
-
-      getAccountBalance(data.titleBeltHolder).then(balance => {
-        setWoooRecord(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
       })
     } catch (error) {
       console.error(error)
@@ -154,7 +151,7 @@ export default function Woooooo({ data }: Props) {
                   </div>
                   <div className='w-full'>
                     <div className='pt-1 mt-1 text-xs leading-snug text-center'>WOOO</div>
-                    <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{millify(woooBalance / 10000)}</div>
+                    <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{woooBalance / 10000}</div>
                   </div>
                 </div>
                 <div className='px-2'>
@@ -164,7 +161,7 @@ export default function Woooooo({ data }: Props) {
                   <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{titleBeltHolder}</div>
                   <div className='w-full'>
                     <div className='pt-1 mt-1 text-xs leading-snug text-center'>WOOO Record</div>
-                    <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{millify(woooRecord / 10000)}</div>
+                    <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{woooRecord / 10000}</div>
                   </div>
                 </div>
               </div>
@@ -224,16 +221,18 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
-    const response = await getTitleBeltHolder();
-    const bns = await getNameFromAddress(response?.value?.value?.value)
-    // const woooRecord = await getWoooTitleRecord()
+    const result = await getWooTitleBeltContractEvents() as any
+    const repr = result.results[0].contract_log.value.repr
+    const woooRecord = Number(repr.split(' ')[2].slice(1, -1))
+    const titleBeltHolder = repr.split(' ')[4].slice(1, -2)
+    const bns = await getNameFromAddress(titleBeltHolder)
 
     return {
       props: {
         data: {
-          titleBeltHolder: response.value.value.value,
+          titleBeltHolder: titleBeltHolder,
           bns: bns.names[0],
-          // woooRecord: woooRecord
+          woooRecord: woooRecord
         }
       },
       revalidate: 60

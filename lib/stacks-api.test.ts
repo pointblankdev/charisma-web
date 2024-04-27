@@ -153,8 +153,10 @@ describe('Stacks API', () => {
     // test get wooo title belt contract events
     it('should get wooo title belt contract events', async () => {
 
-        const result = await getWooTitleBeltContractEvents()
-        console.log(result)
+        const result = await getWooTitleBeltContractEvents() as any
+        const repr = result.results[0].contract_log.value.repr
+        const wooRecord = repr.split(' ')[2]
+        console.log(wooRecord)
         expect(result).toBeDefined()
 
     }, 20000)

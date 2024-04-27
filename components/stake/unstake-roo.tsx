@@ -10,6 +10,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import { toInteger } from "lodash";
+import millify from "millify";
 
 interface UnstakeRooButtonProps {
   tokens: string;
@@ -51,8 +52,8 @@ const UnstakeRooButton: React.FC<UnstakeRooButtonProps> = ({ tokens }) => {
       variant={'ghost'}
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
-      disabled={toInteger(tokens) <= 0}>
-      Unstake {tokens && toInteger(tokens) > 0 ? tokens : 0} sROO
+      disabled={Number(tokens) <= 0}>
+      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sROO
     </Button>
   );
 };

@@ -19,6 +19,7 @@ import { callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import { useState } from 'react';
 import { Input } from '@components/ui/input';
+import millify from 'millify';
 
 export default function StakeWelsh({ data }: Props) {
 
@@ -37,6 +38,8 @@ export default function StakeWelsh({ data }: Props) {
     }
   };
 
+  const tokensInPool = data.tokensInPool
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -53,33 +56,38 @@ export default function StakeWelsh({ data }: Props) {
                 </div>}
               </div>
 
-              <TooltipProvider>
-                <Tooltip>
-                  <TooltipTrigger>
-                    <div className='flex items-center gap-1 mb-2'>
-                      <h1 className="font-bold text-left text-md">How Staking Works</h1>
-                      <Info size={16} color='#948f8f' />
-                    </div>
-                  </TooltipTrigger>
-                  <TooltipContent className='max-w-2xl leading-tight text-white bg-black border-primary'>
-                    <h2 className="mb-2 text-lg font-bold">Interacting with the Staking Dashboard:</h2>
-                    <ul className="pl-5 mb-4 space-y-2 list-disc text-md">
-                      <li>
-                        <b>Stake Tokens</b>: Stake your Welsh tokens to receive Liquid Staked Welsh (sWELSH). The amount of sWELSH you receive is calculated based on the current inverse exchange rate.
-                      </li>
-                      <li>
-                        <b>Unstake Tokens</b>: Redeem your sWELSH for Welsh tokens based on the current exchange rate.
-                      </li>
-                    </ul>
-                    <p className="mb-4">
-                      Staking your Welsh tokens allows you to participate in governance and earn staking rewards generated from network activities. Your staked tokens help secure the network and in return, you earn more tokens over time.
-                    </p>
-                    <p className="mb-4">
-                      The staking interface aims to provide a transparent, user-friendly experience to support your investment decisions.
-                    </p>
-                  </TooltipContent>
-                </Tooltip>
-              </TooltipProvider>
+              <div className='flex justify-between'>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <div className='flex items-center gap-1 mb-2'>
+                        <h1 className="font-bold text-left text-md">How Staking Works</h1>
+                        <Info size={16} color='#948f8f' />
+                      </div>
+                    </TooltipTrigger>
+                    <TooltipContent className='max-w-2xl leading-tight text-white bg-black border-primary'>
+                      <h2 className="mb-2 text-lg font-bold">Interacting with the Staking Dashboard:</h2>
+                      <ul className="pl-5 mb-4 space-y-2 list-disc text-md">
+                        <li>
+                          <b>Stake Tokens</b>: Stake your Welsh tokens to receive Liquid Staked Welsh (sWELSH). The amount of sWELSH you receive is calculated based on the current inverse exchange rate.
+                        </li>
+                        <li>
+                          <b>Unstake Tokens</b>: Redeem your sWELSH for Welsh tokens based on the current exchange rate.
+                        </li>
+                      </ul>
+                      <p className="mb-4">
+                        Staking your Welsh tokens allows you to participate in governance and earn staking rewards generated from network activities. Your staked tokens help secure the network and in return, you earn more tokens over time.
+                      </p>
+                      <p className="mb-4">
+                        The staking interface aims to provide a transparent, user-friendly experience to support your investment decisions.
+                      </p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <div className='px-2 sm:p-0 sm:px-4'>
+                  {millify(tokensInPool / 1000000)} WELSH Staked
+                </div>
+              </div>
               <p className="mb-8 text-xs font-thin leading-tight sm:text-sm">
                 Welshcorgicoin Staking is a crucial part of the network's financial ecosystem, providing a way for token holders to earn passive income while contributing to the token's number-go-up mechanism.
               </p>
@@ -114,8 +122,18 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
     })
 
+    const totalStaked: any = await callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "liquid-staked-welsh",
+      functionName: "get-total-welsh-in-pool",
+      functionArgs: [],
+      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    })
+
     const data = {
       exchangeRate: Number(lc.value.value),
+      tokensInPool: Number(totalStaked.value.value)
     }
 
     return {

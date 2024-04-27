@@ -13,6 +13,20 @@ module.exports = {
       },
     ],
   },
+  async redirects() {
+    return [
+      {
+        source: '/stake',
+        destination: '/stake/welsh',
+        permanent: true,
+      },
+      {
+        source: '/stake-roo',
+        destination: '/stake/roo',
+        permanent: true,
+      },
+    ]
+  },
   experimental: {
     scrollRestoration: true,
   },

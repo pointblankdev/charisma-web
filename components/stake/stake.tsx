@@ -10,6 +10,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import { toInteger } from "lodash";
+import millify from "millify";
 
 interface StakeWelshButtonProps {
   tokens: string;
@@ -60,9 +61,9 @@ const StakeWelshButton: React.FC<StakeWelshButtonProps> = ({ tokens }) => {
     <Button
       className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
       onClick={stake}
-      disabled={toInteger(tokens) <= 0}
+      disabled={Number(tokens) <= 0}
     >
-      Stake {tokens && toInteger(tokens) > 0 ? tokens : 0} WELSH
+      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} WELSH
     </Button>
   );
 };

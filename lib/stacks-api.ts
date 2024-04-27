@@ -519,34 +519,6 @@ export async function getAccountBalance(principal: string) {
     return response
 }
 
-export async function getWoooTitleRecord() {
-    let offset = 0;
-    const limit = 50;
-    const transactions: any[] = [];
-
-    while (true) {
-        const resp: any = await accountsApi.getAccountTransactions({
-            principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme022-wooo-title-belt-nft',
-            limit: limit,
-            offset: offset,
-            unanchored: true
-        });
-
-        if (!resp.results || resp.results.length === 0) {
-            break; // exit the loop if there are no more results
-        }
-
-        resp.results.forEach((result: any) => {
-            console.log(result.tx_result.repr)
-
-        })
-        offset += limit; // increment the offset for the next page
-    }
-
-    return transactions;
-
-}
-
 export async function getWooTitleBeltContractEvents() {
     const response = await scApi.getContractEventsById({
         contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme022-wooo-title-belt-nft'
