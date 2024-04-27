@@ -49,7 +49,7 @@ export default function StakeOdin({ data }: Props) {
               <div className='flex justify-between mb-2'>
                 <h1 className="self-center font-bold text-md sm:text-2xl">Liquid Staked Odin</h1>
                 {data.exchangeRate && <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
-                  <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg bg-primary sm:p-0 sm:px-4">1 sROO = {Number(data.exchangeRate) / 1000000} ROO</div>
+                  <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg bg-primary sm:p-0 sm:px-4">1 sODIN = {Number(data.exchangeRate) / 1000000} ODIN</div>
                 </div>}
               </div>
 
@@ -65,10 +65,10 @@ export default function StakeOdin({ data }: Props) {
                     <h2 className="mb-2 text-lg font-bold">Interacting with the Staking Dashboard:</h2>
                     <ul className="pl-5 mb-4 space-y-2 list-disc text-md">
                       <li>
-                        <b>Stake Tokens</b>: Stake your Odin tokens to receive Liquid Staked Odin (sROO). The amount of sROO you receive is calculated based on the current inverse exchange rate.
+                        <b>Stake Tokens</b>: Stake your Odin tokens to receive Liquid Staked Odin (sODIN). The amount of sODIN you receive is calculated based on the current inverse exchange rate.
                       </li>
                       <li>
-                        <b>Unstake Tokens</b>: Redeem your sROO for Odin tokens based on the current exchange rate.
+                        <b>Unstake Tokens</b>: Redeem your sODIN for Odin tokens based on the current exchange rate.
                       </li>
                     </ul>
                     <p className="mb-4">
