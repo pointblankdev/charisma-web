@@ -101,7 +101,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/liquid-odin-21.png'
       },
       slug: 'stake/odin',
-      wip: true
+      wip: false
     },
     {
       guild: {
