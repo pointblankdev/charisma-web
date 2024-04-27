@@ -23,7 +23,7 @@ import { useEffect, useState } from 'react';
 import { userSession } from '@components/stacks-session/connect';
 import millify from 'millify';
 import { StacksMainnet } from "@stacks/network";
-import { AnchorMode, PostConditionMode } from '@stacks/transactions';
+import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
 
 export default function Woooooo({ data }: Props) {
@@ -53,7 +53,9 @@ export default function Woooooo({ data }: Props) {
       functionName: "challenge-title-holder",
       functionArgs: [],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [],
+      postConditions: [
+        Pc.principal(data.titleBeltHolder).willSendAsset().nft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme022-wooo-title-belt-nft::wooo-title-belt', uintCV(0))
+      ],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
