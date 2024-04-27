@@ -22,7 +22,9 @@ import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { userSession } from '@components/stacks-session/connect';
 import millify from 'millify';
-import { Input } from '@components/ui/input';
+import { StacksMainnet } from "@stacks/network";
+import { AnchorMode, PostConditionMode, uintCV } from '@stacks/transactions';
+import { useConnect } from '@stacks/connect-react';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
@@ -31,12 +33,35 @@ export default function Woooooo({ data }: Props) {
     image: '/woo-og.png'
   };
 
+  const { doContractCall } = useConnect();
+
   const titleBeltHolder = data.bns || data.titleBeltHolder
 
   const [sWelshBalance, setSWelshBalance] = useState(0)
   const [sRooBalance, setSRooBalance] = useState(0)
   const [woooBalance, setWoooBalance] = useState(0)
   const [woooRecord, setWoooRecord] = useState(0)
+
+  function challenge() {
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "dme022-wooo-title-belt-nft",
+      functionName: "challenge",
+      functionArgs: [],
+      // postConditionMode: PostConditionMode.Deny,
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
 
 
   useEffect(() => {
@@ -131,7 +156,7 @@ export default function Woooooo({ data }: Props) {
                 </div>
                 <div className='px-2'>
                   {/* <div className='text-xs whitespace-nowrap'>ARE YOU READY TO RUMBLE?</div> */}
-                  <Button className='w-full' variant={'secondary'}>🥊 Challenge Title Holder</Button>
+                  <Button className='w-full' variant={'secondary'} onClick={challenge}>🥊 Challenge Title Holder</Button>
                   <div className='pt-1 mt-1 text-xs leading-snug text-center'>Current Title Belt Holder</div>
                   <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{titleBeltHolder}</div>
                   <div className='w-full'>
