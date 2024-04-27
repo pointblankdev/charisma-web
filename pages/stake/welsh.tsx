@@ -20,7 +20,7 @@ import { StacksMainnet } from "@stacks/network";
 import { useState } from 'react';
 import { Input } from '@components/ui/input';
 
-export default function Stake({ data }: Props) {
+export default function StakeWelsh({ data }: Props) {
   const [tokenAmount, setTokenAmount] = useState('');
 
   const meta = {

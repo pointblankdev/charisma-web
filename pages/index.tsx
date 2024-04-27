@@ -14,7 +14,7 @@ import { StacksMainnet } from "@stacks/network";
 export default function Conf({ data }: Props) {
   const { query } = useRouter();
   const meta = {
-    title: 'Charisma',
+    title: 'Charisma | The community-run DAO',
     description: META_DESCRIPTION
   };
   const ticketNumber = query.ticketNumber?.toString();

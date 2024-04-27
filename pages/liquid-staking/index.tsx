@@ -44,7 +44,78 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-welsh-21.png'
       },
-      slug: 'stake'
+      slug: 'stake/welsh',
+      wip: false
+    },
+    {
+      guild: {
+        logo: {
+          url: '/leo-logo.png'
+        }
+      },
+      title: 'Leopold the Cat',
+      subtitle: 'Liquid Staked Leo',
+      cardImage: {
+        url: '/liquid-leo-21.png'
+      },
+      slug: 'stake/leo',
+      wip: true
+    },
+    {
+      guild: {
+        logo: {
+          url: '/not-logo.png'
+        }
+      },
+      title: 'Nothing',
+      subtitle: 'Liquid Staked Nothing',
+      cardImage: {
+        url: '/liquid-nothing-21.png'
+      },
+      slug: 'stake/not',
+      wip: true
+    },
+    {
+      guild: {
+        logo: {
+          url: '/pepe-logo.png'
+        }
+      },
+      title: 'Pepe the Frog',
+      subtitle: 'Liquid Staked Pepe',
+      cardImage: {
+        url: '/liquid-pepe-21.png'
+      },
+      slug: 'stake/pepe',
+      wip: true
+    },
+    {
+      guild: {
+        logo: {
+          url: '/odin-logo.png'
+        }
+      },
+      title: 'Odin, God of Bitcoin',
+      subtitle: 'Liquid Staked Odin',
+      cardImage: {
+        url: '/liquid-odin-21.png'
+      },
+      slug: 'stake/odin',
+      wip: true
+    },
+    {
+      guild: {
+        logo: {
+          url: '/LONGcoin.png'
+        }
+      },
+      title: 'Long the Dragon',
+      subtitle: 'Liquid Staked Long',
+      cardImage: {
+        url: '/liquid-long-21.png'
+      },
+      slug: 'stake/long',
+      wip: true
     },
     {
       guild: {
@@ -52,13 +123,84 @@ export const getStaticProps: GetStaticProps<Props> = () => {
           url: '/liquid-staked-roo.png'
         }
       },
-      title: 'Kangaroo',
+      title: 'Roo the Kangaroo',
       subtitle: 'Liquid Staked Roo',
       cardImage: {
         url: '/liquid-roo-21.png'
       },
-      slug: 'stake-roo'
-    }
+      slug: 'stake/roo',
+      wip: false
+    },
+    {
+      guild: {
+        logo: {
+          url: '/GUS_Logo.svg'
+        }
+      },
+      title: 'Gus the Black Lab',
+      subtitle: 'Liquid Staked Gus',
+      cardImage: {
+        url: '/liquid-gus-21.png'
+      },
+      slug: 'stake/gus',
+      wip: true
+    },
+    {
+      guild: {
+        logo: {
+          url: '/play_logo.png'
+        }
+      },
+      title: 'Play the Penguin',
+      subtitle: 'Liquid Staked Play',
+      cardImage: {
+        url: '/liquid-play-21.png'
+      },
+      slug: 'stake/play',
+      wip: true
+    },
+    {
+      guild: {
+        logo: {
+          url: '/babywelsh-logo.jpeg'
+        }
+      },
+      title: 'Baby Welshcorgicoin',
+      subtitle: 'Liquid Staked Baby Welsh',
+      cardImage: {
+        url: '/liquid-babywelsh-21.png'
+      },
+      slug: 'stake/babywelsh',
+      wip: true
+    },
+    {
+      guild: {
+        logo: {
+          url: '/MAX_logo.svg'
+        }
+      },
+      title: 'Max the Duck',
+      subtitle: 'Liquid Staked Max',
+      cardImage: {
+        url: '/liquid-max-21.png'
+      },
+      slug: 'stake/max',
+      wip: true
+    },
+    {
+      guild: {
+        logo: {
+          url: '/dogwifhat.svg'
+        }
+      },
+      title: 'Dogwifhat',
+      subtitle: 'Liquid Staked Wif',
+      cardImage: {
+        url: '/liquid-wif-21.png'
+      },
+      slug: 'stake/wif',
+      wip: true
+    },
   ]
 
   return {
@@ -69,7 +211,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
   };
 };
 
-export default function Quests({ quests }: Props) {
+export default function LiquidStaking({ quests }: Props) {
 
   const meta = {
     title: 'Charisma | Liquid Staking',
@@ -90,8 +232,9 @@ export default function Quests({ quests }: Props) {
               const isCompleted = quest.completed; // Assuming there's a 'completed' property on the quest. Adjust as needed.
               const charismaRewards = quest?.rewardCharisma || 0
               const showCommunityRewards = charismaRewards > 0 || quest.rewardSTX > 0
+              const wip = quest.wip
               return (
-                <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-75 hover:opacity-90')}>
+                <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', wip && 'opacity-50 hover:opacity-60')}>
                   <Link href={`${quest.slug}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
