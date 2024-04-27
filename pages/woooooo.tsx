@@ -17,7 +17,7 @@ import woooooo from '@public/woooooo.webp'
 import SalvageWoo from '@components/salvage/salvage-woo';
 import CraftWoo from '@components/mint/craft-woo';
 import { Button } from '@components/ui/button';
-import { getAccountBalance, getNameFromAddress, getTitleBeltHolder } from '@lib/stacks-api';
+import { getAccountBalance, getNameFromAddress, getTitleBeltHolder, getWoooTitleRecord } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { userSession } from '@components/stacks-session/connect';
@@ -32,6 +32,8 @@ export default function Woooooo({ data }: Props) {
     description: META_DESCRIPTION,
     image: '/woo-og.png'
   };
+
+  console.log(data.woooRecord)
 
   const { doContractCall } = useConnect();
 
@@ -222,12 +224,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const response = await getTitleBeltHolder();
     const bns = await getNameFromAddress(response?.value?.value?.value)
+    const woooRecord = await getWoooTitleRecord()
 
     return {
       props: {
         data: {
           titleBeltHolder: response.value.value.value,
-          bns: bns.names[0]
+          bns: bns.names[0],
+          woooRecord: woooRecord
         }
       },
       revalidate: 60
