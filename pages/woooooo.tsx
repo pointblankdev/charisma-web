@@ -204,23 +204,23 @@ export default function Woooooo({ data }: Props) {
                 <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-4xl text-center" />
                 <div className='flex flex-wrap py-4 space-x-1 space-y-4 sm:py-0 sm:space-y-0 sm:flex-nowrap'>
                   <div className='w-full'>
-                    <div className='flex justify-center space-x-1'>
+                    <div className='flex justify-center space-x-1 whitespace-nowrap'>
                       <div className='text-xs text-center font-fine'>Crafting Costs:</div>
                       <div className='text-xs text-center font-fine'>{millify(Number(tokenAmount) / 100, { precision: 6 })} sWELSH +  {millify(4.2 * Number(tokenAmount) / 100000, { precision: 6 })} sROO</div>
                     </div>
                     <CraftWoo amount={Number(tokenAmount)} />
-                    <div className='flex justify-center space-x-1'>
+                    <div className='flex justify-center space-x-1 whitespace-nowrap'>
                       <div className='text-xs text-center font-fine'>You'll Receive:</div>
                       <div className='text-xs text-center font-fine'>{millify(0.9999 * Number(tokenAmount) / 10000, { precision: 6 })} WOOO</div>
                     </div>
                   </div>
                   <div className='w-full'>
-                    <div className='flex justify-center space-x-1'>
+                    <div className='flex justify-center space-x-1 whitespace-nowrap'>
                       <div className='text-xs text-center font-fine'>Salvage Costs:</div>
                       <div className='text-xs text-center font-fine'>{millify(Number(tokenAmount) / 10000, { precision: 6 })} WOOO</div>
                     </div>
                     <SalvageWoo amount={Number(tokenAmount)} />
-                    <div className='flex justify-center space-x-1'>
+                    <div className='flex justify-center space-x-1 whitespace-nowrap'>
                       <div className='text-xs text-center font-fine'>You'll Receive:</div>
                       <div className='text-xs text-center font-fine'>{millify(0.99 * Number(tokenAmount) / 100, { precision: 6 })} sWELSH +  {millify(0.99 * 4.2 * Number(tokenAmount) / 100000, { precision: 6 })} sROO</div>
                     </div>
