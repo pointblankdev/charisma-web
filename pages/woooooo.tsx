@@ -25,6 +25,7 @@ import millify from 'millify';
 import { StacksMainnet } from "@stacks/network";
 import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
+import { Input } from '@components/ui/input';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
@@ -33,7 +34,17 @@ export default function Woooooo({ data }: Props) {
     image: '/woo-og.png'
   };
 
-  console.log(data.woooRecord)
+  const [amount, setAmount] = useState('');
+
+  const tokenAmount = Number(amount) * 10000
+
+  const handleTokenAmountChange = (event: any) => {
+    const { value } = event.target;
+    // Limit input to only allow numbers and to 6 decimal places
+    if (/^\d*\.?\d{0,4}$/.test(value)) {
+      setAmount(value);
+    }
+  };
 
   const { doContractCall } = useConnect();
 
@@ -68,7 +79,6 @@ export default function Woooooo({ data }: Props) {
   useEffect(() => {
     try {
       const profile = userSession.loadUserData().profile
-      console.log(profile.stxAddress.mainnet)
       getAccountBalance(profile.stxAddress.mainnet).then(balance => {
         setSWelshBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'].balance)
         setSRooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo'].balance)
@@ -135,7 +145,7 @@ export default function Woooooo({ data }: Props) {
                   Do you have what it takes to be a champion? Whoever claims the title for the most WOOO tokens, can "challenge" the champion. If they win, they claim the Wooo! Champion's Title Belt NFT and get a huge reward of Charisma tokens. Competition begins on 5/1.
                 </p>
               </div>
-              <div className='flex flex-wrap justify-around my-8 space-x-2'>
+              <div className='flex flex-wrap justify-around my-8 space-x-2 space-y-8 sm:space-y-0'>
                 <div className='px-2'>
                   <div className='text-xl text-center whitespace-nowrap'>Your Account Balances</div>
                   <div className='flex space-x-2'>
@@ -164,7 +174,7 @@ export default function Woooooo({ data }: Props) {
                   </div>
                 </div>
               </div>
-              <div className='my-16 space-y-2'>
+              {/* <div className='my-16 space-y-2'>
                 <div className='flex flex-wrap space-x-2 space-y-8 sm:space-y-0 sm:flex-nowrap'>
                   <div className='w-full'>
                     <div className='flex justify-center space-x-1'>
@@ -189,8 +199,35 @@ export default function Woooooo({ data }: Props) {
                     </div>
                   </div>
                 </div>
+              </div> */}
+              <div className='mx-0 mb-16 space-y-2 sm:mx-6'>
+                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-4xl text-center" />
+                <div className='flex flex-wrap py-4 space-x-1 space-y-4 sm:py-0 sm:space-y-0 sm:flex-nowrap'>
+                  <div className='w-full'>
+                    <div className='flex justify-center space-x-1'>
+                      <div className='text-xs text-center font-fine'>Crafting Costs:</div>
+                      <div className='text-xs text-center font-fine'>{millify(Number(tokenAmount) / 100, { precision: 6 })} sWELSH +  {millify(4.2 * Number(tokenAmount) / 100000, { precision: 6 })} sROO</div>
+                    </div>
+                    <CraftWoo amount={Number(tokenAmount)} />
+                    <div className='flex justify-center space-x-1'>
+                      <div className='text-xs text-center font-fine'>You'll Receive:</div>
+                      <div className='text-xs text-center font-fine'>{millify(0.9999 * Number(tokenAmount) / 10000, { precision: 6 })} WOOO</div>
+                    </div>
+                  </div>
+                  <div className='w-full'>
+                    <div className='flex justify-center space-x-1'>
+                      <div className='text-xs text-center font-fine'>Salvage Costs:</div>
+                      <div className='text-xs text-center font-fine'>{millify(Number(tokenAmount) / 10000, { precision: 6 })} WOOO</div>
+                    </div>
+                    <SalvageWoo amount={Number(tokenAmount)} />
+                    <div className='flex justify-center space-x-1'>
+                      <div className='text-xs text-center font-fine'>You'll Receive:</div>
+                      <div className='text-xs text-center font-fine'>{millify(0.99 * Number(tokenAmount) / 100, { precision: 6 })} sWELSH +  {millify(0.99 * 4.2 * Number(tokenAmount) / 100000, { precision: 6 })} sROO</div>
+                    </div>
+                  </div>
+                </div>
               </div>
-              <p className="my-8 text-sm font-light leading-tight text-center sm:text-md">
+              <p className="my-8 text-sm leading-tight text-center font-extralight sm:text-md">
                 ⚠️ Wooo! utilizes micro-transaction to support the WELSH and ROO staking pools. Charisma token rewards will be enabled on 5/1. Hell yeah, brother.
               </p>
               <div className='flex font-thin justify-evenly'>
