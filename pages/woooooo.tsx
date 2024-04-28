@@ -174,7 +174,7 @@ export default function Woooooo({ data }: Props) {
                     <CraftWoo amount={100000} />
                     <div className='flex justify-center space-x-1'>
                       <div className='text-xs text-center font-fine'>You'll Receive:</div>
-                      <div className='text-xs text-center font-fine'>9.99 WOOO</div>
+                      <div className='text-xs text-center font-fine'>9.999 WOOO</div>
                     </div>
                   </div>
                   <div className='w-full'>
