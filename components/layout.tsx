@@ -55,7 +55,7 @@ export default function Layout({
                     <div>{name}</div>
                     {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
                     {name === 'Faucet' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'MemeFi Apps' && <div className='text-xxs absolute top-4 text-[lightblue] animate-pulse'>UI UPDATE</div>}
+                    {name === 'App Store' && <div className='text-xxs absolute top-4 text-[lightblue] animate-pulse'>UI UPDATE</div>}
                   </div>
                 </Link>
               ))}
