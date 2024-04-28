@@ -127,7 +127,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "liquid-staked-leo",
-      functionName: "get-total-leo-in-pool",
+      functionName: "get-total-in-pool",
       functionArgs: [],
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
     })
