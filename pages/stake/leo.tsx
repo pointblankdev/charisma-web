@@ -133,7 +133,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     })
 
 
-
     const data = {
       exchangeRate: Number(lc.value),
       tokensInPool: Number(totalStaked.value)
