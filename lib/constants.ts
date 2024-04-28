@@ -32,7 +32,7 @@ export const NAVIGATION = [
     route: '/liquid-staking'
   },
   {
-    name: 'App Store',
+    name: 'MemeFi Apps',
     route: '/apps'
   },
   // {
