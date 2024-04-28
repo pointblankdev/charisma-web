@@ -185,7 +185,7 @@ export default function Woooooo({ data }: Props) {
                     <SalvageWoo amount={100000} />
                     <div className='flex justify-center space-x-1'>
                       <div className='text-xs text-center font-fine'>You'll Receive:</div>
-                      <div className='text-xs text-center font-fine'>999 sWELSH +  4.158 sROO</div>
+                      <div className='text-xs text-center font-fine'>990 sWELSH +  4.158 sROO</div>
                     </div>
                   </div>
                 </div>
