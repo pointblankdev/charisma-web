@@ -54,7 +54,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     {
       guild: {
         logo: {
-          url: '/leo-logo.png'
+          url: '/liquid-staked-leo.png'
         }
       },
       title: 'Leopold the Cat',
@@ -63,7 +63,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/liquid-leo-21.png'
       },
       slug: 'stake/leo',
-      wip: true,
+      wip: false,
     },
     {
       guild: {
