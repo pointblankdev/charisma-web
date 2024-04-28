@@ -31,25 +31,9 @@ export const NAVIGATION = [
     name: 'Liquid Staking',
     route: '/liquid-staking'
   },
-  // {
-  //   name: 'Liquid Staked Welsh',
-  //   route: '/stake'
-  // },
   {
-    name: 'Wishing Well',
-    route: '/wishing-well'
-  },
-  // {
-  //   name: 'Liquid Staked Roo',
-  //   route: '/stake-roo'
-  // },
-  {
-    name: 'Kangaroo Burrow',
-    route: '/kangaroo-burrow'
-  },
-  {
-    name: 'Woooooo!',
-    route: '/woooooo'
+    name: 'MemeFi Apps',
+    route: '/apps'
   },
   // {
   //   name: 'Tokenomics',
