@@ -73,7 +73,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       title: 'Wooo!',
       subtitle: 'Do you have what it takes to be a champion?',
       cardImage: {
-        url: '/woooooo.webp'
+        url: '/wooo-title-belt.gif'
       },
       slug: 'woooooo',
       wip: false,
