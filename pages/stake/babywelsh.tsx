@@ -44,7 +44,7 @@ export default function Stake({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="m-2 sm:container sm:mx-auto sm:py-10 md:babywelsh-w-2xl">
+        <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
 
           <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
             <Image alt='Liquid Babywelsh' src={liquidBabywelsh} width="1080" height="605" className='border-b border-accent-foreground' />
@@ -65,7 +65,7 @@ export default function Stake({ data }: Props) {
                         <Info size={16} color='#948f8f' />
                       </div>
                     </TooltipTrigger>
-                    <TooltipContent className='leading-tight text-white bg-black babywelsh-w-2xl border-primary'>
+                    <TooltipContent className='max-w-2xl leading-tight text-white bg-black border-primary'>
                       <h2 className="mb-2 text-lg font-bold">Interacting with the Staking Dashboard:</h2>
                       <ul className="pl-5 mb-4 space-y-2 list-disc text-md">
                         <li>
