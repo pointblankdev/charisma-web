@@ -51,7 +51,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
       disabled={Number(tokens) <= 0}>
-      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sBABYWELSH
+      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sLONG
     </Button>
   );
 };
