@@ -22,6 +22,7 @@ import { UrlObject } from 'url';
 import { useRouter } from 'next/navigation';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
+import liquidStakedOdin from '@public/liquid-staked-odin.png'
 
 type Props = {
   pools: any[];
@@ -62,6 +63,23 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       wip: false,
       apps: [
         { slug: '/stake/roo', img: liquidStakedRoo },
+      ]
+    },
+    {
+      guild: {
+        logo: {
+          url: '/uppsala-21.png'
+        }
+      },
+      title: 'The Temple at Uppsala',
+      subtitle: 'Donate to the Temple at Uppsala',
+      cardImage: {
+        url: '/uppsala-21.png'
+      },
+      slug: 'apps/uppsala',
+      wip: false,
+      apps: [
+        { slug: '/stake/odin', img: liquidStakedOdin },
       ]
     },
     {

@@ -7,10 +7,23 @@ import {
   PostConditionMode,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
+import ConnectWallet, { userSession } from "./stacks-session/connect";
 import { Button } from "@components/ui/button";
+import millify from "millify";
 
-const DepositOdin = ({ amount }: { amount: number }) => {
+const Deposit = ({
+  amount,
+  stakingContractName,
+  contractPrincipal,
+  contractToken,
+  tokenTicker
+}: {
+  amount: number,
+  stakingContractName: string,
+  contractPrincipal: `${string}.${string}`,
+  contractToken: string,
+  tokenTicker: string
+}) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -22,12 +35,12 @@ const DepositOdin = ({ amount }: { amount: number }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-odin",
+      contractName: stakingContractName,
       functionName: "deposit",
       functionArgs: [uintCV(amount * 1000000)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(amount * 1000000).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
+        Pc.principal(sender).willSendEq(amount * 1000000).ft(contractPrincipal, contractToken),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -43,8 +56,8 @@ const DepositOdin = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>{amount} ROO</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>{millify(amount)} {tokenTicker}</Button>
   );
 };
 
-export default DepositOdin;
+export default Deposit;

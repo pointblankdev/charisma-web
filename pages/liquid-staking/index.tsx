@@ -19,6 +19,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import wishingWell from '@public/wishing-well-1.png'
 import kangarooBurrow from '@public/kangaroo-borrow-1.png'
+import uppsala from '@public/uppsala-21.png'
 import wooo from '@public/wooo.webp'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
@@ -106,6 +107,9 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       },
       slug: 'stake/odin',
       wip: false,
+      apps: [
+        { slug: '/apps/uppsala', img: uppsala },
+      ]
     },
     {
       guild: {
