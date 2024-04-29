@@ -31,7 +31,7 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-max",
+      contractName: "liquid-staked-long",
       functionName: "stake",
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Deny,
@@ -39,8 +39,8 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
         Pc.principal(sender)
           .willSendEq(tokens6Dec)
           .ft(
-            "SP7V1SE7EA3ZG3QTWSBA2AAG8SRHEYJ06EBBD1J2.max-token",
-            "max"
+            "SP265WBWD4NH7TVPYQTVD23X3607NNK4484DTXQZ3.longcoin",
+            "longcoin"
           ),
       ],
       onFinish: (data) => {
@@ -62,7 +62,7 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
       onClick={stake}
       disabled={Number(tokens) <= 0}
     >
-      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} MAX
+      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} LONG
     </Button>
   );
 };

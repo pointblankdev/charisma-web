@@ -39,8 +39,8 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
         Pc.principal(sender)
           .willSendEq(tokens6Dec)
           .ft(
-            "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.babywelsh-token",
-            "babywelsh"
+            "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kjvtr37ht",
+            "tokensoft-token"
           ),
       ],
       onFinish: (data) => {

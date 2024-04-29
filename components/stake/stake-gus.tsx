@@ -39,7 +39,7 @@ const StakeGusButton: React.FC<StakeGusButtonProps> = ({ tokens }) => {
         Pc.principal(sender)
           .willSendEq(tokens6Dec)
           .ft(
-            "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.gus-token",
+            "SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token",
             "gus"
           ),
       ],
