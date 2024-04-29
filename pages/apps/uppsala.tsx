@@ -69,14 +69,14 @@ export default function App({ data }: Props) {
               </p>
               <div className='space-y-1'>
                 <div className='flex space-x-1'>
-                  <Deposit amount={1} stakingContractName={'.liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
-                  <Deposit amount={10} stakingContractName={'.liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
-                  <Deposit amount={100} stakingContractName={'.liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
+                  <Deposit amount={1} stakingContractName={'liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
+                  <Deposit amount={10} stakingContractName={'liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
+                  <Deposit amount={100} stakingContractName={'liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
                 </div>
                 <div className='flex space-x-1'>
-                  <Deposit amount={1000} stakingContractName={'.liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
-                  <Deposit amount={10000} stakingContractName={'.liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
-                  <Deposit amount={100000} stakingContractName={'.liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
+                  <Deposit amount={1000} stakingContractName={'liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
+                  <Deposit amount={10000} stakingContractName={'liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
+                  <Deposit amount={100000} stakingContractName={'liquid-staked-odin'} contractPrincipal={"SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn"} contractToken={'odin'} tokenTicker={'ODIN'} />
                 </div>
               </div>
             </div>
