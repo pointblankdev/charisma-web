@@ -183,7 +183,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/liquid-babywelsh-21.png'
       },
       slug: 'stake/babywelsh',
-      wip: true,
+      wip: false,
     },
     {
       guild: {
