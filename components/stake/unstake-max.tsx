@@ -10,11 +10,11 @@ import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
 
-interface UnstakeGusButtonProps {
+interface UnstakeButtonProps {
   tokens: string;
 }
 
-const UnstakeGusButton: React.FC<UnstakeGusButtonProps> = ({ tokens }) => {
+const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -27,7 +27,7 @@ const UnstakeGusButton: React.FC<UnstakeGusButtonProps> = ({ tokens }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-gus",
+      contractName: "liquid-staked-max",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Allow,
@@ -51,9 +51,9 @@ const UnstakeGusButton: React.FC<UnstakeGusButtonProps> = ({ tokens }) => {
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
       disabled={Number(tokens) <= 0}>
-      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sGUS
+      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sMAX
     </Button>
   );
 };
 
-export default UnstakeGusButton;
+export default UnstakeButton;

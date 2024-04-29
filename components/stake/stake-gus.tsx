@@ -62,7 +62,7 @@ const StakeGusButton: React.FC<StakeGusButtonProps> = ({ tokens }) => {
       onClick={stake}
       disabled={Number(tokens) <= 0}
     >
-      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} LEO
+      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} GUS
     </Button>
   );
 };

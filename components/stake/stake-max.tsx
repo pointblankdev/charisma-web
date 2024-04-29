@@ -3,6 +3,7 @@ import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
 import {
   AnchorMode,
+  Pc,
   PostConditionMode,
   uintCV,
 } from "@stacks/transactions";
@@ -10,28 +11,38 @@ import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
 
-interface UnstakeGusButtonProps {
+interface StakeButtonProps {
   tokens: string;
 }
 
-const UnstakeGusButton: React.FC<UnstakeGusButtonProps> = ({ tokens }) => {
+const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   const tokens6Dec = Number(tokens) * 1000000
 
-  function unstake() {
+  function stake() {
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-gus",
-      functionName: "unstake",
+      contractName: "liquid-staked-max",
+      functionName: "stake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(sender)
+          .willSendEq(tokens6Dec)
+          .ft(
+            "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.max-token",
+            "max"
+          ),
+      ],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -47,13 +58,13 @@ const UnstakeGusButton: React.FC<UnstakeGusButtonProps> = ({ tokens }) => {
 
   return (
     <Button
-      variant={'ghost'}
-      className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
-      onClick={unstake}
-      disabled={Number(tokens) <= 0}>
-      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sGUS
+      className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
+      onClick={stake}
+      disabled={Number(tokens) <= 0}
+    >
+      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} MAX
     </Button>
   );
 };
 
-export default UnstakeGusButton;
+export default StakeButton;
