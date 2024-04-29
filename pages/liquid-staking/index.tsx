@@ -155,7 +155,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/liquid-gus-21.png'
       },
       slug: 'stake/gus',
-      wip: true,
+      wip: false,
     },
     {
       guild: {
