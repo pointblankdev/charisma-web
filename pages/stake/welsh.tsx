@@ -11,8 +11,8 @@ import {
 } from "@components/ui/tooltip"
 import { Info } from 'lucide-react';
 import { Card } from '@components/ui/card';
-import StakeWelshButton from '@components/stake/stake';
-import UnstakeWelshButton from '@components/stake/unstake';
+import StakeWelshButton from '@components/stake/stake-welsh';
+import UnstakeWelshButton from '@components/stake/unstake-welsh';
 import liquidWelsh from '@public/liquid-welsh.png'
 import { GetStaticProps } from 'next';
 import { callReadOnlyFunction } from '@stacks/transactions';
