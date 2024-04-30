@@ -169,7 +169,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/liquid-play-21.png'
       },
       slug: 'stake/play',
-      wip: true,
+      wip: false,
     },
     {
       guild: {
@@ -211,7 +211,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/liquid-wif-21.png'
       },
       slug: 'stake/wif',
-      wip: true,
+      wip: false,
     },
   ]
 
