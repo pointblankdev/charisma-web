@@ -140,7 +140,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       wip: false,
       apps: [
         { slug: '/kangaroo-burrow', img: kangarooBurrow },
-        { slug: '/woooooo', img: titleFight }
+        { slug: '/apps/title-fight', img: titleFight }
       ]
     },
     {

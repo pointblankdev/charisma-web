@@ -93,7 +93,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/wooo-title-belt.gif'
       },
-      slug: 'woooooo',
+      slug: 'apps/title-fight',
       wip: false,
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
