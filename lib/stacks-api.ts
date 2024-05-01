@@ -494,9 +494,23 @@ export async function getTitleBeltHolder() {
     const response: any = await callReadOnlyFunction({
         network: new StacksMainnet(),
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: "dme022-wooo-title-belt-nft",
-        functionName: "get-owner",
-        functionArgs: [uintCV(0)],
+        contractName: "dme023-wooo-title-belt-nft",
+        functionName: "get-title-holder",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getTitleBeltHoldeBalance() {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme023-wooo-title-belt-nft",
+        functionName: "get-title-holder-balance",
+        functionArgs: [],
         senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
     });
 

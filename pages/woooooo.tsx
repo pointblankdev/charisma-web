@@ -17,7 +17,7 @@ import woooooo from '@public/woooooo.webp'
 import SalvageWoo from '@components/salvage/salvage-woo';
 import CraftWoo from '@components/mint/craft-woo';
 import { Button } from '@components/ui/button';
-import { getAccountBalance, getNameFromAddress, getWooTitleBeltContractEvents } from '@lib/stacks-api';
+import { getAccountBalance, getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder, getWooTitleBeltContractEvents } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { userSession } from '@components/stacks-session/connect';
@@ -29,7 +29,7 @@ import { Input } from '@components/ui/input';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
-    title: 'Charisma | WELSH + ROO = Woooooo!',
+    title: 'Charisma | WELSH + ROO = WOOO',
     description: META_DESCRIPTION,
     image: '/woo-og.png'
   };
@@ -60,12 +60,12 @@ export default function Woooooo({ data }: Props) {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "dme022-wooo-title-belt-nft",
+      contractName: "dme023-wooo-title-belt-nft",
       functionName: "challenge-title-holder",
       functionArgs: [],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(data.titleBeltHolder).willSendAsset().nft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme022-wooo-title-belt-nft::wooo-title-belt', uintCV(0))
+        Pc.principal(data.titleBeltHolder).willSendAsset().nft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme023-wooo-title-belt-nft::wooo-title-belt', uintCV(0))
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -257,18 +257,16 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
-    const result = await getWooTitleBeltContractEvents() as any
-    const repr = result.results[0].contract_log.value.repr
-    const woooRecord = Number(repr.split(' ')[2].slice(1, -1))
-    const titleBeltHolder = repr.split(' ')[4].slice(1, -2)
-    const bns = await getNameFromAddress(titleBeltHolder)
+    const holder = await getTitleBeltHolder()
+    const balance = await getTitleBeltHoldeBalance()
+    const bns = await getNameFromAddress(holder.value)
 
     return {
       props: {
         data: {
-          titleBeltHolder: titleBeltHolder,
+          titleBeltHolder: holder.value,
           bns: bns.names[0],
-          woooRecord: woooRecord
+          woooRecord: balance.value
         }
       },
       revalidate: 60
