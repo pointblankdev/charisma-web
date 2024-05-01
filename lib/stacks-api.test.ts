@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenPrices, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 
 const network = new StacksMainnet();
@@ -157,6 +157,15 @@ describe('Stacks API', () => {
         const repr = result.results[0].contract_log.value.repr
         const wooRecord = repr.split(' ')[2]
         console.log(wooRecord)
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // should get token prices
+    it('should get token prices', async () => {
+
+        const result = await getTokenPrices()
+        console.log(result)
         expect(result).toBeDefined()
 
     }, 20000)

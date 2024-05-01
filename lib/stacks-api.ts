@@ -539,3 +539,21 @@ export async function getWooTitleBeltContractEvents() {
     })
     return response
 }
+
+export async function getTokenPrices() {
+    return (await fetch('https://mainnet-prod-proxy-service-dedfb0daae85.herokuapp.com/swapapp/swap/tokens')).json()
+}
+
+export async function getStakedTokenExchangeRate(contract) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: contract,
+        functionName: "get-exchange-rate",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}

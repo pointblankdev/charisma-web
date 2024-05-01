@@ -16,13 +16,15 @@ import {
   CardTitle,
 } from "@components/ui/card"
 import Link from 'next/link';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
 import { useRouter } from 'next/navigation';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
+import { getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
+import millify from 'millify';
 
 type Props = {
   apps: any[];
@@ -38,6 +40,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         }
       },
       title: 'Wooo!',
+      ticker: 'WOOO',
       subtitle: 'sWELSH + sROO = WOOO',
       cardImage: {
         url: '/wooo-title-belt.gif'
@@ -56,6 +59,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         }
       },
       title: 'Fenrir, Corgi of Ragnarok',
+      ticker: 'FENRIR',
       subtitle: '...and the end of the world',
       cardImage: {
         url: '/fenrir-21.png'
@@ -84,8 +88,56 @@ export default function Crafting({ apps }: Props) {
     image: '/fenrir-21.png'
   };
 
-  const router = useRouter()
   const [loading, setLoading] = useState(false);
+  const [welshPrice, setWelshPrice] = useState(0)
+  const [odinPrice, setOdinPrice] = useState(0)
+  const [rooPrice, setRooPrice] = useState(0)
+
+  const [welshExchangeRate, setWelshExchangeRate] = useState(1)
+  const [welshv2ExchangeRate, setWelshv2ExchangeRate] = useState(1)
+  const [odinExchangeRate, setOdinExchangeRate] = useState(1)
+  const [rooExchangeRate, setRooExchangeRate] = useState(1)
+
+
+  useEffect(() => {
+    getTokenPrices().then((prices) => {
+      // find symbol: 'WELSH and 'ODIN' in the message array
+      // set the price of each to a state variable
+      prices.message.forEach((token: { symbol: string; price: number; }) => {
+        if (token.symbol === 'WELSH') {
+          setWelshPrice(token.price)
+        }
+        if (token.symbol === 'ODIN') {
+          setOdinPrice(token.price)
+        }
+        if (token.symbol === '$ROO') {
+          setRooPrice(token.price)
+        }
+      })
+      getStakedTokenExchangeRate("liquid-staked-welsh").then((rate) => {
+        setWelshExchangeRate(rate.value.value / 1000000)
+      })
+      getStakedTokenExchangeRate("liquid-staked-welsh-v2").then((rate) => {
+        setWelshv2ExchangeRate(rate.value / 1000000)
+      })
+      getStakedTokenExchangeRate("liquid-staked-odin").then((rate) => {
+        setOdinExchangeRate(rate.value / 1000000)
+      })
+      getStakedTokenExchangeRate("liquid-staked-roo").then((rate) => {
+        setRooExchangeRate(rate.value / 1000000)
+      })
+    })
+  }, [])
+
+  // look at the apps field of the apps array and calculate the value of the token
+  // here is an example for the wooo app which is /stake/welsh and /stake/roo
+  // millify((100 * welshPrice * 1.06) + (0.42 * rooPrice * 1.01), { precision: 6 })
+
+  const woooValue = millify((100 * welshPrice * welshExchangeRate) + (0.42 * rooPrice * rooExchangeRate), { precision: 4 })
+  const fenrirValue = millify((10 * welshPrice * welshv2ExchangeRate) + (21 * odinPrice * odinExchangeRate), { precision: 4 })
+
+  apps[0].value = woooValue
+  apps[1].value = fenrirValue
 
   return (
     <Page meta={meta} fullViewport>
@@ -99,20 +151,27 @@ export default function Crafting({ apps }: Props) {
                   <Link href={`${pool.slug}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
-                        <div className='flex gap-2'>
-                          <div className='min-w-max'>
-                            {pool.guild.logo.url ?
-                              <Image src={pool.guild.logo.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 border border-white rounded-full grow' />
-                              : <div className='w-10 h-10 bg-white border border-white rounded-full' />
-                            }
+                        <div className='flex justify-between align-top'>
+
+                          <div className='flex gap-2'>
+                            <div className='min-w-max'>
+                              {pool.guild.logo.url ?
+                                <Image src={pool.guild.logo.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 border border-white rounded-full grow' />
+                                : <div className='w-10 h-10 bg-white border border-white rounded-full' />
+                              }
+                            </div>
+                            <div className=''>
+                              <div className='text-sm font-semibold leading-none text-secondary'>
+                                {pool.title}
+                              </div>
+                              <div className='mt-1 text-xs leading-tight font-fine text-secondary'>
+                                {pool.subtitle}
+                              </div>
+                            </div>
                           </div>
-                          <div className=''>
-                            <div className='text-sm font-semibold leading-none text-secondary'>
-                              {pool.title}
-                            </div>
-                            <div className='mt-1 text-xs leading-tight font-fine text-secondary'>
-                              {pool.subtitle}
-                            </div>
+                          <div className='flex flex-col items-end leading-[1.1]'>
+                            <div className='text-white text-sm font-semibold'>{pool.ticker}</div>
+                            <div className='text-white'>${pool.value}</div>
                           </div>
                         </div>
                       </CardHeader>
