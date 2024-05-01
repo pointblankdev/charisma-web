@@ -544,7 +544,7 @@ export async function getTokenPrices() {
     return (await fetch('https://mainnet-prod-proxy-service-dedfb0daae85.herokuapp.com/swapapp/swap/tokens')).json()
 }
 
-export async function getStakedTokenExchangeRate(contract) {
+export async function getStakedTokenExchangeRate(contract: string) {
 
     const response: any = await callReadOnlyFunction({
         network: new StacksMainnet(),
