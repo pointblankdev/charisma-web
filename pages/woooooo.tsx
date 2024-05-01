@@ -142,7 +142,7 @@ export default function Woooooo({ data }: Props) {
               </TooltipProvider>
               <div className='flex justify-around space-x-2'>
                 <p className="w-full mb-8 text-xs leading-tight font-md sm:text-sm">
-                  Do you have what it takes to be a champion? Whoever claims the title for the most WOOO tokens, can "challenge" the champion. If they win, they claim the Wooo! Champion's Title Belt NFT and get a huge reward of Charisma tokens. Competition begins on 5/1.
+                  Do you have what it takes to be a champion? Whoever claims the title for the most WOOO tokens, can "challenge" the champion. If they win, they claim the Wooo! Champion's Title Belt NFT, which is a mint pass and airdrop target for future rewards.
                 </p>
               </div>
               <div className='flex flex-wrap justify-around my-8 space-x-2 space-y-8 sm:space-y-0'>
@@ -228,7 +228,7 @@ export default function Woooooo({ data }: Props) {
                 </div>
               </div>
               <p className="my-8 text-sm leading-tight text-center font-extralight sm:text-md">
-                ⚠️ Wooo! utilizes micro-transaction to support the WELSH and ROO staking pools. Charisma token rewards will be enabled on 5/1. Hell yeah, brother.
+                ⚠️ Wooo! utilizes micro-transaction to support the WELSH and ROO staking pools. Hell yeah, brother.
               </p>
               <div className='flex font-thin justify-evenly'>
                 <p className="text-sm leading-tight text-center sm:text-md">
