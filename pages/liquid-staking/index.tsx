@@ -21,6 +21,7 @@ import wishingWell from '@public/wishing-well-1.png'
 import kangarooBurrow from '@public/kangaroo-borrow-1.png'
 import uppsala from '@public/uppsala-21.png'
 import titleFight from '@public/wooo-title-belt-nft.gif'
+import fenrir from '@public/fenrir-icon.png'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
 import { useRouter } from 'next/navigation';
@@ -49,7 +50,8 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       rewardSTX: 100,
       apps: [
         { slug: '/wishing-well', img: wishingWell },
-        { slug: '/woooooo', img: titleFight }
+        { slug: '/woooooo', img: titleFight },
+        { slug: '/crafting/fenrir', img: fenrir }
       ]
     },
     {
@@ -109,6 +111,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       wip: false,
       apps: [
         { slug: '/apps/uppsala', img: uppsala },
+        { slug: '/crafting/fenrir', img: fenrir }
       ]
     },
     {

@@ -1,0 +1,291 @@
+
+import { SkipNavContent } from '@reach/skip-nav';
+
+import Page from '@components/page';
+import { META_DESCRIPTION } from '@lib/constants';
+import Layout from '@components/layout';
+import Image from 'next/image';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@components/ui/tooltip"
+import { Info } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
+import woooooo from '@public/woooooo.webp'
+import SalvageWoo from '@components/salvage/salvage-woo';
+import CraftFenrir from '@components/craft/fenrir';
+import { Button } from '@components/ui/button';
+import { getAccountBalance, getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
+import { GetStaticProps } from 'next';
+import { useEffect, useState } from 'react';
+import { userSession } from '@components/stacks-session/connect';
+import millify from 'millify';
+import { StacksMainnet } from "@stacks/network";
+import { AnchorMode, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
+import { useConnect } from '@stacks/connect-react';
+import { Input } from '@components/ui/input';
+import { cn } from '@lib/utils';
+import charismaToken from '@public/charisma.png'
+import stxToken from '@public/stacks-stx-logo.png'
+import Link from 'next/link';
+import Typewriter from 'typewriter-effect';
+import { motion } from "framer-motion"
+import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
+import liquidStakedOdin from '@public/liquid-staked-odin.png'
+import fenrirIcon from '@public/fenrir-icon-2.png'
+
+export default function Woooooo({ data }: Props) {
+  const meta = {
+    title: 'Charisma | WELSH + ROO = WOOO',
+    description: META_DESCRIPTION,
+    image: '/woo-og.png'
+  };
+
+  const [amount, setAmount] = useState(1000);
+
+  const tokenAmount = Number(amount) * 1000000
+
+  const handleTokenAmountChange = (event: any) => {
+    const { value } = event.target;
+    // Limit input to only allow numbers and to 6 decimal places
+    if (/^\d*\.?\d{0,4}$/.test(value)) {
+      setAmount(value);
+    }
+  };
+
+  const { doContractCall } = useConnect();
+
+  const [sWelshBalance, setSWelshBalance] = useState(0)
+  const [sRooBalance, setSRooBalance] = useState(0)
+  const [woooBalance, setWoooBalance] = useState(0)
+  const [woooRecord, setWoooRecord] = useState(data.woooRecord)
+  const [objectivesVisible, setObjectivesVisible] = useState(false)
+  const [descriptionVisible, setDescriptionVisible] = useState(false)
+
+  function craft() {
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "fenrir-token",
+      functionName: "craft",
+      functionArgs: [uintCV(tokenAmount), principalCV(sender)],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(sender).willSendLte(tokenAmount * 100).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
+        Pc.principal(sender).willSendLte(tokenAmount * 100).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin", 'liquid-staked-odin'),
+      ],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
+  useEffect(() => {
+    try {
+      const profile = userSession.loadUserData().profile
+      getAccountBalance(profile.stxAddress.mainnet).then(balance => {
+        setSWelshBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'].balance)
+        setSRooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo'].balance)
+        setWoooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
+        setDescriptionVisible(true)
+      })
+
+    } catch (error) {
+      console.error(error)
+    }
+
+  }, [userSession])
+
+
+
+  const description = [
+    "In the mystical realm of Asgard, there lived a colossal creature named Fenrir, feared by the gods and prophesied to bring about the end of the world. However, Fenrir was not a fearsome wolf but a massive Welsh Corgi with an insatiable appetite for adventure and mischief. This unexpected revelation came to light when Odin, the All-Father, embarked on a quest to find and confront Fenrir. Instead of a terrifying beast, he discovered a playful and mischievous Corgi eager to join his adventure.",
+    " News of Fenrir's true nature spread throughout Asgard, and the gods were left in awe of the unlikely duo. The prophecy of Ragnarok was averted, not through force or violence, but through the power of friendship. And so, the mighty Fenrir, the feared harbinger of doom, was revealed to be nothing more than a massive Welsh Corgi, forever changing the course of Norse mythology."
+  ]
+
+  const fadeIn = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 1 }
+  };
+
+  const fadeInHalfway = {
+    hidden: { opacity: 0 },
+    visible: { opacity: 0.2 }
+  };
+
+  return (
+    <Page meta={meta} fullViewport>
+      <SkipNavContent />
+      <Layout>
+        <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
+
+          <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
+            <CardHeader className='p-4 z-20'>
+              <div className='flex justify-between items-center'>
+                <CardTitle className='text-xl font-semibold z-30'>{'Fenrir, Corgi of Ragnarok'}</CardTitle>
+                <ActiveQuestIndicator active={true} />
+              </div>
+              <CardDescription className='text-md font-fine text-foreground z-30 pb-12'>{'...and the end of the world'}</CardDescription>
+              <div className='z-20'>
+                <CardTitle className='text-xl font-semibold mt-2 z-30'>Rewards</CardTitle>
+                <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>
+                <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
+                  <div className='relative'>
+                    <Image alt='Fenrir' src={fenrirIcon} className='border-white rounded-full border w-full z-30' />
+                    <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>1K</div>
+                  </div>
+
+                  {descriptionVisible && <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger>{
+                        <motion.div initial="hidden" animate="visible" variants={fadeInHalfway} className='relative'>
+                          <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30' />
+                          <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>100</div>
+                        </motion.div>
+                      }</TooltipTrigger>
+                      <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                        Charisma rewards can be enabled after passing a DAO proposal.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>}
+
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent className='p-0 z-20'>
+              <div className='p-4 z-30'>
+                <CardTitle className='text-xl font-semibold z-30'>Description</CardTitle>
+                <p className='text-base z-30'>
+                  {descriptionVisible && <Typewriter
+                    options={{
+                      delay: 25,
+                    }}
+                    onInit={(typewriter) => {
+                      typewriter.pauseFor(1500)
+                      description?.forEach((s: string) => typewriter.typeString(s).pauseFor(1000))
+
+                      typewriter.start().callFunction(() => setObjectivesVisible(true))
+                    }}
+                  />}
+                </p>
+                <div className='z-20 mt-12 sm:mt-72'>
+                  {objectivesVisible && <motion.div initial="hidden" animate="visible" variants={fadeIn} className='text-xl font-semibold mt-4 z-30'>Requirements</motion.div>}
+                  {objectivesVisible && <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>These tokens will be liquid staked to craft Fenrir tokens:</CardDescription>}
+                  {objectivesVisible &&
+                    <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
+                      <div className='relative'>
+                        <Image alt='Liquid Staked Welshcorgicoin' src={liquidStakedWelsh} className='border-white rounded-full border w-full z-30' />
+                        <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>10K</div>
+                      </div>
+                      <div className='relative'>
+                        <Image alt='Liquid Staked Odin' src={liquidStakedOdin} className='border-white rounded-full border w-full z-30' />
+                        <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>21K</div>
+                      </div>
+                    </div>}
+                </div>
+              </div>
+            </CardContent>
+
+            <CardFooter className="p-4 flex justify-between z-20">
+              <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
+
+              <div className='flex items-center space-x-1'>
+                {descriptionVisible && <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>{<Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Craft</Button>}</TooltipTrigger>
+                    <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                      Crafting Fenrir requires 10k sWELSH and 21k sODIN.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>}
+
+
+                {descriptionVisible && <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger>{<Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={console.log}>Salvage</Button>}</TooltipTrigger>
+                    <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                      Salvaging Fenrir returns 10k sWELSH and 21k sODIN back to you.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>}
+              </div>
+
+
+            </CardFooter>
+            <Image
+              src={'/fenrir-12.png'}
+              width={800}
+              height={1600}
+              alt={'quest-background-image'}
+              className={cn("object-cover", "sm:aspect-[1/2]", 'aspect-[1/3]', 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
+            />
+            <div className='absolute inset-0 bg-gradient-to-b from-white to-black opacity-10 z-0 pointer-events-none' />
+          </Card>
+
+
+
+
+        </div>
+      </Layout>
+    </Page>
+  );
+}
+
+type Props = {
+  data: any;
+};
+
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+  try {
+    const holder = await getTitleBeltHolder()
+    const balance = await getTitleBeltHoldeBalance()
+    const bns = await getNameFromAddress(holder.value)
+
+    return {
+      props: {
+        data: {
+          titleBeltHolder: holder.value,
+          bns: bns.names[0],
+          woooRecord: balance.value
+        }
+      },
+      revalidate: 60
+    };
+
+  } catch (error) {
+    return {
+      props: {
+        data: {}
+      },
+    }
+  }
+};
+
+// active quest indicator pings green circle when active, red when not active
+// tooltip on hover shows "active" or "not active"
+const ActiveQuestIndicator = ({ active }: { active: boolean }) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger className='cursor-default'>
+          <div className='relative w-4 h-4'>
+            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-red-500'}`} />
+            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500'}`} />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+          {active ? 'Quest is active' : 'Quest is not active'}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}

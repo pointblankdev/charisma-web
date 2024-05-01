@@ -25,12 +25,12 @@ import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 
 type Props = {
-  pools: any[];
+  apps: any[];
 };
 
 export const getStaticProps: GetStaticProps<Props> = () => {
 
-  const pools = [
+  const apps = [
     {
       guild: {
         logo: {
@@ -42,29 +42,46 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/wooo-title-belt.gif'
       },
-      slug: 'crafting/wooo',
+      slug: '/crafting/wooo',
       wip: false,
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/roo', img: liquidStakedRoo },
+      ]
+    },
+    {
+      guild: {
+        logo: {
+          url: '/fenrir-icon-2.png'
+        }
+      },
+      title: 'Fenrir, Corgi of Ragnarok',
+      subtitle: '...and the end of the world',
+      cardImage: {
+        url: '/fenrir-21.png'
+      },
+      slug: '/crafting/fenrir',
+      wip: true,
+      apps: [
+        { slug: '/stake/welsh', img: liquidStakedWelsh },
+        { slug: '/stake/odin', img: liquidStakedOdin },
       ]
     }
   ]
 
   return {
     props: {
-      pools
+      apps
     },
-    // revalidate: 60
   };
 };
 
-export default function LiquidStaking({ pools }: Props) {
+export default function Crafting({ apps }: Props) {
 
   const meta = {
-    title: 'Charisma | Liquid Staking',
+    title: 'Charisma | Crafting',
     description: META_DESCRIPTION,
-    image: '/liquid-welsh.png'
+    image: '/fenrir-21.png'
   };
 
   const router = useRouter()
@@ -76,9 +93,9 @@ export default function LiquidStaking({ pools }: Props) {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
-            {pools.map((pool) => {
+            {apps.map((pool) => {
               return (
-                <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
+                <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60 pointer-events-none animate-pulse')}>
                   <Link href={`${pool.slug}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">

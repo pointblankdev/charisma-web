@@ -219,21 +219,21 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
 
     const wallets = await getAllWallets()
-    const quest = await getQuestBySlug(String(params?.slug))
+    const quest = {} //await getQuestBySlug(String(params?.slug))
 
-    const getCharismaRewards: any = await callReadOnlyFunction({
-        network: new StacksMainnet(),
-        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: "dme009-charisma-rewards",
-        functionName: "get-rewards",
-        functionArgs: [uintCV(Number(quest?.questid))],
-        senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-    })
+    // const getCharismaRewards: any = await callReadOnlyFunction({
+    //     network: new StacksMainnet(),
+    //     contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    //     contractName: "dme009-charisma-rewards",
+    //     functionName: "get-rewards",
+    //     functionArgs: [uintCV(Number(quest?.questid))],
+    //     senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
+    // })
 
     return {
         props: {
             ...quest,
-            charismaRewards: Number(getCharismaRewards.value.value),
+            charismaRewards: 0, //Number(getCharismaRewards.value.value),
             wallets
         },
         revalidate: 60
