@@ -213,6 +213,20 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       slug: 'stake/wif',
       wip: false,
     },
+    {
+      guild: {
+        logo: {
+          url: '/memegoat-logo.png'
+        }
+      },
+      title: 'Meme Goat',
+      subtitle: 'Liquid Staked Goat',
+      cardImage: {
+        url: '/liquid-goat-21.png'
+      },
+      slug: 'stake/goat',
+      wip: false,
+    }
   ]
 
   return {
