@@ -5,11 +5,14 @@ import {
   AnchorMode,
   Pc,
   PostConditionMode,
+  noneCV,
+  principalCV,
   uintCV,
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "./stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
+import { none } from "@stacks/transactions/dist/cl";
 
 const MicroDeposit = ({
   amount,
@@ -33,12 +36,12 @@ const MicroDeposit = ({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: stakingContractName,
-      functionName: "deposit",
-      functionArgs: [uintCV(amount)],
+      contractName: 'liquid-staked-welsh-v2',
+      functionName: "transfer",
+      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-token'), noneCV()],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(amount).ft(contractPrincipal, contractToken),
+        Pc.principal(sender).willSendEq(1).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2', 'liquid-staked-token'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

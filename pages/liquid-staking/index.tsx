@@ -21,7 +21,8 @@ import wishingWell from '@public/wishing-well-1.png'
 import kangarooBurrow from '@public/kangaroo-borrow-1.png'
 import uppsala from '@public/uppsala-21.png'
 import titleFight from '@public/wooo-title-belt-nft.gif'
-import fenrir from '@public/fenrir-icon.png'
+import wooo from '@public/wooo.webp'
+import fenrir from '@public/fenrir-icon-2.png'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
 import { useRouter } from 'next/navigation';
@@ -50,7 +51,8 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       rewardSTX: 100,
       apps: [
         { slug: '/wishing-well', img: wishingWell },
-        { slug: '/woooooo', img: titleFight },
+        { slug: '/crafting/wooo', img: wooo },
+        { slug: '/apps/title-fight', img: titleFight },
         { slug: '/crafting/fenrir', img: fenrir }
       ]
     },
@@ -143,7 +145,8 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       wip: false,
       apps: [
         { slug: '/kangaroo-burrow', img: kangarooBurrow },
-        { slug: '/apps/title-fight', img: titleFight }
+        { slug: '/crafting/wooo', img: wooo },
+        { slug: '/apps/title-fight', img: titleFight },
       ]
     },
     {
@@ -294,7 +297,7 @@ export default function LiquidStaking({ pools }: Props) {
                   <CardFooter className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all', loading && 'opacity-0')}>
                     <div className='z-20 p-2'>
                       <CardTitle className='z-30 mt-2 text-lg font-semibold leading-none text-white'>Staking Rewards</CardTitle>
-                      {pool.apps && <CardDescription className='z-30 mb-2 text-sm text-white font-fine'>Apps and games that fund this pool:</CardDescription>}
+                      {pool.apps && <CardDescription className='z-30 mb-2 text-sm text-white font-fine'>Tokens and apps that fund this pool:</CardDescription>}
                       {pool.apps ? <div className='z-30 grid grid-cols-5 gap-2'>
                         {pool.apps.map((app: { slug: string | UrlObject; img: string | StaticImport; }) => {
                           return (

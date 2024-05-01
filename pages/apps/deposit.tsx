@@ -24,9 +24,9 @@ export default function App() {
               <div className='space-y-1'>
                 <MicroDeposit
                   amount={1}
-                  stakingContractName={'liquid-staked-goat'}
+                  stakingContractName={'.fenrir-token'}
                   contractPrincipal={"SP2F4QC563WN0A0949WPH5W1YXVC4M1R46QKE0G14.memegoatstx"}
-                  contractToken={'memegoatstx'}
+                  contractToken={'fenrir'}
                 />
               </div>
             </div>
