@@ -85,10 +85,10 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     {
       guild: {
         logo: {
-          url: '/woooooo.webp'
+          url: '/wooo-title-belt-nft.gif'
         }
       },
-      title: 'Wooo!',
+      title: 'Wooo! Title Fight',
       subtitle: 'Do you have what it takes to be a champion?',
       cardImage: {
         url: '/wooo-title-belt.gif'

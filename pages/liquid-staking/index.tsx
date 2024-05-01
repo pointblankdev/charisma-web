@@ -20,7 +20,7 @@ import { useState } from 'react';
 import wishingWell from '@public/wishing-well-1.png'
 import kangarooBurrow from '@public/kangaroo-borrow-1.png'
 import uppsala from '@public/uppsala-21.png'
-import wooo from '@public/wooo.webp'
+import titleFight from '@public/wooo-title-belt-nft.gif'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
 import { useRouter } from 'next/navigation';
@@ -49,7 +49,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       rewardSTX: 100,
       apps: [
         { slug: '/wishing-well', img: wishingWell },
-        { slug: '/woooooo', img: wooo }
+        { slug: '/woooooo', img: titleFight }
       ]
     },
     {
@@ -140,7 +140,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       wip: false,
       apps: [
         { slug: '/kangaroo-burrow', img: kangarooBurrow },
-        { slug: '/woooooo', img: wooo }
+        { slug: '/woooooo', img: titleFight }
       ]
     },
     {

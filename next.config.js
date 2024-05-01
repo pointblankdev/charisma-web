@@ -25,6 +25,11 @@ module.exports = {
         destination: '/stake/roo',
         permanent: true,
       },
+      {
+        source: '/woooooo',
+        destination: '/apps/title-fight',
+        permanent: true,
+      },
     ]
   },
   experimental: {
