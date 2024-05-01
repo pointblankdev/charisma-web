@@ -16,6 +16,7 @@ import millify from 'millify';
 import { StacksMainnet } from "@stacks/network";
 import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
+import Link from 'next/link';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
@@ -112,6 +113,13 @@ export default function Woooooo({ data }: Props) {
                     <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{woooRecord / 10000}</div>
                   </div>
                 </div>
+              </div>
+              <div className='flex justify-around space-x-2'>
+                <Link href={'/crafting/wooo'}>
+                  <p className="w-full text-xs leading-tight font-md sm:text-sm py-2 hover:text-secondary">
+                    Need WOOO? You can craft it by combining sWELSH and sROO tokens.
+                  </p>
+                </Link>
               </div>
             </div>
           </Card>

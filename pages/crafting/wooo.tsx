@@ -90,25 +90,16 @@ export default function Woooooo({ data }: Props) {
                     <TooltipContent className='max-w-2xl leading-tight text-white bg-black border-primary'>
                       <h2 className="mb-2 text-lg font-bold">Wooo! Explained:</h2>
                       <p className="mb-4">
-                        <strong>How WOOO is Made:</strong> WOOO tokens are made by mixing sWELSH and sROO, and that's the only way to make them. This locks up the liquidity of both tokens into one, sort of like an LP token but the weights are fixed by supply, not dollar amount, so there's no risk of impermanent loss.
+                        <strong>Crafting:</strong> WOOO tokens are made by mixing sWELSH and sROO, and that's the only way to make them. This locks up the liquidity of both tokens into one, sort of like an LP token but the weights are fixed by supply, not dollar amount, so there's no risk of impermanent loss.
                       </p>
                       <p className="mb-4">
-                        <strong>Splitting Tokens:</strong> You can split your WOOO back into sWELSH and sROO whenever you want. This makes it easy to switch up your strategy without any hassle.
+                        <strong>Salvaging:</strong> You can split your WOOO back into sWELSH and sROO whenever you want. This makes it easy to switch up your strategy without any hassle.
                       </p>
                       <p className="mb-4">
-                        <strong>Fees on Transactions:</strong> Whether you're crafting, salvaging, or transferring WOO, there's a micro-transaction fee of less than 0.1%. These fees feed right back into the sWELSH and sROO liquid staking pools, increasing the value of all tokens involved and giving you a direct benefit for being active in the game.
+                        <strong>Token Rewards:</strong> You get Charisma tokens rewards for crafting, salvaging, or transferring WOO. We've set it up so the more you do, the more you get back. It's straightforward: help the platform grow and get rewarded for it.
                       </p>
                       <p className="mb-4">
-                        <strong>Governance with Charisma Tokens:</strong> If you hold Charisma Tokens, you can create and vote on proposals to change the rules of this token, including the fees and rewards. This keeps the power in the hands of the community, ensuring that the people actually using the token decide where it's headed.
-                      </p>
-                      <p className="mb-4">
-                        <strong>Rewards for Your Moves:</strong> You get Charisma tokens rewards for crafting, salvaging, or transferring WOO. We've set it up so the more you do, the more you get back. It's straightforward: help the platform grow and get rewarded for it.
-                      </p>
-                      <p className="mb-4">
-                        <strong>Better Trading:</strong> By pulling together liquidity from two different memecoins, WOOO smooths out market movement and discourages jeeting from one coin to another. It's better for everyone when things are less choppy.
-                      </p>
-                      <p className="mb-4">
-                        <strong>Keeping It Democratic:</strong> All the big decisions about WOO, like what it's called or how it's divided, are voted on by everyone. The DAO setup means no single person has all the control. It's all about the community.
+                        <strong>Transactions Fees:</strong> Whether you're crafting, salvaging, or transferring WOO, there's a micro-transaction fee. These fees feed right back into the sWELSH and sROO liquid staking pools, increasing the value of all tokens involved and giving you a direct benefit for being active in the game.
                       </p>
                     </TooltipContent>
                   </Tooltip>
@@ -133,7 +124,6 @@ export default function Woooooo({ data }: Props) {
                     <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{woooBalance / 10000}</div>
                   </div>
                 </div>
-
               </div>
               <div className='mx-0 mb-8 space-y-2 sm:mx-6'>
                 <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-4xl text-center" />
@@ -162,9 +152,6 @@ export default function Woooooo({ data }: Props) {
                   </div>
                 </div>
               </div>
-              <p className="my-8 text-sm leading-tight text-center font-extralight sm:text-md">
-                Hell yeah, brother.
-              </p>
               <div className='flex font-thin justify-evenly'>
                 <p className="text-sm leading-tight text-center sm:text-md">
                   Crafting Fee: 0.01%
