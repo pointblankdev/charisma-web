@@ -91,7 +91,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       title: 'Wooo! Title Fight',
       subtitle: 'Do you have what it takes to be a champion?',
       cardImage: {
-        url: '/wooo-title-belt.gif'
+        url: '/wooo-title-belt-nft.gif'
       },
       slug: 'apps/title-fight',
       wip: false,

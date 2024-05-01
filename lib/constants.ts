@@ -32,6 +32,10 @@ export const NAVIGATION = [
     route: '/liquid-staking'
   },
   {
+    name: 'Crafting',
+    route: '/crafting'
+  },
+  {
     name: 'MemeFi Apps',
     route: '/apps'
   },

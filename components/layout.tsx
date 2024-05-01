@@ -53,9 +53,10 @@ export default function Layout({
                 >
                   <div className='relative flex flex-col items-center justify-center'>
                     <div>{name}</div>
-                    {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
                     {name === 'Faucet' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'MemeFi Apps' && <div className='text-xxs absolute top-4 text-[lightblue] animate-pulse'>UI UPDATE</div>}
+                    {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Crafting' && <div className='absolute text-xxs top-4 text-[green] animate-pulse'>new</div>}
+                    {name === 'MemeFi Apps' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
                   </div>
                 </Link>
               ))}
