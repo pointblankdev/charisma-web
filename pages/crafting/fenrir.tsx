@@ -139,7 +139,7 @@ export default function Woooooo({ data }: Props) {
                 <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                   <div className='relative'>
                     <Image alt='Fenrir' src={fenrirIcon} className='border-white rounded-full border w-full z-30' />
-                    <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>1K</div>
+                    <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>10B</div>
                   </div>
 
                   {descriptionVisible && <TooltipProvider>
@@ -186,7 +186,7 @@ export default function Woooooo({ data }: Props) {
                       </div>
                       <div className='relative'>
                         <Image alt='Liquid Staked Odin' src={liquidStakedOdin} className='border-white rounded-full border w-full z-30' />
-                        <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>21K</div>
+                        <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>10K</div>
                       </div>
                     </div>}
                 </div>
@@ -199,9 +199,9 @@ export default function Woooooo({ data }: Props) {
               <div className='flex items-center space-x-1'>
                 {descriptionVisible && <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>{<Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Craft</Button>}</TooltipTrigger>
+                    <TooltipTrigger>{<Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Craft</Button>}</TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Crafting Fenrir requires 10k sWELSH and 21k sODIN.
+                      Crafting Fenrir requires 10k sWELSH and 10k sODIN.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>}
@@ -209,9 +209,9 @@ export default function Woooooo({ data }: Props) {
 
                 {descriptionVisible && <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>{<Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={console.log}>Salvage</Button>}</TooltipTrigger>
+                    <TooltipTrigger>{<Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={console.log}>Salvage</Button>}</TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Salvaging Fenrir returns 10k sWELSH and 21k sODIN back to you.
+                      Salvaging Fenrir returns 10k sWELSH and 10k sODIN back to you.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>}
