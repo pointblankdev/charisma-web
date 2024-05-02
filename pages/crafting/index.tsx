@@ -77,6 +77,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     props: {
       apps
     },
+    revalidate: 60
   };
 };
 
