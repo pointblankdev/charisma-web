@@ -11,20 +11,8 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "./stacks-session/connect";
 import { Button } from "@components/ui/button";
-import millify from "millify";
-import { none } from "@stacks/transactions/dist/cl";
 
-const MicroDeposit = ({
-  amount,
-  stakingContractName,
-  contractPrincipal,
-  contractToken,
-}: {
-  amount: number,
-  stakingContractName: string,
-  contractPrincipal: `${string}.${string}`,
-  contractToken: string,
-}) => {
+const MicroDeposit = () => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -36,12 +24,12 @@ const MicroDeposit = ({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'liquid-staked-welsh-v2',
+      contractName: 'liquid-staked-odin',
       functionName: "transfer",
-      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-token'), noneCV()],
+      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok'), noneCV()],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(1).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2', 'liquid-staked-token'),
+        Pc.principal(sender).willSendEq(1).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin', 'liquid-staked-odin'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -57,7 +45,7 @@ const MicroDeposit = ({
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>{millify(amount)}</Button>
+    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Micro-Deposit</Button>
   );
 };
 

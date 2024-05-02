@@ -36,74 +36,25 @@ import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import fenrirIcon from '@public/fenrir-icon-2.png'
 
-export default function Woooooo({ data }: Props) {
+export default function Fenrir({ data }: Props) {
   const meta = {
-    title: 'Charisma | WELSH + ROO = WOOO',
+    title: 'Charisma | Fenrir, Corgi of Ragnarok',
     description: META_DESCRIPTION,
-    image: '/woo-og.png'
+    image: '/fenrir-21.png'
   };
 
-  const [amount, setAmount] = useState(1000);
-
-  const tokenAmount = Number(amount) * 1000000
-
-  const handleTokenAmountChange = (event: any) => {
-    const { value } = event.target;
-    // Limit input to only allow numbers and to 6 decimal places
-    if (/^\d*\.?\d{0,4}$/.test(value)) {
-      setAmount(value);
-    }
-  };
-
-  const { doContractCall } = useConnect();
-
-  const [sWelshBalance, setSWelshBalance] = useState(0)
-  const [sRooBalance, setSRooBalance] = useState(0)
-  const [woooBalance, setWoooBalance] = useState(0)
-  const [woooRecord, setWoooRecord] = useState(data.woooRecord)
   const [objectivesVisible, setObjectivesVisible] = useState(false)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
 
-  function craft() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "fenrir-token",
-      functionName: "craft",
-      functionArgs: [uintCV(tokenAmount), principalCV(sender)],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(sender).willSendLte(tokenAmount * 100).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
-        Pc.principal(sender).willSendLte(tokenAmount * 100).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin", 'liquid-staked-odin'),
-      ],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
-      },
-      onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
-    });
-  }
-
   useEffect(() => {
     try {
-      const profile = userSession.loadUserData().profile
-      getAccountBalance(profile.stxAddress.mainnet).then(balance => {
-        setSWelshBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'].balance)
-        setSRooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo'].balance)
-        setWoooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme021-wooo-token::wooo'].balance)
-        setDescriptionVisible(true)
-      })
+      setDescriptionVisible(true)
 
     } catch (error) {
       console.error(error)
     }
 
-  }, [userSession])
-
-
+  }, [])
 
   const description = [
     "In the mystical realm of Asgard, there lived a colossal creature named Fenrir, feared by the gods and prophesied to bring about the end of the world. However, Fenrir was not a fearsome wolf but a massive Welsh Corgi with an insatiable appetite for adventure and mischief. This unexpected revelation came to light when Odin, the All-Father, embarked on a quest to find and confront Fenrir. Instead of a terrifying beast, he discovered a playful and mischievous Corgi eager to join his adventure.",
@@ -199,7 +150,7 @@ export default function Woooooo({ data }: Props) {
               <div className='flex items-center space-x-1'>
                 {descriptionVisible && <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>{<Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Craft</Button>}</TooltipTrigger>
+                    <TooltipTrigger>{<Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={console.log}>Craft</Button>}</TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                       Crafting Fenrir requires 10k sWELSH and 10k sODIN.
                     </TooltipContent>

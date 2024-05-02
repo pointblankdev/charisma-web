@@ -22,12 +22,7 @@ export default function App() {
           <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
             <div className='m-2'>
               <div className='space-y-1'>
-                <MicroDeposit
-                  amount={1}
-                  stakingContractName={'.fenrir-token'}
-                  contractPrincipal={"SP2F4QC563WN0A0949WPH5W1YXVC4M1R46QKE0G14.memegoatstx"}
-                  contractToken={'fenrir'}
-                />
+                <MicroDeposit />
               </div>
             </div>
           </Card>

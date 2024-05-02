@@ -17,7 +17,7 @@ const CraftWoo = ({ amount }: { amount: number }) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  const tokens6Dec = Number(amount) * 1000000
+  const tokens = Number(amount)
 
   function craft() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet
@@ -25,13 +25,13 @@ const CraftWoo = ({ amount }: { amount: number }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "fenrir-token",
+      contractName: "fenrir-corgi-of-ragnarok",
       functionName: "craft",
-      functionArgs: [uintCV(tokens6Dec), principalCV(sender)],
+      functionArgs: [uintCV(tokens), principalCV(sender)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendLte(tokens6Dec * 10).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
-        Pc.principal(sender).willSendLte(tokens6Dec * 21).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin", 'liquid-staked-odin'),
+        Pc.principal(sender).willSendLte(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
+        Pc.principal(sender).willSendLte(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin", 'liquid-staked-odin'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

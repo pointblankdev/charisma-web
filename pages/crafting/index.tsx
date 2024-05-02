@@ -23,8 +23,9 @@ import { useRouter } from 'next/navigation';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
-import { getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
+import { getFenrirBalance, getFenrirTotalSupply, getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
 import millify from 'millify';
+import { set } from 'lodash';
 
 type Props = {
   apps: any[];
@@ -65,7 +66,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/fenrir-21.png'
       },
       slug: '/crafting/fenrir',
-      wip: true,
+      wip: false,
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/odin', img: liquidStakedOdin },
@@ -99,6 +100,10 @@ export default function Crafting({ apps }: Props) {
   const [odinExchangeRate, setOdinExchangeRate] = useState(1)
   const [rooExchangeRate, setRooExchangeRate] = useState(1)
 
+  const [welshBalance, setWelshBalance] = useState(0)
+  const [odinBalance, setOdinBalance] = useState(0)
+  const [fenrirTotalSupply, setFenrirTotalSupply] = useState(0)
+
 
   useEffect(() => {
     getTokenPrices().then((prices) => {
@@ -127,6 +132,15 @@ export default function Crafting({ apps }: Props) {
       getStakedTokenExchangeRate("liquid-staked-roo").then((rate) => {
         setRooExchangeRate(rate.value / 1000000)
       })
+      getFenrirBalance("liquid-staked-welsh-v2").then((amount) => {
+        setWelshBalance(Number(amount.value.value))
+      })
+      getFenrirBalance("liquid-staked-odin").then((amount) => {
+        setOdinBalance(Number(amount.value.value))
+      })
+      getFenrirTotalSupply().then((amount) => {
+        setFenrirTotalSupply(Number(amount.value.value))
+      })
     })
   }, [])
 
@@ -135,7 +149,7 @@ export default function Crafting({ apps }: Props) {
   // millify((100 * welshPrice * 1.06) + (0.42 * rooPrice * 1.01), { precision: 6 })
 
   const woooValue = millify((100 * welshPrice * welshExchangeRate) + (0.42 * rooPrice * rooExchangeRate), { precision: 4 })
-  const fenrirValue = millify((10 * welshPrice * welshv2ExchangeRate) + (21 * odinPrice * odinExchangeRate), { precision: 4 })
+  const fenrirValue = millify((welshPrice * welshv2ExchangeRate * (welshBalance / fenrirTotalSupply)) + (odinPrice * odinExchangeRate * (odinBalance / fenrirTotalSupply)), { precision: 4 })
 
   apps[0].value = woooValue
   apps[1].value = fenrirValue
