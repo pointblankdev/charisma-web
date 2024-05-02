@@ -116,7 +116,7 @@ export default function StakeWelsh({ data }: Props) {
           <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
 
             <p className="m-2 text-lg font-thin leading-tight sm:text-md">
-              Liquid Staked Welsh v2 is a new and improved version of the original Liquid Staked Welsh pool. The v2 has a "deflate" function which simplifies the contract logic required to reward sWELSH holders. For the time being, rewards will continue to be distributed to the original v1 pool.
+              Liquid Staked Welsh v2 is a new and improved version of the original Liquid Staked Welsh pool. The v2 has a "deflate" function which simplifies the contract logic required to reward sWELSH holders. Moving forward, new crafting recipies and apps will reward the v2 pool.
             </p>
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
