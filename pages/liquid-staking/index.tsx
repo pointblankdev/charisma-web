@@ -232,6 +232,20 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       },
       slug: 'stake/goat',
       wip: false,
+    },
+    {
+      guild: {
+        logo: {
+          url: '/pomboo-logo.jpeg'
+        }
+      },
+      title: 'Pomboo the Pomeranian',
+      subtitle: 'Liquid Staked Pomboo',
+      cardImage: {
+        url: '/liquid-pomboo-12.png'
+      },
+      slug: 'stake/pomboo',
+      wip: false,
     }
   ]
 
