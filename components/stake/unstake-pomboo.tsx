@@ -27,7 +27,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-pomboo",
+      contractName: "liquid-staked-boo",
       functionName: "unstake",
       functionArgs: [uintCV(tokens8Dec)],
       postConditionMode: PostConditionMode.Allow,
@@ -51,7 +51,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
       disabled={Number(tokens) <= 0}>
-      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sPOMBOO
+      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sBOO
     </Button>
   );
 };

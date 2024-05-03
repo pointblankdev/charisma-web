@@ -11,11 +11,11 @@ import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
 
-interface StakeButtonProps {
+interface StakeRooButtonProps {
   tokens: string;
 }
 
-const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
+const StakeRooButton: React.FC<StakeRooButtonProps> = ({ tokens }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -23,7 +23,7 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
     setMounted(true);
   }, []);
 
-  const tokens8Dec = Number(tokens) * 100000000
+  const tokens6Dec = Number(tokens) * 1000000
 
   function stake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
@@ -31,16 +31,16 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-boo",
+      contractName: "liquid-staked-roo-v2",
       functionName: "stake",
-      functionArgs: [uintCV(tokens8Dec)],
+      functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         Pc.principal(sender)
-          .willSendEq(tokens8Dec)
+          .willSendEq(tokens6Dec)
           .ft(
-            "SP1N4EXSR8DP5GRN2XCWZEW9PR32JHNRYW7MVPNTA.PomerenianBoo-Pomboo",
-            "PomeranianBoo"
+            "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo",
+            "kangaroo"
           ),
       ],
       onFinish: (data) => {
@@ -62,9 +62,9 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
       onClick={stake}
       disabled={Number(tokens) <= 0}
     >
-      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} POMBOO
+      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} ROO
     </Button>
   );
 };
 
-export default StakeButton;
+export default StakeRooButton;

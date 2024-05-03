@@ -518,7 +518,6 @@ export async function getTitleBeltHoldeBalance() {
 }
 
 export async function getAccountAssets(principal: string) {
-
     const response: any = await accountsApi.getAccountAssets({
         principal
     })
@@ -526,7 +525,6 @@ export async function getAccountAssets(principal: string) {
 }
 
 export async function getAccountBalance(principal: string) {
-
     const response: any = await accountsApi.getAccountBalance({
         principal
     })

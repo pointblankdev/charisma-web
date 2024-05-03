@@ -5,43 +5,33 @@ import {
   AnchorMode,
   Pc,
   PostConditionMode,
+  principalCV,
   uintCV,
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
 
-interface StakeButtonProps {
-  tokens: string;
-}
-
-const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
+const SalvageOldWoo = ({ amount }: { amount: number }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
+  useEffect(() => { setMounted(true) }, []);
 
-  const tokens8Dec = Number(tokens) * 100000000
-
-  function stake() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+  function salvage() {
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-boo",
-      functionName: "stake",
-      functionArgs: [uintCV(tokens8Dec)],
-      postConditionMode: PostConditionMode.Deny,
+      contractName: "dme020-woooooo-token",
+      functionName: "burn",
+      functionArgs: [uintCV(amount), principalCV(sender)],
+      // postConditionMode: PostConditionMode.Deny,
+      postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        Pc.principal(sender)
-          .willSendEq(tokens8Dec)
-          .ft(
-            "SP1N4EXSR8DP5GRN2XCWZEW9PR32JHNRYW7MVPNTA.PomerenianBoo-Pomboo",
-            "PomeranianBoo"
-          ),
+        // Pc.principal(sender).willSendLte(amount * 100).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
+        // Pc.principal(sender).willSendLte(amount * 0.42).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -57,14 +47,8 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
   }
 
   return (
-    <Button
-      className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
-      onClick={stake}
-      disabled={Number(tokens) <= 0}
-    >
-      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} POMBOO
-    </Button>
+    <Button disabled={amount <= 0} variant='outline' className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={salvage}>⛏️ Free Salvage</Button>
   );
 };
 
-export default StakeButton;
+export default SalvageOldWoo;

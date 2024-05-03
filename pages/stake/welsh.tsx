@@ -57,9 +57,9 @@ export default function StakeWelsh({ data }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl space-y-8">
-
           <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
             <Image alt='Liquid Welsh' src={liquidWelsh} width="1080" height="605" className='border-b border-accent-foreground' />
+            {/*  */}
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
                 <h1 className="self-center font-bold text-md sm:text-2xl">Liquid Staked Welsh</h1>
@@ -113,8 +113,9 @@ export default function StakeWelsh({ data }: Props) {
             </div>
           </Card>
 
-          <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
+          <div className='animate-bounce text-center'>🔻 MIGRATE TO NEW POOL BY MAY 7th 🔻</div>
 
+          <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
             <p className="m-2 text-lg font-thin leading-tight sm:text-md">
               Liquid Staked Welsh v2 is a new and improved version of the original Liquid Staked Welsh pool. The v2 has a "deflate" function which simplifies the contract logic required to reward sWELSH holders. Moving forward, new crafting recipies and apps will reward the v2 pool.
             </p>

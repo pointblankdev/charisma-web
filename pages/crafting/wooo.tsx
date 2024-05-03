@@ -26,6 +26,7 @@ import { StacksMainnet } from "@stacks/network";
 import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
 import { Input } from '@components/ui/input';
+import SalvageOldWoo from '@components/salvage/salvage-old-woo';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
@@ -33,16 +34,25 @@ export default function Woooooo({ data }: Props) {
     description: META_DESCRIPTION,
     image: '/woo-og.png'
   };
-
   const [amount, setAmount] = useState('');
 
-  const tokenAmount = Number(amount) * 10000
+  const tokenAmount = Number(amount) * 10000;
 
   const handleTokenAmountChange = (event: any) => {
     const { value } = event.target;
     // Limit input to only allow numbers and to 6 decimal places
     if (/^\d*\.?\d{0,4}$/.test(value)) {
       setAmount(value);
+    }
+  };
+
+  const [salvageAmount, setSalvageAmount] = useState('');
+  const salvageTokenAmount = Number(salvageAmount) * 10000;
+  const handleSalvageAmountChange = (event: any) => {
+    const { value } = event.target;
+    // Limit input to only allow numbers and to 6 decimal places
+    if (/^\d*\.?\d{0,4}$/.test(value)) {
+      setSalvageAmount(value);
     }
   };
 
@@ -122,6 +132,13 @@ export default function Woooooo({ data }: Props) {
                   <div className='w-full'>
                     <div className='pt-1 mt-1 text-xs leading-snug text-center'>WOOO</div>
                     <div className='py-0 -mt-2 text-2xl text-center border-4 rounded-md'>{woooBalance / 10000}</div>
+                  </div>
+                </div>
+                <div className='w-64 border border-1 rounded-sm p-2 space-y-3'>
+                  <div className='text-sm text-center'>Got WOO from the old contract?</div>
+                  <Input value={salvageAmount} onChange={handleSalvageAmountChange} placeholder="Enter token amount" className="h-10 text-center" />
+                  <div className='w-full'>
+                    <SalvageOldWoo amount={Number(salvageTokenAmount)} />
                   </div>
                 </div>
               </div>

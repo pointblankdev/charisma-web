@@ -3,29 +3,33 @@ import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
 import {
   AnchorMode,
-  Pc,
   PostConditionMode,
-  noneCV,
-  principalCV,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "./stacks-session/connect";
+import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
+import millify from "millify";
 
-const MicroDeposit = () => {
+interface UnstakeRooButtonProps {
+  tokens: string;
+}
+
+const UnstakeRooButton: React.FC<UnstakeRooButtonProps> = ({ tokens }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  function deposit() {
+  const tokens6Dec = Number(tokens) * 1000000
+
+  function unstake() {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP1N4EXSR8DP5GRN2XCWZEW9PR32JHNRYW7MVPNTA",
-      contractName: 'PomerenianBoo-Pomboo',
-      functionName: "transfer",
-      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-boo'), noneCV()],
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "liquid-staked-roo-v2",
+      functionName: "unstake",
+      functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
@@ -42,8 +46,14 @@ const MicroDeposit = () => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Micro-Deposit</Button>
+    <Button
+      variant={'ghost'}
+      className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
+      onClick={unstake}
+      disabled={Number(tokens) <= 0}>
+      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sROO
+    </Button>
   );
 };
 
-export default MicroDeposit;
+export default UnstakeRooButton;

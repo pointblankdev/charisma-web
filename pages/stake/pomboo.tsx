@@ -52,7 +52,7 @@ export default function Stake({ data }: Props) {
               <div className='flex justify-between mb-2'>
                 <h1 className="self-center font-bold text-md sm:text-2xl">Liquid Staked Pomboo</h1>
                 {data.exchangeRate && <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
-                  <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg bg-primary sm:p-0 sm:px-4">1 sPOMBOO = {Number(data.exchangeRate) / 1000000} POMBOO</div>
+                  <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg bg-primary sm:p-0 sm:px-4">1 sBOO = {Number(data.exchangeRate) / 1000000} POMBOO</div>
                 </div>}
               </div>
 
@@ -69,10 +69,10 @@ export default function Stake({ data }: Props) {
                       <h2 className="mb-2 text-lg font-bold">Interacting with the Staking Dashboard:</h2>
                       <ul className="pl-5 mb-4 space-y-2 list-disc text-md">
                         <li>
-                          <b>Stake Tokens</b>: Stake your Pomboo tokens to receive Liquid Staked Pomboo (sPOMBOO). The amount of sPOMBOO you receive is calculated based on the current inverse exchange rate.
+                          <b>Stake Tokens</b>: Stake your Pomboo tokens to receive Liquid Staked Pomboo (sBOO). The amount of sBOO you receive is calculated based on the current inverse exchange rate.
                         </li>
                         <li>
-                          <b>Unstake Tokens</b>: Redeem your sPOMBOO for Pomboo tokens based on the current exchange rate.
+                          <b>Unstake Tokens</b>: Redeem your sBOO for Pomboo tokens based on the current exchange rate.
                         </li>
                       </ul>
                       <p className="mb-4">
@@ -93,10 +93,10 @@ export default function Stake({ data }: Props) {
               </p>
               <div className='space-y-2'>
                 <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-lg text-center" />
-                {/* <div className='flex space-x-1'>
+                <div className='flex space-x-1'>
                   <StakePombooButton tokens={tokenAmount} />
                   <UnstakePombooButton tokens={tokenAmount} />
-                </div> */}
+                </div>
               </div>
             </div>
           </Card>
@@ -116,7 +116,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const lc: any = await callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-pomboo",
+      contractName: "liquid-staked-boo",
       functionName: "get-exchange-rate",
       functionArgs: [],
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
@@ -126,7 +126,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const totalStaked: any = await callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-pomboo",
+      contractName: "liquid-staked-boo",
       functionName: "get-total-in-pool",
       functionArgs: [],
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
