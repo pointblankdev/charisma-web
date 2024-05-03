@@ -23,13 +23,13 @@ const MicroDeposit = () => {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'liquid-staked-odin',
+      contractAddress: "SP1N4EXSR8DP5GRN2XCWZEW9PR32JHNRYW7MVPNTA",
+      contractName: 'PomerenianBoo-Pomboo',
       functionName: "transfer",
-      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok'), noneCV()],
+      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pomboo'), noneCV()],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(1).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin', 'liquid-staked-odin'),
+        Pc.principal(sender).willSendEq(1).ft('SP1N4EXSR8DP5GRN2XCWZEW9PR32JHNRYW7MVPNTA.PomerenianBoo-Pomboo', 'PomerenianBoo'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -45,7 +45,7 @@ const MicroDeposit = () => {
   }
 
   return (
-    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Micro-Deposit</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Micro-Deposit</Button>
   );
 };
 
