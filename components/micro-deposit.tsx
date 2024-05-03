@@ -19,7 +19,6 @@ const MicroDeposit = () => {
   useEffect(() => { setMounted(true) }, []);
 
   function deposit() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -27,10 +26,8 @@ const MicroDeposit = () => {
       contractName: 'PomerenianBoo-Pomboo',
       functionName: "transfer",
       functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pomboo'), noneCV()],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(sender).willSendEq(1).ft('SP1N4EXSR8DP5GRN2XCWZEW9PR32JHNRYW7MVPNTA.PomerenianBoo-Pomboo', 'PomerenianBoo'),
-      ],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
