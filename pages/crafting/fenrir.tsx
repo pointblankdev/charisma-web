@@ -11,30 +11,21 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@components/ui/tooltip"
-import { Info } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
-import woooooo from '@public/woooooo.webp'
-import SalvageWoo from '@components/salvage/salvage-woo';
 import CraftFenrir from '@components/craft/fenrir';
 import { Button } from '@components/ui/button';
-import { getAccountBalance, getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
+import { getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
-import { userSession } from '@components/stacks-session/connect';
-import millify from 'millify';
-import { StacksMainnet } from "@stacks/network";
-import { AnchorMode, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
-import { useConnect } from '@stacks/connect-react';
-import { Input } from '@components/ui/input';
 import { cn } from '@lib/utils';
 import charismaToken from '@public/charisma.png'
-import stxToken from '@public/stacks-stx-logo.png'
 import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion"
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import fenrirIcon from '@public/fenrir-icon-2.png'
+import SalvageFenrir from '@components/salvage/salvage-fenrir';
 
 export default function Fenrir({ data }: Props) {
   const meta = {
@@ -81,7 +72,7 @@ export default function Fenrir({ data }: Props) {
             <CardHeader className='p-4 z-20'>
               <div className='flex justify-between items-center'>
                 <CardTitle className='text-xl font-semibold z-30'>{'Fenrir, Corgi of Ragnarok'}</CardTitle>
-                <ActiveQuestIndicator active={true} />
+                <ActiveRecipeIndicator active={false} />
               </div>
               <CardDescription className='text-md font-fine text-foreground z-30 pb-12'>{'...and the end of the world'}</CardDescription>
               <div className='z-20'>
@@ -150,7 +141,7 @@ export default function Fenrir({ data }: Props) {
               <div className='flex items-center space-x-1'>
                 {descriptionVisible && <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>{<Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={console.log}>Craft</Button>}</TooltipTrigger>
+                    <TooltipTrigger><CraftFenrir amount={10000000000} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                       Crafting Fenrir requires 10k sWELSH and 10k sODIN.
                     </TooltipContent>
@@ -160,7 +151,7 @@ export default function Fenrir({ data }: Props) {
 
                 {descriptionVisible && <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger>{<Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={console.log}>Salvage</Button>}</TooltipTrigger>
+                    <TooltipTrigger><SalvageFenrir amount={10000000000} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                       Salvaging Fenrir returns 10k sWELSH and 10k sODIN back to you.
                     </TooltipContent>
@@ -221,20 +212,18 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }
 };
 
-// active quest indicator pings green circle when active, red when not active
-// tooltip on hover shows "active" or "not active"
-const ActiveQuestIndicator = ({ active }: { active: boolean }) => {
+const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger className='cursor-default'>
           <div className='relative w-4 h-4'>
-            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-red-500'}`} />
-            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500'}`} />
+            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'}`} />
+            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'}`} />
           </div>
         </TooltipTrigger>
         <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-          {active ? 'Quest is active' : 'Quest is not active'}
+          {active ? 'Crafting is live' : 'Crafting goes live on May 7th'}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
