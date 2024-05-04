@@ -57,11 +57,6 @@ export default function Fenrir({ data }: Props) {
     visible: { opacity: 1 }
   };
 
-  const fadeInHalfway = {
-    hidden: { opacity: 0 },
-    visible: { opacity: 0.2 }
-  };
-
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -84,19 +79,19 @@ export default function Fenrir({ data }: Props) {
                     <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>10B</div>
                   </div>
 
-                  {descriptionVisible && <TooltipProvider>
+                  <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>{
-                        <motion.div initial="hidden" animate="visible" variants={fadeInHalfway} className='relative'>
+                        <motion.div initial="hidden" animate="visible" variants={fadeIn} className='relative'>
                           <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30' />
                           <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>100</div>
                         </motion.div>
                       }</TooltipTrigger>
                       <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                        Charisma rewards can be enabled after passing a DAO proposal.
+                        Charisma tokens can be used to propose and vote on changes to the fees and rewards of Fenrir.
                       </TooltipContent>
                     </Tooltip>
-                  </TooltipProvider>}
+                  </TooltipProvider>
 
                 </div>
               </div>
