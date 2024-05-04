@@ -211,7 +211,7 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger className='cursor-default'>
+        <TooltipTrigger>
           <div className='relative w-4 h-4'>
             <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'}`} />
             <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'}`} />
