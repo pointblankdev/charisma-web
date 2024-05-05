@@ -12,6 +12,9 @@ const apiConfig: Configuration = new Configuration({
     // for mainnet, replace `testnet` with `mainnet`
     basePath: 'https://api.mainnet.hiro.so', // defaults to http://localhost:3999
     apiKey: process.env.STACKS_API_KEY,
+    headers: {
+        "x-hiro-api-key": String(process.env.STACKS_API_KEY)
+    }
 });
 
 const scApi = new SmartContractsApi(apiConfig);
