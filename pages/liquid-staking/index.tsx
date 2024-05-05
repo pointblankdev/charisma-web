@@ -23,6 +23,7 @@ import uppsala from '@public/uppsala-21.png'
 import titleFight from '@public/wooo-title-belt-nft.gif'
 import wooo from '@public/wooo.webp'
 import fenrir from '@public/fenrir-icon-2.png'
+import odinsRaven from '@public/odins-raven/img/4.gif'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
 import { useRouter } from 'next/navigation';
@@ -113,7 +114,8 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       wip: false,
       apps: [
         { slug: '/apps/uppsala', img: uppsala },
-        { slug: '/crafting/fenrir', img: fenrir }
+        { slug: '/crafting/fenrir', img: fenrir },
+        { slug: '/apps/odins-raven', img: odinsRaven }
       ]
     },
     {

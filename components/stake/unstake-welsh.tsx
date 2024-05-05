@@ -32,14 +32,14 @@ const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-welsh",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Deny,
+      postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        Pc.principal(sender)
-          .willSendEq(tokens6Dec)
-          .ft(
-            "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh",
-            "liquid-staked-welsh"
-          ),
+        // Pc.principal(sender)
+        //   .willSendEq(tokens6Dec)
+        //   .ft(
+        //     "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh",
+        //     "liquid-staked-welsh"
+        //   ),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

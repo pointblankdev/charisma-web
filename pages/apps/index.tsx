@@ -99,6 +99,24 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/roo', img: liquidStakedRoo },
       ]
+    },
+    {
+      guild: {
+        logo: {
+          url: '/odins-raven/img/4.gif'
+        }
+      },
+      title: "Odin's Raven",
+      subtitle: 'Eyes and ears of the Allfather',
+      cardImage: {
+        url: '/raven-of-odin.png'
+      },
+      slug: 'apps/odins-raven',
+      wip: false,
+      apps: [
+        { slug: '/stake/welsh', img: liquidStakedWelsh },
+        { slug: '/stake/odin', img: liquidStakedOdin },
+      ]
     }
   ]
 
