@@ -60,9 +60,9 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
     <Button
       className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
       onClick={stake}
-      disabled={Number(tokens) <= 0}
+      disabled={tokens6Dec <= 0}
     >
-      Stake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} GOAT
+      Stake {tokens && tokens6Dec > 0 ? millify(Number(tokens)) : 0} GOAT
     </Button>
   );
 };

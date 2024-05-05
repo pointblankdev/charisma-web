@@ -50,8 +50,8 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       variant={'ghost'}
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
-      disabled={Number(tokens) <= 0}>
-      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sBABYWELSH
+      disabled={tokens6Dec <= 0}>
+      Unstake {tokens && tokens6Dec > 0 ? millify(Number(tokens)) : 0} sBABYWELSH
     </Button>
   );
 };
