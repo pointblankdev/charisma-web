@@ -32,14 +32,14 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-not",
       functionName: "unstake",
       functionArgs: [uintCV(tokens0Dec)],
-      postConditionMode: PostConditionMode.Deny,
+      postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        Pc.principal(sender)
-          .willSendEq(tokens0Dec)
-          .ft(
-            "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-not",
-            "liquid-staked-token"
-          ),
+        // Pc.principal(sender)
+        //   .willSendEq(tokens0Dec)
+        //   .ft(
+        //     "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-not",
+        //     "liquid-staked-token"
+        //   ),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

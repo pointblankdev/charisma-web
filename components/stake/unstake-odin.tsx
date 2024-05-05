@@ -33,14 +33,14 @@ const UnstakeOdinButton: React.FC<UnstakeOdinButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-odin",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Deny,
+      postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        Pc.principal(sender)
-          .willSendEq(tokens6Dec)
-          .ft(
-            "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin",
-            "liquid-staked-odin"
-          ),
+        // Pc.principal(sender)
+        //   .willSendEq(tokens6Dec)
+        //   .ft(
+        //     "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin",
+        //     "liquid-staked-odin"
+        //   ),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
