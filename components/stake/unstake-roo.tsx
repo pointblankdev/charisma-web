@@ -9,7 +9,6 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
-import { toInteger } from "lodash";
 import millify from "millify";
 
 interface UnstakeRooButtonProps {
@@ -25,6 +24,7 @@ const UnstakeRooButton: React.FC<UnstakeRooButtonProps> = ({ tokens }) => {
   const tokens6Dec = Number(tokens) * 1000000
 
   function unstake() {
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -33,7 +33,14 @@ const UnstakeRooButton: React.FC<UnstakeRooButtonProps> = ({ tokens }) => {
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
+      postConditions: [
+        Pc.principal(sender)
+          .willSendEq(tokens6Dec)
+          .ft(
+            "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo",
+            "liquid-staked-roo"
+          ),
+      ],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -52,8 +59,8 @@ const UnstakeRooButton: React.FC<UnstakeRooButtonProps> = ({ tokens }) => {
       variant={'ghost'}
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
-      disabled={Number(tokens) <= 0}>
-      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sROO
+      disabled={tokens6Dec <= 0}>
+      Unstake {tokens && tokens6Dec > 0 ? millify(Number(tokens)) : 0} sROO
     </Button>
   );
 };
