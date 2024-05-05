@@ -1,0 +1,15 @@
+{
+    "sip": 16,
+    "name": "Odin's Raven #66",
+    "image": "https://charisma.rocks/odins-raven/img/66.gif",
+    "attributes": [
+        {
+            "trait_type": "name",
+            "value": "Rúnatýr"
+        }
+    ],
+    "properties": {
+        "collection": "Odin's Raven",
+        "total_supply": "100"
+    }
+}

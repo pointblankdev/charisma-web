@@ -1,0 +1,15 @@
+{
+    "sip": 16,
+    "name": "Odin's Raven #62",
+    "image": "https://charisma.rocks/odins-raven/img/62.gif",
+    "attributes": [
+        {
+            "trait_type": "name",
+            "value": "Muninleikr"
+        }
+    ],
+    "properties": {
+        "collection": "Odin's Raven",
+        "total_supply": "100"
+    }
+}
