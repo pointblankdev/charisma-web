@@ -24,6 +24,7 @@ const UnstakeLeoButton: React.FC<UnstakeLeoButtonProps> = ({ tokens }) => {
   const tokens6Dec = Number(tokens) * 1000000
 
   function unstake() {
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -31,8 +32,15 @@ const UnstakeLeoButton: React.FC<UnstakeLeoButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-leo",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(sender)
+          .willSendEq(tokens6Dec)
+          .ft(
+            "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo",
+            "liquid-staked-token"
+          ),
+      ],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },

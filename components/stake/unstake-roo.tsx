@@ -32,7 +32,7 @@ const UnstakeRooButton: React.FC<UnstakeRooButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-roo",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [
         Pc.principal(sender)
           .willSendEq(tokens6Dec)

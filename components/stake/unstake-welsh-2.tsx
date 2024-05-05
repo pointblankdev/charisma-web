@@ -3,6 +3,7 @@ import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
 import {
   AnchorMode,
+  Pc,
   PostConditionMode,
   uintCV,
 } from "@stacks/transactions";
@@ -23,6 +24,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
   const tokens6Dec = Number(tokens) * 1000000
 
   function unstake() {
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -30,8 +32,15 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-welsh-v2",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(sender)
+          .willSendEq(tokens6Dec)
+          .ft(
+            "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2",
+            "liquid-staked-token"
+          ),
+      ],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -50,8 +59,8 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       variant={'ghost'}
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
-      disabled={Number(tokens) <= 0}>
-      Unstake {tokens && Number(tokens) > 0 ? millify(Number(tokens)) : 0} sWELSH
+      disabled={tokens6Dec <= 0}>
+      Unstake {tokens && tokens6Dec > 0 ? millify(Number(tokens)) : 0} sWELSH
     </Button>
   );
 };
