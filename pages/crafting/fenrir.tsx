@@ -124,7 +124,7 @@ export default function Fenrir({ data }: Props) {
                     }}
                   />}
                 </p>
-                <div className='z-20 h-[136px]'>
+                <div className='z-20 min-h-[136px]'>
                   {objectivesVisible && <div className='z-30 text-xl font-semibold'>Requirements</div>}
                   {objectivesVisible && <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>These tokens will be liquid staked to craft Fenrir tokens:</CardDescription>}
                   {objectivesVisible &&

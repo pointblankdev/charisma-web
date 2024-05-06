@@ -126,7 +126,7 @@ export default function OdinsRaven({ data }: Props) {
                     }}
                   />}
                 </p>
-                <div className='z-20 h-[220px]'>
+                <div className='z-20 min-h-[220px]'>
                   {objectivesVisible && <div className='z-30 text-xl font-semibold'>Requirements</div>}
                   {objectivesVisible && <CardDescription className='z-30 mb-6 text-sm font-fine text-foreground'>
                     <p className="leading-normal">
