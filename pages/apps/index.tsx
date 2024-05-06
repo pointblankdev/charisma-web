@@ -126,7 +126,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     props: {
       pools
     },
-    // revalidate: 60
+    revalidate: 6000
   };
 };
 
