@@ -222,7 +222,7 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
           </div>
         </TooltipTrigger>
         <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-          {active ? 'Crafting is live' : 'Crafting goes live on May 7th'}
+          {active ? 'Crafting is live' : 'Crafting goes live on May 8th'}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
