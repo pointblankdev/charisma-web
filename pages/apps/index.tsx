@@ -23,6 +23,8 @@ import { useRouter } from 'next/navigation';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
+import raven from '@public/raven-of-odin.png'
+import odinsRaven from '@public/odins-raven/img/4.gif'
 
 type Props = {
   pools: any[];
@@ -103,13 +105,13 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     {
       guild: {
         logo: {
-          url: '/odins-raven/img/4.gif'
+          url: odinsRaven
         }
       },
       title: "Odin's Raven",
       subtitle: 'Eyes and ears of the Allfather',
       cardImage: {
-        url: '/raven-of-odin.png'
+        url: raven
       },
       slug: 'apps/odins-raven',
       wip: false,
