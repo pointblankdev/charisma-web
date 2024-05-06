@@ -89,7 +89,7 @@ export default function OdinsRaven({ data }: Props) {
                 <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>You will recieve:</CardDescription>
                 <div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                   <div className='relative'>
-                    <Image alt='Fenrir' src={odinsRaven} className='z-30 w-full border border-white rounded-full' />
+                    <Image alt='Fenrir' src={odinsRaven} quality={10} className='z-30 w-full border border-white rounded-full' />
                     <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>NFT</div>
                   </div>
 
