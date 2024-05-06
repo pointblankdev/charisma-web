@@ -51,7 +51,8 @@ export default function Fenrir({ data }: Props) {
 
   const description = [
     "In the mystical realm of Asgard, there lived a colossal creature named Fenrir, feared by the gods and prophesied to bring about the end of the world. However, Fenrir was not a fearsome wolf but a massive Welsh Corgi with an insatiable appetite for adventure and mischief. This unexpected revelation came to light when Odin, the All-Father, embarked on a quest to find and confront Fenrir. Instead of a terrifying beast, he discovered a playful and mischievous Corgi eager to join his adventure.",
-    " News of Fenrir's true nature spread throughout Asgard, and the gods were left in awe of the unlikely duo. The prophecy of Ragnarok was averted, not through force or violence, but through the power of friendship. And so, the mighty Fenrir, the feared harbinger of doom, was revealed to be nothing more than a massive Welsh Corgi, forever changing the course of Norse mythology."
+    " News of Fenrir's true nature spread throughout Asgard, and the gods were left in awe of the unlikely duo. The prophecy of Ragnarok was averted, not through force or violence, but through the power of friendship. ",
+    " And so, the mighty Fenrir, the feared harbinger of doom, was revealed to be nothing more than a massive Welsh Corgi, forever changing the course of Norse mythology."
   ]
 
   const fadeIn = {
@@ -66,7 +67,7 @@ export default function Fenrir({ data }: Props) {
         alt="norse-background-image"
         layout="fill"
         objectFit="cover"
-        className='grayscale-[0.7]'
+        className='grayscale-[0.7] fixed inset-0'
         priority
       />
       <SkipNavContent />
@@ -74,27 +75,27 @@ export default function Fenrir({ data }: Props) {
         <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
 
           <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl'>
-            <CardHeader className='p-4 z-20'>
-              <div className='flex justify-between items-center'>
-                <CardTitle className='text-xl font-semibold z-30'>{'Fenrir, Corgi of Ragnarok'}</CardTitle>
+            <CardHeader className='z-20 p-4'>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='z-30 text-xl font-semibold'>{'Fenrir, Corgi of Ragnarok'}</CardTitle>
                 <ActiveRecipeIndicator active={false} />
               </div>
-              <CardDescription className='text-md font-fine text-foreground z-30 pb-12'>{'...and the end of the world'}</CardDescription>
+              <CardDescription className='z-30 pb-6 text-md font-fine text-foreground'>{'...and the end of the world'}</CardDescription>
               <div className='z-20'>
-                <CardTitle className='text-xl font-semibold mt-2 z-30'>Rewards</CardTitle>
-                <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>
-                <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
+                <CardTitle className='z-30 mt-2 text-xl font-semibold'>Rewards</CardTitle>
+                <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>You will recieve:</CardDescription>
+                <div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                   <div className='relative'>
-                    <Image alt='Fenrir' src={fenrirIcon} className='border-white rounded-full border w-full z-30' />
-                    <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>10B</div>
+                    <Image alt='Fenrir' src={fenrirIcon} className='z-30 w-full border border-white rounded-full' />
+                    <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>10B</div>
                   </div>
 
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>{
                         <motion.div initial="hidden" animate="visible" variants={fadeIn} className='relative'>
-                          <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30' />
-                          <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>100</div>
+                          <Image src={charismaToken} alt='charisma-token' className='z-30 w-full border border-white rounded-full' />
+                          <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>100</div>
                         </motion.div>
                       }</TooltipTrigger>
                       <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
@@ -106,10 +107,10 @@ export default function Fenrir({ data }: Props) {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className='p-0 z-20'>
-              <div className='p-4 z-30'>
-                <CardTitle className='text-xl font-semibold z-30'>Description</CardTitle>
-                <p className='text-base z-30'>
+            <CardContent className='z-20 p-0'>
+              <div className='z-30 p-4'>
+                <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle>
+                <p className='z-30 text-base h-[300px]'>
                   {descriptionVisible && <Typewriter
                     options={{
                       delay: 25,
@@ -122,25 +123,25 @@ export default function Fenrir({ data }: Props) {
                     }}
                   />}
                 </p>
-                <div className='z-20 mt-12 sm:mt-18 md:mt-24 lg:mt-36 xl:mt-64 min-h-[122px]'>
-                  {objectivesVisible && <motion.div initial="hidden" animate="visible" variants={fadeIn} className='text-xl font-semibold mt-4 z-30'>Requirements</motion.div>}
-                  {objectivesVisible && <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>These tokens will be liquid staked to craft Fenrir tokens:</CardDescription>}
+                <div className='z-20 h-[136px]'>
+                  {objectivesVisible && <div className='z-30 text-xl font-semibold'>Requirements</div>}
+                  {objectivesVisible && <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>These tokens will be liquid staked to craft Fenrir tokens:</CardDescription>}
                   {objectivesVisible &&
-                    <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
+                    <div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                       <div className='relative'>
-                        <Image alt='Liquid Staked Welshcorgicoin' src={liquidStakedWelsh} className='border-white rounded-full border w-full z-30' />
-                        <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>10K</div>
+                        <Image alt='Liquid Staked Welshcorgicoin' src={liquidStakedWelsh} className='z-30 w-full border border-white rounded-full' />
+                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>10K</div>
                       </div>
                       <div className='relative'>
-                        <Image alt='Liquid Staked Odin' src={liquidStakedOdin} className='border-white rounded-full border w-full z-30' />
-                        <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>10K</div>
+                        <Image alt='Liquid Staked Odin' src={liquidStakedOdin} className='z-30 w-full border border-white rounded-full' />
+                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>10K</div>
                       </div>
                     </div>}
                 </div>
               </div>
             </CardContent>
 
-            <CardFooter className="p-4 flex justify-between z-20">
+            <CardFooter className="z-20 flex justify-between p-4">
               <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
 
               {descriptionVisible && <div className='flex items-center space-x-1'>
@@ -173,7 +174,7 @@ export default function Fenrir({ data }: Props) {
               alt={'quest-background-image'}
               className={cn("object-cover", "sm:aspect-[1/2]", 'aspect-[1/3]', 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
             />
-            <div className='absolute inset-0 bg-gradient-to-b from-white to-black opacity-10 z-0 pointer-events-none' />
+            <div className='absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10' />
           </Card>
 
 

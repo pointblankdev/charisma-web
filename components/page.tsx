@@ -26,7 +26,7 @@ export default function Page({ meta, children, fullViewport = false }: Props) {
   const description = meta.description || SITE_NAME;
 
   return (
-    <div className={cn('page-container', { full: fullViewport })}>
+    <div className={cn('page-container', { full: fullViewport }, 'relative')}>
       <Head>
         <title>{title}</title>
         <meta property="og:title" content={title} />

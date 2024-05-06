@@ -54,8 +54,8 @@ export default function OdinsRaven({ data }: Props) {
   }, [])
 
   const description = [
-    `Odin's raven, often depicted as a pair named Huginn and Muninn, which translate to "thought" and "memory" respectively, are more than mere birds in Norse mythology.`,
-    ` These ravens are extensions of Odin himself, serving as his eyes and ears across the Nine Worlds. Each morning, they are dispatched from Odin's shoulders to fly throughout the realms, gathering news and secrets from the earth below. By evening, they return to whisper all they have seen and heard directly into Odin's ear.`,
+    `Odin's raven, often depicted as a pair named Huginn and Muninn, which translate to "thought" and "memory" respectively, are more than mere birds in Norse mythology. These ravens are extensions of Odin himself, serving as his eyes and ears across the Nine Worlds.`,
+    ` Each morning, they are dispatched from Odin's shoulders to fly throughout the realms, gathering news and secrets from the earth below. By evening, they return to whisper all they have seen and heard directly into Odin's ear.`,
     ` These creatures are not only symbols of the god's intellectual and psychic powers but also embody the deep connection Odin maintains with his realm and its inhabitants. They are portrayed as sleek and black, mirroring the enigmatic and wise nature of their master.`,
     ` The ravens' daily flights underscore their crucial role in keeping Odin well-informed and several steps ahead of his adversaries, reinforcing his stature as the god of wisdom and knowledge.`,
   ]
@@ -78,27 +78,27 @@ export default function OdinsRaven({ data }: Props) {
       <Layout >
         <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
           <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl'>
-            <CardHeader className='p-4 z-20'>
-              <div className='flex justify-between items-center'>
-                <CardTitle className='text-xl font-semibold z-30'>{title}</CardTitle>
+            <CardHeader className='z-20 p-4'>
+              <div className='flex items-center justify-between'>
+                <CardTitle className='z-30 text-xl font-semibold'>{title}</CardTitle>
                 <ActiveRecipeIndicator active={false} />
               </div>
-              <CardDescription className='text-md font-fine text-foreground z-30 pb-6'>{subtitle}</CardDescription>
+              <CardDescription className='z-30 pb-6 text-md font-fine text-foreground'>{subtitle}</CardDescription>
               <div className='z-20'>
-                <CardTitle className='text-xl font-semibold mt-2 z-30'>Rewards</CardTitle>
-                <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>You will recieve:</CardDescription>
-                <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
+                <CardTitle className='z-30 mt-2 text-xl font-semibold'>Rewards</CardTitle>
+                <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>You will recieve:</CardDescription>
+                <div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                   <div className='relative'>
-                    <Image alt='Fenrir' src={odinsRaven} className='border-white rounded-full border w-full z-30' />
-                    <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>NFT</div>
+                    <Image alt='Fenrir' src={odinsRaven} className='z-30 w-full border border-white rounded-full' />
+                    <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>NFT</div>
                   </div>
 
                   {/* <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>{
                         <motion.div initial="hidden" animate="visible" variants={fadeIn} className='relative'>
-                          <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30' />
-                          <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>100</div>
+                          <Image src={charismaToken} alt='charisma-token' className='z-30 w-full border border-white rounded-full' />
+                          <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>100</div>
                         </motion.div>
                       }</TooltipTrigger>
                       <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
@@ -110,10 +110,10 @@ export default function OdinsRaven({ data }: Props) {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className='p-0 z-20'>
-              <div className='p-4 z-30'>
-                <CardTitle className='text-xl font-semibold z-30'>Description</CardTitle>
-                <p className='text-base z-30'>
+            <CardContent className='z-20 p-0'>
+              <div className='z-30 p-4'>
+                <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle>
+                <p className='text-base z-30 h-[330px]'>
                   {descriptionVisible && <Typewriter
                     options={{
                       delay: 25,
@@ -126,30 +126,30 @@ export default function OdinsRaven({ data }: Props) {
                     }}
                   />}
                 </p>
-                <div className='z-20 mt-12 sm:mt-36 min-h-[122px]'>
-                  {objectivesVisible && <motion.div initial="hidden" animate="visible" variants={fadeIn} className='text-xl font-semibold mt-4 z-30'>Requirements</motion.div>}
-                  {objectivesVisible && <CardDescription className='text-sm font-fine text-foreground mb-6 z-30'>
+                <div className='z-20 h-[220px]'>
+                  {objectivesVisible && <div className='z-30 text-xl font-semibold'>Requirements</div>}
+                  {objectivesVisible && <CardDescription className='z-30 mb-6 text-sm font-fine text-foreground'>
                     <p className="leading-normal">
-                      To mint a Raven, you need to hold more than <span className="font-bold">10 billion</span> Fenrir tokens multiplied by its mint ID. For instance, having <span className="font-bold">10 billion</span> Fenrir allows you to mint the first Raven with ID #<span className="font-bold">1</span>. For the 10th Raven with ID #<span className="font-bold">10</span>, you'll need <span className="font-bold">100 billion</span> Fenrir. The final Raven, #<span className="font-bold">100</span>, requires <span className="font-bold">1 trillion</span> Fenrir tokens. These tokens aren't spent during minting; they're simply a requirement.
+                      To mint a Raven, you need to hold at least <span className="font-bold">10 billion</span> Fenrir tokens multiplied by its mint ID. For instance, having <span className="font-bold">10 billion</span> Fenrir allows you to mint the first Raven with ID #<span className="font-bold">1</span>. For the 10th Raven with ID #<span className="font-bold">10</span>, you'll need <span className="font-bold">100 billion</span> Fenrir. The final Raven, #<span className="font-bold">100</span>, requires <span className="font-bold">1 trillion</span> Fenrir tokens. These tokens aren't spent during minting; they're simply a requirement.
                     </p>
                   </CardDescription>}
                   {objectivesVisible &&
-                    <div className='grid gap-4 grid-cols-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10 items-center'>
+                    <div className='grid items-center grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                       <div className='relative'>
-                        <Image alt='Fenrir, Corgi of Ragnarok' src={fenrirIcon} className='border-white rounded-full border w-full z-30' />
-                        <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>10B</div>
+                        <Image alt='Fenrir, Corgi of Ragnarok' src={fenrirIcon} className='z-30 w-full border border-white rounded-full' />
+                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>10B</div>
                       </div>
-                      <div className='text-5xl text-center ml-1'>✕</div>
+                      <div className='ml-1 text-5xl text-center'>✕</div>
                       <div className='relative'>
-                        <Image alt='Fenrir' src={odinsRaven} className='border-white rounded-full border w-full z-30' />
-                        <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>ID#</div>
+                        <Image alt='Fenrir' src={odinsRaven} className='z-30 w-full border border-white rounded-full' />
+                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>ID#</div>
                       </div>
                     </div>}
                 </div>
               </div>
             </CardContent>
 
-            <CardFooter className="p-4 flex justify-between z-20">
+            <CardFooter className="z-20 flex justify-between p-4">
               <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
 
               {descriptionVisible && <div className='flex items-center space-x-1'>
@@ -172,7 +172,7 @@ export default function OdinsRaven({ data }: Props) {
               alt={'quest-background-image'}
               className={cn("object-cover", "sm:aspect-[1/2]", 'aspect-[1/3]', 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
             />
-            <div className='absolute inset-0 bg-gradient-to-b from-white to-black opacity-10 z-0 pointer-events-none' />
+            <div className='absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10' />
           </Card>
 
 
