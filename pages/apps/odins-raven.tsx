@@ -189,22 +189,15 @@ type Props = {
 };
 
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getStaticProps: GetStaticProps<Props> = () => {
 
   try {
-    const holder = await getTitleBeltHolder()
-    const balance = await getTitleBeltHoldeBalance()
-    const bns = await getNameFromAddress(holder.value)
 
     return {
       props: {
-        data: {
-          titleBeltHolder: holder.value,
-          bns: bns.names[0],
-          woooRecord: balance.value
-        }
+        data: {}
       },
-      revalidate: 60
+      revalidate: 6000
     };
 
   } catch (error) {
