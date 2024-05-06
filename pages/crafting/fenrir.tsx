@@ -171,6 +171,7 @@ export default function Fenrir({ data }: Props) {
               src={fenrir}
               width={800}
               height={1600}
+              quality={10}
               alt={'quest-background-image'}
               className={cn("object-cover", "sm:aspect-[1/2]", 'aspect-[1/3]', 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
             />
