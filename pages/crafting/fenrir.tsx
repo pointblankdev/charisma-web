@@ -111,7 +111,7 @@ export default function Fenrir({ data }: Props) {
             <CardContent className='z-20 p-0'>
               <div className='z-30 p-4'>
                 <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle>
-                <p className='z-30 text-base h-[300px]'>
+                <p className='z-30 text-base min-h-[300px]'>
                   {descriptionVisible && <Typewriter
                     options={{
                       delay: 25,

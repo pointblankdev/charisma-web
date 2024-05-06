@@ -113,7 +113,7 @@ export default function OdinsRaven({ data }: Props) {
             <CardContent className='z-20 p-0'>
               <div className='z-30 p-4'>
                 <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle>
-                <p className='text-base z-30 h-[330px]'>
+                <p className='text-base z-30 min-h-[330px]'>
                   {descriptionVisible && <Typewriter
                     options={{
                       delay: 25,
