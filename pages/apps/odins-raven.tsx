@@ -16,7 +16,7 @@ import MintRaven from '@components/mint/raven';
 import { Button } from '@components/ui/button';
 import { getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import charismaToken from '@public/charisma.png'
 import Link from 'next/link';
@@ -27,6 +27,8 @@ import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
 import SalvageFenrir from '@components/salvage/salvage-fenrir';
 import fenrirIcon from '@public/fenrir-icon-2.png'
+import bolt from '@public/bolt.gif'
+import raven from '@public/raven-of-odin.png'
 
 export default function OdinsRaven({ data }: Props) {
   const meta = {
@@ -41,7 +43,7 @@ export default function OdinsRaven({ data }: Props) {
   const [objectivesVisible, setObjectivesVisible] = useState(false)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     try {
       setDescriptionVisible(true)
 
@@ -65,20 +67,16 @@ export default function OdinsRaven({ data }: Props) {
 
   return (
     <Page meta={meta} fullViewport>
-      <div className="absolute inset-0 z-0">
-        <Image
-          src="/thunder.gif"
-          alt="thunder-background-image"
-          layout="fill"
-          objectFit="cover"
-          className='blur-[1002px] grayscale-[0.9]'
-        />
-        {/* <div className="absolute inset-0 bg-black opacity-[0.8]"></div> */}
-      </div>
+      <Image
+        src={bolt}
+        alt="bolt-background-image"
+        layout="fill"
+        objectFit="cover"
+        priority
+      />
       <SkipNavContent />
       <Layout >
-        <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
-
+        <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
           <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl'>
             <CardHeader className='p-4 z-20'>
               <div className='flex justify-between items-center'>
@@ -154,21 +152,21 @@ export default function OdinsRaven({ data }: Props) {
             <CardFooter className="p-4 flex justify-between z-20">
               <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
 
-              <div className='flex items-center space-x-1'>
-                {descriptionVisible && <TooltipProvider>
+              {descriptionVisible && <div className='flex items-center space-x-1'>
+                <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger><MintRaven /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                       This mint is free, granted you possess the necessary amount of Fenrir tokens.
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>}
-              </div>
+                </TooltipProvider>
+              </div>}
 
 
             </CardFooter>
             <Image
-              src={'/raven-of-odin.png'}
+              src={raven}
               width={800}
               height={1600}
               alt={'quest-background-image'}
@@ -180,7 +178,7 @@ export default function OdinsRaven({ data }: Props) {
 
 
 
-        </div>
+        </motion.div>
       </Layout>
     </Page>
   );

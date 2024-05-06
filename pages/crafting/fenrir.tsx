@@ -16,7 +16,7 @@ import CraftFenrir from '@components/craft/fenrir';
 import { Button } from '@components/ui/button';
 import { getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
-import { useEffect, useState } from 'react';
+import { useEffect, useLayoutEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import charismaToken from '@public/charisma.png'
 import Link from 'next/link';
@@ -26,6 +26,8 @@ import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import fenrirIcon from '@public/fenrir-icon-2.png'
 import SalvageFenrir from '@components/salvage/salvage-fenrir';
+import norse from '@public/norse.gif'
+import fenrir from '@public/fenrir-12.png'
 
 export default function Fenrir({ data }: Props) {
   const meta = {
@@ -37,7 +39,7 @@ export default function Fenrir({ data }: Props) {
   const [objectivesVisible, setObjectivesVisible] = useState(false)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
 
-  useEffect(() => {
+  useLayoutEffect(() => {
     try {
       setDescriptionVisible(true)
 
@@ -59,11 +61,19 @@ export default function Fenrir({ data }: Props) {
 
   return (
     <Page meta={meta} fullViewport>
+      <Image
+        src={norse}
+        alt="norse-background-image"
+        layout="fill"
+        objectFit="cover"
+        className='grayscale-[0.7]'
+        priority
+      />
       <SkipNavContent />
       <Layout>
-        <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
+        <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
 
-          <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl'>
+          <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl'>
             <CardHeader className='p-4 z-20'>
               <div className='flex justify-between items-center'>
                 <CardTitle className='text-xl font-semibold z-30'>{'Fenrir, Corgi of Ragnarok'}</CardTitle>
@@ -112,7 +122,7 @@ export default function Fenrir({ data }: Props) {
                     }}
                   />}
                 </p>
-                <div className='z-20 mt-12 sm:mt-72 min-h-[122px]'>
+                <div className='z-20 mt-12 sm:mt-18 md:mt-24 lg:mt-36 xl:mt-64 min-h-[122px]'>
                   {objectivesVisible && <motion.div initial="hidden" animate="visible" variants={fadeIn} className='text-xl font-semibold mt-4 z-30'>Requirements</motion.div>}
                   {objectivesVisible && <CardDescription className='text-sm font-fine text-foreground mb-4 z-30'>These tokens will be liquid staked to craft Fenrir tokens:</CardDescription>}
                   {objectivesVisible &&
@@ -133,31 +143,31 @@ export default function Fenrir({ data }: Props) {
             <CardFooter className="p-4 flex justify-between z-20">
               <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
 
-              <div className='flex items-center space-x-1'>
-                {descriptionVisible && <TooltipProvider>
+              {descriptionVisible && <div className='flex items-center space-x-1'>
+                <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger><CraftFenrir amount={10000000000} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                       Crafting Fenrir requires 10k sWELSH and 10k sODIN.
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>}
+                </TooltipProvider>
 
 
-                {descriptionVisible && <TooltipProvider>
+                <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger><SalvageFenrir amount={10000000000} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                       Salvaging Fenrir returns 10k sWELSH and 10k sODIN back to you.
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>}
-              </div>
+                </TooltipProvider>
+              </div>}
 
 
             </CardFooter>
             <Image
-              src={'/fenrir-12.png'}
+              src={fenrir}
               width={800}
               height={1600}
               alt={'quest-background-image'}
@@ -169,7 +179,7 @@ export default function Fenrir({ data }: Props) {
 
 
 
-        </div>
+        </motion.div>
       </Layout>
     </Page>
   );
