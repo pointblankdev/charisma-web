@@ -28,6 +28,10 @@ export const NAVIGATION = [
     route: '/faucet'
   },
   {
+    name: 'Swap',
+    route: '/swap'
+  },
+  {
     name: 'Liquid Staking',
     route: '/liquid-staking'
   },
