@@ -94,7 +94,7 @@ export default function Woo({ data }: Props) {
                 <div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                   <div className='relative'>
                     <Image alt='Woo' src={wooIcon} quality={10} className='z-30 w-full border border-white rounded-full' />
-                    <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>10B</div>
+                    <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>100M</div>
                   </div>
 
                   <TooltipProvider>
@@ -140,11 +140,11 @@ export default function Woo({ data }: Props) {
                     <div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                       <div className='relative'>
                         <Image alt='Liquid Staked Welshcorgicoin' src={liquidStakedWelsh} className='z-30 w-full border border-white rounded-full' />
-                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>10K</div>
+                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>25K</div>
                       </div>
                       <div className='relative'>
                         <Image alt='Liquid Staked Roo' src={liquidStakedRoo} className='z-30 w-full border border-white rounded-full' />
-                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground min-w-[24px] text-center'>42</div>
+                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground min-w-[24px] text-center'>100</div>
                       </div>
                     </div>}
                 </div>
@@ -157,18 +157,18 @@ export default function Woo({ data }: Props) {
               {descriptionVisible && <div className='flex items-center space-x-1'>
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger><CraftWoo amount={10000000000} /></TooltipTrigger>
+                    <TooltipTrigger><CraftWoo amount={25000000000} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Crafting Woo requires 10k sWELSH and 42 sROO.
+                      Crafting Woo requires 25k sWELSH and 100 sROO.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
 
                 <TooltipProvider>
                   <Tooltip>
-                    <TooltipTrigger><SalvageWoo amount={42000000} /></TooltipTrigger>
+                    <TooltipTrigger><SalvageWoo amount={100000000} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Salvaging Woo returns 10k sWELSH and 42 sROO back to you.
+                      Salvaging Woo returns 25k sWELSH and 100 sROO back to you.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
