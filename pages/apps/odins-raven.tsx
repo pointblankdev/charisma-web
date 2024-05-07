@@ -46,6 +46,7 @@ export default function OdinsRaven({ data }: Props) {
 
   const handleDescriptionClick = () => {
     setSkipAnimation(true);
+    setObjectivesVisible(true)
   };
 
   useLayoutEffect(() => {
@@ -119,21 +120,21 @@ export default function OdinsRaven({ data }: Props) {
               <div className='z-30 p-4'>
                 <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle>
                 <div className='text-base z-30 min-h-[330px]' onClick={handleDescriptionClick}>
-                {!skipAnimation && descriptionVisible && (
-                  <Typewriter
-                    options={{
-                      delay: 25,
-                    }}
-                    onInit={(typewriter) => {
-                      typewriter.pauseFor(1500);
-                      description?.forEach((s: string) => typewriter.typeString(s).pauseFor(1000));
-                      
-                      typewriter.start().callFunction(() => setObjectivesVisible(true));
-                    }}
-                  />
-                )}
-                {skipAnimation && descriptionVisible && description?.map((s: string, index: number) => <p key={index}>{s}</p>)}
-              </div>
+                  {!skipAnimation && descriptionVisible && (
+                    <Typewriter
+                      options={{
+                        delay: 25,
+                      }}
+                      onInit={(typewriter) => {
+                        typewriter.pauseFor(1500);
+                        description?.forEach((s: string) => typewriter.typeString(s).pauseFor(1000));
+
+                        typewriter.start().callFunction(() => setObjectivesVisible(true));
+                      }}
+                    />
+                  )}
+                  {skipAnimation && descriptionVisible && description?.map((s: string, index: number) => <p key={index}>{s}</p>)}
+                </div>
                 <div className='z-20 min-h-[220px]'>
                   {objectivesVisible && <div className='z-30 text-xl font-semibold'>Requirements</div>}
                   {objectivesVisible && <CardDescription className='z-30 mb-6 text-sm font-fine text-foreground'>

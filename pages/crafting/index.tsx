@@ -19,13 +19,11 @@ import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
-import { useRouter } from 'next/navigation';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import { getFenrirBalance, getFenrirTotalSupply, getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
 import millify from 'millify';
-import { set } from 'lodash';
 
 type Props = {
   apps: any[];
@@ -71,6 +69,25 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/odin', img: liquidStakedOdin },
       ]
+    },
+    {
+      guild: {
+        logo: {
+          url: '/woo-icon.png'
+        }
+      },
+      title: `Roo Flair's Bizarre Adventure`,
+      ticker: 'WOO',
+      subtitle: 'The fight to save the Spirit of Bitcoin',
+      cardImage: {
+        url: '/woo-1.png'
+      },
+      slug: '/crafting/woo',
+      wip: false,
+      apps: [
+        { slug: '/stake/welsh', img: liquidStakedWelsh },
+        { slug: '/stake/roo', img: liquidStakedRoo },
+      ]
     }
   ]
 
@@ -99,6 +116,7 @@ export default function Crafting({ apps }: Props) {
   const [welshv2ExchangeRate, setWelshv2ExchangeRate] = useState(1)
   const [odinExchangeRate, setOdinExchangeRate] = useState(1)
   const [rooExchangeRate, setRooExchangeRate] = useState(1)
+  const [roov2ExchangeRate, setRoov2ExchangeRate] = useState(1)
 
   const [welshBalance, setWelshBalance] = useState(0)
   const [odinBalance, setOdinBalance] = useState(0)
@@ -132,6 +150,9 @@ export default function Crafting({ apps }: Props) {
       getStakedTokenExchangeRate("liquid-staked-roo").then((rate) => {
         setRooExchangeRate(rate.value / 1000000)
       })
+      getStakedTokenExchangeRate("liquid-staked-roo-v2").then((rate) => {
+        setRoov2ExchangeRate(rate.value / 1000000)
+      })
       getFenrirBalance("liquid-staked-welsh-v2").then((amount) => {
         setWelshBalance(Number(amount.value.value))
       })
@@ -150,9 +171,11 @@ export default function Crafting({ apps }: Props) {
 
   const woooValue = millify((100 * welshPrice * welshExchangeRate) + (0.42 * rooPrice * rooExchangeRate), { precision: 4 })
   const fenrirValue = millify((welshPrice * welshv2ExchangeRate * (welshBalance / fenrirTotalSupply)) + (odinPrice * odinExchangeRate * (odinBalance / fenrirTotalSupply)), { precision: 4 })
+  const wooValue = millify((100 * welshPrice * welshv2ExchangeRate) + (0.42 * rooPrice * roov2ExchangeRate), { precision: 4 })
 
   apps[0].value = woooValue
   apps[1].value = fenrirValue
+  apps[2].value = wooValue
 
   return (
     <Page meta={meta} fullViewport>
