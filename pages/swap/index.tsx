@@ -92,7 +92,7 @@ export default function Fenrir({ data }: Props) {
                         </CardContent>
 
                         <CardFooter className="z-20 flex justify-between p-4 mt-36">
-                            <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
+                            <div></div>
                             <SwapStxForFenrir amount={Number(tokenAmount)} />
                         </CardFooter>
                         <Image
