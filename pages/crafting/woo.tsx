@@ -32,7 +32,7 @@ export default function Woo({ data }: Props) {
   const meta = {
     title: `Charisma | Roo Flair's Bizarre Adventure`,
     description: META_DESCRIPTION,
-    image: '/fenrir-21.png'
+    image: '/woo-21.png'
   };
 
   const [objectivesVisible, setObjectivesVisible] = useState(false)
