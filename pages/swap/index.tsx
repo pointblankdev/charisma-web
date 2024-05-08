@@ -51,9 +51,9 @@ export default function Swap({ data }: Props) {
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
+                <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl">
 
-                    <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl'>
+                    <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl'>
                         <CardHeader className='z-20 p-4'>
                             <div className='flex items-center justify-between'>
                                 <CardTitle className='z-30 text-xl font-semibold'>Swap Tokens</CardTitle>
@@ -63,9 +63,9 @@ export default function Swap({ data }: Props) {
                         <CardContent className='z-20 p-4'>
 
                             <div className='relative'>
-                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-2xl text-right absolute pr-72" />
-                                <div className='flex space-x-2 items-center absolute w-[17rem] right-0 top-0 h-20'>
-                                    <Image src={stxIcon} alt='Fenrir Token' className='z-30 w-8 h-8 border border-white rounded-full' />
+                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-2xl text-right absolute pr-[21rem]" />
+                                <div className='flex space-x-2 items-center absolute w-[20.5rem] right-0 top-0 h-20'>
+                                    <Image src={stxIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
                                     <div className=''>
                                         <div className='text-xl leading-tight'>STX</div>
                                         <div className='text-xs -mt-2'>Stacks Gas Token</div>
@@ -76,12 +76,45 @@ export default function Swap({ data }: Props) {
                             <div className='relative mt-28 mb-6 text-5xl items-center flex pb-4 justify-center w-full'>↯</div>
 
                             <div className='relative'>
-                                <Input value={"~" + millify(Number(tokenAmount) * 100)} placeholder="Estimated Amount" className="h-20 mb-2 text-2xl text-right absolute pr-72" />
-                                <div className='flex space-x-2 items-center absolute w-[17rem] right-0 top-0 h-20'>
-                                    <Image src={fenrirIcon} alt='Fenrir Token' className='z-30 w-8 h-8 border border-white rounded-full' />
+                                <Input value={"~" + millify(Number(tokenAmount) * 100)} placeholder="Estimated Amount" className="h-20 mb-2 text-2xl text-right absolute pr-[21rem]" />
+                                <div className='flex space-x-2 items-center absolute w-[20.5rem] right-0 top-0 h-20'>
+                                    <Image src={fenrirIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
                                     <div className=''>
                                         <div className='text-xl leading-tight'>FENRIR</div>
-                                        <div className='text-xs -mt-2'>Auto-Deflationary 2x Rebase Token</div>
+                                        <div className='text-xs -mt-2'>Corgi of Ragnarok, Number-Go-Up Beast</div>
+                                        <div className='text-xs mt-0 flex space-x-1'>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Auto-Deflationary</div></TooltipTrigger>
+                                                    <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                        <strong>Compound Rebase Token:</strong> This token automatically burns a small percentage of each transaction, channeling these funds directly into its own rebasing pool. <br /><br />
+                                                        This mechanism continuously reduces the total supply relative to it's base token, increasing the token's value over time. <br /><br />
+                                                        The self-burning feature, coupled with the rebase pool, ensures a dynamic adjustment of the token's supply in response to transactional activity, promoting stability and encouraging long-term holding. <br /><br />
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Compound Rebase</div></TooltipTrigger>
+                                                    <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                        <strong>Compound Rebase Token:</strong> This token type leverages the rebase mechanisms of multiple underlying tokens. <br /><br />
+                                                        This advanced structure allows for synchronized adjustments in value, closely tracking the collective performance of diverse assets. <br /><br />
+                                                        It's supported by a robust ecosystem of apps and protocols, each contributing to the vitality and growth of multiple rebasing pools. <br /><br />
+                                                        This interconnected framework not only enhances potential returns but also fosters a dynamic environment for investment and financial strategy. <br /><br />
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Hybrid</div></TooltipTrigger>
+                                                    <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                        <strong>Hybrid Token Definition:</strong> A hybrid token is a type of rebase token that combines characteristics of two distinct coins. <br /><br />
+                                                        It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
+                                                        This mechanism ensures that the hybrid token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -105,9 +138,9 @@ export default function Swap({ data }: Props) {
 
 
 
-                </motion.div>
-            </Layout>
-        </Page>
+                </motion.div >
+            </Layout >
+        </Page >
     );
 }
 
