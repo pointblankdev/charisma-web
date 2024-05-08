@@ -168,7 +168,7 @@ export default function LiquidStaking({ pools }: Props) {
             <Card className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 shadow-md rounded-lg">
                 <h3 className="font-bold text-lg">Apps Overview</h3>
-                <p>Discover a variety of apps within the Charisma ecosystem, each created by the community. These apps utilize and enhance the ecosystem's liquid staking and rebase pools, adding value and expanding functionalities.</p>
+                <p>Discover a variety of apps within the Charisma ecosystem, each created by the community. These apps utilize and enhance the ecosystem's liquid staking and rebase pools, adding value and expanding utility.</p>
                 <p>From gaming and finance to NFTs and governance, these apps integrate directly with Charisma's core features, providing users with opportunities to engage, innovate, and grow their assets.</p>
                 <p>Each app each made by someone in the community to support their liquidity pool of choice. Join the Discord to learn how to make and deploy your own app here.</p>
               </div>
