@@ -47,7 +47,7 @@ const SwapStxForFenrir = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={swap}>Swap</Button>
+    <Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={swap}>Swap</Button>
   );
 };
 

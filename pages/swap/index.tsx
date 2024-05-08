@@ -63,8 +63,8 @@ export default function Swap({ data }: Props) {
                         <CardContent className='z-20 p-4'>
 
                             <div className='relative'>
-                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-2xl text-right absolute pr-[21rem]" />
-                                <div className='flex space-x-2 items-center absolute w-[20.5rem] right-0 top-0 h-20'>
+                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-2xl text-right absolute pr-[23rem]" />
+                                <div className='flex space-x-2 items-center absolute w-[22rem] right-0 top-0 h-20'>
                                     <Image src={stxIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
                                     <div className=''>
                                         <div className='text-xl leading-tight'>STX</div>
@@ -76,8 +76,8 @@ export default function Swap({ data }: Props) {
                             <div className='relative mt-28 mb-6 text-5xl items-center flex pb-4 justify-center w-full'>↯</div>
 
                             <div className='relative'>
-                                <Input value={"~" + millify(Number(tokenAmount) * 100)} placeholder="Estimated Amount" className="h-20 mb-2 text-2xl text-right absolute pr-[21rem]" />
-                                <div className='flex space-x-2 items-center absolute w-[20.5rem] right-0 top-0 h-20'>
+                                <Input value={"~" + millify(Number(tokenAmount) * 100)} placeholder="Estimated Amount" className="h-20 mb-2 text-2xl text-right absolute pr-[23rem]" />
+                                <div className='flex space-x-2 items-center absolute w-[22rem] right-0 top-0 h-20'>
                                     <Image src={fenrirIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
                                     <div className=''>
                                         <div className='text-xl leading-tight'>FENRIR</div>
@@ -106,11 +106,11 @@ export default function Swap({ data }: Props) {
                                             </TooltipProvider>
                                             <TooltipProvider>
                                                 <Tooltip>
-                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Hybrid</div></TooltipTrigger>
+                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Craftable</div></TooltipTrigger>
                                                     <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        <strong>Hybrid Token:</strong> A hybrid token is a type of rebase token that combines characteristics of two distinct coins. <br /><br />
+                                                        <strong>Craftable Token:</strong> A craftable token is a type of rebase token that combines characteristics of two distinct coins. <br /><br />
                                                         It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
-                                                        This mechanism ensures that the hybrid token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
+                                                        This mechanism ensures that the craftable token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
