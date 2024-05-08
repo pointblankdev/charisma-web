@@ -108,7 +108,7 @@ export default function Swap({ data }: Props) {
                                                 <Tooltip>
                                                     <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Craftable</div></TooltipTrigger>
                                                     <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        <strong>Craftable Token:</strong> A craftable token is a type of rebase token that combines characteristics of two distinct coins. <br /><br />
+                                                        <strong>Craftable Token:</strong> A craftable token is a type of compound token that requires one or more base tokens to create. <br /><br />
                                                         It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
                                                         This mechanism ensures that the craftable token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
                                                     </TooltipContent>
