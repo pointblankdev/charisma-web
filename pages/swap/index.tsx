@@ -22,6 +22,7 @@ import swap from '@public/quests/a2.png'
 import { Input } from '@components/ui/input';
 import SwapStxForFenrir from '@components/swap/fenrir';
 import millify from 'millify';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/swap/select';
 
 export default function Swap({ data }: Props) {
     const meta = {
@@ -31,8 +32,6 @@ export default function Swap({ data }: Props) {
     };
 
     const [amount, setAmount] = useState('');
-
-    const tokenAmount = Number(amount) * 1000000;
 
     const handleTokenAmountChange = (event: any) => {
         const { value } = event.target;
@@ -47,6 +46,19 @@ export default function Swap({ data }: Props) {
         visible: { opacity: 1 }
     };
 
+    const [sellToken, setSellToken] = useState('STX');
+    const [buyToken, setBuyToken] = useState('FENRIR');
+
+    let exchangeRate = 1
+
+    if (sellToken === 'STX' && buyToken === 'FENRIR') {
+        exchangeRate = 100000000
+    }
+
+    if (sellToken === 'FENRIR' && buyToken === 'STX') {
+        exchangeRate = 1 / 100000000
+    }
+
     return (
         <Page meta={meta} fullViewport>
             <SkipNavContent />
@@ -58,72 +70,189 @@ export default function Swap({ data }: Props) {
                             <div className='flex items-center justify-between'>
                                 <CardTitle className='z-30 text-xl font-semibold'>Swap Tokens</CardTitle>
                             </div>
-
                         </CardHeader>
                         <CardContent className='z-20 p-4'>
-
                             <div className='flex flex-col sm:relative'>
-                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-2xl text-right sm:absolute sm:pr-[23rem]" />
-                                <div className='flex space-x-2 items-center sm:absolute sm:w-[22rem] right-0 top-0 h-20'>
-                                    <Image src={stxIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
-                                    <div className=''>
-                                        <div className='text-xl leading-tight'>STX</div>
-                                        <div className='text-xs -mt-2'>Stacks Gas Token</div>
-                                    </div>
-                                </div>
+                                <Select value={sellToken} onValueChange={setSellToken}>
+                                    <SelectTrigger className="h-20 mb-2 text-2xl text-right sm:absolute sm:pl-[20rem]" >
+                                        <SelectValue placeholder='Select a token' />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="STX" className='group/token' disabled={buyToken == 'STX'}>
+                                            <div className='flex space-x-2 items-center h-20'>
+                                                <Image src={stxIcon} alt='Stacks Token' className='z-30 w-12 h-12 border border-white rounded-full' />
+                                                <div className='text-left'>
+                                                    <div className='flex items-baseline space-x-1'>
+                                                        <div className='text-xl font-medium leading-tight'>STX</div>
+                                                        <div className='text-lg font-light -mt-1 leading-normal'>Stacks Native Token</div>
+                                                    </div>
+                                                    <div className='-ml-0.5 text-sm mt-0 flex flex-wrap group-hover/token:text-white'>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Gas Token</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Gas Token:</strong> This token is used to pay for transaction fees on the Stacks blockchain. <br /><br />
+                                                                    It is consumed in the process of executing smart contracts and other operations on the network. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Stackable</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Stackable:</strong> This token can be used to participate in the Proof-of-Transfer (PoX) consensus mechanism of the Stacks blockchain. <br /><br />
+                                                                    It can be locked up or liquid staked to secure the network and earn rewards. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem value="FENRIR" className='group/token' disabled={buyToken == 'FENRIR'}>
+                                            <div className='flex space-x-2 items-center h-20'>
+                                                <Image src={fenrirIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
+                                                <div className='text-left'>
+                                                    <div className='flex items-baseline space-x-1'>
+                                                        <div className='text-xl font-medium leading-tight'>FENRIR</div>
+                                                        <div className='text-lg font-light -mt-1 leading-normal'>Corgi of Ragnarok</div>
+                                                    </div>
+                                                    <div className='-ml-0.5 text-xs mt-0 flex flex-wrap group-hover/token:text-white'>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Deflationary</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Deflationary:</strong> This token automatically burns a small percentage of each transaction, channeling these funds directly into its own rebasing pool. <br /><br />
+                                                                    This mechanism continuously reduces the total supply relative to it's base token, increasing the token's value over time. <br /><br />
+                                                                    The self-burning feature, coupled with the rebase pool, ensures a dynamic adjustment of the token's supply in response to transactional activity, promoting stability and encouraging long-term holding. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Compound Rebase</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Compound Rebase:</strong> This token type leverages the rebase mechanisms of multiple underlying tokens. <br /><br />
+                                                                    This advanced structure allows for synchronized adjustments in value, closely tracking the collective performance of diverse assets. <br /><br />
+                                                                    It's supported by a robust ecosystem of apps and protocols, each contributing to the vitality and growth of multiple rebasing pools. <br /><br />
+                                                                    This interconnected framework not only enhances potential returns but also fosters a dynamic environment for investment and financial strategy. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Craftable</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Craftable Token:</strong> A craftable token is a type of compound token that requires one or more base tokens to create. <br /><br />
+                                                                    It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
+                                                                    This mechanism ensures that the craftable token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter an amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
                             </div>
 
-                            <div className='relative mt-0 sm:mt-28 mb-6 text-5xl items-center flex pb-4 justify-center w-full'>↯</div>
+                            <div className='relative mt-0 sm:mt-28 mb-6 text-5xl items-center flex pb-4 justify-center w-full' >
+                                <div className='cursor-pointer select-none hover:text-accent/80' onClick={() => { setBuyToken(sellToken);; setSellToken(buyToken) }}>↯</div>
+                            </div>
 
                             <div className='flex flex-col sm:relative'>
-                                <Input value={"~" + millify(Number(tokenAmount) * 100)} placeholder="Estimated Amount" className="h-20 mb-2 text-2xl text-right sm:absolute sm:pr-[23rem]" />
-                                <div className='flex space-x-2 items-center sm:absolute sm:w-[22rem] right-0 top-0 h-20'>
-                                    <Image src={fenrirIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
-                                    <div className=''>
-                                        <div className='text-xl leading-tight'>FENRIR</div>
-                                        <div className='text-xs -mt-2'>Corgi of Ragnarok, Number-Go-Up Beast</div>
-                                        <div className='text-xs mt-0 flex flex-wrap'>
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1 m-1'>Auto-Deflationary</div></TooltipTrigger>
-                                                    <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        <strong>Auto-Deflationary:</strong> This token automatically burns a small percentage of each transaction, channeling these funds directly into its own rebasing pool. <br /><br />
-                                                        This mechanism continuously reduces the total supply relative to it's base token, increasing the token's value over time. <br /><br />
-                                                        The self-burning feature, coupled with the rebase pool, ensures a dynamic adjustment of the token's supply in response to transactional activity, promoting stability and encouraging long-term holding. <br /><br />
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1 m-1'>Compound Rebase</div></TooltipTrigger>
-                                                    <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        <strong>Compound Rebase:</strong> This token type leverages the rebase mechanisms of multiple underlying tokens. <br /><br />
-                                                        This advanced structure allows for synchronized adjustments in value, closely tracking the collective performance of diverse assets. <br /><br />
-                                                        It's supported by a robust ecosystem of apps and protocols, each contributing to the vitality and growth of multiple rebasing pools. <br /><br />
-                                                        This interconnected framework not only enhances potential returns but also fosters a dynamic environment for investment and financial strategy. <br /><br />
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                            <TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1 m-1'>Craftable</div></TooltipTrigger>
-                                                    <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        <strong>Craftable Token:</strong> A craftable token is a type of compound token that requires one or more base tokens to create. <br /><br />
-                                                        It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
-                                                        This mechanism ensures that the craftable token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>
-                                        </div>
-                                    </div>
-                                </div>
+                                <Select value={buyToken} onValueChange={setBuyToken}>
+                                    <SelectTrigger className="h-20 mb-2 text-2xl text-right sm:absolute sm:pl-[20rem]" >
+                                        <SelectValue placeholder='Select a token' />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        <SelectItem value="STX" className='group/token' disabled={sellToken == 'STX'}>
+                                            <div className='flex space-x-2 items-center h-20'>
+                                                <Image src={stxIcon} alt='Stacks Token' className='z-30 w-12 h-12 border border-white rounded-full' />
+                                                <div className='text-left'>
+                                                    <div className='flex items-baseline space-x-1'>
+                                                        <div className='text-xl font-medium leading-tight'>STX</div>
+                                                        <div className='text-lg font-light -mt-1 leading-normal'>Stacks Native Token</div>
+                                                    </div>
+                                                    <div className='-ml-0.5 text-sm mt-0 flex flex-wrap group-hover/token:text-white'>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Gas Token</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Gas Token:</strong> This token is used to pay for transaction fees on the Stacks blockchain. <br /><br />
+                                                                    It is consumed in the process of executing smart contracts and other operations on the network. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Stackable</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Stackable:</strong> This token can be used to participate in the Proof-of-Transfer (PoX) consensus mechanism of the Stacks blockchain. <br /><br />
+                                                                    It can be locked up or liquid staked to secure the network and earn rewards. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </SelectItem>
+                                        <SelectItem value="FENRIR" className='group/token' disabled={sellToken == 'FENRIR'}>
+                                            <div className='flex space-x-2 items-center h-20'>
+                                                <Image src={fenrirIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
+                                                <div className='text-left'>
+                                                    <div className='flex items-baseline space-x-1'>
+                                                        <div className='text-xl font-medium leading-tight'>FENRIR</div>
+                                                        <div className='text-lg font-light -mt-1 leading-normal'>Corgi of Ragnarok</div>
+                                                    </div>
+                                                    <div className='-ml-0.5 text-xs mt-0 flex flex-wrap group-hover/token:text-white'>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Deflationary</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Deflationary:</strong> This token automatically burns a small percentage of each transaction, channeling these funds directly into its own rebasing pool. <br /><br />
+                                                                    This mechanism continuously reduces the total supply relative to it's base token, increasing the token's value over time. <br /><br />
+                                                                    The self-burning feature, coupled with the rebase pool, ensures a dynamic adjustment of the token's supply in response to transactional activity, promoting stability and encouraging long-term holding. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Compound Rebase</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Compound Rebase:</strong> This token type leverages the rebase mechanisms of multiple underlying tokens. <br /><br />
+                                                                    This advanced structure allows for synchronized adjustments in value, closely tracking the collective performance of diverse assets. <br /><br />
+                                                                    It's supported by a robust ecosystem of apps and protocols, each contributing to the vitality and growth of multiple rebasing pools. <br /><br />
+                                                                    This interconnected framework not only enhances potential returns but also fosters a dynamic environment for investment and financial strategy. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                        <TooltipProvider>
+                                                            <Tooltip>
+                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Craftable</div></TooltipTrigger>
+                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                                    <strong>Craftable Token:</strong> A craftable token is a type of compound token that requires one or more base tokens to create. <br /><br />
+                                                                    It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
+                                                                    This mechanism ensures that the craftable token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
+                                                                </TooltipContent>
+                                                            </Tooltip>
+                                                        </TooltipProvider>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </SelectItem>
+                                    </SelectContent>
+                                </Select>
+                                <Input value={"~" + millify(Number(amount) * exchangeRate)} placeholder="Estimated Amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
                             </div>
 
                         </CardContent>
 
                         <CardFooter className="z-20 flex justify-between p-4 mt-36">
                             <div></div>
-                            <SwapStxForFenrir amount={Number(tokenAmount)} />
+                            <SwapStxForFenrir amount={Number(amount)} />
                         </CardFooter>
                         <Image
                             src={swap}
