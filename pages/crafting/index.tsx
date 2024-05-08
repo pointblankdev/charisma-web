@@ -182,7 +182,17 @@ export default function Crafting({ apps }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
-          <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+          <div className='grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
+            <Card className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
+              <div className="relative flex flex-col items-start text-md p-4 space-y-4 shadow-md rounded-lg">
+                <h3 className="font-bold text-lg">Crafting Overview</h3>
+                <p>There are a number of "recipes" on the crafting page which allow you to combine your liquid staked assets into new tokens that have unique and powerful properties.</p>
+                <p>Here are some of the key terms to know:</p>
+                <p><strong>Compound Token:</strong> A rebase token which base token(s) are also rebase tokens.</p>
+                <p><strong>Crafting:</strong> The process through which compound tokens are created by liquid staking two base tokens.</p>
+                <p><strong>Salvaging:</strong> Involves the breakdown of a compound token back into its original base assets.</p>
+              </div>
+            </Card>
             {apps.map((pool) => {
               return (
                 <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60 pointer-events-none animate-pulse')}>
