@@ -23,6 +23,7 @@ import { useRouter } from 'next/navigation';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
+import charisma from '@public/charisma.png'
 import raven from '@public/raven-of-odin.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
 
@@ -33,6 +34,23 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = () => {
 
   const pools = [
+    {
+      guild: {
+        logo: {
+          url: '/token-faucet.png'
+        }
+      },
+      title: 'The Charisma Faucet',
+      subtitle: 'Collect free Charisma tokens',
+      cardImage: {
+        url: '/token-faucet-5.png'
+      },
+      slug: 'faucet',
+      wip: false,
+      apps: [
+        { slug: '/faucet', img: charisma },
+      ]
+    },
     {
       guild: {
         logo: {

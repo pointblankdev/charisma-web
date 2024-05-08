@@ -12,11 +12,9 @@ import {
     TooltipTrigger,
 } from "@components/ui/tooltip"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
-import { Button } from '@components/ui/button';
 import { GetStaticProps } from 'next';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { cn } from '@lib/utils';
-import Link from 'next/link';
 import { motion } from "framer-motion"
 import fenrirIcon from '@public/fenrir-icon-2.png'
 import stxIcon from '@public/stacks-stx-logo.png'
@@ -25,9 +23,9 @@ import { Input } from '@components/ui/input';
 import SwapStxForFenrir from '@components/swap/fenrir';
 import millify from 'millify';
 
-export default function Fenrir({ data }: Props) {
+export default function Swap({ data }: Props) {
     const meta = {
-        title: 'Charisma | Fenrir, Corgi of Ragnarok',
+        title: 'Charisma | Swap Tokens',
         description: META_DESCRIPTION,
         image: '/fenrir-21.png'
     };
@@ -49,7 +47,6 @@ export default function Fenrir({ data }: Props) {
         visible: { opacity: 1 }
     };
 
-    console.log(tokenAmount)
     return (
         <Page meta={meta} fullViewport>
             <SkipNavContent />

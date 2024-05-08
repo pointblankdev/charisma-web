@@ -24,8 +24,8 @@ export const NAVIGATION = [
   //   route: '/quests'
   // },
   {
-    name: 'Faucet',
-    route: '/faucet'
+    name: 'Apps',
+    route: '/apps'
   },
   {
     name: 'Swap',
@@ -38,10 +38,6 @@ export const NAVIGATION = [
   {
     name: 'Crafting',
     route: '/crafting'
-  },
-  {
-    name: 'MemeFi Apps',
-    route: '/apps'
   },
   // {
   //   name: 'Tokenomics',

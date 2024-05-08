@@ -19,6 +19,7 @@ const SwapStxForFenrir = ({ amount }: { amount: number }) => {
 
   const tokens = Number(amount)
   const estimatedTokens = Number(amount) * 100
+  console.log(tokens)
 
   function swap() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet
@@ -26,9 +27,9 @@ const SwapStxForFenrir = ({ amount }: { amount: number }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "ssff-test-1",
+      contractName: "swap-wrapper-v0",
       functionName: "swap-stx-for-fenrir",
-      functionArgs: [uintCV(tokens), uintCV(estimatedTokens), uintCV(estimatedTokens), uintCV(estimatedTokens)],
+      functionArgs: [uintCV(tokens), uintCV(estimatedTokens), uintCV(estimatedTokens), uintCV(estimatedTokens), uintCV(tokens)],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [
       ],

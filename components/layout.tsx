@@ -53,11 +53,10 @@ export default function Layout({
                 >
                   <div className='relative flex flex-col items-center justify-center'>
                     <div>{name}</div>
-                    {name === 'Faucet' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
                     {name === 'Swap' && <div className='absolute text-xxs top-4 text-[yellow] animate-pulse'>preview</div>}
                     {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
                     {name === 'Crafting' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'MemeFi Apps' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
+                    {name === 'Apps' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
                   </div>
                 </Link>
               ))}
