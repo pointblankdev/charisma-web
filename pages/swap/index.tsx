@@ -62,9 +62,9 @@ export default function Swap({ data }: Props) {
                         </CardHeader>
                         <CardContent className='z-20 p-4'>
 
-                            <div className='relative'>
-                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-2xl text-right absolute pr-[23rem]" />
-                                <div className='flex space-x-2 items-center absolute w-[22rem] right-0 top-0 h-20'>
+                            <div className='flex flex-col sm:relative'>
+                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="h-20 mb-2 text-2xl text-right sm:absolute sm:pr-[23rem]" />
+                                <div className='flex space-x-2 items-center sm:absolute sm:w-[22rem] right-0 top-0 h-20'>
                                     <Image src={stxIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
                                     <div className=''>
                                         <div className='text-xl leading-tight'>STX</div>
@@ -73,19 +73,19 @@ export default function Swap({ data }: Props) {
                                 </div>
                             </div>
 
-                            <div className='relative mt-28 mb-6 text-5xl items-center flex pb-4 justify-center w-full'>↯</div>
+                            <div className='relative mt-0 sm:mt-28 mb-6 text-5xl items-center flex pb-4 justify-center w-full'>↯</div>
 
-                            <div className='relative'>
-                                <Input value={"~" + millify(Number(tokenAmount) * 100)} placeholder="Estimated Amount" className="h-20 mb-2 text-2xl text-right absolute pr-[23rem]" />
-                                <div className='flex space-x-2 items-center absolute w-[22rem] right-0 top-0 h-20'>
+                            <div className='flex flex-col sm:relative'>
+                                <Input value={"~" + millify(Number(tokenAmount) * 100)} placeholder="Estimated Amount" className="h-20 mb-2 text-2xl text-right sm:absolute sm:pr-[23rem]" />
+                                <div className='flex space-x-2 items-center sm:absolute sm:w-[22rem] right-0 top-0 h-20'>
                                     <Image src={fenrirIcon} alt='Fenrir Token' className='z-30 w-12 h-12 border border-white rounded-full' />
                                     <div className=''>
                                         <div className='text-xl leading-tight'>FENRIR</div>
                                         <div className='text-xs -mt-2'>Corgi of Ragnarok, Number-Go-Up Beast</div>
-                                        <div className='text-xs mt-0 flex space-x-1'>
+                                        <div className='text-xs mt-0 flex flex-wrap'>
                                             <TooltipProvider>
                                                 <Tooltip>
-                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Auto-Deflationary</div></TooltipTrigger>
+                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1 m-1'>Auto-Deflationary</div></TooltipTrigger>
                                                     <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
                                                         <strong>Auto-Deflationary:</strong> This token automatically burns a small percentage of each transaction, channeling these funds directly into its own rebasing pool. <br /><br />
                                                         This mechanism continuously reduces the total supply relative to it's base token, increasing the token's value over time. <br /><br />
@@ -95,7 +95,7 @@ export default function Swap({ data }: Props) {
                                             </TooltipProvider>
                                             <TooltipProvider>
                                                 <Tooltip>
-                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Compound Rebase</div></TooltipTrigger>
+                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1 m-1'>Compound Rebase</div></TooltipTrigger>
                                                     <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
                                                         <strong>Compound Rebase:</strong> This token type leverages the rebase mechanisms of multiple underlying tokens. <br /><br />
                                                         This advanced structure allows for synchronized adjustments in value, closely tracking the collective performance of diverse assets. <br /><br />
@@ -106,7 +106,7 @@ export default function Swap({ data }: Props) {
                                             </TooltipProvider>
                                             <TooltipProvider>
                                                 <Tooltip>
-                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Craftable</div></TooltipTrigger>
+                                                    <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1 m-1'>Craftable</div></TooltipTrigger>
                                                     <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
                                                         <strong>Craftable Token:</strong> A craftable token is a type of compound token that requires one or more base tokens to create. <br /><br />
                                                         It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
