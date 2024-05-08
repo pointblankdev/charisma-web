@@ -87,7 +87,7 @@ export default function Swap({ data }: Props) {
                                                 <Tooltip>
                                                     <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Auto-Deflationary</div></TooltipTrigger>
                                                     <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        <strong>Compound Rebase Token:</strong> This token automatically burns a small percentage of each transaction, channeling these funds directly into its own rebasing pool. <br /><br />
+                                                        <strong>Auto-Deflationary:</strong> This token automatically burns a small percentage of each transaction, channeling these funds directly into its own rebasing pool. <br /><br />
                                                         This mechanism continuously reduces the total supply relative to it's base token, increasing the token's value over time. <br /><br />
                                                         The self-burning feature, coupled with the rebase pool, ensures a dynamic adjustment of the token's supply in response to transactional activity, promoting stability and encouraging long-term holding. <br /><br />
                                                     </TooltipContent>
@@ -97,7 +97,7 @@ export default function Swap({ data }: Props) {
                                                 <Tooltip>
                                                     <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Compound Rebase</div></TooltipTrigger>
                                                     <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        <strong>Compound Rebase Token:</strong> This token type leverages the rebase mechanisms of multiple underlying tokens. <br /><br />
+                                                        <strong>Compound Rebase:</strong> This token type leverages the rebase mechanisms of multiple underlying tokens. <br /><br />
                                                         This advanced structure allows for synchronized adjustments in value, closely tracking the collective performance of diverse assets. <br /><br />
                                                         It's supported by a robust ecosystem of apps and protocols, each contributing to the vitality and growth of multiple rebasing pools. <br /><br />
                                                         This interconnected framework not only enhances potential returns but also fosters a dynamic environment for investment and financial strategy. <br /><br />
@@ -108,7 +108,7 @@ export default function Swap({ data }: Props) {
                                                 <Tooltip>
                                                     <TooltipTrigger><div className='bg-primary rounded w-fit leading-tight px-1'>Hybrid</div></TooltipTrigger>
                                                     <TooltipContent className={`text-md max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        <strong>Hybrid Token Definition:</strong> A hybrid token is a type of rebase token that combines characteristics of two distinct coins. <br /><br />
+                                                        <strong>Hybrid Token:</strong> A hybrid token is a type of rebase token that combines characteristics of two distinct coins. <br /><br />
                                                         It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
                                                         This mechanism ensures that the hybrid token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
                                                     </TooltipContent>
