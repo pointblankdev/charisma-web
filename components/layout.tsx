@@ -67,6 +67,9 @@ export default function Layout({
                     {name === 'Crafting' && <TooltipContent className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
                       <div className="relative flex flex-col items-start p-4 space-y-4 shadow-md rounded-lg">
                         <h3 className="font-bold text-xl mb-2">Crafting Overview</h3>
+                        <p>There are a number of "recipes" on the crafting page which allow you to combine your liquid staked assets into new tokens that have unique and powerful properties.</p>
+                        <p>Here are some of the key terms to know:</p>
+                        <p><strong>Compound Token:</strong> A rebase token which base token(s) are also rebase tokens.</p>
                         <p><strong>Crafting:</strong> The process through which compound tokens are created by liquid staking two base tokens.</p>
                         <p><strong>Salvaging:</strong> Involves the breakdown of a compound token back into its original base assets.</p>
                       </div>
