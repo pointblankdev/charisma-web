@@ -280,7 +280,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           odinStaked: Number(odin.value.value)
         }
       },
-      revalidate: 6000
+      revalidate: 60
     };
 
   } catch (error) {
