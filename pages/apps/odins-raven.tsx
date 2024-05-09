@@ -87,7 +87,7 @@ export default function OdinsRaven({ data }: Props) {
             <CardHeader className='z-20 p-4'>
               <div className='flex items-center justify-between'>
                 <CardTitle className='z-30 text-xl font-semibold'>{title}</CardTitle>
-                <ActiveRecipeIndicator active={false} />
+                <ActiveRecipeIndicator active={true} />
               </div>
               <CardDescription className='z-30 pb-6 text-md font-fine text-foreground'>{subtitle}</CardDescription>
               <div className='z-20'>
