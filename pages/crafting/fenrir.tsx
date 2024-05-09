@@ -38,12 +38,6 @@ export default function Fenrir({ data }: Props) {
   };
 
 
-  const handleDescriptionClick = () => {
-    setSkipAnimation(true);
-    setObjectivesVisible(true)
-  };
-
-  const [skipAnimation, setSkipAnimation] = useState(false);
   const [objectivesVisible, setObjectivesVisible] = useState(false)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
   const [stakedWelshPrice, setStakedWelshPrice] = useState(0)
@@ -76,10 +70,12 @@ export default function Fenrir({ data }: Props) {
 
   const craftAmount = 10000000000
   const salvageAmount = 10000000000
-  const welshCost = craftAmount * data.welshStaked / data.totalFenrirSupply
-  const odinCost = craftAmount * data.odinStaked / data.totalFenrirSupply
+  const welshCost = Math.floor(craftAmount * data.welshStaked / data.totalFenrirSupply)
+  const odinCost = Math.floor(craftAmount * data.odinStaked / data.totalFenrirSupply)
 
   const tvl = (data.welshStaked / 1000000) * stakedWelshPrice + (data.odinStaked / 1000000) * stakedOdinPrice
+
+  console.log({ welshCost, odinCost, tvl })
 
   return (
     <Page meta={meta} fullViewport>
@@ -171,8 +167,8 @@ export default function Fenrir({ data }: Props) {
             <CardContent className='z-20 p-0'>
               <div className='z-30 p-4'>
                 <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle>
-                {!skipAnimation && descriptionVisible && <p className='z-30 text-base min-h-[300px]' onClick={handleDescriptionClick}>
-                  <Typewriter
+                <p className='z-30 text-base min-h-[300px]'>
+                  {descriptionVisible && <Typewriter
                     options={{
                       delay: 25,
                     }}
@@ -182,9 +178,8 @@ export default function Fenrir({ data }: Props) {
 
                       typewriter.start().callFunction(() => setObjectivesVisible(true))
                     }}
-                  />
-                </p>}
-                {skipAnimation && descriptionVisible && description?.map((s: string, index: number) => <p key={index}>{s}</p>)}
+                  />}
+                </p>
                 <div className='z-20 min-h-[136px]'>
                   {objectivesVisible && <div className='z-30 text-xl font-semibold'>Requirements</div>}
                   {objectivesVisible && <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>These tokens will be liquid staked to craft Fenrir tokens:</CardDescription>}
