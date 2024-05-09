@@ -306,6 +306,7 @@ export default function Swap({ data }: Props) {
                         />
                         <div className='absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10' />
                     </Card>
+                    <div className='text-center font-thin m-2 text-sm'>*Swaps use Velar liquidity pools and may be subject to slippage with high volumes</div>
 
 
 
