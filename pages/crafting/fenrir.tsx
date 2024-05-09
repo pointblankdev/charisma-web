@@ -37,6 +37,13 @@ export default function Fenrir({ data }: Props) {
     image: '/fenrir-21.png'
   };
 
+
+  const handleDescriptionClick = () => {
+    setSkipAnimation(true);
+    setObjectivesVisible(true)
+  };
+
+  const [skipAnimation, setSkipAnimation] = useState(false);
   const [objectivesVisible, setObjectivesVisible] = useState(false)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
   const [stakedWelshPrice, setStakedWelshPrice] = useState(0)
@@ -164,8 +171,8 @@ export default function Fenrir({ data }: Props) {
             <CardContent className='z-20 p-0'>
               <div className='z-30 p-4'>
                 <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle>
-                <p className='z-30 text-base min-h-[300px]'>
-                  {descriptionVisible && <Typewriter
+                {!skipAnimation && descriptionVisible && <p className='z-30 text-base min-h-[300px]' onClick={handleDescriptionClick}>
+                  <Typewriter
                     options={{
                       delay: 25,
                     }}
@@ -175,8 +182,9 @@ export default function Fenrir({ data }: Props) {
 
                       typewriter.start().callFunction(() => setObjectivesVisible(true))
                     }}
-                  />}
-                </p>
+                  />
+                </p>}
+                {skipAnimation && descriptionVisible && description?.map((s: string, index: number) => <p key={index}>{s}</p>)}
                 <div className='z-20 min-h-[136px]'>
                   {objectivesVisible && <div className='z-30 text-xl font-semibold'>Requirements</div>}
                   {objectivesVisible && <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>These tokens will be liquid staked to craft Fenrir tokens:</CardDescription>}
