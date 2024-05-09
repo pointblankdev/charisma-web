@@ -57,7 +57,7 @@ export default function Layout({
                         <div className='relative flex flex-col items-center justify-center'>
                           <div>{name}</div>
                           {name === 'Apps' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
-                          {name === 'Swap' && <div className='absolute text-xxs top-4 text-[yellow] animate-pulse'>preview</div>}
+                          {name === 'Swap' && <div className='absolute text-xxs top-4 text-[green] animate-pulse'>new</div>}
                           {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
                           {name === 'Crafting' && <div className='whitespace-nowrap absolute text-xs top-4 text-[red] animate-pulse'>FENRIR IS LIVE</div>}
                         </div>
