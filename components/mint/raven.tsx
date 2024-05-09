@@ -22,7 +22,7 @@ const MintRaven = () => {
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "odins-raven",
             functionName: "mint",
-            functionArgs: [principalCV('.fenrir-corgi-of-ragnarok')],
+            functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok')],
             postConditionMode: PostConditionMode.Deny,
             postConditions: [],
             onFinish: (data) => {
@@ -39,7 +39,7 @@ const MintRaven = () => {
     }
 
     return (
-        <Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={mint}>Mint</Button>
+        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={mint}>Mint</Button>
     );
 };
 
