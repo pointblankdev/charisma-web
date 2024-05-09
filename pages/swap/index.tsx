@@ -23,6 +23,8 @@ import { Input } from '@components/ui/input';
 import SwapStxForFenrir from '@components/swap/fenrir';
 import millify from 'millify';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/swap/select';
+import SwapFenrirForStx from '@components/swap/stx';
+import { getFenrirBalance, getFenrirTotalSupply, getTokenPrices } from '@lib/stacks-api';
 
 export default function Swap({ data }: Props) {
     const meta = {
@@ -41,6 +43,37 @@ export default function Swap({ data }: Props) {
         }
     };
 
+    const [odinWelshRatio, setOdinWelshRatio] = useState(1)
+    const [welshVelarPrice, setWelshVelarPrice] = useState(0)
+    const [odinVelarPrice, setOdinVelarPrice] = useState(0)
+    const [stxVelarPrice, setStxVelarPrice] = useState(0)
+
+    const [welshBalance, setWelshBalance] = useState(0)
+    const [odinBalance, setOdinBalance] = useState(0)
+    const [fenrirTotalSupply, setFenrirTotalSupply] = useState(0)
+
+    useEffect(() => {
+        getTokenPrices().then((response) => {
+            const odinVelarPrice = Number(response.message[16].price)
+            const welshVelarPrice = Number(response.message[14].price)
+            const stxVelarPrice = Number(response.message[0].price)
+            setOdinWelshRatio((odinVelarPrice * 10) / welshVelarPrice)
+            setOdinVelarPrice(odinVelarPrice)
+            setWelshVelarPrice(welshVelarPrice)
+            setStxVelarPrice(stxVelarPrice)
+
+            getFenrirBalance("liquid-staked-welsh-v2").then((amount) => {
+                setWelshBalance(Number(amount.value.value))
+            })
+            getFenrirBalance("liquid-staked-odin").then((amount) => {
+                setOdinBalance(Number(amount.value.value))
+            })
+            getFenrirTotalSupply().then((amount) => {
+                setFenrirTotalSupply(Number(amount.value.value))
+            })
+        })
+    }, [])
+
     const fadeIn = {
         hidden: { opacity: 0 },
         visible: { opacity: 1 }
@@ -49,15 +82,25 @@ export default function Swap({ data }: Props) {
     const [sellToken, setSellToken] = useState('STX');
     const [buyToken, setBuyToken] = useState('FENRIR');
 
-    let exchangeRate = 1
+    const amountStx = Number(amount) * 1000000
+    let amountStxForWelsh = 0
+    let amountStxForOdin = 0
+    let amountFenrir = 0
+    let amountOutEstimation = 0
 
     if (sellToken === 'STX' && buyToken === 'FENRIR') {
-        exchangeRate = 100000000
+        amountStxForWelsh = Math.floor(amountStx * (1 - odinWelshRatio))
+        amountStxForOdin = amountStx - amountStxForWelsh
+        amountFenrir = Math.floor(((amountStxForWelsh * stxVelarPrice) / welshVelarPrice) * 0.9) // 10% slippage safety
+        amountOutEstimation = amountFenrir
     }
 
     if (sellToken === 'FENRIR' && buyToken === 'STX') {
-        exchangeRate = 1 / 100000000
+        amountFenrir = Number(amount)
+        amountOutEstimation = (amountFenrir / 1000000) * ((welshVelarPrice * (welshBalance / fenrirTotalSupply)) + (odinVelarPrice * (odinBalance / fenrirTotalSupply)))
     }
+
+    console.log(amountOutEstimation)
 
     return (
         <Page meta={meta} fullViewport>
@@ -245,14 +288,14 @@ export default function Swap({ data }: Props) {
                                         </SelectItem>
                                     </SelectContent>
                                 </Select>
-                                <Input value={"~" + millify(Number(amount) * exchangeRate)} placeholder="Estimated Amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
+                                <Input value={"~" + millify(amountOutEstimation)} placeholder="Estimated Amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
                             </div>
 
                         </CardContent>
 
                         <CardFooter className="z-20 flex justify-between p-4 mt-36">
                             <div></div>
-                            <SwapStxForFenrir amount={Number(amount)} />
+                            {sellToken == 'STX' ? <SwapStxForFenrir amountStx={amountStx} amountStxForWelsh={amountStxForWelsh} amountStxForOdin={amountStxForOdin} amountFenrir={amountFenrir} /> : <SwapFenrirForStx amountFenrir={amountFenrir} />}
                         </CardFooter>
                         <Image
                             src={swap}

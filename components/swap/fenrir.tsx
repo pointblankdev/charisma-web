@@ -11,15 +11,13 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const SwapStxForFenrir = ({ amount }: { amount: number }) => {
+const SwapStxForFenrir = ({ amountStx, amountStxForWelsh, amountStxForOdin, amountFenrir }: any) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  const tokens = Number(amount)
-  const estimatedTokens = Number(amount) * 100
-  console.log(tokens)
+  console.log({ amountStx, amountStxForWelsh, amountStxForOdin, amountFenrir })
 
   function swap() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet
@@ -27,11 +25,12 @@ const SwapStxForFenrir = ({ amount }: { amount: number }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "swap-wrapper-v0",
+      contractName: "swap-wrapper-v3",
       functionName: "swap-stx-for-fenrir",
-      functionArgs: [uintCV(tokens), uintCV(estimatedTokens), uintCV(estimatedTokens), uintCV(estimatedTokens), uintCV(tokens)],
+      functionArgs: [uintCV(amountStx), uintCV(amountStxForWelsh), uintCV(amountStxForOdin), uintCV(amountFenrir)],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [
+        // Pc.principal(sender).willSendLte(amountStx).ustx()
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

@@ -59,7 +59,7 @@ export async function fetchAllClaimsParallel() {
         transactionsFetched = false; // Assume no more transactions until found
 
         results.forEach(result => {
-            if (result.status === 'fulfilled' && result.value.results.length > 0) {
+            if (result.status === 'fulfilled' && result.value.results?.length > 0) {
                 transactionsFetched = true; // Transactions found, continue loop
                 result.value.results.forEach((r: any) => {
                     uniqueWalletsLast7Days += processTransaction(r, uniqueWallets, uniqueWalletsLast7Days, oneWeekAgo);

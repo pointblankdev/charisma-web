@@ -1,7 +1,5 @@
-
 import { GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
-
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
@@ -186,10 +184,10 @@ export default function Crafting({ apps }: Props) {
             <Card className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 shadow-md rounded-lg">
                 <h3 className="font-bold text-lg">Crafting Overview</h3>
-                <p>There are a number of "recipes" on the crafting page which allow you to combine your liquid staked assets into new tokens that have unique and powerful properties.</p>
+                <p>The crafting page allow you to leverage your liquid staked assets to mint new tokens called compound tokens, that have unique and powerful properties.</p>
                 <p>Here are some of the key terms to know:</p>
-                <p><strong>Compound Token:</strong> A rebase token which base token(s) are also rebase tokens.</p>
-                <p><strong>Crafting:</strong> The process through which compound tokens are created by liquid staking two base tokens.</p>
+                <p><strong>Compound Token:</strong> A rebase token which base token(s) are also rebase tokens. It has compounding returns.</p>
+                <p><strong>Crafting:</strong> The process through which compound tokens are created by liquid staking base tokens.</p>
                 <p><strong>Salvaging:</strong> Involves the breakdown of a compound token back into its original base assets.</p>
               </div>
             </Card>

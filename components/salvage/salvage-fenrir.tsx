@@ -3,6 +3,7 @@ import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
 import {
   AnchorMode,
+  Pc,
   PostConditionMode,
   principalCV,
   uintCV,
@@ -25,11 +26,9 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
       contractName: "crafting-helper",
       functionName: "salvage",
       functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok'), uintCV(amount), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin')],
-      // postConditionMode: PostConditionMode.Deny,
       postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        // Pc.principal(sender).willSendLte(amount * 100).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
-        // Pc.principal(sender).willSendLte(amount * 0.42).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
+        // Pc.principal(sender).willSendEq(amount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok", 'fenrir'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -45,7 +44,7 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Salvage</Button>
+    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Salvage</Button>
   );
 };
 
