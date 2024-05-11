@@ -113,7 +113,7 @@ export default function StakeWelsh({ data }: Props) {
             </div>
           </Card>
 
-          <div className='animate-bounce text-center'>🔻 MIGRATE TO NEW POOL BY MAY 7th 🔻</div>
+          <div className='animate-bounce text-center'>🔻 MIGRATE TO NEW POOL 🔻</div>
 
           <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
             <p className="m-2 text-lg font-thin leading-tight sm:text-md">

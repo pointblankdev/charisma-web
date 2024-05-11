@@ -137,6 +137,23 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/odin', img: liquidStakedOdin },
       ]
+    },
+    {
+      guild: {
+        logo: {
+          url: '/green-room-icon.png'
+        }
+      },
+      title: 'The Green Room',
+      subtitle: 'Private faucet for AWC & VIPs',
+      cardImage: {
+        url: '/green-room-card.png'
+      },
+      slug: 'apps/the-green-room',
+      wip: false,
+      apps: [
+        { slug: '/faucet', img: charisma },
+      ]
     }
   ]
 

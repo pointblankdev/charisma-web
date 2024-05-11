@@ -8,15 +8,17 @@ import Image from 'next/image';
 import { Card } from '@components/ui/card';
 import titleBelt from '@public/wooo-title-belt-nft.gif'
 import { Button } from '@components/ui/button';
-import { getAccountBalance, getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
+import { blocksApi, getAccountBalance, getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { userSession } from '@components/stacks-session/connect';
 import millify from 'millify';
 import { StacksMainnet } from "@stacks/network";
-import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
+import { AnchorMode, Pc, PostConditionMode, callReadOnlyFunction, uintCV } from '@stacks/transactions';
 import { useConnect } from '@stacks/connect-react';
 import Link from 'next/link';
+import { clamp } from 'lodash';
+import ClaimFaucetButton from '@components/faucet/champion-claim';
 
 export default function Woooooo({ data }: Props) {
   const meta = {
@@ -33,6 +35,8 @@ export default function Woooooo({ data }: Props) {
   const [sRooBalance, setSRooBalance] = useState(0)
   const [woooBalance, setWoooBalance] = useState(0)
   const [woooRecord, setWoooRecord] = useState(data.woooRecord)
+
+  const [isHolder, setIsHolder] = useState(false)
 
   function challenge() {
     doContractCall({
@@ -58,6 +62,7 @@ export default function Woooooo({ data }: Props) {
   useEffect(() => {
     try {
       const profile = userSession.loadUserData().profile
+      setIsHolder(profile.stxAddress.mainnet === data.titleBeltHolder)
       getAccountBalance(profile.stxAddress.mainnet).then(balance => {
         setSWelshBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'].balance)
         setSRooBalance(balance.fungible_tokens['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo'].balance)
@@ -68,6 +73,12 @@ export default function Woooooo({ data }: Props) {
     }
 
   }, [userSession])
+
+  // faucet logic
+  const blockHeight = data.latestBlock
+  const lastClaimBlockHeight = data.lastClaim
+  const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
+  const dripAmount = data.dripAmount
 
   return (
     <Page meta={meta} fullViewport>
@@ -114,6 +125,10 @@ export default function Woooooo({ data }: Props) {
                   </div>
                 </div>
               </div>
+              <div className='m-6 text-center font-thin text-xs sm:text-sm'>
+                Only the title belt holder can claim Charisma Tokens here.
+                <ClaimFaucetButton tokensToClaim={unclaimedBlocks * dripAmount} isHolder={isHolder} />
+              </div>
               <div className='flex justify-around space-x-2'>
                 <Link href={'/crafting/wooo'}>
                   <p className="w-full text-xs leading-tight font-md sm:text-sm py-2 hover:text-secondary">
@@ -140,13 +155,40 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const holder = await getTitleBeltHolder()
     const balance = await getTitleBeltHoldeBalance()
     const bns = await getNameFromAddress(holder.value)
+    const { results } = await blocksApi.getBlockList({ limit: 1 })
+
+    const lc: any = await callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "champions-faucet",
+      functionName: "get-last-claim",
+      functionArgs: [],
+      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    })
+
+
+    const d: any = await callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "champions-faucet",
+      functionName: "get-drip-amount",
+      functionArgs: [],
+      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    })
+
+    const data = {
+      lastClaim: Number(lc.value.value),
+      dripAmount: Number(d.value.value),
+      latestBlock: results[0].height
+    }
 
     return {
       props: {
         data: {
           titleBeltHolder: holder.value,
           bns: bns.names[0],
-          woooRecord: balance.value
+          woooRecord: balance.value,
+          ...data
         }
       },
       revalidate: 60

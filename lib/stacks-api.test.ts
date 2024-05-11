@@ -1,8 +1,9 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenPrices, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenPrices, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
+import { writeFileSync } from "fs";
 
 const network = new StacksMainnet();
 
@@ -168,5 +169,12 @@ describe('Stacks API', () => {
         console.log(result)
         expect(result).toBeDefined()
 
+    }, 20000)
+
+    // should get all charisma wallets
+    it('should get all charisma wallets', async () => {
+        const result = await getAllCharismaWallets()
+        // console.log(result)
+        writeFileSync('charisma-wallets.json', JSON.stringify(result, null, 2))
     }, 20000)
 })

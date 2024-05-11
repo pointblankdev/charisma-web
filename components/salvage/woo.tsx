@@ -24,7 +24,12 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: "crafting-helper",
       functionName: "salvage",
-      functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.woo-meme-world-champion'), uintCV(amount), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo-v2')],
+      functionArgs: [
+        principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.woo-meme-world-champion'),
+        uintCV(amount),
+        principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'),
+        principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo-v2')
+      ],
       // postConditionMode: PostConditionMode.Deny,
       postConditionMode: PostConditionMode.Allow,
       postConditions: [
@@ -45,7 +50,7 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Salvage</Button>
+    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Salvage</Button>
   );
 };
 

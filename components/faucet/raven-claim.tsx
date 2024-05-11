@@ -3,32 +3,35 @@ import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
 import {
   AnchorMode,
-  Pc,
   PostConditionMode,
-  uintCV,
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
+import { newWallet } from "@lib/user-api";
 import { Button } from "@components/ui/button";
+import millify from "millify";
 
-const DepositRoo = ({ amount }: { amount: number }) => {
+const ClaimFaucetButton = ({ tokensToClaim, isHolder }: { tokensToClaim: number, isHolder: boolean }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  function deposit() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+  function claim() {
+    try {
+      const profile = userSession.loadUserData().profile
+      newWallet({ wallet: profile })
+    } catch (error) {
+      console.error(error)
+    }
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-roo-v2",
-      functionName: "deposit",
-      functionArgs: [uintCV(amount * 1000000)],
+      contractName: "raven-faucet",
+      functionName: "claim",
+      functionArgs: [],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(sender).willSendEq(amount * 1000000).ft("SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo", 'kangaroo'),
-      ],
+      postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -43,8 +46,8 @@ const DepositRoo = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>{amount} ROO</Button>
-  );
+    <Button disabled={tokensToClaim === 0} variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={claim}>Claim {millify(tokensToClaim)} tokens</Button>
+  )
 };
 
-export default DepositRoo;
+export default ClaimFaucetButton;

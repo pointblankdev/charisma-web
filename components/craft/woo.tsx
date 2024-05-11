@@ -11,7 +11,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const CraftFenrir = ({ amount }: { amount: number }) => {
+const CraftFenrir = ({ amount, welshCost, rooCost }: { amount: number, welshCost: number, rooCost: number }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -30,8 +30,8 @@ const CraftFenrir = ({ amount }: { amount: number }) => {
       functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.woo-meme-world-champion'), uintCV(tokens), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo-v2')],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendLte(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
-        Pc.principal(sender).willSendLte(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo-v2", 'liquid-staked-token'),
+        Pc.principal(sender).willSendLte(welshCost).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
+        Pc.principal(sender).willSendLte(rooCost).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo-v2", 'liquid-staked-token'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -47,7 +47,7 @@ const CraftFenrir = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Craft</Button>
+    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Craft</Button>
   );
 };
 

@@ -33,16 +33,16 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     {
       guild: {
         logo: {
-          url: '/woooooo.webp'
+          url: '/woo-icon.png'
         }
       },
-      title: 'Wooo!',
-      ticker: 'WOOO',
-      subtitle: 'sWELSH + sROO = WOOO',
+      title: `Roo Flair's Bizarre Adventure`,
+      ticker: 'WOO',
+      subtitle: 'The fight to save the Spirit of Bitcoin',
       cardImage: {
-        url: '/wooo-title-belt.gif'
+        url: '/woo-1.png'
       },
-      slug: '/crafting/wooo',
+      slug: '/crafting/woo',
       wip: false,
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
@@ -71,17 +71,17 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     {
       guild: {
         logo: {
-          url: '/woo-icon.png'
+          url: '/woooooo.webp'
         }
       },
-      title: `Roo Flair's Bizarre Adventure`,
-      ticker: 'WOO',
-      subtitle: 'The fight to save the Spirit of Bitcoin',
+      title: 'Wooo! (Deprecated)',
+      ticker: 'WOOO',
+      subtitle: 'sWELSH + sROO = WOOO',
       cardImage: {
-        url: '/woo-1.png'
+        url: '/wooo-title-belt.gif'
       },
-      slug: '/crafting/woo',
-      wip: false,
+      slug: '/crafting/wooo',
+      wip: true,
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/roo', img: liquidStakedRoo },
@@ -193,7 +193,7 @@ export default function Crafting({ apps }: Props) {
             </Card>
             {apps.map((pool) => {
               return (
-                <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60 pointer-events-none animate-pulse')}>
+                <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
                   <Link href={`${pool.slug}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">

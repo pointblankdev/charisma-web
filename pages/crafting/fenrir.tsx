@@ -14,7 +14,7 @@ import {
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
 import CraftFenrir from '@components/craft/fenrir';
 import { Button } from '@components/ui/button';
-import { getFenrirBalance, getFenrirTotalSupply, getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder, getTokenPrices } from '@lib/stacks-api';
+import { getCraftingRewards, getFenrirBalance, getFenrirTotalSupply, getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder, getTokenPrices } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { cn } from '@lib/utils';
@@ -72,6 +72,7 @@ export default function Fenrir({ data }: Props) {
   const salvageAmount = 10000000000
   const welshCost = Math.floor(craftAmount * data.welshStaked / data.totalFenrirSupply)
   const odinCost = Math.floor(craftAmount * data.odinStaked / data.totalFenrirSupply)
+  const craftingRewards = (craftAmount / 1000000) * data.craftingRewardFactor
 
   const tvl = (data.welshStaked / 1000000) * stakedWelshPrice + (data.odinStaked / 1000000) * stakedOdinPrice
 
@@ -152,7 +153,7 @@ export default function Fenrir({ data }: Props) {
                       <TooltipTrigger>{
                         <motion.div initial="hidden" animate="visible" variants={fadeIn} className='relative'>
                           <Image src={charismaToken} alt='charisma-token' className='z-30 w-full border border-white rounded-full' />
-                          <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground min-w-[24px]'>1B</div>
+                          <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground min-w-[24px]'>{millify(craftingRewards)}</div>
                         </motion.div>
                       }</TooltipTrigger>
                       <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
@@ -238,7 +239,6 @@ export default function Fenrir({ data }: Props) {
                 </TooltipProvider>
               </div>}
 
-
             </CardFooter>
             <Image
               src={fenrir}
@@ -249,9 +249,6 @@ export default function Fenrir({ data }: Props) {
             />
             <div className='absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10' />
           </Card>
-
-
-
 
         </motion.div>
       </Layout>
@@ -271,13 +268,15 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const fenrir = await getFenrirTotalSupply()
     const welsh = await getFenrirBalance('liquid-staked-welsh-v2')
     const odin = await getFenrirBalance('liquid-staked-odin')
+    const craftingRewardFactor = await getCraftingRewards('fenrir-corgi-of-ragnarok')
 
     return {
       props: {
         data: {
           totalFenrirSupply: Number(fenrir.value.value),
           welshStaked: Number(welsh.value.value),
-          odinStaked: Number(odin.value.value)
+          odinStaked: Number(odin.value.value),
+          craftingRewardFactor: Number(craftingRewardFactor.value.value)
         }
       },
       revalidate: 60

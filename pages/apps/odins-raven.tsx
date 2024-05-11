@@ -14,11 +14,10 @@ import {
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
 import MintRaven from '@components/mint/raven';
 import { Button } from '@components/ui/button';
-import { getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
+import { blocksApi, getNameFromAddress, getTitleBeltHoldeBalance, getTitleBeltHolder } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useEffect, useLayoutEffect, useState } from 'react';
 import { cn } from '@lib/utils';
-import charismaToken from '@public/charisma.png'
 import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
 import { motion } from "framer-motion"
@@ -29,6 +28,11 @@ import SalvageFenrir from '@components/salvage/salvage-fenrir';
 import fenrirIcon from '@public/fenrir-icon-2.png'
 import bolt from '@public/bolt.gif'
 import raven from '@public/raven-of-odin.png'
+import { callReadOnlyFunction } from '@stacks/transactions';
+import { StacksMainnet } from "@stacks/network";
+import { clamp } from 'lodash';
+import ClaimFaucetButton from '@components/faucet/raven-claim';
+import charismaToken from '@public/charisma.png'
 
 export default function OdinsRaven({ data }: Props) {
   const meta = {
@@ -71,6 +75,12 @@ export default function OdinsRaven({ data }: Props) {
     visible: { opacity: 1 }
   };
 
+  // faucet logic
+  const blockHeight = data.latestBlock
+  const lastClaimBlockHeight = data.lastClaim
+  const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
+  const dripAmount = data.dripAmount || 0
+
   return (
     <Page meta={meta} fullViewport>
       <Image
@@ -99,19 +109,19 @@ export default function OdinsRaven({ data }: Props) {
                     <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>NFT</div>
                   </div>
 
-                  {/* <TooltipProvider>
+                  <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>{
-                        <motion.div initial="hidden" animate="visible" variants={fadeIn} className='relative'>
+                        <motion.div initial="hidden" animate="visible" variants={fadeIn} className={cn('relative')}>
                           <Image src={charismaToken} alt='charisma-token' className='z-30 w-full border border-white rounded-full' />
-                          <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>100</div>
+                          <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground min-w-[24px]'>💧</div>
                         </motion.div>
                       }</TooltipTrigger>
                       <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                        Charisma tokens can be used to propose and vote on changes to the fees and rewards of Fenrir.
+                        Raven NFT Holders can claim Charisma tokens from a private faucet.
                       </TooltipContent>
                     </Tooltip>
-                  </TooltipProvider> */}
+                  </TooltipProvider>
 
                 </div>
               </div>
@@ -164,6 +174,14 @@ export default function OdinsRaven({ data }: Props) {
               {descriptionVisible && <div className='flex items-center space-x-1'>
                 <TooltipProvider>
                   <Tooltip>
+                    <TooltipTrigger><ClaimFaucetButton tokensToClaim={lastClaimBlockHeight * dripAmount || 0} isHolder={true} /></TooltipTrigger>
+                    <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                      Tokens are free to claim if you hold an Odin's Raven NFT.
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
                     <TooltipTrigger><MintRaven /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                       This mint is free, granted you possess the necessary amount of Fenrir tokens.
@@ -198,13 +216,38 @@ type Props = {
 };
 
 
-export const getStaticProps: GetStaticProps<Props> = () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
+    const { results } = await blocksApi.getBlockList({ limit: 1 })
+
+    const lc: any = await callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "raven-faucet",
+      functionName: "get-last-claim",
+      functionArgs: [],
+      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    })
+
+    const d: any = await callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "raven-faucet",
+      functionName: "get-drip-amount",
+      functionArgs: [],
+      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    })
+
+    const data = {
+      lastClaim: Number(lc.value.value),
+      dripAmount: Number(d.value.value),
+      latestBlock: results[0].height
+    }
 
     return {
       props: {
-        data: {}
+        data: data
       },
       revalidate: 6000
     };

@@ -586,3 +586,77 @@ export async function getFenrirTotalSupply() {
 
     return cvToJSON(response)
 }
+
+export async function getWooBalance(contract: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: contract,
+        functionName: "get-balance",
+        functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.woo-meme-world-champion')],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getWooTotalSupply() {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'woo-meme-world-champion',
+        functionName: "get-total-supply",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getAllCharismaWallets() {
+    let offset = 0;
+    const limit = 50;
+    const wallets: any[] = [];
+    const uniqueWallets: Set<string> = new Set();
+
+    while (true) {
+        const resp: any = await accountsApi.getAccountTransactions({
+            principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0',
+            limit: limit,
+            offset: offset,
+            unanchored: true
+        });
+
+        if (!resp.results || resp.results.length === 0) {
+            break; // exit the loop if there are no more results
+        }
+
+        for (const r of resp.results) {
+            if (!uniqueWallets.has(r.sender_address)) {
+                uniqueWallets.add(r.sender_address)
+                wallets.push(r.sender_address)
+            }
+        }
+
+        offset += limit; // increment the offset for the next page
+    }
+
+    return wallets;
+
+}
+
+export async function getCraftingRewards(contract: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: contract,
+        functionName: "get-craft-reward-factor",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
