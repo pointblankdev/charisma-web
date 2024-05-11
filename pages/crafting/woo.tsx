@@ -93,7 +93,7 @@ export default function Woo({ data }: Props) {
         Your browser does not support the video tag.
       </video>
 
-      <motion.div transition={{ delay: 7.5 }} initial="visible" animate="hidden" variants={fadeIn} className='absolute w-full text-sm text-center bottom-4 text-secondary'> ← Click anywhere to mute audio → </motion.div>
+      <motion.div transition={{ delay: 7.5 }} initial="visible" animate="hidden" variants={fadeIn} className='absolute w-full text-sm text-center bottom-4 text-secondary'> ← Click anywhere to unmute audio → </motion.div>
       <SkipNavContent />
       <Layout>
         <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
@@ -110,6 +110,41 @@ export default function Woo({ data }: Props) {
                 </div>
               </div>
               <CardDescription className='z-30 pb-6 text-md font-fine text-foreground'>The fight to save the Spirit of Bitcoin</CardDescription>
+
+              <div className='-ml-0.5 text-sm mt-0 flex flex-wrap pb-6'>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Deflationary</div></TooltipTrigger>
+                    <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                      <strong>Deflationary:</strong> This token automatically burns a small percentage of each transaction, channeling these funds directly into its own rebasing pool. <br /><br />
+                      This mechanism continuously reduces the total supply relative to it's base token, increasing the token's value over time. <br /><br />
+                      The self-burning feature, coupled with the rebase pool, ensures a dynamic adjustment of the token's supply in response to transactional activity, promoting stability and encouraging long-term holding. <br /><br />
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Compound Rebase</div></TooltipTrigger>
+                    <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                      <strong>Compound Rebase:</strong> This token type leverages the rebase mechanisms of multiple underlying tokens. <br /><br />
+                      This advanced structure allows for synchronized adjustments in value, closely tracking the collective performance of diverse assets. <br /><br />
+                      It's supported by a robust ecosystem of apps and protocols, each contributing to the vitality and growth of multiple rebasing pools. <br /><br />
+                      This interconnected framework not only enhances potential returns but also fosters a dynamic environment for investment and financial strategy. <br /><br />
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Craftable</div></TooltipTrigger>
+                    <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                      <strong>Craftable Token:</strong> A craftable token is a type of compound token that requires one or more base tokens to create. <br /><br />
+                      It is crafted through a rebasing process that aligns its value with both coins simultaneously, offering holders a representative share in each of the coin's pools at a fixed weight. <br /><br />
+                      This mechanism ensures that the craftable token maintains a balanced exposure to both assets, providing a unique investment opportunity that diversifies risk and potential rewards. <br /><br />
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </div>
+
               <div className='z-20'>
                 <CardTitle className='z-30 mt-2 text-xl font-semibold'>Rewards</CardTitle>
                 <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>You will recieve:</CardDescription>
