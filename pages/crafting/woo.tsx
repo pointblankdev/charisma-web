@@ -109,7 +109,7 @@ export default function Woo({ data }: Props) {
                   <ActiveRecipeIndicator active={true} />
                 </div>
               </div>
-              <CardDescription className='z-30 pb-6 text-md font-fine text-foreground'>The fight to save the Spirit of Bitcoin</CardDescription>
+              <CardDescription className='z-30 text-md font-fine text-foreground'>The fight to save the Spirit of Bitcoin</CardDescription>
 
               <div className='-ml-0.5 text-sm mt-0 flex flex-wrap pb-6'>
                 <TooltipProvider>
