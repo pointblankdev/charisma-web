@@ -51,7 +51,7 @@ export default function Woo({ data }: Props) {
 
   useLayoutEffect(() => {
     try {
-      videoRef.current.muted = false
+      // videoRef.current.muted = false
       setDescriptionVisible(true)
       getTokenPrices().then((response) => {
         setStakedWelshPrice(response.message[14].price)
@@ -88,12 +88,12 @@ export default function Woo({ data }: Props) {
     <Page meta={meta} fullViewport>
 
       <video autoPlay loop muted id='video' onClick={(e: any) => { e.target.muted = !e.target.muted }} ref={videoRef}
-        className='opacity-30 absolute inset-0 h-full w-full'>
+        className='absolute inset-0 w-full h-full opacity-30'>
         <source src={'/roundabout.mp4'} type="video/mp4" />
         Your browser does not support the video tag.
       </video>
 
-      <motion.div transition={{ delay: 7.5 }} initial="visible" animate="hidden" variants={fadeIn} className='bottom-4 w-full text-center absolute text-secondary text-sm'> ← Click anywhere to mute audio → </motion.div>
+      <motion.div transition={{ delay: 7.5 }} initial="visible" animate="hidden" variants={fadeIn} className='absolute w-full text-sm text-center bottom-4 text-secondary'> ← Click anywhere to mute audio → </motion.div>
       <SkipNavContent />
       <Layout>
         <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
