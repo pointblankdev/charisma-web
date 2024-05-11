@@ -102,7 +102,12 @@ export default function Woo({ data }: Props) {
             <CardHeader className='z-20 p-4'>
               <div className='flex items-center justify-between'>
                 <CardTitle className='z-30 text-xl font-semibold'>Roo Flair's Bizarre Adventure</CardTitle>
-                <ActiveRecipeIndicator active={true} />
+                <div className='flex space-x-4'>
+                  <div className='text-lg'>
+                    ${millify(tvl)} TVL
+                  </div>
+                  <ActiveRecipeIndicator active={true} />
+                </div>
               </div>
               <CardDescription className='z-30 pb-6 text-md font-fine text-foreground'>The fight to save the Spirit of Bitcoin</CardDescription>
               <div className='z-20'>
