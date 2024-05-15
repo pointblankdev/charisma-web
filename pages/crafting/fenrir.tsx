@@ -76,7 +76,7 @@ export default function Fenrir({ data }: Props) {
 
   const tvl = (data.welshStaked / 1000000) * stakedWelshPrice + (data.odinStaked / 1000000) * stakedOdinPrice
 
-  console.log({ welshCost, odinCost, tvl })
+  // console.log({ welshCost, odinCost, tvl })
 
   return (
     <Page meta={meta} fullViewport>

@@ -660,3 +660,8 @@ export async function getCraftingRewards(contract: string) {
 
     return cvToJSON(response)
 }
+
+export async function getContractSource({ contractAddress, contractName }: any) {
+    const proposalSourceResp = await scApi.getContractSource({ contractAddress, contractName });
+    return proposalSourceResp;
+}

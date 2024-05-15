@@ -13,6 +13,7 @@ import { GetStaticProps } from 'next';
 import greenRoom from '@public/green-room-card.png'
 import { Card } from '@components/ui/card';
 import { clamp } from 'framer-motion';
+import millify from 'millify';
 
 
 export default function TheGreenRoom({ data }: Props) {
@@ -25,6 +26,9 @@ export default function TheGreenRoom({ data }: Props) {
   const lastClaimBlockHeight = data.lastClaim
   const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
   const dripAmount = data.dripAmount
+  const claimableTokens = millify(unclaimedBlocks * dripAmount)
+
+  console.log({ blockHeight, lastClaimBlockHeight, unclaimedBlocks, dripAmount, claimableTokens })
 
   return (
     <Page meta={meta} fullViewport>
@@ -37,7 +41,7 @@ export default function TheGreenRoom({ data }: Props) {
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
                 <h1 className="text-md sm:text-2xl font-bold self-center">The Green Room </h1>
-                <div className="sm:text-lg text-xs my-1 bg-primary rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">{unclaimedBlocks * dripAmount} Tokens Unclaimed</div>
+                <div className="sm:text-lg text-xs my-1 bg-primary rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">{claimableTokens} Tokens Unclaimed</div>
               </div>
               <p className="mb-8 text-xs sm:text-sm leading-tight font-thin">
                 The Green Room is like an exclusive backstage area, reserved just for those who've been with the Charisma project from the very start and who keep supporting us every day. It's our special way of saying thanks, distributing Charisma tokens to these key supporters like VIP passes, ensuring they're recognized and rewarded for their ongoing contributions. This private setup keeps it cool and exclusive, much like the vibe of an artist's green room.
@@ -64,7 +68,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const lc: any = await callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "the-green-room",
+      contractName: "green-room",
       functionName: "get-last-claim",
       functionArgs: [],
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
@@ -74,7 +78,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const d: any = await callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "the-green-room",
+      contractName: "green-room",
       functionName: "get-drip-amount",
       functionArgs: [],
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'

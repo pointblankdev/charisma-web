@@ -27,7 +27,7 @@ const ClaimFaucetButton = ({ tokensToClaim }: { tokensToClaim: number }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "the-green-room",
+      contractName: "green-room",
       functionName: "claim",
       functionArgs: [],
       postConditionMode: PostConditionMode.Deny,
