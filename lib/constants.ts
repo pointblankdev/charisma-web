@@ -24,25 +24,29 @@ export const NAVIGATION = [
   //   route: '/quests'
   // },
   {
-    name: 'Faucet',
-    route: '/faucet'
+    name: 'Apps',
+    route: '/apps'
   },
   {
-    name: 'Liquid Staked Welsh',
-    route: '/stake'
+    name: 'Swap',
+    route: '/swap'
   },
   {
-    name: 'Wishing Well',
-    route: '/wishing-well'
+    name: 'Liquid Staking',
+    route: '/liquid-staking'
   },
   {
-    name: 'Tokenomics',
-    route: '/tokenomics'
+    name: 'Crafting',
+    route: '/crafting'
   },
-  {
-    name: 'Governance',
-    route: '/governance'
-  },
+  // {
+  //   name: 'Tokenomics',
+  //   route: '/tokenomics'
+  // },
+  // {
+  //   name: 'Governance',
+  //   route: '/governance'
+  // },
   // {
   //   name: 'Guilds',
   //   route: '/guilds'

@@ -17,6 +17,7 @@ import { Analytics } from '@vercel/analytics/react';
 import { Ysabeau_Infant } from 'next/font/google'
 import { cn } from '@lib/utils';
 import { Toaster } from "@components/ui/toaster"
+import { SpeedInsights } from "@vercel/speed-insights/next"
 
 // If loading a variable font, you don't need to specify the font weight
 const font = Ysabeau_Infant({ subsets: ['latin'] })
@@ -49,6 +50,7 @@ export default function App({ Component, pageProps }: AppProps) {
         <ResizeHandler />
         <NProgress />
         <Analytics />
+        <SpeedInsights />
       </Connect>
     </OverlayProvider>
   );

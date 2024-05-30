@@ -12,6 +12,7 @@ import Footer from './footer';
 import React from 'react';
 import { BsBookHalf, BsDiscord, BsTwitter } from 'react-icons/bs';
 import ConnectWallet from './stacks-session/connect';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 
 type Props = {
   children: React.ReactNode;
@@ -44,27 +45,42 @@ export default function Layout({
             </div>
             <div className={styles.tabs}>
               {NAVIGATION.map(({ name, route }) => (
-                <Link
-                  href={route}
-                  key={name}
-                  className={cn(styles.tab, {
-                    [styles['tab-active']]: activeRoute.startsWith(route)
-                  })}
-                >
-                  <div className='flex flex-col items-center justify-center relative'>
-                    <div>{name}</div>
-                    {name === 'Quests' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'Faucet' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'Liquid Staked Welsh' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
-                    {name === 'Wishing Well' && <div className='text-xxs absolute top-4 text-[green] animate-pulse'>new</div>}
-                  </div>
-                </Link>
+                <TooltipProvider key={name}>
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <Link
+                        href={route}
+                        className={cn(styles.tab, {
+                          [styles['tab-active']]: activeRoute.endsWith(route)
+                        })}
+                      >
+                        <div className='relative flex flex-col items-center justify-center'>
+                          <div>{name}</div>
+                          {/* {name === 'Apps' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
+                          {name === 'Swap' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
+                          {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>} */}
+                          {/* {name === 'Crafting' && <div className='whitespace-nowrap absolute text-xs top-4 text-primary animate-pulse'>FENRIR IS ALIVE</div>} */}
+                        </div>
+                      </Link>
+                    </TooltipTrigger>
+                    {name === 'Crafting' && <TooltipContent className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                      <div className="relative flex flex-col items-start p-4 space-y-4 shadow-md rounded-lg">
+                        <h3 className="font-bold text-xl mb-2">Crafting Overview</h3>
+                        <p>The crafting page allow you to leverage your liquid staked assets to mint new tokens called compound tokens, that have unique and powerful properties.</p>
+                        <p>Here are some of the key terms to know:</p>
+                        <p><strong>Compound Token:</strong> A rebase token which base token(s) are also rebase tokens. It has compounding returns.</p>
+                        <p><strong>Crafting:</strong> The process through which compound tokens are created by liquid staking base tokens.</p>
+                        <p><strong>Salvaging:</strong> Involves the breakdown of a compound token back into its original base assets.</p>
+                      </div>
+                    </TooltipContent>}
+                  </Tooltip>
+                </TooltipProvider>
               ))}
             </div>
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
-              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
-              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link>
-              {/* <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='cursor-pointer fill-gray-300 hover:fill-gray-100 hidden sm:flex' /></Link> */}
+              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link>
+              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link>
+              <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link>
               <ConnectWallet />
             </div>
           </header>

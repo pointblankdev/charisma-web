@@ -20,6 +20,7 @@ import { GetStaticProps } from 'next';
 import tokenfaucet2 from '@public/token-faucet-2.png'
 import { Card } from '@components/ui/card';
 import { clamp } from 'framer-motion';
+import millify from 'millify';
 
 
 export default function Faucet({ data }: Props) {
@@ -32,6 +33,8 @@ export default function Faucet({ data }: Props) {
   const lastClaimBlockHeight = data.lastClaim
   const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
   const dripAmount = data.dripAmount
+  const claimableTokens = millify(unclaimedBlocks * dripAmount)
+
 
   return (
     <Page meta={meta} fullViewport>
@@ -44,7 +47,7 @@ export default function Faucet({ data }: Props) {
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
                 <h1 className="text-md sm:text-2xl font-bold self-center">Charisma Token Faucet </h1>
-                <div className="sm:text-lg text-xs my-1 bg-primary rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">{unclaimedBlocks * dripAmount} Tokens Unclaimed</div>
+                <div className="sm:text-lg text-xs my-1 bg-primary rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">{claimableTokens} Tokens Unclaimed</div>
               </div>
 
               <TooltipProvider>
@@ -78,7 +81,7 @@ export default function Faucet({ data }: Props) {
                 </Tooltip>
               </TooltipProvider>
               <p className="mb-8 text-xs sm:text-sm leading-tight font-thin">
-                The Charisma Token Faucet is a contract (a piece of blockchain code) that automatically releases ("drips") Charisma tokens over time, a process similar to how a real-world faucet drips water. This process is also known as "token minting". The rate of these drips, i.e., the number of tokens released per Bitcoin block, is called the "drip amount". These tokens are used for governance and voting purposes within the Dungeon Master DAO.
+                The Charisma Token Faucet is a contract (a piece of blockchain code) that automatically releases ("drips") Charisma tokens over time, a process similar to how a real-world faucet drips water. This process is also known as "token minting". The rate of these drips, i.e., the number of tokens released per Bitcoin block, is called the "drip amount". These tokens are used for governance and voting purposes within the Charisma DAO.
               </p>
 
               <ClaimFaucetButton tokensToClaim={unclaimedBlocks * dripAmount} />

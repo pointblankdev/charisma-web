@@ -1,0 +1,15 @@
+{
+    "sip": 16,
+    "name": "Odin's Raven #18",
+    "image": "https://charisma.rocks/odins-raven/img/18.gif",
+    "attributes": [
+        {
+            "trait_type": "name",
+            "value": "Svartálfr"
+        }
+    ],
+    "properties": {
+        "collection": "Odin's Raven",
+        "total_supply": "100"
+    }
+}

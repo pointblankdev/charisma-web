@@ -33,6 +33,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const quests = await getAllQuests()
 
+  // const quests = []
+
   // loop through all quests and get rewards, activation, expiration, max completions
   for (const quest of quests) {
     const result = await getQuestRewards(quest.questid)
@@ -58,33 +60,31 @@ export default function Quests({ quests }: Props) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      const address = userSession.loadUserData().profile.stxAddress.mainnet;
+    const address = userSession.loadUserData().profile.stxAddress.mainnet;
 
-      const checkQuests = async () => {
-        // Deep clone the quests array to prevent mutations on the original data
-        const updatedQuests = JSON.parse(JSON.stringify(quests));
+    const checkQuests = async () => {
+      // Deep clone the quests array to prevent mutations on the original data
+      const updatedQuests = JSON.parse(JSON.stringify(quests));
 
-        for (const quest of updatedQuests) {
-          const response = await checkQuestComplete(address, quest.questid);
-          quest.completed = response.type === 3;
+      for (const quest of updatedQuests) {
+        const response = await checkQuestComplete(address, quest.questid);
+        quest.completed = response.type === 3;
 
-          const profile = userSession.loadUserData().profile
-          const stxRewardResponse = await checkQuestStxRewards(profile.stxAddress.mainnet, Number(quest.questid || 0))
-          if (!stxRewardResponse.success) {
-            console.warn(stxRewardResponse.value.value)
-          } else {
-            console.log(stxRewardResponse.value.value)
-            quest.rewardSTX = stxRewardResponse.value.value / 1000000
-          }
+        const profile = userSession.loadUserData().profile
+        const stxRewardResponse = await checkQuestStxRewards(profile.stxAddress.mainnet, Number(quest.questid || 0))
+        if (!stxRewardResponse.success) {
+          console.warn(stxRewardResponse.value.value)
+        } else {
+          console.log(stxRewardResponse.value.value)
+          quest.rewardSTX = stxRewardResponse.value.value / 1000000
         }
-
-        // Functional update form of setState
-        setData(() => updatedQuests);
       }
 
-      checkQuests().then(() => setLoading(false));
+      // Functional update form of setState
+      setData(() => updatedQuests);
     }
+
+    checkQuests().then(() => setLoading(false));
   }, [quests]);
 
   return (
@@ -100,20 +100,20 @@ export default function Quests({ quests }: Props) {
               return (
                 <Card key={quest.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', isCompleted && 'opacity-75 hover:opacity-90')}>
                   <Link href={`quests/${quest.slug}`} className='w-full'>
-                    <CardContent className='p-0 w-full'>
-                      <CardHeader className="z-20 absolute inset-0 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl p-2">
+                    <CardContent className='w-full p-0'>
+                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
                         <div className='flex gap-2'>
                           <div className='min-w-max'>
                             {quest.guild.logo.url ?
-                              <Image src={quest.guild.logo.url} width={40} height={40} alt='guild-logo' className='h-10 w-10 border-white border rounded-full grow' />
-                              : <div className='h-10 w-10 bg-white rounded-full border border-white' />
+                              <Image src={quest.guild.logo.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 border border-white rounded-full grow' />
+                              : <div className='w-10 h-10 bg-white border border-white rounded-full' />
                             }
                           </div>
                           <div className=''>
-                            <div className='text-sm font-semibold text-secondary leading-none'>
+                            <div className='text-sm font-semibold leading-none text-secondary'>
                               {quest.title}
                             </div>
-                            <div className='text-xs font-fine text-secondary leading-tight mt-1'>
+                            <div className='mt-1 text-xs leading-tight font-fine text-secondary'>
                               {quest.subtitle}
                             </div>
                           </div>
@@ -126,23 +126,23 @@ export default function Quests({ quests }: Props) {
                         alt='quest-featured-image'
                         className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-80', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
                       />
-                      <div className='absolute inset-0 bg-gradient-to-b from-white/50 to-transparent opacity-30 z-0' />
+                      <div className='absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30' />
                       {showCommunityRewards && <div className='absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/90 to-69% opacity-90 z-20' />}
                       <CardFooter className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all', loading && 'opacity-0')}>
                         {!isCompleted ? <div className='z-20 p-2'>
-                          <CardTitle className='text-lg font-semibold mt-2 z-30 text-white leading-none'>Rewards</CardTitle>
-                          {showCommunityRewards && <CardDescription className='text-sm font-fine text-white mb-4 z-30'>You will recieve:</CardDescription>}
-                          {showCommunityRewards ? <div className='grid gap-4 grid-cols-5 z-30'>
+                          <CardTitle className='z-30 mt-2 text-lg font-semibold leading-none text-white'>Rewards</CardTitle>
+                          {showCommunityRewards && <CardDescription className='z-30 mb-4 text-sm text-white font-fine'>You will recieve:</CardDescription>}
+                          {showCommunityRewards ? <div className='z-30 grid grid-cols-5 gap-4'>
                             <div className='relative z-30'>
-                              <Image src={charismaToken} alt='charisma-token' className='border-white rounded-full border w-full z-30' />
-                              <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{charismaRewards}</div>
+                              <Image src={charismaToken} alt='charisma-token' className='z-30 w-full border border-white rounded-full' />
+                              <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{charismaRewards}</div>
                             </div>
                             {quest.rewardSTX > 0 && <div className='relative'>
-                              <Image src={stxToken} alt='stx-token' className='border-white rounded-full border w-full z-30 ' />
-                              <div className='absolute -top-1 -right-3 text-md md:text-base lg:text-xs font-bold bg-accent text-accent-foreground rounded-full px-1'>{quest.rewardSTX}</div>
+                              <Image src={stxToken} alt='stx-token' className='z-30 w-full border border-white rounded-full ' />
+                              <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{quest.rewardSTX}</div>
                             </div>}
-                          </div> : <div className='text-sm font-fine text-white/90 z-30'>No rewards have been set for this quest yet</div>}
-                        </div> : <div className='flex items-center justify-center w-full'><div className='z-20 p-2 text-white/90 text-lg'>Quest Completed</div><div className='z-30'><FaCheck size={16} className="text-green-500" /></div></div>}
+                          </div> : <div className='z-30 text-sm font-fine text-white/90'>No rewards have been set for this quest yet</div>}
+                        </div> : <div className='flex items-center justify-center w-full'><div className='z-20 p-2 text-lg text-white/90'>Quest Completed</div><div className='z-30'><FaCheck size={16} className="text-green-500" /></div></div>}
                       </CardFooter>
                     </CardContent>
                   </Link>

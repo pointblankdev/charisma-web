@@ -1,8 +1,9 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getNameFromAddress, getProposals, getQuestRewards, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenPrices, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
+import { writeFileSync } from "fs";
 
 const network = new StacksMainnet();
 
@@ -118,5 +119,62 @@ describe('Stacks API', () => {
         console.log(result)
         expect(result).toBeDefined()
 
+    }, 20000)
+
+    // test get title belt holder
+    it('should get title belt holder', async () => {
+
+        const result = await getTitleBeltHolder()
+        console.log(result)
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // test get account assets
+    it('should get account assets', async () => {
+
+        const result = await getAccountAssets('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result)
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // test get account balance
+    it('should get account balance', async () => {
+
+        const result = await getAccountBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result.fungible_tokens)
+        // SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh
+        // SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo::liquid-staked-roo
+        // .balance
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // test get wooo title belt contract events
+    it('should get wooo title belt contract events', async () => {
+
+        const result = await getWooTitleBeltContractEvents() as any
+        const repr = result.results[0].contract_log.value.repr
+        const wooRecord = repr.split(' ')[2]
+        console.log(wooRecord)
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // should get token prices
+    it('should get token prices', async () => {
+
+        const result = await getTokenPrices()
+        console.log(result)
+        expect(result).toBeDefined()
+
+    }, 20000)
+
+    // should get all charisma wallets
+    it('should get all charisma wallets', async () => {
+        const result = await getAllCharismaWallets()
+        // console.log(result)
+        writeFileSync('charisma-wallets.json', JSON.stringify(result, null, 2))
     }, 20000)
 })

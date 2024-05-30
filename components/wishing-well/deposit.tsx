@@ -22,7 +22,7 @@ const Deposit = ({ amount }: { amount: number }) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-welsh",
+      contractName: "liquid-staked-welsh-v2",
       functionName: "deposit",
       functionArgs: [uintCV(amount * 1000000)],
       postConditionMode: PostConditionMode.Deny,
@@ -31,12 +31,6 @@ const Deposit = ({ amount }: { amount: number }) => {
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
-        (window as any)
-          .open(
-            `https://explorer.hiro.so/txid/${data.txId}?chain=mainnet`,
-            "_blank"
-          )
-          .focus();
       },
       onCancel: () => {
         console.log("onCancel:", "Transaction was canceled");

@@ -8,6 +8,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import { newWallet } from "@lib/user-api";
+import millify from "millify";
 
 const ClaimFaucetButton = ({ tokensToClaim }: { tokensToClaim: number }) => {
   const { doContractCall } = useConnect();
@@ -33,12 +34,6 @@ const ClaimFaucetButton = ({ tokensToClaim }: { tokensToClaim: number }) => {
       postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
-        (window as any)
-          .open(
-            `https://explorer.hiro.so/txid/${data.txId}?chain=mainnet`,
-            "_blank"
-          )
-          .focus();
       },
       onCancel: () => {
         console.log("onCancel:", "Transaction was canceled");
@@ -51,7 +46,7 @@ const ClaimFaucetButton = ({ tokensToClaim }: { tokensToClaim: number }) => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={claim}>Claim {tokensToClaim} CHA tokens</Button>
+    <Button disabled={tokensToClaim === 0} className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={claim}>Claim {millify(tokensToClaim)} CHA tokens</Button>
   );
 };
 

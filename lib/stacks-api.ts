@@ -12,6 +12,9 @@ const apiConfig: Configuration = new Configuration({
     // for mainnet, replace `testnet` with `mainnet`
     basePath: 'https://api.mainnet.hiro.so', // defaults to http://localhost:3999
     apiKey: process.env.STACKS_API_KEY,
+    headers: {
+        "x-hiro-api-key": String(process.env.STACKS_API_KEY)
+    }
 });
 
 const scApi = new SmartContractsApi(apiConfig);
@@ -56,7 +59,7 @@ export async function fetchAllClaimsParallel() {
         transactionsFetched = false; // Assume no more transactions until found
 
         results.forEach(result => {
-            if (result.status === 'fulfilled' && result.value.results.length > 0) {
+            if (result.status === 'fulfilled' && result.value.results?.length > 0) {
                 transactionsFetched = true; // Transactions found, continue loop
                 result.value.results.forEach((r: any) => {
                     uniqueWalletsLast7Days += processTransaction(r, uniqueWallets, uniqueWalletsLast7Days, oneWeekAgo);
@@ -487,4 +490,178 @@ export async function getQuestRewards(questId: number) {
     });
 
     return cvToJSON(response)
+}
+
+export async function getTitleBeltHolder() {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme023-wooo-title-belt-nft",
+        functionName: "get-title-holder",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getTitleBeltHoldeBalance() {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "dme023-wooo-title-belt-nft",
+        functionName: "get-title-holder-balance",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getAccountAssets(principal: string) {
+    const response: any = await accountsApi.getAccountAssets({
+        principal
+    })
+    return response
+}
+
+export async function getAccountBalance(principal: string) {
+    const response: any = await accountsApi.getAccountBalance({
+        principal
+    })
+    return response
+}
+
+export async function getWooTitleBeltContractEvents() {
+    const response = await scApi.getContractEventsById({
+        contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme022-wooo-title-belt-nft'
+    })
+    return response
+}
+
+export async function getTokenPrices() {
+    return (await fetch('https://mainnet-prod-proxy-service-dedfb0daae85.herokuapp.com/swapapp/swap/tokens')).json()
+}
+
+export async function getStakedTokenExchangeRate(contract: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: contract,
+        functionName: "get-exchange-rate",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getFenrirBalance(contract: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: contract,
+        functionName: "get-balance",
+        functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok')],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getFenrirTotalSupply() {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'fenrir-corgi-of-ragnarok',
+        functionName: "get-total-supply",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getWooBalance(contract: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: contract,
+        functionName: "get-balance",
+        functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.woo-meme-world-champion')],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getWooTotalSupply() {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'woo-meme-world-champion',
+        functionName: "get-total-supply",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getAllCharismaWallets() {
+    let offset = 0;
+    const limit = 50;
+    const wallets: any[] = [];
+    const uniqueWallets: Set<string> = new Set();
+
+    while (true) {
+        const resp: any = await accountsApi.getAccountTransactions({
+            principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0',
+            limit: limit,
+            offset: offset,
+            unanchored: true
+        });
+
+        if (!resp.results || resp.results.length === 0) {
+            break; // exit the loop if there are no more results
+        }
+
+        for (const r of resp.results) {
+            if (!uniqueWallets.has(r.sender_address)) {
+                uniqueWallets.add(r.sender_address)
+                wallets.push(r.sender_address)
+            }
+        }
+
+        offset += limit; // increment the offset for the next page
+    }
+
+    return wallets;
+
+}
+
+export async function getCraftingRewards(contract: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: contract,
+        functionName: "get-craft-reward-factor",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
+export async function getContractSource({ contractAddress, contractName }: any) {
+    const proposalSourceResp = await scApi.getContractSource({ contractAddress, contractName });
+    return proposalSourceResp;
 }

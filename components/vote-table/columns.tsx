@@ -30,7 +30,7 @@ export type Proposal = {
     id: string
     source: string
     amount: number
-    status: "Pending" | "Passed" | "Voting Active" | "Voting Ended"
+    status: "Pending" | "Passed" | "Voting Active" | "Voting Ended" | "Failed"
     name: string
     url: string
 }
@@ -126,9 +126,9 @@ export const columns: ColumnDef<Proposal>[] = [
         cell: ({ row }) => {
             const proposal = row.original
 
-            if (proposal.status === 'Passed' || proposal.status === 'Voting Ended') {
+            if (proposal.status === 'Passed' || proposal.status === 'Failed' || proposal.status === 'Voting Ended') {
                 return <>
-                    {/* <Conclude proposalPrincipal={proposal.name} /> */}
+                    <Conclude proposalPrincipal={proposal.name} />
                     <ReclaimVotes proposalPrincipal={proposal.name} />
                 </>
             } else if (proposal.status === 'Voting Active') {

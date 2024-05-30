@@ -32,12 +32,6 @@ const ContractCallVote = ({ proposalPrincipal }: any) => {
       postConditions: [Pc.principal(sender).willSendEq(1).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma')],
       onFinish: (data) => {
         console.log("onFinish:", data);
-        (window as any)
-          .open(
-            `https://explorer.hiro.so/txid/${data.txId}?chain=mainnet`,
-            "_blank"
-          )
-          .focus();
       },
       onCancel: () => {
         console.log("onCancel:", "Transaction was canceled");

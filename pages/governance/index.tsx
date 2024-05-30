@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 
 import Page from '@components/page';
@@ -210,7 +210,7 @@ export default function Governance({ data }: Props) {
 }
 
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   try {
 
@@ -225,7 +225,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       props: {
         data: updatedProposals
       },
-      revalidate: 6000
     };
 
   } catch (error) {

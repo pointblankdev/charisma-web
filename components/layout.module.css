@@ -32,8 +32,7 @@
   justify-content: space-between;
   background: var(--sidebar);
   border-bottom: 1px solid var(--accents-7);
-  height: var(--header-height);
-  z-index: 2;
+  z-index: 200;
 }
 
 .header-logos {
