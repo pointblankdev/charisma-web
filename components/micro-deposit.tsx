@@ -22,10 +22,10 @@ const MicroDeposit = () => {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'liquid-staked-odin',
+      contractAddress: "SP28NB976TJHHGF4218KT194NPWP9N1X3WY516Z1P",
+      contractName: 'Hashiko',
       functionName: "transfer",
-      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok'), noneCV()],
+      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-hashiko'), noneCV()],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {

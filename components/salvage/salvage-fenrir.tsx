@@ -47,7 +47,7 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
   //     contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
   //     contractName: "fenrir-token",
   //     functionName: "salvage",
-  //     functionArgs: [uintCV(99000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
+  //     functionArgs: [uintCV(9000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
   //     postConditionMode: PostConditionMode.Allow,
   //     postConditions: [
   //       // Pc.principal(sender).willSendEq(amount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok", 'fenrir'),
