@@ -21,7 +21,7 @@ import wishingWell from '@public/wishing-well-1.png'
 import kangarooBurrow from '@public/kangaroo-borrow-1.png'
 import uppsala from '@public/uppsala-21.png'
 import titleFight from '@public/wooo-title-belt-nft.gif'
-import wooo from '@public/wooo.webp'
+import woo from '@public/woo-icon.png'
 import fenrir from '@public/fenrir-icon-2.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
@@ -52,7 +52,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       rewardSTX: 100,
       apps: [
         { slug: '/wishing-well', img: wishingWell },
-        { slug: '/crafting/wooo', img: wooo },
+        { slug: '/crafting/woo', img: woo },
         { slug: '/apps/title-fight', img: titleFight },
         { slug: '/crafting/fenrir', img: fenrir }
       ]
@@ -147,7 +147,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       wip: false,
       apps: [
         { slug: '/kangaroo-burrow', img: kangarooBurrow },
-        { slug: '/crafting/wooo', img: wooo },
+        { slug: '/crafting/woo', img: woo },
         { slug: '/apps/title-fight', img: titleFight },
       ]
     },
@@ -247,6 +247,20 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/liquid-pomboo-12.png'
       },
       slug: 'stake/pomboo',
+      wip: false,
+    },
+    {
+      guild: {
+        logo: {
+          url: '/hashiko-logo.png'
+        }
+      },
+      title: 'Hashiko the Husky',
+      subtitle: 'Liquid Staked Hashiko',
+      cardImage: {
+        url: '/liquid-hashiko-21.png'
+      },
+      slug: 'stake/hashiko',
       wip: false,
     }
   ]

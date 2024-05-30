@@ -39,6 +39,28 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
     });
   }
 
+  // function salvage() {
+  //   const sender = userSession.loadUserData().profile.stxAddress.mainnet
+  //   doContractCall({
+  //     network: new StacksMainnet(),
+  //     anchorMode: AnchorMode.Any,
+  //     contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+  //     contractName: "fenrir-token",
+  //     functionName: "salvage",
+  //     functionArgs: [uintCV(99000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
+  //     postConditionMode: PostConditionMode.Allow,
+  //     postConditions: [
+  //       // Pc.principal(sender).willSendEq(amount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok", 'fenrir'),
+  //     ],
+  //     onFinish: (data) => {
+  //       console.log("onFinish:", data);
+  //     },
+  //     onCancel: () => {
+  //       console.log("onCancel:", "Transaction was canceled");
+  //     },
+  //   });
+  // }
+
   if (!mounted || !userSession.isUserSignedIn()) {
     return <ConnectWallet />;
   }
