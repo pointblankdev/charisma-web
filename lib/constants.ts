@@ -27,10 +27,10 @@ export const NAVIGATION = [
     name: 'Apps',
     route: '/apps'
   },
-  {
-    name: 'Swap',
-    route: '/swap'
-  },
+  // {
+  //   name: 'Swap',
+  //   route: '/swap'
+  // },
   {
     name: 'Liquid Staking',
     route: '/liquid-staking'
