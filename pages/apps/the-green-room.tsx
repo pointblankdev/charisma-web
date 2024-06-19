@@ -25,7 +25,7 @@ export default function TheGreenRoom({ data }: Props) {
   const blockHeight = data.latestBlock
   const lastClaimBlockHeight = data.lastClaim
   const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
-  const dripAmount = data.dripAmount
+  const dripAmount = data.dripAmount / 1000000
   const claimableTokens = millify(unclaimedBlocks * dripAmount)
 
   console.log({ blockHeight, lastClaimBlockHeight, unclaimedBlocks, dripAmount, claimableTokens })
