@@ -28,8 +28,6 @@ export default function TheGreenRoom({ data }: Props) {
   const dripAmount = data.dripAmount / 1000000
   const claimableTokens = millify(unclaimedBlocks * dripAmount)
 
-  console.log({ blockHeight, lastClaimBlockHeight, unclaimedBlocks, dripAmount, claimableTokens })
-
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -44,7 +42,7 @@ export default function TheGreenRoom({ data }: Props) {
                 <div className="sm:text-lg text-xs my-1 bg-primary rounded-full sm:p-0 px-2 sm:px-4 text-center self-center font-light">{claimableTokens} Tokens Unclaimed</div>
               </div>
               <p className="mb-8 text-xs sm:text-sm leading-tight font-thin">
-                The Green Room is like an exclusive backstage area, reserved just for those who've been with the Charisma project from the very start and who keep supporting us every day. It's our special way of saying thanks, distributing Charisma tokens to these key supporters like VIP passes, ensuring they're recognized and rewarded for their ongoing contributions. This private setup keeps it cool and exclusive, much like the vibe of an artist's green room.
+                The Green Room is an exclusive backstage area reserved for those who've volunteered their time for the Charisma project and who keep supporting us every day. It's our special way of saying thanks and ensuring they're recognized and rewarded for their ongoing contributions.
               </p>
 
               <ClaimFaucetButton tokensToClaim={unclaimedBlocks * dripAmount} />

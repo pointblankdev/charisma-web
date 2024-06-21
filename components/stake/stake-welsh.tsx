@@ -61,7 +61,8 @@ const StakeWelshButton: React.FC<StakeWelshButtonProps> = ({ tokens }) => {
     <Button
       className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
       onClick={stake}
-      disabled={tokens6Dec <= 0}
+      // disabled={tokens6Dec <= 0}
+      disabled
     >
       Stake {tokens && tokens6Dec > 0 ? millify(Number(tokens)) : 0} WELSH
     </Button>

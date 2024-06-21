@@ -53,7 +53,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       apps: [
         { slug: '/wishing-well', img: wishingWell },
         { slug: '/crafting/woo', img: woo },
-        { slug: '/apps/title-fight', img: titleFight },
+        // { slug: '/apps/title-fight', img: titleFight },
         { slug: '/crafting/fenrir', img: fenrir }
       ]
     },
@@ -148,7 +148,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       apps: [
         { slug: '/kangaroo-burrow', img: kangarooBurrow },
         { slug: '/crafting/woo', img: woo },
-        { slug: '/apps/title-fight', img: titleFight },
+        // { slug: '/apps/title-fight', img: titleFight },
       ]
     },
     {
