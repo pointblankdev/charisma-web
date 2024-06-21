@@ -68,25 +68,25 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         { slug: '/stake/odin', img: liquidStakedOdin },
       ]
     },
-    {
-      guild: {
-        logo: {
-          url: '/woooooo.webp'
-        }
-      },
-      title: 'Wooo! (Deprecated)',
-      ticker: 'WOOO',
-      subtitle: 'sWELSH + sROO = WOOO',
-      cardImage: {
-        url: '/wooo-title-belt.gif'
-      },
-      slug: '/crafting/wooo',
-      wip: true,
-      apps: [
-        { slug: '/stake/welsh', img: liquidStakedWelsh },
-        { slug: '/stake/roo', img: liquidStakedRoo },
-      ]
-    }
+    // {
+    //   guild: {
+    //     logo: {
+    //       url: '/woooooo.webp'
+    //     }
+    //   },
+    //   title: 'Wooo! (Deprecated)',
+    //   ticker: 'WOOO',
+    //   subtitle: 'sWELSH + sROO = WOOO',
+    //   cardImage: {
+    //     url: '/wooo-title-belt.gif'
+    //   },
+    //   slug: '/crafting/wooo',
+    //   wip: true,
+    //   apps: [
+    //     { slug: '/stake/welsh', img: liquidStakedWelsh },
+    //     { slug: '/stake/roo', img: liquidStakedRoo },
+    //   ]
+    // }
   ]
 
   return {
@@ -100,7 +100,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
 export default function Crafting({ apps }: Props) {
 
   const meta = {
-    title: 'Charisma | Crafting',
+    title: 'Charisma | Indexes',
     description: META_DESCRIPTION,
     image: '/fenrir-21.png'
   };
@@ -121,59 +121,59 @@ export default function Crafting({ apps }: Props) {
   const [fenrirTotalSupply, setFenrirTotalSupply] = useState(0)
 
 
-  useEffect(() => {
-    getTokenPrices().then((prices) => {
-      // find symbol: 'WELSH and 'ODIN' in the message array
-      // set the price of each to a state variable
-      prices.message.forEach((token: { symbol: string; price: number; }) => {
-        if (token.symbol === 'WELSH') {
-          setWelshPrice(token.price)
-        }
-        if (token.symbol === 'ODIN') {
-          setOdinPrice(token.price)
-        }
-        if (token.symbol === '$ROO') {
-          setRooPrice(token.price)
-        }
-      })
-      getStakedTokenExchangeRate("liquid-staked-welsh").then((rate) => {
-        setWelshExchangeRate(rate.value.value / 1000000)
-      })
-      getStakedTokenExchangeRate("liquid-staked-welsh-v2").then((rate) => {
-        setWelshv2ExchangeRate(rate.value / 1000000)
-      })
-      getStakedTokenExchangeRate("liquid-staked-odin").then((rate) => {
-        setOdinExchangeRate(rate.value / 1000000)
-      })
-      getStakedTokenExchangeRate("liquid-staked-roo").then((rate) => {
-        setRooExchangeRate(rate.value / 1000000)
-      })
-      getStakedTokenExchangeRate("liquid-staked-roo-v2").then((rate) => {
-        setRoov2ExchangeRate(rate.value / 1000000)
-      })
-      getFenrirBalance("liquid-staked-welsh-v2").then((amount) => {
-        setWelshBalance(Number(amount.value.value))
-      })
-      getFenrirBalance("liquid-staked-odin").then((amount) => {
-        setOdinBalance(Number(amount.value.value))
-      })
-      getFenrirTotalSupply().then((amount) => {
-        setFenrirTotalSupply(Number(amount.value.value))
-      })
-    })
-  }, [])
+  // useEffect(() => {
+  //   getTokenPrices().then((prices) => {
+  //     // find symbol: 'WELSH and 'ODIN' in the message array
+  //     // set the price of each to a state variable
+  //     prices.message.forEach((token: { symbol: string; price: number; }) => {
+  //       if (token.symbol === 'WELSH') {
+  //         setWelshPrice(token.price)
+  //       }
+  //       if (token.symbol === 'ODIN') {
+  //         setOdinPrice(token.price)
+  //       }
+  //       if (token.symbol === '$ROO') {
+  //         setRooPrice(token.price)
+  //       }
+  //     })
+  //     getStakedTokenExchangeRate("liquid-staked-welsh").then((rate) => {
+  //       setWelshExchangeRate(rate.value.value / 1000000)
+  //     })
+  //     getStakedTokenExchangeRate("liquid-staked-welsh-v2").then((rate) => {
+  //       setWelshv2ExchangeRate(rate.value / 1000000)
+  //     })
+  //     getStakedTokenExchangeRate("liquid-staked-odin").then((rate) => {
+  //       setOdinExchangeRate(rate.value / 1000000)
+  //     })
+  //     getStakedTokenExchangeRate("liquid-staked-roo").then((rate) => {
+  //       setRooExchangeRate(rate.value / 1000000)
+  //     })
+  //     getStakedTokenExchangeRate("liquid-staked-roo-v2").then((rate) => {
+  //       setRoov2ExchangeRate(rate.value / 1000000)
+  //     })
+  //     getFenrirBalance("liquid-staked-welsh-v2").then((amount) => {
+  //       setWelshBalance(Number(amount.value.value))
+  //     })
+  //     getFenrirBalance("liquid-staked-odin").then((amount) => {
+  //       setOdinBalance(Number(amount.value.value))
+  //     })
+  //     getFenrirTotalSupply().then((amount) => {
+  //       setFenrirTotalSupply(Number(amount.value.value))
+  //     })
+  //   })
+  // }, [])
 
   // look at the apps field of the apps array and calculate the value of the token
   // here is an example for the wooo app which is /stake/welsh and /stake/roo
   // millify((100 * welshPrice * 1.06) + (0.42 * rooPrice * 1.01), { precision: 6 })
 
-  const woooValue = millify((100 * welshPrice * welshExchangeRate) + (0.42 * rooPrice * rooExchangeRate), { precision: 4 })
-  const fenrirValue = millify((welshPrice * welshv2ExchangeRate * (welshBalance / fenrirTotalSupply)) + (odinPrice * odinExchangeRate * (odinBalance / fenrirTotalSupply)), { precision: 4 })
-  const wooValue = millify((100 * welshPrice * welshv2ExchangeRate) + (0.42 * rooPrice * roov2ExchangeRate), { precision: 4 })
+  // const woooValue = millify((100 * welshPrice * welshExchangeRate) + (0.42 * rooPrice * rooExchangeRate), { precision: 4 })
+  // const fenrirValue = millify((welshPrice * welshv2ExchangeRate * (welshBalance / fenrirTotalSupply)) + (odinPrice * odinExchangeRate * (odinBalance / fenrirTotalSupply)), { precision: 4 })
+  // const wooValue = millify((100 * welshPrice * welshv2ExchangeRate) + (0.42 * rooPrice * roov2ExchangeRate), { precision: 4 })
 
-  apps[0].value = woooValue
-  apps[1].value = fenrirValue
-  apps[2].value = wooValue
+  // apps[0].value = woooValue
+  // apps[1].value = fenrirValue
+  // apps[2].value = wooValue
 
   return (
     <Page meta={meta} fullViewport>
@@ -183,12 +183,16 @@ export default function Crafting({ apps }: Props) {
           <div className='grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
             <Card className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 shadow-md rounded-lg">
-                <h3 className="font-bold text-lg">Crafting Overview</h3>
-                <p>The crafting page allow you to leverage your liquid staked assets to mint new tokens called compound tokens, that have unique and powerful properties.</p>
-                <p>Here are some of the key terms to know:</p>
-                <p><strong>Compound Token:</strong> A rebase token which base token(s) are also rebase tokens. It has compounding returns.</p>
-                <p><strong>Crafting:</strong> The process through which compound tokens are created by liquid staking base tokens.</p>
-                <p><strong>Salvaging:</strong> Involves the breakdown of a compound token back into its original base assets.</p>
+                <h3 className="font-bold text-lg">Indexes</h3>
+                <p>Leverage your liquid staked memecoins to mint new tokens called Indexes.</p>
+                <p>Indexes enable you to consolidate your tokens into a single, more valuable token- like an stocks index fund.</p>
+                <p>As Index TVL grows, we can reverse the fragmentation of liquidity from new memecoins being created.</p>
+                <p>Indexes always maintain a fixed ratio between their base pair tokens, so you'll never be subject to impermanent loss.</p>
+                <p>The staking process for Indexes is 100% trustless, so your funds are always safe and can be withdrawn at any time.</p>
+                {/* <p>Here are some of the key terms to know:</p>
+                <p><strong>Index Token:</strong> A token created by combining two or more other tokens at a fixed ratio.</p>
+                <p><strong>Add Liquidity:</strong> Recieve index tokens by depositing base tokens.</p>
+                <p><strong>Remove Liqudity:</strong> Recover your base tokens by depositing index tokens.</p> */}
               </div>
             </Card>
             {apps.map((pool) => {
@@ -217,7 +221,7 @@ export default function Crafting({ apps }: Props) {
                           </div>
                           <div className='flex flex-col items-end leading-[1.1]'>
                             <div className='text-white text-sm font-semibold'>{pool.ticker}</div>
-                            <div className='text-white'>${pool.value}</div>
+                            {/* <div className='text-white'>${pool.value}</div> */}
                           </div>
                         </div>
                       </CardHeader>

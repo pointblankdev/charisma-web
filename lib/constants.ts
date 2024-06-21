@@ -36,7 +36,7 @@ export const NAVIGATION = [
     route: '/liquid-staking'
   },
   {
-    name: 'Crafting',
+    name: 'Indexes',
     route: '/crafting'
   },
   // {
