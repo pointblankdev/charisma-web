@@ -38,7 +38,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       },
       title: `Roo Flair's Bizarre Adventure`,
       ticker: 'WOO',
-      subtitle: 'The fight to save the Spirit of Bitcoin',
+      subtitle: 'sWELSH and sROO at a fixed 25:1 ratio',
       cardImage: {
         url: '/woo-1.png'
       },
@@ -57,7 +57,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       },
       title: 'Fenrir, Corgi of Ragnarok',
       ticker: 'FENRIR',
-      subtitle: '...and the end of the world',
+      subtitle: 'sWELSH and sODIN at a fixed 1:10 ratio',
       cardImage: {
         url: '/fenrir-21.png'
       },

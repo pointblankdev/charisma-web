@@ -36,7 +36,7 @@ export default function Woo({ data }: Props) {
     image: '/woo-21.png'
   };
 
-  const [objectivesVisible, setObjectivesVisible] = useState(false)
+  const [objectivesVisible, setObjectivesVisible] = useState(true)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
   const [skipAnimation, setSkipAnimation] = useState(false);
   const [stakedWelshPrice, setStakedWelshPrice] = useState(0)
@@ -101,7 +101,7 @@ export default function Woo({ data }: Props) {
           <Card className='text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.995] shadow-black shadow-2xl'>
             <CardHeader className='z-20 p-4'>
               <div className='flex items-center justify-between'>
-                <CardTitle className='z-30 text-xl font-semibold'>Roo Flair's Bizarre Adventure</CardTitle>
+                <CardTitle className='z-30 text-xl font-semibold'>Index: WOO</CardTitle>
                 <div className='flex space-x-4'>
                   <div className='text-lg'>
                     ${millify(tvl)} TVL
@@ -109,9 +109,9 @@ export default function Woo({ data }: Props) {
                   <ActiveRecipeIndicator active={true} />
                 </div>
               </div>
-              <CardDescription className='z-30 text-md font-fine text-foreground'>The fight to save the Spirit of Bitcoin</CardDescription>
+              <CardDescription className='z-30 text-md font-fine text-foreground'>sWELSH and sROO at a fixed 25:1 ratio</CardDescription>
 
-              <div className='-ml-0.5 text-sm mt-0 flex flex-wrap pb-6'>
+              {/* <div className='-ml-0.5 text-sm mt-0 flex flex-wrap pb-6'>
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Deflationary</div></TooltipTrigger>
@@ -143,11 +143,11 @@ export default function Woo({ data }: Props) {
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
-              </div>
+              </div> */}
 
               <div className='z-20'>
-                <CardTitle className='z-30 mt-2 text-xl font-semibold'>Rewards</CardTitle>
-                <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>You will recieve:</CardDescription>
+                <CardTitle className='z-30 mt-2 text-xl font-semibold'>Mintable Token</CardTitle>
+                <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>Roo Flair's Bizarre Adventure</CardDescription>
                 <div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                   <TooltipProvider>
                     <Tooltip>
@@ -163,7 +163,7 @@ export default function Woo({ data }: Props) {
                     </Tooltip>
                   </TooltipProvider>
 
-                  <TooltipProvider>
+                  {/* <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>{
                         <motion.div initial="hidden" animate="visible" variants={fadeIn} className='relative'>
@@ -175,15 +175,15 @@ export default function Woo({ data }: Props) {
                         Charisma tokens can be used to propose and vote on changes to the fees and rewards of WOO
                       </TooltipContent>
                     </Tooltip>
-                  </TooltipProvider>
+                  </TooltipProvider> */}
 
                 </div>
               </div>
             </CardHeader>
             <CardContent className='z-20 p-0'>
               <div className='z-30 p-4'>
-                <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle>
-                <p className='z-30 text-base min-h-[360px]' onClick={handleDescriptionClick}>
+                {/* <CardTitle className='z-30 text-xl font-semibold'>Description</CardTitle> */}
+                {/* <p className='z-30 text-base min-h-[360px]' onClick={handleDescriptionClick}>
                   {!skipAnimation && descriptionVisible && (
                     <Typewriter
                       options={{
@@ -198,10 +198,10 @@ export default function Woo({ data }: Props) {
                     />
                   )}
                   {skipAnimation && descriptionVisible && description?.map((s: string, index: number) => <p key={index}>{s}</p>)}
-                </p>
+                </p> */}
                 <div className='z-20 min-h-[136px]'>
-                  {objectivesVisible && <div className='z-30 text-xl font-semibold'>Requirements</div>}
-                  {objectivesVisible && <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>These tokens will be liquid staked to craft WOO tokens:</CardDescription>}
+                  {objectivesVisible && <div className='z-30 text-xl font-semibold'>Staked Base Tokens</div>}
+                  {objectivesVisible && <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>These tokens will be staked to mint WOO Index tokens:</CardDescription>}
                   {objectivesVisible &&
                     <div className='grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10'>
                       <TooltipProvider>
@@ -243,7 +243,7 @@ export default function Woo({ data }: Props) {
                   <Tooltip>
                     <TooltipTrigger><CraftWoo amount={craftAmount} welshCost={welshCost} rooCost={rooCost} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Crafting Woo requires {millify(welshCost / 1000000)} sWELSH and {millify(rooCost / 1000000)} sROO.
+                      Minting WOO requires {millify(welshCost / 1000000)} sWELSH and {millify(rooCost / 1000000)} sROO.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
@@ -251,7 +251,7 @@ export default function Woo({ data }: Props) {
                   <Tooltip>
                     <TooltipTrigger><SalvageWoo amount={salvageAmount} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Salvaging Woo returns {millify(welshCost / 1000000)} sWELSH and {millify(rooCost / 1000000)} sROO back to you.
+                      Burning WOO returns {millify(welshCost / 1000000)} sWELSH and {millify(rooCost / 1000000)} sROO back to you.
                     </TooltipContent>
                   </Tooltip>
                 </TooltipProvider>
