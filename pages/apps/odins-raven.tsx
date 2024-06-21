@@ -53,7 +53,7 @@ export default function OdinsRaven({ data }: Props) {
     setObjectivesVisible(true)
   };
 
-  useLayoutEffect(() => {
+  useEffect(() => {
     try {
       setDescriptionVisible(true)
 
@@ -76,10 +76,10 @@ export default function OdinsRaven({ data }: Props) {
   };
 
   // faucet logic
-  const blockHeight = data.latestBlock
-  const lastClaimBlockHeight = data.lastClaim
-  const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
-  const dripAmount = data.dripAmount || 0
+  // const blockHeight = data.latestBlock
+  // const lastClaimBlockHeight = data.lastClaim
+  // const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
+  // const dripAmount = data.dripAmount || 0
 
   return (
     <Page meta={meta} fullViewport>
@@ -109,7 +109,7 @@ export default function OdinsRaven({ data }: Props) {
                     <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>NFT</div>
                   </div>
 
-                  <TooltipProvider>
+                  {/* <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>{
                         <motion.div initial="hidden" animate="visible" variants={fadeIn} className={cn('relative')}>
@@ -121,7 +121,7 @@ export default function OdinsRaven({ data }: Props) {
                         Raven NFT Holders can claim Charisma tokens from a private faucet.
                       </TooltipContent>
                     </Tooltip>
-                  </TooltipProvider>
+                  </TooltipProvider> */}
 
                 </div>
               </div>
@@ -172,14 +172,14 @@ export default function OdinsRaven({ data }: Props) {
               <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
 
               {descriptionVisible && <div className='flex items-center space-x-1'>
-                <TooltipProvider>
+                {/* <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger><ClaimFaucetButton tokensToClaim={lastClaimBlockHeight * dripAmount || 0} isHolder={true} /></TooltipTrigger>
                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                       Tokens are free to claim if you hold an Odin's Raven NFT.
                     </TooltipContent>
                   </Tooltip>
-                </TooltipProvider>
+                </TooltipProvider> */}
                 <TooltipProvider>
                   <Tooltip>
                     <TooltipTrigger><MintRaven /></TooltipTrigger>
@@ -221,27 +221,27 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const { results } = await blocksApi.getBlockList({ limit: 1 })
 
-    const lc: any = await callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "raven-faucet",
-      functionName: "get-last-claim",
-      functionArgs: [],
-      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-    })
+    // const lc: any = await callReadOnlyFunction({
+    //   network: new StacksMainnet(),
+    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    //   contractName: "raven-faucet",
+    //   functionName: "get-last-claim",
+    //   functionArgs: [],
+    //   senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    // })
 
-    const d: any = await callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "raven-faucet",
-      functionName: "get-drip-amount",
-      functionArgs: [],
-      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-    })
+    // const d: any = await callReadOnlyFunction({
+    //   network: new StacksMainnet(),
+    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    //   contractName: "raven-faucet",
+    //   functionName: "get-drip-amount",
+    //   functionArgs: [],
+    //   senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    // })
 
     const data = {
-      lastClaim: Number(lc.value.value),
-      dripAmount: Number(d.value.value),
+      // lastClaim: Number(lc.value.value),
+      // dripAmount: Number(d.value.value),
       latestBlock: results[0].height
     }
 
