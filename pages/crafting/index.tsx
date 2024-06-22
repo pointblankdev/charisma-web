@@ -195,9 +195,9 @@ export default function Crafting({ apps }: Props) {
                 <p><strong>Remove Liqudity:</strong> Recover your base tokens by depositing index tokens.</p> */}
               </div>
             </Card>
-            {apps.map((pool) => {
+            {apps.map((pool, i) => {
               return (
-                <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
+                <Card key={i} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
                   <Link href={`${pool.slug}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
@@ -241,9 +241,9 @@ export default function Crafting({ apps }: Props) {
                       {/* <CardTitle className='z-30 mt-2 text-lg font-semibold leading-none text-white'>Pool Funding</CardTitle> */}
                       {/* {pool.apps && <CardDescription className='z-30 mb-2 text-sm text-white font-fine'>This app funds the following pool(s):</CardDescription>} */}
                       {pool.apps ? <div className='z-30 grid grid-cols-5 gap-2'>
-                        {pool.apps.map((app: { slug: string | UrlObject; img: string | StaticImport; }) => {
+                        {pool.apps.map((app: { slug: string | UrlObject; img: string | StaticImport; }, i: number) => {
                           return (
-                            <div className='relative z-30 none'>
+                            <div className='relative z-30 none' key={i}>
                               <Link href={app.slug}>
                                 <Image src={app.img} alt='charisma-token' className='z-30 w-12 h-12 border border-white rounded-full' />
                                 {/* <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{0}</div> */}
