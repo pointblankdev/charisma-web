@@ -155,10 +155,10 @@ export default function Crafting({ apps }: Props) {
             <div className="flex justify-between items-center">
               <div className="flex gap-3">
                 <div className="py-1 px-2 flex items-center justify-center rounded-md bg-[#252932]">
-                  All Pools
+                  All Indexes
                 </div>
                 <div className="p-1 flex items-center justify-center rounded-md bg-[#252932]">
-                  All Pools
+                  All Indexes
                 </div>
               </div>
               <div className="flex gap-2 items-center">
