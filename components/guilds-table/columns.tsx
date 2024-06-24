@@ -32,7 +32,7 @@ export const columns: ColumnDef<Guild>[] = [
         accessorKey: "name",
         header: () => <div className="text-center">Name</div>,
         cell: ({ row }) => {
-            const name = row.getValue("name")
+            const name: string = row.getValue("name")
 
             return <div className="text-center font-medium">{name}</div>
         },
@@ -42,7 +42,7 @@ export const columns: ColumnDef<Guild>[] = [
         accessorKey: "description",
         header: () => <div className="text-center">Description</div>,
         cell: ({ row }) => {
-            const description = row.getValue("description")
+            const description: string = row.getValue("description")
 
             return <div className="text-center font-medium">{description}</div>
         },
