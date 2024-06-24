@@ -1,4 +1,3 @@
-
 import { GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 
@@ -24,14 +23,21 @@ import { userSession } from '@components/stacks-session/connect';
 import charismaToken from '@public/charisma.png'
 import stxToken from '@public/stacks-stx-logo.png'
 
-
 type Props = {
   quests: any[];
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
+  const quests = await getAllQuests();
 
-  const quests = await getAllQuests()
+  if (!quests) {
+    return {
+      props: {
+        quests: []
+      },
+      revalidate: 60
+    };
+  }
 
   // const quests = []
 
@@ -82,7 +88,7 @@ export default function Quests({ quests }: Props) {
 
       // Functional update form of setState
       setData(() => updatedQuests);
-    }
+    };
 
     checkQuests().then(() => setLoading(false));
   }, [quests]);
@@ -147,7 +153,7 @@ export default function Quests({ quests }: Props) {
                     </CardContent>
                   </Link>
                 </Card>
-              )
+              );
             })}
           </div>
         </div>

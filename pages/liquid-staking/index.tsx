@@ -38,6 +38,22 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     {
       guild: {
         logo: {
+          url: '/liquid-staked-charisma.png'
+        }
+      },
+      title: 'Charisma',
+      subtitle: 'Liquid Staked Charisma',
+      cardImage: {
+        url: '/liquid-charisma-21.png'
+      },
+      slug: 'stake/charisma',
+      wip: false,
+      apps: [
+      ]
+    },
+    {
+      guild: {
+        logo: {
           url: '/liquid-staked-welshcorgicoin.png'
         }
       },
