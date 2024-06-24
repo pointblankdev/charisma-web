@@ -115,6 +115,8 @@ const ParticlesConfig = {
     "retina_detect": true
 }
 
+const ParticlesFix = Particles as any
+
 const ParticleBackground = () => {
     const particlesInit = useCallback(async (engine) => {
         // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
@@ -129,14 +131,14 @@ const ParticleBackground = () => {
     }, []);
     return (
         <div id='particle-background'>
-            <Particles
+            <ParticlesFix
                 id='tsparticles'
                 init={particlesInit}
                 loaded={particlesLoaded}
                 options={ParticlesConfig}
                 height='100vh'
                 width='100vw'
-            ></Particles>
+            ></ParticlesFix>
         </div>
     );
 };
