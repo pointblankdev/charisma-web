@@ -186,7 +186,6 @@ export default function Crafting({ apps }: Props) {
                 <h3 className="font-bold text-lg">Indexes</h3>
                 <p>Leverage your liquid staked memecoins to mint new tokens called Indexes.</p>
                 <p>Indexes enable you to consolidate your tokens into a single, more valuable token- like an stocks index fund.</p>
-                <p>As Index TVL grows, we can reverse the fragmentation of liquidity from new memecoins being created.</p>
                 <p>Indexes always maintain a fixed ratio between their base pair tokens, so you'll never be subject to impermanent loss.</p>
                 <p>The staking process for Indexes is 100% trustless, so your funds are always safe and can be withdrawn at any time.</p>
                 {/* <p>Here are some of the key terms to know:</p>

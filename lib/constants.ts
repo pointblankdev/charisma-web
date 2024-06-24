@@ -39,10 +39,10 @@ export const NAVIGATION = [
     name: 'Indexes',
     route: '/crafting'
   },
-  {
-    name: 'Indexes',
-    route: '/indexes'
-  },
+  // {
+  //   name: 'Indexes',
+  //   route: '/indexes'
+  // },
   // {
   //   name: 'Tokenomics',
   //   route: '/tokenomics'
