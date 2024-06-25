@@ -27,6 +27,8 @@ import odinsRaven from '@public/odins-raven/img/4.gif'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
 import { useRouter } from 'next/navigation';
+import featherFallFund from '@public/feather-fall-fund-logo.png'
+
 
 type Props = {
   pools: any[];
@@ -49,6 +51,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       slug: 'stake/charisma',
       wip: false,
       apps: [
+        { slug: '/crafting/fff', img: featherFallFund },
       ]
     },
     {
@@ -343,7 +346,7 @@ export default function LiquidStaking({ pools }: Props) {
                   <CardFooter className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all', loading && 'opacity-0')}>
                     <div className='z-20 p-2'>
                       <CardTitle className='z-30 mt-2 text-lg font-semibold leading-none text-white'>Staking Rewards</CardTitle>
-                      {pool.apps && <CardDescription className='z-30 mb-2 text-sm text-white font-fine'>Tokens and apps that fund this pool:</CardDescription>}
+                      {pool.apps && <CardDescription className='z-30 mb-2 text-sm text-white font-fine'>Apps and indexes that utilize this pool:</CardDescription>}
                       {pool.apps ? <div className='z-30 grid grid-cols-5 gap-2'>
                         {pool.apps.map((app: { slug: string | UrlObject; img: string | StaticImport; }) => {
                           return (
@@ -355,7 +358,7 @@ export default function LiquidStaking({ pools }: Props) {
                             </div>
                           )
                         })}
-                      </div> : <div className='z-30 text-sm font-fine text-white/90'>No rewards have been set for this pool yet</div>}
+                      </div> : <div className='z-30 text-sm font-fine text-white/90'>No utility has been setup for this pool yet</div>}
                     </div>
                   </CardFooter>
                 </Card>

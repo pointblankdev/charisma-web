@@ -22,6 +22,8 @@ import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import { getFenrirBalance, getFenrirTotalSupply, getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
 import millify from 'millify';
+import aeUSDC from '@public/aeUSDC-logo.svg'
+import liquidStakedCharisma from '@public/liquid-staked-charisma.png'
 
 type Props = {
   apps: any[];
@@ -45,6 +47,8 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       slug: '/crafting/fff',
       wip: false,
       apps: [
+        { slug: 'https://app.velar.com/swap', img: aeUSDC },
+        { slug: '/stake/charisma', img: liquidStakedCharisma },
       ]
     },
     {

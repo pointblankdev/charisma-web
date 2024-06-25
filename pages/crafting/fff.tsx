@@ -44,7 +44,7 @@ export default function Fenrir({ data }: Props) {
   const [objectivesVisible, setObjectivesVisible] = useState(true)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
 
-  const [factor, setFactor] = useState(1)
+  const [factor, setFactor] = useState(2)
 
   useLayoutEffect(() => {
     try {
