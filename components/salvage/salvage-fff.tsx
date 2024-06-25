@@ -30,7 +30,7 @@ const SalvageIndex = ({ amount }: { amount: number }) => {
       functionArgs: [uintCV(tokens)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund", 'fff'),
+        Pc.principal(sender).willSendEq(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1", 'fff'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

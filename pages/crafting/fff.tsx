@@ -195,7 +195,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
 
-    const fff = await getTotalSupply('feather-fall-fund')
+    const fff = await getTotalSupply('feather-fall-fund-v1')
 
     return {
       props: {
