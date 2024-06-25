@@ -573,6 +573,20 @@ export async function getFenrirBalance(contract: string) {
     return cvToJSON(response)
 }
 
+export async function getTotalSupply(contract: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: contract,
+        functionName: "get-total-supply",
+        functionArgs: [],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)
+}
+
 export async function getFenrirTotalSupply() {
 
     const response: any = await callReadOnlyFunction({

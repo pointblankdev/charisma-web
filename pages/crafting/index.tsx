@@ -30,23 +30,23 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = () => {
 
   const apps = [
-    // {
-    //   guild: {
-    //     logo: {
-    //       url: '/feather-fall-fund-logo.png'
-    //     }
-    //   },
-    //   title: `Feather Fall Fund`,
-    //   ticker: 'FFF',
-    //   subtitle: 'aeUSDC and sCHA at a fixed 1:1 ratio',
-    //   cardImage: {
-    //     url: '/feather-fall-fund-card.png'
-    //   },
-    //   slug: '/crafting/fff',
-    //   wip: false,
-    //   apps: [
-    //   ]
-    // },
+    {
+      guild: {
+        logo: {
+          url: '/feather-fall-fund-logo.png'
+        }
+      },
+      title: `Feather Fall Fund`,
+      ticker: 'FFF',
+      subtitle: 'aeUSDC and sCHA at a fixed 1:1 ratio',
+      cardImage: {
+        url: '/feather-fall-fund-card.png'
+      },
+      slug: '/crafting/fff',
+      wip: false,
+      apps: [
+      ]
+    },
     {
       guild: {
         logo: {
@@ -222,8 +222,8 @@ export default function Crafting({ apps }: Props) {
                           <div className='flex gap-2'>
                             <div className='min-w-max'>
                               {pool.guild.logo.url ?
-                                <Image src={pool.guild.logo.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 border border-white rounded-full grow' />
-                                : <div className='w-10 h-10 bg-white border border-white rounded-full' />
+                                <Image src={pool.guild.logo.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 border rounded-full grow' />
+                                : <div className='w-10 h-10 bg-white border rounded-full' />
                               }
                             </div>
                             <div className=''>
@@ -261,7 +261,7 @@ export default function Crafting({ apps }: Props) {
                           return (
                             <div className='relative z-30 none' key={i}>
                               <Link href={app.slug}>
-                                <Image src={app.img} alt='charisma-token' className='z-30 w-12 h-12 border border-white rounded-full' />
+                                <Image src={app.img} alt='charisma-token' className='z-30 w-12 h-12 bordere rounded-full' />
                                 {/* <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{0}</div> */}
                               </Link>
                             </div>
