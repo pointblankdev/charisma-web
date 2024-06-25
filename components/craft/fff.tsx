@@ -17,7 +17,7 @@ const CraftIndex = ({ amount }: { amount: number }) => {
     const [mounted, setMounted] = useState(false);
     useEffect(() => { setMounted(true) }, []);
 
-    const tokens = Number(amount) * 1000000
+    const tokens = (Number(amount) * 1000000).toFixed(0)
 
     function craft() {
         const sender = userSession.loadUserData().profile.stxAddress.mainnet

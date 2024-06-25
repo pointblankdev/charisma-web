@@ -31,6 +31,7 @@ import fenrir from '@public/feather-fall-fund-card.png'
 import millify from 'millify';
 import CraftIndex from '@components/craft/fff';
 import SalvageIndex from '@components/salvage/salvage-fff';
+import { Slider } from '@components/ui/slider';
 
 export default function Fenrir({ data }: Props) {
   const meta = {
@@ -42,6 +43,8 @@ export default function Fenrir({ data }: Props) {
 
   const [objectivesVisible, setObjectivesVisible] = useState(true)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
+
+  const [factor, setFactor] = useState(1)
 
   useLayoutEffect(() => {
     try {
@@ -61,10 +64,10 @@ export default function Fenrir({ data }: Props) {
     visible: { opacity: 1 }
   };
 
-  const craftAmount = 100
-  const salvageAmount = 100
-  const welshCost = 100000000
-  const odinCost = 100000000
+  const craftAmount = Math.pow(10, factor)
+  const salvageAmount = Math.pow(10, factor)
+  const welshCost = Math.pow(10, factor) * 1000000
+  const odinCost = Math.pow(10, factor) * 1000000
 
   const tvl = data.totalSupply / 1000000
 
@@ -147,27 +150,29 @@ export default function Fenrir({ data }: Props) {
               </div>
             </CardContent>
 
-            <CardFooter className="z-20 flex justify-between p-4">
+            <CardFooter className="z-20 flex justify-between p-4 items-end mt-12">
               <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
 
-              {descriptionVisible && <div className='z-20 flex items-center space-x-1'>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger><CraftIndex amount={craftAmount} /></TooltipTrigger>
-                    <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Minting FFF requires {millify(welshCost / 1000000)} aeUSDC and {millify(odinCost / 1000000)} sCHA.
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger><SalvageIndex amount={salvageAmount} /></TooltipTrigger>
-                    <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Burning FFF returns {millify(welshCost / 1000000)} aeUSDC and {millify(odinCost / 1000000)} sCHA back to you.
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
-              </div>}
+              {descriptionVisible && <div className='flex flex-col'>
+                <Slider defaultValue={[factor]} min={1} max={5} step={0.1} className='w-full p-4' onValueChange={(v: any) => setFactor(v[0])} />
+                <div className='z-20 flex items-center space-x-1'>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger><CraftIndex amount={craftAmount} /></TooltipTrigger>
+                      <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                        Minting FFF requires {millify(welshCost / 1000000)} aeUSDC and {millify(odinCost / 1000000)} sCHA.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger><SalvageIndex amount={salvageAmount} /></TooltipTrigger>
+                      <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                        Burning FFF returns {millify(welshCost / 1000000)} aeUSDC and {millify(odinCost / 1000000)} sCHA back to you.
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
+                </div></div>}
 
             </CardFooter>
             <Image

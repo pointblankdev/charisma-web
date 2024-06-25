@@ -17,7 +17,7 @@ const SalvageIndex = ({ amount }: { amount: number }) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  const tokens = Number(amount) * 1000000
+  const tokens = (Number(amount) * 1000000).toFixed(0)
 
   function salvage() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet
@@ -31,6 +31,8 @@ const SalvageIndex = ({ amount }: { amount: number }) => {
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         Pc.principal(sender).willSendEq(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1", 'fff'),
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1').willSendEq(tokens).ft("SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc", 'aeUSDC'),
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1').willSendEq(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma", 'liquid-staked-token'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
