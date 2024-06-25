@@ -30,6 +30,23 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = () => {
 
   const apps = [
+    // {
+    //   guild: {
+    //     logo: {
+    //       url: '/feather-fall-fund-logo.png'
+    //     }
+    //   },
+    //   title: `Feather Fall Fund`,
+    //   ticker: 'FFF',
+    //   subtitle: 'aeUSDC and sCHA at a fixed 1:1 ratio',
+    //   cardImage: {
+    //     url: '/feather-fall-fund-card.png'
+    //   },
+    //   slug: '/crafting/fff',
+    //   wip: false,
+    //   apps: [
+    //   ]
+    // },
     {
       guild: {
         logo: {
