@@ -7,7 +7,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@compo
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { getDecimals, getDeployedIndexes, getSymbol, getTokenPrices, getTokenURI, getTotalSupply } from '@lib/stacks-api';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
@@ -54,11 +54,6 @@ export default function IndexDetailPage({ data }: Props) {
             console.error(error)
         }
     }, [])
-
-
-    if (!data.metadata) {
-        return <div>Error Prerendering Page</div>
-    }
 
     const fadeIn = {
         hidden: { opacity: 0 },
@@ -165,8 +160,7 @@ type Props = {
     data: any;
 };
 
-
-export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: any) => {
 
     try {
         const contractName = params?.id.split('.')[1]
@@ -199,30 +193,69 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => 
         console.log(error)
         return {
             props: {
-                data: {
-                    address: '',
-                    metadata: {},
-                    totalSupply: 0,
-                    symbol: '',
-                    baseTokens: [],
-                    decimals: 0
-                }
+                data: {}
             },
         }
     }
 };
 
-export const getStaticPaths = async () => {
-    const contracts = await getDeployedIndexes();
-    // blacklist ones that are not active
-    const blacklist = ['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund']
-    const enabledContracts = contracts.filter((contract: any) => !blacklist.includes(contract))
-    const paths = enabledContracts.map((contract) => ({ params: { id: contract } }));
-    return {
-        paths,
-        fallback: true
-    };
-}
+// export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => {
+
+//     try {
+//         const contractName = params?.id.split('.')[1]
+
+//         const metadata = await getTokenURI(params?.id as string)
+//         const supply = await getTotalSupply(contractName)
+//         const symbol = await getSymbol(params?.id as string)
+//         const decimals = await getDecimals(params?.id as string)
+
+//         const baseTokens = await Promise.all(metadata.contains.map(async (token: any) => {
+//             const tokenMetadata = await getTokenURI(token.address)
+//             return tokenMetadata;
+//         }));
+
+//         return {
+//             props: {
+//                 data: {
+//                     address: params?.id,
+//                     metadata: metadata,
+//                     totalSupply: Number(supply.value.value),
+//                     symbol: symbol,
+//                     baseTokens: baseTokens,
+//                     decimals: decimals
+//                 }
+//             },
+//             revalidate: 600
+//         };
+
+//     } catch (error) {
+//         console.log(error)
+//         return {
+//             props: {
+//                 data: {
+//                     address: '',
+//                     metadata: {},
+//                     totalSupply: 0,
+//                     symbol: '',
+//                     baseTokens: [],
+//                     decimals: 0
+//                 }
+//             },
+//         }
+//     }
+// };
+
+// export const getStaticPaths = async () => {
+//     const contracts = await getDeployedIndexes();
+//     // blacklist ones that are not active
+//     const blacklist = ['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund']
+//     const enabledContracts = contracts.filter((contract: any) => !blacklist.includes(contract))
+//     const paths = enabledContracts.map((contract) => ({ params: { id: contract } }));
+//     return {
+//         paths,
+//         fallback: true
+//     };
+// }
 
 
 const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
