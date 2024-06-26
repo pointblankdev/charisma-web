@@ -87,7 +87,7 @@ export default function IndexDetailPage({ data }: Props) {
                                 <div className='grid grid-cols-4 gap-4 lg:grid-cols-6'>
                                     <div className='relative'>
                                         <Image alt={data.metadata.name} src={data.metadata.image} width={100} height={100} className='z-30 w-full border rounded-full' />
-                                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{millify(tokensRequested)}</div>
+                                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(tokensRequested)}</div>
                                     </div>
                                 </div>
                             </div>
@@ -103,7 +103,7 @@ export default function IndexDetailPage({ data }: Props) {
                                                 <TooltipTrigger>
                                                     <div className='z-20 relative'>
                                                         <Image alt={token.name} src={token.image} width={100} height={100} className='z-30 w-full border rounded-full' />
-                                                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{millify(tokensRequired[k])}</div>
+                                                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(tokensRequired[k])}</div>
                                                     </div>
                                                 </TooltipTrigger>
                                                 <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
