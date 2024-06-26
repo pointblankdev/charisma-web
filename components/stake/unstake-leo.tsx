@@ -10,6 +10,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
+import { getStakedTokenExchangeRate } from "@lib/stacks-api";
 
 interface UnstakeLeoButtonProps {
   tokens: string;
@@ -23,8 +24,10 @@ const UnstakeLeoButton: React.FC<UnstakeLeoButtonProps> = ({ tokens }) => {
 
   const tokens6Dec = Number(tokens) * 1000000
 
-  function unstake() {
+  async function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+    const { value } = await getStakedTokenExchangeRate('liquid-staked-leo')
+    const tokensOutMin = tokens6Dec * value / 1000000
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -32,14 +35,10 @@ const UnstakeLeoButton: React.FC<UnstakeLeoButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-leo",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        // Pc.principal(sender)
-        //   .willSendEq(tokens6Dec)
-        //   .ft(
-        //     "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo",
-        //     "liquid-staked-token"
-        //   ),
+        Pc.principal(sender).willSendEq(tokens6Dec).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo", "liquid-staked-token"),
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo').willSendGte(tokensOutMin).ft("SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token", 'leo'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

@@ -11,6 +11,7 @@ import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import { toInteger } from "lodash";
 import millify from "millify";
+import { getStakedTokenExchangeRate } from "@lib/stacks-api";
 
 interface UnstakeOdinButtonProps {
   tokens: string;
@@ -24,8 +25,10 @@ const UnstakeOdinButton: React.FC<UnstakeOdinButtonProps> = ({ tokens }) => {
 
   const tokens6Dec = Number(tokens) * 1000000
 
-  function unstake() {
+  async function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+    const { value } = await getStakedTokenExchangeRate('liquid-staked-odin')
+    const tokensOutMin = tokens6Dec * value / 1000000
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -33,14 +36,10 @@ const UnstakeOdinButton: React.FC<UnstakeOdinButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-odin",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        // Pc.principal(sender)
-        //   .willSendEq(tokens6Dec)
-        //   .ft(
-        //     "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin",
-        //     "liquid-staked-odin"
-        //   ),
+        Pc.principal(sender).willSendEq(tokens6Dec).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin", "liquid-staked-odin"),
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin').willSendGte(tokensOutMin).ft("SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn", 'odin'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

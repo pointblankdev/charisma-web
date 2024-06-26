@@ -10,6 +10,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
+import { getStakedTokenExchangeRate } from "@lib/stacks-api";
 
 interface UnstakeButtonProps {
   tokens: string;
@@ -23,8 +24,10 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
 
   const tokens6Dec = Number(tokens) * 1000000
 
-  function unstake() {
+  async function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+    const { value } = await getStakedTokenExchangeRate('liquid-staked-welsh-v2')
+    const tokensOutMin = tokens6Dec * value / 1000000
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -32,14 +35,10 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       contractName: "liquid-staked-welsh-v2",
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        // Pc.principal(sender)
-        //   .willSendEq(tokens6Dec)
-        //   .ft(
-        //     "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2",
-        //     "liquid-staked-token"
-        //   ),
+        Pc.principal(sender).willSendEq(tokens6Dec).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", "liquid-staked-token"),
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2').willSendGte(tokensOutMin).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
