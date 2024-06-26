@@ -60,7 +60,7 @@ export default function Swap({ data }: Props) {
     const welshPrice = priceData.find((token) => token.symbol === 'WELSH')?.price
     const stxPrice = priceData.find((token) => token.symbol === 'STX')?.price
 
-    const amountOutEstimation = ((stxPrice * Number(amount)) / welshPrice) * 0.96 // 4% slippage
+    const amountOutEstimation = ((stxPrice * Number(amount)) / welshPrice) * 0.975 // 2.5% slippage
 
     return (
         <Page meta={meta} fullViewport>
@@ -212,7 +212,7 @@ export default function Swap({ data }: Props) {
                         />
                         <div className='absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10' />
                     </Card>
-                    <div className='text-center font-thin m-2 text-xs sm:text-sm'>*Swaps use Velar liquidity pools and are set to a maximum of 4% slippage.</div>
+                    <div className='text-center font-thin m-2 text-xs sm:text-sm'>*Swaps use Velar liquidity pools and are set to a maximum of 2.5% slippage.</div>
                 </motion.div >
             </Layout >
         </Page >
