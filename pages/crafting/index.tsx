@@ -195,10 +195,7 @@ export default function Crafting({ apps }: Props) {
                   <p>Indexes maintain a fixed ratio between their base pair tokens, ensuring you never face impermanent loss.</p>
                   <p>The staking process for indexes is completely trustless, keeping your funds safe and available for withdrawal at any time.</p>
                   <p>There are no fees for adding or removing liquidity from indexes. You can use them as often as you like.</p>
-                  {/* <p>Here are some of the key terms to know:</p>
-                <p><strong>Index Token:</strong> A token created by combining two or more other tokens at a fixed ratio.</p>
-                <p><strong>Add Liquidity:</strong> Recieve index tokens by depositing base tokens.</p>
-                <p><strong>Remove Liqudity:</strong> Recover your base tokens by depositing index tokens.</p> */}</div>
+                </div>
                 <label className='flex items-center gap-2'>
                   <span>Show Inactive Indexes</span>
                   <Switch checked={showInactive} onCheckedChange={() => setShowInactive(!showInactive)} />
