@@ -12,22 +12,19 @@ import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
 import { motion } from "framer-motion"
-import cardBackground from '@public/feather-fall-fund-card.png'
 import millify from 'millify';
 import { Slider } from '@components/ui/slider';
 import AddLiquidityToIndex from '@components/craft/add-liquidity';
 import RemoveLiquidityFromIndex from '@components/salvage/remove-liquidity';
-import { LinkIcon } from 'lucide-react';
 import { Link1Icon } from '@radix-ui/react-icons';
 
-export default function Fenrir({ data }: Props) {
+export default function IndexDetailPage({ data }: Props) {
     const meta = {
-        title: 'Charisma | Feather Fall Fund',
+        title: `Charisma | ${data.metadata.name}`,
         description: META_DESCRIPTION,
-        image: '/feather-fall-fund-card.png'
+        image: data.metadata.background
     };
 
-    const [objectivesVisible, setObjectivesVisible] = useState(true)
     const [descriptionVisible, setDescriptionVisible] = useState(false)
     const [tvl, setTVL] = useState(0)
 
@@ -97,25 +94,24 @@ export default function Fenrir({ data }: Props) {
                         <CardContent className='z-20 p-0'>
                             <div className='z-30 p-4'>
                                 <div className='z-20 min-h-[136px]'>
-                                    {objectivesVisible && <div className='z-30 text-xl font-semibold'>Base Tokens</div>}
-                                    {objectivesVisible && <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>These tokens will be staked to mint {data.symbol} index tokens</CardDescription>}
-                                    {objectivesVisible &&
-                                        <div className='z-20 grid grid-cols-4 gap-4 lg:grid-cols-6'>
-                                            {data.baseTokens.map((token: any, k: any) => (<TooltipProvider>
-                                                <Tooltip>
-                                                    <TooltipTrigger>
-                                                        <div className='z-20 relative'>
-                                                            <Image alt={token.name} src={token.image} width={100} height={100} className='z-30 w-full border rounded-full' />
-                                                            <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{millify(tokensRequired[k])}</div>
-                                                        </div>
-                                                    </TooltipTrigger>
-                                                    <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        {Math.floor(tokensRequired[k])} {data.metadata.contains[k].symbol}
-                                                    </TooltipContent>
-                                                </Tooltip>
-                                            </TooltipProvider>))}
+                                    <div className='z-30 text-xl font-semibold'>Base Tokens</div>
+                                    <CardDescription className='z-30 mb-4 text-sm font-fine text-foreground'>These tokens will be staked to mint {data.symbol} index tokens</CardDescription>
+                                    <div className='z-20 grid grid-cols-4 gap-4 lg:grid-cols-6'>
+                                        {data.baseTokens.map((token: any, k: any) => (<TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger>
+                                                    <div className='z-20 relative'>
+                                                        <Image alt={token.name} src={token.image} width={100} height={100} className='z-30 w-full border rounded-full' />
+                                                        <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{millify(tokensRequired[k])}</div>
+                                                    </div>
+                                                </TooltipTrigger>
+                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+                                                    {Math.floor(tokensRequired[k])} {data.metadata.contains[k].symbol}
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider>))}
 
-                                        </div>}
+                                    </div>
                                 </div>
                             </div>
                         </CardContent>
@@ -190,7 +186,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => 
                     decimals: decimals
                 }
             },
-            revalidate: 60
+            revalidate: 600
         };
 
     } catch (error) {
