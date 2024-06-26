@@ -64,8 +64,7 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
         const safeTicker = ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
         doContractDeploy({
             contractName: safeName,
-            codeBody: `
-;; Title: ${name}
+            codeBody: `;; Title: ${name}
 ;; Created With Charisma
 
 (impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v2.sip010-ft-trait)
