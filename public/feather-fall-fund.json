@@ -1,6 +1,8 @@
 {
     "name": "Feather Fall Fund",
     "description": "An index fund composed of aeUSDC and sCHA at a fixed 1:1 ratio.",
+    "symbol": "FFF",
+    "ft": "fff",
     "image": "https://charisma.rocks/feather-fall-fund-logo.png",
     "contains": [
         {
