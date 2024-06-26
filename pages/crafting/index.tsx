@@ -188,8 +188,8 @@ export default function Crafting({ apps }: Props) {
           <div className='grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
             <Card className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
-                <div className='space-y-4'>
-                  <h3 className="font-bold text-lg">Indexes</h3>
+                <div className='space-y-4 text-sm'>
+                  <h3 className="font-bold text-lg">Token Indexes</h3>
                   <p>Use your funds to mint new tokens called Indexes.</p>
                   <p>Indexes allow you to consolidate your tokens into a single, more valuable token, similar to a stock index fund.</p>
                   <p>Indexes maintain a fixed ratio between their base pair tokens, ensuring you never face impermanent loss.</p>
