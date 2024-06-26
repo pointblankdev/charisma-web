@@ -4,6 +4,7 @@ import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
 import { getAllWallets } from "./cms-providers/dato";
 import { cvToJSON } from '@stacks/transactions';
+import contractAbi from '../public/indexes/contract-abi.json';
 
 const network = new StacksMainnet();
 
@@ -571,6 +572,63 @@ export async function getFenrirBalance(contract: string) {
     });
 
     return cvToJSON(response)
+}
+
+export async function getDeployedIndexes() {
+    const response = await scApi.getContractsByTrait({
+        traitAbi: JSON.stringify(contractAbi)
+    })
+    return response.results.map((r: any) => r.contract_id)
+}
+
+export async function getTokenURI(contract: string) {
+
+    const [address, name] = contract.split('.')
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: address,
+        contractName: name,
+        functionName: "get-token-uri",
+        functionArgs: [],
+        senderAddress: address
+    });
+
+    const metadata = (await fetch(cvToJSON(response).value.value.value)).json()
+
+    return metadata
+}
+
+export async function getSymbol(contract: string) {
+
+    const [address, name] = contract.split('.')
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: address,
+        contractName: name,
+        functionName: "get-symbol",
+        functionArgs: [],
+        senderAddress: address
+    });
+
+    return cvToJSON(response).value.value
+}
+
+export async function getDecimals(contract: string) {
+
+    const [address, name] = contract.split('.')
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: address,
+        contractName: name,
+        functionName: "get-decimals",
+        functionArgs: [],
+        senderAddress: address
+    });
+
+    return cvToJSON(response).value.value
 }
 
 export async function getTotalSupply(contract: string) {

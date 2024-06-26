@@ -20,37 +20,59 @@ import { UrlObject } from 'url';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
-import { getFenrirBalance, getFenrirTotalSupply, getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
+import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
 import millify from 'millify';
 import aeUSDC from '@public/aeUSDC-logo.svg'
 import liquidStakedCharisma from '@public/liquid-staked-charisma.png'
+import { Switch } from '@components/ui/switch';
 
 type Props = {
   apps: any[];
 };
 
-export const getStaticProps: GetStaticProps<Props> = () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+  const contracts = await getDeployedIndexes();
+  // blacklist ones that are not active
+  const blacklist = ['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund']
+  const enabledContracts = contracts.filter((contract: any) => !blacklist.includes(contract))
+
+  // lookup metadata for each contract
+  const tokenMetadataPromises = enabledContracts.map(async (contract: any) => {
+    const tokenMetadata = await getTokenURI(contract);
+    const baseTokens = await Promise.all(tokenMetadata.contains.map(async (token: any) => {
+      const baseTokenMetadata = await getTokenURI(token.address)
+      return baseTokenMetadata;
+    }));
+    tokenMetadata.tokens = baseTokens;
+    return tokenMetadata;
+  });
+
+  const tokenMetadata = await Promise.all(tokenMetadataPromises);
+
+
+
+  // [
+  //   {
+  //     name: 'Charismatic Corgi',
+  //     description: 'An index fund composed of sWELSH and sCHA at a fixed 100:1 ratio.',
+  //     image: 'https://charisma.rocks/indexes/charismatic-corgi-logo.png',
+  //     background: 'https://charisma.rocks/indexes/charismatic-corgi-bg.png',
+  //     symbol: 'iCC',
+  //     ft: 'index-token',
+  //     contains: [ [Object], [Object] ]
+  //   },
+  //   {
+  //     name: 'Feather Fall Fund',
+  //     description: 'An index fund composed of aeUSDC and sCHA at a fixed 1:1 ratio.',
+  //     symbol: 'FFF',
+  //     ft: 'fff',
+  //     image: 'https://charisma.rocks/feather-fall-fund-logo.png',
+  //     contains: [ [Object], [Object] ]
+  //   }
+  // ]
 
   const apps = [
-    {
-      guild: {
-        logo: {
-          url: '/feather-fall-fund-logo.png'
-        }
-      },
-      title: `Feather Fall Fund`,
-      ticker: 'FFF',
-      subtitle: 'aeUSDC and sCHA at a fixed 1:1 ratio',
-      cardImage: {
-        url: '/feather-fall-fund-card.png'
-      },
-      slug: '/crafting/fff',
-      wip: false,
-      apps: [
-        { slug: 'https://app.velar.com/swap', img: aeUSDC },
-        { slug: '/stake/charisma', img: liquidStakedCharisma },
-      ]
-    },
     {
       guild: {
         logo: {
@@ -64,7 +86,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/woo-1.png'
       },
       slug: '/crafting/woo',
-      wip: false,
+      inactive: true,
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/roo', img: liquidStakedRoo },
@@ -83,36 +105,61 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         url: '/fenrir-21.png'
       },
       slug: '/crafting/fenrir',
-      wip: false,
+      inactive: true,
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/odin', img: liquidStakedOdin },
       ]
     },
-    // {
-    //   guild: {
-    //     logo: {
-    //       url: '/woooooo.webp'
-    //     }
-    //   },
-    //   title: 'Wooo! (Deprecated)',
-    //   ticker: 'WOOO',
-    //   subtitle: 'sWELSH + sROO = WOOO',
-    //   cardImage: {
-    //     url: '/wooo-title-belt.gif'
-    //   },
-    //   slug: '/crafting/wooo',
-    //   wip: true,
-    //   apps: [
-    //     { slug: '/stake/welsh', img: liquidStakedWelsh },
-    //     { slug: '/stake/roo', img: liquidStakedRoo },
-    //   ]
-    // }
+    {
+      guild: {
+        logo: {
+          url: '/woooooo.webp'
+        }
+      },
+      title: 'Wooo! (Deprecated)',
+      ticker: 'WOOO',
+      subtitle: 'sWELSH + sROO = WOOO',
+      cardImage: {
+        url: '/wooo-title-belt.gif'
+      },
+      slug: '/crafting/wooo',
+      inactive: true,
+      apps: [
+        { slug: '/stake/welsh', img: liquidStakedWelsh },
+        { slug: '/stake/roo', img: liquidStakedRoo },
+      ]
+    }
   ]
+
+  const modifiedApps = tokenMetadata.map((metadata: any, k: number) => {
+    return {
+      guild: {
+        logo: {
+          url: metadata.image
+        }
+      },
+      title: metadata.name,
+      ticker: metadata.symbol,
+      subtitle: metadata.description,
+      cardImage: {
+        url: metadata.background || '/liquid-charisma.png'
+      },
+      slug: `/crafting/${enabledContracts[k]}`,
+      inactive: false,
+      apps: metadata.tokens.map((token: any) => {
+        return {
+          img: token.image
+        }
+      })
+    }
+  });
+
+  const finalApps = [...apps, ...modifiedApps];
 
   return {
     props: {
-      apps
+      apps: finalApps
     },
     revalidate: 60
   };
@@ -127,74 +174,11 @@ export default function Crafting({ apps }: Props) {
   };
 
   const [loading, setLoading] = useState(false);
-  const [welshPrice, setWelshPrice] = useState(0)
-  const [odinPrice, setOdinPrice] = useState(0)
-  const [rooPrice, setRooPrice] = useState(0)
 
-  const [welshExchangeRate, setWelshExchangeRate] = useState(1)
-  const [welshv2ExchangeRate, setWelshv2ExchangeRate] = useState(1)
-  const [odinExchangeRate, setOdinExchangeRate] = useState(1)
-  const [rooExchangeRate, setRooExchangeRate] = useState(1)
-  const [roov2ExchangeRate, setRoov2ExchangeRate] = useState(1)
+  // checkbox to enable/disable inactive pools
+  const [showInactive, setShowInactive] = useState(false);
 
-  const [welshBalance, setWelshBalance] = useState(0)
-  const [odinBalance, setOdinBalance] = useState(0)
-  const [fenrirTotalSupply, setFenrirTotalSupply] = useState(0)
-
-
-  // useEffect(() => {
-  //   getTokenPrices().then((prices) => {
-  //     // find symbol: 'WELSH and 'ODIN' in the message array
-  //     // set the price of each to a state variable
-  //     prices.message.forEach((token: { symbol: string; price: number; }) => {
-  //       if (token.symbol === 'WELSH') {
-  //         setWelshPrice(token.price)
-  //       }
-  //       if (token.symbol === 'ODIN') {
-  //         setOdinPrice(token.price)
-  //       }
-  //       if (token.symbol === '$ROO') {
-  //         setRooPrice(token.price)
-  //       }
-  //     })
-  //     getStakedTokenExchangeRate("liquid-staked-welsh").then((rate) => {
-  //       setWelshExchangeRate(rate.value.value / 1000000)
-  //     })
-  //     getStakedTokenExchangeRate("liquid-staked-welsh-v2").then((rate) => {
-  //       setWelshv2ExchangeRate(rate.value / 1000000)
-  //     })
-  //     getStakedTokenExchangeRate("liquid-staked-odin").then((rate) => {
-  //       setOdinExchangeRate(rate.value / 1000000)
-  //     })
-  //     getStakedTokenExchangeRate("liquid-staked-roo").then((rate) => {
-  //       setRooExchangeRate(rate.value / 1000000)
-  //     })
-  //     getStakedTokenExchangeRate("liquid-staked-roo-v2").then((rate) => {
-  //       setRoov2ExchangeRate(rate.value / 1000000)
-  //     })
-  //     getFenrirBalance("liquid-staked-welsh-v2").then((amount) => {
-  //       setWelshBalance(Number(amount.value.value))
-  //     })
-  //     getFenrirBalance("liquid-staked-odin").then((amount) => {
-  //       setOdinBalance(Number(amount.value.value))
-  //     })
-  //     getFenrirTotalSupply().then((amount) => {
-  //       setFenrirTotalSupply(Number(amount.value.value))
-  //     })
-  //   })
-  // }, [])
-
-  // look at the apps field of the apps array and calculate the value of the token
-  // here is an example for the wooo app which is /stake/welsh and /stake/roo
-  // millify((100 * welshPrice * 1.06) + (0.42 * rooPrice * 1.01), { precision: 6 })
-
-  // const woooValue = millify((100 * welshPrice * welshExchangeRate) + (0.42 * rooPrice * rooExchangeRate), { precision: 4 })
-  // const fenrirValue = millify((welshPrice * welshv2ExchangeRate * (welshBalance / fenrirTotalSupply)) + (odinPrice * odinExchangeRate * (odinBalance / fenrirTotalSupply)), { precision: 4 })
-  // const wooValue = millify((100 * welshPrice * welshv2ExchangeRate) + (0.42 * rooPrice * roov2ExchangeRate), { precision: 4 })
-
-  // apps[0].value = woooValue
-  // apps[1].value = fenrirValue
-  // apps[2].value = wooValue
+  const activeApps = showInactive ? apps : apps.filter((app) => !app.inactive)
 
   return (
     <Page meta={meta} fullViewport>
@@ -203,21 +187,26 @@ export default function Crafting({ apps }: Props) {
         <div className="m-2 sm:container sm:mx-auto sm:py-10">
           <div className='grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3'>
             <Card className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
-              <div className="relative flex flex-col items-start text-md p-4 space-y-4 shadow-md rounded-lg">
-                <h3 className="font-bold text-lg">Indexes</h3>
-                <p>Leverage your liquid staked memecoins to mint new tokens called Indexes.</p>
-                <p>Indexes enable you to consolidate your tokens into a single, more valuable token- like an stocks index fund.</p>
-                <p>Indexes always maintain a fixed ratio between their base pair tokens, so you'll never be subject to impermanent loss.</p>
-                <p>The staking process for Indexes is 100% trustless, so your funds are always safe and can be withdrawn at any time.</p>
-                {/* <p>Here are some of the key terms to know:</p>
+              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
+                <div className='space-y-4'>
+                  <h3 className="font-bold text-lg">Indexes</h3>
+                  <p>Leverage your liquid staked memecoins to mint new tokens called Indexes.</p>
+                  <p>Indexes enable you to consolidate your tokens into a single, more valuable token- like an stocks index fund.</p>
+                  <p>Indexes always maintain a fixed ratio between their base pair tokens, so you'll never be subject to impermanent loss.</p>
+                  <p>The staking process for Indexes is 100% trustless, so your funds are always safe and can be withdrawn at any time.</p>
+                  {/* <p>Here are some of the key terms to know:</p>
                 <p><strong>Index Token:</strong> A token created by combining two or more other tokens at a fixed ratio.</p>
                 <p><strong>Add Liquidity:</strong> Recieve index tokens by depositing base tokens.</p>
-                <p><strong>Remove Liqudity:</strong> Recover your base tokens by depositing index tokens.</p> */}
+                <p><strong>Remove Liqudity:</strong> Recover your base tokens by depositing index tokens.</p> */}</div>
+                <label className='flex items-center gap-2'>
+                  <span>Show Inactive Indexes</span>
+                  <Switch checked={showInactive} onCheckedChange={() => setShowInactive(!showInactive)} />
+                </label>
               </div>
             </Card>
-            {apps.map((pool, i) => {
+            {activeApps.map((pool, i) => {
               return (
-                <Card key={i} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
+                <Card key={i} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.inactive && 'opacity-25 hover:opacity-60')}>
                   <Link href={`${pool.slug}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
@@ -226,7 +215,7 @@ export default function Crafting({ apps }: Props) {
                           <div className='flex gap-2'>
                             <div className='min-w-max'>
                               {pool.guild.logo.url ?
-                                <Image src={pool.guild.logo.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 border rounded-full grow' />
+                                <Image src={pool.guild.logo.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 rounded-full grow' />
                                 : <div className='w-10 h-10 bg-white border rounded-full' />
                               }
                             </div>
@@ -264,10 +253,10 @@ export default function Crafting({ apps }: Props) {
                         {pool.apps.map((app: { slug: string | UrlObject; img: string | StaticImport; }, i: number) => {
                           return (
                             <div className='relative z-30 none' key={i}>
-                              <Link href={app.slug}>
-                                <Image src={app.img} alt='charisma-token' className='z-30 w-12 h-12 bordere rounded-full' />
-                                {/* <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{0}</div> */}
-                              </Link>
+                              {/* <Link href={app.slug}> */}
+                              <Image src={app.img} width={40} height={40} alt='charisma-token' className='z-30 w-12 h-12 rounded-full' />
+                              {/* <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{0}</div> */}
+                              {/* </Link> */}
                             </div>
                           )
                         })}

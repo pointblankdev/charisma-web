@@ -5,40 +5,34 @@ import {
     AnchorMode,
     Pc,
     PostConditionMode,
-    principalCV,
     uintCV,
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const CraftIndex = ({ amount }: { amount: number }) => {
+const AddLiquidityToIndex = ({ amount, address, metadata }: { amount: number, address: `${string}.${string}`, metadata: any }) => {
     const { doContractCall } = useConnect();
 
     const [mounted, setMounted] = useState(false);
     useEffect(() => { setMounted(true) }, []);
 
+    const [contractAddress, contractName] = address.split('.')
+
     const tokens = (Number(amount) * 1000000).toFixed(0)
 
-    function craft() {
+    function addLiquidity() {
         const sender = userSession.loadUserData().profile.stxAddress.mainnet
         doContractCall({
             network: new StacksMainnet(),
             anchorMode: AnchorMode.Any,
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: "feather-fall-fund-v1",
+            contractAddress,
+            contractName,
             functionName: "add-liquidity",
             functionArgs: [uintCV(tokens)],
             postConditionMode: PostConditionMode.Deny,
-            postConditions: [
-                Pc.principal(sender).willSendEq(tokens).ft("SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc", 'aeUSDC'),
-                Pc.principal(sender).willSendEq(tokens).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma", 'liquid-staked-token'),
-            ],
-            onFinish: (data) => {
-                console.log("onFinish:", data);
-            },
-            onCancel: () => {
-                console.log("onCancel:", "Transaction was canceled");
-            },
+            postConditions: metadata.contains.map((item: any) => Pc.principal(sender).willSendEq(Number(tokens) * Number(item.weight)).ft(item.address, item.ft)),
+            onFinish: (data) => { console.log("onFinish:", data) },
+            onCancel: () => { console.log("onCancel:", "Transaction was canceled") },
         });
     }
 
@@ -47,8 +41,8 @@ const CraftIndex = ({ amount }: { amount: number }) => {
     }
 
     return (
-        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Add Liquidity</Button>
+        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={addLiquidity}>Add Liquidity</Button>
     );
 };
 
-export default CraftIndex;
+export default AddLiquidityToIndex;

@@ -107,7 +107,7 @@ export default function Fenrir({ data }: Props) {
                   <div className='text-lg'>
                     ${millify(tvl)} TVL
                   </div>
-                  <ActiveRecipeIndicator active={true} />
+                  <ActiveRecipeIndicator active={false} />
                 </div>
               </div>
               <CardDescription className='z-30 text-sm sm:text-md font-fine text-foreground'>sWELSH and sODIN at a fixed 1:10 ratio</CardDescription>
@@ -304,12 +304,12 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
       <Tooltip>
         <TooltipTrigger>
           <div className='relative w-4 h-4'>
-            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'}`} />
-            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'}`} />
+            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-red-500'}`} />
+            <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500 animate-ping'}`} />
           </div>
         </TooltipTrigger>
         <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-          {active ? 'Crafting is live' : 'Crafting goes live on May 8th'}
+          {active ? 'Crafting is live' : 'Crafting is disabled. Non-standard SIP10 tokens have proven difficult to list on DEXs, so the plan is to simplify the tokenomics and relaunch with a new token. Fees have all been disabled so you can withdraw your deposit at no cost.'}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

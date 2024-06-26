@@ -2,6 +2,7 @@ module.exports = {
   images: {
     domains: [
       'www.datocms-assets.com',
+      'charisma.rocks'
     ],
     imageSizes: [24, 64, 300],
     remotePatterns: [

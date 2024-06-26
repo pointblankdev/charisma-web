@@ -52,7 +52,7 @@ const CraftWoo = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button disabled={amount <= 0} className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={craft}>🔨 Craft</Button>
+    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={craft}>🔨 Craft</Button>
   );
 };
 

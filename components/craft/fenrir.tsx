@@ -47,7 +47,7 @@ const CraftFenrir = ({ amount, welshCost, odinCost }: { amount: number, welshCos
   }
 
   return (
-    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Mint</Button>
+    <Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={craft}>Mint</Button>
   );
 };
 

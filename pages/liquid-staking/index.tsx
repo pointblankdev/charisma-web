@@ -51,7 +51,8 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       slug: 'stake/charisma',
       wip: false,
       apps: [
-        { slug: '/crafting/fff', img: featherFallFund },
+        { slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1', img: featherFallFund },
+        { slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi', img: '/indexes/charismatic-corgi-logo.png' },
       ]
     },
     {
@@ -352,7 +353,7 @@ export default function LiquidStaking({ pools }: Props) {
                           return (
                             <div className='relative z-30 none'>
                               <Link href={app.slug}>
-                                <Image src={app.img} alt='charisma-token' className='z-30 w-12 h-12 border rounded-full' />
+                                <Image src={app.img} width={40} height={40} alt='integrated apps' className='z-30 w-12 h-12 border rounded-full' />
                                 {/* <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{0}</div> */}
                               </Link>
                             </div>
