@@ -186,7 +186,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
                     decimals: decimals
                 }
             },
-            revalidate: 600
         };
 
     } catch (error) {

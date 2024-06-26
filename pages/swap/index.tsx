@@ -100,8 +100,6 @@ export default function Swap({ data }: Props) {
         amountOutEstimation = (amountFenrir / 1000000) * ((welshVelarPrice * (welshBalance / fenrirTotalSupply)) + (odinVelarPrice * (odinBalance / fenrirTotalSupply)))
     }
 
-    console.log(amountOutEstimation)
-
     return (
         <Page meta={meta} fullViewport>
             <SkipNavContent />

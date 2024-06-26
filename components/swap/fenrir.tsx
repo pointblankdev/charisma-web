@@ -17,8 +17,6 @@ const SwapStxForFenrir = ({ amountStx, amountStxForWelsh, amountStxForOdin, amou
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  console.log({ amountStx, amountStxForWelsh, amountStxForOdin, amountFenrir })
-
   function swap() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
