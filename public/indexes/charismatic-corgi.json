@@ -2,6 +2,7 @@
     "name": "Charismatic Corgi",
     "description": "An index fund composed of sWELSH and sCHA at a fixed 100:1 ratio.",
     "image": "https://charisma.rocks/indexes/charismatic-corgi-logo.png",
+    "background": "https://charisma.rocks/indexes/charismatic-corgi-bg.png",
     "symbol": "iCC",
     "ft": "index-token",
     "contains": [
