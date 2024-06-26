@@ -1,0 +1,22 @@
+{
+    "name": "Good Karma",
+    "description": "An index fund composed of VELAR and sCHA at a fixed 10:1 ratio.",
+    "image": "https://charisma.rocks/indexes/good-karma-logo.png",
+    "background": "https://charisma.rocks/indexes/good-karma-bg.png",
+    "symbol": "iGK",
+    "ft": "index-token",
+    "contains": [
+        {
+            "address": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token",
+            "symbol": "VELAR",
+            "ft": "velar",
+            "weight": 10
+        },
+        {
+            "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
+            "symbol": "sCHA",
+            "ft": "liquid-staked-token",
+            "weight": 1
+        }
+    ]
+}

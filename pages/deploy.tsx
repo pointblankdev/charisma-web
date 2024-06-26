@@ -37,12 +37,11 @@ import { Slider } from "@components/ui/slider"
 const questFormSchema = z.object({
     baseTokenA: z.string(),
     baseTokenB: z.string(),
-    // ratioAtoB: z.coerce.number(),
+    tokenARatio: z.coerce.number(),
+    tokenBRatio: z.coerce.number(),
     name: z.string(),
     ticker: z.string(),
     decimals: z.coerce.number(),
-    // cardImage: z.string(),
-    // questBgImage: z.string(),
 })
 
 type QuestFormValues = z.infer<typeof questFormSchema>
@@ -55,9 +54,8 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
     const deployContract = ({
         baseTokenA,
         baseTokenB,
-        // ratioAtoB,
-        tokenARatio = 100,
-        tokenBRatio = 1,
+        tokenARatio,
+        tokenBRatio,
         name,
         ticker,
         decimals,
@@ -251,19 +249,32 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
                                     </FormItem>
                                 )}
                             />
-                            {/* <FormField
+                            <FormField
                                 control={form.control}
-                                name="ratioAtoB"
+                                name="tokenARatio"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>Base Tokens Weight Ratio (A:B)</FormLabel>
+                                        <FormLabel>Base Token A Weight (A:B)</FormLabel>
                                         <FormControl>
-                                            <Slider min={0} max={100} step={1} />
+                                            <Input defaultValue={1} type="number" min={1} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
-                            /> */}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="tokenBRatio"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>Base Token B Weight (A:B)</FormLabel>
+                                        <FormControl>
+                                            <Input defaultValue={1} type="number" min={1} {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                             <FormField
                                 control={form.control}
                                 name="name"
