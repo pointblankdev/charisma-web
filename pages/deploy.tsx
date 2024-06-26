@@ -56,7 +56,7 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
         baseTokenA,
         baseTokenB,
         // ratioAtoB,
-        tokenARatio = 1,
+        tokenARatio = 100,
         tokenBRatio = 1,
         name,
         ticker,
@@ -70,8 +70,8 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
 ;; Title: ${name}
 ;; Created With Charisma
 
-(impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v2.sip010-ft-trait)
-(impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v2.extension-trait)
+(impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v3.sip010-ft-trait)
+(impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v3.extension-trait)
 (impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v3.index-token-trait)
 
 (define-constant err-unauthorized (err u3000))
