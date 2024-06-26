@@ -190,10 +190,11 @@ export default function Crafting({ apps }: Props) {
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
                 <div className='space-y-4'>
                   <h3 className="font-bold text-lg">Indexes</h3>
-                  <p>Leverage your liquid staked memecoins to mint new tokens called Indexes.</p>
-                  <p>Indexes enable you to consolidate your tokens into a single, more valuable token- like an stocks index fund.</p>
-                  <p>Indexes always maintain a fixed ratio between their base pair tokens, so you'll never be subject to impermanent loss.</p>
-                  <p>The staking process for Indexes is 100% trustless, so your funds are always safe and can be withdrawn at any time.</p>
+                  <p>Use your funds to mint new tokens called Indexes.</p>
+                  <p>Indexes allow you to consolidate your tokens into a single, more valuable token, similar to a stock index fund.</p>
+                  <p>Indexes maintain a fixed ratio between their base pair tokens, ensuring you never face impermanent loss.</p>
+                  <p>The staking process for indexes is completely trustless, keeping your funds safe and available for withdrawal at any time.</p>
+                  <p>There are no fees for adding or removing liquidity from indexes. You can use them as often as you like.</p>
                   {/* <p>Here are some of the key terms to know:</p>
                 <p><strong>Index Token:</strong> A token created by combining two or more other tokens at a fixed ratio.</p>
                 <p><strong>Add Liquidity:</strong> Recieve index tokens by depositing base tokens.</p>
