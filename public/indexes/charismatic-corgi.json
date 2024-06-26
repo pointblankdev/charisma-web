@@ -1,5 +1,21 @@
 {
     "name": "Charismatic Corgi",
     "description": "An index fund composed of sWELSH and sCHA at a fixed 100:1 ratio.",
-    "image": "https://charisma.rocks/indexes/charismatic-corgi-logo.png"
+    "image": "https://charisma.rocks/indexes/charismatic-corgi-logo.png",
+    "symbol": "iCC",
+    "ft": "index-token",
+    "contains": [
+        {
+            "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2",
+            "symbol": "sWELSH",
+            "ft": "liquid-staked-token",
+            "weight": 100
+        },
+        {
+            "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
+            "symbol": "sCHA",
+            "ft": "liquid-staked-token",
+            "weight": 1
+        }
+    ]
 }

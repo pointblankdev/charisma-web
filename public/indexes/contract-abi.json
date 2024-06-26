@@ -1,0 +1,59 @@
+{
+    "maps": [],
+    "epoch": "Epoch25",
+    "functions": [
+        {
+            "args": [
+                {
+                    "name": "amount",
+                    "type": "uint128"
+                }
+            ],
+            "name": "add-liquidity",
+            "access": "public",
+            "outputs": {
+                "type": {
+                    "response": {
+                        "ok": "bool",
+                        "error": "uint128"
+                    }
+                }
+            }
+        },
+        {
+            "args": [
+                {
+                    "name": "amount",
+                    "type": "uint128"
+                }
+            ],
+            "name": "remove-liquidity",
+            "access": "public",
+            "outputs": {
+                "type": {
+                    "response": {
+                        "ok": "bool",
+                        "error": "uint128"
+                    }
+                }
+            }
+        },
+        {
+            "args": [],
+            "name": "get-total-supply",
+            "access": "read_only",
+            "outputs": {
+                "type": {
+                    "response": {
+                        "ok": "uint128",
+                        "error": "none"
+                    }
+                }
+            }
+        }
+    ],
+    "variables": [],
+    "clarity_version": "Clarity2",
+    "fungible_tokens": [],
+    "non_fungible_tokens": []
+}
