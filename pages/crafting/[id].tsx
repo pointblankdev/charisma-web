@@ -30,6 +30,7 @@ export default function IndexDetailPage({ data }: Props) {
 
     const [factor, setFactor] = useState(2)
 
+
     const tokenAddressList = data.metadata.contains.map((token: any) => token.address)
 
     const totalSupply = data.totalSupply / Math.pow(10, data.decimals)
@@ -53,6 +54,11 @@ export default function IndexDetailPage({ data }: Props) {
             console.error(error)
         }
     }, [])
+
+
+    if (!data.metadata) {
+        return <div>Error Prerendering Page</div>
+    }
 
     const fadeIn = {
         hidden: { opacity: 0 },
@@ -193,7 +199,14 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => 
         console.log(error)
         return {
             props: {
-                data: {}
+                data: {
+                    address: '',
+                    metadata: {},
+                    totalSupply: 0,
+                    symbol: '',
+                    baseTokens: [],
+                    decimals: 0
+                }
             },
         }
     }
