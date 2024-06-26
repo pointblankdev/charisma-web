@@ -128,7 +128,7 @@ export default function Swap({ data }: Props) {
                                         <SelectValue placeholder='Select a token' />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        <SelectItem value="STX" className='group/token' disabled={sellToken == 'STX'}>
+                                        {/* <SelectItem value="STX" className='group/token' disabled={sellToken == 'STX'}>
                                             <div className='flex space-x-2 items-center h-20'>
                                                 <Image src={stxIcon} alt='Stacks Token' className='z-30 w-12 h-12 border border-white rounded-full' />
                                                 <div className='text-left'>
@@ -158,7 +158,7 @@ export default function Swap({ data }: Props) {
                                                     </div>
                                                 </div>
                                             </div>
-                                        </SelectItem>
+                                        </SelectItem> */}
                                         <SelectItem value="WELSH" className='group/token' disabled={sellToken == 'WELSH'}>
                                             <div className='flex space-x-2 items-center h-20'>
                                                 <Image src={WelshIcon} alt='Welshcorgicoin Token' className='z-30 w-12 h-12 border border-white rounded-full' />
