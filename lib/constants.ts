@@ -51,10 +51,10 @@ export const NAVIGATION = [
   //   name: 'Governance',
   //   route: '/governance',
   // },
-  // {
-  //   name: 'Guilds',
-  //   route: '/guilds'
-  // },
+  {
+    name: 'Portfolio',
+    route: '/portfolio'
+  },
 ];
 
 export type TicketGenerationState = 'default' | 'loading';

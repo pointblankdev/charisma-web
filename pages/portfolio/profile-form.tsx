@@ -109,7 +109,7 @@ export default function ProfileForm() {
                 <Input placeholder={address} {...field} disabled />
               </FormControl>
               <FormDescription>
-                This is your public display name unless you have a BNS handle setup.
+                This is your Stacks public address. It's used to send and recieve tokens.
               </FormDescription>
               <FormMessage />
             </FormItem>

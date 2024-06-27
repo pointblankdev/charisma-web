@@ -56,7 +56,7 @@ export default function Layout({
                     {/* {name === 'Apps' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
                           {name === 'Swap' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
                           {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>} */}
-                    {/* {name === 'Crafting' && <div className='whitespace-nowrap absolute text-xs top-4 text-primary animate-pulse'>FENRIR IS ALIVE</div>} */}
+                    {name === 'Portfolio' && <div className='whitespace-nowrap absolute text-xs top-4 text-yellow-500 animate-pulse'>preview</div>}
                   </div>
                 </Link>
               ))}

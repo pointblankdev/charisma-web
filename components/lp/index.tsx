@@ -1,61 +1,29 @@
 
 import { useState } from 'react';
-import { PageState, ConfDataContext, UserData } from '@lib/hooks/use-conf-data';
-import Whitelist from './whitelist';
+import useWallet, { WalletBalancesContext, WalletBalances } from '@lib/hooks/use-wallet-balances';
 import Layout from '../layout';
 import Hero from './hero';
-import Form from './form';
 import LearnMore from './learn-more';
-import styles from './hero.module.css';
 import styleUtils from '@components/utils.module.css';
-import ClaimFaucetButton from '@components/faucet/claim';
-import { cn } from '@lib/utils';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
-import { Info } from 'lucide-react';
-import { clamp } from 'lodash';
 
 type Props = {
-  defaultUserData: UserData;
-  sharePage?: boolean;
-  defaultPageState?: PageState;
-  data: any;
+  defaultWalletBalances: WalletBalances;
 };
 
-export default function LandingPage({
-  defaultUserData,
-  defaultPageState = 'registration',
-  data
-}: Props) {
-  const [userData, setUserData] = useState<UserData>(defaultUserData);
-  const [pageState, setPageState] = useState<PageState>(defaultPageState);
+export default function LandingPage({ defaultWalletBalances }: Props) {
 
-  // const blockHeight = data.latestBlock
-  // const lastClaimBlockHeight = data.lastClaim
-  // const unclaimedBlocks = clamp(0, 999, blockHeight - lastClaimBlockHeight)
-  // const dripAmount = data.dripAmount
+  const [balances, setBalances] = useState<WalletBalances>(defaultWalletBalances);
 
   return (
-    <ConfDataContext.Provider
-      value={{
-        userData,
-        setUserData,
-        setPageState
-      }}
-    >
+    <WalletBalancesContext.Provider value={{ balances, setBalances }}>
       <Layout>
         <div className={styleUtils.container}>
-          {pageState === 'registration' ? (
-            <>
-              <Hero />
-              {/* <Form /> */}
-              <LearnMore />
-            </>
-          ) : (
-            <Whitelist />
-          )}
-
+          <>
+            <Hero />
+            <LearnMore />
+          </>
         </div>
       </Layout>
-    </ConfDataContext.Provider>
+    </WalletBalancesContext.Provider>
   );
 }

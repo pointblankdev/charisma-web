@@ -6,7 +6,7 @@ import '@styles/chrome-bug.css';
 import type { AppProps } from 'next/app';
 import NProgress from '@components/nprogress';
 import ResizeHandler from '@components/resize-handler';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import {
   Connect,
   AuthOptions,
@@ -18,16 +18,13 @@ import { Ysabeau_Infant } from 'next/font/google'
 import { cn } from '@lib/utils';
 import { Toaster } from "@components/ui/toaster"
 import { SpeedInsights } from "@vercel/speed-insights/next"
+import { WalletBalances, WalletBalancesContext } from '@lib/hooks/use-wallet-balances';
+import { getAccountBalance } from '@lib/stacks-api';
+import { appDetails, userSession } from '@components/stacks-session/connect';
+import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
 
 // If loading a variable font, you don't need to specify the font weight
 const font = Ysabeau_Infant({ subsets: ['latin'] })
-
-export const appConfig = new AppConfig(["store_write", "publish_data"]);
-export const userSession = new UserSession({ appConfig });
-export const appDetails = {
-  name: "Charisma",
-  icon: "https://charisma.rocks/charisma.png",
-};
 
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
@@ -36,21 +33,33 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const authOptions: AuthOptions = {
     redirectTo: "/",
-    appDetails,
-    userSession,
+    appDetails: appDetails,
+    userSession: userSession,
   };
+
+  const [balances, setBalances] = useState<WalletBalances>({} as AddressBalanceResponse);
+
+  useEffect(() => {
+    const ca = userSession.loadUserData().profile.stxAddress.mainnet
+    getAccountBalance(ca).then((balances) => {
+      setBalances(balances);
+    })
+    console.log('recalc')
+  }, []);
 
   return (
     <OverlayProvider>
       <Connect authOptions={authOptions}>
-        <main className={cn(font.className)}>
-          <Component {...pageProps} />
-        </main>
-        <Toaster />
-        <ResizeHandler />
-        <NProgress />
-        <Analytics />
-        <SpeedInsights />
+        <WalletBalancesContext.Provider value={{ balances, setBalances }}>
+          <main className={cn(font.className)}>
+            <Component {...pageProps} />
+          </main>
+          <Toaster />
+          <ResizeHandler />
+          <NProgress />
+          <Analytics />
+          <SpeedInsights />
+        </WalletBalancesContext.Provider>
       </Connect>
     </OverlayProvider>
   );

@@ -18,7 +18,7 @@ import { BiSolidUserPin } from "react-icons/bi";
 import Image from "next/image";
 import charisma from "@public/quests/a1.png";
 
-const appConfig = new AppConfig(["store_write", "publish_data"]);
+export const appConfig = new AppConfig(["store_write", "publish_data"]);
 
 export const userSession = new UserSession({ appConfig });
 
@@ -64,14 +64,14 @@ const ConnectWallet = () => {
                   <NavigationMenuLink asChild className="z-20 absolute inset-0">
                     <Link
                       className="flex h-full w-full select-none flex-col justify-end bg-gradient-to-b from-accent-foreground/25 to-black/90 p-6 no-underline outline-none focus:shadow-md"
-                      href="/settings"
+                      href="/portfolio"
                     >
                       <BiSolidUserPin className="h-6 w-6" />
                       <div className="mb-2 mt-4 text-lg font-medium">
                         {address}
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
-                        Manage your account profile and settings.
+                        View and manage your Charisma tokens.
                       </p>
                     </Link>
                   </NavigationMenuLink>
