@@ -66,3 +66,11 @@ export async function updateUserWithWallet(
 
     return data;
 }
+
+export async function getContractMetadata(ca: string): Promise<any> {
+    return await kv.get(`ca:${ca}`);
+}
+
+export async function setContractMetadata(ca: string, data: any): Promise<void> {
+    await kv.set(`ca:${ca}`, data);
+}

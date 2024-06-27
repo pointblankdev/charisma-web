@@ -599,7 +599,7 @@ export async function getTokenURI(contract: string) {
     return metadata
 }
 
-export async function getSymbol(contract: string) {
+export async function getSymbol(contract: string): Promise<string> {
 
     const [address, name] = contract.split('.')
 

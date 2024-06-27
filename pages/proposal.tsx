@@ -33,6 +33,7 @@ export default function ContractEditor({ data }: any) {
         doContractDeploy({
             contractName: safeName,
             codeBody: `;; Title: Reward Stakers
+;; Author: ${sender}
 ;; Created By Charisma
 ;; 
 ;; Synopsis: Mint Charisma tokens directly to the staking pool, evenly distributing them among all stakers.
@@ -50,13 +51,14 @@ export default function ContractEditor({ data }: any) {
             network: new StacksMainnet(),
             onFinish: (resp) => {
                 console.log("onFinish:", resp);
+                const ca = `${sender}.${safeName}`
                 doContractCall({
                     network: new StacksMainnet(),
                     contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
                     contractName: "dme002-proposal-submission",
                     functionName: "propose",
                     functionArgs: [
-                        principalCV(`${sender}.${safeName}`),
+                        principalCV(ca),
                         uintCV(Number(data.latestBlock) + 200),
                     ],
                     postConditionMode: PostConditionMode.Allow,

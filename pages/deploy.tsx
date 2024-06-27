@@ -1,38 +1,16 @@
-import { GetStaticProps } from "next"
 import Image from "next/image"
 import { Button } from "@components/ui/button"
-import { Separator } from "@components/ui/separator"
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@components/ui/tabs"
 import Layout from "@components/layout"
-import { getQuestById } from "@lib/db-providers/dato"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form"
 import { Input } from "@components/ui/input"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { getAllGuilds, getAllNetworks, getQuestImageUrls } from "@lib/cms-providers/dato"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select"
-import { useEffect, useState } from "react"
-import { checkQuestStxRewards, getQuestActivationBlock, getQuestExpirationBlock, getQuestMaxCompletions, getStxProtocolFeePercentage, getStxQuestRewardsDeposited } from "@lib/stacks-api"
+import { getContractSource, getSymbol } from "@lib/stacks-api"
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from "@stacks/connect-react"
-import {
-    AnchorMode,
-    Pc,
-    PostConditionMode,
-    principalCV,
-    uintCV,
-} from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
-import { updateQuest } from "@lib/user-api"
-import { Textarea } from "@components/ui/textarea"
-import { Slider } from "@components/ui/slider"
-// import DepositForm from "@components/quest-manager/deposit-form"
+import { setContractMetadata } from "@lib/user-api"
 
 const questFormSchema = z.object({
     baseTokenA: z.string(),
@@ -40,13 +18,16 @@ const questFormSchema = z.object({
     tokenARatio: z.coerce.number(),
     tokenBRatio: z.coerce.number(),
     name: z.string(),
+    description: z.string(),
     ticker: z.string(),
     decimals: z.coerce.number(),
+    image: z.string(),
+    background: z.string(),
 })
 
 type QuestFormValues = z.infer<typeof questFormSchema>
 
-export default function ContractEditor({ quest, cardImage, questBgImage }: any) {
+export default function ContractEditor({ quest }: any) {
 
 
     const { doContractDeploy } = useConnect();
@@ -57,14 +38,20 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
         tokenARatio,
         tokenBRatio,
         name,
+        description,
         ticker,
         decimals,
+        image,
+        background
     }: any) => {
+        const sender = userSession.loadUserData().profile.stxAddress.mainnet
         const safeName = name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
         const safeTicker = ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
+        const ca = `${sender}.${safeName}`
         doContractDeploy({
             contractName: safeName,
             codeBody: `;; Title: ${name}
+;; Author: ${sender}
 ;; Created With Charisma
 
 (impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v2.sip010-ft-trait)
@@ -79,7 +66,7 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
 
 (define-data-var token-name (string-ascii 32) "${name}")
 (define-data-var token-symbol (string-ascii 10) "${safeTicker}")
-(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/indexes/${safeName}.json"))
+(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/metadata/${ca}.json"))
 (define-data-var token-decimals uint u${Number(decimals).toFixed(0)})
 
 (define-data-var token-a-ratio uint u${Number(tokenARatio).toFixed(0)})
@@ -198,6 +185,82 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
 	(ok true)
 )`,
             network: new StacksMainnet(),
+            onFinish: async (resp) => {
+
+                const baseTokenSymbolA = await getSymbol(baseTokenA)
+                const baseTokenSymbolB = await getSymbol(baseTokenB)
+                const baseTokenSourceA = await getContractSource({ contractAddress: baseTokenA.split('.')[0], contractName: baseTokenA.split('.')[1] })
+                const baseTokenSourceB = await getContractSource({ contractAddress: baseTokenB.split('.')[0], contractName: baseTokenB.split('.')[1] })
+                // find the string that comes after the first occurence of 'define-fungible-token' in the baseTokenSourceA.source string
+                const baseTokenFtA = baseTokenSourceA.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
+                const baseTokenFtB = baseTokenSourceB.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
+
+                // todo: this might be a good time to scan the source code with AI for malicious code or vulnerabilities
+
+                const response = await setContractMetadata(ca, {
+                    name: name,
+                    description: description,
+                    image: image,
+                    background: background,
+                    symbol: ticker,
+                    ft: "index-token",
+                    contains: [
+                        {
+                            address: baseTokenA,
+                            symbol: baseTokenSymbolA,
+                            ft: baseTokenFtA,
+                            weight: tokenARatio
+                        },
+                        {
+                            address: baseTokenB,
+                            symbol: baseTokenSymbolB,
+                            ft: baseTokenFtB,
+                            weight: tokenBRatio
+                        }
+                    ]
+
+                })
+                console.log(response)
+            },
+            onCancel: async () => {
+                console.log("onCancel:", "Transaction was canceled")
+
+                const baseTokenSymbolA = await getSymbol(baseTokenA)
+                const baseTokenSymbolB = await getSymbol(baseTokenB)
+                const baseTokenSourceA = await getContractSource({ contractAddress: baseTokenA.split('.')[0], contractName: baseTokenA.split('.')[1] })
+                const baseTokenSourceB = await getContractSource({ contractAddress: baseTokenB.split('.')[0], contractName: baseTokenB.split('.')[1] })
+                // find the string that comes after the first occurence of 'define-fungible-token' in the baseTokenSourceA.source string
+                const baseTokenFtA = baseTokenSourceA.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
+                const baseTokenFtB = baseTokenSourceB.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
+
+                // todo: this might be a good time to scan the source code with AI for malicious code or vulnerabilities
+
+                const ca = `${sender}.${safeName}`
+                const response = await setContractMetadata(ca, {
+                    name: name,
+                    description: description,
+                    image: image,
+                    background: background,
+                    symbol: ticker,
+                    ft: "index-token",
+                    contains: [
+                        {
+                            address: baseTokenA,
+                            symbol: baseTokenSymbolA,
+                            ft: baseTokenFtA,
+                            weight: tokenARatio
+                        },
+                        {
+                            address: baseTokenB,
+                            symbol: baseTokenSymbolB,
+                            ft: baseTokenFtB,
+                            weight: tokenBRatio
+                        }
+                    ]
+
+                })
+                console.log(response)
+            },
         });
     }
 
@@ -218,7 +281,8 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
 
     return (
         <Layout>
-            <div className="my-4 space-y-4">
+            <div className="my-4 space-y-4 sm:container sm:mx-auto sm:py-10 md:max-w-4xl">
+                <h1 className="text-2xl font-bold mx-8">Create an Index Token</h1>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="container my-4 space-y-4">
@@ -279,9 +343,22 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>New Index Name</FormLabel>
+                                        <FormLabel>New Index Token - Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder={'Charismatic Corgi'} {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="description"
+                                render={({ field }) => (
+                                    <FormItem className="w-full">
+                                        <FormLabel>New Index Token - Description</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder={'An index fund composed of sWELSH and sCHA at a fixed 100:1 ratio.'} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -292,7 +369,7 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
                                 name="ticker"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>New Index Ticker</FormLabel>
+                                        <FormLabel>New Index Token - Ticker</FormLabel>
                                         <FormControl>
                                             <Input placeholder={'iCC'} {...field} />
                                         </FormControl>
@@ -305,7 +382,7 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
                                 name="decimals"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>Decimals</FormLabel>
+                                        <FormLabel>New Index Token - Decimals</FormLabel>
                                         <FormControl>
                                             <Input defaultValue={6} type="number" {...field} />
                                         </FormControl>
@@ -314,15 +391,15 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
                                 )}
                             />
                             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                                {/* <div>
+                                <div>
 
                                     <div className="flex items-end space-x-4">
                                         <FormField
                                             control={form.control}
-                                            name="cardImage"
+                                            name="image"
                                             render={({ field }) => (
                                                 <FormItem className="w-full">
-                                                    <FormLabel>Card Image</FormLabel>
+                                                    <FormLabel>Token Icon</FormLabel>
                                                     <FormControl>
                                                         <Input placeholder={'Publicly available URL of image'} {...field} />
                                                     </FormControl>
@@ -331,7 +408,7 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
                                             )}
                                         />
                                     </div>
-                                    {cardImage && <Image src={cardImage.url} width={400} height={400} alt={cardImage.alt} className="w-full rounded-lg cursor-pointer border mt-4" />}
+                                    {form.getValues().image && <Image src={form.getValues().image} width={400} height={400} alt='index logo image' className="w-full rounded-lg cursor-pointer border mt-4" />}
 
                                 </div>
                                 <div>
@@ -339,7 +416,7 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
                                     <div className="flex items-end space-x-4">
                                         <FormField
                                             control={form.control}
-                                            name="questBgImage"
+                                            name="background"
                                             render={({ field }) => (
                                                 <FormItem className="w-full">
                                                     <FormLabel>Background Image</FormLabel>
@@ -351,9 +428,9 @@ export default function ContractEditor({ quest, cardImage, questBgImage }: any) 
                                             )}
                                         />
                                     </div>
-                                    {questBgImage && <Image src={questBgImage.url} width={400} height={400} alt={cardImage.alt} className="w-full rounded-lg cursor-pointer border mt-4" />}
+                                    {form.getValues().background && <Image src={form.getValues().background} width={400} height={400} alt="index background image" className="w-full rounded-lg cursor-pointer border mt-4" />}
 
-                                </div> */}
+                                </div>
                                 <Button type="submit" className="my-4 w-full h-14">
                                     Deploy Index Token Contract
                                 </Button>

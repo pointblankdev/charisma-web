@@ -3,7 +3,8 @@ module.exports = {
     domains: [
       'www.datocms-assets.com',
       'charisma.rocks',
-      'raw.githubusercontent.com'
+      'raw.githubusercontent.com',
+      'cdn.discordapp.com'
     ],
     imageSizes: [24, 64, 300],
     remotePatterns: [
@@ -12,6 +13,11 @@ module.exports = {
         hostname: 'www.datocms-assets.com',
         port: '',
         pathname: '/**',
+      },
+      // TODO: REMOVE THIS
+      {
+        protocol: "https",
+        hostname: "**",
       },
     ],
   },
