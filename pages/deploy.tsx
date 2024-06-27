@@ -306,58 +306,70 @@ export default function ContractEditor({ quest }: any) {
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
                         <div className="container my-4 space-y-4">
-                            <FormField
-                                control={form.control}
-                                name="baseTokenA"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Base Token A - Contract Address</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="baseTokenB"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Base Token B - Contract Address</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="tokenARatio"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Base Token A Weight (A:B)</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'Choose a weight from 1 or greater. Larger weights mean more base tokens are required to mint.'} type="number" min={1} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="tokenBRatio"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Base Token B Weight (A:B)</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'Choose a weight from 1 or greater. Larger weights mean more base tokens are required to mint.'} type="number" min={1} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="flex items-end space-x-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="baseTokenA"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>Base Token A - Contract Address</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'} {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div>
+                                    <FormField
+                                        control={form.control}
+                                        name="tokenARatio"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>Base Token A Weight (A:B)</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={'To mint 1 index token, this many base tokens is required.'} type="number" min={1} {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="flex items-end space-x-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="baseTokenB"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>Base Token B - Contract Address</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'} {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div>
+                                    <FormField
+                                        control={form.control}
+                                        name="tokenBRatio"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>Base Token B Weight (A:B)</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={`To mint 1 index token, this many base tokens is required.`} type="number" min={1} {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
                             <FormField
                                 control={form.control}
                                 name="name"
