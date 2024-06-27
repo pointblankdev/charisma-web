@@ -44,7 +44,7 @@ export default function ContractEditor({ data }: any) {
 
 (define-public (execute (sender principal))
 	(begin
-		(try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-mint u${amount} 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma))
+		(try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-mint (* u${amount} (pow u10 u6)) 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma))
 		(ok true)
 	)
 )`,
@@ -99,7 +99,7 @@ export default function ContractEditor({ data }: any) {
                                     <FormItem className="w-full">
                                         <FormLabel>Number of tokens to mint and distribute to the staking pool</FormLabel>
                                         <FormControl>
-                                            <Input defaultValue={10000} type="number" min={1} max={100000} {...field} />
+                                            <Input placeholder={'Amount of tokens'} type="number" min={1} max={100000} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
