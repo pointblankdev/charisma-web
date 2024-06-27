@@ -319,7 +319,7 @@ export default function ContractEditor({ quest }: any) {
                                     <FormItem className="w-full">
                                         <FormLabel>Base Token A Weight (A:B)</FormLabel>
                                         <FormControl>
-                                            <Input defaultValue={1} type="number" min={1} {...field} />
+                                            <Input placeholder={'Choose a weight from 1 or greater. Larger weights mean more base tokens are required to mint.'} type="number" min={1} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -332,7 +332,7 @@ export default function ContractEditor({ quest }: any) {
                                     <FormItem className="w-full">
                                         <FormLabel>Base Token B Weight (A:B)</FormLabel>
                                         <FormControl>
-                                            <Input defaultValue={1} type="number" min={1} {...field} />
+                                            <Input placeholder={'Choose a weight from 1 or greater. Larger weights mean more base tokens are required to mint.'} type="number" min={1} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -364,35 +364,40 @@ export default function ContractEditor({ quest }: any) {
                                     </FormItem>
                                 )}
                             />
-                            <FormField
-                                control={form.control}
-                                name="ticker"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>New Index Token - Ticker</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'iCC'} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="decimals"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>New Index Token - Decimals</FormLabel>
-                                        <FormControl>
-                                            <Input defaultValue={6} type="number" {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div className="flex items-end space-x-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="ticker"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>New Index Token - Ticker</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={'iCC, iGK, iTOKEN, etc.'} {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
                                 <div>
-
+                                    <FormField
+                                        control={form.control}
+                                        name="decimals"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>New Index Token - Decimals</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={'The standard amount is 6'} type="number" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
                                     <div className="flex items-end space-x-4">
                                         <FormField
                                             control={form.control}
@@ -431,10 +436,10 @@ export default function ContractEditor({ quest }: any) {
                                     {form.getValues().background && <Image src={form.getValues().background} width={400} height={400} alt="index background image" className="w-full rounded-lg cursor-pointer border mt-4" />}
 
                                 </div>
-                                <Button type="submit" className="my-4 w-full h-14">
-                                    Deploy Index Token Contract
-                                </Button>
                             </div>
+                            <Button type="submit" className="my-4 w-full h-14">
+                                Deploy Index Token Contract
+                            </Button>
                         </div>
                     </form>
                 </Form>
