@@ -1,6 +1,6 @@
 import React from 'react';
-import { userSession } from 'pages/_app';
 import { Button } from '@components/ui/button';
+import { userSession } from './connect';
 
 const SignOut = () => {
 
