@@ -23,6 +23,10 @@ const questFormSchema = z.object({
     decimals: z.coerce.number(),
     image: z.string(),
     background: z.string(),
+    // time lock for remove-liquidity
+    unlockBlock: z.coerce.number(),
+    // rate limiting for remove-liquidity
+    blocksPerTx: z.coerce.number()
 })
 
 type QuestFormValues = z.infer<typeof questFormSchema>
@@ -42,7 +46,9 @@ export default function ContractEditor({ quest }: any) {
         ticker,
         decimals,
         image,
-        background
+        background,
+        unlockBlock,
+        blocksPerTx
     }: any) => {
         const sender = userSession.loadUserData().profile.stxAddress.mainnet
         const safeName = name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
@@ -61,6 +67,7 @@ export default function ContractEditor({ quest }: any) {
 (define-constant err-not-token-owner (err u4))
 
 (define-constant contract (as-contract tx-sender))
+(define-constant unlock-block u${Number(unlockBlock).toFixed(0)})
 
 (define-fungible-token index-token)
 
@@ -72,10 +79,17 @@ export default function ContractEditor({ quest }: any) {
 (define-data-var token-a-ratio uint u${Number(tokenARatio).toFixed(0)})
 (define-data-var token-b-ratio uint u${Number(tokenBRatio).toFixed(0)})
 
+(define-data-var blocks-per-tx uint u${Number(blocksPerTx).toFixed(0)})
+(define-data-var block-counter uint u0)
+
 ;; --- Authorization check
 
 (define-read-only (is-dao-or-extension)
 	(ok (asserts! (or (is-eq tx-sender 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master) (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master is-extension contract-caller)) err-unauthorized))
+)
+
+(define-read-only (is-unlocked)
+	(ok (asserts! (>= block-height (+ unlock-block (var-get block-counter))) err-unauthorized))
 )
 
 ;; --- Internal DAO functions
@@ -139,9 +153,11 @@ export default function ContractEditor({ quest }: any) {
             (amount-a (* amount (var-get token-a-ratio)))
             (amount-b (* amount (var-get token-b-ratio)))
         )
+        (try! (is-unlocked))
         (try! (ft-burn? index-token amount tx-sender))
         (try! (as-contract (contract-call? '${baseTokenA} transfer amount-a contract sender none)))
         (try! (as-contract (contract-call? '${baseTokenB} transfer amount-b contract sender none)))
+        (var-set block-counter (+ (var-get block-counter) (var-get blocks-per-tx)))
         (ok true)
     )
 )
@@ -301,7 +317,7 @@ export default function ContractEditor({ quest }: any) {
 
     return (
         <Layout>
-            <div className="my-4 space-y-4 sm:container sm:mx-auto sm:py-10 md:max-w-4xl">
+            <div className="my-4 space-y-4 sm:container sm:mx-auto sm:py-10 md:max-w-4xl lg:max-w-7xl">
                 <h1 className="text-2xl font-bold mx-8">Create an Index Token</h1>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)}>
@@ -467,6 +483,41 @@ export default function ContractEditor({ quest }: any) {
                                     </div>
                                     {form.getValues().background && <Image src={form.getValues().background} width={400} height={400} alt="index background image" className="w-full rounded-lg cursor-pointer border mt-4" />}
 
+                                </div>
+                            </div>
+                            <div className="border rounded-xl px-4 pb-4 pt-2">
+                                <h2 className="text-lg font-fine mb-4">Capital Controls</h2>
+                                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <FormField
+                                            control={form.control}
+                                            name="unlockBlock"
+                                            render={({ field }) => (
+                                                <FormItem className="w-full">
+                                                    <FormLabel>Unlock Block Height</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder={`What block height the remove-liquidity function should be unlocked.`} type="number" min={155500} {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
+                                    <div>
+                                        <FormField
+                                            control={form.control}
+                                            name="blocksPerTx"
+                                            render={({ field }) => (
+                                                <FormItem className="w-full">
+                                                    <FormLabel>Blocks per Transaction</FormLabel>
+                                                    <FormControl>
+                                                        <Input placeholder={`Optional rate limiting of liquidity removal. Selecting 0 will disable rate limiting.`} type="number" min={0} {...field} />
+                                                    </FormControl>
+                                                    <FormMessage />
+                                                </FormItem>
+                                            )}
+                                        />
+                                    </div>
                                 </div>
                             </div>
                             <Button type="submit" className="my-4 w-full h-14">
