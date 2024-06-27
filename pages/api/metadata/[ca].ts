@@ -15,10 +15,13 @@ export default async function getMetadata(
 
     let response, code = 200
     try {
+        let ca = req.query.ca as string
         if (req.method === 'POST') {
-            response = await setContractMetadata(req.query.ca as string, req.body)
+            response = await setContractMetadata(ca, req.body)
         } else if (req.method === 'GET') {
-            response = await getContractMetadata(req.query.ca as string)
+            // if ca ends with .json, remove it
+            if (ca.endsWith('.json')) { ca = ca.slice(0, -5) }
+            response = await getContractMetadata(ca)
         } else {
             code = 501
             response = new Object({
