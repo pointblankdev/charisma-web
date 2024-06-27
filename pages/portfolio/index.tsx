@@ -278,7 +278,7 @@ function Component() {
       </CardContent>
       <CardFooter>
         <div className="text-xs text-muted-foreground">
-          Showing <strong>1-2</strong> of <strong>32</strong> tokens
+          Showing <strong>1-2</strong> of <strong>{Object.keys(tokens).length}</strong> tokens
         </div>
       </CardFooter>
     </Card>
