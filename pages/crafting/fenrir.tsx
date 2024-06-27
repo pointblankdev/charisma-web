@@ -74,8 +74,8 @@ export default function Fenrir({ data }: Props) {
     visible: { opacity: 1 }
   };
 
-  const craftAmount = 10000000000
-  const salvageAmount = 10000000000
+  const craftAmount = 10000000000 * 13
+  const salvageAmount = 10000000000 * 13
   const welshCost = Math.floor(craftAmount * data.welshStaked / data.totalFenrirSupply)
   const odinCost = Math.floor(craftAmount * data.odinStaked / data.totalFenrirSupply)
   const craftingRewards = (craftAmount / 1000000) * data.craftingRewardFactor

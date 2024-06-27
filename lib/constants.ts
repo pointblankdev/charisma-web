@@ -49,7 +49,7 @@ export const NAVIGATION = [
   // },
   // {
   //   name: 'Governance',
-  //   route: '/governance'
+  //   route: '/governance',
   // },
   // {
   //   name: 'Guilds',

@@ -5,25 +5,15 @@ import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
 import { cn } from '@lib/utils';
 import Image from 'next/image';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card"
+import { Card, CardContent, CardFooter, CardHeader, } from "@components/ui/card"
 import Link from 'next/link';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
-import millify from 'millify';
-import aeUSDC from '@public/aeUSDC-logo.svg'
-import liquidStakedCharisma from '@public/liquid-staked-charisma.png'
 import { Switch } from '@components/ui/switch';
 
 type Props = {

@@ -45,9 +45,6 @@ export default function Layout({
             </div>
             <div className={styles.tabs}>
               {NAVIGATION.map(({ name, route }) => (
-                // <TooltipProvider key={name}>
-                //   <Tooltip>
-                //     <TooltipTrigger>
                 <Link
                   href={route}
                   className={cn(styles.tab, {
@@ -62,19 +59,6 @@ export default function Layout({
                     {/* {name === 'Crafting' && <div className='whitespace-nowrap absolute text-xs top-4 text-primary animate-pulse'>FENRIR IS ALIVE</div>} */}
                   </div>
                 </Link>
-                //     </TooltipTrigger>
-                //     {name === 'Crafting' && <TooltipContent className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                //       <div className="relative flex flex-col items-start p-4 space-y-4 shadow-md rounded-lg">
-                //         <h3 className="font-bold text-xl mb-2">Crafting Overview</h3>
-                //         <p>The Indexes page allows you to leverage your liquid staked assets to mint new tokens called index tokens.</p>
-                //         <p>Here are some of the key terms to know:</p>
-                //         <p><strong>Index Token:</strong> A token created by combining two or more other tokens at a fixed ratio.</p>
-                //         <p><strong>Add Liquidity:</strong> The process through which index tokens are created by depositing base tokens.</p>
-                //         <p><strong>Remove Liquidity:</strong> Involves the breakdown of an index token back into its original base assets.</p>
-                //       </div>
-                //     </TooltipContent>}
-                //   </Tooltip>
-                // </TooltipProvider>
               ))}
             </div>
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
