@@ -322,7 +322,7 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
             <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500 animate-ping'}`} />
           </div>
         </TooltipTrigger>
-        <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+        <TooltipContent className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
           {active ? 'Crafting is live' : 'Crafting is disabled. Non-standard SIP10 tokens have proven difficult to list on DEXs, so the plan is to simplify the tokenomics and relaunch with a new token. Fees have all been disabled so you can withdraw your deposit at no cost.'}
         </TooltipContent>
       </Tooltip>
