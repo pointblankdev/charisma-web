@@ -496,7 +496,7 @@ export default function ContractEditor({ quest }: any) {
                                                 <FormItem className="w-full">
                                                     <FormLabel>Unlock Block Height</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder={`What block height the remove-liquidity function should be unlocked.`} type="number" min={155500} {...field} />
+                                                        <Input placeholder={`What block height the remove-liquidity function should be unlocked.`} type="number" min={155500} max={200000} {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
@@ -511,7 +511,7 @@ export default function ContractEditor({ quest }: any) {
                                                 <FormItem className="w-full">
                                                     <FormLabel>Blocks per Transaction</FormLabel>
                                                     <FormControl>
-                                                        <Input placeholder={`Optional rate limiting of liquidity removal. Selecting 0 will disable rate limiting.`} type="number" min={0} {...field} />
+                                                        <Input placeholder={`Optional rate limiting of liquidity removal. Selecting 0 will disable rate limiting.`} type="number" min={0} max={1000} {...field} />
                                                     </FormControl>
                                                     <FormMessage />
                                                 </FormItem>
