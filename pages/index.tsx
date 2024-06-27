@@ -17,7 +17,6 @@ export default function Conf({ data }: Props) {
       <ParticleBackground />
       <SkipNavContent />
       <LandingPage />
-
     </Page>
   );
 }

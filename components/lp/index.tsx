@@ -1,18 +1,15 @@
 
 import { useState } from 'react';
-import useWallet, { WalletBalancesContext, WalletBalances } from '@lib/hooks/use-wallet-balances';
+import { WalletBalancesContext, WalletBalances } from '@lib/hooks/use-wallet-balances';
 import Layout from '../layout';
 import Hero from './hero';
 import LearnMore from './learn-more';
 import styleUtils from '@components/utils.module.css';
 
-type Props = {
-  defaultWalletBalances: WalletBalances;
-};
 
-export default function LandingPage({ defaultWalletBalances }: Props) {
+export default function LandingPage() {
 
-  const [balances, setBalances] = useState<WalletBalances>(defaultWalletBalances);
+  const [balances, setBalances] = useState<WalletBalances>({} as any);
 
   return (
     <WalletBalancesContext.Provider value={{ balances, setBalances }}>
