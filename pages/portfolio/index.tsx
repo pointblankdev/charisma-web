@@ -132,7 +132,7 @@ function Component() {
 
   // console.log(prices)
 
-  if (!tokens) return null
+  if (!tokens) return <div>Loading...</div>
 
   const totalWelshTokens = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`].balance * exchangeRates['liquid-staked-welsh-v2'] / Math.pow(10, 6) +
     tokens[`SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`].balance / Math.pow(10, 6)
