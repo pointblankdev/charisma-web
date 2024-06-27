@@ -117,17 +117,20 @@ function Component() {
   const [prices, setPrices] = useState({} as any)
 
   useEffect(() => {
-    getStakedTokenExchangeRate('liquid-staked-welsh-v2').then((rate) => {
-      setExchangeRates((prev: any) => ({ ...prev, 'liquid-staked-welsh-v2': rate.value / Math.pow(10, 6) }))
-    })
-    getStakedTokenExchangeRate('liquid-staked-leo').then((rate) => {
-      setExchangeRates((prev: any) => ({ ...prev, 'liquid-staked-leo': rate.value / Math.pow(10, 6) }))
-    })
+    try {
+      getStakedTokenExchangeRate('liquid-staked-welsh-v2').then((rate) => {
+        setExchangeRates((prev: any) => ({ ...prev, 'liquid-staked-welsh-v2': rate.value / Math.pow(10, 6) }))
+      })
+      getStakedTokenExchangeRate('liquid-staked-leo').then((rate) => {
+        setExchangeRates((prev: any) => ({ ...prev, 'liquid-staked-leo': rate.value / Math.pow(10, 6) }))
+      })
 
-    getTokenPrices().then((prices) => {
-      setPrices(prices.message)
-    })
-
+      getTokenPrices().then((prices) => {
+        setPrices(prices.message)
+      })
+    } catch (error) {
+      console.error(error)
+    }
   }, [])
 
   // console.log(prices)
