@@ -12,7 +12,7 @@ import { Button } from "@components/ui/button";
 import millify from "millify";
 
 interface UnstakeWelshButtonProps {
-  tokens: string;
+  tokens: number;
 }
 
 const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
@@ -21,7 +21,7 @@ const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  const tokens6Dec = Number(tokens) * 1000000
+  const tokens6Dec = Number(tokens)
 
   function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
@@ -56,11 +56,10 @@ const UnstakeWelshButton: React.FC<UnstakeWelshButtonProps> = ({ tokens }) => {
 
   return (
     <Button
-      variant={'ghost'}
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
       disabled={tokens6Dec <= 0}>
-      Unstake {tokens && tokens6Dec > 0 ? millify(Number(tokens)) : 0} sWELSH
+      Unstake All
     </Button>
   );
 };

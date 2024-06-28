@@ -12,7 +12,7 @@ import { Button } from "@components/ui/button";
 import millify from "millify";
 
 interface StakeButtonProps {
-  tokens: string;
+  tokens: number;
 }
 
 const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
@@ -23,7 +23,7 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
     setMounted(true);
   }, []);
 
-  const tokens6Dec = Number(tokens) * 1000000
+  const tokens6Dec = Number(tokens)
 
   function stake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
@@ -62,7 +62,7 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
       onClick={stake}
       disabled={tokens6Dec <= 0}
     >
-      Stake {tokens && tokens6Dec > 0 ? millify(Number(tokens)) : 0} WELSH
+      Stake {millify(tokens6Dec / 1000000)} WELSH
     </Button>
   );
 };

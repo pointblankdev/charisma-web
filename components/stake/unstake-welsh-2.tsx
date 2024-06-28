@@ -13,7 +13,7 @@ import millify from "millify";
 import { getStakedTokenExchangeRate } from "@lib/stacks-api";
 
 interface UnstakeButtonProps {
-  tokens: string;
+  tokens: number;
 }
 
 const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
@@ -22,12 +22,21 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  const tokens6Dec = Number(tokens) * 1000000
+  useEffect(() => {
+    async function fetchExchangeRate() {
+      const { value } = await getStakedTokenExchangeRate('liquid-staked-welsh-v2')
+      setExchangeRate(value / 1000000)
+    }
+    fetchExchangeRate()
+  }, [])
 
-  async function unstake() {
+  const [exchangeRate, setExchangeRate] = useState(0);
+
+  const tokens6Dec = Number(tokens)
+
+  function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const { value } = await getStakedTokenExchangeRate('liquid-staked-welsh-v2')
-    const tokensOutMin = tokens6Dec * value / 1000000
+    const tokensOutMin = tokens6Dec * exchangeRate
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -59,7 +68,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
       disabled={tokens6Dec <= 0}>
-      Unstake {tokens && tokens6Dec > 0 ? millify(Number(tokens)) : 0} sWELSH
+      Unstake {millify(tokens6Dec * exchangeRate / 1000000)} WELSH
     </Button>
   );
 };

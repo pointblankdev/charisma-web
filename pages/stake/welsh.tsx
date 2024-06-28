@@ -11,7 +11,6 @@ import {
 } from "@components/ui/tooltip"
 import { Info } from 'lucide-react';
 import { Card } from '@components/ui/card';
-import StakeWelshButton from '@components/stake/stake-welsh';
 import UnstakeWelshButton from '@components/stake/unstake-welsh';
 import StakeWelsh2Button from '@components/stake/stake-welsh-2';
 import UnstakeWelsh2Button from '@components/stake/unstake-welsh-2';
@@ -19,9 +18,8 @@ import liquidWelsh from '@public/liquid-welsh.png'
 import { GetStaticProps } from 'next';
 import { callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
-import { useState } from 'react';
-import { Input } from '@components/ui/input';
 import millify from 'millify';
+import useWallet from '@lib/hooks/use-wallet-balances';
 
 export default function StakeWelsh({ data }: Props) {
 
@@ -31,56 +29,44 @@ export default function StakeWelsh({ data }: Props) {
     image: '/liquid-welsh.png'
   };
 
-  const [tokenAmount, setTokenAmount] = useState('');
-  const handleTokenAmountChange = (event: any) => {
-    const { value } = event.target;
-    // Limit input to only allow numbers and to 6 decimal places
-    if (/^\d*\.?\d{0,6}$/.test(value)) {
-      setTokenAmount(value);
-    }
-  };
-
-  const [tokenAmount2, setTokenAmount2] = useState('');
-  const handleTokenAmountChange2 = (event: any) => {
-    const { value } = event.target;
-    // Limit input to only allow numbers and to 6 decimal places
-    if (/^\d*\.?\d{0,6}$/.test(value)) {
-      setTokenAmount2(value);
-    }
-  };
-
   const tokensInPool = data.tokensInPool
   const tokensInPool2 = data.tokensInPool2
+
+  const { balances } = useWallet()
+
+  const oldSWelshBalance = (balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'] as any)?.balance || 0
+  const sWelshBalance = (balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token'] as any)?.balance || 0
+  const welshBalance = (balances?.fungible_tokens?.['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin'] as any)?.balance || 0
 
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl space-y-8">
-          <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
-            {/*  */}
+          {oldSWelshBalance > 0 && <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
-                <h1 className="self-center font-bold text-md sm:text-2xl">Liquid Staked Welsh v1</h1>
+                <h1 className="self-center font-bold text-md sm:text-lg">Liquid Staked Welsh v1</h1>
+                <div className='px-2 sm:p-0 sm:px-4'>
+                  {millify(tokensInPool / 1000000)} WELSH Staked
+                </div>
               </div>
               <div className='space-y-2'>
-                <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-lg text-center" />
                 <div className='flex space-x-1'>
-                  <StakeWelshButton tokens={tokenAmount} />
-                  <UnstakeWelshButton tokens={tokenAmount} />
+                  <UnstakeWelshButton tokens={oldSWelshBalance} />
                 </div>
               </div>
             </div>
-          </Card>
+          </Card>}
 
-          <div className='animate-bounce text-center'>🔻 MIGRATE TO NEW POOL 🔻</div>
+          {oldSWelshBalance > 0 && <div className='animate-bounce text-center'>🔻 MIGRATE TO NEW POOL 🔻</div>}
 
           <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
             <Image alt='Liquid Welsh' src={liquidWelsh} width="1080" height="605" className='border-b border-accent-foreground' />
 
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
-                <h1 className="self-center font-bold text-md sm:text-2xl">Liquid Staked Welsh v2</h1>
+                <h1 className="self-center font-bold text-md sm:text-2xl flex space-x-1 items-baseline"><div>Liquid Staked Welsh</div><div className='font-light text-sm'>v2</div></h1>
                 {data.exchangeRate2 && <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg sm:p-0 sm:px-4">
                   <div className="self-center px-2 my-1 text-xs font-light text-center rounded-full sm:text-lg bg-primary sm:p-0 sm:px-4">1 sWELSH = {Number(data.exchangeRate2) / 1000000} WELSH</div>
                 </div>}
@@ -118,18 +104,21 @@ export default function StakeWelsh({ data }: Props) {
                   {millify(tokensInPool2 / 1000000)} WELSH Staked
                 </div>
               </div>
-              <p className="mb-8 text-xs font-thin leading-tight sm:text-sm">
+              <p className="mb-6 text-xs font-thin leading-tight sm:text-sm">
                 Welshcorgicoin Staking is a crucial part of the network's financial ecosystem, providing a way for token holders to earn passive income while contributing to the token's number-go-up mechanism.
               </p>
               <div className='space-y-2'>
-                <Input value={tokenAmount2} onChange={handleTokenAmountChange2} placeholder="Enter token amount" className="text-lg text-center" />
                 <div className='flex space-x-1'>
-                  <StakeWelsh2Button tokens={tokenAmount2} />
-                  <UnstakeWelsh2Button tokens={tokenAmount2} />
+                  {sWelshBalance > 0 && <UnstakeWelsh2Button tokens={sWelshBalance} />}
+                  {welshBalance > 0 && <StakeWelsh2Button tokens={welshBalance} />}
                 </div>
               </div>
             </div>
           </Card>
+          <div>
+            <p className='text-center font-thin'>The interface has been updated to be aware of wallet balances.</p>
+            <p className='text-center font-thin'>Let us know what you think in Discord.</p>
+          </div>
         </div>
       </Layout>
     </Page>
