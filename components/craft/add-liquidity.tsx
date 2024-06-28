@@ -17,8 +17,11 @@ const AddLiquidityToIndex = ({ amount, address, metadata }: { amount: number, ad
     useEffect(() => { setMounted(true) }, []);
 
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+
     const [contractAddress, contractName] = address.split('.');
-    const tokens = (Number(amount) * 1000000).toFixed(0);
+
+    const decimals = 6;
+    const tokens = Math.floor(amount * Math.pow(10, decimals));
 
     function combinePostConditions(postConditions: any[]) {
         const combined: any = {};
