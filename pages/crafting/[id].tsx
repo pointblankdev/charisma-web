@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/ui/tooltip"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { getDecimals, getDeployedIndexes, getSymbol, getTokenPrices, getTokenURI, getTotalSupply } from '@lib/stacks-api';
+import { getDecimals, getDeployedIndexes, getIsUnlocked, getSymbol, getTokenPrices, getTokenURI, getTotalSupply } from '@lib/stacks-api';
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
@@ -17,6 +17,7 @@ import { Slider } from '@components/ui/slider';
 import AddLiquidityToIndex from '@components/craft/add-liquidity';
 import RemoveLiquidityFromIndex from '@components/salvage/remove-liquidity';
 import { Link1Icon } from '@radix-ui/react-icons';
+import { TimerOffIcon } from 'lucide-react';
 
 export default function IndexDetailPage({ data }: Props) {
     const meta = {
@@ -67,7 +68,7 @@ export default function IndexDetailPage({ data }: Props) {
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
+                <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl lg:max-w-3xl">
 
                     <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl'>
                         <CardHeader className='z-20 p-4'>
@@ -139,14 +140,17 @@ export default function IndexDetailPage({ data }: Props) {
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger><RemoveLiquidityFromIndex amount={tokensRequested} address={data.address} metadata={data.metadata} /></TooltipTrigger>
-                                            <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                                                Burning {millify(tokensRequested)} {data.symbol} returns {millify(tokensRequired[0])} {data.metadata.contains[0].symbol} and {millify(tokensRequired[1])} sCHA back to you.
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
+                                    {data.isRemoveLiquidityUnlocked ?
+                                        <TooltipProvider>
+                                            <Tooltip>
+                                                <TooltipTrigger><RemoveLiquidityFromIndex amount={tokensRequested} address={data.address} metadata={data.metadata} /></TooltipTrigger>
+                                                <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                                                    Burning {millify(tokensRequested)} {data.symbol} returns {millify(tokensRequired[0])} {data.metadata.contains[0].symbol} and {millify(tokensRequired[1])} sCHA back to you.
+                                                </TooltipContent>
+                                            </Tooltip>
+                                        </TooltipProvider> :
+                                        <div className='text-secondary/50 text-sm flex items-center space-x-2'><div>Removal Locked</div> <TimerOffIcon size={14} /> </div>
+                                    }
                                 </div></div>}
 
                         </CardFooter>
@@ -180,6 +184,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
         const symbol = await getSymbol(params?.id as string)
         const decimals = await getDecimals(params?.id as string)
 
+        const isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string)
+
         const baseTokens = await Promise.all(metadata.contains.map(async (token: any) => {
             const tokenMetadata = await getTokenURI(token.address)
             return tokenMetadata;
@@ -193,7 +199,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
                     totalSupply: Number(supply.value.value),
                     symbol: symbol,
                     baseTokens: baseTokens,
-                    decimals: decimals
+                    decimals: decimals,
+                    isRemoveLiquidityUnlocked
                 }
             },
         };

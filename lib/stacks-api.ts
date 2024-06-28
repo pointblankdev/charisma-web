@@ -631,6 +631,27 @@ export async function getDecimals(contract: string) {
     return cvToJSON(response).value.value
 }
 
+export async function getIsUnlocked(contract: string) {
+
+    const [address, name] = contract.split('.')
+
+    try {
+        const response: any = await callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: address,
+            contractName: name,
+            functionName: "is-unlocked",
+            functionArgs: [],
+            senderAddress: address
+        });
+
+        return cvToJSON(response)?.value?.value === true
+
+    } catch (error) {
+        return true
+    }
+}
+
 export async function getTotalSupply(contract: string) {
 
     const response: any = await callReadOnlyFunction({

@@ -17,12 +17,32 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata }: { amount: numbe
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  const [contractAddress, contractName] = address.split('.')
+  const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+  const [contractAddress, contractName] = address.split('.');
+  const tokens = (Number(amount) * 1000000).toFixed(0);
 
-  const tokens = (Number(amount) * 1000000).toFixed(0)
+  function combinePostConditions(postConditions: any[]) {
+    const combined: any = {};
+
+    postConditions.forEach((pc: { principal: any; assetInfo: any; amount: any; }) => {
+      const key = `${pc.principal.address.hash160}-${pc.assetInfo.contractName.content}-${pc.assetInfo.assetName.content}`;
+      if (combined[key]) {
+        combined[key].amount += pc.amount;
+      } else {
+        combined[key] = { ...pc };
+      }
+    });
+
+    return Object.values(combined);
+  }
 
   function salvage() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+    const postConditions = [
+      Pc.principal(sender).willSendEq(tokens).ft(address, metadata.ft),
+      ...metadata.contains.map((item: any) => Pc.principal(address).willSendEq(Number(tokens) * Number(item.weight)).ft(item.address, item.ft))
+    ]
+    const combinedPostConditions: any[] = combinePostConditions(postConditions);
+
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -31,10 +51,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata }: { amount: numbe
       functionName: "remove-liquidity",
       functionArgs: [uintCV(tokens)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(sender).willSendEq(tokens).ft(address, metadata.ft),
-        ...metadata.contains.map((item: any) => Pc.principal(address).willSendEq(Number(tokens) * Number(item.weight)).ft(item.address, item.ft))
-      ],
+      postConditions: combinedPostConditions,
       onFinish: (data) => { console.log("onFinish:", data) },
       onCancel: () => { console.log("onCancel:", "Transaction was canceled") },
     });
