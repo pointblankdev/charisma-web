@@ -226,7 +226,7 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
                     </div>
                 </TooltipTrigger>
                 <TooltipContent className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                    {active ? 'Index fund is live' : 'Index fund liquidity deposits are disabled'}
+                    {active ? 'Index fund is live' : 'Index fund liquidity removal is locked for 10 blocks'}
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
