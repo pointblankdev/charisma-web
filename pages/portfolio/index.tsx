@@ -151,16 +151,16 @@ function Component() {
     (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`]
       .balance *
       exchangeRates['liquid-staked-welsh-v2']) /
-      Math.pow(10, 6) +
+    Math.pow(10, 6) +
     tokens[`SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`]
       .balance /
-      Math.pow(10, 6);
+    Math.pow(10, 6);
 
   const totalLeoTokens =
     (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`]
       .balance *
       exchangeRates['liquid-staked-leo']) /
-      Math.pow(10, 6) +
+    Math.pow(10, 6) +
     tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`].balance / Math.pow(10, 6);
 
   return (
@@ -231,7 +231,7 @@ function Component() {
                           `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`
                         ].balance *
                           exchangeRates['liquid-staked-welsh-v2']) /
-                          Math.pow(10, 6)
+                        Math.pow(10, 6)
                       )}
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -252,7 +252,7 @@ function Component() {
                   {tokens && Math.floor(totalWelshTokens)}
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
-                  ${(prices[6].price * totalWelshTokens).toFixed(2)}
+                  ${(prices[6]?.price * totalWelshTokens).toFixed(2)}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -297,7 +297,7 @@ function Component() {
                   {tokens &&
                     Math.floor(
                       tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`].balance /
-                        Math.pow(10, 6)
+                      Math.pow(10, 6)
                     )}
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right whitespace-nowrap">
@@ -308,7 +308,7 @@ function Component() {
                           `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
                         ].balance *
                           exchangeRates['liquid-staked-leo']) /
-                          Math.pow(10, 6)
+                        Math.pow(10, 6)
                       )}
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -335,7 +335,7 @@ function Component() {
                         Number(
                           tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`].balance
                         )) /
-                        Math.pow(10, 6)
+                      Math.pow(10, 6)
                     )}
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
