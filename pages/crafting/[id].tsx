@@ -126,7 +126,7 @@ export default function IndexDetailPage({ data }: Props) {
                                 </div>
                             </div>
                         </CardContent>
-                        <CardFooter className="z-20 flex justify-between p-4 items-end mt-4">
+                        <CardFooter className="z-20 flex justify-between p-4 items-end">
                             <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
                             {descriptionVisible && <div className='flex flex-col'>
                                 <Slider defaultValue={[factor]} min={1} max={5} step={0.1} className='w-full p-4' onValueChange={(v: any) => setFactor(v[0])} />
@@ -207,65 +207,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
         }
     }
 };
-
-// export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => {
-
-//     try {
-//         const contractName = params?.id.split('.')[1]
-
-//         const metadata = await getTokenURI(params?.id as string)
-//         const supply = await getTotalSupply(contractName)
-//         const symbol = await getSymbol(params?.id as string)
-//         const decimals = await getDecimals(params?.id as string)
-
-//         const baseTokens = await Promise.all(metadata.contains.map(async (token: any) => {
-//             const tokenMetadata = await getTokenURI(token.address)
-//             return tokenMetadata;
-//         }));
-
-//         return {
-//             props: {
-//                 data: {
-//                     address: params?.id,
-//                     metadata: metadata,
-//                     totalSupply: Number(supply.value.value),
-//                     symbol: symbol,
-//                     baseTokens: baseTokens,
-//                     decimals: decimals
-//                 }
-//             },
-//             revalidate: 600
-//         };
-
-//     } catch (error) {
-//         console.log(error)
-//         return {
-//             props: {
-//                 data: {
-//                     address: '',
-//                     metadata: {},
-//                     totalSupply: 0,
-//                     symbol: '',
-//                     baseTokens: [],
-//                     decimals: 0
-//                 }
-//             },
-//         }
-//     }
-// };
-
-// export const getStaticPaths = async () => {
-//     const contracts = await getDeployedIndexes();
-//     // blacklist ones that are not active
-//     const blacklist = ['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund']
-//     const enabledContracts = contracts.filter((contract: any) => !blacklist.includes(contract))
-//     const paths = enabledContracts.map((contract) => ({ params: { id: contract } }));
-//     return {
-//         paths,
-//         fallback: true
-//     };
-// }
-
 
 const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
     return (
