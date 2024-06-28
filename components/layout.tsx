@@ -1,4 +1,3 @@
-
 import Link from 'next/link';
 import { cn } from '@lib/utils';
 import { useRouter } from 'next/router';
@@ -21,12 +20,7 @@ type Props = {
   layoutStyles?: any;
 };
 
-export default function Layout({
-  children,
-  className,
-  hideNav,
-  layoutStyles,
-}: Props) {
+export default function Layout({ children, className, hideNav, layoutStyles }: Props) {
   const router = useRouter();
   const activeRoute = router.asPath;
 
@@ -44,27 +38,38 @@ export default function Layout({
               </div>
             </div>
             <div className={styles.tabs}>
-              {NAVIGATION.map(({ name, route }) => (
+              {NAVIGATION.map(({ name, route }, i) => (
                 <Link
+                  key={i}
                   href={route}
                   className={cn(styles.tab, {
                     [styles['tab-active']]: activeRoute.endsWith(route)
                   })}
                 >
-                  <div className='relative flex flex-col items-center justify-center'>
+                  <div className="relative flex flex-col items-center justify-center">
                     <div>{name}</div>
                     {/* {name === 'Apps' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>live</div>}
                           {name === 'Swap' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
                           {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>} */}
-                    {name === 'Portfolio' && <div className='whitespace-nowrap absolute text-xs top-4 text-yellow-500 animate-pulse'>preview</div>}
+                    {name === 'Portfolio' && (
+                      <div className="whitespace-nowrap absolute text-xs top-4 text-yellow-500 animate-pulse">
+                        preview
+                      </div>
+                    )}
                   </div>
                 </Link>
               ))}
             </div>
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
-              <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link>
-              <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link>
-              <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex' /></Link>
+              <Link href={'https://twitter.com/CharismaBTC'}>
+                <BsTwitter className="hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex" />
+              </Link>
+              <Link href={'https://discord.gg/UTZmwWGC8C'}>
+                <BsDiscord className="hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex" />
+              </Link>
+              <Link href={'https://docs.charisma.rocks'}>
+                <BsBookHalf className="hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex" />
+              </Link>
               <ConnectWallet />
             </div>
           </header>
