@@ -36,7 +36,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
 
   function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const tokensOutMin = tokens6Dec * exchangeRate
+    const tokensOutMin = (tokens6Dec * exchangeRate).toFixed(0)
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -68,7 +68,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
       className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
       onClick={unstake}
       disabled={tokens6Dec <= 0}>
-      Unstake {millify(tokens6Dec * exchangeRate / 1000000)} WELSH
+      Unstake {(tokens6Dec * exchangeRate / 1000000).toFixed(6)} WELSH
     </Button>
   );
 };
