@@ -63,7 +63,6 @@ export default function IndexDetailPage({ data }: Props) {
 
     const tokensRequested = Math.pow(10, factor)
     const tokensRequired = data.metadata.contains.map((token: any) => tokensRequested * token.weight);
-    console.log(data.blocksUntilUnlock)
 
     return (
         <Page meta={meta} fullViewport>
@@ -150,7 +149,7 @@ export default function IndexDetailPage({ data }: Props) {
                                                 </TooltipContent>
                                             </Tooltip>
                                         </TooltipProvider> :
-                                        <div className='text-secondary/50 text-sm flex items-center space-x-2'><div>Locked ({data.blocksUntilUnlock} blocks)</div> <TimerOffIcon size={14} className='mt-0.5' /> </div>
+                                        <div className='text-secondary/50 text-sm flex items-center space-x-2'><div>Locked ({data.blocksUntilUnlock} block{data.blocksUntilUnlock > 1 && `s`})</div> <TimerOffIcon size={14} className='mt-0.5' /> </div>
                                     }
                                 </div></div>}
 
