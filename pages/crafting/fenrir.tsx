@@ -29,6 +29,7 @@ import SalvageFenrir from '@components/salvage/salvage-fenrir';
 import norse from '@public/norse.gif'
 import fenrir from '@public/fenrir-12.png'
 import millify from 'millify';
+import useWallet from '@lib/hooks/use-wallet-balances';
 
 export default function Fenrir({ data }: Props) {
   const meta = {
@@ -36,7 +37,6 @@ export default function Fenrir({ data }: Props) {
     description: META_DESCRIPTION,
     image: '/fenrir-21.png'
   };
-
 
   const [objectivesVisible, setObjectivesVisible] = useState(true)
   const [descriptionVisible, setDescriptionVisible] = useState(false)
@@ -74,15 +74,17 @@ export default function Fenrir({ data }: Props) {
     visible: { opacity: 1 }
   };
 
-  const craftAmount = 10000000000
-  const salvageAmount = 10000000000
+  const { balances } = useWallet()
+  const fenrirBalance = (balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok::fenrir'] as any)?.balance
+
+  const craftAmount = fenrirBalance
+  const salvageAmount = fenrirBalance
   const welshCost = Math.floor(craftAmount * data.welshStaked / data.totalFenrirSupply)
   const odinCost = Math.floor(craftAmount * data.odinStaked / data.totalFenrirSupply)
   const craftingRewards = (craftAmount / 1000000) * data.craftingRewardFactor
 
   const tvl = (data.welshStaked / 1000000) * stakedWelshPrice + (data.odinStaked / 1000000) * stakedOdinPrice
 
-  // console.log({ welshCost, odinCost, tvl })
 
   return (
     <Page meta={meta} fullViewport>

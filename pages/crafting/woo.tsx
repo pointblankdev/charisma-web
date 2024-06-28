@@ -28,6 +28,7 @@ import woo from '@public/woo-1.png'
 import CraftWoo from '@components/craft/woo';
 import SalvageWoo from '@components/salvage/woo';
 import millify from 'millify';
+import useWallet from '@lib/hooks/use-wallet-balances';
 
 export default function Woo({ data }: Props) {
   const meta = {
@@ -74,16 +75,19 @@ export default function Woo({ data }: Props) {
     visible: { opacity: 1 }
   };
 
-  const craftAmount = 100000000
-  const salvageAmount = 100000000
+  const { balances } = useWallet()
+  const wooBalance = (balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.woo-meme-world-champion::woo'] as any)?.balance
+
+  const craftAmount = wooBalance
+  const salvageAmount = wooBalance
   const welshCost = Math.floor(craftAmount * data.welshStaked / data.totalWooSupply)
   const rooCost = Math.floor(craftAmount * data.rooStaked / data.totalWooSupply)
   const craftingRewards = (craftAmount / 1000000) * data.craftingRewardFactor
 
   const tvl = ((data.welshStaked / 1000000) * stakedWelshPrice) + ((data.rooStaked / 1000000) * stakedRooPrice)
 
-  // console.log({ welshCost, rooCost, tvl, craftingRewards })
 
+  console.log(wooBalance)
   return (
     <Page meta={meta} fullViewport>
 

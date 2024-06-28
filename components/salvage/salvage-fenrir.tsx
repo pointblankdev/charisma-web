@@ -71,7 +71,7 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Burn</Button>
+    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Burn All</Button>
   );
 };
 

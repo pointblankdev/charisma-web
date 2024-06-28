@@ -15,6 +15,7 @@ import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
 import { Switch } from '@components/ui/switch';
+import { Checkbox } from '@components/ui/checkbox';
 
 type Props = {
   apps: any[];
@@ -188,7 +189,7 @@ export default function Crafting({ apps }: Props) {
                 </div>
                 <label className='flex items-center gap-2'>
                   <span>Show Inactive Indexes</span>
-                  <Switch checked={showInactive} onCheckedChange={() => setShowInactive(!showInactive)} />
+                  <Checkbox className='mt-0.5' checked={showInactive} onCheckedChange={() => setShowInactive(!showInactive)} />
                 </label>
               </div>
             </Card>

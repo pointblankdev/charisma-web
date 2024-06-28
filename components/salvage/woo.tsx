@@ -17,7 +17,6 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
   useEffect(() => { setMounted(true) }, []);
 
   function salvage() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -50,7 +49,7 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
   }
 
   return (
-    <Button variant="ghost" className='z-30 text-primary hover:bg-white hover:text-primary' onClick={salvage}>Burn</Button>
+    <Button variant="ghost" className='z-30 text-primary hover:bg-white hover:text-primary' onClick={salvage}>Burn All</Button>
   );
 };
 
