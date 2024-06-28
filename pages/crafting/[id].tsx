@@ -78,7 +78,7 @@ export default function IndexDetailPage({ data }: Props) {
                                     <div className='text-lg'>
                                         ${millify(tvl)} TVL
                                     </div>
-                                    <ActiveRecipeIndicator active={true} />
+                                    <ActiveRecipeIndicator active={data.isRemoveLiquidityUnlocked} />
                                 </div>
                             </div>
                             <CardDescription className='z-30 text-sm sm:text-md font-fine text-foreground'>{data.metadata.description}</CardDescription>
