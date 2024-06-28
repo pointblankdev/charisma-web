@@ -68,6 +68,9 @@ export default function ContractEditor({ quest }: any) {
 
 (define-constant contract (as-contract tx-sender))
 (define-constant unlock-block u${Number(unlockBlock).toFixed(0)})
+(define-constant token-a-ratio u${Number(tokenARatio).toFixed(0)})
+(define-constant token-b-ratio u${Number(tokenBRatio).toFixed(0)})
+
 
 (define-fungible-token index-token)
 
@@ -75,9 +78,6 @@ export default function ContractEditor({ quest }: any) {
 (define-data-var token-symbol (string-ascii 10) "${safeTicker}")
 (define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/metadata/${ca}.json"))
 (define-data-var token-decimals uint u${Number(decimals).toFixed(0)})
-
-(define-data-var token-a-ratio uint u${Number(tokenARatio).toFixed(0)})
-(define-data-var token-b-ratio uint u${Number(tokenBRatio).toFixed(0)})
 
 (define-data-var blocks-per-tx uint u${Number(blocksPerTx).toFixed(0)})
 (define-data-var block-counter uint u0)
@@ -115,6 +115,13 @@ export default function ContractEditor({ quest }: any) {
 	)
 )
 
+(define-public (set-blocks-per-tx (new-blocks-per-tx uint))
+	(begin
+		(try! (is-dao-or-extension))
+		(ok (var-set blocks-per-tx new-blocks-per-tx))
+	)
+)
+
 (define-public (set-token-uri (new-uri (optional (string-utf8 256))))
 	(begin
 		(try! (is-dao-or-extension))
@@ -136,8 +143,8 @@ export default function ContractEditor({ quest }: any) {
 (define-public (add-liquidity (amount uint))
     (let
         (
-            (amount-a (* amount (var-get token-a-ratio)))
-            (amount-b (* amount (var-get token-b-ratio)))
+            (amount-a (* amount token-a-ratio))
+            (amount-b (* amount token-b-ratio))
         )
         (try! (contract-call? '${baseTokenA} transfer amount-a tx-sender contract none))
         (try! (contract-call? '${baseTokenB} transfer amount-b tx-sender contract none))
@@ -150,8 +157,8 @@ export default function ContractEditor({ quest }: any) {
     (let
         (
             (sender tx-sender)
-            (amount-a (* amount (var-get token-a-ratio)))
-            (amount-b (* amount (var-get token-b-ratio)))
+            (amount-a (* amount token-a-ratio))
+            (amount-b (* amount token-b-ratio))
         )
         (try! (is-unlocked))
         (try! (ft-burn? index-token amount tx-sender))
@@ -181,6 +188,18 @@ export default function ContractEditor({ quest }: any) {
 
 (define-read-only (get-decimals)
 	(ok (var-get token-decimals))
+)
+
+(define-read-only (get-blocks-per-tx)
+	(ok (var-get blocks-per-tx))
+)
+
+(define-read-only (get-block-counter)
+	(ok (var-get block-counter))
+)
+
+(define-read-only (get-txs-available)
+    (ok (/ (- block-height (+ unlock-block (var-get block-counter))) (var-get blocks-per-tx)))
 )
 
 (define-read-only (get-balance (who principal))
