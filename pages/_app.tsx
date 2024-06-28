@@ -7,12 +7,7 @@ import type { AppProps } from 'next/app';
 import NProgress from '@components/nprogress';
 import ResizeHandler from '@components/resize-handler';
 import { useEffect, useState } from 'react';
-import {
-  Connect,
-  AuthOptions,
-  AppConfig,
-  UserSession,
-} from "@stacks/connect-react";
+import { Connect, AuthOptions } from "@stacks/connect-react";
 import { Analytics } from '@vercel/analytics/react';
 import { Ysabeau_Infant } from 'next/font/google'
 import { cn } from '@lib/utils';
@@ -40,11 +35,12 @@ export default function App({ Component, pageProps }: AppProps) {
   const [balances, setBalances] = useState<WalletBalances>({} as AddressBalanceResponse);
 
   useEffect(() => {
-    const ca = userSession.loadUserData().profile.stxAddress.mainnet
-    getAccountBalance(ca).then((balances) => {
-      setBalances(balances);
-    })
-    console.log('recalc')
+    if (userSession.isUserSignedIn()) {
+      const ca = userSession.loadUserData().profile.stxAddress.mainnet
+      getAccountBalance(ca).then((balances) => {
+        setBalances(balances);
+      })
+    }
   }, []);
 
   return (
