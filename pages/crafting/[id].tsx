@@ -65,6 +65,7 @@ export default function IndexDetailPage({ data }: Props) {
     const tokensArray = Object.keys(balances?.fungible_tokens || {})
     const token = tokensArray.find((token: string) => token.includes(data.address)) || ''
 
+    const indexWeight = 1
     const indexBalance = (balances?.fungible_tokens?.[token] as any)?.balance || 0
 
     const baseTokens = data.metadata.contains.map((token: any) => {
@@ -88,7 +89,7 @@ export default function IndexDetailPage({ data }: Props) {
     const smallestBaseBalance = (balances?.fungible_tokens?.[smallestBaseToken.token] as any)?.balance || 0
 
     const [tokensSelected, setTokensSelected] = useState(0)
-    const tokensRequested = tokensSelected
+    const tokensRequested = tokensSelected / Math.pow(10, 6)
     const tokensRequired = data.metadata.contains.map((token: any) => (tokensRequested * token.weight))
 
     useEffect(() => {
@@ -163,12 +164,12 @@ export default function IndexDetailPage({ data }: Props) {
                             <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
                             {descriptionVisible &&
                                 <div className='flex flex-col'>
-                                    <Slider min={-indexBalance / Math.pow(10, 6)} max={smallestBaseBalance / smallestTokenWeight / Math.pow(10, 6)} step={1} className='w-full p-4' onValueChange={(v: any) => setTokensSelected(v[0])} />
+                                    <Slider min={-indexBalance / indexWeight} max={smallestBaseBalance / smallestTokenWeight} step={1} className='w-full p-4' onValueChange={(v: any) => setTokensSelected(v[0])} />
                                     <div className='z-20 flex items-center space-x-1'>
                                         {data.isRemoveLiquidityUnlocked ?
                                             <TooltipProvider>
                                                 <Tooltip>
-                                                    <TooltipTrigger><RemoveLiquidityFromIndex amount={-tokensRequested} address={data.address} metadata={data.metadata} /></TooltipTrigger>
+                                                    <TooltipTrigger><RemoveLiquidityFromIndex amount={-tokensSelected} address={data.address} metadata={data.metadata} /></TooltipTrigger>
                                                     <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                                                         Burning {millify(Math.abs(tokensRequested))} {data.symbol} returns {millify(Math.abs(tokensRequired[0]))} {data.metadata.contains[0].symbol} and {millify(Math.abs(tokensRequired[1]))} sCHA back to you.
                                                     </TooltipContent>
@@ -178,7 +179,7 @@ export default function IndexDetailPage({ data }: Props) {
                                         }
                                         <TooltipProvider>
                                             <Tooltip>
-                                                <TooltipTrigger><AddLiquidityToIndex amount={tokensRequested} address={data.address} metadata={data.metadata} /></TooltipTrigger>
+                                                <TooltipTrigger><AddLiquidityToIndex amount={tokensSelected} address={data.address} metadata={data.metadata} /></TooltipTrigger>
                                                 <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
                                                     Minting {millify(Math.abs(tokensRequested))} {data.symbol} requires {millify(Math.abs(tokensRequired[0]))} {data.metadata.contains[0].symbol} and {millify(Math.abs(tokensRequired[1]))} sCHA.
                                                 </TooltipContent>

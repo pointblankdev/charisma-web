@@ -20,8 +20,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata }: { amount: numbe
 
   const [contractAddress, contractName] = address.split('.');
 
-  const decimals = 6;
-  const tokens = Math.floor(amount * Math.pow(10, decimals));
+  const tokens = Math.floor(amount);
 
   function combinePostConditions(postConditions: any[]) {
     const combined: any = {};
