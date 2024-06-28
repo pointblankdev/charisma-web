@@ -53,8 +53,8 @@ export default function Fenrir({ data }: Props) {
     try {
       setDescriptionVisible(true)
       getTokenPrices().then((response) => {
-        setStakedWelshPrice(response.message[14].price)
-        setStakedOdinPrice(response.message[16].price)
+        setStakedWelshPrice(response[14].price)
+        setStakedOdinPrice(response[16].price)
       })
 
     } catch (error) {

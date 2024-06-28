@@ -21,9 +21,9 @@ export default async function tokens(
         });
     }
 
-    const response = await getTokenPrices()
-    const odinVelarPrice = Number(response.message[16].price)
-    const welshVelarPrice = Number(response.message[14].price)
+    const message = await getTokenPrices()
+    const odinVelarPrice = Number(message[16].price)
+    const welshVelarPrice = Number(message[14].price)
 
     const welshBalanceReponse = await getFenrirBalance("liquid-staked-welsh-v2")
     const odinBalanceReponse = await getFenrirBalance("liquid-staked-odin")

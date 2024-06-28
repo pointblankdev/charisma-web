@@ -55,8 +55,8 @@ export default function Woo({ data }: Props) {
       // videoRef.current.muted = false
       setDescriptionVisible(true)
       getTokenPrices().then((response) => {
-        setStakedWelshPrice(response.message[14].price)
-        setStakedRooPrice(response.message[15].price)
+        setStakedWelshPrice(response[14].price)
+        setStakedRooPrice(response[15].price)
       })
     } catch (error) {
       console.error(error)

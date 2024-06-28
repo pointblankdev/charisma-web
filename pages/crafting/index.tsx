@@ -14,8 +14,8 @@ import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
 import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
-import { Switch } from '@components/ui/switch';
 import { Checkbox } from '@components/ui/checkbox';
+import _ from 'lodash';
 
 type Props = {
   apps: any[];
@@ -31,7 +31,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   // lookup metadata for each contract
   const tokenMetadataPromises = enabledContracts.map(async (contract: any) => {
     const tokenMetadata = await getTokenURI(contract);
-    const baseTokens = await Promise.all(tokenMetadata.contains.map(async (token: any) => {
+    const unqiueTokens = _.uniqBy(tokenMetadata.contains, 'address');
+    const baseTokens = await Promise.all(unqiueTokens.map(async (token: any) => {
       const baseTokenMetadata = await getTokenURI(token.address)
       return baseTokenMetadata;
     }));
@@ -40,28 +41,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   });
 
   const tokenMetadata = await Promise.all(tokenMetadataPromises);
-
-
-
-  // [
-  //   {
-  //     name: 'Charismatic Corgi',
-  //     description: 'An index fund composed of sWELSH and sCHA at a fixed 100:1 ratio.',
-  //     image: 'https://charisma.rocks/indexes/charismatic-corgi-logo.png',
-  //     background: 'https://charisma.rocks/indexes/charismatic-corgi-bg.png',
-  //     symbol: 'iCC',
-  //     ft: 'index-token',
-  //     contains: [ [Object], [Object] ]
-  //   },
-  //   {
-  //     name: 'Feather Fall Fund',
-  //     description: 'An index fund composed of aeUSDC and sCHA at a fixed 1:1 ratio.',
-  //     symbol: 'FFF',
-  //     ft: 'fff',
-  //     image: 'https://charisma.rocks/feather-fall-fund-logo.png',
-  //     contains: [ [Object], [Object] ]
-  //   }
-  // ]
 
   const apps = [
     {

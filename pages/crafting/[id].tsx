@@ -6,8 +6,8 @@ import Image from 'next/image';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/ui/tooltip"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { blocksApi, getBlockCounter, getDecimals, getDeployedIndexes, getIsUnlocked, getSymbol, getTokenPrices, getTokenURI, getTotalSupply } from '@lib/stacks-api';
-import { GetServerSideProps, GetStaticProps } from 'next';
+import { blocksApi, getBlockCounter, getDecimals, getIsUnlocked, getSymbol, getTokenPrices, getTokenURI, getTotalSupply } from '@lib/stacks-api';
+import { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
@@ -18,10 +18,12 @@ import AddLiquidityToIndex from '@components/craft/add-liquidity';
 import RemoveLiquidityFromIndex from '@components/salvage/remove-liquidity';
 import { Link1Icon } from '@radix-ui/react-icons';
 import { TimerOffIcon } from 'lucide-react';
+import _ from 'lodash'
+import useWallet from '@lib/hooks/use-wallet-balances';
 
 export default function IndexDetailPage({ data }: Props) {
     const meta = {
-        title: `Charisma | ${data.metadata.name}`,
+        title: `Charisma | ${data.metadata?.name}`,
         description: META_DESCRIPTION,
         image: data.metadata.background
     };
@@ -29,18 +31,14 @@ export default function IndexDetailPage({ data }: Props) {
     const [descriptionVisible, setDescriptionVisible] = useState(false)
     const [tvl, setTVL] = useState(0)
 
-    const [factor, setFactor] = useState(2)
-
-
     const tokenAddressList = data.metadata.contains.map((token: any) => token.address)
-
     const totalSupply = data.totalSupply / Math.pow(10, data.decimals)
 
     useEffect(() => {
         try {
             setDescriptionVisible(true)
             getTokenPrices().then((response: any) => {
-                const baseTokensPriceData = response.message.filter((token: any) => tokenAddressList.includes(token.contractAddress))
+                const baseTokensPriceData = response.filter((token: any) => tokenAddressList.includes(token.contractAddress))
                 // loop for each matching token
                 const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
                     const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress)
@@ -61,8 +59,41 @@ export default function IndexDetailPage({ data }: Props) {
         visible: { opacity: 1 }
     };
 
-    const tokensRequested = Math.pow(10, factor)
-    const tokensRequired = data.metadata.contains.map((token: any) => tokensRequested * token.weight);
+    const { balances } = useWallet()
+
+    // use lodash to loop through balances map and find the token, which will be in the map key
+    const tokensArray = Object.keys(balances?.fungible_tokens || {})
+    const token = tokensArray.find((token: string) => token.includes(data.address)) || ''
+
+    const indexBalance = (balances?.fungible_tokens?.[token] as any)?.balance || 0
+
+    const baseTokens = data.metadata.contains.map((token: any) => {
+        const baseToken = tokensArray.find((t: string) => t.includes(token.address)) || ''
+        const baseTokenBalance = (balances?.fungible_tokens?.[baseToken] as any)?.balance || 0
+        return {
+            token: baseToken,
+            balance: baseTokenBalance,
+            weight: token.weight
+        }
+    })
+
+    console.log(baseTokens)
+
+    const smallestBaseToken = baseTokens.reduce((smallestToken: { token: string | number; weight: number; }, currentToken: { token: string | number; weight: number; }) => {
+        const smallestBalance = (balances?.fungible_tokens?.[smallestToken.token] as any)?.balance || 0
+        const currentBalance = (balances?.fungible_tokens?.[currentToken.token] as any)?.balance || 0
+        return (currentBalance / currentToken.weight) < (smallestBalance / smallestToken.weight) ? currentToken : smallestToken
+    }, baseTokens[0])
+
+    const smallestBaseBalance = (balances?.fungible_tokens?.[smallestBaseToken.token] as any)?.balance || 0
+
+    const [tokensSelected, setTokensSelected] = useState(0)
+    const tokensRequested = tokensSelected
+    const tokensRequired = data.metadata.contains.map((token: any) => (tokensRequested * token.weight))
+
+    useEffect(() => {
+        setTokensSelected(smallestBaseBalance / 1000000 >= 100 ? 100 : 0)
+    }, [smallestBaseBalance])
 
     return (
         <Page meta={meta} fullViewport>
@@ -91,11 +122,11 @@ export default function IndexDetailPage({ data }: Props) {
                                             <TooltipTrigger>
                                                 <div className='relative'>
                                                     <Image alt={data.metadata.name} src={data.metadata.image} width={100} height={100} className='z-30 w-full border rounded-full' />
-                                                    <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(tokensRequested)}</div>
+                                                    <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(Math.abs(tokensRequested))}</div>
                                                 </div>
                                             </TooltipTrigger>
                                             <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                {Math.floor(tokensRequested)} {data.metadata.symbol}
+                                                {Math.floor(Math.abs(tokensRequested))} {data.metadata.symbol}
                                             </TooltipContent>
                                         </Tooltip>
                                     </TooltipProvider>
@@ -114,45 +145,48 @@ export default function IndexDetailPage({ data }: Props) {
                                                     <TooltipTrigger>
                                                         <div className='z-20 relative'>
                                                             <Image alt={token.name} src={token.image} width={100} height={100} className='z-30 w-full border rounded-full' />
-                                                            <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(tokensRequired[k])}</div>
+                                                            <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(Math.abs(tokensRequired[k]))}</div>
                                                         </div>
                                                     </TooltipTrigger>
                                                     <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                        {Math.floor(tokensRequired[k])} {data.metadata.contains[k].symbol}
+                                                        {Math.floor(Math.abs(tokensRequired[k]))} {data.metadata.contains[k].symbol}
                                                     </TooltipContent>
                                                 </Tooltip>
                                             </TooltipProvider>
-                                        ))}
+                                        )
+                                        )}
                                     </div>
                                 </div>
                             </div>
                         </CardContent>
                         <CardFooter className="z-20 flex justify-between p-4 items-end">
                             <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
-                            {descriptionVisible && <div className='flex flex-col'>
-                                <Slider defaultValue={[factor]} min={1} max={5} step={0.1} className='w-full p-4' onValueChange={(v: any) => setFactor(v[0])} />
-                                <div className='z-20 flex items-center space-x-1'>
-                                    <TooltipProvider>
-                                        <Tooltip>
-                                            <TooltipTrigger><AddLiquidityToIndex amount={tokensRequested} address={data.address} metadata={data.metadata} /></TooltipTrigger>
-                                            <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                                                Minting {millify(tokensRequested)} {data.symbol} requires {millify(tokensRequired[0])} {data.metadata.contains[0].symbol} and {millify(tokensRequired[1])} sCHA.
-                                            </TooltipContent>
-                                        </Tooltip>
-                                    </TooltipProvider>
-                                    {data.isRemoveLiquidityUnlocked ?
+                            {descriptionVisible &&
+                                <div className='flex flex-col'>
+                                    <Slider min={-indexBalance / Math.pow(10, 6)} max={smallestBaseBalance / Math.pow(10, 6)} step={1} className='w-full p-4' onValueChange={(v: any) => setTokensSelected(v[0])} />
+                                    <div className='z-20 flex items-center space-x-1'>
+                                        {data.isRemoveLiquidityUnlocked ?
+                                            <TooltipProvider>
+                                                <Tooltip>
+                                                    <TooltipTrigger><RemoveLiquidityFromIndex amount={-tokensRequested} address={data.address} metadata={data.metadata} /></TooltipTrigger>
+                                                    <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
+                                                        Burning {millify(Math.abs(tokensRequested))} {data.symbol} returns {millify(Math.abs(tokensRequired[0]))} {data.metadata.contains[0].symbol} and {millify(Math.abs(tokensRequired[1]))} sCHA back to you.
+                                                    </TooltipContent>
+                                                </Tooltip>
+                                            </TooltipProvider> :
+                                            <div className='text-secondary/50 text-sm flex items-center space-x-2'><div>Locked ({data.blocksUntilUnlock} block{data.blocksUntilUnlock > 1 && `s`})</div> <TimerOffIcon size={14} className='mt-0.5' /> </div>
+                                        }
                                         <TooltipProvider>
                                             <Tooltip>
-                                                <TooltipTrigger><RemoveLiquidityFromIndex amount={tokensRequested} address={data.address} metadata={data.metadata} /></TooltipTrigger>
+                                                <TooltipTrigger><AddLiquidityToIndex amount={tokensRequested} address={data.address} metadata={data.metadata} /></TooltipTrigger>
                                                 <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                                                    Burning {millify(tokensRequested)} {data.symbol} returns {millify(tokensRequired[0])} {data.metadata.contains[0].symbol} and {millify(tokensRequired[1])} sCHA back to you.
+                                                    Minting {millify(Math.abs(tokensRequested))} {data.symbol} requires {millify(Math.abs(tokensRequired[0]))} {data.metadata.contains[0].symbol} and {millify(Math.abs(tokensRequired[1]))} sCHA.
                                                 </TooltipContent>
                                             </Tooltip>
-                                        </TooltipProvider> :
-                                        <div className='text-secondary/50 text-sm flex items-center space-x-2'><div>Locked ({data.blocksUntilUnlock} block{data.blocksUntilUnlock > 1 && `s`})</div> <TimerOffIcon size={14} className='mt-0.5' /> </div>
-                                    }
-                                </div></div>}
-
+                                        </TooltipProvider>
+                                    </div>
+                                </div>
+                            }
                         </CardFooter>
                         <Image
                             src={data.metadata.background}
@@ -185,7 +219,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
         const decimals = await getDecimals(params?.id as string)
 
         const isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string)
-        const blockCounter = await getBlockCounter(params?.id as string)
+
+        // workaround for missing block counter in metadata
+        let blockCounter = 0
+        if (contractName === 'quiet-confidence') {
+            blockCounter = await getBlockCounter(params?.id as string)
+        }
         const { results } = await blocksApi.getBlockList({ limit: 1 })
 
         const blocksUntilUnlock = 155550 + blockCounter - results[0].height
@@ -195,6 +234,20 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
             return tokenMetadata;
         }));
 
+        // if data.metadata.contains has multiple matching items, create a map to track them and sum of their weights of duplicates
+        const uniqueTokens = metadata.contains.reduce((acc: any, token: any) => {
+            if (acc[token.address]) {
+                acc[token.address].weight += token.weight
+            } else {
+                acc[token.address] = token
+            }
+            return acc
+        }, {})
+
+        // remove duplicates from metadata.contains
+        metadata.contains = Object.values(uniqueTokens)
+
+
         return {
             props: {
                 data: {
@@ -202,7 +255,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
                     metadata: metadata,
                     totalSupply: Number(supply.value.value),
                     symbol: symbol,
-                    baseTokens: baseTokens,
+                    baseTokens: _.uniqBy(baseTokens, 'name'),
                     decimals: decimals,
                     isRemoveLiquidityUnlocked,
                     blocksUntilUnlock

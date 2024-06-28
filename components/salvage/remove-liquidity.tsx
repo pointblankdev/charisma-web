@@ -5,7 +5,6 @@ import {
   AnchorMode,
   Pc,
   PostConditionMode,
-  principalCV,
   uintCV,
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
@@ -62,7 +61,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata }: { amount: numbe
   }
 
   return (
-    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Remove Liquidity</Button>
+    <Button disabled={amount <= 0} variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Remove Liquidity</Button>
   );
 };
 

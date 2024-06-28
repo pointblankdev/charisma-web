@@ -543,7 +543,20 @@ export async function getWooTitleBeltContractEvents() {
 }
 
 export async function getTokenPrices() {
-    return (await fetch('https://mainnet-prod-proxy-service-dedfb0daae85.herokuapp.com/swapapp/swap/tokens')).json()
+    try {
+        const { message } = await (await fetch('https://mainnet-prod-proxy-service-dedfb0daae85.herokuapp.com/swapapp/swap/tokens')).json()
+        // simulate the charisma price
+        message.push({
+            assetName: "liquid-staked-charisma",
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
+            name: "Liquid Staked Charisma",
+            symbol: 'sCHA',
+            price: "1"
+        })
+        return message
+    } catch (error) {
+        return []
+    }
 }
 
 export async function getStakedTokenExchangeRate(contract: string) {

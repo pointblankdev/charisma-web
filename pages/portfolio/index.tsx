@@ -126,7 +126,7 @@ function Component() {
       })
 
       getTokenPrices().then((prices) => {
-        setPrices(prices.message)
+        setPrices(prices)
       })
     } catch (error) {
       console.error(error)

@@ -76,9 +76,9 @@ export const getServerSideProps = async () => {
     const alexStx = await alexStxResponse.json();
     const alexWelsh = await alexWelshResponse.json();
 
-    const velarResponse = await getTokenPrices()
+    const message = await getTokenPrices()
 
-    console.log(velarResponse)
+    console.log(message)
 
     return {
       props: {
@@ -88,9 +88,9 @@ export const getServerSideProps = async () => {
             stx: alexStx
           },
           velar: {
-            stx: velarResponse.message[0],
-            welsh: velarResponse.message[6],
-            swelsh: velarResponse.message[14]
+            stx: message[0],
+            welsh: message[6],
+            swelsh: message[14]
           }
         }
       },
