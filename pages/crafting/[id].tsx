@@ -231,7 +231,7 @@ const ActiveRecipeIndicator = ({ active, blocksUntilUnlock }: { active: boolean,
                     </div>
                 </TooltipTrigger>
                 <TooltipContent className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                    {active ? 'Index fund is live' : `Base token asset withdraws are locked for ${blocksUntilUnlock} more blocks`}
+                    {active ? 'Index fund is live' : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock > 1 && 's'}`}
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
