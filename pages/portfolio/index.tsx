@@ -83,9 +83,6 @@ export default function PortfolioPage(
 ) {
   const supportedTokens = ['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'];
 
-  console.log({rates});
-  
-
   return (
     <SettingsLayout>
       <main className="flex flex-1 flex-col gap-4 p-0 md:gap-8">
