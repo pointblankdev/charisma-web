@@ -193,7 +193,7 @@ export default function Crafting({ apps }: Props) {
                 </label>
               </div>
             </Card>
-            {activeApps.reverse().map((pool, i) => {
+            {activeApps.map((pool, i) => {
               return (
                 <Card key={i} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.inactive && 'opacity-25 hover:opacity-60')}>
                   <Link href={`${pool.slug}`} className='w-full'>
