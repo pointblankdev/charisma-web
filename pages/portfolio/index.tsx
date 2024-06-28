@@ -17,8 +17,74 @@ import Link from 'next/link';
 import welshLogo from '@public/welsh-logo.png';
 import leoLogo from '@public/leo-logo.png';
 
-export default function PortfolioPage() {
+import { MoreHorizontal } from 'lucide-react';
+import { Button } from '@components/ui/button';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuTrigger
+} from '@components/ui/dropdown-menu';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@components/ui/table';
+import { Badge } from '@components/ui/badge';
+import millify from 'millify';
+import { getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
+import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+
+type Rates = {
+  'liquid-staked-welsh-v2': number,
+  'liquid-staked-leo': number,
+  "prices": any
+}
+
+export const getServerSideProps = (async () => {
+  try {
+  // Fetch data from external API
+  const [welshRate, leoRate, prices] = await Promise.all([
+    getStakedTokenExchangeRate('liquid-staked-welsh-v2'),
+    getStakedTokenExchangeRate('liquid-staked-leo'),
+    getTokenPrices(),
+  ]);
+
+  const rates: Rates = {
+    'liquid-staked-welsh-v2': welshRate.value / Math.pow(10, 6),
+    'liquid-staked-leo': leoRate.value / Math.pow(10, 6),
+    "prices": prices
+  }
+
+  // Pass data to the page via props
+  return { props: { rates } }
+} catch (error) {
+  console.error('Error fetching data:', error);
+  return {
+    props: {
+      rates: {
+        'liquid-staked-welsh-v2': 0,
+        'liquid-staked-leo': 0,
+        prices: {},
+      },
+    },
+  };
+}
+}) satisfies GetServerSideProps<{ rates: Rates }>
+
+export default function PortfolioPage(
+  {
+    rates,
+  }: InferGetServerSidePropsType<typeof getServerSideProps>
+) {
   const supportedTokens = ['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'];
+
+  console.log({rates});
+  
 
   return (
     <SettingsLayout>
@@ -81,87 +147,37 @@ export default function PortfolioPage() {
             </CardContent>
           </Card>
         </div> */}
-        <Component />
+        <Component rates={rates} />
       </main>
     </SettingsLayout>
   );
 }
 
-import { MoreHorizontal } from 'lucide-react';
-import { Button } from '@components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger
-} from '@components/ui/dropdown-menu';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow
-} from '@components/ui/table';
-import { Badge } from '@components/ui/badge';
-import millify from 'millify';
-import { getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
-import { useEffect, useState } from 'react';
 
-function Component() {
+function Component({rates}: {rates:Rates}) {
   const { balances } = useWallet();
 
-  const tokens = balances.fungible_tokens as any;
+  const tokens = balances?.fungible_tokens as any;
 
-  // console.log(tokens)
-
-  const [exchangeRates, setExchangeRates] = useState({} as any);
-  const [prices, setPrices] = useState({} as any);
-
-  useEffect(() => {
-    try {
-      getStakedTokenExchangeRate('liquid-staked-welsh-v2').then(rate => {
-        setExchangeRates((prev: any) => ({
-          ...prev,
-          'liquid-staked-welsh-v2': rate.value / Math.pow(10, 6)
-        }));
-      });
-
-      getStakedTokenExchangeRate('liquid-staked-leo').then(rate => {
-        setExchangeRates((prev: any) => ({
-          ...prev,
-          'liquid-staked-leo': rate.value / Math.pow(10, 6)
-        }));
-      });
-
-      getTokenPrices().then(prices => {
-        setPrices(prices);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
-  // console.log(prices)
+  const { 'liquid-staked-welsh-v2': welshRate, 'liquid-staked-leo': leoRate, prices } = rates;
 
   if (!tokens) return <div>Loading...</div>;
 
   const totalWelshTokens =
     (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`]
-      .balance *
-      exchangeRates['liquid-staked-welsh-v2']) /
-    Math.pow(10, 6) +
+      ?.balance *
+      welshRate) /
+      Math.pow(10, 6) +
     tokens[`SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`]
-      .balance /
-    Math.pow(10, 6);
+      ?.balance /
+      Math.pow(10, 6);
 
   const totalLeoTokens =
     (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`]
-      .balance *
-      exchangeRates['liquid-staked-leo']) /
-    Math.pow(10, 6) +
-    tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`].balance / Math.pow(10, 6);
+      ?.balance *
+      leoRate) /
+      Math.pow(10, 6) +
+    tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance / Math.pow(10, 6);
 
   return (
     <Card>
@@ -220,7 +236,7 @@ function Component() {
                     Math.floor(
                       tokens[
                         `SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`
-                      ].balance / Math.pow(10, 6)
+                      ]?.balance / Math.pow(10, 6)
                     )}
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right whitespace-nowrap">
@@ -229,9 +245,9 @@ function Component() {
                       Math.floor(
                         (tokens[
                           `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`
-                        ].balance *
-                          exchangeRates['liquid-staked-welsh-v2']) /
-                        Math.pow(10, 6)
+                        ]?.balance *
+                          welshRate) /
+                          Math.pow(10, 6)
                       )}
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -239,12 +255,12 @@ function Component() {
                       {millify(
                         tokens[
                           `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`
-                        ].balance / Math.pow(10, 6)
+                        ]?.balance / Math.pow(10, 6)
                       )}{' '}
                       sWELSH
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x{Number(exchangeRates['liquid-staked-welsh-v2'])}
+                      x{Number(welshRate)}
                     </div>
                   </div>
                 </TableCell>
@@ -296,8 +312,8 @@ function Component() {
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   {tokens &&
                     Math.floor(
-                      tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`].balance /
-                      Math.pow(10, 6)
+                      tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance /
+                        Math.pow(10, 6)
                     )}
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right whitespace-nowrap">
@@ -306,9 +322,9 @@ function Component() {
                       Math.floor(
                         (tokens[
                           `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
-                        ].balance *
-                          exchangeRates['liquid-staked-leo']) /
-                        Math.pow(10, 6)
+                        ]?.balance *
+                          leoRate) /
+                          Math.pow(10, 6)
                       )}
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -316,12 +332,12 @@ function Component() {
                       {millify(
                         tokens[
                           `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
-                        ].balance / Math.pow(10, 6)
+                        ]?.balance / Math.pow(10, 6)
                       )}{' '}
                       sLEO
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x{exchangeRates['liquid-staked-leo']}
+                      x{leoRate}
                     </div>
                   </div>
                 </TableCell>
@@ -330,10 +346,10 @@ function Component() {
                     Math.floor(
                       (tokens[
                         `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
-                      ].balance *
-                        exchangeRates['liquid-staked-leo'] +
+                      ]?.balance *
+                        leoRate +
                         Number(
-                          tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`].balance
+                          tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance
                         )) /
                       Math.pow(10, 6)
                     )}
