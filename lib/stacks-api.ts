@@ -551,7 +551,7 @@ export async function getTokenPrices() {
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
             name: "Liquid Staked Charisma",
             symbol: 'sCHA',
-            price: "1"
+            price: "2.00"
         })
         return message
     } catch (error) {
