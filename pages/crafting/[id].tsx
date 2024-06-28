@@ -164,7 +164,7 @@ export default function IndexDetailPage({ data }: Props) {
                             <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
                             {descriptionVisible &&
                                 <div className='flex flex-col'>
-                                    <Slider min={-indexBalance / indexWeight} max={smallestBaseBalance / smallestTokenWeight} step={1} className='w-full p-4' onValueChange={(v: any) => setTokensSelected(v[0])} />
+                                    <Slider defaultValue={[0]} min={-indexBalance / indexWeight} max={smallestBaseBalance / smallestTokenWeight} step={1} className='w-full p-4' onValueChange={(v: any) => setTokensSelected(v[0])} />
                                     <div className='z-20 flex items-center space-x-1'>
                                         {data.isRemoveLiquidityUnlocked ?
                                             <TooltipProvider>
