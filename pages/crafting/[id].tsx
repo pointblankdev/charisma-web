@@ -123,7 +123,7 @@ export default function IndexDetailPage({ data }: Props) {
                                             <TooltipTrigger>
                                                 <div className='relative'>
                                                     <Image alt={data.metadata.name} src={data.metadata.image} width={100} height={100} className='z-30 w-full border rounded-full' />
-                                                    <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(Math.abs(tokensRequested))}</div>
+                                                    {Math.abs(tokensRequested) && <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(Math.abs(tokensRequested))}</div>}
                                                 </div>
                                             </TooltipTrigger>
                                             <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
@@ -146,7 +146,7 @@ export default function IndexDetailPage({ data }: Props) {
                                                     <TooltipTrigger>
                                                         <div className='z-20 relative'>
                                                             <Image alt={token.name} src={token.image} width={100} height={100} className='z-30 w-full border rounded-full' />
-                                                            <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(Math.abs(tokensRequired[k]))}</div>
+                                                            {Math.abs(tokensRequired[k]) && <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground'>{millify(Math.abs(tokensRequired[k]))}</div>}
                                                         </div>
                                                     </TooltipTrigger>
                                                     <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
