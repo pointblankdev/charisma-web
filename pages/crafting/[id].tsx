@@ -25,7 +25,7 @@ export default function IndexDetailPage({ data }: Props) {
     const meta = {
         title: `Charisma | ${data.metadata?.name}`,
         description: META_DESCRIPTION,
-        image: data.metadata.background
+        image: data.metadata?.background
     };
 
     const [descriptionVisible, setDescriptionVisible] = useState(false)
