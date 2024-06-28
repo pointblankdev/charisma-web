@@ -6,7 +6,7 @@ import Image from 'next/image';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/ui/tooltip"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { getDecimals, getDeployedIndexes, getIsUnlocked, getSymbol, getTokenPrices, getTokenURI, getTotalSupply } from '@lib/stacks-api';
+import { blocksApi, getBlockCounter, getDecimals, getDeployedIndexes, getIsUnlocked, getSymbol, getTokenPrices, getTokenURI, getTotalSupply } from '@lib/stacks-api';
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
@@ -63,6 +63,7 @@ export default function IndexDetailPage({ data }: Props) {
 
     const tokensRequested = Math.pow(10, factor)
     const tokensRequired = data.metadata.contains.map((token: any) => tokensRequested * token.weight);
+    console.log(data.blocksUntilUnlock)
 
     return (
         <Page meta={meta} fullViewport>
@@ -78,7 +79,7 @@ export default function IndexDetailPage({ data }: Props) {
                                     <div className='text-lg'>
                                         ${millify(tvl)} TVL
                                     </div>
-                                    <ActiveRecipeIndicator active={data.isRemoveLiquidityUnlocked} />
+                                    <ActiveRecipeIndicator active={data.isRemoveLiquidityUnlocked} blocksUntilUnlock={data.blocksUntilUnlock} />
                                 </div>
                             </div>
                             <CardDescription className='z-30 text-sm sm:text-md font-fine text-foreground'>{data.metadata.description}</CardDescription>
@@ -149,7 +150,7 @@ export default function IndexDetailPage({ data }: Props) {
                                                 </TooltipContent>
                                             </Tooltip>
                                         </TooltipProvider> :
-                                        <div className='text-secondary/50 text-sm flex items-center space-x-2'><div>Removal Locked</div> <TimerOffIcon size={14} /> </div>
+                                        <div className='text-secondary/50 text-sm flex items-center space-x-2'><div>Locked ({data.blocksUntilUnlock} blocks)</div> <TimerOffIcon size={14} className='mt-0.5' /> </div>
                                     }
                                 </div></div>}
 
@@ -185,6 +186,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
         const decimals = await getDecimals(params?.id as string)
 
         const isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string)
+        const blockCounter = await getBlockCounter(params?.id as string)
+        const { results } = await blocksApi.getBlockList({ limit: 1 })
+
+        const blocksUntilUnlock = 155550 + blockCounter - results[0].height
 
         const baseTokens = await Promise.all(metadata.contains.map(async (token: any) => {
             const tokenMetadata = await getTokenURI(token.address)
@@ -200,7 +205,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
                     symbol: symbol,
                     baseTokens: baseTokens,
                     decimals: decimals,
-                    isRemoveLiquidityUnlocked
+                    isRemoveLiquidityUnlocked,
+                    blocksUntilUnlock
                 }
             },
         };
@@ -215,7 +221,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     }
 };
 
-const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
+const ActiveRecipeIndicator = ({ active, blocksUntilUnlock }: { active: boolean, blocksUntilUnlock: number }) => {
     return (
         <TooltipProvider>
             <Tooltip>
@@ -226,7 +232,7 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
                     </div>
                 </TooltipTrigger>
                 <TooltipContent className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                    {active ? 'Index fund is live' : 'Index fund liquidity removal is locked for 10 blocks'}
+                    {active ? 'Index fund is live' : `Base token asset withdraws are locked for ${blocksUntilUnlock} more blocks`}
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>

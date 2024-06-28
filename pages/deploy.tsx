@@ -202,6 +202,10 @@ export default function ContractEditor({ quest }: any) {
     (ok (/ (- block-height (+ unlock-block (var-get block-counter))) (var-get blocks-per-tx)))
 )
 
+(define-read-only (get-blocks-until-unlock)
+	(ok (- (+ unlock-block (var-get block-counter)) block-height))
+)
+
 (define-read-only (get-balance (who principal))
 	(ok (ft-get-balance index-token who))
 )
