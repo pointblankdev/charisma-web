@@ -115,10 +115,6 @@ export default function StakeWelsh({ data }: Props) {
               </div>
             </div>
           </Card>
-          <div>
-            <p className='text-center font-thin'>The interface has been updated to be aware of wallet balances.</p>
-            <p className='text-center font-thin'>Let us know what you think in Discord.</p>
-          </div>
         </div>
       </Layout>
     </Page>
