@@ -62,7 +62,7 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
       onClick={stake}
       disabled={tokens6Dec <= 0}
     >
-      Stake {millify(tokens6Dec / 1000000)} WELSH
+      Stake {(tokens6Dec / 1000000).toFixed(6)} WELSH
     </Button>
   );
 };

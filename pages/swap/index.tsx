@@ -45,7 +45,7 @@ export default function Swap({ data }: Props) {
 
     useEffect(() => {
         getTokenPrices().then((response) => {
-            setPriceData(response.message)
+            setPriceData(response)
         })
     }, [])
 
