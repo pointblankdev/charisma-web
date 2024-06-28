@@ -77,9 +77,9 @@ export default function IndexDetailPage({ data }: Props) {
         }
     })
 
-    console.log(baseTokens)
-
+    let smallestTokenWeight = 0
     const smallestBaseToken = baseTokens.reduce((smallestToken: { token: string | number; weight: number; }, currentToken: { token: string | number; weight: number; }) => {
+        if (smallestTokenWeight === 0) { smallestTokenWeight = currentToken.weight }
         const smallestBalance = (balances?.fungible_tokens?.[smallestToken.token] as any)?.balance || 0
         const currentBalance = (balances?.fungible_tokens?.[currentToken.token] as any)?.balance || 0
         return (currentBalance / currentToken.weight) < (smallestBalance / smallestToken.weight) ? currentToken : smallestToken
@@ -163,7 +163,7 @@ export default function IndexDetailPage({ data }: Props) {
                             <Link href='/crafting'><Button variant="ghost" className='z-30'>Back</Button></Link>
                             {descriptionVisible &&
                                 <div className='flex flex-col'>
-                                    <Slider min={-indexBalance / Math.pow(10, 6)} max={smallestBaseBalance / Math.pow(10, 6)} step={1} className='w-full p-4' onValueChange={(v: any) => setTokensSelected(v[0])} />
+                                    <Slider min={-indexBalance / Math.pow(10, 6)} max={smallestBaseBalance / smallestTokenWeight / Math.pow(10, 6)} step={1} className='w-full p-4' onValueChange={(v: any) => setTokensSelected(v[0])} />
                                     <div className='z-20 flex items-center space-x-1'>
                                         {data.isRemoveLiquidityUnlocked ?
                                             <TooltipProvider>
