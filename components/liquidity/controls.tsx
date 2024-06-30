@@ -5,7 +5,7 @@ import { TimerOffIcon } from 'lucide-react';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@components/ui/tooltip';
 import millify from 'millify';
 
-const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data = {}, tokensRequested, tokensRequired }: any) => {
+const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data = {}, tokensRequested, tokensRequired, indexWeight }: any) => {
     return (
         <div className="flex flex-col">
             <Slider
@@ -25,6 +25,7 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
                                     amount={-tokensSelected}
                                     address={data.address}
                                     metadata={data.metadata}
+                                    indexWeight={indexWeight}
                                 />
                             </TooltipTrigger>
                             <TooltipContent

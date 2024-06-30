@@ -79,7 +79,7 @@ export default function IndexDetailPage({ data }: Props) {
   const tokensArray = Object.keys(balances?.fungible_tokens || {});
   const token = tokensArray.find((token: string) => token.includes(data.address)) || '';
 
-  const indexWeight = 1;
+  const indexWeight = data.address === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma" ? 2 : 1;
   const indexBalance = (balances?.fungible_tokens?.[token] as any)?.balance || 0;
 
   const baseTokens = data.metadata.contains.map((token: any) => {
@@ -172,7 +172,7 @@ export default function IndexDetailPage({ data }: Props) {
                           />
                           {Math.abs(tokensRequested) !== 0 && (
                             <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                              {millify(Math.abs(tokensRequested))}
+                              {millify(Math.abs(tokensRequested * indexWeight))}
                             </div>
                           )}
                         </div>
@@ -241,7 +241,8 @@ export default function IndexDetailPage({ data }: Props) {
                   max={smallestBaseBalance / smallestTokenWeight}
                   onSetTokensSelected={setTokensSelected}
                   tokensSelected={tokensSelected}
-                  tokensRequested={tokensRequested}
+                  indexWeight={indexWeight}
+                  tokensRequested={tokensRequested * indexWeight}
                   tokensRequired={tokensRequired}
                   data={data}
                 />

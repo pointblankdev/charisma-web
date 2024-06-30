@@ -26,7 +26,8 @@ const questFormSchema = z.object({
     // time lock for remove-liquidity
     unlockBlock: z.coerce.number(),
     // rate limiting for remove-liquidity
-    blocksPerTx: z.coerce.number()
+    blocksPerTx: z.coerce.number(),
+    indexTokenRatio: z.coerce.number(),
 })
 
 type QuestFormValues = z.infer<typeof questFormSchema>
@@ -48,7 +49,8 @@ export default function ContractEditor({ quest }: any) {
         image,
         background,
         unlockBlock,
-        blocksPerTx
+        blocksPerTx,
+        indexTokenRatio
     }: any) => {
         const sender = userSession.loadUserData().profile.stxAddress.mainnet
         const safeName = name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
@@ -70,7 +72,7 @@ export default function ContractEditor({ quest }: any) {
 (define-constant unlock-block u${Number(unlockBlock).toFixed(0)})
 (define-constant token-a-ratio u${Number(tokenARatio).toFixed(0)})
 (define-constant token-b-ratio u${Number(tokenBRatio).toFixed(0)})
-
+(define-constant index-token-ratio u${Number(indexTokenRatio).toFixed(0)})
 
 (define-fungible-token index-token)
 
@@ -145,10 +147,13 @@ export default function ContractEditor({ quest }: any) {
         (
             (amount-a (* amount token-a-ratio))
             (amount-b (* amount token-b-ratio))
+            (amount-index (* amount index-token-ratio))
         )
+        (try! (is-unlocked))
         (try! (contract-call? '${baseTokenA} transfer amount-a tx-sender contract none))
         (try! (contract-call? '${baseTokenB} transfer amount-b tx-sender contract none))
-        (try! (ft-mint? index-token amount tx-sender))
+        (try! (ft-mint? index-token amount-index tx-sender))
+        (var-set block-counter (+ (var-get block-counter) (var-get blocks-per-tx)))
         (ok true)
     )
 )
@@ -159,14 +164,43 @@ export default function ContractEditor({ quest }: any) {
             (sender tx-sender)
             (amount-a (* amount token-a-ratio))
             (amount-b (* amount token-b-ratio))
+            (amount-index (* amount index-token-ratio))
         )
         (try! (is-unlocked))
-        (try! (ft-burn? index-token amount tx-sender))
+        (try! (ft-burn? index-token amount-index tx-sender))
         (try! (as-contract (contract-call? '${baseTokenA} transfer amount-a contract sender none)))
         (try! (as-contract (contract-call? '${baseTokenB} transfer amount-b contract sender none)))
         (var-set block-counter (+ (var-get block-counter) (var-get blocks-per-tx)))
         (ok true)
     )
+)
+    
+(define-read-only (get-token-a-ratio)
+    (ok token-a-ratio)
+)
+
+(define-read-only (get-token-a-ratio)
+    (ok token-a-ratio)
+)
+
+(define-read-only (get-index-token-ratio)
+    (ok index-token-ratio)
+)
+
+(define-read-only (get-blocks-per-tx)
+	(ok (var-get blocks-per-tx))
+)
+
+(define-read-only (get-block-counter)
+	(ok (var-get block-counter))
+)
+
+(define-read-only (get-txs-available)
+    (ok (/ (- block-height (+ unlock-block (var-get block-counter))) (var-get blocks-per-tx)))
+)
+
+(define-read-only (get-blocks-until-unlock)
+	(ok (- (+ unlock-block (var-get block-counter)) block-height))
 )
 
 ;; --- SIP-010 FT Trait
@@ -188,22 +222,6 @@ export default function ContractEditor({ quest }: any) {
 
 (define-read-only (get-decimals)
 	(ok (var-get token-decimals))
-)
-
-(define-read-only (get-blocks-per-tx)
-	(ok (var-get blocks-per-tx))
-)
-
-(define-read-only (get-block-counter)
-	(ok (var-get block-counter))
-)
-
-(define-read-only (get-txs-available)
-    (ok (/ (- block-height (+ unlock-block (var-get block-counter))) (var-get blocks-per-tx)))
-)
-
-(define-read-only (get-blocks-until-unlock)
-	(ok (- (+ unlock-block (var-get block-counter)) block-height))
 )
 
 (define-read-only (get-balance (who principal))
@@ -409,19 +427,38 @@ export default function ContractEditor({ quest }: any) {
                                     />
                                 </div>
                             </div>
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>New Index Token - Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'Charismatic Corgi'} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <div>
+                                    <FormField
+                                        control={form.control}
+                                        name="name"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>New Index Token - Name</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={'Charismatic Corgi'} {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                                <div>
+                                    <FormField
+                                        control={form.control}
+                                        name="indexTokenRatio"
+                                        render={({ field }) => (
+                                            <FormItem className="w-full">
+                                                <FormLabel>Index Token Weight</FormLabel>
+                                                <FormControl>
+                                                    <Input placeholder={`For each mint, this many index tokens are created.`} type="number" min={1} {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
+                            </div>
                             <FormField
                                 control={form.control}
                                 name="description"

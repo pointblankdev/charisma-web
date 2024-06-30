@@ -10,7 +10,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const RemoveLiquidityFromIndex = ({ amount, address, metadata }: { amount: number, address: `${string}.${string}`, metadata: any }) => {
+const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { amount: number, address: `${string}.${string}`, metadata: any, indexWeight: number }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -20,7 +20,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata }: { amount: numbe
 
   const [contractAddress, contractName] = address.split('.');
 
-  const tokens = Math.floor(amount);
+  const tokens = Math.floor(amount * indexWeight);
 
   function combinePostConditions(postConditions: any[]) {
     const combined: any = {};
@@ -40,7 +40,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata }: { amount: numbe
   function salvage() {
     const postConditions = [
       Pc.principal(sender).willSendEq(tokens).ft(address, metadata.ft),
-      ...metadata.contains.map((item: any) => Pc.principal(address).willSendEq(Number(tokens) * Number(item.weight)).ft(item.address, item.ft))
+      ...metadata.contains.map((item: any) => Pc.principal(address).willSendEq(Number(tokens) * Number(item.weight) / Number(indexWeight)).ft(item.address, item.ft))
     ]
     const combinedPostConditions: any[] = combinePostConditions(postConditions);
 
