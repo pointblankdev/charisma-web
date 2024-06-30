@@ -95,7 +95,7 @@ export async function getQuestsByOwner(address: string) {
 }
 
 export async function getContractMetadata(ca: string) {
-  return await fetch(`/api/metadata/${ca}`, {
+  return await fetch(`https://charisma.rocks/api/metadata/${ca}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -104,7 +104,7 @@ export async function getContractMetadata(ca: string) {
 }
 
 export async function setContractMetadata(ca: string, metadata: any) {
-  return await fetch(`/api/metadata/${ca}`, {
+  return await fetch(`https://charisma.rocks/api/metadata/${ca}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'

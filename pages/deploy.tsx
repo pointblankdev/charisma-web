@@ -281,6 +281,7 @@ export default function ContractEditor({ quest }: any) {
                     background: background,
                     symbol: ticker,
                     ft: "index-token",
+                    weight: indexTokenRatio,
                     contains: [
                         {
                             address: baseTokenA,
