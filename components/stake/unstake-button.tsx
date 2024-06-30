@@ -14,9 +14,22 @@ import { getStakedTokenExchangeRate } from "@lib/stacks-api";
 
 interface UnstakeButtonProps {
   tokens: number;
+  contractAddress: string;
+  contractName: string;
+  fungibleTokenName?: string;
+  baseTokenContractAddress: string;
+  baseTokenContractName: string;
+  baseFungibleTokenName: string;
 }
 
-const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
+const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
+  contractAddress,
+  contractName,
+  fungibleTokenName = 'liquid-staked-token',
+  baseTokenContractAddress,
+  baseTokenContractName,
+  baseFungibleTokenName,
+}) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -24,11 +37,11 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
 
   useEffect(() => {
     async function fetchExchangeRate() {
-      const { value } = await getStakedTokenExchangeRate('liquid-staked-welsh-v2')
+      const { value } = await getStakedTokenExchangeRate(contractName)
       setExchangeRate(value / 1000000)
     }
     fetchExchangeRate()
-  }, [])
+  }, [contractName])
 
   const [exchangeRate, setExchangeRate] = useState(0);
 
@@ -40,14 +53,14 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-welsh-v2",
+      contractAddress: contractAddress,
+      contractName: contractName,
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(tokens6Dec).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", "liquid-staked-token"),
-        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2').willSendGte(tokensOutMin).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
+        Pc.principal(sender).willSendEq(tokens6Dec).ft(`${contractAddress}.${contractName}`, fungibleTokenName),
+        Pc.principal(`${contractAddress}.${contractName}`).willSendGte(tokensOutMin).ft(`${baseTokenContractAddress}.${baseTokenContractName}`, baseFungibleTokenName),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -64,11 +77,12 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
 
   return (
     <Button
-      variant={'ghost'}
-      className='text-md w-full hover:bg-[#ffffffee] hover:text-primary'
+      disabled={tokens <= 0}
+      variant="ghost"
+      className='text-primary text-md hover:bg-white hover:text-primary z-30'
       onClick={unstake}
-      disabled={tokens6Dec <= 0}>
-      Unstake {(tokens6Dec * exchangeRate / 1000000).toFixed(6)} WELSH
+    >
+      Unstake
     </Button>
   );
 };

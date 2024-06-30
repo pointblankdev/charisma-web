@@ -29,13 +29,10 @@ import { cn } from '@lib/utils';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import millify from 'millify';
-import { Slider } from '@components/ui/slider';
-import AddLiquidityToIndex from '@components/craft/add-liquidity';
-import RemoveLiquidityFromIndex from '@components/salvage/remove-liquidity';
 import { Link1Icon } from '@radix-ui/react-icons';
-import { TimerOffIcon } from 'lucide-react';
 import _ from 'lodash';
 import useWallet from '@lib/hooks/use-wallet-balances';
+import LiquidityControls from '@components/liquidity/controls';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -239,64 +236,15 @@ export default function IndexDetailPage({ data }: Props) {
                 </Button>
               </Link>
               {descriptionVisible && (
-                <div className="flex flex-col">
-                  <Slider
-                    defaultValue={[0]}
-                    min={-indexBalance / indexWeight}
-                    max={smallestBaseBalance / smallestTokenWeight}
-                    step={1}
-                    className="w-full p-4"
-                    onValueChange={(v: any) => setTokensSelected(v[0])}
-                  />
-                  <div className="z-20 flex items-center space-x-1">
-                    {data.isRemoveLiquidityUnlocked ? (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <RemoveLiquidityFromIndex
-                              amount={-tokensSelected}
-                              address={data.address}
-                              metadata={data.metadata}
-                            />
-                          </TooltipTrigger>
-                          <TooltipContent
-                            className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}
-                          >
-                            Burning {millify(Math.abs(tokensRequested))} {data.symbol} returns{' '}
-                            {millify(Math.abs(tokensRequired[0]))}{' '}
-                            {data.metadata.contains[0].symbol} and{' '}
-                            {millify(Math.abs(tokensRequired[1]))} sCHA back to you.
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
-                    ) : (
-                      <div className="text-secondary/50 text-sm flex items-center space-x-2">
-                        <div>
-                          Locked ({data.blocksUntilUnlock} block{data.blocksUntilUnlock > 1 && `s`})
-                        </div>{' '}
-                        <TimerOffIcon size={14} className="mt-0.5" />{' '}
-                      </div>
-                    )}
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <AddLiquidityToIndex
-                            amount={tokensSelected}
-                            address={data.address}
-                            metadata={data.metadata}
-                          />
-                        </TooltipTrigger>
-                        <TooltipContent
-                          className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}
-                        >
-                          Minting {millify(Math.abs(tokensRequested))} {data.symbol} requires{' '}
-                          {millify(Math.abs(tokensRequired[0]))} {data.metadata.contains[0].symbol}{' '}
-                          and {millify(Math.abs(tokensRequired[1]))} sCHA.
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </div>
-                </div>
+                <LiquidityControls
+                  min={-indexBalance / indexWeight}
+                  max={smallestBaseBalance / smallestTokenWeight}
+                  onSetTokensSelected={setTokensSelected}
+                  tokensSelected={tokensSelected}
+                  tokensRequested={tokensRequested}
+                  tokensRequired={tokensRequired}
+                  data={data}
+                />
               )}
             </CardFooter>
             <Image
@@ -406,14 +354,12 @@ const ActiveRecipeIndicator = ({
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
-                active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
-              }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
+                }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
-                active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
-              }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
+                }`}
             />
           </div>
         </TooltipTrigger>
@@ -422,9 +368,8 @@ const ActiveRecipeIndicator = ({
         >
           {active
             ? 'Index fund is live'
-            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${
-                blocksUntilUnlock > 1 && 's'
-              }`}
+            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock > 1 && 's'
+            }`}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

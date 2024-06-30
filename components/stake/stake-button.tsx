@@ -9,13 +9,24 @@ import {
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
-import millify from "millify";
 
 interface StakeButtonProps {
   tokens: number;
+  contractAddress: string;
+  contractName: string;
+  baseTokenContractAddress: string;
+  baseTokenContractName: string;
+  baseFungibleTokenName: string;
 }
 
-const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
+const StakeButton: React.FC<StakeButtonProps> = ({
+  tokens,
+  contractAddress,
+  contractName,
+  baseTokenContractAddress,
+  baseTokenContractName,
+  baseFungibleTokenName,
+}) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -30,18 +41,13 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-welsh-v2",
+      contractAddress: contractAddress,
+      contractName: contractName,
       functionName: "stake",
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender)
-          .willSendEq(tokens6Dec)
-          .ft(
-            "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
-            "welshcorgicoin"
-          ),
+        Pc.principal(sender).willSendEq(tokens6Dec).ft(`${baseTokenContractAddress}.${baseTokenContractName}`, baseFungibleTokenName),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -58,11 +64,12 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
 
   return (
     <Button
-      className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
+      disabled={tokens <= 0}
+      variant="ghost"
+      className='text-primary text-md hover:bg-white hover:text-primary z-30'
       onClick={stake}
-      disabled={tokens6Dec <= 0}
     >
-      Stake {(tokens6Dec / 1000000).toFixed(6)} WELSH
+      Stake
     </Button>
   );
 };

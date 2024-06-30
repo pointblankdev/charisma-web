@@ -11,18 +11,16 @@ import {
 } from "@components/ui/tooltip"
 import { Info } from 'lucide-react';
 import { Card } from '@components/ui/card';
-import StakeCharismaButton from '@components/stake/stake-charisma';
-import UnstakeCharismaButton from '@components/stake/unstake-charisma';
 import liquidCharisma from '@public/liquid-charisma.png'
 import { GetStaticProps } from 'next';
 import { callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import { useState } from 'react';
-import { Input } from '@components/ui/input';
 import millify from 'millify';
+import useWallet from '@lib/hooks/use-wallet-balances';
+import StakingControls from '@components/liquidity/staking';
 
 export default function Stake({ data }: Props) {
-  const [tokenAmount, setTokenAmount] = useState('');
 
   const meta = {
     title: 'Charisma | Stake Charisma Tokens',
@@ -30,15 +28,14 @@ export default function Stake({ data }: Props) {
     image: '/liquid-charisma.png'
   };
 
-  const handleTokenAmountChange = (event: any) => {
-    const { value } = event.target;
-    // Limit input to only allow numbers and to 6 decimal places
-    if (/^\d*\.?\d{0,6}$/.test(value)) {
-      setTokenAmount(value);
-    }
-  };
-
   const tokensInPool = data.tokensInPool
+
+  const { balances } = useWallet()
+
+  const sCharismaBalance = (balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'] as any)?.balance || 0
+  const charismaBalance = (balances?.fungible_tokens?.['SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma'] as any)?.balance || 0
+
+  const [tokensSelected, setTokensSelected] = useState(0);
 
   return (
     <Page meta={meta} fullViewport>
@@ -92,11 +89,21 @@ export default function Stake({ data }: Props) {
                 Charisma Staking is a crucial part of the network's financial ecosystem, providing a way for token holders to earn passive income while contributing to the token's number-go-up mechanism.
               </p>
               <div className='space-y-2'>
-                <Input value={tokenAmount} onChange={handleTokenAmountChange} placeholder="Enter token amount" className="text-lg text-center" />
-                <div className='flex space-x-1'>
-                  <StakeCharismaButton tokens={tokenAmount} />
-                  <UnstakeCharismaButton tokens={tokenAmount} />
-                </div>
+                <StakingControls
+                  min={-sCharismaBalance}
+                  max={charismaBalance}
+                  onSetTokensSelected={setTokensSelected}
+                  tokensSelected={tokensSelected}
+                  tokensRequested={0}
+                  tokensRequired={[]}
+                  contractAddress='SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+                  contractName='liquid-staked-charisma'
+                  symbol={tokensSelected >= 0 ? 'CHA' : 'sCHA'}
+                  baseTokenContractAddress='SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
+                  baseTokenContractName='dme000-governance-token'
+                  baseFungibleTokenName='charisma'
+                  decimals={6}
+                />
               </div>
             </div>
           </Card>

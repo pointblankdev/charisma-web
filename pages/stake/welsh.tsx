@@ -12,14 +12,14 @@ import {
 import { Info } from 'lucide-react';
 import { Card } from '@components/ui/card';
 import UnstakeWelshButton from '@components/stake/unstake-welsh';
-import StakeWelsh2Button from '@components/stake/stake-welsh-2';
-import UnstakeWelsh2Button from '@components/stake/unstake-welsh-2';
 import liquidWelsh from '@public/liquid-welsh.png'
 import { GetStaticProps } from 'next';
 import { callReadOnlyFunction } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import millify from 'millify';
 import useWallet from '@lib/hooks/use-wallet-balances';
+import StakingControls from '@components/liquidity/staking';
+import { useState } from 'react';
 
 export default function StakeWelsh({ data }: Props) {
 
@@ -37,6 +37,8 @@ export default function StakeWelsh({ data }: Props) {
   const oldSWelshBalance = (balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh::liquid-staked-welsh'] as any)?.balance || 0
   const sWelshBalance = (balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token'] as any)?.balance || 0
   const welshBalance = (balances?.fungible_tokens?.['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin'] as any)?.balance || 0
+
+  const [tokensSelected, setTokensSelected] = useState(0);
 
   return (
     <Page meta={meta} fullViewport>
@@ -108,10 +110,21 @@ export default function StakeWelsh({ data }: Props) {
                 Welshcorgicoin Staking is a crucial part of the network's financial ecosystem, providing a way for token holders to earn passive income while contributing to the token's number-go-up mechanism.
               </p>
               <div className='space-y-2'>
-                <div className='flex space-x-1'>
-                  {sWelshBalance > 0 && <UnstakeWelsh2Button tokens={sWelshBalance} />}
-                  {welshBalance > 0 && <StakeWelsh2Button tokens={welshBalance} />}
-                </div>
+                <StakingControls
+                  min={-sWelshBalance}
+                  max={welshBalance}
+                  onSetTokensSelected={setTokensSelected}
+                  tokensSelected={tokensSelected}
+                  tokensRequested={0}
+                  tokensRequired={[]}
+                  contractAddress='SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+                  contractName='liquid-staked-welsh-v2'
+                  symbol={tokensSelected >= 0 ? 'WELSH' : 'sWELSH'}
+                  baseTokenContractAddress='SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G'
+                  baseTokenContractName='welshcorgicoin-token'
+                  baseFungibleTokenName='welshcorgicoin'
+                  decimals={6}
+                />
               </div>
             </div>
           </Card>
