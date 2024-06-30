@@ -20,7 +20,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { 
 
   const [contractAddress, contractName] = address.split('.');
 
-  const tokens = Math.floor(amount * indexWeight);
+  const tokens = Math.floor(amount);
 
   function combinePostConditions(postConditions: any[]) {
     const combined: any = {};
@@ -39,8 +39,8 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { 
 
   function salvage() {
     const postConditions = [
-      Pc.principal(sender).willSendEq(tokens).ft(address, metadata.ft),
-      ...metadata.contains.map((item: any) => Pc.principal(address).willSendEq(Number(tokens) * Number(item.weight) / Number(indexWeight)).ft(item.address, item.ft))
+      Pc.principal(sender).willSendEq(Number(tokens) * Number(indexWeight)).ft(address, metadata.ft),
+      ...metadata.contains.map((item: any) => Pc.principal(address).willSendEq(Number(tokens) * Number(item.weight)).ft(item.address, item.ft))
     ]
     const combinedPostConditions: any[] = combinePostConditions(postConditions);
 
