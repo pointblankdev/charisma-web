@@ -3852,6 +3852,11 @@ comma-separated-tokens@^2.0.0:
   resolved "https://registry.yarnpkg.com/comma-separated-tokens/-/comma-separated-tokens-2.0.3.tgz#4e89c9458acb61bc8fef19f4529973b2392839ee"
   integrity sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==
 
+commafy-anything@^4.0.0:
+  version "4.0.0"
+  resolved "https://registry.yarnpkg.com/commafy-anything/-/commafy-anything-4.0.0.tgz#da41043447c269be6df54cfac35c7e8325ebe98f"
+  integrity sha512-dhVuVAOX11UKjNJyLTSvMRkYarns7Xhefe33rg05Mb/ifDeuR3O+Pog122J5rRoK0RoMgidHd072keWAWIzUnw==
+
 commander@^4.0.0:
   version "4.1.1"
   resolved "https://registry.yarnpkg.com/commander/-/commander-4.1.1.tgz#9fd602bd936294e9e9ef46a3f4d6964044b18068"

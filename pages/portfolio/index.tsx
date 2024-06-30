@@ -33,6 +33,7 @@ import {
 } from '@components/ui/table';
 
 import millify from 'millify';
+import { commafy } from 'commafy-anything'
 import { getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
@@ -230,27 +231,27 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   {tokens &&
-                    Math.floor(
+                    commafy(Math.floor(
                       tokens[
                         `SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`
                       ]?.balance / Math.pow(10, 6)
-                    )}
+                    ))}
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
                   <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
-                    ${(2 * totalCharismaTokens).toFixed(2)}
+                    ${commafy((2 * totalCharismaTokens).toFixed(2))}
                   </div>
                   <div className="leading-[1]">
-                    {tokens && Math.floor(totalCharismaTokens)}
+                    {tokens && commafy(Math.floor(totalCharismaTokens))}
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
                     <div className="font-fine text-sm mb-0.5">
                       {tokens &&
-                        Math.floor(
+                        commafy(Math.floor(
                           tokens[
                             `SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`
                           ]?.balance / Math.pow(10, 6)
-                        )} CHA
+                        ))} CHA
                     </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -333,7 +334,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
-                  ${(2 * totalCharismaTokens).toFixed(2)}
+                  ${commafy((2 * totalCharismaTokens).toFixed(2))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -374,10 +375,10 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
                   <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
-                    ${(prices[6]?.price * totalWelshTokens).toFixed(2)}
+                    ${commafy((prices[6]?.price * totalWelshTokens).toFixed(2))}
                   </div>
                   <div className="leading-[1]">
-                    {tokens && Math.floor(totalWelshTokens)}
+                    {tokens && commafy(Math.floor(totalWelshTokens))}
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
                     <div className="font-fine text-sm mb-0.5">
@@ -417,7 +418,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
-                  ${(prices[6]?.price * totalWelshTokens).toFixed(2)}
+                  ${commafy((prices[6]?.price * totalWelshTokens).toFixed(2))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -450,21 +451,21 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   {tokens &&
-                    Math.floor(
+                    commafy(Math.floor(
                       tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance /
                       Math.pow(10, 6)
-                    )}
+                    ))}
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
                   <div className="leading-[1] mt-4">
                     {tokens &&
-                      Math.floor(
+                      commafy(Math.floor(
                         (tokens[
                           `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
                         ]?.balance *
                           leoRate) /
                         Math.pow(10, 6)
-                      )}
+                      ))}
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
                     <div className="font-fine text-sm mr-1 mb-0.5">
@@ -481,7 +482,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
-                  ${(prices[5].price * totalLeoTokens).toFixed(2)}
+                  ${commafy((prices[5].price * totalLeoTokens).toFixed(2))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
