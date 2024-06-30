@@ -8,12 +8,9 @@ import {
   CardTitle
 } from '@components/ui/card';
 import useWallet from '@lib/hooks/use-wallet-balances';
-import { Avatar, AvatarImage, AvatarFallback } from '@radix-ui/react-avatar';
-import { DollarSign, Users, CreditCard, Activity } from 'lucide-react';
 import Image from 'next/image';
-import { Link1Icon } from '@radix-ui/react-icons';
-import Link from 'next/link';
 
+import charismaLogo from '@public/charisma.png';
 import welshLogo from '@public/welsh-logo.png';
 import leoLogo from '@public/leo-logo.png';
 
@@ -34,12 +31,13 @@ import {
   TableHeader,
   TableRow
 } from '@components/ui/table';
-import { Badge } from '@components/ui/badge';
+
 import millify from 'millify';
 import { getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 
 type Rates = {
+  'liquid-staked-charisma': number
   'liquid-staked-welsh-v2': number,
   'liquid-staked-leo': number,
   "prices": any
@@ -47,33 +45,36 @@ type Rates = {
 
 export const getServerSideProps = (async () => {
   try {
-  // Fetch data from external API
-  const [welshRate, leoRate, prices] = await Promise.all([
-    getStakedTokenExchangeRate('liquid-staked-welsh-v2'),
-    getStakedTokenExchangeRate('liquid-staked-leo'),
-    getTokenPrices(),
-  ]);
+    // Fetch data from external API
+    const [charismaRate, welshRate, leoRate, prices] = await Promise.all([
+      getStakedTokenExchangeRate('liquid-staked-charisma'),
+      getStakedTokenExchangeRate('liquid-staked-welsh-v2'),
+      getStakedTokenExchangeRate('liquid-staked-leo'),
+      getTokenPrices(),
+    ]);
 
-  const rates: Rates = {
-    'liquid-staked-welsh-v2': welshRate.value / Math.pow(10, 6),
-    'liquid-staked-leo': leoRate.value / Math.pow(10, 6),
-    "prices": prices
-  }
+    const rates: Rates = {
+      'liquid-staked-charisma': charismaRate.value / Math.pow(10, 6),
+      'liquid-staked-welsh-v2': welshRate.value / Math.pow(10, 6),
+      'liquid-staked-leo': leoRate.value / Math.pow(10, 6),
+      "prices": prices
+    }
 
-  // Pass data to the page via props
-  return { props: { rates } }
-} catch (error) {
-  console.error('Error fetching data:', error);
-  return {
-    props: {
-      rates: {
-        'liquid-staked-welsh-v2': 0,
-        'liquid-staked-leo': 0,
-        prices: {},
+    // Pass data to the page via props
+    return { props: { rates } }
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    return {
+      props: {
+        rates: {
+          'liquid-staked-charisma': 0,
+          'liquid-staked-welsh-v2': 0,
+          'liquid-staked-leo': 0,
+          prices: {},
+        },
       },
-    },
-  };
-}
+    };
+  }
 }) satisfies GetServerSideProps<{ rates: Rates }>
 
 export default function PortfolioPage(
@@ -144,45 +145,55 @@ export default function PortfolioPage(
             </CardContent>
           </Card>
         </div> */}
-        <Component rates={rates} />
+        <TokenBalances rates={rates} />
       </main>
     </SettingsLayout>
   );
 }
 
 
-function Component({rates}: {rates:Rates}) {
+function TokenBalances({ rates }: { rates: Rates }) {
   const { balances } = useWallet();
 
   const tokens = balances?.fungible_tokens as any;
 
-  const { 'liquid-staked-welsh-v2': welshRate, 'liquid-staked-leo': leoRate, prices } = rates;
+  const {
+    'liquid-staked-charisma': charismaRate,
+    'liquid-staked-welsh-v2': welshRate,
+    'liquid-staked-leo': leoRate,
+    prices
+  } = rates;
 
   if (!tokens) return <div>Loading...</div>;
 
+  const totalCharismaTokens =
+    (tokens[`SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`]?.balance / Math.pow(10, 6))
+    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token`]?.balance * charismaRate / Math.pow(10, 6))
+    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
+    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence::index-token`]?.balance * 100 * charismaRate / Math.pow(10, 6))
+    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.outback-stakehouse::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
+    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.good-karma::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
+    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1::fff`]?.balance * 1 * charismaRate / Math.pow(10, 6))
+
   const totalWelshTokens =
-    (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`]
-      ?.balance *
-      welshRate) /
-      Math.pow(10, 6) +
-    tokens[`SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`]
-      ?.balance /
-      Math.pow(10, 6);
+    (tokens[`SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`]?.balance / Math.pow(10, 6)) +
+    (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`]?.balance * welshRate / Math.pow(10, 6)) +
+    (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`]?.balance * 100 * welshRate / Math.pow(10, 6))
 
   const totalLeoTokens =
     (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`]
       ?.balance *
       leoRate) /
-      Math.pow(10, 6) +
+    Math.pow(10, 6) +
     tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance / Math.pow(10, 6);
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle>Staked Token Balances</CardTitle>
+      <CardHeader className='p-2 sm:p-4'>
+        <CardTitle>Token Balances</CardTitle>
         <CardDescription>A detailed list of all liquid staked tokens held.</CardDescription>
       </CardHeader>
-      <CardContent>
+      <CardContent className='p-0'>
         {tokens && prices && (
           <Table>
             <TableHeader>
@@ -194,8 +205,7 @@ function Component({rates}: {rates:Rates}) {
                   <span className="sr-only">Name</span>
                 </TableHead>
                 <TableHead className="hidden md:table-cell text-right">Unstaked</TableHead>
-                <TableHead className="hidden md:table-cell text-right">Staked</TableHead>
-                <TableHead className="hidden md:table-cell text-right">Total Amount</TableHead>
+                <TableHead className="md:table-cell text-right">Total Amount</TableHead>
                 <TableHead className="hidden md:table-cell text-right">
                   Current Value (USD)
                 </TableHead>
@@ -211,22 +221,148 @@ function Component({rates}: {rates:Rates}) {
                     alt="Product image"
                     className="aspect-square rounded-md object-cover"
                     height="64"
+                    src={charismaLogo}
+                    width="64"
+                  />
+                </TableCell>
+                <TableCell className="font-medium">
+                  <div className="text-lg">Charisma</div>
+                </TableCell>
+                <TableCell className="hidden md:table-cell text-xl text-right">
+                  {tokens &&
+                    Math.floor(
+                      tokens[
+                        `SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`
+                      ]?.balance / Math.pow(10, 6)
+                    )}
+                </TableCell>
+                <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
+                  <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
+                    ${(2 * totalCharismaTokens).toFixed(2)}
+                  </div>
+                  <div className="leading-[1]">
+                    {tokens && Math.floor(totalCharismaTokens)}
+                  </div>
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mb-0.5">
+                      {tokens &&
+                        Math.floor(
+                          tokens[
+                            `SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`
+                          ]?.balance / Math.pow(10, 6)
+                        )} CHA
+                    </div>
+                  </div>
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mr-1 mb-0.5">
+                      {millify(
+                        tokens[
+                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`
+                        ]?.balance / Math.pow(10, 6)
+                      )}{' '}
+                      sCHA
+                    </div>
+                    <div className="font-fine text-sm mb-0.5">
+                      x{Number(welshRate)}
+                    </div>
+                  </div>
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mr-1 mb-0.5">
+                      {millify(
+                        tokens[
+                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence::index-token`
+                        ]?.balance / Math.pow(10, 6)
+                      )}{' '}
+                      iQC
+                    </div>
+                    <div className="font-fine text-sm mb-0.5">
+                      x100
+                    </div>
+                  </div>
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mr-1 mb-0.5">
+                      {millify(
+                        tokens[
+                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`
+                        ]?.balance / Math.pow(10, 6)
+                      )}{' '}
+                      iCC
+                    </div>
+                    <div className="font-fine text-sm mb-0.5">
+                      x1
+                    </div>
+                  </div>
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mr-1 mb-0.5">
+                      {millify(
+                        tokens[
+                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.outback-stakehouse::index-token`
+                        ]?.balance / Math.pow(10, 6)
+                      )}{' '}
+                      iOS
+                    </div>
+                    <div className="font-fine text-sm mb-0.5">
+                      x1
+                    </div>
+                  </div>
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mr-1 mb-0.5">
+                      {millify(
+                        tokens[
+                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.good-karma::index-token`
+                        ]?.balance / Math.pow(10, 6)
+                      )}{' '}
+                      iGK
+                    </div>
+                    <div className="font-fine text-sm mb-0.5">
+                      x1
+                    </div>
+                  </div>
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mr-1 mb-0.5">
+                      {millify(
+                        tokens[
+                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1::fff`
+                        ]?.balance / Math.pow(10, 6)
+                      )}{' '}
+                      FFF
+                    </div>
+                    <div className="font-fine text-sm mb-0.5">
+                      x1
+                    </div>
+                  </div>
+                </TableCell>
+                <TableCell className="hidden md:table-cell text-xl text-right">
+                  ${(2 * totalCharismaTokens).toFixed(2)}
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button disabled aria-haspopup="true" size="icon" variant="ghost">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Toggle menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem>Edit</DropdownMenuItem>
+                      <DropdownMenuItem>Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="hidden sm:table-cell">
+                  <Image
+                    alt="Product image"
+                    className="aspect-square rounded-md object-cover"
+                    height="64"
                     src={welshLogo}
                     width="64"
                   />
                 </TableCell>
                 <TableCell className="font-medium">
                   <div className="text-lg">Welshcorgicoin</div>
-                  <Link
-                    href={`https://stxscan.co/accounts/${'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'}`}
-                  >
-                    <div className="items-end space-x-1 text-xs hidden sm:flex">
-                      <div className="whitespace-nowrap hidden lg:flex">
-                        SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token
-                      </div>
-                      <Link1Icon className="mb-0.5" />
-                    </div>
-                  </Link>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   {tokens &&
@@ -236,16 +372,22 @@ function Component({rates}: {rates:Rates}) {
                       ]?.balance / Math.pow(10, 6)
                     )}
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-xl text-right whitespace-nowrap">
-                  <div className="leading-[1] mt-4">
-                    {tokens &&
-                      Math.floor(
-                        (tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`
-                        ]?.balance *
-                          welshRate) /
-                          Math.pow(10, 6)
-                      )}
+                <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
+                  <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
+                    ${(prices[6]?.price * totalWelshTokens).toFixed(2)}
+                  </div>
+                  <div className="leading-[1]">
+                    {tokens && Math.floor(totalWelshTokens)}
+                  </div>
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mb-0.5">
+                      {tokens &&
+                        Math.floor(
+                          tokens[
+                            `SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`
+                          ]?.balance / Math.pow(10, 6)
+                        )} WELSH
+                    </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
                     <div className="font-fine text-sm mr-1 mb-0.5">
@@ -260,9 +402,19 @@ function Component({rates}: {rates:Rates}) {
                       x{Number(welshRate)}
                     </div>
                   </div>
-                </TableCell>
-                <TableCell className="hidden md:table-cell text-xl text-right">
-                  {tokens && Math.floor(totalWelshTokens)}
+                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                    <div className="font-fine text-sm mr-1 mb-0.5">
+                      {millify(
+                        tokens[
+                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`
+                        ]?.balance / Math.pow(10, 6)
+                      )}{' '}
+                      iCC
+                    </div>
+                    <div className="font-fine text-sm mb-0.5">
+                      x100
+                    </div>
+                  </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   ${(prices[6]?.price * totalWelshTokens).toFixed(2)}
@@ -295,25 +447,15 @@ function Component({rates}: {rates:Rates}) {
                 </TableCell>
                 <TableCell className="font-medium">
                   <div className="text-lg">Leo</div>
-                  <Link
-                    href={`https://stxscan.co/accounts/${'SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token'}`}
-                  >
-                    <div className="items-end space-x-1 text-xs hidden sm:flex">
-                      <div className="whitespace-nowrap hidden lg:flex">
-                        SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token
-                      </div>
-                      <Link1Icon className="mb-0.5" />
-                    </div>
-                  </Link>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   {tokens &&
                     Math.floor(
                       tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance /
-                        Math.pow(10, 6)
+                      Math.pow(10, 6)
                     )}
                 </TableCell>
-                <TableCell className="hidden md:table-cell text-xl text-right whitespace-nowrap">
+                <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
                   <div className="leading-[1] mt-4">
                     {tokens &&
                       Math.floor(
@@ -321,7 +463,7 @@ function Component({rates}: {rates:Rates}) {
                           `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
                         ]?.balance *
                           leoRate) /
-                          Math.pow(10, 6)
+                        Math.pow(10, 6)
                       )}
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -337,19 +479,6 @@ function Component({rates}: {rates:Rates}) {
                       x{leoRate}
                     </div>
                   </div>
-                </TableCell>
-                <TableCell className="hidden md:table-cell text-xl text-right">
-                  {tokens &&
-                    Math.floor(
-                      (tokens[
-                        `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
-                      ]?.balance *
-                        leoRate +
-                        Number(
-                          tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance
-                        )) /
-                      Math.pow(10, 6)
-                    )}
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   ${(prices[5].price * totalLeoTokens).toFixed(2)}
@@ -374,11 +503,11 @@ function Component({rates}: {rates:Rates}) {
           </Table>
         )}
       </CardContent>
-      <CardFooter>
+      <CardFooter className='p-2 sm:p-4'>
         <div className="text-xs text-muted-foreground">
           Showing <strong>1-2</strong> of <strong>{Object.keys(tokens).length}</strong> tokens
         </div>
       </CardFooter>
-    </Card>
+    </Card >
   );
 }
