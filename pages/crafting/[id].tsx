@@ -16,6 +16,7 @@ import { Button } from '@components/ui/button';
 import {
   blocksApi,
   getBlockCounter,
+  getBlocksUntilUnlocked,
   getDecimals,
   getIsUnlocked,
   getSymbol,
@@ -291,12 +292,15 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     // workaround for missing block counter in metadata
     let blockCounter = 0;
+    let blocksUntilUnlock = 0
     if (contractName === 'quiet-confidence') {
       blockCounter = await getBlockCounter(params?.id as string);
+      const { results } = await blocksApi.getBlockList({ limit: 1 });
+      blocksUntilUnlock = 155550 + blockCounter - results[0].height;
+    } else {
+      blocksUntilUnlock = await getBlocksUntilUnlocked(params?.id as string);
     }
-    const { results } = await blocksApi.getBlockList({ limit: 1 });
 
-    const blocksUntilUnlock = 155550 + blockCounter - results[0].height;
 
     const baseTokens = await Promise.all(
       metadata.contains.map(async (token: any) => {

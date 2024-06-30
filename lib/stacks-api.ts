@@ -689,6 +689,22 @@ export async function getBlockCounter(contract: string) {
     return Number(cvToJSON(response)?.value?.value)
 }
 
+export async function getBlocksUntilUnlocked(contract: string) {
+
+    const [address, name] = contract.split('.')
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: address,
+        contractName: name,
+        functionName: "get-blocks-until-unlock",
+        functionArgs: [],
+        senderAddress: address
+    });
+
+    return Number(cvToJSON(response)?.value?.value)
+}
+
 export async function getTotalSupply(contract: string) {
 
     const response: any = await callReadOnlyFunction({
