@@ -33,6 +33,8 @@ import {
 } from '@components/ui/table';
 
 import millify from 'millify';
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { commafy } from 'commafy-anything'
 import { getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
