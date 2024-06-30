@@ -263,7 +263,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                       sCHA
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x{Number(welshRate)}
+                      x{Number(charismaRate)}
                     </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -276,7 +276,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                       iQC
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x100
+                      x100 x{Number(charismaRate)}
                     </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -289,7 +289,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                       iCC
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x1
+                      x1 x{Number(charismaRate)}
                     </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -302,7 +302,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                       iOS
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x1
+                      x1 x{Number(charismaRate)}
                     </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -315,7 +315,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                       iGK
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x1
+                      x1 x{Number(charismaRate)}
                     </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
@@ -328,7 +328,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                       FFF
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x1
+                      x1 x{Number(charismaRate)}
                     </div>
                   </div>
                 </TableCell>
@@ -412,7 +412,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                       iCC
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x100
+                      x100 x{Number(welshRate)}
                     </div>
                   </div>
                 </TableCell>
