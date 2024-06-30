@@ -6,7 +6,6 @@ import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@compo
 import millify from 'millify';
 
 const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data = {}, tokensRequested, tokensRequired, indexWeight }: any) => {
-    console.log(data)
     return data.isRemoveLiquidityUnlocked ? (
         <div className="flex flex-col">
             <Slider

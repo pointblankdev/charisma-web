@@ -2500,7 +2500,7 @@
     "@types/bn.js" "^5.1.0"
     "@types/node" "^18.0.4"
 
-"@stacks/connect-react@^22.1.1":
+"@stacks/connect-react@^22.4.1":
   version "22.4.2"
   resolved "https://registry.yarnpkg.com/@stacks/connect-react/-/connect-react-22.4.2.tgz#a85966aa5fa6c46e5c70e47becd38984d60bd5a3"
   integrity sha512-7hYKFyOzhbbCsrinXDjgcEps960s0b/iVGddf7sruDg3RLHwK8R6og2fHw9KovZ/UrZT3nZKjA/DNnK0pV/vmA==
@@ -2896,9 +2896,9 @@
   integrity sha512-D4k2kNi0URNBxIRCb1khTnkWNHv8KSL1owPmS/K5e5t8B2GzMReY7AsJIY1BnP5KdlgC4rj9jk2IkDMasIE7xg==
 
 "@types/node@^18.0.4":
-  version "18.19.38"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.38.tgz#cf4f04c1dab1fcaaa514ec789cf5125184c8c5d8"
-  integrity sha512-SApYXUF7si4JJ+lO2o6X60OPOnA6wPpbiB09GMCkQ+JAwpa9hxUVG8p7GzA08TKQn5OhzK57rj1wFj+185YsGg==
+  version "18.19.39"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.39.tgz#c316340a5b4adca3aee9dcbf05de385978590593"
+  integrity sha512-nPwTRDKUctxw3di5b4TfT3I0sWDiWoPQCZjXhvdkINntwr8lcoVCKsTgnXeRubKIlfnV+eN/HYk6Jb40tbcEAQ==
   dependencies:
     undici-types "~5.26.4"
 

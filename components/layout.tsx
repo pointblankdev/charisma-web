@@ -8,10 +8,11 @@ import styleUtils from './utils.module.css';
 import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { BsBookHalf, BsDiscord, BsTwitter } from 'react-icons/bs';
 import ConnectWallet from './stacks-session/connect';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
+import { getTokenPrices } from '@lib/stacks-api';
 
 type Props = {
   children: React.ReactNode;
@@ -23,6 +24,19 @@ type Props = {
 export default function Layout({ children, className, hideNav, layoutStyles }: Props) {
   const router = useRouter();
   const activeRoute = router.asPath;
+
+  const [priceFeedActive, setPriceFeedActive] = React.useState<boolean>(true);
+
+  useEffect(() => {
+    getTokenPrices().then((prices) => {
+      console.log(prices);
+      if (prices.length === 0) {
+        console.error('Error fetching token prices')
+        setPriceFeedActive(false);
+      }
+    }
+    );
+  }, []);
 
   return (
     <>
@@ -61,6 +75,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               ))}
             </div>
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
+              <ActiveRecipeIndicator active={priceFeedActive} />
               <Link href={'https://twitter.com/CharismaBTC'}>
                 <BsTwitter className="hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex" />
               </Link>
@@ -85,3 +100,36 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     </>
   );
 }
+
+const ActiveRecipeIndicator = ({
+  active
+}: {
+  active: boolean;
+}) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <div className="relative w-4 h-4">
+            <div
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-red-500'
+                }`}
+            />
+            <div
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500 animate-ping'
+                }`}
+            />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent
+          className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
+        >
+          {active
+            ? 'Price data feed is live'
+            : `There is an error getting token pricing data. Expect liquidity pool TVLs and portfolio balances to be inaccurate until the price data feed is back online.`
+          }
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};

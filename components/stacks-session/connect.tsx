@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { AppConfig, showConnect, UserSession } from "@stacks/connect";
+import { AppConfig, showConnect, UserSession } from "@stacks/connect-react";
 import styles from './index.module.css';
 import { cn } from '@lib/utils';
 import { Button } from "@components/ui/button";
