@@ -263,7 +263,6 @@ export default function ContractEditor({ quest }: any) {
 )`,
             network: new StacksMainnet(),
             onFinish: async (resp) => {
-
                 const baseTokenSymbolA = await getSymbol(baseTokenA)
                 const baseTokenSymbolB = await getSymbol(baseTokenB)
                 const baseTokenSourceA = await getContractSource({ contractAddress: baseTokenA.split('.')[0], contractName: baseTokenA.split('.')[1] })
@@ -300,44 +299,8 @@ export default function ContractEditor({ quest }: any) {
                 })
                 console.log(response)
             },
-            onCancel: async () => {
+            onCancel: () => {
                 console.log("onCancel:", "Transaction was canceled")
-
-                const baseTokenSymbolA = await getSymbol(baseTokenA)
-                const baseTokenSymbolB = await getSymbol(baseTokenB)
-                const baseTokenSourceA = await getContractSource({ contractAddress: baseTokenA.split('.')[0], contractName: baseTokenA.split('.')[1] })
-                const baseTokenSourceB = await getContractSource({ contractAddress: baseTokenB.split('.')[0], contractName: baseTokenB.split('.')[1] })
-                // find the string that comes after the first occurence of 'define-fungible-token' in the baseTokenSourceA.source string
-                const baseTokenFtA = baseTokenSourceA.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
-                const baseTokenFtB = baseTokenSourceB.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
-
-                // todo: this might be a good time to scan the source code with AI for malicious code or vulnerabilities
-
-                const ca = `${sender}.${safeName}`
-                const response = await setContractMetadata(ca, {
-                    name: name,
-                    description: description,
-                    image: image,
-                    background: background,
-                    symbol: ticker,
-                    ft: "index-token",
-                    contains: [
-                        {
-                            address: baseTokenA,
-                            symbol: baseTokenSymbolA,
-                            ft: baseTokenFtA,
-                            weight: tokenARatio
-                        },
-                        {
-                            address: baseTokenB,
-                            symbol: baseTokenSymbolB,
-                            ft: baseTokenFtB,
-                            weight: tokenBRatio
-                        }
-                    ]
-
-                })
-                console.log(response)
             },
         });
     }
