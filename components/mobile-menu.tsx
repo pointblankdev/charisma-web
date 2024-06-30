@@ -12,7 +12,7 @@ import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
 import { userSession } from './stacks-session/connect';
 
-const mobileNav = [...NAVIGATION, { name: 'Governance', route: '/governance' }, { name: 'Portfolio', route: '/portfolio' }]
+const mobileNav = [...NAVIGATION, { name: 'Governance', route: '/governance' }]
 
 
 function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof useDialog>[0]) {
