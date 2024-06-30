@@ -17,6 +17,7 @@ export default async function getMetadata(
     try {
         let ca = req.query.ca as string
         if (req.method === 'POST') {
+            console.log(req.body)
             response = await setContractMetadata(ca, req.body)
         } else if (req.method === 'GET') {
             // if ca ends with .json, remove it
