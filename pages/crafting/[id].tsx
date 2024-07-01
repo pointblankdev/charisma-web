@@ -269,21 +269,23 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     const decimals = await getDecimals(params?.id as string);
 
     // get price data from Velar API
-    const prices = await velarApi.tickers();
+    const prices = await velarApi.tokens()
 
     // TVL calculation
     let tvl = 0
     const tokenAddressList = metadata?.contains.map((token: any) => token.address);
     const totalSupply: number = Number(supply.value.value) / Math.pow(10, decimals);
-    const baseTokensPriceData = prices.filter((token: any) => tokenAddressList.includes(token.target_currency));
-    // loop for each matching token to get the TVL of base tokens
-    const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
-      const tokenIndex = tokenAddressList.indexOf(baseToken.target_currency);
-      const tokenWeight = metadata.contains[tokenIndex].weight;
-      const tokenPrice = baseToken.last_price;
-      return totalSupply * tokenWeight * tokenPrice;
+    const baseTokensPriceData = prices.filter((token: any) => {
+      return tokenAddressList.includes(token.contractAddress)
     });
 
+    // loop for each matching token to get the TVL of base tokens
+    const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
+      const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress);
+      const tokenWeight = metadata.contains[tokenIndex].weight;
+      const tokenPrice = Number(baseToken.price);
+      return totalSupply * tokenWeight * tokenPrice;
+    });
     tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0)
 
     // blocks until unlocked calculation
