@@ -39,7 +39,6 @@ export default function App({ Component, pageProps }: AppProps) {
   const getKeyByContractAddress = (contractAddress: string) => {
     const tokensArray = Object.keys(balances?.fungible_tokens || {});
     const token = tokensArray.find((token: string) => token.includes(contractAddress)) || '';
-    console.log(token)
     return token
   }
 
