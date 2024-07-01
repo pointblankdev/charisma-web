@@ -368,11 +368,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   {tokens &&
-                    Math.floor(
-                      tokens[
-                        `SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`
-                      ]?.balance / Math.pow(10, 6)
-                    )}
+                    Math.floor(welshBalance / Math.pow(10, 6))}
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
                   <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
@@ -381,30 +377,36 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   <div className="leading-[1]">
                     {tokens && commafy(Math.floor(totalWelshTokens))}
                   </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mb-0.5">
-                      {tokens &&
-                        Math.floor(welshBalance / Math.pow(10, 6))} WELSH
+                  {welshBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mb-0.5">
+                        {tokens &&
+                          Math.floor(welshBalance / Math.pow(10, 6))} WELSH
+                      </div>
                     </div>
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(sWelshBalance / Math.pow(10, 6))}{' '}
-                      sWELSH
+                  }
+                  {sWelshBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(sWelshBalance / Math.pow(10, 6))}{' '}
+                        sWELSH
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x{Number(welshRate)}
+                      </div>
                     </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x{Number(welshRate)}
+                  }
+                  {iCCBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(iCCBalance / Math.pow(10, 6))}{' '}
+                        iCC
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x100 x{Number(welshRate)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(iCCBalance / Math.pow(10, 6))}{' '}
-                      iCC
-                    </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x100 x{Number(welshRate)}
-                    </div>
-                  </div>
+                  }
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   ${commafy((welshPrice * totalWelshTokens).toFixed(2))}
