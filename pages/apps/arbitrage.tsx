@@ -2,8 +2,7 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
-import { GetStaticProps } from 'next';
-import { getTokenPrices } from '@lib/stacks-api';
+import velarApi from '@lib/velar-api';
 
 export default function App({ data }: Props) {
   const meta = {
@@ -76,9 +75,9 @@ export const getServerSideProps = async () => {
     const alexStx = await alexStxResponse.json();
     const alexWelsh = await alexWelshResponse.json();
 
-    const message = await getTokenPrices()
+    const tickers = await velarApi.tickers()
 
-    console.log(message)
+    console.log(tickers)
 
     return {
       props: {
@@ -88,9 +87,9 @@ export const getServerSideProps = async () => {
             stx: alexStx
           },
           velar: {
-            stx: message[0],
-            welsh: message[6],
-            swelsh: message[14]
+            // stx: tickers[0],
+            // welsh: tickers[6],
+            // swelsh: tickers[14]
           }
         }
       },

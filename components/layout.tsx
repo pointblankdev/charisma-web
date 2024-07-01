@@ -12,7 +12,7 @@ import React, { useEffect } from 'react';
 import { BsBookHalf, BsDiscord, BsTwitter } from 'react-icons/bs';
 import ConnectWallet from './stacks-session/connect';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
-import { getTokenPrices } from '@lib/stacks-api';
+import velarApi from '@lib/velar-api';
 
 type Props = {
   children: React.ReactNode;
@@ -27,16 +27,20 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   const [priceFeedActive, setPriceFeedActive] = React.useState<boolean>(true);
 
-  useEffect(() => {
-    getTokenPrices().then((prices) => {
-      console.log(prices);
-      if (prices.length === 0) {
-        console.error('Error fetching token prices')
-        setPriceFeedActive(false);
-      }
-    }
-    );
-  }, []);
+  // useEffect(() => {
+  //   try {
+
+  //     velarApi.tickers().then((prices) => {
+  //       console.log(prices);
+  //       if (prices.length === 0) {
+  //         console.error('Error fetching token prices')
+  //         setPriceFeedActive(false);
+  //       }
+  //     });
+  //   } catch (error) {
+  //     console.error(error)
+  //   }
+  // }, []);
 
   return (
     <>
@@ -75,7 +79,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               ))}
             </div>
             <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
-              <ActiveRecipeIndicator active={priceFeedActive} />
+              <PriceDataLiveMonitor active={priceFeedActive} />
               <Link href={'https://twitter.com/CharismaBTC'}>
                 <BsTwitter className="hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex" />
               </Link>
@@ -101,7 +105,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   );
 }
 
-const ActiveRecipeIndicator = ({
+const PriceDataLiveMonitor = ({
   active
 }: {
   active: boolean;

@@ -19,17 +19,11 @@ import {
   getCraftingRewards,
   getFenrirBalance,
   getFenrirTotalSupply,
-  getNameFromAddress,
-  getTitleBeltHoldeBalance,
-  getTitleBeltHolder,
-  getTokenPrices
 } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useLayoutEffect, useState } from 'react';
 import { cn } from '@lib/utils';
-import charismaToken from '@public/charisma.png';
 import Link from 'next/link';
-import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png';
 import liquidStakedOdin from '@public/liquid-staked-odin.png';
@@ -39,6 +33,7 @@ import norse from '@public/norse.gif';
 import fenrir from '@public/fenrir-12.png';
 import millify from 'millify';
 import useWallet from '@lib/hooks/use-wallet-balances';
+import velarApi from '@lib/velar-api';
 
 export default function Fenrir({ data }: Props) {
   const meta = {
@@ -61,9 +56,12 @@ export default function Fenrir({ data }: Props) {
   useLayoutEffect(() => {
     try {
       setDescriptionVisible(true);
-      getTokenPrices().then(response => {
-        setStakedWelshPrice(response[14].price);
-        setStakedOdinPrice(response[16].price);
+      velarApi.tickers().then((prices) => {
+        const stxPrice = prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
+        const sWelshPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2').last_price
+        const odinPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn').last_price
+        setStakedWelshPrice(sWelshPrice)
+        setStakedOdinPrice(odinPrice);
       });
     } catch (error) {
       console.error(error);
@@ -379,14 +377,12 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
-                active ? 'bg-green-500 animate-ping' : 'bg-red-500'
-              }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-red-500'
+                }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
-                active ? 'bg-green-500' : 'bg-red-500 animate-ping'
-              }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500 animate-ping'
+                }`}
             />
           </div>
         </TooltipTrigger>

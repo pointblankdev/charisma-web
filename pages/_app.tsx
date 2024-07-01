@@ -21,6 +21,8 @@ import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
 // If loading a variable font, you don't need to specify the font weight
 const font = Ysabeau_Infant({ subsets: ['latin'] })
 
+
+
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     document.body.classList?.remove('loading');
@@ -34,6 +36,17 @@ export default function App({ Component, pageProps }: AppProps) {
 
   const [balances, setBalances] = useState<WalletBalances>({} as AddressBalanceResponse);
 
+  const getKeyByContractAddress = (contractAddress: string) => {
+    const tokensArray = Object.keys(balances?.fungible_tokens || {});
+    const token = tokensArray.find((token: string) => token.includes(contractAddress)) || '';
+    console.log(token)
+    return token
+  }
+
+  const getBalanceByKey = (key: string) => {
+    return balances?.fungible_tokens?.[key]
+  }
+
   useEffect(() => {
     if (userSession.isUserSignedIn()) {
       const ca = userSession.loadUserData().profile.stxAddress.mainnet
@@ -46,7 +59,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <OverlayProvider>
       <Connect authOptions={authOptions}>
-        <WalletBalancesContext.Provider value={{ balances, setBalances }}>
+        <WalletBalancesContext.Provider value={{ balances, setBalances, getKeyByContractAddress, getBalanceByKey }}>
           <main className={cn(font.className)}>
             <Component {...pageProps} />
           </main>

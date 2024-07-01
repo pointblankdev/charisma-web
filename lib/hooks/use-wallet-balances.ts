@@ -9,6 +9,8 @@ export type WalletBalances = AddressBalanceResponse;
 type WalletBalancesContextType = {
   balances: WalletBalances;
   setBalances: React.Dispatch<React.SetStateAction<WalletBalances>>;
+  getKeyByContractAddress: any;
+  getBalanceByKey: any
 };
 
 export const WalletBalancesContext = createContext<WalletBalancesContextType | null>(null);

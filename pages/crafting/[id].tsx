@@ -20,7 +20,6 @@ import {
   getDecimals,
   getIsUnlocked,
   getSymbol,
-  getTokenPrices,
   getTokenURI,
   getTotalSupply
 } from '@lib/stacks-api';
@@ -34,6 +33,7 @@ import { Link1Icon } from '@radix-ui/react-icons';
 import _ from 'lodash';
 import useWallet from '@lib/hooks/use-wallet-balances';
 import LiquidityControls from '@components/liquidity/controls';
+import velarApi from '@lib/velar-api';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -43,30 +43,10 @@ export default function IndexDetailPage({ data }: Props) {
   };
 
   const [descriptionVisible, setDescriptionVisible] = useState(false);
-  const [tvl, setTVL] = useState(0);
-
-  const tokenAddressList = data.metadata.contains.map((token: any) => token.address);
-  const totalSupply = data.totalSupply / Math.pow(10, data.decimals);
+  const [tokensSelected, setTokensSelected] = useState(0);
 
   useEffect(() => {
-    try {
-      setDescriptionVisible(true);
-      getTokenPrices().then((response: any) => {
-        const baseTokensPriceData = response.filter((token: any) =>
-          tokenAddressList.includes(token.contractAddress)
-        );
-        // loop for each matching token
-        const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
-          const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress);
-          const tokenWeight = data.metadata.contains[tokenIndex].weight;
-          const tokenPrice = baseToken.price;
-          return totalSupply * tokenWeight * tokenPrice;
-        });
-        setTVL(tokenTVL.reduce((a: number, b: number) => a + b, 0));
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    setDescriptionVisible(true);
   }, []);
 
   const fadeIn = {
@@ -74,18 +54,23 @@ export default function IndexDetailPage({ data }: Props) {
     visible: { opacity: 1 }
   };
 
-  const { balances } = useWallet();
+  const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
 
-  // use lodash to loop through balances map and find the token, which will be in the map key
-  const tokensArray = Object.keys(balances?.fungible_tokens || {});
-  const token = tokensArray.find((token: string) => token.includes(data.address)) || '';
+  let smallestBaseBalance = 0;
+  useEffect(() => {
+    setTokensSelected(smallestBaseBalance / 1000000 >= 100 ? 100 : 0);
+  }, [smallestBaseBalance]);
 
-  const indexWeight = data.address === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma" ? 2 : 1;
-  const indexBalance = (balances?.fungible_tokens?.[token] as any)?.balance || 0;
+  if (!data.metadata || !balances) return <div>Loading...</div>
 
-  const baseTokens = data.metadata.contains.map((token: any) => {
-    const baseToken = tokensArray.find((t: string) => t.includes(token.address)) || '';
-    const baseTokenBalance = (balances?.fungible_tokens?.[baseToken] as any)?.balance || 0;
+  const token = getKeyByContractAddress(data.address);
+
+  const indexWeight = data.indexWeight;
+  const indexBalance = getBalanceByKey(token)?.balance || 0;
+
+  const baseTokens = data.metadata?.contains.map((token: any) => {
+    const baseToken = getKeyByContractAddress(token.address)
+    const baseTokenBalance = getBalanceByKey(baseToken)?.balance || 0;
     return {
       token: baseToken,
       balance: baseTokenBalance,
@@ -94,7 +79,7 @@ export default function IndexDetailPage({ data }: Props) {
   });
 
   let smallestTokenWeight = 0;
-  const smallestBaseToken = baseTokens.reduce(
+  const smallestBaseToken = baseTokens?.reduce(
     (
       smallestToken: { token: string | number; weight: number },
       currentToken: { token: string | number; weight: number }
@@ -103,8 +88,8 @@ export default function IndexDetailPage({ data }: Props) {
         smallestTokenWeight = currentToken.weight;
       }
       const smallestBalance =
-        (balances?.fungible_tokens?.[smallestToken.token] as any)?.balance || 0;
-      const currentBalance = (balances?.fungible_tokens?.[currentToken.token] as any)?.balance || 0;
+        getBalanceByKey(smallestToken.token)?.balance || 0;
+      const currentBalance = getBalanceByKey(currentToken.token)?.balance || 0;
       return currentBalance / currentToken.weight < smallestBalance / smallestToken.weight
         ? currentToken
         : smallestToken;
@@ -112,16 +97,10 @@ export default function IndexDetailPage({ data }: Props) {
     baseTokens[0]
   );
 
-  const smallestBaseBalance =
-    (balances?.fungible_tokens?.[smallestBaseToken.token] as any)?.balance || 0;
+  smallestBaseBalance = getBalanceByKey(smallestBaseToken?.token)?.balance || 0;
 
-  const [tokensSelected, setTokensSelected] = useState(0);
   const tokensRequested = tokensSelected / Math.pow(10, 6);
-  const tokensRequired = data.metadata.contains.map((token: any) => tokensRequested * token.weight);
-
-  useEffect(() => {
-    setTokensSelected(smallestBaseBalance / 1000000 >= 100 ? 100 : 0);
-  }, [smallestBaseBalance]);
+  const tokensRequired = data.metadata?.contains.map((token: any) => tokensRequested * token.weight);
 
   return (
     <Page meta={meta} fullViewport>
@@ -140,7 +119,7 @@ export default function IndexDetailPage({ data }: Props) {
                   Index: {data.symbol}
                 </CardTitle>
                 <div className="flex space-x-4">
-                  <div className="text-lg">${millify(tvl)} TVL</div>
+                  <div className="text-lg">${millify(data.tvl)} TVL</div>
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
                     blocksUntilUnlock={data.blocksUntilUnlock}
@@ -283,25 +262,47 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
   try {
     const contractName = params?.id.split('.')[1];
 
+    // get token metadata from Stacks API + metadata URL
     const metadata = await getTokenURI(params?.id as string);
     const supply = await getTotalSupply(contractName);
     const symbol = await getSymbol(params?.id as string);
     const decimals = await getDecimals(params?.id as string);
 
-    const isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);
+    // get price data from Velar API
+    const prices = await velarApi.tickers();
 
-    // workaround for missing block counter in metadata
+    // TVL calculation
+    let tvl = 0
+    const tokenAddressList = metadata?.contains.map((token: any) => token.address);
+    const totalSupply: number = Number(supply.value.value) / Math.pow(10, decimals);
+    const baseTokensPriceData = prices.filter((token: any) => tokenAddressList.includes(token.target_currency));
+    // loop for each matching token to get the TVL of base tokens
+    const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
+      const tokenIndex = tokenAddressList.indexOf(baseToken.target_currency);
+      const tokenWeight = metadata.contains[tokenIndex].weight;
+      const tokenPrice = baseToken.last_price;
+      return totalSupply * tokenWeight * tokenPrice;
+    });
+
+    tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0)
+
+    // blocks until unlocked calculation
     let blockCounter = 0;
     let blocksUntilUnlock = 0
+    let isRemoveLiquidityUnlocked = false;
     if (contractName === 'quiet-confidence') {
       blockCounter = await getBlockCounter(params?.id as string);
       const { results } = await blocksApi.getBlockList({ limit: 1 });
       blocksUntilUnlock = 155550 + blockCounter - results[0].height;
-    } else {
+      isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);
+    } else if (contractName === 'wrapped-charisma') {
       blocksUntilUnlock = await getBlocksUntilUnlocked(params?.id as string);
+      isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);
+    } else {
+      blocksUntilUnlock = 0;
     }
 
-
+    // get base token metadata from token-metadata-uri
     const baseTokens = await Promise.all(
       metadata.contains.map(async (token: any) => {
         const tokenMetadata = await getTokenURI(token.address);
@@ -322,19 +323,23 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     // remove duplicates from metadata.contains
     metadata.contains = Object.values(uniqueTokens);
 
+    const data = {
+      address: params?.id,
+      metadata: metadata,
+      totalSupply: totalSupply,
+      symbol: symbol,
+      indexWeight: metadata.weight || 1,
+      baseTokens: _.uniqBy(baseTokens, 'name'),
+      decimals: decimals,
+      isRemoveLiquidityUnlocked,
+      blocksUntilUnlock,
+      prices: prices,
+      tvl: tvl,
+    }
+
+
     return {
-      props: {
-        data: {
-          address: params?.id,
-          metadata: metadata,
-          totalSupply: Number(supply.value.value),
-          symbol: symbol,
-          baseTokens: _.uniqBy(baseTokens, 'name'),
-          decimals: decimals,
-          isRemoveLiquidityUnlocked,
-          blocksUntilUnlock
-        }
-      }
+      props: { data }
     };
   } catch (error) {
     console.log(error);
@@ -342,7 +347,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       props: {
         data: {}
       }
-    };
+    }
   }
 };
 

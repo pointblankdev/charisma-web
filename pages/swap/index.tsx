@@ -11,9 +11,9 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@components/ui/tooltip"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
 import { GetStaticProps } from 'next';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useState } from 'react';
 import { cn } from '@lib/utils';
 import { motion } from "framer-motion"
 import WelshIcon from '@public/welsh-logo.png'
@@ -22,8 +22,8 @@ import swap from '@public/quests/a2.png'
 import { Input } from '@components/ui/input';
 import millify from 'millify';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/swap/select';
-import { getTokenPrices } from '@lib/stacks-api';
 import BasicSwap from '@components/swap/basic';
+import velarApi from '@lib/velar-api';
 
 export default function Swap({ data }: Props) {
     const meta = {
@@ -33,7 +33,7 @@ export default function Swap({ data }: Props) {
     };
 
     const [amount, setAmount] = useState('');
-    const [priceData, setPriceData] = useState([] as any[]);
+    const priceData = data.tickers
 
     const handleTokenAmountChange = (event: any) => {
         const { value } = event.target;
@@ -43,11 +43,7 @@ export default function Swap({ data }: Props) {
         }
     };
 
-    useEffect(() => {
-        getTokenPrices().then((response) => {
-            setPriceData(response)
-        })
-    }, [])
+
 
     const fadeIn = {
         hidden: { opacity: 0 },
@@ -57,8 +53,8 @@ export default function Swap({ data }: Props) {
     const [sellToken, setSellToken] = useState('STX');
     const [buyToken, setBuyToken] = useState('WELSH');
 
-    const welshPrice = priceData.find((token) => token.symbol === 'WELSH')?.price
-    const stxPrice = priceData.find((token) => token.symbol === 'STX')?.price
+    const stxPrice = priceData.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
+    const welshPrice = stxPrice / priceData.find((ticker: any) => ticker.target_currency === 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
 
     const amountOutEstimation = ((stxPrice * Number(amount)) / welshPrice) * 0.975 // 2.5% slippage
 
@@ -224,15 +220,17 @@ type Props = {
 };
 
 
-export const getStaticProps: GetStaticProps<Props> = () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
 
     try {
 
+        const tickers = await velarApi.tickers()
+
         return {
             props: {
-                data: {}
+                data: { tickers }
             },
-            revalidate: 6000
+            revalidate: 60
         };
 
     } catch (error) {

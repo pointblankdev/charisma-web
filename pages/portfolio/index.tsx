@@ -36,8 +36,9 @@ import millify from 'millify';
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { commafy } from 'commafy-anything'
-import { getStakedTokenExchangeRate, getTokenPrices } from '@lib/stacks-api';
+import { getStakedTokenExchangeRate } from '@lib/stacks-api';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
+import velarApi from '@lib/velar-api';
 
 type Rates = {
   'liquid-staked-charisma': number
@@ -49,18 +50,18 @@ type Rates = {
 export const getServerSideProps = (async () => {
   try {
     // Fetch data from external API
-    const [charismaRate, welshRate, leoRate, prices] = await Promise.all([
+    const [charismaRate, welshRate, leoRate, tickers] = await Promise.all([
       getStakedTokenExchangeRate('liquid-staked-charisma'),
       getStakedTokenExchangeRate('liquid-staked-welsh-v2'),
       getStakedTokenExchangeRate('liquid-staked-leo'),
-      getTokenPrices(),
+      velarApi.tickers(),
     ]);
 
     const rates: Rates = {
       'liquid-staked-charisma': charismaRate.value / Math.pow(10, 6),
       'liquid-staked-welsh-v2': welshRate.value / Math.pow(10, 6),
       'liquid-staked-leo': leoRate.value / Math.pow(10, 6),
-      "prices": prices
+      "prices": tickers
     }
 
     // Pass data to the page via props
@@ -190,6 +191,12 @@ function TokenBalances({ rates }: { rates: Rates }) {
     Math.pow(10, 6) +
     tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance / Math.pow(10, 6);
 
+
+  const stxPrice = prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
+  const welshPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
+  const leoPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token').last_price
+  const chaPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token').last_price
+
   return (
     <Card>
       <CardHeader className='p-2 sm:p-4'>
@@ -241,7 +248,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
                   <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
-                    ${commafy((2 * totalCharismaTokens).toFixed(2))}
+                    ${commafy((chaPrice * totalCharismaTokens).toFixed(2))}
                   </div>
                   <div className="leading-[1]">
                     {tokens && commafy(Math.floor(totalCharismaTokens))}
@@ -336,7 +343,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
-                  ${commafy((2 * totalCharismaTokens).toFixed(2))}
+                  ${commafy((chaPrice * totalCharismaTokens).toFixed(2))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -377,7 +384,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
                   <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
-                    ${commafy((prices[6]?.price * totalWelshTokens).toFixed(2))}
+                    ${commafy((welshPrice * totalWelshTokens).toFixed(2))}
                   </div>
                   <div className="leading-[1]">
                     {tokens && commafy(Math.floor(totalWelshTokens))}
@@ -420,7 +427,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
-                  ${commafy((prices[6]?.price * totalWelshTokens).toFixed(2))}
+                  ${commafy((welshPrice * totalWelshTokens).toFixed(2))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
@@ -459,7 +466,10 @@ function TokenBalances({ rates }: { rates: Rates }) {
                     ))}
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
-                  <div className="leading-[1] mt-4">
+                  <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
+                    ${commafy((leoPrice * totalLeoTokens).toFixed(2))}
+                  </div>
+                  <div className="leading-[1]">
                     {tokens &&
                       commafy(Math.floor(
                         (tokens[
@@ -484,7 +494,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   </div>
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
-                  ${commafy((prices[5].price * totalLeoTokens).toFixed(2))}
+                  ${commafy((leoPrice * totalLeoTokens).toFixed(2))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>

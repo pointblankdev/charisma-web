@@ -542,31 +542,6 @@ export async function getWooTitleBeltContractEvents() {
     return response
 }
 
-export async function getTokenPrices() {
-    try {
-        const { message } = await (await fetch('https://mainnet-prod-proxy-service-dedfb0daae85.herokuapp.com/swapapp/swap/tokens')).json()
-        // simulate the CHA price
-        message.push({
-            assetName: "dme000-governance-token",
-            contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token",
-            name: "Charisma",
-            symbol: 'CHA',
-            price: "2.00"
-        })
-        // simulate the sCHA price
-        message.push({
-            assetName: "liquid-staked-charisma",
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
-            name: "Liquid Staked Charisma",
-            symbol: 'sCHA',
-            price: "2.00"
-        })
-        return message
-    } catch (error) {
-        return []
-    }
-}
-
 export async function getStakedTokenExchangeRate(contract: string) {
 
     const response: any = await callReadOnlyFunction({
@@ -693,16 +668,19 @@ export async function getBlocksUntilUnlocked(contract: string) {
 
     const [address, name] = contract.split('.')
 
-    const response: any = await callReadOnlyFunction({
-        network: new StacksMainnet(),
-        contractAddress: address,
-        contractName: name,
-        functionName: "get-blocks-until-unlock",
-        functionArgs: [],
-        senderAddress: address
-    });
-
-    return Number(cvToJSON(response)?.value?.value)
+    try {
+        const response: any = await callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: address,
+            contractName: name,
+            functionName: "get-blocks-until-unlock",
+            functionArgs: [],
+            senderAddress: address
+        });
+        return Number(cvToJSON(response)?.value?.value)
+    } catch (error) {
+        return 0
+    }
 }
 
 export async function getTotalSupply(contract: string) {

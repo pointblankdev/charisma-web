@@ -13,7 +13,7 @@ import {
 } from "@components/ui/tooltip"
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { getCraftingRewards, getTokenPrices, getWooBalance, getWooTotalSupply } from '@lib/stacks-api';
+import { getCraftingRewards, getWooBalance, getWooTotalSupply } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { useLayoutEffect, useRef, useState } from 'react';
 import { cn } from '@lib/utils';
@@ -29,6 +29,7 @@ import CraftWoo from '@components/craft/woo';
 import SalvageWoo from '@components/salvage/woo';
 import millify from 'millify';
 import useWallet from '@lib/hooks/use-wallet-balances';
+import velarApi from '@lib/velar-api';
 
 export default function Woo({ data }: Props) {
   const meta = {
@@ -54,9 +55,12 @@ export default function Woo({ data }: Props) {
     try {
       // videoRef.current.muted = false
       setDescriptionVisible(true)
-      getTokenPrices().then((response) => {
-        setStakedWelshPrice(response[14].price)
-        setStakedRooPrice(response[15].price)
+      velarApi.tickers().then((prices) => {
+        const stxPrice = prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
+        const sWelshPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2').last_price
+        const rooPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo').last_price
+        setStakedWelshPrice(sWelshPrice)
+        setStakedRooPrice(rooPrice)
       })
     } catch (error) {
       console.error(error)
