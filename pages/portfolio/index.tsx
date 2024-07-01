@@ -174,7 +174,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
     (tokens[`SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`]?.balance / Math.pow(10, 6))
     + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token`]?.balance * charismaRate / Math.pow(10, 6))
     + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
-    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence::index-token`]?.balance * 100 * charismaRate / Math.pow(10, 6))
+    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence::index-token`]?.balance * 10 * charismaRate / Math.pow(10, 6))
     + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.outback-stakehouse::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
     + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.good-karma::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
     + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1::fff`]?.balance * 1 * charismaRate / Math.pow(10, 6))
@@ -286,7 +286,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                       iQC
                     </div>
                     <div className="font-fine text-sm mb-0.5">
-                      x100 x{Number(charismaRate)}
+                      x10 x{Number(charismaRate)}
                     </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
