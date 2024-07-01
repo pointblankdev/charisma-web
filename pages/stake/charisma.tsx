@@ -19,6 +19,7 @@ import { useState } from 'react';
 import millify from 'millify';
 import useWallet from '@lib/hooks/use-wallet-balances';
 import StakingControls from '@components/liquidity/staking';
+import velarApi from '@lib/velar-api';
 
 export default function Stake({ data }: Props) {
 
@@ -35,6 +36,8 @@ export default function Stake({ data }: Props) {
   const sCharismaBalance = (balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'] as any)?.balance || 0
   const charismaBalance = (balances?.fungible_tokens?.['SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma'] as any)?.balance || 0
 
+  const tvl = data.sChaToken.price * tokensInPool / Math.pow(10, Number(data.sChaToken.decimal.replace('u', '')))
+
   const [tokensSelected, setTokensSelected] = useState(0);
 
   return (
@@ -43,8 +46,9 @@ export default function Stake({ data }: Props) {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
 
-          <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
+          <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl relative'>
             <Image alt='Liquid Charisma' src={liquidCharisma} width="1080" height="605" className='border-b border-accent-foreground' />
+            <div className='my-2 mx-4 absolute top-0 right-0 font-medium text-lg'>${millify(tvl)} TVL</div>
             <div className='m-2'>
               <div className='flex justify-between mb-2'>
                 <h1 className="self-center font-bold text-md sm:text-2xl">Liquid Staked Charisma</h1>
@@ -139,10 +143,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
     })
 
+    const tokens = await velarApi.tokens('sCHA')
+    const sChaToken = tokens.find((token: any) => token.contractAddress === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
 
     const data = {
       exchangeRate: Number(lc.value),
-      tokensInPool: Number(totalStaked.value)
+      tokensInPool: Number(totalStaked.value),
+      sChaToken: sChaToken
     }
 
     return {
