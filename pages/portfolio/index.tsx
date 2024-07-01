@@ -172,32 +172,35 @@ function TokenBalances({ rates }: { rates: Rates }) {
 
   if (!tokens) return <div>Sign in to view your balances...</div>;
 
+  const chaBalance = tokens[`SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`]?.balance
+  const sChaBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token`]?.balance
+  const iCCBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`]?.balance
+  const iQCBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence::index-token`]?.balance
+  const iOSBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.outback-stakehouse::index-token`]?.balance
+  const iGKBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.good-karma::index-token`]?.balance
+  const fffBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1::fff`]?.balance
+
+  const welshBalance = tokens[`SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`]?.balance
+  const sWelshBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`]?.balance
+
   const totalCharismaTokens =
-    (tokens[`SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`]?.balance / Math.pow(10, 6))
-    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token`]?.balance * charismaRate / Math.pow(10, 6))
-    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
-    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence::index-token`]?.balance * 10 * charismaRate / Math.pow(10, 6))
-    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.outback-stakehouse::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
-    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.good-karma::index-token`]?.balance * 1 * charismaRate / Math.pow(10, 6))
-    + (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1::fff`]?.balance * 1 * charismaRate / Math.pow(10, 6))
+    (chaBalance / Math.pow(10, 6))
+    + (sChaBalance * charismaRate / Math.pow(10, 6))
+    + (iCCBalance * 1 * charismaRate / Math.pow(10, 6))
+    + (iQCBalance * 10 * charismaRate / Math.pow(10, 6))
+    + (iOSBalance * 1 * charismaRate / Math.pow(10, 6))
+    + (iGKBalance * 1 * charismaRate / Math.pow(10, 6))
+    + (fffBalance * 1 * charismaRate / Math.pow(10, 6))
 
   const totalWelshTokens =
-    (tokens[`SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`]?.balance / Math.pow(10, 6)) +
-    (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`]?.balance * welshRate / Math.pow(10, 6)) +
-    (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`]?.balance * 100 * welshRate / Math.pow(10, 6))
-
-  const totalLeoTokens =
-    (tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`]
-      ?.balance *
-      leoRate) /
-    Math.pow(10, 6) +
-    tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance / Math.pow(10, 6);
+    (welshBalance / Math.pow(10, 6)) +
+    (sWelshBalance * welshRate / Math.pow(10, 6)) +
+    (iCCBalance * 100 * welshRate / Math.pow(10, 6))
 
 
   const stxPrice = prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
-  const welshPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
-  const leoPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token').last_price
   const chaPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token').last_price
+  const welshPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
 
   return (
     <Card>
@@ -254,94 +257,82 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   </div>
                   <div className="leading-[1] flex justify-end space-x-1 items-center">
                     {tokens && commafy(Math.floor(totalCharismaTokens))}</div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mb-0.5">
-                      {tokens &&
-                        commafy(Math.floor(
-                          tokens[
-                            `SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`
-                          ]?.balance / Math.pow(10, 6)
-                        ))} CHA
+                  {chaBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mb-0.5">
+                        {tokens && commafy(Math.floor(chaBalance / Math.pow(10, 6)))} CHA
+                      </div>
                     </div>
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
-                      sCHA
+                  }
+                  {sChaBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(sChaBalance / Math.pow(10, 6))}{' '}
+                        sCHA
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x{Number(charismaRate)}
+                      </div>
                     </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x{Number(charismaRate)}
+                  }
+                  {iQCBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(iQCBalance / Math.pow(10, 6))}{' '}
+                        iQC
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x10 x{Number(charismaRate)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence::index-token`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
-                      iQC
+                  }
+                  {iCCBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(iCCBalance / Math.pow(10, 6)
+                        )}{' '}
+                        iCC
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x1 x{Number(charismaRate)}
+                      </div>
                     </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x10 x{Number(charismaRate)}
+                  }
+                  {iOSBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(iOSBalance / Math.pow(10, 6)
+                        )}{' '}
+                        iOS
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x1 x{Number(charismaRate)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
-                      iCC
+                  }
+                  {iGKBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(iGKBalance / Math.pow(10, 6)
+                        )}{' '}
+                        iGK
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x1 x{Number(charismaRate)}
+                      </div>
                     </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x1 x{Number(charismaRate)}
+                  }
+                  {fffBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(fffBalance / Math.pow(10, 6))}{' '}
+                        FFF
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x1 x{Number(charismaRate)}
+                      </div>
                     </div>
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.outback-stakehouse::index-token`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
-                      iOS
-                    </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x1 x{Number(charismaRate)}
-                    </div>
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.good-karma::index-token`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
-                      iGK
-                    </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x1 x{Number(charismaRate)}
-                    </div>
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1::fff`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
-                      FFF
-                    </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x1 x{Number(charismaRate)}
-                    </div>
-                  </div>
+                  }
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   ${commafy((chaPrice * totalCharismaTokens).toFixed(2))}
@@ -393,20 +384,12 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
                     <div className="font-fine text-sm mb-0.5">
                       {tokens &&
-                        Math.floor(
-                          tokens[
-                            `SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`
-                          ]?.balance / Math.pow(10, 6)
-                        )} WELSH
+                        Math.floor(welshBalance / Math.pow(10, 6))} WELSH
                     </div>
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
                     <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
+                      {millify(sWelshBalance / Math.pow(10, 6))}{' '}
                       sWELSH
                     </div>
                     <div className="font-fine text-sm mb-0.5">
@@ -415,11 +398,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   </div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
                     <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi::index-token`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
+                      {millify(iCCBalance / Math.pow(10, 6))}{' '}
                       iCC
                     </div>
                     <div className="font-fine text-sm mb-0.5">
@@ -429,73 +408,6 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   ${commafy((welshPrice * totalWelshTokens).toFixed(2))}
-                </TableCell>
-                <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button disabled aria-haspopup="true" size="icon" variant="ghost">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Toggle menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuItem>Edit</DropdownMenuItem>
-                      <DropdownMenuItem>Delete</DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-              <TableRow>
-                <TableCell className="hidden sm:table-cell">
-                  <Image
-                    alt="Product image"
-                    className="aspect-square rounded-md object-cover"
-                    height="64"
-                    src={leoLogo}
-                    width="64"
-                  />
-                </TableCell>
-                <TableCell className="font-medium">
-                  <div className="text-lg">Leo</div>
-                </TableCell>
-                <TableCell className="hidden md:table-cell text-xl text-right">
-                  {tokens &&
-                    commafy(Math.floor(
-                      tokens[`SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo`]?.balance /
-                      Math.pow(10, 6)
-                    ))}
-                </TableCell>
-                <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
-                  <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
-                    ${commafy((leoPrice * totalLeoTokens).toFixed(2))}
-                  </div>
-                  <div className="leading-[1]">
-                    {tokens &&
-                      commafy(Math.floor(
-                        (tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
-                        ]?.balance *
-                          leoRate) /
-                        Math.pow(10, 6)
-                      ))}
-                  </div>
-                  <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
-                    <div className="font-fine text-sm mr-1 mb-0.5">
-                      {millify(
-                        tokens[
-                          `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo::liquid-staked-token`
-                        ]?.balance / Math.pow(10, 6)
-                      )}{' '}
-                      sLEO
-                    </div>
-                    <div className="font-fine text-sm mb-0.5">
-                      x{leoRate}
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell className="hidden md:table-cell text-xl text-right">
-                  ${commafy((leoPrice * totalLeoTokens).toFixed(2))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
