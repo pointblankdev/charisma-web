@@ -14,7 +14,7 @@ import charismaLogo from '@public/charisma.png';
 import welshLogo from '@public/welsh-logo.png';
 import leoLogo from '@public/leo-logo.png';
 
-import { MoreHorizontal } from 'lucide-react';
+import { Activity, CreditCard, DollarSign, MoreHorizontal, Users } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import {
   DropdownMenu,
@@ -39,6 +39,8 @@ import { commafy } from 'commafy-anything'
 import { getStakedTokenExchangeRate } from '@lib/stacks-api';
 import { GetServerSideProps, InferGetServerSidePropsType } from 'next';
 import velarApi from '@lib/velar-api';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
+import InfoIcon from '@components/icons/icon-info';
 
 type Rates = {
   'liquid-staked-charisma': number
@@ -250,9 +252,8 @@ function TokenBalances({ rates }: { rates: Rates }) {
                   <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
                     ${commafy((chaPrice * totalCharismaTokens).toFixed(2))}
                   </div>
-                  <div className="leading-[1]">
-                    {tokens && commafy(Math.floor(totalCharismaTokens))}
-                  </div>
+                  <div className="leading-[1] flex justify-end space-x-1 items-center">
+                    {tokens && commafy(Math.floor(totalCharismaTokens))}</div>
                   <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
                     <div className="font-fine text-sm mb-0.5">
                       {tokens &&
@@ -514,8 +515,9 @@ function TokenBalances({ rates }: { rates: Rates }) {
               </TableRow>
             </TableBody>
           </Table>
-        )}
-      </CardContent>
+        )
+        }
+      </CardContent >
       <CardFooter className='p-2 sm:p-4'>
         <div className="text-xs text-muted-foreground">
           Showing <strong>1-2</strong> of <strong>{Object.keys(tokens).length}</strong> tokens
@@ -524,3 +526,24 @@ function TokenBalances({ rates }: { rates: Rates }) {
     </Card >
   );
 }
+
+
+
+const StakedTokenBreakdown = ({ children }: any) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <div className="relative w-4 h-4">
+            <InfoIcon className="w-4 h-4" />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent
+          className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
+        >
+          {children}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
