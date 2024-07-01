@@ -61,7 +61,7 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
         <div className="m-2">
             <div className="text-secondary/50 text-sm flex items-center space-x-2">
                 <div>
-                    Liquidity Changes Locked (for {data.blocksUntilUnlock} block{data.blocksUntilUnlock !== 1 && `s`})
+                    Liquidity Locked (for {data.blocksUntilUnlock} block{data.blocksUntilUnlock !== 1 && `s`})
                 </div>{' '}
                 <TimerOffIcon size={14} className="mt-0.5 animate-pulse" />{' '}
             </div>
