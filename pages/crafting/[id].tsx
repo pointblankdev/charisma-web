@@ -378,8 +378,8 @@ const ActiveRecipeIndicator = ({
         >
           {active
             ? 'Index fund is live'
-            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock > 1 && 's'
-            }`}
+            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock > 1 ? 's' : ''}`
+          }
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
