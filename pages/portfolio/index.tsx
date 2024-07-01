@@ -170,7 +170,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
     prices
   } = rates;
 
-  if (!tokens) return <div>Loading...</div>;
+  if (!tokens) return <div>Sign in to view your balances...</div>;
 
   const totalCharismaTokens =
     (tokens[`SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`]?.balance / Math.pow(10, 6))
