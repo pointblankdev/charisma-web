@@ -150,7 +150,7 @@ export default function IndexDetailPage({ data }: Props) {
                             height={100}
                             className="z-30 w-full border rounded-full"
                           />
-                          {Math.abs(tokensRequested) !== 0 && (
+                          {Math.abs(tokensRequested).toFixed(0) !== '0' && (
                             <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
                               {millify(Math.abs(tokensRequested * indexWeight))}
                             </div>
@@ -188,7 +188,7 @@ export default function IndexDetailPage({ data }: Props) {
                                 height={100}
                                 className="z-30 w-full border rounded-full"
                               />
-                              {Math.abs(tokensRequired[k]) !== 0 && (
+                              {Math.abs(tokensRequired[k]).toFixed(0) !== '0' && (
                                 <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
                                   {millify(Math.abs(tokensRequired[k]))}
                                 </div>
