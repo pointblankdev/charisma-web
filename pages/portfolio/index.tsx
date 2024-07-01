@@ -245,11 +245,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   {tokens &&
-                    commafy(Math.floor(
-                      tokens[
-                        `SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma`
-                      ]?.balance / Math.pow(10, 6)
-                    ))}
+                    commafy(Math.floor(chaBalance / Math.pow(10, 6)))}
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
                   <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
