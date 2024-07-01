@@ -45,24 +45,21 @@ import InfoIcon from '@components/icons/icon-info';
 type Rates = {
   'liquid-staked-charisma': number
   'liquid-staked-welsh-v2': number,
-  'liquid-staked-leo': number,
   "prices": any
 }
 
 export const getServerSideProps = (async () => {
   try {
     // Fetch data from external API
-    const [charismaRate, welshRate, leoRate, tickers] = await Promise.all([
+    const [charismaRate, welshRate, tickers] = await Promise.all([
       getStakedTokenExchangeRate('liquid-staked-charisma'),
       getStakedTokenExchangeRate('liquid-staked-welsh-v2'),
-      getStakedTokenExchangeRate('liquid-staked-leo'),
       velarApi.tickers(),
     ]);
 
     const rates: Rates = {
       'liquid-staked-charisma': charismaRate.value / Math.pow(10, 6),
       'liquid-staked-welsh-v2': welshRate.value / Math.pow(10, 6),
-      'liquid-staked-leo': leoRate.value / Math.pow(10, 6),
       "prices": tickers
     }
 
@@ -75,7 +72,6 @@ export const getServerSideProps = (async () => {
         rates: {
           'liquid-staked-charisma': 0,
           'liquid-staked-welsh-v2': 0,
-          'liquid-staked-leo': 0,
           prices: {},
         },
       },
@@ -166,7 +162,6 @@ function TokenBalances({ rates }: { rates: Rates }) {
   const {
     'liquid-staked-charisma': charismaRate,
     'liquid-staked-welsh-v2': welshRate,
-    'liquid-staked-leo': leoRate,
     prices
   } = rates;
 
@@ -199,8 +194,9 @@ function TokenBalances({ rates }: { rates: Rates }) {
 
 
   const stxPrice = prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
-  const chaPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token').last_price
-  const welshPrice = stxPrice / prices.find((ticker: any) => ticker.target_currency === 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
+  // todo: update chaPrices this to use wCHA when available
+  const chaPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma').last_price
+  const welshPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
 
   return (
     <Card>

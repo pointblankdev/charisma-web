@@ -6,7 +6,7 @@ const velarApi = {
             symbol: 'CHA',
             name: 'Charisma',
             contractAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token',
-            price: '1.0'
+            price: '2'
         })
         return data
     },
@@ -17,7 +17,7 @@ const velarApi = {
             ticker_id: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token',
             base_currency: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx',
             target_currency: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token',
-            last_price: 1,
+            last_price: 2,
         })
         return data
     }
