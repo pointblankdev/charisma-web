@@ -8,12 +8,14 @@ import ClaimFaucetButton from '@components/faucet/green-room-claim';
 import Image from 'next/image';
 import { StacksMainnet } from "@stacks/network";
 import { callReadOnlyFunction } from '@stacks/transactions';
-import { blocksApi } from '@lib/stacks-api';
+import { blocksApi, getGuestlist } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import greenRoom from '@public/green-room-card.png'
 import { Card } from '@components/ui/card';
 import { clamp } from 'framer-motion';
 import millify from 'millify';
+import { userSession } from '@components/stacks-session/connect';
+import { useEffect, useState } from 'react';
 
 
 export default function TheGreenRoom({ data }: Props) {

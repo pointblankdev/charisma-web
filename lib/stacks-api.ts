@@ -664,6 +664,20 @@ export async function getBlockCounter(contract: string) {
     return Number(cvToJSON(response)?.value?.value)
 }
 
+export async function getGuestlist(contract: string) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'green-room',
+        functionName: "check-guestlist",
+        functionArgs: [principalCV(contract)],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response)?.value ? true : false
+}
+
 export async function getBlocksUntilUnlocked(contract: string) {
 
     const [address, name] = contract.split('.')

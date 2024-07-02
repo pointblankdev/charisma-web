@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getDeployedIndexes, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getDeployedIndexes, getGuestlist, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 
@@ -179,6 +179,12 @@ describe('Stacks API', () => {
     // should get deploy index contracts
     it('should get deploy index contracts', async () => {
         const result = await getDeployedIndexes()
+        console.log(result)
+        expect(result).toBeDefined()
+    }, 20000)
+
+    it('should check the guestlist for a address', async () => {
+        const result = await getGuestlist('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
         console.log(result)
         expect(result).toBeDefined()
     }, 20000)

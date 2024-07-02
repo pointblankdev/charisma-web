@@ -28,6 +28,7 @@ import wantedPosters from '@public/governance/wanted-posters.png'
 import courthouse from '@public/governance/courthouse.png'
 import innkeeper from '@public/governance/innkeeper.png'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs"
+import greenRoom from '@public/green-room-card.png'
 
 
 type CardProps = {
@@ -101,6 +102,13 @@ export default function Governance({ data }: Props) {
       alt: 'Token Faucet Extention Image',
       title: 'token-faucet',
       subtitle: 'Token Faucet',
+    },
+    {
+      href: "https://explorer.hiro.so/txid/0xdf39fdd38e530c0bfce31b9fea28d038c4250932a7c2da6e608a6c3fcbb3a580?chain=mainnet",
+      src: greenRoom,
+      alt: 'Green Room Extention Image',
+      title: 'green-room',
+      subtitle: 'The Green Room',
     },
     // {
     //   href: "https://explorer.hiro.so/txid/0xc05db7eb16e3745c4d82884e120be4f2fe4af660f295e1450abf1beeca24c034?chain=mainnet",

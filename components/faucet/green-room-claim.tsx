@@ -9,6 +9,8 @@ import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import { newWallet } from "@lib/user-api";
 import millify from "millify";
+import { getGuestlist } from "@lib/stacks-api";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@components/ui/tooltip";
 
 const ClaimFaucetButton = ({ tokensToClaim }: { tokensToClaim: number }) => {
   const { doContractCall } = useConnect();
@@ -16,9 +18,19 @@ const ClaimFaucetButton = ({ tokensToClaim }: { tokensToClaim: number }) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
+  // see if the user is on the guestlist
+  const signedIn = userSession.isUserSignedIn()
+  const [isGuestlisted, setIsGuestlisted] = useState(false)
+  useEffect(() => {
+    const address: string = userSession.loadUserData().profile.stxAddress.mainnet
+    getGuestlist(address).then((isGuest) => {
+      setIsGuestlisted(isGuest)
+    })
+  }, [signedIn])
+
   function claim() {
+    const profile = userSession.loadUserData().profile
     try {
-      const profile = userSession.loadUserData().profile
       newWallet({ wallet: profile })
     } catch (error) {
       console.error(error)
@@ -46,7 +58,18 @@ const ClaimFaucetButton = ({ tokensToClaim }: { tokensToClaim: number }) => {
   }
 
   return (
-    <Button disabled={tokensToClaim === 0} className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={claim}>Claim {millify(tokensToClaim)} CHA tokens</Button>
+
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger className="w-full">
+          <Button disabled={tokensToClaim === 0 || !isGuestlisted} className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={claim}>Claim {millify(tokensToClaim)} CHA tokens</Button>
+        </TooltipTrigger>
+        <TooltipContent className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
+          <div>Access to this faucet is limited to guestlist members. Guestlists are curated through community voting, ensuring all members contribute meaningfully to the project.</div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+
   );
 };
 
