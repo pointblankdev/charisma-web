@@ -184,7 +184,8 @@ const FirstTokenAction = ({ config }: { config: StepConfig }) => {
   return (
     <div>
       <div className='flex flex-col sm:relative'>
-        <TokenSelect token={config.fromToken} setToken={handleFromTokenChange} />
+        {/* <TokenSelect token={config.fromToken} setToken={handleFromTokenChange} /> */}
+        <TokenSelect token={config.fromToken} />
         <Input value={config.fromAmount} onChange={(v) => handleFromTokenAmountChange(Number(v.target.value))} placeholder="Enter an amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
       </div>
 
@@ -194,7 +195,8 @@ const FirstTokenAction = ({ config }: { config: StepConfig }) => {
       </div>
 
       <div className='flex flex-col sm:relative'>
-        <TokenSelect token={config.toToken} setToken={handleToTokenChange} />
+        {/* <TokenSelect token={config.toToken} setToken={handleToTokenChange} /> */}
+        <TokenSelect token={config.toToken} />
         <Input value={Number(config.toAmount).toFixed(6)} placeholder="Estimated Amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
       </div>
     </div>
@@ -220,7 +222,8 @@ const TokenAction = ({ config, stepNumber }: { config: StepConfig, stepNumber: n
       </div>
 
       <div className='flex flex-col sm:relative'>
-        <TokenSelect token={config.toToken} setToken={handleToTokenChange} />
+        {/* <TokenSelect token={config.toToken} setToken={handleToTokenChange} /> */}
+        <TokenSelect token={config.toToken} />
         <Input value={Number(config.toAmount).toFixed(6)} placeholder="Estimated Amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
       </div>
     </div>
