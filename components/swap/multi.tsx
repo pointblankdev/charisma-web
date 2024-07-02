@@ -26,14 +26,13 @@ const MultiSwap = ({ data }: any) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "arbitrage-welsh-stx-swelsh-welsh",
-      functionName: "strategy-welsh-stx-swelsh-welsh",
+      contractName: "arbitrage-welsh-stx-swelsh-unstake",
+      functionName: "execute-strategy",
       functionArgs: [uintCV(amountIn - royalties)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         Pc.principal(sender).willSendEq(amountIn).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
-        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-welsh-stx-swelsh-welsh').willSendGte(amountIn).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
-        // Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-welsh-stx-swelsh-welsh').willSendEq(data.options.creatorRoyality).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token')
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-welsh-stx-swelsh-welsh').willSendGte(amountIn).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token')
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
