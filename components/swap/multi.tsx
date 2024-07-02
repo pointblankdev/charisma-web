@@ -26,13 +26,17 @@ const MultiSwap = ({ data }: any) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "arbitrage-welsh-stx-swelsh-unstake",
+      contractName: "arbitrage-w-s-sw-w-zf",
       functionName: "execute-strategy",
-      functionArgs: [uintCV(amountIn - royalties)],
-      postConditionMode: PostConditionMode.Deny,
+      functionArgs: [uintCV(amountIn)],
+      postConditionMode: PostConditionMode.Allow,
       postConditions: [
         Pc.principal(sender).willSendEq(amountIn).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
-        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-welsh-stx-swelsh-welsh').willSendGte(amountIn).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token')
+        // Pc.principal('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core').willSendGte(1).ustx(),
+        // Pc.principal(sender).willSendGte(1).ustx(),
+        // Pc.principal('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core').willSendGte(amountIn).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
+        // Pc.principal(sender).willSendEq(amountIn).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2').willSendGte(amountIn).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -48,7 +52,7 @@ const MultiSwap = ({ data }: any) => {
   }
 
   return (
-    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={swap}>Swap</Button>
+    <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={swap}>Execute Strategy</Button>
   );
 };
 

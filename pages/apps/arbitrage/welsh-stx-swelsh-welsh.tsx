@@ -116,7 +116,7 @@ export default function Swap({ data }: Props) {
           <SwapContext.Provider value={{ tokenList, setTokenList, swapConfig: recalculateSwapConfig, setSwapConfig }}>
             <SwapDashboard />
           </SwapContext.Provider>
-          <div className='text-center font-thin m-2 text-xs sm:text-sm'>*Swaps use Velar liquidity pools and are set to a maximum of 2.5% slippage.</div>
+          {/* <div className='text-center font-thin m-2 text-xs sm:text-sm'>*Swaps use Velar liquidity pools and are set to a maximum of 2.5% slippage.</div> */}
         </motion.div >
       </Layout >
     </Page >
@@ -125,13 +125,24 @@ export default function Swap({ data }: Props) {
 
 const SwapDashboard = () => {
 
-  const { swapConfig } = useContext(SwapContext);
+  const { swapConfig, tokenList } = useContext(SwapContext);
+
+  const arbitrageProfit = swapConfig.steps[swapConfig.steps.length - 1].toAmount - swapConfig.steps[0].fromAmount
+  const arbitrageToken = tokenList.find((token: Token) => token.contractAddress === swapConfig.steps[swapConfig.steps.length - 1].toToken)
+  const arbitrageProfitInUSD = arbitrageProfit * arbitrageToken?.price
 
   return (
     <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl'>
       <CardHeader className='z-20 p-4'>
         <div className='flex items-center justify-between'>
-          <CardTitle className='z-30 text-xl font-semibold'>Arbitrage Tool</CardTitle>
+          <CardTitle className='z-30 text-xl font-semibold'>
+            <div>
+              Arbitrage Strategy
+            </div>
+            <div className='text-sm font-light'>
+              Stabilize STX-sWELSH pool price, accumulate sWELSH.
+            </div>
+          </CardTitle>
         </div>
       </CardHeader>
       <CardContent className='z-20 p-4'>
@@ -142,7 +153,12 @@ const SwapDashboard = () => {
       </CardContent>
 
       <CardFooter className="z-20 flex justify-between p-4 mt-24">
-        <div></div>
+        <div className='font-fine flex space-x-3 items-baseline'>
+          <div className='text-lg'>Estimated Profit:</div>
+          <div className='text-xl text-white'>{`${arbitrageProfit.toFixed(0)} ${arbitrageToken?.symbol}`}</div>
+          <div>≅</div>
+          <div className='text-lg text-green-300'>{`$${arbitrageProfitInUSD.toFixed(2)} USD`}</div>
+        </div>
         <MultiSwap data={swapConfig} />
       </CardFooter>
       <Image
