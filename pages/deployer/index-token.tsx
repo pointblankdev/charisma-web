@@ -256,7 +256,7 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
 
 
 
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+    const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
     const defaultValues: Partial<ContractFormValues> = {
         sender: sender,

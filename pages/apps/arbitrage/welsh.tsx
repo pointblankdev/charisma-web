@@ -100,6 +100,7 @@ export default function Swap({ data }: Props) {
         <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl">
           <SwapContext.Provider value={{ tokenList, setTokenList, swapConfig: recalculateSwapConfig, setSwapConfig }}>
             <SwapDashboard />
+            <div className='text-center text-xs m-2 text-secondary/50'>*If your trade is profitable, a small portion of earnings are deposited in the Velar STX-sCHA LP. This LP remains yours.</div>
           </SwapContext.Provider>
           {/* <div className='text-center font-thin m-2 text-xs sm:text-sm'>*Swaps use Velar liquidity pools and are set to a maximum of 2.5% slippage.</div> */}
         </motion.div >
@@ -145,7 +146,7 @@ const SwapDashboard = () => {
           <div>≅</div>
           <div className='text-lg text-green-300'>{`$${arbitrageProfitInUSD.toFixed(2)} USD`}</div>
         </div>
-        <MultiSwap data={swapConfig} />
+        <MultiSwap data={swapConfig} lp={true} />
       </CardFooter>
       <Image
         src={swap}

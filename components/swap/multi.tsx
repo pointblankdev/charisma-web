@@ -11,7 +11,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const MultiSwap = ({ data }: any) => {
+const MultiSwap = ({ data, lp = false }: any) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -26,7 +26,7 @@ const MultiSwap = ({ data }: any) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "arbitrage-w-s-sw-w-zf",
+      contractName: lp ? "arb-and-micro-lp-add-test" : "arbitrage-w-s-sw-w-zf",
       functionName: "execute-strategy",
       functionArgs: [uintCV(amountIn)],
       postConditionMode: PostConditionMode.Allow,

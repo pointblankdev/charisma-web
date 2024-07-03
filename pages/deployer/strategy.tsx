@@ -22,7 +22,7 @@ function generateClarityContract({ swapConfigString }: { swapConfigString: strin
     const liquidStakedCharisma = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
     const lpToken = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
 
-    const optionalLiquidityAdd = `\n(try! (contract-call? 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router add-liquidity u54 ${wstxContract} ${liquidStakedCharisma} ${lpToken} u100000 u750000 u50000 u15000))`
+    const optionalLiquidityAdd = `\n        (try! (contract-call? 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router add-liquidity u54 '${wstxContract} '${liquidStakedCharisma} '${lpToken} u100000 u750000 u50000 u15000))`
     try {
         const swapConfig = JSON.parse(swapConfigString);
         const steps = swapConfig.steps;
@@ -81,8 +81,6 @@ const contractFormSchema = z.object({
 type ContractFormValues = z.infer<typeof contractFormSchema>
 
 export default function ArbitrageStrategyTemplate({ onFormChange }: any) {
-
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
 
     const defaultValues: Partial<ContractFormValues> = {
     }
