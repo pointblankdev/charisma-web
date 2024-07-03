@@ -294,6 +294,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     let isRemoveLiquidityUnlocked = true;
     if (contractName === 'quiet-confidence') {
       blockCounter = await getBlockCounter(params?.id as string);
+      console.log(blockCounter)
       const { results } = await blocksApi.getBlockList({ limit: 1 });
       blocksUntilUnlock = 155550 + blockCounter - results[0].height;
       isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);

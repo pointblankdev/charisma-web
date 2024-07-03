@@ -1121,7 +1121,7 @@
     aria-hidden "^1.1.1"
     react-remove-scroll "2.5.4"
 
-"@radix-ui/react-dialog@1.1.1", "@radix-ui/react-dialog@^1.0.4":
+"@radix-ui/react-dialog@1.1.1", "@radix-ui/react-dialog@^1.0.4", "@radix-ui/react-dialog@^1.1.1":
   version "1.1.1"
   resolved "https://registry.yarnpkg.com/@radix-ui/react-dialog/-/react-dialog-1.1.1.tgz#4906507f7b4ad31e22d7dad69d9330c87c431d44"
   integrity sha512-zysS+iU4YP3STKNS6USvFVqI4qqx8EpiwmT5TuCApVEBca+eRCbONi4EgzfNSuVnOXvC5UPHHMjs8RXO6DH9Bg==
@@ -6356,10 +6356,10 @@ lru-cache@^6.0.0:
   dependencies:
     yallist "^4.0.0"
 
-lucide-react@^0.263.1:
-  version "0.263.1"
-  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.263.1.tgz#a456ee0d171aa373929bd3ee20d6f9fb4429c301"
-  integrity sha512-keqxAx97PlaEN89PXZ6ki1N8nRjGWtDa4021GFYLNj0RgruM5odbpl8GHTExj0hhPq3sF6Up0gnxt6TSHu+ovw==
+lucide-react@^0.400.0:
+  version "0.400.0"
+  resolved "https://registry.yarnpkg.com/lucide-react/-/lucide-react-0.400.0.tgz#8dc044bc1ace05fde5bdd4a8a7ad35c9e69ca575"
+  integrity sha512-rpp7pFHh3Xd93KHixNgB0SqThMHpYNzsGUu69UaQbSZ75Q/J3m5t6EhKyMT3m4w2WOxmJ2mY0tD3vebnXqQryQ==
 
 make-dir@^4.0.0:
   version "4.0.0"
@@ -9614,6 +9614,13 @@ varuint-bitcoin@^1.1.2:
   integrity sha512-4EVb+w4rx+YfVM32HQX42AbbT7/1f5zwAYhIujKXKk8NQK+JfRVl3pqT3hjNn/L+RstigmGGKVwHA/P0wgITZw==
   dependencies:
     safe-buffer "^5.1.1"
+
+vaul@^0.9.1:
+  version "0.9.1"
+  resolved "https://registry.yarnpkg.com/vaul/-/vaul-0.9.1.tgz#3640198e04636b209b1f907fcf3079bec6ecc66b"
+  integrity sha512-fAhd7i4RNMinx+WEm6pF3nOl78DFkAazcN04ElLPFF9BMCNGbY/kou8UMhIcicm0rJCNePJP0Yyza60gGOD0Jw==
+  dependencies:
+    "@radix-ui/react-dialog" "^1.0.4"
 
 vfile-message@^3.0.0:
   version "3.1.4"
