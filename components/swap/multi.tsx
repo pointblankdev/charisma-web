@@ -20,23 +20,37 @@ const MultiSwap = ({ data, lp = false }: any) => {
   const amountIn = Number(data.steps[0].fromAmount * 1000000)
   const royalties = Number(data.options.communityRoyality) + Number(data.options.creatorRoyality)
 
+  console.log(data.steps[0])
+
+  let ft = ''
+  let sendingContract = ''
+  const contractAddress = data.steps[0].fromToken
+  const firstAction = data.steps[0].action
+  if (contractAddress === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma") {
+    ft = 'index-token'
+    sendingContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
+  } else if (contractAddress === "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token") {
+    ft = 'welshcorgicoin'
+    sendingContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'
+  }
+
   function swap() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: lp ? "arb-and-micro-lp-add-test" : "arbitrage-w-s-sw-w-zf",
+      contractName: 'arb-cha-launch-1',//firstAction === 'SWAP' ? 'arb-cha-launch-1' : 'arb-cha-launch-2', //lp ? "arb-and-micro-lp-add-test-2" : "arbitrage-w-s-sw-w-zf",
       functionName: "execute-strategy",
-      functionArgs: [uintCV(amountIn)],
+      functionArgs: [uintCV(amountIn)], //uintCV(1000000), uintCV(9070017), uintCV(960000), uintCV(8707216)
       postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        Pc.principal(sender).willSendEq(amountIn).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
+        // Pc.principal(sender).willSendEq(amountIn).ft(contractAddress, ft),
         // Pc.principal('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core').willSendGte(1).ustx(),
         // Pc.principal(sender).willSendGte(1).ustx(),
         // Pc.principal('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core').willSendGte(amountIn).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
         // Pc.principal(sender).willSendEq(amountIn).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
-        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2').willSendGte(amountIn).ft("SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token", 'welshcorgicoin'),
+        // Pc.principal(sendingContract).willSendGte(amountIn).ft(contractAddress, ft),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

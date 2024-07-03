@@ -61,7 +61,7 @@ function generateClarityContract({ swapConfigString }: { swapConfigString: strin
 
         const contractString = `(define-public (execute-strategy (amount-in uint))
     (begin
-        ${contractCalls.join('\n        ')}${optionalLiquidityAdd}
+        ${contractCalls.join('\n        ')}
         (ok true)
     )
 )`;
@@ -73,6 +73,8 @@ function generateClarityContract({ swapConfigString }: { swapConfigString: strin
         return ';; invalid swap config'
     }
 }
+
+// ${optionalLiquidityAdd}
 
 const contractFormSchema = z.object({
     swapConfigString: z.string(),
