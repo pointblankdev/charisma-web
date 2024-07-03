@@ -280,13 +280,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     });
 
     // loop for each matching token to get the TVL of base tokens
-    const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
-      const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress);
-      const tokenWeight = metadata.contains[tokenIndex].weight;
-      const tokenPrice = Number(baseToken.price);
-      return totalSupply * tokenWeight * tokenPrice;
-    });
-    tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0)
+    const tokenInPriceList = prices.find((token: any) => token.contractAddress === params?.id)
+    if (tokenInPriceList && tokenInPriceList.price > 0) {
+      tvl = totalSupply * Number(tokenInPriceList.price);
+    } else {
+      const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
+        const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress);
+        const tokenWeight = metadata.contains[tokenIndex].weight;
+        const tokenPrice = Number(baseToken.price);
+        return totalSupply * tokenWeight * tokenPrice;
+      });
+      tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0)
+    }
 
     // blocks until unlocked calculation
     let blockCounter = 0;
@@ -294,7 +299,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     let isRemoveLiquidityUnlocked = true;
     if (contractName === 'quiet-confidence') {
       blockCounter = await getBlockCounter(params?.id as string);
-      console.log(blockCounter)
       const { results } = await blocksApi.getBlockList({ limit: 1 });
       blocksUntilUnlock = 155550 + blockCounter - results[0].height;
       isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);
