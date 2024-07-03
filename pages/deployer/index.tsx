@@ -5,7 +5,9 @@ import {
     Code2,
     Coins,
     CornerDownLeft,
+    Currency,
     LifeBuoy,
+    Merge,
     Mic,
     Paperclip,
     Plane,
@@ -57,6 +59,10 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { motion } from 'framer-motion';
 import { template } from "lodash"
 import IndexTokenTemplate from "./index-token"
+import { BsCurrencyExchange } from "react-icons/bs"
+import { BiMath } from "react-icons/bi"
+import ArbitrageStrategyTemplate from "./strategy"
+import { userSession } from "@components/stacks-session/connect"
 
 
 const generateHeader = ({ name, sender, description }: any) => {
@@ -85,17 +91,15 @@ export default function ContractDeployer() {
 
     const [loading, setLoading] = useState(true);
 
-    const [contractConfig, setContractConfig] = useState<any>({
-        template: 'proposal',
-        header: generateHeader({}),
-        airdrop: '',
-        proposal: '',
-        token: ''
-    })
+    const [template, setTemplate] = useState<string>('proposal')
+    const [body, setBody] = useState<string>('')
+    const [header, setHeader] = useState<string>('')
 
     useEffect(() => {
         setLoading(false);
     }, []);
+
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet
 
     const defaultValues: Partial<ContractFormValues> = {
         template: 'proposal'
@@ -108,18 +112,16 @@ export default function ContractDeployer() {
     })
 
     const handleTemplateChange = (value: string) => {
-        setContractConfig({ ...contractConfig, template: value })
+        setTemplate(value)
     };
 
     const handleContractChange = (template: string) => {
-        setContractConfig({ ...contractConfig, [contractConfig.template]: template })
+        setBody(template)
     }
 
     const handleHeaderChange = () => {
-        setContractConfig({ ...contractConfig, header: generateHeader(form.getValues()) })
+        setHeader(generateHeader({ sender, ...form.getValues() }))
     }
-
-
 
     return (
         <Layout>
@@ -190,14 +192,30 @@ export default function ContractDeployer() {
                                                                     </div>
                                                                 </div>
                                                             </SelectItem>
-                                                            <SelectItem value="quantum">
+                                                            <SelectItem value="index">
                                                                 <div className="flex items-start gap-3 text-foreground">
                                                                     <Coins className="size-5" />
                                                                     <div className="grid gap-0.5">
                                                                         <p>
-                                                                            Create{" "}
+                                                                            Index{" "}
                                                                             <span className="font-medium text-foreground">
-                                                                                Index Token
+                                                                                Token
+                                                                            </span>
+                                                                        </p>
+                                                                        <p className="text-xs" data-description>
+                                                                            Create a new Charisma index token.
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </SelectItem>
+                                                            <SelectItem value="arbitrage">
+                                                                <div className="flex items-start gap-3 text-foreground">
+                                                                    <Coins className="size-5" />
+                                                                    <div className="grid gap-0.5">
+                                                                        <p>
+                                                                            Arbitrage{" "}
+                                                                            <span className="font-medium text-foreground">
+                                                                                Strategy
                                                                             </span>
                                                                         </p>
                                                                         <p className="text-xs" data-description>
@@ -281,16 +299,32 @@ export default function ContractDeployer() {
                                                                         </SelectItem>
                                                                         <SelectItem value="index">
                                                                             <div className="flex items-start gap-3 text-foreground">
-                                                                                <Coins className="size-5" />
+                                                                                <BsCurrencyExchange className="size-5" />
                                                                                 <div className="grid gap-0.5">
                                                                                     <p>
-                                                                                        Create{" "}
+                                                                                        Index{" "}
                                                                                         <span className="font-medium text-foreground">
-                                                                                            Index Token
+                                                                                            Token
                                                                                         </span>
                                                                                     </p>
                                                                                     <p className="text-xs" data-description>
                                                                                         Create a new Charisma index token.
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
+                                                                        <SelectItem value="strategy">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <BiMath className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        Arbitrage{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            Strategy
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Create an multi-step arbitrage trade
                                                                                     </p>
                                                                                 </div>
                                                                             </div>
@@ -315,7 +349,7 @@ export default function ContractDeployer() {
                                                     <FormItem className="w-full">
                                                         <FormLabel>Contract Name</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder={'For The Homies'} {...field} />
+                                                            <Input placeholder={'Awesome Contract'} {...field} />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -336,13 +370,17 @@ export default function ContractDeployer() {
                                             />
                                         </fieldset>
                                         {!loading && <motion.div initial="hidden" animate="visible" variants={fadeIn}>
-                                            {contractConfig.template === 'airdrop' ?
+                                            {template === 'airdrop' ?
                                                 <AirdropTemplate onFormChange={handleContractChange} />
-                                                : contractConfig.template === 'index' ?
+                                                : template === 'index' ?
                                                     <IndexTokenTemplate onFormChange={handleContractChange} />
-                                                    : null
+                                                    : template === 'proposal' ?
+                                                        <div>Not Implemented</div>
+                                                        : template === 'strategy' ?
+                                                            <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
+                                                            : <div>...</div>
                                                 // <ProposalTemplate onFormChange={handleContractChange} />
-                                                // : contractConfig.template === 'airdrop' ?
+                                                // : template === 'airdrop' ?
 
                                             }
                                         </motion.div>}
@@ -353,7 +391,7 @@ export default function ContractDeployer() {
                                         Output
                                     </Badge>
                                     <SyntaxHighlighter language="lisp" customStyle={{ background: 'black', height: '100%' }} wrapLongLines={true}>
-                                        {String(contractConfig.header) + String(contractConfig[contractConfig.template])}
+                                        {String(header) + String(body)}
                                     </SyntaxHighlighter>
                                     {/* <div
                                         className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring" x-chunk="dashboard-03-chunk-1"

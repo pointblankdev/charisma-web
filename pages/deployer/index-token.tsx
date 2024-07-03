@@ -284,7 +284,7 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
             <form onChange={handleChange}>
                 <fieldset className="grid grid-cols-1 gap-4 rounded-lg border p-4">
                     <legend className="-ml-1 px-1 text-sm font-medium">
-                        Create Index Token
+                        Index Token
                     </legend>
                     <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
                         <div className="flex items-end space-x-4">

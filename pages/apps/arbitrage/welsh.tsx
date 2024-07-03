@@ -17,7 +17,8 @@ import millify from 'millify';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/swap/select';
 import MultiSwap from '@components/swap/multi';
 import velarApi from '@lib/velar-api';
-import { StepConfig, SwapConfig, SwapContext, SwapContextType, Ticker, Token } from '@lib/hooks/use-swap-context';
+import { StepConfig, SwapConfig, SwapContext, SwapContextType, Ticker, Token, processStep, reverseSwapConfig } from '@lib/hooks/use-swap-context';
+import { Rotate3D } from 'lucide-react';
 
 type Props = {
   data: any;
@@ -61,7 +62,7 @@ export default function Swap({ data }: Props) {
   const [tokenList, setTokenList] = useState<Token[]>([]);
   const [swapConfig, setSwapConfig] = useState<SwapConfig>({
     steps: [
-      { fromToken: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', fromAmount: 0, action: 'SWAP', toToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', toAmount: 0 },
+      { fromToken: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', fromAmount: 100000, action: 'SWAP', toToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', toAmount: 0 },
       { fromToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', fromAmount: 0, action: 'SWAP', toToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2', toAmount: 0 },
       { fromToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2', fromAmount: 0, action: 'UNSTAKE', toToken: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', toAmount: 0 }
     ],
@@ -76,37 +77,21 @@ export default function Swap({ data }: Props) {
 
   const recalculateSwapConfig: SwapConfig = useMemo(() => {
 
-    swapConfig.steps.forEach((step: StepConfig, k: number) => {
-      if (step.action === 'SWAP') {
-        const pool = data.tickers.find((ticker: Ticker) => ticker.ticker_id === `${step.fromToken}_${step.toToken}`)
-        step.toAmount = pool?.last_price * step.fromAmount
-        if (!pool) {
-          const pool = data.tickers.find((ticker: Ticker) => ticker.ticker_id === `${step.toToken}_${step.fromToken}`)
-          step.toAmount = step.fromAmount / pool?.last_price
-        }
+    swapConfig.steps.forEach((step: StepConfig, index: number) => {
+      processStep(step, data.tickers);
+      // Update the next step
+      if (index < swapConfig.steps.length - 1) {
+        swapConfig.steps[index + 1].fromToken = step.toToken;
+        swapConfig.steps[index + 1].fromAmount = step.toAmount || 0;
       }
-      if (step.action === 'STAKE') {
-        if (step.fromToken.includes('welshcorgicoin-token') && step.toToken.includes('liquid-staked-welsh-v2')) {
-          step.toAmount = step.fromAmount / 1.0005
-        }
-      }
-      if (step.action === 'UNSTAKE') {
-        if (step.fromToken.includes('liquid-staked-welsh-v2') && step.toToken.includes('welshcorgicoin-token')) {
-          step.toAmount = step.fromAmount * 1.0005
-        }
-      }
-
-      // update the next step with the new fromToken and fromAmount
-      if (swapConfig.steps[k + 1]) swapConfig.steps[k + 1].fromToken = step.toToken
-      if (swapConfig.steps[k + 1]) swapConfig.steps[k + 1].fromAmount = step.toAmount
-    })
+    });
 
     setSwapConfig(swapConfig)
 
     return swapConfig
   }, [swapConfig, data.tickers])
 
-  // console.log({ recalculateSwapConfig })
+  console.log(swapConfig)
 
   return (
     <Page meta={meta} fullViewport>
@@ -125,7 +110,7 @@ export default function Swap({ data }: Props) {
 
 const SwapDashboard = () => {
 
-  const { swapConfig, tokenList } = useContext(SwapContext);
+  const { swapConfig, setSwapConfig, tokenList } = useContext(SwapContext);
 
   const arbitrageProfit = swapConfig.steps[swapConfig.steps.length - 1].toAmount - swapConfig.steps[0].fromAmount
   const arbitrageToken = tokenList.find((token: Token) => token.contractAddress === swapConfig.steps[swapConfig.steps.length - 1].toToken)
@@ -143,6 +128,7 @@ const SwapDashboard = () => {
               Stabilize STX-sWELSH pool price, accumulate sWELSH.
             </div>
           </CardTitle>
+          <Rotate3D className='w-8 h-8 mx-4 hover:text-primary/50 cursor-pointer' onClick={() => setSwapConfig({ ...swapConfig, ...reverseSwapConfig(swapConfig) })} />
         </div>
       </CardHeader>
       <CardContent className='z-20 p-4'>
@@ -259,7 +245,7 @@ const TokenSelect = ({ token, setToken }: any) => {
         {tokenList.map((token: Token) => (
           <SelectItem key={token.contractAddress} value={token.contractAddress} className='group/token'>
             <div className='flex space-x-2 items-center h-20'>
-              <Image src={token.imageUrl} width={48} height={48} alt='Stacks Token' className='z-30 w-12 h-12 border border-white rounded-full' />
+              <Image src={token.imageUrl} width={48} height={48} alt='Stacks Token' className='z-30 w-12 h-12 border rounded-full' />
               <div className='text-left'>
                 <div className='flex items-baseline space-x-1'>
                   <div className='text-xl font-medium leading-tight'>{token.symbol}</div>
