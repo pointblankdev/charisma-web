@@ -52,12 +52,12 @@ const MultiSwap = ({ data, lp = false }: any) => {
       functionArgs: [uintCV(amountIn)], //uintCV(1000000), uintCV(9070017), uintCV(960000), uintCV(8707216)
       postConditionMode: PostConditionMode.Allow,
       postConditions: [
-        Pc.principal(sender).willSendEq(amountIn).ft(contractAddress, ft),
+        // Pc.principal(sender).willSendEq(amountIn).ft(contractAddress, ft),
         // Pc.principal('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core').willSendGte(1).ustx(),
         // Pc.principal(sender).willSendGte(1).ustx(),
         // Pc.principal('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core').willSendGte(amountIn).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
         // Pc.principal(sender).willSendEq(amountIn).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2", 'liquid-staked-token'),
-        Pc.principal(sendingContract).willSendGte(amountIn).ft(contractAddress, ft),
+        // Pc.principal(sendingContract).willSendGte(amountIn).ft(contractAddress, ft),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
