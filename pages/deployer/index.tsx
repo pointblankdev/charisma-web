@@ -99,7 +99,7 @@ export default function ContractDeployer() {
         setLoading(false);
     }, []);
 
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+    const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
     const defaultValues: Partial<ContractFormValues> = {
         template: 'proposal'

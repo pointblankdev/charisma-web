@@ -17,6 +17,12 @@ import { StepConfig, SwapConfig, getStakingContract } from "@lib/hooks/use-swap-
 
 
 function generateClarityContract({ swapConfigString }: { swapConfigString: string }) {
+
+    const wstxContract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'
+    const liquidStakedCharisma = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
+    const lpToken = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
+
+    const optionalLiquidityAdd = `\n(try! (contract-call? 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router add-liquidity u54 ${wstxContract} ${liquidStakedCharisma} ${lpToken} u100000 u750000 u50000 u15000))`
     try {
         const swapConfig = JSON.parse(swapConfigString);
         const steps = swapConfig.steps;
@@ -25,17 +31,17 @@ function generateClarityContract({ swapConfigString }: { swapConfigString: strin
         let i = 0;
         while (i < steps.length) {
             const step = steps[i];
-            if (step.action === 'SWAP' && step.toToken === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx') {
+            if (step.action === 'SWAP' && step.toToken === wstxContract) {
                 if (i + 1 < steps.length && steps[i + 1].action === 'SWAP') {
                     const nextStep = steps[i + 1];
-                    contractCalls.push(`(try! (contract-call? '${step.fromToken.split('.')[0]}.univ2-path2 swap-3 amount-in amount-in '${step.fromToken} '${step.toToken} '${nextStep.toToken} '${nextStep.fromToken.split('.')[0]}.univ2-share-fee-to))`);
+                    contractCalls.push(`(try! (contract-call? 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-path2 swap-3 amount-in amount-in '${step.fromToken} '${step.toToken} '${nextStep.toToken} '${nextStep.fromToken.split('.')[0]}.univ2-share-fee-to))`);
                     i += 2;
                     continue;
                 }
             }
             switch (step.action) {
                 case 'SWAP':
-                    contractCalls.push(`(try! (contract-call? '${step.fromToken.split('.')[0]}.univ2-path2 swap amount-in))`);
+                    contractCalls.push(`(try! (contract-call? 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-path2 swap amount-in))`);
                     break;
                 case 'STAKE':
                 case 'UNSTAKE':
@@ -55,7 +61,7 @@ function generateClarityContract({ swapConfigString }: { swapConfigString: strin
 
         const contractString = `(define-public (execute-strategy (amount-in uint))
     (begin
-        ${contractCalls.join('\n        ')}
+        ${contractCalls.join('\n        ')}${optionalLiquidityAdd}
         (ok true)
     )
 )`;
