@@ -266,7 +266,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-pomboo-12.png'
       },
-      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pomboo',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-boo',
       wip: false,
     },
     {

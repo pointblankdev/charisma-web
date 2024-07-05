@@ -65,6 +65,7 @@ import { userSession } from "@components/stacks-session/connect"
 import { useConnect } from "@stacks/connect-react"
 import { PostConditionMode } from "@stacks/transactions"
 import { StacksMainnet } from "@stacks/network";
+import ProposalTemplate from "./proposal"
 
 
 const generateHeader = ({ name, sender, description }: any) => {
@@ -393,12 +394,10 @@ export default function ContractDeployer() {
                                                 : template === 'index' ?
                                                     <IndexTokenTemplate onFormChange={handleContractChange} />
                                                     : template === 'proposal' ?
-                                                        <div>Not Implemented</div>
+                                                        <ProposalTemplate onFormChange={handleContractChange} />
                                                         : template === 'strategy' ?
                                                             <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
                                                             : <div>...</div>
-                                                // <ProposalTemplate onFormChange={handleContractChange} />
-                                                // : template === 'airdrop' ?
 
                                             }
                                         </motion.div>}
