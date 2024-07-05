@@ -1,5 +1,14 @@
 {
     "name": "Liquid Staked Babywelsh",
     "description": "Liquid Staked Babywelsh represents a staked version of Babywelsh that allows holders to earn staking rewards while retaining liquidity.",
-    "image": "https://charisma.rocks/liquid-staked-babywelsh.png"
+    "image": "https://charisma.rocks/liquid-staked-babywelsh.png",
+    "cardImage": "/liquid-babywelsh.png",
+    "ft": "liquid-staked-token",
+    "contains": [
+        {
+            "address": "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kjvtr37ht",
+            "symbol": "BABYWELSH",
+            "ft": "tokensoft-token"
+        }
+    ]
 }

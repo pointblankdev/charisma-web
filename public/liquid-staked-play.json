@@ -1,5 +1,14 @@
 {
     "name": "Liquid Staked Play",
     "description": "Liquid Staked Play represents a staked version of Play that allows holders to earn staking rewards while retaining liquidity.",
-    "image": "https://charisma.rocks/liquid-staked-play.png"
+    "image": "https://charisma.rocks/liquid-staked-play.png",
+    "cardImage": "/liquid-play.png",
+    "ft": "liquid-staked-token",
+    "contains": [
+        {
+            "address": "SP1PW804599BZ46B4A0FYH86ED26XPJA7SFYNK1XS.play",
+            "symbol": "PLAY",
+            "ft": "play"
+        }
+    ]
 }

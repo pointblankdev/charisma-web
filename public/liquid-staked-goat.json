@@ -1,5 +1,14 @@
 {
     "name": "Liquid Staked Goat",
     "description": "Liquid Staked Goat represents a staked version of Goat that allows holders to earn staking rewards while retaining liquidity.",
-    "image": "https://charisma.rocks/liquid-staked-goat.png"
+    "image": "https://charisma.rocks/liquid-staked-goat.png",
+    "cardImage": "/liquid-goat.png",
+    "ft": "liquid-staked-token",
+    "contains": [
+        {
+            "address": "SP2F4QC563WN0A0949WPH5W1YXVC4M1R46QKE0G14.memegoatstx",
+            "symbol": "GOAT",
+            "ft": "memegoatstx"
+        }
+    ]
 }

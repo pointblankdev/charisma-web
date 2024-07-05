@@ -1,5 +1,14 @@
 {
     "name": "Liquid Staked Odin",
     "description": "Liquid Staked Odin represents a staked version of Odin that allows holders to earn staking rewards while retaining liquidity.",
-    "image": "https://charisma.rocks/liquid-staked-odin.png"
+    "image": "https://charisma.rocks/liquid-staked-odin.png",
+    "cardImage": "/liquid-charisma.png",
+    "ft": "liquid-staked-odin",
+    "contains": [
+        {
+            "address": "SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn",
+            "symbol": "ODIN",
+            "ft": "odin"
+        }
+    ]
 }

@@ -1,5 +1,14 @@
 {
     "name": "Liquid Staked Dogwifhat",
     "description": "Liquid Staked Dogwifhat represents a staked version of Dogwifhat that allows holders to earn staking rewards while retaining liquidity.",
-    "image": "https://charisma.rocks/liquid-staked-wif.png"
+    "image": "https://charisma.rocks/liquid-staked-wif.png",
+    "cardImage": "/liquid-wif.png",
+    "ft": "liquid-staked-token",
+    "contains": [
+        {
+            "address": "SP3WPNAEBYMX06RQNNYTH5PTJ1FRGX5A13ZZMZ01D.dogwifhat-token",
+            "symbol": "WIF",
+            "ft": "wif"
+        }
+    ]
 }
