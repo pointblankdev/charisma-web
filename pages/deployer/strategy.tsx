@@ -6,23 +6,16 @@ import { Input } from "@components/ui/input"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
-import { getContractSource, getSymbol } from "@lib/stacks-api"
-import { userSession } from '@components/stacks-session/connect';
-import { useConnect } from "@stacks/connect-react"
-import { StacksMainnet } from "@stacks/network";
-import { setContractMetadata } from "@lib/user-api"
-import { useEffect } from "react"
 import { Textarea } from "@components/ui/textarea"
-import { StepConfig, SwapConfig, getStakingContract } from "@lib/hooks/use-swap-context"
+import { getStakingContract } from "@lib/hooks/use-swap-context"
+import { Checkbox } from "@components/ui/checkbox" // Add this import
 
-
-function generateClarityContract({ swapConfigString }: { swapConfigString: string }) {
-
+function generateClarityContract({ swapConfigString, addLiquidity }: { swapConfigString: string, addLiquidity: boolean }) {
     const wstxContract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'
-    const liquidStakedCharisma = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
-    const lpToken = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
+    const liquidStakedCharisma = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma'
+    const lpToken = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha'
 
-    const optionalLiquidityAdd = `\n        (try! (contract-call? 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router add-liquidity u54 '${wstxContract} '${liquidStakedCharisma} '${lpToken} u100000 u750000 u50000 u15000))`
+    const optionalLiquidityAdd = `(try! (contract-call? 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router add-liquidity u55 '${wstxContract} '${liquidStakedCharisma} '${lpToken} amt0-desired amt1-desired amt0-min amt1-min))`
     try {
         const swapConfig = JSON.parse(swapConfigString);
         const steps = swapConfig.steps;
@@ -59,9 +52,10 @@ function generateClarityContract({ swapConfigString }: { swapConfigString: strin
             i += 1;
         }
 
-        const contractString = `(define-public (execute-strategy (amount-in uint))
+        const contractString = `(define-public (execute-strategy (amount-in uint) (amt0-desired uint) (amt1-desired uint) (amt0-min uint) (amt1-min uint))
     (begin
         ${contractCalls.join('\n        ')}
+        ${addLiquidity ? optionalLiquidityAdd : ''}
         (ok true)
     )
 )`;
@@ -78,6 +72,7 @@ function generateClarityContract({ swapConfigString }: { swapConfigString: strin
 
 const contractFormSchema = z.object({
     swapConfigString: z.string(),
+    addLiquidity: z.boolean().default(false),
 })
 
 type ContractFormValues = z.infer<typeof contractFormSchema>
@@ -85,6 +80,7 @@ type ContractFormValues = z.infer<typeof contractFormSchema>
 export default function ArbitrageStrategyTemplate({ onFormChange }: any) {
 
     const defaultValues: Partial<ContractFormValues> = {
+        addLiquidity: false,
     }
 
     const form = useForm<ContractFormValues>({
@@ -93,29 +89,52 @@ export default function ArbitrageStrategyTemplate({ onFormChange }: any) {
         mode: "onChange",
     })
 
-    const handleChange = (e: any) => {
-        const template = generateClarityContract({ swapConfigString: e.target.value })
+    const handleChange = () => {
+        const values = form.getValues();
+        const template = generateClarityContract({
+            swapConfigString: values.swapConfigString,
+            addLiquidity: values.addLiquidity
+        })
         onFormChange(template)
     };
 
     return (
         <Form {...form} >
-            <form>
+            <form onChange={handleChange}>
                 <fieldset className="grid grid-cols-1 gap-4 rounded-lg border p-4">
                     <legend className="-ml-1 px-1 text-sm font-medium">
                         Arbitrage Strategy
                     </legend>
-                    <div className="flex items-end space-x-4">
+                    <div className="flex flex-col space-y-4">
                         <FormField
                             control={form.control}
                             name="swapConfigString"
                             render={({ field }) => (
                                 <FormItem className="w-full">
                                     <FormLabel>Swap Config</FormLabel>
-                                    <FormControl onChange={handleChange}>
+                                    <FormControl>
                                         <Textarea placeholder={'json string'} {...field} className="min-h-96" />
                                     </FormControl>
                                     <FormMessage />
+                                </FormItem>
+                            )}
+                        />
+                        <FormField
+                            control={form.control}
+                            name="addLiquidity"
+                            render={({ field }) => (
+                                <FormItem className="flex flex-row items-start space-x-3 space-y-0">
+                                    <FormControl>
+                                        <Checkbox
+                                            checked={field.value}
+                                            onCheckedChange={field.onChange}
+                                        />
+                                    </FormControl>
+                                    <div className="space-y-1 leading-none">
+                                        <FormLabel>
+                                            Add Liquidity After Success
+                                        </FormLabel>
+                                    </div>
                                 </FormItem>
                             )}
                         />

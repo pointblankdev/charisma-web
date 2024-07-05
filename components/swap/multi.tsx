@@ -11,14 +11,13 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
-const MultiSwap = ({ data, lp = false }: any) => {
+const MultiSwap = ({ data, lpConfig }: any) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
   const amountIn = Number(data.steps[0].fromAmount * 1000000)
-  const royalties = Number(data.options.communityRoyality) + Number(data.options.creatorRoyality)
 
   console.log(data.steps[0])
 
@@ -39,17 +38,15 @@ const MultiSwap = ({ data, lp = false }: any) => {
     sendingContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'
   }
 
-
-
   function swap() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: firstAction === 'SWAP' ? 'arb-cha-launch-1' : 'arb-cha-launch-2', //lp ? "arb-and-micro-lp-add-test-2" : "arbitrage-w-s-sw-w-zf",
+      contractName: firstAction === 'SWAP' ? 'cha-arb-lp-1' : 'cha-arb-lp-2',
       functionName: "execute-strategy",
-      functionArgs: [uintCV(amountIn)], //uintCV(1000000), uintCV(9070017), uintCV(960000), uintCV(8707216)
+      functionArgs: [uintCV(amountIn), uintCV(lpConfig.amount0Desired), uintCV(lpConfig.amount1Desired), uintCV(lpConfig.amount0Min), uintCV(lpConfig.amount1Min)],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [
         // Pc.principal(sender).willSendEq(amountIn).ft(contractAddress, ft),

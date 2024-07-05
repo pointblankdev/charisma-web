@@ -1,26 +1,9 @@
 import {
-    Bird,
-    Book,
-    Bot,
-    Code2,
     Coins,
-    CornerDownLeft,
-    Currency,
-    LifeBuoy,
-    Merge,
-    Mic,
-    Paperclip,
-    Plane,
-    Rabbit,
     Scale,
     Send,
     Settings,
-    Settings2,
     Share,
-    SquareTerminal,
-    SquareUser,
-    Triangle,
-    Turtle,
 } from "lucide-react"
 import { Badge } from "@components/ui/badge"
 import { Button } from "@components/ui/button"
@@ -41,13 +24,6 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@components/ui/select"
-import { Textarea } from "@components/ui/textarea"
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@components/ui/tooltip"
 import Layout from "@components/layout"
 import AirdropTemplate from "./airdropper"
 import { useForm } from "react-hook-form"
@@ -66,7 +42,8 @@ import { useConnect } from "@stacks/connect-react"
 import { PostConditionMode } from "@stacks/transactions"
 import { StacksMainnet } from "@stacks/network";
 import ProposalTemplate from "./proposal"
-
+import { GetStaticProps } from "next"
+import velarApi from "@lib/velar-api"
 
 const generateHeader = ({ name, sender, description }: any) => {
     return `;; Title: ${name}
@@ -90,7 +67,7 @@ const contractFormSchema = z.object({
 
 type ContractFormValues = z.infer<typeof contractFormSchema>
 
-export default function ContractDeployer() {
+export default function ContractDeployer({ data }: any) {
 
     const [loading, setLoading] = useState(true);
 
@@ -140,7 +117,6 @@ export default function ContractDeployer() {
             network: new StacksMainnet(),
         });
     }
-
 
     return (
         <Layout>
@@ -500,9 +476,3 @@ export default function ContractDeployer() {
 //     })
 //     console.log(response)
 // }
-
-// other stuffs
-//
-// const safeName = name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
-// const safeTicker = ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
-// const ca = `${sender}.${safeName}`
