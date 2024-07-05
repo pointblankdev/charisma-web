@@ -84,7 +84,7 @@ const fadeIn = {
 
 const contractFormSchema = z.object({
     template: z.string(),
-    name: z.string(),
+    name: z.string().max(24, "Names have a max length of 24 characters, since they are used in the contract address"),
     description: z.string(),
 })
 
@@ -368,7 +368,7 @@ export default function ContractDeployer() {
                                                     <FormItem className="w-full">
                                                         <FormLabel>Contract Name</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder={'Awesome Contract'} {...field} />
+                                                            <Input placeholder={'A concise contract title'} {...field} />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -381,7 +381,7 @@ export default function ContractDeployer() {
                                                     <FormItem className="w-full">
                                                         <FormLabel>Description</FormLabel>
                                                         <FormControl>
-                                                            <Input placeholder={'To reward all the homies for their valor against all odds.'} {...field} />
+                                                            <Input placeholder={'Some details to explain what the contract is doing'} {...field} />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>

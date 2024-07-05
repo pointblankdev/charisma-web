@@ -118,7 +118,8 @@ export default function IndexDetailPage({ data }: Props) {
                 <CardTitle className="z-30 text-lg sm:text-xl font-semibold">
                   Index: {data.symbol}
                 </CardTitle>
-                <div className="flex space-x-4">
+                <div className="flex space-x-4 items-center">
+                  <div className='z-30 bg-background border border-primary/40 rounded-full px-2'>${data.tokenPrice.toFixed(2)} / {data.symbol}</div>
                   <div className="text-lg">${millify(data.tvl)} TVL</div>
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
@@ -330,6 +331,20 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     // remove duplicates from metadata.contains
     metadata.contains = Object.values(uniqueTokens);
 
+    // calculate token price
+    let tokenPrice = 0;
+    const tokenOnVelar = prices.find((token: any) => token.contractAddress === params?.id)
+    if (tokenOnVelar) {
+      tokenPrice = Number(tokenOnVelar.price)
+    } else {
+      metadata.contains.forEach((token: any) => {
+        const baseToken = prices.find((baseToken: any) => baseToken.contractAddress === token.address)
+        if (baseToken) {
+          tokenPrice += baseToken.price * token.weight
+        }
+      })
+    }
+
     const data = {
       address: params?.id,
       metadata: metadata,
@@ -342,6 +357,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       blocksUntilUnlock,
       prices: prices,
       tvl: tvl,
+      tokenPrice,
     }
 
 

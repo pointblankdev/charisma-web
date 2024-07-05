@@ -52,8 +52,8 @@ export const getServerSideProps = (async () => {
   try {
     // Fetch data from external API
     const [charismaRate, welshRate, tickers] = await Promise.all([
-      getStakedTokenExchangeRate('liquid-staked-charisma'),
-      getStakedTokenExchangeRate('liquid-staked-welsh-v2'),
+      getStakedTokenExchangeRate('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'),
+      getStakedTokenExchangeRate('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'),
       velarApi.tickers(),
     ]);
 
@@ -192,10 +192,8 @@ function TokenBalances({ rates }: { rates: Rates }) {
     (sWelshBalance * welshRate / Math.pow(10, 6)) +
     (iCCBalance * 100 * welshRate / Math.pow(10, 6))
 
-
   const stxPrice = prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
-  // todo: update chaPrices this to use wCHA when available
-  const chaPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma').last_price
+  const chaPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma').last_price
   const welshPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
 
   return (
