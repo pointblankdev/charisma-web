@@ -42,7 +42,7 @@ const MultiSwap = ({ data, lpConfig }: any) => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: firstAction === 'SWAP' ? 'cha-arb-lp-1' : 'cha-arb-lp-2',
+      contractName: firstAction === 'SWAP' ? 'wcha-arb-lp-1' : 'wcha-arb-lp-2',
       functionName: "execute-strategy",
       functionArgs: [uintCV(amountIn), uintCV(lpConfig.amount0Desired), uintCV(lpConfig.amount1Desired), uintCV(lpConfig.amount0Min), uintCV(lpConfig.amount1Min)],
       postConditionMode: PostConditionMode.Allow,
