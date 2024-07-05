@@ -66,7 +66,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-welsh-21.png'
       },
-      slug: 'stake/welsh',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2',
       wip: false,
       rewardCharisma: 100,
       rewardSTX: 100,
@@ -88,7 +88,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-leo-21.png'
       },
-      slug: 'stake/leo',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo',
       wip: false,
     },
     {
@@ -102,7 +102,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-nothing-21.png'
       },
-      slug: 'stake/not',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-not',
       wip: false,
     },
     {
@@ -116,7 +116,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-pepe-21.png'
       },
-      slug: 'stake/pepe',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe',
       wip: false,
     },
     {
@@ -130,7 +130,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-odin-21.png'
       },
-      slug: 'stake/odin',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin',
       wip: false,
       apps: [
         { slug: '/apps/uppsala', img: uppsala },
@@ -149,7 +149,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-long-21.png'
       },
-      slug: 'stake/long',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-long',
       wip: false,
     },
     {
@@ -163,7 +163,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-roo-21.png'
       },
-      slug: 'stake/roo',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo-v2',
       wip: false,
       apps: [
         { slug: '/kangaroo-burrow', img: kangarooBurrow },
@@ -182,7 +182,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-gus-21.png'
       },
-      slug: 'stake/gus',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-gus',
       wip: false,
     },
     {
@@ -196,7 +196,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-play-21.png'
       },
-      slug: 'stake/play',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-play',
       wip: false,
     },
     {
@@ -210,7 +210,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-babywelsh-21.png'
       },
-      slug: 'stake/babywelsh',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-babywelsh',
       wip: false,
     },
     {
@@ -224,7 +224,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-max-21.png'
       },
-      slug: 'stake/max',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-max',
       wip: false,
     },
     {
@@ -238,7 +238,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-wif-21.png'
       },
-      slug: 'stake/wif',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-wif',
       wip: false,
     },
     {
@@ -252,7 +252,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-goat-21.png'
       },
-      slug: 'stake/goat',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-goat',
       wip: false,
     },
     {
@@ -266,7 +266,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-pomboo-12.png'
       },
-      slug: 'stake/pomboo',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pomboo',
       wip: false,
     },
     {
@@ -280,7 +280,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-hashiko-21.png'
       },
-      slug: 'stake/hashiko',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-hashiko',
       wip: false,
     }
   ]

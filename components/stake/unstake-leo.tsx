@@ -26,7 +26,7 @@ const UnstakeLeoButton: React.FC<UnstakeLeoButtonProps> = ({ tokens }) => {
 
   async function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const { value } = await getStakedTokenExchangeRate('liquid-staked-leo')
+    const value = await getStakedTokenExchangeRate('liquid-staked-leo')
     const tokensOutMin = tokens6Dec * value / 1000000
     doContractCall({
       network: new StacksMainnet(),

@@ -27,7 +27,7 @@ const UnstakeOdinButton: React.FC<UnstakeOdinButtonProps> = ({ tokens }) => {
 
   async function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const { value } = await getStakedTokenExchangeRate('liquid-staked-odin')
+    const value = await getStakedTokenExchangeRate('liquid-staked-odin')
     const tokensOutMin = tokens6Dec * value / 1000000
     doContractCall({
       network: new StacksMainnet(),

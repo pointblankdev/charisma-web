@@ -57,12 +57,14 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { useEffect, useState } from "react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form"
 import { motion } from 'framer-motion';
-import { template } from "lodash"
 import IndexTokenTemplate from "./index-token"
 import { BsCurrencyExchange } from "react-icons/bs"
 import { BiMath } from "react-icons/bi"
 import ArbitrageStrategyTemplate from "./strategy"
 import { userSession } from "@components/stacks-session/connect"
+import { useConnect } from "@stacks/connect-react"
+import { PostConditionMode } from "@stacks/transactions"
+import { StacksMainnet } from "@stacks/network";
 
 
 const generateHeader = ({ name, sender, description }: any) => {
@@ -122,6 +124,22 @@ export default function ContractDeployer() {
     const handleHeaderChange = () => {
         setHeader(generateHeader({ sender, ...form.getValues() }))
     }
+
+    const { doContractDeploy, doContractCall } = useConnect();
+
+    const deployContract = (e: any) => {
+        e.preventDefault()
+        const name = form.getValues().name
+        const safeName = name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")
+        const safeContractName = `${safeName}-${Date.now().toString().slice(0, 7)}`
+        doContractDeploy({
+            contractName: safeContractName,
+            codeBody: `${header}${body}`,
+            postConditionMode: PostConditionMode.Allow,
+            network: new StacksMainnet(),
+        });
+    }
+
 
     return (
         <Layout>
@@ -232,12 +250,12 @@ export default function ContractDeployer() {
                                     </DrawerContent>
                                 </Drawer>
                                 <Button
-                                    variant="outline"
                                     size="sm"
                                     className="ml-auto gap-1.5 text-sm"
+                                    onClick={deployContract}
                                 >
                                     <Share className="size-3.5" />
-                                    Share
+                                    Deploy
                                 </Button>
                             </header>
                             <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
@@ -340,7 +358,7 @@ export default function ContractDeployer() {
                                         </fieldset>
                                         <fieldset className="grid grid-cols-1 gap-4 rounded-lg border p-4">
                                             <legend className="-ml-1 px-1 text-sm font-medium">
-                                                Airdrop Template
+                                                Contract Metadata
                                             </legend>
                                             <FormField
                                                 control={form.control}

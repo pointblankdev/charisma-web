@@ -544,16 +544,18 @@ export async function getWooTitleBeltContractEvents() {
 
 export async function getStakedTokenExchangeRate(contract: string) {
 
+    const [address, name] = contract.split('.')
+
     const response: any = await callReadOnlyFunction({
         network: new StacksMainnet(),
-        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: contract,
+        contractAddress: address,
+        contractName: name,
         functionName: "get-exchange-rate",
         functionArgs: [],
-        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+        senderAddress: address
     });
 
-    return cvToJSON(response)
+    return cvToJSON(response).value
 }
 
 export async function getFenrirBalance(contract: string) {
@@ -699,16 +701,46 @@ export async function getBlocksUntilUnlocked(contract: string) {
 
 export async function getTotalSupply(contract: string) {
 
+    const [address, name] = contract.split('.')
+
     const response: any = await callReadOnlyFunction({
         network: new StacksMainnet(),
-        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: contract,
+        contractAddress: address,
+        contractName: name,
         functionName: "get-total-supply",
         functionArgs: [],
-        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+        senderAddress: address
     });
 
-    return cvToJSON(response)
+    return cvToJSON(response).value.value
+}
+
+export async function getTotalInPool(contract: string) {
+
+    const [address, name] = contract.split('.')
+
+    let response: any;
+    if (name === 'liquid-staked-odin') {
+        response = await callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: address,
+            contractName: name,
+            functionName: "get-total-odin-in-pool",
+            functionArgs: [],
+            senderAddress: address
+        })
+    } else {
+        response = await callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: address,
+            contractName: name,
+            functionName: "get-total-in-pool",
+            functionArgs: [],
+            senderAddress: address
+        })
+    }
+
+    return Number(cvToJSON(response).value)
 }
 
 export async function getFenrirTotalSupply() {

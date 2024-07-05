@@ -10,7 +10,7 @@ import {
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
-import { getStakedTokenExchangeRate } from "@lib/stacks-api";
+import { getDecimals, getStakedTokenExchangeRate } from "@lib/stacks-api";
 
 interface UnstakeButtonProps {
   tokens: number;
@@ -20,6 +20,7 @@ interface UnstakeButtonProps {
   baseTokenContractAddress: string;
   baseTokenContractName: string;
   baseFungibleTokenName: string;
+  exchangeRate: number;
 }
 
 const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
@@ -29,21 +30,12 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
   baseTokenContractAddress,
   baseTokenContractName,
   baseFungibleTokenName,
+  exchangeRate,
 }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
-
-  useEffect(() => {
-    async function fetchExchangeRate() {
-      const { value } = await getStakedTokenExchangeRate(contractName)
-      setExchangeRate(value / 1000000)
-    }
-    fetchExchangeRate()
-  }, [contractName])
-
-  const [exchangeRate, setExchangeRate] = useState(0);
 
   const tokens6Dec = Number(tokens)
 

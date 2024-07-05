@@ -264,7 +264,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     // get token metadata from Stacks API + metadata URL
     const metadata = await getTokenURI(params?.id as string);
-    const supply = await getTotalSupply(contractName);
+    const supply = await getTotalSupply(params?.id as string);
     const symbol = await getSymbol(params?.id as string);
     const decimals = await getDecimals(params?.id as string);
 
@@ -274,7 +274,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     // TVL calculation
     let tvl = 0
     const tokenAddressList = metadata?.contains.map((token: any) => token.address);
-    const totalSupply: number = Number(supply.value.value) / Math.pow(10, decimals);
+    const totalSupply: number = Number(supply) / Math.pow(10, decimals);
     const baseTokensPriceData = prices.filter((token: any) => {
       return tokenAddressList.includes(token.contractAddress)
     });

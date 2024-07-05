@@ -58,8 +58,8 @@ export const getServerSideProps = (async () => {
     ]);
 
     const rates: Rates = {
-      'liquid-staked-charisma': charismaRate.value / Math.pow(10, 6),
-      'liquid-staked-welsh-v2': welshRate.value / Math.pow(10, 6),
+      'liquid-staked-charisma': charismaRate / Math.pow(10, 6),
+      'liquid-staked-welsh-v2': welshRate / Math.pow(10, 6),
       "prices": tickers
     }
 

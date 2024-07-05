@@ -26,7 +26,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens }) => {
 
   async function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const { value } = await getStakedTokenExchangeRate('liquid-staked-charisma')
+    const value = await getStakedTokenExchangeRate('liquid-staked-charisma')
     const tokensOutMin = tokens6Dec * value / 1000000
     doContractCall({
       network: new StacksMainnet(),
