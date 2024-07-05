@@ -19,8 +19,6 @@ const MultiSwap = ({ data, lpConfig }: any) => {
 
   const amountIn = Number(data.steps[0].fromAmount * 1000000)
 
-  console.log(data.steps[0])
-
   let ft = ''
   let sendingContract = ''
   const contractAddress = data.steps[0].fromToken
