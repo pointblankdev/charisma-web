@@ -48,7 +48,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       cardImage: {
         url: '/liquid-charisma-21.png'
       },
-      slug: 'stake/charisma',
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma',
       wip: false,
       apps: [
         { slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1', img: featherFallFund },
