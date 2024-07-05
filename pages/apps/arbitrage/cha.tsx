@@ -67,7 +67,7 @@ export default function Swap({ data }: Props) {
       { fromToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma', fromAmount: 500, action: 'SWAP', toToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', toAmount: 0 },
       { fromToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', fromAmount: 0, action: 'SWAP', toToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', toAmount: 0 },
       { fromToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', fromAmount: 0, action: 'UNSTAKE', toToken: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', toAmount: 0 },
-      { fromToken: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', fromAmount: 0, action: 'STAKE', toToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma', toAmount: 0 },
+      { fromToken: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', fromAmount: 0, action: 'WRAP', toToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma', toAmount: 0 },
     ],
     options: {
       communityRoyality: 200000000,
