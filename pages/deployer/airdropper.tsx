@@ -1,5 +1,6 @@
 import { UploadCloud } from "lucide-react";
 import { useEffect, useState, useRef } from "react";
+import _ from "lodash";
 
 const MAX_LIST_LENGTH = 200;
 
@@ -67,7 +68,9 @@ export default function AirdropTemplate({ onFormChange }: { onFormChange: (templ
     }
 
     const formatAddresses = (addresses: Address[]) => {
-        const formattedData = addresses.map((item, index) => ({
+        console.log(addresses.length)
+        console.log(_.uniq(addresses).length)
+        const formattedData = _.uniqBy(addresses, 'address').map((item, index) => ({
             id: index + 1,
             address: item.address,
             amount: item.amount
