@@ -30,7 +30,7 @@ const ReclaimVotes = ({ proposalPrincipal }: Props) => {
       functionName: "reclaim-votes",
       functionArgs: [principalCV(proposalPrincipal)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal(sender).willSendEq(1).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma-locked')],
+      postConditions: [Pc.principal(sender).willSendGte(1).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma-locked')],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
