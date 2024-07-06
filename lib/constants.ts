@@ -32,6 +32,10 @@ export const NAVIGATION = [
     route: '/swap'
   },
   {
+    name: 'Arbitrage',
+    route: '/apps/arbitrage/cha'
+  },
+  {
     name: 'Liquid Staking',
     route: '/liquid-staking'
   },

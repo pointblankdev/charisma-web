@@ -153,7 +153,10 @@ const SwapDashboard = ({ lpConfig }: any) => {
               Stabilize wCHA to sCHA price relationship, accumulate wCHA and sCHA.
             </div>
           </CardTitle>
-          <Rotate3D className='w-8 h-8 mx-4 hover:text-primary/50 cursor-pointer' onClick={() => setSwapConfig({ ...swapConfig, ...reverseSwapConfig(swapConfig) })} />
+          <div className='flex flex-col items-center hover:text-primary/50 cursor-pointer' onClick={() => setSwapConfig({ ...swapConfig, ...reverseSwapConfig(swapConfig) })}>
+            <Rotate3D className='w-8 h-8 mx-4' />
+            <div className='text-xxs'>Reverse Strategy</div>
+          </div>
         </div>
       </CardHeader>
       <CardContent className='z-20 p-4'>

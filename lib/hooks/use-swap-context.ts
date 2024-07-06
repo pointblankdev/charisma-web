@@ -112,7 +112,12 @@ export function processStep(step: StepConfig, tickers: Ticker[]): void {
             step.toAmount = step.fromAmount / getStakingPair(step.toToken).rate;
             break;
         case 'UNSTAKE':
-            console.log(step)
+            step.toAmount = step.fromAmount / getStakingPair(step.toToken).rate;
+            break;
+        case 'WRAP':
+            step.toAmount = step.fromAmount / getStakingPair(step.toToken).rate;
+            break;
+        case 'UNWRAP':
             step.toAmount = step.fromAmount / getStakingPair(step.toToken).rate;
             break;
         default:
