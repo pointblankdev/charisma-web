@@ -107,7 +107,7 @@ export const columns: ColumnDef<Proposal>[] = [
         cell: ({ row }) => {
             const amount = parseFloat(row.getValue("amount"))
 
-            return <div className="text-right font-medium">{amount}</div>
+            return <div className="text-right font-medium">{amount / Math.pow(10, 6)}</div>
         },
 
     },
@@ -117,7 +117,7 @@ export const columns: ColumnDef<Proposal>[] = [
         cell: ({ row }) => {
             const against = parseFloat(row.getValue("against"))
 
-            return <div className="text-right font-medium">{against}</div>
+            return <div className="text-right font-medium">{against / Math.pow(10, 6)}</div>
         },
 
     },
