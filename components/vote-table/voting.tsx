@@ -29,7 +29,7 @@ const ContractCallVote = ({ proposalPrincipal }: any) => {
       functionName: "vote",
       functionArgs: [uintCV(1000000), boolCV(pick), principalCV(proposalPrincipal)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal(sender).willSendEq(1).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma')],
+      postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma')],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
