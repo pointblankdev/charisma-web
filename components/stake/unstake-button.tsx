@@ -16,7 +16,7 @@ interface UnstakeButtonProps {
   tokens: number;
   contractAddress: string;
   contractName: string;
-  fungibleTokenName?: string;
+  fungibleTokenName: string;
   baseTokenContractAddress: string;
   baseTokenContractName: string;
   baseFungibleTokenName: string;
@@ -34,8 +34,6 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
 }) => {
   const { doContractCall } = useConnect();
 
-  console.log(fungibleTokenName)
-
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
@@ -51,7 +49,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
       contractName: contractName,
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [
         Pc.principal(sender).willSendEq(tokens6Dec).ft(`${contractAddress}.${contractName}`, fungibleTokenName),
         Pc.principal(`${contractAddress}.${contractName}`).willSendGte(tokensOutMin).ft(`${baseTokenContractAddress}.${baseTokenContractName}`, baseFungibleTokenName),
