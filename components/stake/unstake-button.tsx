@@ -26,13 +26,15 @@ interface UnstakeButtonProps {
 const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
   contractAddress,
   contractName,
-  fungibleTokenName = 'liquid-staked-token',
+  fungibleTokenName,
   baseTokenContractAddress,
   baseTokenContractName,
   baseFungibleTokenName,
   exchangeRate,
 }) => {
   const { doContractCall } = useConnect();
+
+  console.log(fungibleTokenName)
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
@@ -41,9 +43,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
 
   function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    // const tokensOutMin = (tokens6Dec * exchangeRate).toFixed(0)
-    // todo: look into why this is not working, proabably because of unit precision
-    const tokensOutMin = (tokens6Dec).toFixed(0)
+    const tokensOutMin = (tokens6Dec * exchangeRate).toFixed(0)
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -51,7 +51,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
       contractName: contractName,
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Deny,
+      postConditionMode: PostConditionMode.Allow,
       postConditions: [
         Pc.principal(sender).willSendEq(tokens6Dec).ft(`${contractAddress}.${contractName}`, fungibleTokenName),
         Pc.principal(`${contractAddress}.${contractName}`).willSendGte(tokensOutMin).ft(`${baseTokenContractAddress}.${baseTokenContractName}`, baseFungibleTokenName),

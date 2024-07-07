@@ -12,6 +12,7 @@ const StakingControls = ({
     tokensSelected,
     contractAddress,
     contractName,
+    fungibleTokenName,
     decimals,
     symbol,
     baseTokenContractAddress,
@@ -49,6 +50,7 @@ const StakingControls = ({
                     <UnstakeButton
                         contractAddress={contractAddress}
                         contractName={contractName}
+                        fungibleTokenName={fungibleTokenName}
                         tokens={-tokensSelected}
                         baseTokenContractAddress={baseTokenContractAddress}
                         baseTokenContractName={baseTokenContractName}

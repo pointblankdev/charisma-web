@@ -100,6 +100,7 @@ export default function Stake({ data }: Props) {
                                     tokensRequired={[]}
                                     contractAddress={data.contractAddress}
                                     contractName={data.contractName}
+                                    fungibleTokenName={data.metadata?.ft || 'liquid-staked-token'}
                                     symbol={tokensSelected >= 0 ? `${data.baseToken?.symbol}` : `${data.symbol}`}
                                     baseTokenContractAddress={data.baseToken?.address.split('.')[0]}
                                     baseTokenContractName={data.baseToken?.address.split('.')[1]}
