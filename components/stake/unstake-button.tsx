@@ -41,7 +41,9 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
 
   function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const tokensOutMin = (tokens6Dec * exchangeRate).toFixed(0)
+    // const tokensOutMin = (tokens6Dec * exchangeRate).toFixed(0)
+    // todo: look into why this is not working, proabably because of unit precision
+    const tokensOutMin = (tokens6Dec).toFixed(0)
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
