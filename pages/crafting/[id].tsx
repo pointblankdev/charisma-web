@@ -56,7 +56,9 @@ export default function IndexDetailPage({ data }: Props) {
 
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
 
-  let smallestBaseBalance = 0;
+  let smallestBaseBalance = Infinity;
+  let smallestTokenWeight = Infinity;
+
   useEffect(() => {
     setTokensSelected(smallestBaseBalance / 1000000 >= 100 ? 100 : 0);
   }, [smallestBaseBalance]);
@@ -78,26 +80,14 @@ export default function IndexDetailPage({ data }: Props) {
     };
   });
 
-  let smallestTokenWeight = 0;
-  const smallestBaseToken = baseTokens?.reduce(
-    (
-      smallestToken: { token: string | number; weight: number },
-      currentToken: { token: string | number; weight: number }
-    ) => {
-      if (smallestTokenWeight === 0) {
-        smallestTokenWeight = currentToken.weight;
-      }
-      const smallestBalance =
-        getBalanceByKey(smallestToken.token)?.balance || 0;
-      const currentBalance = getBalanceByKey(currentToken.token)?.balance || 0;
-      return currentBalance / currentToken.weight < smallestBalance / smallestToken.weight
-        ? currentToken
-        : smallestToken;
-    },
-    baseTokens[0]
-  );
-
-  smallestBaseBalance = getBalanceByKey(smallestBaseToken?.token)?.balance || 0;
+  // Calculate the smallest base balance and smallest token weight
+  baseTokens.forEach((token: { balance: number; weight: number; }) => {
+    const balanceRelativeToWeight = token.balance / token.weight;
+    if (balanceRelativeToWeight < smallestBaseBalance) {
+      smallestBaseBalance = token.balance;
+      smallestTokenWeight = token.weight;
+    }
+  });
 
   const tokensRequested = tokensSelected / Math.pow(10, 6);
   const tokensRequired = data.metadata?.contains.map((token: any) => tokensRequested * token.weight);

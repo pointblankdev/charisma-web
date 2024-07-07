@@ -30,7 +30,7 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
                         <TooltipContent
                             className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}
                         >
-                            Burning {millify(Math.abs(tokensRequested))} {data.symbol} returns{' '}
+                            Unwrapping {millify(Math.abs(tokensRequested))} {data.symbol} returns{' '}
                             {millify(Math.abs(tokensRequired[0]))}{' '}
                             {data.metadata?.contains[0].symbol}
                             {tokensRequired[1] && `and ${millify(Math.abs(tokensRequired[1]))} sCHA back to you.`}
@@ -49,7 +49,7 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
                         <TooltipContent
                             className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}
                         >
-                            Minting {millify(Math.abs(tokensRequested))} {data.symbol} requires{' '}
+                            Wrapping {millify(Math.abs(tokensRequested))} {data.symbol} requires{' '}
                             {millify(Math.abs(tokensRequired[0]))} {data.metadata?.contains[0].symbol}{' '}
                             {tokensRequired[1] && `and ${millify(Math.abs(tokensRequired[1]))} sCHA.`}
                         </TooltipContent>
