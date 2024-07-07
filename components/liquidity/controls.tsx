@@ -7,7 +7,7 @@ import millify from 'millify';
 
 const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data = {}, tokensRequested, tokensRequired, indexWeight }: any) => {
     return data.isRemoveLiquidityUnlocked ? (
-        <div className="flex flex-col">
+        <div className="flex flex-col min-w-48">
             <Slider
                 defaultValue={[0]}
                 min={min}
@@ -16,10 +16,10 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
                 className="w-full p-4"
                 onValueChange={(v: any) => onSetTokensSelected(v[0])}
             />
-            <div className="z-20 flex items-center space-x-1">
+            <div className="z-20 flex items-center justify-evenly space-x-1">
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger className='w-full'>
                             <RemoveLiquidityFromIndex
                                 amount={-tokensSelected}
                                 address={data.address}
@@ -39,7 +39,7 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
                 </TooltipProvider>
                 <TooltipProvider>
                     <Tooltip>
-                        <TooltipTrigger>
+                        <TooltipTrigger className='w-full'>
                             <AddLiquidityToIndex
                                 amount={tokensSelected}
                                 address={data.address}

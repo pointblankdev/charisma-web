@@ -60,7 +60,7 @@ const AddLiquidityToIndex = ({ amount, address, metadata }: { amount: number, ad
     }
 
     return (
-        <Button disabled={tokens <= 0} variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={addLiquidity}>Wrap</Button>
+        <Button disabled={tokens <= 0} variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30 w-full' onClick={addLiquidity}>Wrap</Button>
     );
 };
 

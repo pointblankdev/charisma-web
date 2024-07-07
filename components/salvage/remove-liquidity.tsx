@@ -63,7 +63,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { 
   }
 
   return (
-    <Button disabled={tokens <= 0} variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={salvage}>Unwrap</Button>
+    <Button disabled={tokens <= 0} variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30 w-full' onClick={salvage}>Unwrap</Button>
   );
 };
 
