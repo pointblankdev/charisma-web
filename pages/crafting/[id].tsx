@@ -56,21 +56,16 @@ export default function IndexDetailPage({ data }: Props) {
 
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
 
-  let smallestBaseBalance = Infinity;
-  let smallestTokenWeight = Infinity;
-
-  useEffect(() => {
-    setTokensSelected(smallestBaseBalance / 1000000 >= 100 ? 100 : 0);
-  }, [smallestBaseBalance]);
+  let maxPossibleIndex = Infinity;
+  let limitingToken = null;
 
   if (!data.metadata || !balances) return <div>Loading...</div>
 
   const token = getKeyByContractAddress(data.address);
-
   const indexWeight = data.indexWeight;
   const indexBalance = getBalanceByKey(token)?.balance || 0;
 
-  const baseTokens = data.metadata?.contains.map((token: any) => {
+  const baseTokens = data.metadata?.contains.map((token) => {
     const baseToken = getKeyByContractAddress(token.address)
     const baseTokenBalance = getBalanceByKey(baseToken)?.balance || 0;
     return {
@@ -80,17 +75,19 @@ export default function IndexDetailPage({ data }: Props) {
     };
   });
 
-  // Calculate the smallest base balance and smallest token weight
-  baseTokens.forEach((token: { balance: number; weight: number; }) => {
-    const balanceRelativeToWeight = token.balance / token.weight;
-    if (balanceRelativeToWeight < smallestBaseBalance) {
-      smallestBaseBalance = token.balance;
-      smallestTokenWeight = token.weight;
+  // Calculate the maximum possible index tokens for each base token
+  baseTokens.forEach((token) => {
+    // Calculate how many index tokens can be created from this base token
+    const possibleIndex = token.balance / (token.weight / indexWeight);
+
+    if (possibleIndex < maxPossibleIndex) {
+      maxPossibleIndex = possibleIndex;
+      limitingToken = token;
     }
   });
 
   const tokensRequested = tokensSelected / Math.pow(10, 6);
-  const tokensRequired = data.metadata?.contains.map((token: any) => tokensRequested * token.weight);
+  const tokensRequired = data.metadata?.contains.map((token) => tokensRequested * token.weight);
 
   return (
     <Page meta={meta} fullViewport>
@@ -209,7 +206,7 @@ export default function IndexDetailPage({ data }: Props) {
               {descriptionVisible && (
                 <LiquidityControls
                   min={-indexBalance / indexWeight}
-                  max={smallestBaseBalance / smallestTokenWeight}
+                  max={maxPossibleIndex}
                   onSetTokensSelected={setTokensSelected}
                   tokensSelected={tokensSelected}
                   indexWeight={indexWeight}
