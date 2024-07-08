@@ -321,7 +321,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     // calculate token price
     let tokenPrice = 0;
     const tokenOnVelar = prices.find((token: any) => token.contractAddress === params?.id)
-    if (tokenOnVelar && tokenOnVelar.price > 0) {
+    if (tokenOnVelar && tokenOnVelar.price > 0 && tokenOnVelar.symbol !== 'iQC') {
       tokenPrice = Number(tokenOnVelar.price)
     } else {
       metadata.contains.forEach((token: any) => {

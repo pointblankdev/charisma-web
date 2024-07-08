@@ -23,7 +23,8 @@ interface UnstakeButtonProps {
   exchangeRate: number;
 }
 
-const UnstakeButton: React.FC<UnstakeButtonProps> = ({ tokens,
+const UnstakeButton: React.FC<UnstakeButtonProps> = ({
+  tokens,
   contractAddress,
   contractName,
   fungibleTokenName,
