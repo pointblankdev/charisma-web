@@ -269,7 +269,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     // loop for each matching token to get the TVL of base tokens
     const tokenInPriceList = prices.find((token: any) => token.contractAddress === params?.id)
-    if (tokenInPriceList && tokenInPriceList.price > 0) {
+    if (tokenInPriceList && tokenInPriceList.price > 0 && tokenInPriceList.symbol !== 'iQC') {
       tvl = totalSupply * Number(tokenInPriceList.price);
     } else {
       const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
