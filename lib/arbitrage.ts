@@ -2,13 +2,14 @@ import { getArbitrageTxsFromMempool } from "./stacks-api";
 
 export async function runAll() {
     const config = getConfig();
-    const txs = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
+    // const mempoolTxs = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
+    const mempoolTxs = await getArbitrageTxsFromMempool('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router');
 
-    console.log({ config, txs })
+    console.log({ config, mempoolTxs })
 
     // run all jobs in config except ones still in the mempool
     const jobs = config.jobs.filter((job: any) => {
-        return !txs.find((tx: any) => tx.contract_call.function_name === job);
+        return !mempoolTxs.find((tx: any) => tx.contract_call.function_name === job);
     });
 
     console.log({ jobs })
