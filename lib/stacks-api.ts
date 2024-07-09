@@ -880,7 +880,7 @@ export async function getArbitrageTxsFromMempool(contractAddress: string) {
     return transactions
 }
 
-export async function executeArbitrageStrategy(address: string, functionName: string, fee: number) {
+export async function executeArbitrageStrategy(address: string, functionName: string, fee: number, nonce?: number) {
 
     const password = String(process.env.STACKS_ORACLE_PASSWORD);
     const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY)
@@ -900,6 +900,7 @@ export async function executeArbitrageStrategy(address: string, functionName: st
         PostConditionMode: PostConditionMode.Allow,
         postConditions: [],
         fee: fee, // set a tx fee if you don't want the builder to estimate
+        nonce: nonce,
         anchorMode: AnchorMode.Any,
     };
 

@@ -16,9 +16,9 @@ export async function runAll() {
     console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx) })
 
     // get highest none in mempool
-    // const highestNonce = mempoolTxs.reduce((acc: number, tx: any) => {
-    //     return Math.max(acc, tx.tx_nonce);
-    // }, 0);
+    const highestNonce = mempoolTxs.reduce((acc: number, tx: any) => {
+        return Math.max(acc, tx.nonce);
+    }, 0);
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
