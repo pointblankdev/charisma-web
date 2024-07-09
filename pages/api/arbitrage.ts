@@ -13,14 +13,15 @@ export default async function arbitrage(
     res: NextApiResponse<any | ErrorResponse>
 ) {
 
+    const response: any = {}
     try {
-        console.log('ARBITRAGE ENDPOINT HIT');
-        const response = await runAll()
-        console.log(response)
+        const transactions = await runAll()
+        console.log(transactions)
+        response.transactions = transactions
 
     } catch (error: any) {
         console.error(error.message);
     }
 
-    return res.status(200).json({});
+    return res.status(200).json(response);
 }
