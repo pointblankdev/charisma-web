@@ -12,7 +12,7 @@ export async function runAll() {
     });
 
     console.log({ jobs })
-
+    return {}
 }
 
 export function getConfig() {
