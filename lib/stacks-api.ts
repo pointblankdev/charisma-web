@@ -900,9 +900,12 @@ export async function executeArbitrageStrategy(address: string, functionName: st
         PostConditionMode: PostConditionMode.Allow,
         postConditions: [],
         fee: fee, // set a tx fee if you don't want the builder to estimate
-        nonce: nonce,
         anchorMode: AnchorMode.Any,
-    };
+    } as any;
+
+    if (nonce) {
+        txOptions.nonce = nonce
+    }
 
     const transaction = await makeContractCall(txOptions);
 
