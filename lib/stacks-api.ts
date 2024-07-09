@@ -899,7 +899,7 @@ export async function executeArbitrageStrategy(address: string, functionName: st
         senderKey: account.stxPrivateKey,
         // validateWithAbi: true,
         network,
-        PostConditionMode: PostConditionMode.Allow,
+        postConditionMode: PostConditionMode.Allow,
         fee: fee, // set a tx fee if you don't want the builder to estimate
         anchorMode: AnchorMode.Any,
     } as any;
