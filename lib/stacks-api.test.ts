@@ -191,7 +191,8 @@ describe('Stacks API', () => {
 
     it('should get arbitrage txs from mempool', async () => {
         const result = await getArbitrageTxsFromMempool('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router')
-        console.log(result)
+        // console.log(JSON.stringify(result.map(r => r.post_conditions), null, 4))
+        console.log(result.map(r => JSON.stringify(r.post_conditions)))
         expect(result).toBeDefined()
     }, 20000)
 
