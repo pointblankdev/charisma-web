@@ -5,7 +5,7 @@ export async function runAll() {
     // const mempoolTxs = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
     const mempoolTxs = await getArbitrageTxsFromMempool('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router');
 
-    console.log({ config, mempoolTxs })
+    console.log({ config, mempoolTxs: mempoolTxs.map((tx: any) => tx.contract_call.function_name) })
 
     // run all jobs in config except ones still in the mempool
     const jobs = config.jobs.filter((job: any) => {
