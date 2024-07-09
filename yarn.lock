@@ -2500,6 +2500,14 @@
     "@types/bn.js" "^5.1.0"
     "@types/node" "^18.0.4"
 
+"@stacks/common@^6.16.0":
+  version "6.16.0"
+  resolved "https://registry.yarnpkg.com/@stacks/common/-/common-6.16.0.tgz#1b980acf29fd66f34b26757e85d45c6abd2e4d32"
+  integrity sha512-PnzvhrdGRMVZvxTulitlYafSK4l02gPCBBoI9QEoTqgSnv62oaOXhYAUUkTMFKxdHW1seVEwZsrahuXiZPIAwg==
+  dependencies:
+    "@types/bn.js" "^5.1.0"
+    "@types/node" "^18.0.4"
+
 "@stacks/connect-react@^22.4.1":
   version "22.4.2"
   resolved "https://registry.yarnpkg.com/@stacks/connect-react/-/connect-react-22.4.2.tgz#a85966aa5fa6c46e5c70e47becd38984d60bd5a3"
@@ -2550,6 +2558,14 @@
     "@stacks/common" "^6.13.0"
     cross-fetch "^3.1.5"
 
+"@stacks/network@^6.16.0":
+  version "6.16.0"
+  resolved "https://registry.yarnpkg.com/@stacks/network/-/network-6.16.0.tgz#2d21d0a06fd5ad8f7f2b5fe672049ebac7a9fbd6"
+  integrity sha512-uqz9Nb6uf+SeyCKENJN+idt51HAfEeggQKrOMfGjpAeFgZV2CR66soB/ci9+OVQR/SURvasncAz2ScI1blfS8A==
+  dependencies:
+    "@stacks/common" "^6.16.0"
+    cross-fetch "^3.1.5"
+
 "@stacks/profile@^6.1.1", "@stacks/profile@^6.15.0":
   version "6.15.0"
   resolved "https://registry.yarnpkg.com/@stacks/profile/-/profile-6.15.0.tgz#28ea7c5f757de99b5cb247351f1c543895505353"
@@ -2579,7 +2595,7 @@
     base64-js "^1.5.1"
     jsontokens "^4.0.1"
 
-"@stacks/transactions@^6.1.1", "@stacks/transactions@^6.15.0", "@stacks/transactions@^6.5.5", "@stacks/transactions@^6.7.0":
+"@stacks/transactions@^6.1.1", "@stacks/transactions@^6.15.0", "@stacks/transactions@^6.7.0":
   version "6.15.0"
   resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-6.15.0.tgz#41d61aec7c00035112bf25d423139b9828207dc6"
   integrity sha512-P6XKDcqqycPy+KBJBw8+5N+u57D8moJN7msYdde1gYXERmvOo9ht/MNREWWQ7SAM7Nlhau5mpezCdYCzXOCilQ==
@@ -2588,6 +2604,18 @@
     "@noble/secp256k1" "1.7.1"
     "@stacks/common" "^6.13.0"
     "@stacks/network" "^6.13.0"
+    c32check "^2.0.0"
+    lodash.clonedeep "^4.5.0"
+
+"@stacks/transactions@^6.16.1":
+  version "6.16.1"
+  resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-6.16.1.tgz#dee8f83651e1e4713fa3cc5f2c645ec0055319f2"
+  integrity sha512-yCtUM+8IN0QJbnnlFhY1wBW7Q30Cxje3Zmy8DgqdBoM/EPPWadez/8wNWFANVAMyUZeQ9V/FY+8MAw4E+pCReA==
+  dependencies:
+    "@noble/hashes" "1.1.5"
+    "@noble/secp256k1" "1.7.1"
+    "@stacks/common" "^6.16.0"
+    "@stacks/network" "^6.16.0"
     c32check "^2.0.0"
     lodash.clonedeep "^4.5.0"
 
@@ -2884,9 +2912,9 @@
   integrity sha512-iiUgKzV9AuaEkZqkOLDIvlQiL6ltuZd9tGcW3gwpnX8JbuiuhFlEGmmFXEXkN50Cvq7Os88IY2v0dkDqXYWVgA==
 
 "@types/node@*":
-  version "20.14.9"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.14.9.tgz#12e8e765ab27f8c421a1820c99f5f313a933b420"
-  integrity sha512-06OCtnTXtWOZBJlRApleWndH4JsRVs1pDCc8dLSQp+7PpUpX3ePdHyeNSFTeSe7FtKyQkrlPvHwJOW3SLd8Oyg==
+  version "20.14.10"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-20.14.10.tgz#a1a218290f1b6428682e3af044785e5874db469a"
+  integrity sha512-MdiXf+nDuMvY0gJKxyfZ7/6UFsETO7mGKF54MVD/ekJS6HdFtpZFBgrh6Pseu64XTb2MLyFPlbW6hj8HYRQNOQ==
   dependencies:
     undici-types "~5.26.4"
 

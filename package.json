@@ -44,7 +44,7 @@
     "@stacks/common": "^6.5.5",
     "@stacks/connect-react": "^22.4.1",
     "@stacks/encryption": "^6.5.5",
-    "@stacks/transactions": "^6.5.5",
+    "@stacks/transactions": "^6.16.1",
     "@stacks/wallet-sdk": "^6.7.0",
     "@tanstack/react-table": "^8.9.3",
     "@vercel/analytics": "^1.0.2",
