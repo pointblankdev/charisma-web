@@ -112,8 +112,7 @@ export default function Stake({ data }: Props) {
                             </div>
                         </div>
                     </Card>
-
-                    {data.symbol === 'sWELSH' || data.symbol === 'sROO' && <div className='flex justify-center p-2 text-sm'>
+                    {(data.symbol === 'sWELSH' || data.symbol === 'sROO') && <div className='flex justify-center p-2 text-sm'>
                         <Link href={`/stake/old-${data.symbol.toLowerCase()}`}>Looking for the old {data.symbol} pool?</Link>
                     </div>}
                 </div>

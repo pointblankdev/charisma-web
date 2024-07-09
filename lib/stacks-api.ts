@@ -750,6 +750,7 @@ export async function getTotalInPool(contract: string) {
             functionArgs: [],
             senderAddress: address
         })
+        response = response.value
 
     } else {
         response = await callReadOnlyFunction({
