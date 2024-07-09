@@ -147,8 +147,8 @@ const generateTemplate = ({
     (ok token-a-ratio)
 )
 
-(define-read-only (get-token-a-ratio)
-    (ok token-a-ratio)
+(define-read-only (get-token-b-ratio)
+    (ok token-b-ratio)
 )
 
 (define-read-only (get-index-token-ratio)
@@ -279,7 +279,7 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
         onFormChange(generateTemplate(form.getValues()))
     }, [form])
 
-    const createMetadata = async (e) => {
+    const createMetadata = async (e: any) => {
         e.preventDefault()
         const safeName = form.getValues().name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
         const safeTicker = form.getValues().ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
