@@ -28,7 +28,12 @@ export async function runAll() {
     const broadcastedJobs = []
     for (const job of newJobs) {
         console.log(`Running job: ${job}`);
-        const newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee, ++highestNonce)
+        let newTx;
+        if (highestNonce === 0) {
+            newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee)
+        } else {
+            newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee, ++highestNonce)
+        }
         broadcastedJobs.push(newTx)
     }
 
