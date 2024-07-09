@@ -6,17 +6,12 @@ export async function runAll() {
 
     console.log({ config, txs })
 
-    //   for (const job of config.jobs) {
-    //     if (!tsx.includes(job.txId)) {
-    //       try {
-    //         const result = await executeJob(job);
-    //         await updateJobStatus(job.id, result);
-    //       } catch (error) {
-    //         console.error(`Error executing job ${job.id}:`, error);
-    //         await updateJobStatus(job.id, { success: false, error: error.message });
-    //       }
-    //     }
-    //   }
+    // run all jobs in config except ones still in the mempool
+    const jobs = config.jobs.filter((job: any) => {
+        return !txs.find((tx: any) => tx.contract_call.function_name === job);
+    });
+
+    console.log({ jobs })
 
 }
 

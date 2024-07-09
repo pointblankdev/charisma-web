@@ -13,16 +13,6 @@ export default async function arbitrage(
     res: NextApiResponse<any | ErrorResponse>
 ) {
 
-    if (req.method !== 'POST') {
-        return res.status(501).json({
-            error: {
-                code: 'method_unknown',
-                message: 'This endpoint only responds to POST'
-            }
-        });
-    }
-
-
     try {
         console.log('ARBITRAGE ENDPOINT HIT');
         const response = await runAll()
