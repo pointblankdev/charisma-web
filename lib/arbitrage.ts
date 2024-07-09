@@ -21,33 +21,21 @@ export async function runAll() {
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
-        return !mempoolTxs.find((tx: any) => tx.contract_call.function_name === job);
+        return !mempoolTxs.find((tx: any) => tx.contract_call.function_name === job.function);
     });
 
     // run all jobs
     const broadcastedJobs = []
     for (const job of newJobs) {
-        console.log(`Running job: ${job}`);
+        console.log(`Running job: ${job.function}`);
         let newTx;
         if (highestNonce === 0) {
-            newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee)
+            newTx = await executeArbitrageStrategy(job.address, job.name, config.gasFee)
         } else {
-            newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee, ++highestNonce)
+            newTx = await executeArbitrageStrategy(job.address, job.name, config.gasFee, ++highestNonce)
         }
         broadcastedJobs.push(newTx)
     }
-
-    // replace with new fee
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute1', config.gasFee, 18)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute2', config.gasFee, 111)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute3', config.gasFee, 111)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute4', config.gasFee, 111)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute5', config.gasFee, 111)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute6', config.gasFee, 111)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute7', config.gasFee, 111)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute8', config.gasFee, 111)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute9', config.gasFee, 111)
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute10', config.gasFee, 111)
 
     return broadcastedJobs
 }
