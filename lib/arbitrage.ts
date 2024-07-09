@@ -1,3 +1,4 @@
+import { sleep } from "sbtc";
 import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
 
 export function getConfig() {
@@ -25,6 +26,8 @@ export async function runAll() {
         console.log(`Running job: ${job}`);
         const newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee)
         broadcastedJobs.push(newTx)
+        // wait 5 seconds between each job
+        await sleep(5000)
     }
     return broadcastedJobs
 }
