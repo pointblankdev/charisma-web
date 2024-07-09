@@ -45,7 +45,7 @@ export default function Stake({ data }: Props) {
                 <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
 
                     <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl relative'>
-                        <Image alt={data.metadata?.name} src={data.metadata?.cardImage} width="1080" height="605" className='border-b border-accent-foreground' />
+                        {data.metadata?.cardImage && <Image alt={data.metadata?.name} src={data.metadata?.cardImage} width="1080" height="605" className='border-b border-accent-foreground' />}
                         {tvl > 0 && <div className='my-2 mx-4 absolute top-0 right-0 font-medium text-lg px-2 rounded-full bg-background border border-primary overflow-hidden'>${millify(tvl)} TVL</div>}
                         <div className='m-2'>
                             <div className='flex justify-between mb-2'>

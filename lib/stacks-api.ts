@@ -729,6 +729,26 @@ export async function getTotalInPool(contract: string) {
             functionArgs: [],
             senderAddress: address
         })
+    } else if (name === 'liquid-staked-roo') {
+        response = await callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: address,
+            contractName: name,
+            functionName: "get-total-roo-in-pool",
+            functionArgs: [],
+            senderAddress: address
+        })
+
+    } else if (name === 'liquid-staked-welsh') {
+        response = await callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: address,
+            contractName: name,
+            functionName: "get-total-welsh-in-pool",
+            functionArgs: [],
+            senderAddress: address
+        })
+
     } else {
         response = await callReadOnlyFunction({
             network: new StacksMainnet(),
