@@ -6,7 +6,15 @@
         },
         {
             "path": "/api/arbitrage",
-            "schedule": "* * * * * *"
+            "schedule": "0 * * * * *"
+        },
+        {
+            "path": "/api/arbitrage",
+            "schedule": "28 * * * * *"
+        },
+        {
+            "path": "/api/arbitrage",
+            "schedule": "30 * * * * *"
         }
     ]
 }

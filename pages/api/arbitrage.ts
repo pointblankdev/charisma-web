@@ -24,7 +24,6 @@ export default async function arbitrage(
 
 
     try {
-
         console.log('ARBITRAGE ENDPOINT HIT');
         const response = await runAll()
         console.log(response)
