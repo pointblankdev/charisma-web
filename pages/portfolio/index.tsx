@@ -13,6 +13,7 @@ import Image from 'next/image';
 import charismaLogo from '@public/charisma.png';
 import welshLogo from '@public/welsh-logo.png';
 import leoLogo from '@public/leo-logo.png';
+import odinLogo from '@public/odin-logo.png';
 
 import { Activity, CreditCard, DollarSign, MoreHorizontal, Users } from 'lucide-react';
 import { Button } from '@components/ui/button';
@@ -45,21 +46,24 @@ import InfoIcon from '@components/icons/icon-info';
 type Rates = {
   'liquid-staked-charisma': number
   'liquid-staked-welsh-v2': number,
+  'liquid-staked-odin': number,
   "prices": any
 }
 
 export const getServerSideProps = (async () => {
   try {
     // Fetch data from external API
-    const [charismaRate, welshRate, tickers] = await Promise.all([
+    const [charismaRate, welshRate, odinRate, tickers] = await Promise.all([
       getStakedTokenExchangeRate('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'),
       getStakedTokenExchangeRate('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'),
+      getStakedTokenExchangeRate('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin'),
       velarApi.tickers(),
     ]);
 
     const rates: Rates = {
       'liquid-staked-charisma': charismaRate / Math.pow(10, 6),
       'liquid-staked-welsh-v2': welshRate / Math.pow(10, 6),
+      'liquid-staked-odin': odinRate / Math.pow(10, 6),
       "prices": tickers
     }
 
@@ -72,6 +76,7 @@ export const getServerSideProps = (async () => {
         rates: {
           'liquid-staked-charisma': 0,
           'liquid-staked-welsh-v2': 0,
+          'liquid-staked-odin': 0,
           prices: {},
         },
       },
@@ -84,7 +89,7 @@ export default function PortfolioPage(
     rates,
   }: InferGetServerSidePropsType<typeof getServerSideProps>
 ) {
-  const supportedTokens = ['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'];
+  const supportedTokens = ['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn'];
 
   return (
     <SettingsLayout>
@@ -162,6 +167,7 @@ function TokenBalances({ rates }: { rates: Rates }) {
   const {
     'liquid-staked-charisma': charismaRate,
     'liquid-staked-welsh-v2': welshRate,
+    'liquid-staked-odin': odinRate,
     prices
   } = rates;
 
@@ -178,6 +184,9 @@ function TokenBalances({ rates }: { rates: Rates }) {
   const welshBalance = tokens[`SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin`]?.balance || 0
   const sWelshBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token`]?.balance || 0
 
+  const odinBalance = tokens[`SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn::odin`]?.balance || 0
+  const sOdinBalance = tokens[`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin::liquid-staked-odin`]?.balance || 0
+
   const totalCharismaTokens =
     (chaBalance / Math.pow(10, 6))
     + (sChaBalance * charismaRate / Math.pow(10, 6))
@@ -192,9 +201,14 @@ function TokenBalances({ rates }: { rates: Rates }) {
     (sWelshBalance * welshRate / Math.pow(10, 6)) +
     (iCCBalance * 100 * welshRate / Math.pow(10, 6))
 
+  const totalOdinTokens =
+    (odinBalance / Math.pow(10, 6)) +
+    (sOdinBalance * odinRate / Math.pow(10, 6))
+
   const stxPrice = prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
   const chaPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma').last_price
   const welshPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
+  const odinPrice = stxPrice / prices.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn').last_price
 
   return (
     <Card>
@@ -400,6 +414,67 @@ function TokenBalances({ rates }: { rates: Rates }) {
                 </TableCell>
                 <TableCell className="hidden md:table-cell text-xl text-right">
                   ${commafy((welshPrice * totalWelshTokens).toFixed(2))}
+                </TableCell>
+                <TableCell>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button disabled aria-haspopup="true" size="icon" variant="ghost">
+                        <MoreHorizontal className="h-4 w-4" />
+                        <span className="sr-only">Toggle menu</span>
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuItem>Edit</DropdownMenuItem>
+                      <DropdownMenuItem>Delete</DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell className="hidden sm:table-cell">
+                  <Image
+                    alt="Product image"
+                    className="aspect-square rounded-md object-cover"
+                    height="64"
+                    src={odinLogo}
+                    width="64"
+                  />
+                </TableCell>
+                <TableCell className="font-medium">
+                  <div className="text-lg">Odin</div>
+                </TableCell>
+                <TableCell className="hidden md:table-cell text-xl text-right">
+                  {tokens &&
+                    commafy(Math.floor(odinBalance / Math.pow(10, 6)))}
+                </TableCell>
+                <TableCell className="md:table-cell text-xl text-right whitespace-nowrap">
+                  <div className="leading-[0.8] text-sm text-primary-foreground/80 block sm:hidden">
+                    ${commafy((odinPrice * totalOdinTokens).toFixed(2))}
+                  </div>
+                  <div className="leading-[1] flex justify-end space-x-1 items-center">
+                    {tokens && commafy(Math.floor(totalOdinTokens))}</div>
+                  {odinBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mb-0.5">
+                        {tokens && commafy(Math.floor(odinBalance / Math.pow(10, 6)))} ODIN
+                      </div>
+                    </div>
+                  }
+                  {sOdinBalance > 0 &&
+                    <div className="leading-[1] text-right text-green-200 flex items-end justify-end">
+                      <div className="font-fine text-sm mr-1 mb-0.5">
+                        {millify(sOdinBalance / Math.pow(10, 6))}{' '}
+                        sODIN
+                      </div>
+                      <div className="font-fine text-sm mb-0.5">
+                        x{Number(odinRate)}
+                      </div>
+                    </div>
+                  }
+                </TableCell>
+                <TableCell className="hidden md:table-cell text-xl text-right">
+                  ${commafy((odinPrice * totalOdinTokens).toFixed(2))}
                 </TableCell>
                 <TableCell>
                   <DropdownMenu>
