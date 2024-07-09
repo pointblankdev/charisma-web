@@ -1,4 +1,4 @@
-import { getArbitrageTxsFromMempool } from "./stacks-api";
+import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
 
 export async function runAll() {
     const config = getConfig();
@@ -13,12 +13,18 @@ export async function runAll() {
     });
 
     console.log({ jobs })
+
+    // run all jobs
+    for (const job of jobs) {
+        console.log(`Running job: ${job}`);
+        // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee);
+    }
     return {}
 }
 
 export function getConfig() {
     return {
         jobs: JSON.parse(process.env.ARBITRAGE_JOBS || '[]'),
-        gasFee: process.env.GAS_FEE || 1000, // in STX
+        gasFee: Number(process.env.GAS_FEE || 1000), // in STX
     };
 }

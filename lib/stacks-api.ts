@@ -879,3 +879,32 @@ export async function getArbitrageTxsFromMempool(contractAddress: string) {
     }
     return transactions
 }
+
+export async function executeArbitrageStrategy(address: string, functionName: string, fee: number) {
+
+    const password = String(process.env.STACKS_ORACLE_PASSWORD);
+    const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY)
+
+    const wallet = await generateWallet({ secretKey, password });
+
+    const account = wallet.accounts[0];
+
+    const txOptions = {
+        contractAddress: address.split('.')[0],
+        contractName: address.split('.')[1],
+        functionName: functionName,
+        functionArgs: [],
+        senderKey: account.stxPrivateKey,
+        validateWithAbi: true,
+        network,
+        postConditions: [],
+        fee: fee, // set a tx fee if you don't want the builder to estimate
+        anchorMode: AnchorMode.Any,
+    };
+
+    const transaction = await makeContractCall(txOptions);
+
+    const broadcastResponse = await broadcastTransaction(transaction, network);
+
+    return broadcastResponse
+}
