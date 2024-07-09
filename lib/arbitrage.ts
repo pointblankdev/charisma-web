@@ -4,17 +4,17 @@ import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-a
 export function getConfig() {
     return {
         jobs: [
-            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute1" },
-            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute2" },
-            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute3" },
-            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute4" },
-            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute7" },
-            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute8" },
-            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute9" },
-            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute10" },
-            { "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-1", "function": "execute-strategy", args: [uintCV(1000000000)] },
-            { "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-2", "function": "execute-strategy", args: [uintCV(1000000000)] },
-            { "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf", "function": "execute-strategy", args: [uintCV(100000000000)] },
+            // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute1" },
+            // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute2" },
+            // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute3" },
+            // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute4" },
+            // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute7" },
+            // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute8" },
+            // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute9" },
+            // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute10" },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-1", function: "execute-strategy", args: [uintCV(1000000000)] },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-2", function: "execute-strategy", args: [uintCV(1000000000)] },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf", function: "execute-strategy", args: [uintCV(100000000000)] },
         ],
         gasFee: 10000, // in uSTX
     };
@@ -22,12 +22,12 @@ export function getConfig() {
 
 export async function runAll() {
     const config = getConfig();
-    const mempoolTxs1 = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
+    // const mempoolTxs1 = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
     const mempoolTxs2 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-1');
     const mempoolTxs3 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-2');
     const mempoolTxs4 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf');
 
-    const mempoolTxs = [...mempoolTxs1, ...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4]
+    const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4]
 
     console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
     console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx) })
@@ -39,7 +39,7 @@ export async function runAll() {
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
-        return !mempoolTxs.find((tx: any) => tx.contract_call.function_name === job.function);
+        return !mempoolTxs.find((tx: any) => tx.contract_call.contract_id === job.address);
     });
 
     // run all jobs
