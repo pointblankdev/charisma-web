@@ -1,4 +1,4 @@
-import { AccountsApi, BlocksApi, Configuration, NamesApi, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
+import { AccountsApi, BlocksApi, Configuration, FeesApi, NamesApi, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
@@ -23,13 +23,15 @@ const blocksApi = new BlocksApi(apiConfig);
 const txApi = new TransactionsApi(apiConfig);
 const accountsApi = new AccountsApi(apiConfig);
 const namesApi = new NamesApi(apiConfig);
+const feesApi = new FeesApi(apiConfig);
 
 export {
     scApi,
     blocksApi,
     txApi,
     accountsApi,
-    namesApi
+    namesApi,
+    feesApi
 }
 
 export async function getNameFromAddress(address: string) {
@@ -912,4 +914,14 @@ export async function executeArbitrageStrategy(address: string, functionName: st
     const broadcastResponse = await broadcastTransaction(transaction, network);
 
     return broadcastResponse
+}
+
+export async function getFeeEstimate(tx: string) {
+    const response = await feesApi.postFeeTransaction({
+        transactionFeeEstimateRequest: {
+            transaction_payload: tx,
+            estimated_len: 0
+        }
+    });
+    return response
 }

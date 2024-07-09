@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getDeployedIndexes, getGuestlist, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 
@@ -195,5 +195,10 @@ describe('Stacks API', () => {
         // console.log(result.map(r => JSON.stringify(r.post_conditions)))
         expect(result).toBeDefined()
     }, 20000)
+
+    it('should get a fee rate request', async () => {
+        const result = await getFeeEstimate('0x84890bfdd1ed70e67439ae49c9996e02531165f273145a609d70d7041b1eae18')
+        console.log(result)
+    })
 
 })

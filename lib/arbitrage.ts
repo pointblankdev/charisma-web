@@ -31,5 +31,9 @@ export async function runAll() {
         const newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee, ++highestNonce)
         broadcastedJobs.push(newTx)
     }
+
+
+    await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute4', 25000, 17)
+
     return broadcastedJobs
 }
