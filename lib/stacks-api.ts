@@ -1,5 +1,5 @@
 import { AccountsApi, BlocksApi, Configuration, NamesApi, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
-import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
+import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
 import { getAllWallets } from "./cms-providers/dato";
@@ -897,6 +897,7 @@ export async function executeArbitrageStrategy(address: string, functionName: st
         senderKey: account.stxPrivateKey,
         validateWithAbi: true,
         network,
+        PostConditionMode: PostConditionMode.Allow,
         postConditions: [],
         fee: fee, // set a tx fee if you don't want the builder to estimate
         anchorMode: AnchorMode.Any,
