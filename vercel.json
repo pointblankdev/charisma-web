@@ -3,6 +3,10 @@
         {
             "path": "/api/update-wallet-data",
             "schedule": "0 * * * *"
+        },
+        {
+            "path": "/api/arbitrage",
+            "schedule": "* * * * * *"
         }
     ]
 }
