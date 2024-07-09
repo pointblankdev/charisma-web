@@ -1,16 +1,11 @@
-import Link from "next/link"
+import Link from 'next/link';
 
-import { cn } from "@lib/utils"
+import { cn } from '@lib/utils';
+import { HTMLAttributes } from 'react';
 
-export function MainNav({
-  className,
-  ...props
-}: React.HTMLAttributes<HTMLElement>) {
+export function MainNav({ className, ...props }: HTMLAttributes<HTMLElement>) {
   return (
-    <nav
-      className={cn("flex items-center space-x-4 lg:space-x-6", className)}
-      {...props}
-    >
+    <nav className={cn('flex items-center space-x-4 lg:space-x-6', className)} {...props}>
       {/* <Link
         href="/quest-manager"
         className="text-sm font-medium transition-colors hover:text-primary"
@@ -24,5 +19,5 @@ export function MainNav({
         Quest Manager
       </Link>
     </nav>
-  )
+  );
 }

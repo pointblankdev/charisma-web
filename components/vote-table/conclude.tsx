@@ -1,14 +1,9 @@
-import React, { useEffect, useState } from "react";
-import { useConnect } from "@stacks/connect-react";
-import { StacksMainnet } from "@stacks/network";
-import {
-  AnchorMode,
-  PostConditionMode,
-  principalCV,
-  Pc
-} from "@stacks/transactions";
-import { userSession } from "@components/stacks-session/connect";
-import { Button } from "@components/ui/button";
+import { useEffect, useState } from 'react';
+import { useConnect } from '@stacks/connect-react';
+import { StacksMainnet } from '@stacks/network';
+import { AnchorMode, PostConditionMode, principalCV } from '@stacks/transactions';
+import { userSession } from '@components/stacks-session/connect';
+import { Button } from '@components/ui/button';
 
 type Props = {
   proposalPrincipal: string;
@@ -24,18 +19,18 @@ const Conclude = ({ proposalPrincipal }: Props) => {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
-      contractName: "dme001-proposal-voting",
-      functionName: "conclude",
+      contractAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ',
+      contractName: 'dme001-proposal-voting',
+      functionName: 'conclude',
       functionArgs: [principalCV(proposalPrincipal)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
+      onFinish: data => {
+        console.log('onFinish:', data);
       },
       onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+        console.log('onCancel:', 'Transaction was canceled');
+      }
     });
   }
 

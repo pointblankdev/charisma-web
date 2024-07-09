@@ -1,13 +1,13 @@
-
 import px from '@lib/to-pixels';
 import { cn } from '@lib/utils';
 import styles from './loading-dots.module.css';
+import { ReactNode } from 'react';
 
 interface Props {
   size?: number;
   height?: number | string;
   reverse?: boolean;
-  children?: React.ReactNode;
+  children?: ReactNode;
 }
 
 export default function LoadingDots({ size = 2, height, children, reverse }: Props) {

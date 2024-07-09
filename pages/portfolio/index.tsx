@@ -28,7 +28,7 @@ import liquidPepe from '@public/liquid-pepe.png';
 import liquidPlay from '@public/liquid-play.png';
 import liquidWelsh from '@public/liquid-welsh.png';
 import liquidWif from '@public/liquid-wif.png';
-import { Activity, CreditCard, DollarSign, MoreHorizontal, Users } from 'lucide-react';
+import {  MoreHorizontal } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import {
   DropdownMenu,

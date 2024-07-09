@@ -1,54 +1,59 @@
-import React, { useEffect, useState } from "react";
-import { AppConfig, showConnect, UserSession } from "@stacks/connect-react";
+import { ComponentPropsWithoutRef, ElementRef, forwardRef, useEffect, useState } from 'react';
+import { AppConfig, showConnect, UserSession } from '@stacks/connect-react';
 import styles from './index.module.css';
 import { cn } from '@lib/utils';
-import { Button } from "@components/ui/button";
+import { Button } from '@components/ui/button';
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
   NavigationMenuLink,
   NavigationMenuList,
-  NavigationMenuTrigger,
-  NavigationMenuViewport,
-} from "@components/ui/navigation-menu"
-import Link from "next/link";
-import { BiSolidUserPin } from "react-icons/bi";
-import Image from "next/image";
-import charisma from "@public/quests/a1.png";
+  NavigationMenuTrigger
+} from '@components/ui/navigation-menu';
+import Link from 'next/link';
+import { BiSolidUserPin } from 'react-icons/bi';
+import Image from 'next/image';
+import charisma from '@public/quests/a1.png';
 
-export const appConfig = new AppConfig(["store_write", "publish_data"]);
+export const appConfig = new AppConfig(['store_write', 'publish_data']);
 
 export const userSession = new UserSession({ appConfig });
 
 export const appDetails = {
-  name: "Charisma",
-  icon: "https://charisma.rocks/charisma.png",
+  name: 'Charisma',
+  icon: 'https://charisma.rocks/charisma.png'
 };
 
 function authenticate() {
   showConnect({
     appDetails,
-    redirectTo: "/",
+    redirectTo: '/',
     onFinish: () => {
       window.location.reload();
     },
-    userSession,
+    userSession
   });
 }
 
 function disconnect() {
-  userSession.signUserOut("/");
+  userSession.signUserOut('/');
 }
 
 const ConnectWallet = () => {
   const [mounted, setMounted] = useState(false);
   const [address, setAddress] = useState('');
   useEffect(() => {
-    setMounted(true)
+    setMounted(true);
     if (userSession.isUserSignedIn()) {
-      setAddress(`${userSession.loadUserData().profile.stxAddress.mainnet.slice(0, 4)}...${userSession.loadUserData().profile.stxAddress.mainnet.slice(-4)}`)
+      setAddress(
+        `${userSession
+          .loadUserData()
+          .profile.stxAddress.mainnet.slice(
+            0,
+            4
+          )}...${userSession.loadUserData().profile.stxAddress.mainnet.slice(-4)}`
+      );
     }
   }, []);
 
@@ -67,9 +72,7 @@ const ConnectWallet = () => {
                       href="/portfolio"
                     >
                       <BiSolidUserPin className="h-6 w-6" />
-                      <div className="mb-2 mt-4 text-lg font-medium">
-                        {address}
-                      </div>
+                      <div className="mb-2 mt-4 text-lg font-medium">{address}</div>
                       <p className="text-sm leading-tight text-muted-foreground">
                         View and manage your Charisma tokens.
                       </p>
@@ -79,8 +82,15 @@ const ConnectWallet = () => {
                     src={charisma}
                     height={1200}
                     width={600}
-                    alt='profile background'
-                    className={cn("w-full object-cover transition-all", "aspect-[1/2]", 'flex', 'z - 0', 'absolute', 'inset-0')}
+                    alt="profile background"
+                    className={cn(
+                      'w-full object-cover transition-all',
+                      'aspect-[1/2]',
+                      'flex',
+                      'z - 0',
+                      'absolute',
+                      'inset-0'
+                    )}
                   />
                 </li>
                 <ListItem href="/faucet" title="Faucet">
@@ -101,7 +111,11 @@ const ConnectWallet = () => {
   }
 
   return (
-    <Button onClick={authenticate} id="cta-btn" className={cn(styles['cta-btn'], 'whitespace-nowrap', 'w-full')}>
+    <Button
+      onClick={authenticate}
+      id="cta-btn"
+      className={cn(styles['cta-btn'], 'whitespace-nowrap', 'w-full')}
+    >
       Connect Wallet
     </Button>
   );
@@ -109,29 +123,26 @@ const ConnectWallet = () => {
 
 export default ConnectWallet;
 
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <Link
-          href="#"
-          ref={ref}
-          className={cn(
-            "text-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  )
-})
-ListItem.displayName = "ListItem"
+const ListItem = forwardRef<ElementRef<'a'>, ComponentPropsWithoutRef<'a'>>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <Link
+            href="#"
+            ref={ref}
+            className={cn(
+              'text-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+              className
+            )}
+            {...props}
+          >
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">{children}</p>
+          </Link>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
+ListItem.displayName = 'ListItem';

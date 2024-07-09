@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useConnect } from "@stacks/connect-react";
-import { StacksMainnet } from "@stacks/network";
-import {
-  AnchorMode,
-  Pc,
-  PostConditionMode,
-  uintCV,
-} from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
-import { Button } from "@components/ui/button";
-import millify from "millify";
+import { FC, useEffect, useState } from 'react';
+import { useConnect } from '@stacks/connect-react';
+import { StacksMainnet } from '@stacks/network';
+import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
+import ConnectWallet, { userSession } from '../stacks-session/connect';
+import { Button } from '@components/ui/button';
+import millify from 'millify';
 
 interface StakeButtonProps {
   tokens: string;
 }
 
-const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
+const StakeButton: FC<StakeButtonProps> = ({ tokens }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -23,32 +18,29 @@ const StakeButton: React.FC<StakeButtonProps> = ({ tokens }) => {
     setMounted(true);
   }, []);
 
-  const tokens6Dec = Number(tokens) * 1000000
+  const tokens6Dec = Number(tokens) * 1000000;
 
   function stake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-charisma",
-      functionName: "stake",
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'liquid-staked-charisma',
+      functionName: 'stake',
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         Pc.principal(sender)
           .willSendEq(tokens6Dec)
-          .ft(
-            "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token",
-            "charisma"
-          ),
+          .ft('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', 'charisma')
       ],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
+      onFinish: data => {
+        console.log('onFinish:', data);
       },
       onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+        console.log('onCancel:', 'Transaction was canceled');
+      }
     });
   }
 

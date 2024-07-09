@@ -1,43 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { useConnect } from "@stacks/connect-react";
-import { StacksMainnet } from "@stacks/network";
-import {
-  AnchorMode,
-  PostConditionMode,
-} from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
-import { Button } from "@components/ui/button";
-import { newWallet } from "@lib/user-api";
-import millify from "millify";
+import { useEffect, useState } from 'react';
+import { useConnect } from '@stacks/connect-react';
+import { StacksMainnet } from '@stacks/network';
+import { AnchorMode, PostConditionMode } from '@stacks/transactions';
+import ConnectWallet, { userSession } from '../stacks-session/connect';
+import { Button } from '@components/ui/button';
+import { newWallet } from '@lib/user-api';
+import millify from 'millify';
 
-const ClaimFaucetButton = ({ tokensToClaim, isHolder }: { tokensToClaim: number, isHolder: boolean }) => {
+const ClaimFaucetButton = ({
+  tokensToClaim,
+  isHolder
+}: {
+  tokensToClaim: number;
+  isHolder: boolean;
+}) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   function claim() {
     try {
-      const profile = userSession.loadUserData().profile
-      newWallet({ wallet: profile })
+      const profile = userSession.loadUserData().profile;
+      newWallet({ wallet: profile });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "champions-faucet",
-      functionName: "claim",
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'champions-faucet',
+      functionName: 'claim',
       functionArgs: [],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
+      onFinish: data => {
+        console.log('onFinish:', data);
       },
       onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+        console.log('onCancel:', 'Transaction was canceled');
+      }
     });
   }
 
@@ -46,7 +51,13 @@ const ClaimFaucetButton = ({ tokensToClaim, isHolder }: { tokensToClaim: number,
   }
 
   return (
-    <Button disabled={!isHolder || tokensToClaim == 0} className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={claim}>Claim {millify(tokensToClaim)} CHA tokens</Button>
+    <Button
+      disabled={!isHolder || tokensToClaim == 0}
+      className="text-md w-full hover:bg-[#ffffffee] hover:text-primary"
+      onClick={claim}
+    >
+      Claim {millify(tokensToClaim)} CHA tokens
+    </Button>
   );
 };
 

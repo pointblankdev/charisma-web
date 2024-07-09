@@ -1,14 +1,8 @@
-"use client"
+'use client';
 
-import * as React from "react"
-
-import { cn } from "@lib/utils"
-import {
-  Avatar,
-  AvatarFallback,
-  AvatarImage,
-} from "@components/ui/avatar"
-import { Button } from "@components/ui/button"
+import { cn } from '@lib/utils';
+import { Avatar, AvatarFallback, AvatarImage } from '@components/ui/avatar';
+import { Button } from '@components/ui/button';
 import {
   Command,
   CommandEmpty,
@@ -16,8 +10,8 @@ import {
   CommandInput,
   CommandItem,
   CommandList,
-  CommandSeparator,
-} from "@components/ui/command"
+  CommandSeparator
+} from '@components/ui/command';
 import {
   Dialog,
   DialogContent,
@@ -25,61 +19,56 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
-} from "@components/ui/dialog"
-import { Input } from "@components/ui/input"
-import { Label } from "@components/ui/label"
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@components/ui/popover"
+  DialogTrigger
+} from '@components/ui/dialog';
+import { Input } from '@components/ui/input';
+import { Label } from '@components/ui/label';
+import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover';
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-} from "@components/ui/select"
-import { CheckIcon, PlusCircleIcon, SortAscIcon } from "lucide-react"
+  SelectValue
+} from '@components/ui/select';
+import { CheckIcon, PlusCircleIcon, SortAscIcon } from 'lucide-react';
+import { ComponentPropsWithoutRef, useState } from 'react';
 
 const groups = [
   {
-    label: "Personal Account",
+    label: 'Personal Account',
     teams: [
       {
-        label: "Alicia Koch",
-        value: "personal",
-      },
-    ],
+        label: 'Alicia Koch',
+        value: 'personal'
+      }
+    ]
   },
   {
-    label: "Teams",
+    label: 'Teams',
     teams: [
       {
-        label: "Acme Inc.",
-        value: "acme-inc",
+        label: 'Acme Inc.',
+        value: 'acme-inc'
       },
       {
-        label: "Monsters Inc.",
-        value: "monsters",
-      },
-    ],
-  },
-]
+        label: 'Monsters Inc.',
+        value: 'monsters'
+      }
+    ]
+  }
+];
 
-type Team = (typeof groups)[number]["teams"][number]
+type Team = typeof groups[number]['teams'][number];
 
-type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
+type PopoverTriggerProps = ComponentPropsWithoutRef<typeof PopoverTrigger>;
 
 // interface TeamSwitcherProps extends PopoverTriggerProps { }
 
 export default function TeamSwitcher({ className }: PopoverTriggerProps) {
-  const [open, setOpen] = React.useState(false)
-  const [showNewTeamDialog, setShowNewTeamDialog] = React.useState(false)
-  const [selectedTeam, setSelectedTeam] = React.useState<Team>(
-    groups[0].teams[0]
-  )
+  const [open, setOpen] = useState(false);
+  const [showNewTeamDialog, setShowNewTeamDialog] = useState(false);
+  const [selectedTeam, setSelectedTeam] = useState<Team>(groups[0].teams[0]);
 
   return (
     <Dialog open={showNewTeamDialog} onOpenChange={setShowNewTeamDialog}>
@@ -90,7 +79,7 @@ export default function TeamSwitcher({ className }: PopoverTriggerProps) {
             role="combobox"
             aria-expanded={open}
             aria-label="Select a team"
-            className={cn("w-[200px] justify-between", className)}
+            className={cn('w-[200px] justify-between', className)}
           >
             <Avatar className="mr-2 h-5 w-5">
               <AvatarImage
@@ -108,14 +97,14 @@ export default function TeamSwitcher({ className }: PopoverTriggerProps) {
             <CommandList>
               <CommandInput placeholder="Search team..." />
               <CommandEmpty>No team found.</CommandEmpty>
-              {groups.map((group) => (
+              {groups.map(group => (
                 <CommandGroup key={group.label} heading={group.label}>
-                  {group.teams.map((team) => (
+                  {group.teams.map(team => (
                     <CommandItem
                       key={team.value}
                       onSelect={() => {
-                        setSelectedTeam(team)
-                        setOpen(false)
+                        setSelectedTeam(team);
+                        setOpen(false);
                       }}
                       className="text-sm"
                     >
@@ -130,10 +119,8 @@ export default function TeamSwitcher({ className }: PopoverTriggerProps) {
                       {team.label}
                       <CheckIcon
                         className={cn(
-                          "ml-auto h-4 w-4",
-                          selectedTeam.value === team.value
-                            ? "opacity-100"
-                            : "opacity-0"
+                          'ml-auto h-4 w-4',
+                          selectedTeam.value === team.value ? 'opacity-100' : 'opacity-0'
                         )}
                       />
                     </CommandItem>
@@ -147,8 +134,8 @@ export default function TeamSwitcher({ className }: PopoverTriggerProps) {
                 <DialogTrigger asChild>
                   <CommandItem
                     onSelect={() => {
-                      setOpen(false)
-                      setShowNewTeamDialog(true)
+                      setOpen(false);
+                      setShowNewTeamDialog(true);
                     }}
                   >
                     <PlusCircleIcon className="mr-2 h-5 w-5" />
@@ -163,9 +150,7 @@ export default function TeamSwitcher({ className }: PopoverTriggerProps) {
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Create team</DialogTitle>
-          <DialogDescription>
-            Add a new team to manage products and customers.
-          </DialogDescription>
+          <DialogDescription>Add a new team to manage products and customers.</DialogDescription>
         </DialogHeader>
         <div>
           <div className="space-y-4 py-2 pb-4">
@@ -181,16 +166,12 @@ export default function TeamSwitcher({ className }: PopoverTriggerProps) {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="free">
-                    <span className="font-medium">Free</span> -{" "}
-                    <span className="text-muted-foreground">
-                      Trial for two weeks
-                    </span>
+                    <span className="font-medium">Free</span> -{' '}
+                    <span className="text-muted-foreground">Trial for two weeks</span>
                   </SelectItem>
                   <SelectItem value="pro">
-                    <span className="font-medium">Pro</span> -{" "}
-                    <span className="text-muted-foreground">
-                      $9/month per user
-                    </span>
+                    <span className="font-medium">Pro</span> -{' '}
+                    <span className="text-muted-foreground">$9/month per user</span>
                   </SelectItem>
                 </SelectContent>
               </Select>
@@ -205,5 +186,5 @@ export default function TeamSwitcher({ className }: PopoverTriggerProps) {
         </DialogFooter>
       </DialogContent>
     </Dialog>
-  )
+  );
 }

@@ -1,9 +1,9 @@
-
+import { ReactNode } from 'react';
 import styles from './header.module.css';
 
 type Props = {
-  hero: React.ReactNode;
-  description: React.ReactNode;
+  hero: ReactNode;
+  description: ReactNode;
 };
 
 export default function Header({ hero, description }: Props) {

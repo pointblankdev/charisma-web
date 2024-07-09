@@ -1,9 +1,7 @@
-import { Separator } from "@components/ui/separator"
-import { SidebarNav } from "@components/settings/sidebar-nav"
-import Layout from "@components/layout"
-import Page from "@components/page"
-import Link from "next/link"
-import { META_DESCRIPTION } from "@lib/constants"
+import Layout from '@components/layout';
+import Page from '@components/page';
+import { META_DESCRIPTION } from '@lib/constants';
+import { ReactNode } from 'react';
 
 const meta = {
   title: 'Charisma | Settings',
@@ -12,22 +10,21 @@ const meta = {
 
 const sidebarNavItems = [
   {
-    title: "Fungible Tokens",
-    href: "/portfolio/fungible-tokens",
+    title: 'Fungible Tokens',
+    href: '/portfolio/fungible-tokens'
   },
   {
-    title: "Profile",
-    href: "/portfolio/profile",
-  },
-]
+    title: 'Profile',
+    href: '/portfolio/profile'
+  }
+];
 
 interface SettingsLayoutProps {
-  children: React.ReactNode
+  children: ReactNode;
 }
 
 export default function SettingsLayout({ children }: SettingsLayoutProps) {
   return (
-
     <Page meta={meta} fullViewport>
       <Layout>
         <div className="space-y-6 p-2 sm:p-10 pb-16">
@@ -42,12 +39,10 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
             {/* <aside className="lg:w-1/5">
               <SidebarNav items={sidebarNavItems} />
             </aside> */}
-            <div className="flex-1">
-              {children}
-            </div>
+            <div className="flex-1">{children}</div>
           </div>
         </div>
       </Layout>
-    </Page >
-  )
+    </Page>
+  );
 }

@@ -8,14 +8,14 @@ import styleUtils from './utils.module.css';
 import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
-import React, { useEffect } from 'react';
+import { ReactNode, useState } from 'react';
 import { BsBookHalf, BsDiscord, BsTwitter } from 'react-icons/bs';
 import ConnectWallet from './stacks-session/connect';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
 import velarApi from '@lib/velar-api';
 
 type Props = {
-  children: React.ReactNode;
+  children: ReactNode;
   className?: string;
   hideNav?: boolean;
   layoutStyles?: any;
@@ -25,7 +25,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const router = useRouter();
   const activeRoute = router.asPath;
 
-  const [priceFeedActive, setPriceFeedActive] = React.useState<boolean>(true);
+  const [priceFeedActive, setPriceFeedActive] = useState<boolean>(true);
 
   // useEffect(() => {
   //   try {
@@ -105,23 +105,21 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   );
 }
 
-const PriceDataLiveMonitor = ({
-  active
-}: {
-  active: boolean;
-}) => {
+const PriceDataLiveMonitor = ({ active }: { active: boolean }) => {
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-red-500'
-                }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
+                active ? 'bg-green-500 animate-ping' : 'bg-red-500'
+              }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500 animate-ping'
-                }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
+                active ? 'bg-green-500' : 'bg-red-500 animate-ping'
+              }`}
             />
           </div>
         </TooltipTrigger>
@@ -130,8 +128,7 @@ const PriceDataLiveMonitor = ({
         >
           {active
             ? 'Price data feed is live'
-            : `There is an error getting token pricing data. Expect liquidity pool TVLs and portfolio balances to be inaccurate until the price data feed is back online.`
-          }
+            : `There is an error getting token pricing data. Expect liquidity pool TVLs and portfolio balances to be inaccurate until the price data feed is back online.`}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

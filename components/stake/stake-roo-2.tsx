@@ -1,21 +1,16 @@
-import React, { useEffect, useState } from "react";
-import { useConnect } from "@stacks/connect-react";
-import { StacksMainnet } from "@stacks/network";
-import {
-  AnchorMode,
-  Pc,
-  PostConditionMode,
-  uintCV,
-} from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
-import { Button } from "@components/ui/button";
-import millify from "millify";
+import { FC, useEffect, useState } from 'react';
+import { useConnect } from '@stacks/connect-react';
+import { StacksMainnet } from '@stacks/network';
+import { AnchorMode, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
+import ConnectWallet, { userSession } from '../stacks-session/connect';
+import { Button } from '@components/ui/button';
+import millify from 'millify';
 
 interface StakeRooButtonProps {
   tokens: string;
 }
 
-const StakeRooButton: React.FC<StakeRooButtonProps> = ({ tokens }) => {
+const StakeRooButton: FC<StakeRooButtonProps> = ({ tokens }) => {
   const { doContractCall } = useConnect();
 
   const [mounted, setMounted] = useState(false);
@@ -23,32 +18,29 @@ const StakeRooButton: React.FC<StakeRooButtonProps> = ({ tokens }) => {
     setMounted(true);
   }, []);
 
-  const tokens6Dec = Number(tokens) * 1000000
+  const tokens6Dec = Number(tokens) * 1000000;
 
   function stake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "liquid-staked-roo-v2",
-      functionName: "stake",
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'liquid-staked-roo-v2',
+      functionName: 'stake',
       functionArgs: [uintCV(tokens6Dec)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
         Pc.principal(sender)
           .willSendEq(tokens6Dec)
-          .ft(
-            "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo",
-            "kangaroo"
-          ),
+          .ft('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', 'kangaroo')
       ],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
+      onFinish: data => {
+        console.log('onFinish:', data);
       },
       onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+        console.log('onCancel:', 'Transaction was canceled');
+      }
     });
   }
 

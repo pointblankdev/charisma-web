@@ -1,12 +1,12 @@
 import styles from './index.module.css';
 import { cn } from '@lib/utils';
-import React, { ElementRef } from 'react';
+import { ElementRef, useEffect, useRef } from 'react';
 import useClickOutside from '@lib/hooks/use-click-outside';
 import InfoIcon from '@components/icons/icon-info';
 import { Button } from '@components/ui/button';
 
 const SignIn = ({ handleLogin }: any) => {
-  React.useEffect(() => {
+  useEffect(() => {
     setTimeout(() => {
       const el = document.getElementById('cta-btn');
       el?.classList.add('show-overlay');
@@ -14,7 +14,7 @@ const SignIn = ({ handleLogin }: any) => {
       tooltip?.classList.add('fade-in');
     }, 10000);
   }, []);
-  const ctaRef = React.useRef<ElementRef<'button'>>(null);
+  const ctaRef = useRef<ElementRef<'button'>>(null);
   const clickedOutside = () => {
     const el = document.getElementById('cta-btn');
     const tooltip = document.getElementById('cta-tooltip');
@@ -31,7 +31,7 @@ const SignIn = ({ handleLogin }: any) => {
         <InfoIcon />
         Click here to connect your Stacks wallet
       </div>
-    </div >
+    </div>
   );
 };
 

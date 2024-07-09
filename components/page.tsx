@@ -1,9 +1,9 @@
-
 import { cn } from '@lib/utils';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 
 import { SITE_NAME, SITE_URL, TWITTER_USER_NAME } from '@lib/constants';
+import { ReactNode } from 'react';
 
 type Meta = {
   title: string | null;
@@ -14,7 +14,7 @@ type Meta = {
 
 type Props = {
   meta: Meta;
-  children: React.ReactNode;
+  children: ReactNode;
   fullViewport?: boolean;
 };
 

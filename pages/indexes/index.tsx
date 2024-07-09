@@ -6,8 +6,6 @@ import Layout from '@components/layout';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png';
 import liquidStakedRoo from '@public/liquid-staked-roo.png';
 import liquidStakedOdin from '@public/liquid-staked-odin.png';
-import { PlusIcon } from 'lucide-react';
-import { useEffect, useState } from 'react';
 import Image from 'next/image';
 
 type Props = {
@@ -96,16 +94,24 @@ export default function Crafting({ indexes }: Props) {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto py-10 gap-12 flex flex-col">
           <div className="flex flex-col border-2 p-2 rounded-lg border-[#f5f7fa14]">
-            <ul className='m-2 space-y-4'>
+            <ul className="m-2 space-y-4">
               <li>Leverage your liquid staked memecoins to mint new tokens called Indexes.</li>
-              <li>Indexes enable you to consolidate your tokens into a single, more valuable token- like an stocks index fund.</li>
-              <li>Indexes always maintain a fixed ratio between their base pair tokens, so you'll never be subject to impermanent loss.</li>
-              <li>The staking process for Indexes is 100% trustless, so your funds are always safe and can be withdrawn at any time.</li>
+              <li>
+                Indexes enable you to consolidate your tokens into a single, more valuable token-
+                like an stocks index fund.
+              </li>
+              <li>
+                Indexes always maintain a fixed ratio between their base pair tokens, so you'll
+                never be subject to impermanent loss.
+              </li>
+              <li>
+                The staking process for Indexes is 100% trustless, so your funds are always safe and
+                can be withdrawn at any time.
+              </li>
             </ul>
           </div>
 
           <div className="flex gap-2 flex-col">
-
             <div className="px-2 w-full rounded-lg bg-[#252932]">
               <table className="border-[#f5f7fa14] w-full">
                 <tr className="border-b-[1px] border-[#f5f7fa14]">
@@ -117,7 +123,15 @@ export default function Crafting({ indexes }: Props) {
                 </tr>
                 {indexes.map((item, i) => (
                   <tr className="border-b-[1px] border-[#f5f7fa14]" key={i}>
-                    <td className="p-4"><Image src={item.cardImage.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 border border-white rounded-full grow' /></td>
+                    <td className="p-4">
+                      <Image
+                        src={item.cardImage.url}
+                        width={40}
+                        height={40}
+                        alt="guild-logo"
+                        className="w-10 h-10 border border-white rounded-full grow"
+                      />
+                    </td>
                     <td className="py-4">{item.ticker}</td>
                     <td className="py-4">{item.title}</td>
                     {/* <td className="py-4">{item.subtitle}</td> */}

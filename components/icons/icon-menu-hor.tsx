@@ -1,4 +1,6 @@
-function HorizontalMenuIcon(props: React.SVGProps<SVGSVGElement>) {
+import { SVGProps } from 'react';
+
+function HorizontalMenuIcon(props: SVGProps<SVGSVGElement>) {
   return (
     <svg
       width={24}
