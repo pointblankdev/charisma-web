@@ -1,15 +1,33 @@
+import { uintCV } from "@stacks/transactions";
 import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
 
 export function getConfig() {
     return {
-        jobs: JSON.parse(process.env.ARBITRAGE_JOBS || '[]'),
-        gasFee: 25000, // in STX
+        jobs: [
+            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute1" },
+            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute2" },
+            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute3" },
+            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute4" },
+            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute7" },
+            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute8" },
+            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute9" },
+            // { "address": "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", "function": "execute10" },
+            { "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-1", "function": "execute-strategy", args: [uintCV(1000000000)] },
+            { "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-2", "function": "execute-strategy", args: [uintCV(1000000000)] },
+            { "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf", "function": "execute-strategy", args: [uintCV(100000000000)] },
+        ],
+        gasFee: 10000, // in uSTX
     };
 }
 
 export async function runAll() {
     const config = getConfig();
-    const mempoolTxs = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
+    const mempoolTxs1 = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
+    const mempoolTxs2 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-1');
+    const mempoolTxs3 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-2');
+    const mempoolTxs4 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf');
+
+    const mempoolTxs = [...mempoolTxs1, ...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4]
 
     console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
     console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx) })
@@ -28,12 +46,11 @@ export async function runAll() {
     const broadcastedJobs = []
     for (const job of newJobs) {
         console.log(`Running job: ${job.function}`);
-        let newTx;
-        if (highestNonce === 0) {
-            newTx = await executeArbitrageStrategy(job.address, job.function, config.gasFee)
-        } else {
-            newTx = await executeArbitrageStrategy(job.address, job.function, config.gasFee, ++highestNonce)
-        }
+        const strategy: any = { address: job.address, function: job.function, fee: config.gasFee, args: job.args }
+
+        if (highestNonce !== 0) { strategy.nonce = ++highestNonce }
+
+        const newTx = await executeArbitrageStrategy(strategy)
         broadcastedJobs.push(newTx)
     }
 

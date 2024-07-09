@@ -18,7 +18,6 @@ import useWallet from '@lib/hooks/use-wallet-balances';
 import StakingControls from '@components/liquidity/staking';
 import velarApi from '@lib/velar-api';
 import { getDecimals, getStakedTokenExchangeRate, getSymbol, getTokenURI, getTotalInPool, getTotalSupply } from '@lib/stacks-api';
-import Link from 'next/link';
 
 export default function Stake({ data }: Props) {
 
@@ -112,10 +111,6 @@ export default function Stake({ data }: Props) {
                             </div>
                         </div>
                     </Card>
-
-                    {data.symbol === 'sWELSH' || data.symbol === 'sROO' && <div className='flex justify-center p-2 text-sm'>
-                        <Link href={`/stake/old-${data.symbol.toLowerCase()}`}>Looking for the old {data.symbol} pool?</Link>
-                    </div>}
                 </div>
             </Layout>
         </Page>
@@ -129,17 +124,18 @@ type Props = {
 export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: any) => {
 
     try {
-        const [contractAddress, contractName] = params.ca.split('.');
+        const ca = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh'
+        const [contractAddress, contractName] = ca.split('.');
 
         // get token metadata from Stacks API + metadata URL
-        const metadata = await getTokenURI(params.ca);
-        const supply = await getTotalSupply(params.ca);
-        const symbol = await getSymbol(params.ca);
-        const decimals = await getDecimals(params.ca);
+        const metadata = await getTokenURI(ca);
+        const supply = await getTotalSupply(ca);
+        const symbol = await getSymbol(ca);
+        const decimals = await getDecimals(ca);
 
-        const exchangeRate = await getStakedTokenExchangeRate(params.ca)
+        const exchangeRate = await getStakedTokenExchangeRate(ca)
 
-        const tokensInPool = await getTotalInPool(params.ca)
+        const tokensInPool = await getTotalInPool(ca)
 
         // if rebase token has a price on velar, calculate TVL with that
         // if not, check base token price on velar, and calculate TVL with that
@@ -156,10 +152,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
         }
 
         const data = {
-            ca: params.ca,
+            ca: ca,
             contractAddress,
             contractName,
-            metadata,
+            metadata: {
+                ...metadata,
+                ft: 'liquid-staked-welsh',
+            },
             symbol,
             decimals: Number(decimals),
             supply: Number(supply),
@@ -169,7 +168,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
             tvl,
         }
 
-        console.log(data)
+        // console.log(data)
 
         return {
             props: { data }
