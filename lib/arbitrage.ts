@@ -30,9 +30,9 @@ export async function runAll() {
         console.log(`Running job: ${job.function}`);
         let newTx;
         if (highestNonce === 0) {
-            newTx = await executeArbitrageStrategy(job.address, job.name, config.gasFee)
+            newTx = await executeArbitrageStrategy(job.address, job.function, config.gasFee)
         } else {
-            newTx = await executeArbitrageStrategy(job.address, job.name, config.gasFee, ++highestNonce)
+            newTx = await executeArbitrageStrategy(job.address, job.function, config.gasFee, ++highestNonce)
         }
         broadcastedJobs.push(newTx)
     }
