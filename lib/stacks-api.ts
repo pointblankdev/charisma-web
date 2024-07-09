@@ -883,7 +883,7 @@ export async function getArbitrageTxsFromMempool(contractAddress: string) {
     return transactions
 }
 
-export async function executeArbitrageStrategy({ address, function, fee, nonce, args }: any) {
+export async function executeArbitrageStrategy({ address, functionName, fee, nonce, args }: any) {
 
     const password = String(process.env.STACKS_ORACLE_PASSWORD);
     const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY)
@@ -895,7 +895,7 @@ export async function executeArbitrageStrategy({ address, function, fee, nonce, 
     const txOptions = {
         contractAddress: address.split('.')[0],
         contractName: address.split('.')[1],
-        functionName: function,
+        functionName: functionName,
         functionArgs: args || [],
         senderKey: account.stxPrivateKey,
         network,

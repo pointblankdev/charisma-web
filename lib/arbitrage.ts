@@ -46,7 +46,7 @@ export async function runAll() {
     const broadcastedJobs = []
     for (const job of newJobs) {
         console.log(`Running job: ${job.function}`);
-        const strategy: any = { address: job.address, function: job.function, fee: config.gasFee, args: job.args }
+        const strategy: any = { address: job.address, functionName: job.function, fee: config.gasFee, args: job.args }
 
         if (highestNonce !== 0) { strategy.nonce = ++highestNonce }
 
