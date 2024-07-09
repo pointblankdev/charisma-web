@@ -178,7 +178,7 @@ export default function IndexDetailPage({ data }: Props) {
                               />
                               {Math.abs(tokensRequired[k]).toFixed(0) !== '0' && (
                                 <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                                  {millify(Math.abs(tokensRequired[k]))}
+                                  {millify(Math.abs(tokensRequired[k] * Math.pow(10, 6) / Math.pow(10, token.decimals)))}
                                 </div>
                               )}
                             </div>
@@ -301,7 +301,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     const baseTokens = await Promise.all(
       metadata.contains.map(async (token: any) => {
         const tokenMetadata = await getTokenURI(token.address);
-        return tokenMetadata;
+        const decimals = await getDecimals(token.address);
+        return { ...tokenMetadata, decimals };
       })
     );
 
