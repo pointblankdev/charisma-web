@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getDeployedIndexes, getGuestlist, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getDeployedIndexes, getGuestlist, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 
@@ -188,4 +188,11 @@ describe('Stacks API', () => {
         console.log(result)
         expect(result).toBeDefined()
     }, 20000)
+
+    it('should get arbitrage txs from mempool', async () => {
+        const result = await getArbitrageTxsFromMempool()
+        console.log(result)
+        expect(result).toBeDefined()
+    }, 20000)
+
 })

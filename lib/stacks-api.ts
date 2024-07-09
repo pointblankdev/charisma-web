@@ -855,3 +855,27 @@ export async function getContractSource({ contractAddress, contractName }: any) 
     const proposalSourceResp = await scApi.getContractSource({ contractAddress, contractName });
     return proposalSourceResp;
 }
+
+export async function getArbitrageTxsFromMempool(contractAddress: string) {
+    let offset = 0;
+    const limit = 50;
+    const transactions: any[] = [];
+
+    while (true) {
+        const resp: any = await txApi.getAddressMempoolTransactions({
+            address: contractAddress,
+            limit: limit,
+            offset: offset,
+        });
+
+        if (!resp.results || resp.results.length === 0) {
+            break; // exit the loop if there are no more results
+        }
+
+        resp.results.forEach((result: any) => {
+            transactions.push(result)
+        })
+        offset += limit; // increment the offset for the next page
+    }
+    return transactions
+}
