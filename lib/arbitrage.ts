@@ -13,7 +13,12 @@ export async function runAll() {
     const mempoolTxs = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
 
     console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
-    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.contract_call.function_name) })
+    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx) })
+
+    // get highest none in mempool
+    // const highestNonce = mempoolTxs.reduce((acc: number, tx: any) => {
+    //     return Math.max(acc, tx.tx_nonce);
+    // }, 0);
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
