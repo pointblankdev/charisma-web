@@ -1,3 +1,4 @@
+import arbitrage from "pages/api/arbitrage";
 import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
 
 export function getConfig() {
@@ -11,14 +12,13 @@ export async function runAll() {
     const config = getConfig();
     const mempoolTxs = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
 
-    console.log({ config, mempoolTxs: mempoolTxs.map((tx: any) => tx.contract_call.function_name) })
+    console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
+    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.contract_call.function_name) })
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
         return !mempoolTxs.find((tx: any) => tx.contract_call.function_name === job);
     });
-
-    console.log({ newJobs })
 
     // run all jobs
     const broadcastedJobs = []
