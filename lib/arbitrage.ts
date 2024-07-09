@@ -3,7 +3,7 @@ import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-a
 export function getConfig() {
     return {
         jobs: JSON.parse(process.env.ARBITRAGE_JOBS || '[]'),
-        gasFee: Number(process.env.GAS_FEE || 100000), // in STX
+        gasFee: 25000, // in STX
     };
 }
 
