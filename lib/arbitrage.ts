@@ -15,6 +15,8 @@ export function getConfig() {
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-1", function: "execute-strategy", args: [uintCV(1000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-2", function: "execute-strategy", args: [uintCV(1000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf", function: "execute-strategy", args: [uintCV(100000000000)] },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-a", args: [uintCV(1000000000)] },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-b", args: [uintCV(1000000000), uintCV(50)] },
         ],
         gasFee: 10000, // in uSTX
     };
@@ -39,7 +41,7 @@ export async function runAll() {
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
-        return !mempoolTxs.find((tx: any) => tx.contract_call.contract_id === job.address);
+        return !mempoolTxs.find((tx: any) => tx.contract_call.contract_id === job.address && tx.contract_call.function_name === job.function);
     });
 
     // run all jobs

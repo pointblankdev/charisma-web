@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getVelarSwapAmountOut, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 
@@ -199,6 +199,17 @@ describe('Stacks API', () => {
     it('should get a fee rate request', async () => {
         const result = await getFeeEstimate('0x84890bfdd1ed70e67439ae49c9996e02531165f273145a609d70d7041b1eae18')
         console.log(result)
+    })
+
+    it('should return the amount out from a swap', async () => {
+
+        const amountIn = 1000000
+        const tokenIn = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'
+        const tokenOut = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi'
+        const result = await getVelarSwapAmountOut({ amountIn, tokenIn, tokenOut })
+        console.log(result)
+        expect(result).toBeDefined()
+
     })
 
 })

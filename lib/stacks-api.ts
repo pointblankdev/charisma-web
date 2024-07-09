@@ -925,3 +925,17 @@ export async function getFeeEstimate(tx: string) {
     });
     return response
 }
+
+export async function getVelarSwapAmountOut({ amountIn, tokenIn, tokenOut }: { amountIn: number, tokenIn: string, tokenOut: string }) {
+
+    const response: any = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1",
+        contractName: 'univ2-path2',
+        functionName: "amount-out",
+        functionArgs: [uintCV(amountIn), principalCV(tokenIn), principalCV(tokenOut)],
+        senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    });
+
+    return cvToJSON(response).value
+}
