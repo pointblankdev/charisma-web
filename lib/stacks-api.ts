@@ -900,7 +900,6 @@ export async function executeArbitrageStrategy(address: string, functionName: st
         validateWithAbi: true,
         network,
         PostConditionMode: PostConditionMode.Allow,
-        postConditions: [],
         fee: fee, // set a tx fee if you don't want the builder to estimate
         anchorMode: AnchorMode.Any,
     } as any;
