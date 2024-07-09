@@ -33,7 +33,7 @@ export async function runAll() {
     }
 
     // replace with new fee
-    // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute1', config.gasFee, 111)
+    await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute1', config.gasFee, 18)
     // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute2', config.gasFee, 111)
     // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute3', config.gasFee, 111)
     // await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', 'execute4', config.gasFee, 111)
