@@ -906,6 +906,8 @@ export async function executeArbitrageStrategy({ address, functionName, fee, non
         txOptions.nonce = nonce
     }
 
+    console.log(txOptions)
+
     const transaction = await makeContractCall(txOptions);
 
     const broadcastResponse = await broadcastTransaction(transaction, network);
