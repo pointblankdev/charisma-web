@@ -279,6 +279,49 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
         onFormChange(generateTemplate(form.getValues()))
     }, [form])
 
+    const createMetadata = async (e) => {
+        e.preventDefault()
+        const safeName = form.getValues().name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
+        const safeTicker = form.getValues().ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
+        const ca = `${sender}.${safeName}`
+
+        const baseTokenSymbolA = await getSymbol(form.getValues().baseTokenA)
+        const baseTokenSymbolB = await getSymbol(form.getValues().baseTokenB)
+        const baseTokenSourceA = await getContractSource({ contractAddress: form.getValues().baseTokenA.split('.')[0], contractName: form.getValues().baseTokenA.split('.')[1] })
+        const baseTokenSourceB = await getContractSource({ contractAddress: form.getValues().baseTokenB.split('.')[0], contractName: form.getValues().baseTokenB.split('.')[1] })
+        // find the string that comes after the first occurence of 'define-fungible-token' in the baseTokenSourceA.source string
+        const baseTokenFtA = baseTokenSourceA.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
+        const baseTokenFtB = baseTokenSourceB.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
+
+        // todo: this might be a good time to scan the source code with AI for malicious code or vulnerabilities
+
+        const response = await setContractMetadata(ca, {
+            name: form.getValues().name,
+            description: form.getValues().description,
+            image: form.getValues().image,
+            background: form.getValues().background,
+            symbol: safeTicker,
+            ft: "index-token",
+            weight: form.getValues().indexTokenRatio,
+            contains: [
+                {
+                    address: form.getValues().baseTokenA,
+                    symbol: baseTokenSymbolA,
+                    ft: baseTokenFtA,
+                    weight: form.getValues().tokenARatio
+                },
+                {
+                    address: form.getValues().baseTokenB,
+                    symbol: baseTokenSymbolB,
+                    ft: baseTokenFtB,
+                    weight: form.getValues().tokenBRatio
+                }
+            ]
+
+        })
+        console.log(response)
+    }
+
     return (
         <Form {...form} >
             <form onChange={handleChange}>
@@ -504,6 +547,9 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
                         </div>
                     </div>
                 </fieldset>
+                <div className="flex justify-end">
+                    <Button onClick={createMetadata} className="mt-4">Create Metadata</Button>
+                </div>
             </form>
         </Form>
     )

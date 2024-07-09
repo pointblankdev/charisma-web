@@ -109,9 +109,8 @@ export default function ContractDeployer({ data }: any) {
         e.preventDefault()
         const name = form.getValues().name
         const safeName = name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")
-        const safeContractName = `${safeName}-${Date.now().toString().slice(0, 7)}`
         doContractDeploy({
-            contractName: safeContractName,
+            contractName: safeName,
             codeBody: `${header}${body}`,
             postConditionMode: PostConditionMode.Allow,
             network: new StacksMainnet(),
@@ -435,44 +434,3 @@ export default function ContractDeployer({ data }: any) {
         </Layout>
     )
 }
-
-
-// on finish index deploy
-//
-// async (resp) => {
-//     const baseTokenSymbolA = await getSymbol(baseTokenA)
-//     const baseTokenSymbolB = await getSymbol(baseTokenB)
-//     const baseTokenSourceA = await getContractSource({ contractAddress: baseTokenA.split('.')[0], contractName: baseTokenA.split('.')[1] })
-//     const baseTokenSourceB = await getContractSource({ contractAddress: baseTokenB.split('.')[0], contractName: baseTokenB.split('.')[1] })
-//     // find the string that comes after the first occurence of 'define-fungible-token' in the baseTokenSourceA.source string
-//     const baseTokenFtA = baseTokenSourceA.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
-//     const baseTokenFtB = baseTokenSourceB.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
-
-//     // todo: this might be a good time to scan the source code with AI for malicious code or vulnerabilities
-
-//     const response = await setContractMetadata(ca, {
-//         name: name,
-//         description: description,
-//         image: image,
-//         background: background,
-//         symbol: ticker,
-//         ft: "index-token",
-//         weight: indexTokenRatio,
-//         contains: [
-//             {
-//                 address: baseTokenA,
-//                 symbol: baseTokenSymbolA,
-//                 ft: baseTokenFtA,
-//                 weight: tokenARatio
-//             },
-//             {
-//                 address: baseTokenB,
-//                 symbol: baseTokenSymbolB,
-//                 ft: baseTokenFtB,
-//                 weight: tokenBRatio
-//             }
-//         ]
-
-//     })
-//     console.log(response)
-// }
