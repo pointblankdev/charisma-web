@@ -15,7 +15,7 @@ export async function runAll() {
     console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx) })
 
     // get highest none in mempool
-    const highestNonce = mempoolTxs.reduce((acc: number, tx: any) => {
+    let highestNonce = mempoolTxs.reduce((acc: number, tx: any) => {
         return Math.max(acc, tx.nonce);
     }, 0);
 
@@ -28,7 +28,7 @@ export async function runAll() {
     const broadcastedJobs = []
     for (const job of newJobs) {
         console.log(`Running job: ${job}`);
-        const newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee, highestNonce + 1)
+        const newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee, ++highestNonce)
         broadcastedJobs.push(newTx)
     }
     return broadcastedJobs
