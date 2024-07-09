@@ -1,4 +1,3 @@
-import arbitrage from "pages/api/arbitrage";
 import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
 
 export function getConfig() {
@@ -24,7 +23,8 @@ export async function runAll() {
     const broadcastedJobs = []
     for (const job of newJobs) {
         console.log(`Running job: ${job}`);
-        broadcastedJobs.push(await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee))
+        const newTx = await executeArbitrageStrategy('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen', job, config.gasFee)
+        broadcastedJobs.push(newTx)
     }
     return broadcastedJobs
 }
