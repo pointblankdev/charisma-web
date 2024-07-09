@@ -897,11 +897,9 @@ export async function executeArbitrageStrategy(address: string, functionName: st
         functionName: functionName,
         functionArgs: [],
         senderKey: account.stxPrivateKey,
-        // validateWithAbi: true,
         network,
         postConditionMode: PostConditionMode.Allow,
         fee: fee, // set a tx fee if you don't want the builder to estimate
-        anchorMode: AnchorMode.Any,
     } as any;
 
     if (nonce) {
