@@ -24,9 +24,10 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const contracts = await getDeployedIndexes();
+
   // blacklist ones that are not active
   const blacklist = ['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund']
-  const enabledContracts = contracts.filter((contract: any) => !blacklist.includes(contract))
+  const enabledContracts = _.uniq(contracts).filter((contract: any) => !blacklist.includes(contract))
 
   // lookup metadata for each contract
   const tokenMetadataPromises = enabledContracts.map(async (contract: any) => {

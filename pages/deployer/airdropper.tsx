@@ -47,14 +47,14 @@ export default function AirdropTemplate({ onFormChange }: { onFormChange: (templ
                 const lines: string[] = content.split('\n') || [];
                 const addresses: Address[] = lines.map(line => {
                     const [address, amount] = line.split(',').map(item => item.trim());
-                    return { address, amount: amount ? parseInt(amount) : 2000000 };
+                    return { address, amount: amount ? parseInt(amount) : 1000000 };
                 }).filter(item => item.address);
                 formatAddresses(addresses);
             } else {
                 const addresses: Address[] = content.split('\n')
                     .map((address: string) => address.trim())
                     .filter(Boolean)
-                    .map((address: string) => ({ address, amount: 2000000 }));
+                    .map((address: string) => ({ address, amount: 1000000 }));
                 formatAddresses(addresses);
             }
         };
