@@ -26,6 +26,8 @@ export async function runAll() {
 
     const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4];
 
+    console.log(mempoolTxs)
+
     // Filter out jobs in mempool
     const newJobs = config.jobs.filter((job: any) =>
         !mempoolTxs.find((tx: any) =>
