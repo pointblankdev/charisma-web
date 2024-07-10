@@ -10,7 +10,7 @@ export function getConfig() {
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-a", args: [uintCV(1000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-b", args: [uintCV(1000000000), uintCV(50)] },
         ],
-        gasFee: 25000, // in uSTX
+        fee: 25000, // in uSTX
     };
 }
 
@@ -35,33 +35,32 @@ export async function runAll() {
     );
 
     console.log({
-        arbitrageJobs: config.jobs.map((job: { address: any; function: any; }) => `${job.address}${job.function}`),
-        newJobs: newJobs.map((job: { address: any; function: any; }) => `${job.address}${job.function}`),
-        gasFee: config.gasFee,
+        arbitrageJobs: config.jobs.map((job: { address: any; function: any; }) => `${job.address}::${job.function}`),
+        newJobs: newJobs.map((job: { address: any; function: any; }) => `${job.address}::${job.function}`),
+        gasFee: config.fee,
         mempoolTxs: mempoolTxs.length
     });
 
     // Run all jobs concurrently
     const jobPromises = newJobs.map((job: { function: string | PromiseLike<string>; address: any; args: any; }, index: number) =>
-        new Promise<void>((resolve) => {
+        new Promise((resolve) => {
             setTimeout(() => {
                 console.log(`Running job: ${job.function}`);
                 const strategy: any = {
                     address: job.address,
                     functionName: job.function,
-                    fee: config.gasFee,
+                    fee: config.fee,
                     args: job.args
                 };
                 executeArbitrageStrategy(strategy)
-                    .then(() => resolve())
+                    .then(() => resolve(strategy))
                     .catch((error) => {
                         console.error(`Error executing job ${job.function}:`, error);
-                        resolve();
+                        resolve(strategy);
                     });
-            }, index * 3000); // Stagger job execution by 3 seconds
+            }, index * 3000); // Stagger job execution by 3 seconds to get new nonce
         })
     );
 
-    const results = await Promise.all(jobPromises);
-    return results;
+    return Promise.all(jobPromises);
 }
