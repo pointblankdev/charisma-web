@@ -47,7 +47,7 @@ export async function runAll() {
     //     return Math.max(acc, tx.nonce);
     // }, 0);
 
-    console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee, mempoolTxs: mempoolTxs.length })
+    console.log({ arbitrageJobs: config.jobs.map(job => job.function), gasFee: config.gasFee, mempoolTxs: mempoolTxs.length })
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
