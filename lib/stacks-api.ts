@@ -926,8 +926,7 @@ export async function executeArbitrageStrategy({ address, functionName, fee, non
 export async function getFeeEstimate(tx: string) {
     const response = await feesApi.postFeeTransaction({
         transactionFeeEstimateRequest: {
-            transaction_payload: tx,
-            estimated_len: 0
+            transaction_payload: tx
         }
     });
     return response
