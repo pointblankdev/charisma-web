@@ -34,7 +34,7 @@ export async function runAll() {
     let mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4]
 
     console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
-    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx) })
+    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.txid) })
 
     // filter out jobs in mempool with receipt_time > 2 hours
     const now = new Date().getTime();
