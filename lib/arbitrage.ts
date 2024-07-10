@@ -21,7 +21,7 @@ export function getConfig() {
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-a", args: [uintCV(1000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-b", args: [uintCV(1000000000), uintCV(50)] },
         ],
-        gasFee: undefined, // in uSTX
+        gasFee: 25000, // in uSTX
     };
 }
 
@@ -67,5 +67,5 @@ export async function runAll() {
         }, 10000);
     }
 
-    return newJobs
+    return []
 }
