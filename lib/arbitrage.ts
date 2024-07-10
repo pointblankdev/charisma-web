@@ -47,9 +47,7 @@ export async function runAll() {
     //     return Math.max(acc, tx.nonce);
     // }, 0);
 
-    console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
-    // console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.txid), highestNonce })
-    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.txid) })
+    console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee, mempoolTxs: mempoolTxs.length })
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
@@ -58,7 +56,7 @@ export async function runAll() {
 
     // run all jobs
     for (const job of newJobs) {
-        // timeout loop for 10 seconds
+        // timeout loop for 10 seconds async
         setTimeout(() => {
             console.log(`Running job: ${job.function}`);
             const strategy: any = { address: job.address, functionName: job.function, fee: config.gasFee, args: job.args }
