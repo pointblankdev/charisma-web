@@ -30,7 +30,7 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
 
     <Page meta={meta} fullViewport>
       <Layout>
-        <div className="space-y-6 p-2 sm:p-10 pb-16">
+        <div className="sm:container sm:mx-auto sm:py-10 space-y-6 m-2">
           <div className="space-y-0.5">
             <h2 className="text-2xl font-semibold tracking-tight text-secondary">Portfolio</h2>
             <p className="text-muted-foreground text-sm">
