@@ -63,7 +63,7 @@ const fadeIn = {
 
 const contractFormSchema = z.object({
     template: z.string(),
-    name: z.string().max(24, "Names have a max length of 24 characters, since they are used in the contract address"),
+    name: z.string().max(32, "Names have a max length of 32 characters, since they are used in the contract address"),
     description: z.string(),
 })
 

@@ -298,6 +298,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       || contractName === 'feather-fall-fund-v1'
     ) {
       blocksUntilUnlock = 0;
+      isRemoveLiquidityUnlocked = true;
     } else {
       blocksUntilUnlock = await getBlocksUntilUnlocked(params?.id as string);
       isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);

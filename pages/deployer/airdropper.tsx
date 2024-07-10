@@ -3,7 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import _ from "lodash";
 
 const MAX_LIST_LENGTH = 200;
-const DEFAULT_TOKEN_AMOUNT = 21000000
+const DEFAULT_TOKEN_AMOUNT = 1000000
 
 const generateTemplate = (parsedAddresses: any[]) => {
     const chunkedAddresses = chunkArray(parsedAddresses, MAX_LIST_LENGTH);
