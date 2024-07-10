@@ -12,8 +12,8 @@ export function getConfig() {
             // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute8" },
             // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute9" },
             // { address: "SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen", function: "execute10" },
-            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-1", function: "execute-strategy", args: [uintCV(1000000000)] },
-            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-2", function: "execute-strategy", args: [uintCV(1000000000)] },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0", function: "execute-strategy-a", args: [uintCV(1000000000)] },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0", function: "execute-strategy-b", args: [uintCV(1000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf", function: "execute-strategy", args: [uintCV(100000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-a", args: [uintCV(1000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-b", args: [uintCV(1000000000), uintCV(50)] },
@@ -25,8 +25,8 @@ export function getConfig() {
 export async function runAll() {
     const config = getConfig();
     // const mempoolTxs1 = await getArbitrageTxsFromMempool('SPHFW52QXFX4S6JAM6EFR5JZ61MVEW8KBZ50Z3W.kraqen');
-    const mempoolTxs2 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-1');
-    const mempoolTxs3 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arb-cha-launch-2');
+    const mempoolTxs2 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0');
+    const mempoolTxs3 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0');
     const mempoolTxs4 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf');
 
     const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4]

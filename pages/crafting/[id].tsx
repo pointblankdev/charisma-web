@@ -86,6 +86,9 @@ export default function IndexDetailPage({ data }: Props) {
     }
   });
 
+  // workaround for when 2 baseTokens are consolidated into one, the maxPossibleIndex is incorrectly doubled because it doesn't know it draws twice from the same token
+  maxPossibleIndex = maxPossibleIndex / 2
+
   const tokensRequested = tokensSelected / Math.pow(10, 6);
   const tokensRequired = data.metadata?.contains.map((token: { weight: number; }) => tokensRequested * token.weight);
 
