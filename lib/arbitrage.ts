@@ -38,7 +38,7 @@ export async function runAll() {
     console.log({
         arbitrageJobs: config.jobs.map((job: { address: any; function: any; }) => `${job.address}::${job.function}`),
         newJobs: newJobs.map((job: { address: any; function: any; }) => `${job.address}::${job.function}`),
-        gasFee: config.fee,
+        fee: config.fee,
         mempoolTxs: mempoolTxs.length
     });
 
