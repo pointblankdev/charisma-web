@@ -1,4 +1,4 @@
-import { uintCV } from "@stacks/transactions";
+import { TxBroadcastResult, uintCV } from "@stacks/transactions";
 import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
 import _ from "lodash";
 
@@ -27,8 +27,6 @@ export async function runAll() {
 
     // filter for only transactions with receipt_time (number) in the past 2 hours
     const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4].filter((tx: any) => tx.receipt_time > (Date.now() / 1000) - 7200);
-
-    console.log(mempoolTxs)
 
     // Filter out jobs in mempool
     const newJobs = config.jobs.filter((job: any) =>
@@ -66,6 +64,6 @@ export async function runAll() {
         })
     );
 
-    const jobs = await Promise.all(jobPromises);
-    return jobs.map((job: any) => { job.address, job.function });
+    const jobs = (await Promise.all(jobPromises)) as TxBroadcastResult[];
+    return jobs.map((job) => job.txid);
 }
