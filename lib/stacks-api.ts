@@ -907,7 +907,7 @@ export async function executeArbitrageStrategy({ address, functionName, fee, non
     }
 
     // set a tx fee if you don't want the builder to estimate
-    if (nonce) {
+    if (fee) {
         txOptions.fee = fee
     }
 
