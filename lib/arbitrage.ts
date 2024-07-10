@@ -64,7 +64,7 @@ export async function runAll() {
             const strategy: any = { address: job.address, functionName: job.function, fee: config.gasFee, args: job.args }
             // if (highestNonce !== 0) { strategy.nonce = ++highestNonce }
             executeArbitrageStrategy(strategy).catch(console.error)
-        }, 10000);
+        }, 3000);
     }
 
     return newJobs.map((job: any) => job.function);
