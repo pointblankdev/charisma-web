@@ -39,13 +39,13 @@ export async function runAll() {
         return Number(tx.receipt_time) > (RESET_NONCE ? Infinity : twoHoursAgo);
     });
 
-    console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
-    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.txid) })
-
     // get highest none in mempool
     let highestNonce = mempoolTxs.reduce((acc: number, tx: any) => {
         return Math.max(acc, tx.nonce);
     }, 0);
+
+    console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
+    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.txid), highestNonce })
 
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
