@@ -135,7 +135,7 @@ export default function PortfolioPage({ data }: Props) {
 }
 
 function TokenBalances({ data }: Props) {
-  const tokens = data.tokens;
+  const tokens = data?.tokens;
   const { balances, getBalanceByKey } = useWallet();
 
   if (isEmpty(balances)) return <div>Loading...</div>;
@@ -144,7 +144,7 @@ function TokenBalances({ data }: Props) {
     const address = token.proxy ? token.proxy.address : token.address;
     const balance = getBalanceByKey(`${token.address}::${token.ft}`);
     const tokenData = tokens.find((t: any) => t.contractAddress === address);
-    const amount = balance.balance / Math.pow(10, token.decimals);
+    const amount = balance?.balance / Math.pow(10, token.decimals);
     const totalValueUSD = amount * Number(tokenData?.price || 0);
 
     return {
@@ -189,9 +189,11 @@ function TokenBalances({ data }: Props) {
                 <TableCell className="font-medium">
                   <div className="text-lg">{token.name}</div>
                 </TableCell>
-                <TableCell className="md:table-cell text-xl text-right">{token.amount}</TableCell>
                 <TableCell className="md:table-cell text-xl text-right">
-                  ${token.totalValueUSD}
+                  {isNaN(token.amount) ? 0 : `${token.amount}`}
+                </TableCell>
+                <TableCell className="md:table-cell text-xl text-right">
+                  {isNaN(token.totalValueUSD) ? 0 : `${token.totalValueUSD}`}
                 </TableCell>
               </TableRow>
             ))}
