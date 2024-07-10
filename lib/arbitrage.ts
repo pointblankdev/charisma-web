@@ -47,12 +47,12 @@ export async function runAll() {
     //     return Math.max(acc, tx.nonce);
     // }, 0);
 
-    console.log({ arbitrageJobs: config.jobs.map(job => job.function), gasFee: config.gasFee, mempoolTxs: mempoolTxs.length })
-
     // run all jobs in config except ones still in the mempool
     const newJobs = config.jobs.filter((job: any) => {
         return !mempoolTxs.find((tx: any) => tx.contract_call.contract_id === job.address && tx.contract_call.function_name === job.function);
     });
+
+    console.log({ arbitrageJobs: config.jobs.map(job => `${job.address}${job.function}`), newJobs: newJobs.map(job => `${job.address}${job.function}`), gasFee: config.gasFee, mempoolTxs: mempoolTxs.length })
 
     // run all jobs
     for (const job of newJobs) {
