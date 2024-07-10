@@ -29,7 +29,7 @@ export async function runAll() {
     const mempoolTxs3 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2');
     const mempoolTxs4 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf');
 
-    const mempoolTxs = [] as any //[...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4]
+    const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4]
 
     console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
     console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx) })
