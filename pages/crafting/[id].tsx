@@ -30,10 +30,10 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import millify from 'millify';
 import { Link1Icon } from '@radix-ui/react-icons';
-import _ from 'lodash';
 import useWallet from '@lib/hooks/use-wallet-balances';
 import LiquidityControls from '@components/liquidity/controls';
 import velarApi from '@lib/velar-api';
+import { uniqBy } from 'lodash';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -59,14 +59,14 @@ export default function IndexDetailPage({ data }: Props) {
   let maxPossibleIndex = Infinity;
   let limitingToken = null;
 
-  if (!data.metadata || !balances) return <div>Loading...</div>
+  if (!data.metadata || !balances) return <div>Loading...</div>;
 
   const token = getKeyByContractAddress(data.address);
   const indexWeight = data.indexWeight;
   const indexBalance = getBalanceByKey(token)?.balance || 0;
 
-  const baseTokens = data.metadata?.contains.map((token: { address: any; weight: any; }) => {
-    const baseToken = getKeyByContractAddress(token.address)
+  const baseTokens = data.metadata?.contains.map((token: { address: any; weight: any }) => {
+    const baseToken = getKeyByContractAddress(token.address);
     const baseTokenBalance = getBalanceByKey(baseToken)?.balance || 0;
     return {
       token: baseToken,
@@ -76,7 +76,7 @@ export default function IndexDetailPage({ data }: Props) {
   });
 
   // Calculate the maximum possible index tokens for each base token
-  baseTokens.forEach((token: { balance: number; weight: number; }) => {
+  baseTokens.forEach((token: { balance: number; weight: number }) => {
     // Calculate how many index tokens can be created from this base token
     const possibleIndex = token.balance / (token.weight / indexWeight);
 
@@ -87,10 +87,12 @@ export default function IndexDetailPage({ data }: Props) {
   });
 
   // workaround for when 2 baseTokens are consolidated into one, the maxPossibleIndex is incorrectly doubled because it doesn't know it draws twice from the same token
-  maxPossibleIndex = maxPossibleIndex / 2
+  maxPossibleIndex = maxPossibleIndex / 2;
 
   const tokensRequested = tokensSelected / Math.pow(10, 6);
-  const tokensRequired = data.metadata?.contains.map((token: { weight: number; }) => tokensRequested * token.weight);
+  const tokensRequired = data.metadata?.contains.map(
+    (token: { weight: number }) => tokensRequested * token.weight
+  );
 
   return (
     <Page meta={meta} fullViewport>
@@ -109,7 +111,9 @@ export default function IndexDetailPage({ data }: Props) {
                   Index: {data.symbol}
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
-                  <div className='z-30 bg-background border border-primary/40 rounded-full px-2'>${data.tokenPrice.toFixed(2)} / {data.symbol}</div>
+                  <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
+                    ${data.tokenPrice.toFixed(2)} / {data.symbol}
+                  </div>
                   <div className="text-lg">${millify(data.tvl)} TVL</div>
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
@@ -181,7 +185,12 @@ export default function IndexDetailPage({ data }: Props) {
                               />
                               {Math.abs(tokensRequired[k]).toFixed(0) !== '0' && (
                                 <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                                  {millify(Math.abs(tokensRequired[k] * Math.pow(10, 6) / Math.pow(10, token.decimals)))}
+                                  {millify(
+                                    Math.abs(
+                                      (tokensRequired[k] * Math.pow(10, 6)) /
+                                        Math.pow(10, token.decimals)
+                                    )
+                                  )}
                                 </div>
                               )}
                             </div>
@@ -260,18 +269,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     const decimals = await getDecimals(params?.id as string);
 
     // get price data from Velar API
-    const prices = await velarApi.tokens()
+    const prices = await velarApi.tokens();
 
     // TVL calculation
-    let tvl = 0
+    let tvl = 0;
     const tokenAddressList = metadata?.contains.map((token: any) => token.address);
     const totalSupply: number = Number(supply) / Math.pow(10, decimals);
     const baseTokensPriceData = prices.filter((token: any) => {
-      return tokenAddressList.includes(token.contractAddress)
+      return tokenAddressList.includes(token.contractAddress);
     });
 
     // loop for each matching token to get the TVL of base tokens
-    const tokenInPriceList = prices.find((token: any) => token.contractAddress === params?.id)
+    const tokenInPriceList = prices.find((token: any) => token.contractAddress === params?.id);
     if (tokenInPriceList && tokenInPriceList.price > 0 && tokenInPriceList.symbol !== 'iQC') {
       tvl = totalSupply * Number(tokenInPriceList.price);
     } else {
@@ -281,12 +290,12 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
         const tokenPrice = Number(baseToken.price);
         return totalSupply * tokenWeight * tokenPrice;
       });
-      tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0)
+      tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0);
     }
 
     // blocks until unlocked calculation
     let blockCounter = 0;
-    let blocksUntilUnlock = 0
+    let blocksUntilUnlock = 0;
     let isRemoveLiquidityUnlocked = true;
     if (contractName === 'quiet-confidence') {
       blockCounter = await getBlockCounter(params?.id as string);
@@ -295,10 +304,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);
     } else if (
       // these contracts were made before the block counter was implemented
-      contractName === 'outback-stakehouse'
-      || contractName === 'good-karma'
-      || contractName === 'charismatic-corgi'
-      || contractName === 'feather-fall-fund-v1'
+      contractName === 'outback-stakehouse' ||
+      contractName === 'good-karma' ||
+      contractName === 'charismatic-corgi' ||
+      contractName === 'feather-fall-fund-v1'
     ) {
       blocksUntilUnlock = 0;
       isRemoveLiquidityUnlocked = true;
@@ -331,16 +340,18 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     // calculate token price
     let tokenPrice = 0;
-    const tokenOnVelar = prices.find((token: any) => token.contractAddress === params?.id)
+    const tokenOnVelar = prices.find((token: any) => token.contractAddress === params?.id);
     if (tokenOnVelar && tokenOnVelar.price > 0 && tokenOnVelar.symbol !== 'iQC') {
-      tokenPrice = Number(tokenOnVelar.price)
+      tokenPrice = Number(tokenOnVelar.price);
     } else {
       metadata.contains.forEach((token: any) => {
-        const baseToken = prices.find((baseToken: any) => baseToken.contractAddress === token.address)
+        const baseToken = prices.find(
+          (baseToken: any) => baseToken.contractAddress === token.address
+        );
         if (baseToken) {
-          tokenPrice += baseToken.price * token.weight
+          tokenPrice += baseToken.price * token.weight;
         }
-      })
+      });
     }
 
     const data = {
@@ -349,15 +360,14 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       totalSupply: totalSupply,
       symbol: symbol,
       indexWeight: metadata.weight || 1,
-      baseTokens: _.uniqBy(baseTokens, 'name'),
+      baseTokens: uniqBy(baseTokens, 'name'),
       decimals: decimals,
       isRemoveLiquidityUnlocked,
       blocksUntilUnlock,
       prices: prices,
       tvl: tvl,
-      tokenPrice,
-    }
-
+      tokenPrice
+    };
 
     return {
       props: { data }
@@ -368,7 +378,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       props: {
         data: {}
       }
-    }
+    };
   }
 };
 
@@ -385,12 +395,14 @@ const ActiveRecipeIndicator = ({
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
-                }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
+                active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
+              }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
-                }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
+                active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
+              }`}
             />
           </div>
         </TooltipTrigger>
@@ -399,8 +411,9 @@ const ActiveRecipeIndicator = ({
         >
           {active
             ? 'Index fund is live'
-            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''}`
-          }
+            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${
+                blocksUntilUnlock !== 1 ? 's' : ''
+              }`}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

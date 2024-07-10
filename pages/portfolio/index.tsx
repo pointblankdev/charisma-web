@@ -1,11 +1,23 @@
-import React from 'react';
 import SettingsLayout from './layout';
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle
+} from '@components/ui/card';
 import useWallet from '@lib/hooks/use-wallet-balances';
 import Image from 'next/image';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@components/ui/table';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from '@components/ui/table';
 import velarApi from '@lib/velar-api';
-import _ from 'lodash';
 
 // Import images
 import charismaLogo from '@public/charisma.png';
@@ -16,7 +28,7 @@ import rooLogo from '@public/roo-logo.png';
 import odinLogo from '@public/odin-logo.png';
 import { GetServerSideProps } from 'next';
 import millify from 'millify';
-
+import { isEmpty } from 'lodash';
 
 const tokenList = [
   {
@@ -27,7 +39,7 @@ const tokenList = [
     decimals: 6,
     image: charismaLogo,
     proxy: {
-      address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma',
+      address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma'
     }
   },
   {
@@ -36,7 +48,7 @@ const tokenList = [
     name: 'Wrapped Charisma',
     symbol: 'wCHA',
     decimals: 6,
-    image: wrappedCharismaLogo,
+    image: wrappedCharismaLogo
   },
   {
     address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma',
@@ -44,7 +56,7 @@ const tokenList = [
     name: 'Liquid Staked Charisma',
     symbol: 'sCHA',
     decimals: 6,
-    image: liquidStakedCharismaLogo,
+    image: liquidStakedCharismaLogo
   },
   {
     address: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
@@ -52,7 +64,7 @@ const tokenList = [
     name: 'Welshcorgicoin',
     symbol: 'WELSH',
     decimals: 6,
-    image: welshLogo,
+    image: welshLogo
   },
   {
     address: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo',
@@ -60,7 +72,7 @@ const tokenList = [
     name: 'Kangaroo',
     symbol: 'ROO',
     decimals: 6,
-    image: rooLogo,
+    image: rooLogo
   },
   {
     address: 'SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn',
@@ -68,8 +80,8 @@ const tokenList = [
     name: 'Odin',
     symbol: 'ODIN',
     decimals: 6,
-    image: odinLogo,
-  },
+    image: odinLogo
+  }
   // 'SP2F4QC563WN0A0949WPH5W1YXVC4M1R46QKE0G14.memegoatstx',
   // 'SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token',
   // 'SP28NB976TJHHGF4218KT194NPWP9N1X3WY516Z1P.Hashiko',
@@ -86,23 +98,20 @@ const tokenList = [
 
 // Define the type 'Props' here
 type Props = {
-  data: any
+  data: any;
 };
 
-
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-
   try {
     // Fetch data from external API
-    const tokens = await velarApi.tokens()
+    const tokens = await velarApi.tokens();
     return {
       props: {
         data: {
           tokens
         }
       }
-    }
-
+    };
   } catch (error) {
     console.error('Error fetching data:', error);
     return {
@@ -110,11 +119,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
         data: {
           tokens: []
         }
-      },
+      }
     };
   }
-}
-
+};
 
 export default function PortfolioPage({ data }: Props) {
   return (
@@ -130,7 +138,7 @@ function TokenBalances({ data }: Props) {
   const tokens = data.tokens;
   const { balances, getBalanceByKey } = useWallet();
 
-  if (_.isEmpty(balances)) return <div>Loading...</div>;
+  if (isEmpty(balances)) return <div>Loading...</div>;
 
   const tokenBalances = tokenList.map(token => {
     const address = token.proxy ? token.proxy.address : token.address;
@@ -142,7 +150,7 @@ function TokenBalances({ data }: Props) {
     return {
       ...token,
       amount: millify(amount),
-      totalValueUSD: millify(totalValueUSD),
+      totalValueUSD: millify(totalValueUSD)
     };
   });
 
@@ -163,9 +171,7 @@ function TokenBalances({ data }: Props) {
                 <span className="sr-only">Name</span>
               </TableHead>
               <TableHead className="md:table-cell text-right">Token Amount</TableHead>
-              <TableHead className="md:table-cell text-right">
-                Total Value (USD)
-              </TableHead>
+              <TableHead className="md:table-cell text-right">Total Value (USD)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -183,9 +189,7 @@ function TokenBalances({ data }: Props) {
                 <TableCell className="font-medium">
                   <div className="text-lg">{token.name}</div>
                 </TableCell>
-                <TableCell className="md:table-cell text-xl text-right">
-                  {token.amount}
-                </TableCell>
+                <TableCell className="md:table-cell text-xl text-right">{token.amount}</TableCell>
                 <TableCell className="md:table-cell text-xl text-right">
                   ${token.totalValueUSD}
                 </TableCell>
@@ -195,9 +199,7 @@ function TokenBalances({ data }: Props) {
         </Table>
       </CardContent>
       <CardFooter className="p-2 sm:p-4">
-        <div className="text-xs text-muted-foreground">
-          Showing only supported tokens
-        </div>
+        <div className="text-xs text-muted-foreground">Showing only supported tokens</div>
       </CardFooter>
     </Card>
   );
