@@ -25,7 +25,7 @@ export async function runAll() {
         getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf')
     ]);
 
-    // filter for only transactions with receipt_time (number) in the past 2 hours
+    // filter for only real mempool transactions and not stale ones
     const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4].filter((tx: any) => tx.receipt_time > (Date.now() / 1000) - 5000);
 
     // Filter out jobs in mempool
