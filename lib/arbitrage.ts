@@ -40,7 +40,7 @@ export async function runAll() {
     const now = new Date().getTime();
     const twoHoursAgo = now - 2 * 60 * 60 * 1000;
     mempoolTxs = mempoolTxs.filter((tx: any) => {
-        console.log(Number(tx.receipt_time), twoHoursAgo)
+        console.log(tx.contract_call.function_name, tx.receipt_time, twoHoursAgo)
         return Number(tx.receipt_time) > (RESET_NONCE ? Infinity : twoHoursAgo);
     });
 
