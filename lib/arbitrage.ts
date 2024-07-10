@@ -62,5 +62,6 @@ export async function runAll() {
         })
     );
 
-    return Promise.all(jobPromises);
+    const jobs = await Promise.all(jobPromises);
+    return jobs.map((job: any) => { job.address, job.function });
 }
