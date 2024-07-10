@@ -1,6 +1,8 @@
 import { uintCV } from "@stacks/transactions";
 import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
 
+const RESET_NONCE = false
+
 export function getConfig() {
     return {
         jobs: [
@@ -38,7 +40,7 @@ export async function runAll() {
     const now = new Date().getTime();
     const twoHoursAgo = now - 2 * 60 * 60 * 1000;
     mempoolTxs = mempoolTxs.filter((tx: any) => {
-        return Number(tx.receipt_time) > twoHoursAgo;
+        return Number(tx.receipt_time) > (RESET_NONCE ? Infinity : twoHoursAgo);
     });
 
     // get highest none in mempool
