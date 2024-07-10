@@ -1,22 +1,18 @@
-"use client"
+'use client';
 
-import * as React from "react"
-import { SliderProps } from "@radix-ui/react-slider"
+import { SliderProps } from '@radix-ui/react-slider';
 
-import {
-  HoverCard,
-  HoverCardContent,
-  HoverCardTrigger,
-} from "@components/ui/hover-card"
-import { Label } from "@components/ui/label"
-import { Slider } from "@components/ui/slider"
+import { HoverCard, HoverCardContent, HoverCardTrigger } from '@components/ui/hover-card';
+import { Label } from '@components/ui/label';
+import { Slider } from '@components/ui/slider';
+import { useState } from 'react';
 
 interface TopPSelectorProps {
-  defaultValue: SliderProps["defaultValue"]
+  defaultValue: SliderProps['defaultValue'];
 }
 
 export function TopPSelector({ defaultValue }: TopPSelectorProps) {
-  const [value, setValue] = React.useState(defaultValue)
+  const [value, setValue] = useState(defaultValue);
 
   return (
     <div className="grid gap-2 pt-2">
@@ -40,15 +36,11 @@ export function TopPSelector({ defaultValue }: TopPSelectorProps) {
             />
           </div>
         </HoverCardTrigger>
-        <HoverCardContent
-          align="start"
-          className="w-[260px] text-sm"
-          side="left"
-        >
-          Control diversity via nucleus sampling: 0.5 means half of all
-          likelihood-weighted options are considered.
+        <HoverCardContent align="start" className="w-[260px] text-sm" side="left">
+          Control diversity via nucleus sampling: 0.5 means half of all likelihood-weighted options
+          are considered.
         </HoverCardContent>
       </HoverCard>
     </div>
-  )
+  );
 }
