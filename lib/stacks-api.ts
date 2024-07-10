@@ -911,7 +911,7 @@ export async function executeArbitrageStrategy({ address, functionName, fee, non
         txOptions.fee = fee
     }
 
-    console.log(txOptions)
+    // console.log(txOptions)
 
     const transaction = await makeContractCall(txOptions);
 
