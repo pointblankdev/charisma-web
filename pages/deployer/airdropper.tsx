@@ -3,6 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import _ from "lodash";
 
 const MAX_LIST_LENGTH = 200;
+const DEFAULT_TOKEN_AMOUNT = 21000000
 
 const generateTemplate = (parsedAddresses: any[]) => {
     const chunkedAddresses = chunkArray(parsedAddresses, MAX_LIST_LENGTH);
@@ -47,14 +48,14 @@ export default function AirdropTemplate({ onFormChange }: { onFormChange: (templ
                 const lines: string[] = content.split('\n') || [];
                 const addresses: Address[] = lines.map(line => {
                     const [address, amount] = line.split(',').map(item => item.trim());
-                    return { address, amount: amount ? parseInt(amount) : 1000000 };
+                    return { address, amount: amount ? parseInt(amount) : DEFAULT_TOKEN_AMOUNT };
                 }).filter(item => item.address);
                 formatAddresses(addresses);
             } else {
                 const addresses: Address[] = content.split('\n')
                     .map((address: string) => address.trim())
                     .filter(Boolean)
-                    .map((address: string) => ({ address, amount: 1000000 }));
+                    .map((address: string) => ({ address, amount: DEFAULT_TOKEN_AMOUNT }));
                 formatAddresses(addresses);
             }
         };

@@ -290,11 +290,17 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       const { results } = await blocksApi.getBlockList({ limit: 1 });
       blocksUntilUnlock = 155550 + blockCounter - results[0].height;
       isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);
-    } else if (contractName === 'wrapped-charisma') {
+    } else if (
+      // these contracts were made before the block counter was implemented
+      contractName === 'outback-stakehouse'
+      || contractName === 'good-karma'
+      || contractName === 'charismatic-corgi'
+      || contractName === 'feather-fall-fund-v1'
+    ) {
+      blocksUntilUnlock = 0;
+    } else {
       blocksUntilUnlock = await getBlocksUntilUnlocked(params?.id as string);
       isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);
-    } else {
-      blocksUntilUnlock = 0;
     }
 
     // get base token metadata from token-metadata-uri

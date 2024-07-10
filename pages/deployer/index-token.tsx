@@ -164,11 +164,17 @@ const generateTemplate = ({
 )
 
 (define-read-only (get-txs-available)
-    (ok (/ (- block-height (+ unlock-block (var-get block-counter))) (var-get blocks-per-tx)))
+    (begin
+        (asserts! (>= block-height (+ unlock-block (var-get block-counter))) (ok u0))
+        (ok (/ (- block-height (+ unlock-block (var-get block-counter))) (var-get blocks-per-tx)))
+    )
 )
 
 (define-read-only (get-blocks-until-unlock)
-	(ok (- (+ unlock-block (var-get block-counter)) block-height))
+    (begin
+        (asserts! (< block-height (+ unlock-block (var-get block-counter))) (ok u0))
+	    (ok (- (+ unlock-block (var-get block-counter)) block-height))
+    )
 )
 
 ;; --- SIP-010 FT Trait
