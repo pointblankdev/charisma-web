@@ -31,18 +31,16 @@ export async function runAll() {
     const mempoolTxs3 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2');
     const mempoolTxs4 = await getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf');
 
-    let mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4]
-
-    console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
-    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.txid) })
-
     // filter out jobs in mempool with receipt_time > 2 hours
     const now = new Date().getTime();
     const twoHoursAgo = now - 2 * 60 * 60 * 1000;
-    mempoolTxs = mempoolTxs.filter((tx: any) => {
+    const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4].filter((tx: any) => {
         console.log(tx.contract_call.function_name, tx.receipt_time, twoHoursAgo)
         return Number(tx.receipt_time) > (RESET_NONCE ? Infinity : twoHoursAgo);
     });
+
+    console.log({ arbitrageJobs: config.jobs, gasFee: config.gasFee })
+    console.log({ mempoolTxs: mempoolTxs.map((tx: any) => tx.txid) })
 
     // get highest none in mempool
     let highestNonce = mempoolTxs.reduce((acc: number, tx: any) => {
