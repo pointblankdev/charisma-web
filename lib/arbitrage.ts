@@ -1,5 +1,6 @@
 import { uintCV } from "@stacks/transactions";
 import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
+import _ from "lodash";
 
 export function getConfig() {
     return {
@@ -24,7 +25,10 @@ export async function runAll() {
         getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf')
     ]);
 
-    const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4];
+    const mempoolTxs = _.uniqBy(
+        [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4],
+        (tx: any) => `${tx.contract_call.contract_id}::${tx.contract_call.function_name}`
+    );
 
     console.log(mempoolTxs)
 
