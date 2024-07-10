@@ -1,6 +1,5 @@
 import { TxBroadcastResult, uintCV } from "@stacks/transactions";
 import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
-import _ from "lodash";
 
 export function getConfig() {
     return {
@@ -11,7 +10,7 @@ export function getConfig() {
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-a", args: [uintCV(1000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-b", args: [uintCV(1000000000), uintCV(50)] },
         ],
-        fee: undefined, // in uSTX
+        fee: 10000, // in uSTX
     };
 }
 

@@ -917,9 +917,6 @@ export async function executeArbitrageStrategy({ address, functionName, fee, non
 
     const broadcastResponse = await broadcastTransaction(transaction, network);
 
-    const feeEstimate = await getFeeEstimate(Buffer.from(transaction.serialize()).toString('hex'))
-    console.log(feeEstimate)
-
     return broadcastResponse
 }
 
