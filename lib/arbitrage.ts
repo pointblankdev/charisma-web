@@ -67,5 +67,5 @@ export async function runAll() {
         }, 10000);
     }
 
-    return []
+    return newJobs.map((job: any) => job.function);
 }
