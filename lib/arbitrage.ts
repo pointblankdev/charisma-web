@@ -26,7 +26,7 @@ export async function runAll() {
     ]);
 
     // filter for only transactions with receipt_time (number) in the past 2 hours
-    const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4].filter((tx: any) => tx.receipt_time > (Date.now() / 1000) - 7200);
+    const mempoolTxs = [...mempoolTxs2, ...mempoolTxs3, ...mempoolTxs4].filter((tx: any) => tx.receipt_time > (Date.now() / 1000) - 5000);
 
     // Filter out jobs in mempool
     const newJobs = config.jobs.filter((job: any) =>
