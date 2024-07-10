@@ -900,11 +900,15 @@ export async function executeArbitrageStrategy({ address, functionName, fee, non
         senderKey: account.stxPrivateKey,
         network,
         postConditionMode: PostConditionMode.Allow,
-        fee: fee, // set a tx fee if you don't want the builder to estimate
     } as any;
 
     if (nonce) {
         txOptions.nonce = nonce
+    }
+
+    // set a tx fee if you don't want the builder to estimate
+    if (nonce) {
+        txOptions.fee = fee
     }
 
     console.log(txOptions)
