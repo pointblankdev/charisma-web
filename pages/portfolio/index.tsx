@@ -23,6 +23,8 @@ import velarApi from '@lib/velar-api';
 import charismaLogo from '@public/charisma.png';
 import wrappedCharismaLogo from '@public/indexes/wrapped-charisma-logo.png';
 import liquidStakedCharismaLogo from '@public/liquid-staked-charisma.png';
+import quietConfidenceLogo from '@public/indexes/quiet-confidence-logo.png';
+import charismaticCorgiLogo from '@public/indexes/charismatic-corgi-logo.png';
 import welshLogo from '@public/welsh-logo.png';
 import rooLogo from '@public/roo-logo.png';
 import odinLogo from '@public/odin-logo.png';
@@ -39,7 +41,8 @@ const tokenList = [
     decimals: 6,
     image: charismaLogo,
     proxy: {
-      address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma'
+      address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma',
+      factor: 1
     }
   },
   {
@@ -57,6 +60,26 @@ const tokenList = [
     symbol: 'sCHA',
     decimals: 6,
     image: liquidStakedCharismaLogo
+  },
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence',
+    ft: 'index-token',
+    name: 'Quiet Confience',
+    symbol: 'iQC',
+    decimals: 6,
+    image: quietConfidenceLogo,
+    proxy: {
+      address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma',
+      factor: 10
+    }
+  },
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi',
+    ft: 'index-token',
+    name: 'Charismatic Corgi',
+    symbol: 'iCC',
+    decimals: 6,
+    image: charismaticCorgiLogo
   },
   {
     address: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
@@ -142,9 +165,10 @@ function TokenBalances({ data }: Props) {
 
   const tokenBalances = tokenList.map(token => {
     const address = token.proxy ? token.proxy.address : token.address;
-    const balance = getBalanceByKey(`${token.address}::${token.ft}`);
+    const factor = token.proxy ? token.proxy.factor : 1;
+    const balance = getBalanceByKey(`${token.address}::${token.ft}`)
     const tokenData = tokens.find((t: any) => t.contractAddress === address);
-    const amount = balance?.balance / Math.pow(10, token.decimals);
+    const amount = balance.balance * factor / Math.pow(10, token.decimals);
     const totalValueUSD = amount * Number(tokenData?.price || 0);
 
     return {
