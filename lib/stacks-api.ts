@@ -273,7 +273,7 @@ export async function getProposals() {
         const args = r.tx.contract_call?.function_args;
         if (args) {
             const startBlockHeight = Number(args[1].repr.slice(1));
-            const endBlockHeight = startBlockHeight + 720; // update 720 to use the parameter from the contract
+            const endBlockHeight = startBlockHeight + 1000; // update 1000 to use the parameter from the contract
             let status = '';
             if (latestBlock < startBlockHeight) {
                 status = 'Pending';
