@@ -52,6 +52,27 @@ const SftTest = () => {
     const [mounted, setMounted] = useState(false);
     useEffect(() => { setMounted(true) }, []);
 
+    const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+
+    function unwrap() {
+        doContractCall({
+            network: new StacksMainnet(),
+            anchorMode: AnchorMode.Any,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'sft-test',
+            functionName: "unwrap",
+            functionArgs: [uintCV(2), principalCV(sender), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
+            postConditionMode: PostConditionMode.Allow,
+            postConditions: [],
+            onFinish: (data) => {
+                console.log("onFinish:", data);
+            },
+            onCancel: () => {
+                console.log("onCancel:", "Transaction was canceled");
+            },
+        });
+    }
+
     function wrap() {
         doContractCall({
             network: new StacksMainnet(),
@@ -98,6 +119,7 @@ const SftTest = () => {
         <>
             <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={add}>Add</Button>
             <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={wrap}>Wrap</Button>
+            <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={unwrap}>Unwrap</Button>
         </>
     );
 };
