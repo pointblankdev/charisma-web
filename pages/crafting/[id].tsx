@@ -93,7 +93,7 @@ export default function IndexDetailPage({ data }: Props) {
   // workaround for when 2 baseTokens are consolidated into one, the maxPossibleIndex is incorrectly doubled because it doesn't know it draws twice from the same token
   maxPossibleIndex = maxPossibleIndex / 2;
 
-  const tokensRequested = tokensSelected / Math.pow(10, 6);
+  const tokensRequested = tokensSelected / Math.pow(10, token.decimals);
   const tokensRequired = data.metadata?.contains.map(
     (token: { weight: number }) => tokensRequested * token.weight
   );
@@ -170,7 +170,7 @@ export default function IndexDetailPage({ data }: Props) {
                           />
                           {Math.abs(tokensRequested).toFixed(0) !== '0' && (
                             <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                              {millify(Math.abs(tokensRequested * indexWeight))}
+                              {/* {millify(Math.abs(tokensRequested * indexWeight))} */}
                             </div>
                           )}
                         </div>
@@ -239,9 +239,9 @@ export default function IndexDetailPage({ data }: Props) {
                 </Button>
               </Link>
               <div className='flex flex-col justify-end space-y-2'>
-                <Button className="z-30" onClick={harvest}>
+                {/* <Button className="z-30" onClick={harvest}>
                   Harvest Apples with Farmers
-                </Button>
+                </Button> */}
                 {descriptionVisible && (
                   <LiquidityControls
                     min={-indexBalance / indexWeight}
