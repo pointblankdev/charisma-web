@@ -273,7 +273,7 @@ export default function IndexDetailPage({ data }: Props) {
                 </Button>
               </Link>
               <div className='flex flex-col justify-end space-y-1'>
-                <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>
+                {isApples && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
                 {isApples && <Button size={'sm'} disabled={!claimableAmount} className="z-30" onClick={harvest}>
                   {claimableAmount ? `Harvest ${claimableAmount} Fuji Apples` : 'No Fuji Apples to Harvest'}
                 </Button>}
