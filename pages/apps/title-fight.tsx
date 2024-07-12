@@ -154,7 +154,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const holder = await getTitleBeltHolder()
     const balance = await getTitleBeltHoldeBalance()
-    const bns = await getNameFromAddress(holder.value)
+    // const bns = await getNameFromAddress(holder.value)
     const { results } = await blocksApi.getBlockList({ limit: 1 })
 
     const lc: any = await callReadOnlyFunction({
@@ -186,7 +186,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       props: {
         data: {
           titleBeltHolder: holder.value,
-          bns: bns.names[0],
+          // bns: bns.names[0],
           woooRecord: balance.value,
           ...data
         }

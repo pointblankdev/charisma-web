@@ -42,8 +42,6 @@ import { useConnect } from "@stacks/connect-react"
 import { PostConditionMode } from "@stacks/transactions"
 import { StacksMainnet } from "@stacks/network";
 import ProposalTemplate from "./proposal"
-import { GetStaticProps } from "next"
-import velarApi from "@lib/velar-api"
 
 const generateHeader = ({ name, sender, description }: any) => {
     return `;; Title: ${name}
@@ -52,7 +50,7 @@ const generateHeader = ({ name, sender, description }: any) => {
 ;; Description:
 ;; ${description}
 ;; Unwrap Link:
-;; https://www.charisma.rocks/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence
+;; https://www.charisma.rocks/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples
 
 `}
 

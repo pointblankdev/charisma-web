@@ -198,13 +198,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const holder = await getTitleBeltHolder()
     const balance = await getTitleBeltHoldeBalance()
-    const bns = await getNameFromAddress(holder.value)
+    // const bns = await getNameFromAddress(holder.value)
 
     return {
       props: {
         data: {
           titleBeltHolder: holder.value,
-          bns: bns.names[0],
+          // bns: bns.names[0],
           woooRecord: balance.value
         }
       },
