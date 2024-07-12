@@ -60,10 +60,8 @@ export default function Creatures() {
   const [farmers, setFarmers] = useState(0)
   const [power, setPower] = useState(0)
   const [cost, setCost] = useState(0)
-
+  const [amount, setAmount] = useState(0)
   const { getBalanceByKey } = useWallet();
-
-  const lpAmount = getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance
 
   function summon() {
     doContractCall({
@@ -73,7 +71,7 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "summon",
       functionArgs: [
-        uintCV(Number((lpAmount.balance / cost).toFixed(0))),
+        uintCV((amount / cost).toFixed(0)),
         principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')
       ],
       postConditionMode: PostConditionMode.Allow,
@@ -143,6 +141,11 @@ export default function Creatures() {
     }).then(response => setCost(Number(cvToJSON(response).value)))
 
   }, [sender])
+
+
+  useEffect(() => {
+    setAmount(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance)
+  }, [getBalanceByKey])
 
 
 
@@ -241,8 +244,8 @@ export default function Creatures() {
                       <div className='w-full text-lg px-4'>You command {millify(farmers)} Farmers</div>
                       <div className='flex space-x-2'>
                         <Button className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
-                        <Button disabled={lpAmount === 0} className="z-30" onClick={summon}>Recruit</Button>
-                        <div>{lpAmount === 0 && 'You need STX-wCHA LP Tokens to create Farmers'}</div>
+                        <Button disabled={amount === 0} className="z-30" onClick={summon}>Recruit</Button>
+                        <div>{amount === 0 && 'You need STX-wCHA LP Tokens to create Farmers'}</div>
                       </div>
                     </div>
                   </CardFooter>
