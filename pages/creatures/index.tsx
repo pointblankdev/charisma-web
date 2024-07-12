@@ -73,7 +73,7 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "summon",
       functionArgs: [
-        uintCV(lpAmount.balance),
+        uintCV(lpAmount.balance / cost),
         principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')
       ],
       postConditionMode: PostConditionMode.Allow,
