@@ -20,7 +20,7 @@ import millify from 'millify';
 import { Button } from '@components/ui/button';
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from '@stacks/connect-react';
-import { AnchorMode, callReadOnlyFunction, cvToJSON, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
+import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 
 const creatures = [
@@ -56,6 +56,10 @@ export default function Creatures() {
   };
   const { doContractCall } = useConnect();
 
+  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+
+  const [farmers, setFarmers] = useState(0)
+
   function summon() {
     doContractCall({
       network: new StacksMainnet(),
@@ -64,8 +68,8 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "summon",
       functionArgs: [uintCV(1), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
-      postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -83,8 +87,8 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "unsummon",
       functionArgs: [uintCV(1), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
-      postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures').willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -93,10 +97,6 @@ export default function Creatures() {
       },
     });
   }
-
-  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
-
-  const [farmers, setFarmers] = useState(0)
 
   useEffect(() => {
     callReadOnlyFunction({

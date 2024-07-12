@@ -35,7 +35,7 @@ import LiquidityControls from '@components/liquidity/controls';
 import velarApi from '@lib/velar-api';
 import { uniqBy } from 'lodash';
 import { useConnect } from '@stacks/connect-react';
-import { AnchorMode, callReadOnlyFunction, cvToJSON, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
+import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 
 export default function IndexDetailPage({ data }: Props) {
@@ -122,8 +122,8 @@ export default function IndexDetailPage({ data }: Props) {
       contractName: 'apple-orchard',
       functionName: "harvest",
       functionArgs: [uintCV(1)],
-      postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -260,7 +260,7 @@ export default function IndexDetailPage({ data }: Props) {
                 {isApples && <Button disabled={!claimableAmount} className="z-30" onClick={harvest}>
                   {claimableAmount ? `Harvest ${claimableAmount} Fuji Apples with Farmers` : 'No Fuji Apples to Harvest'}
                 </Button>}
-                {descriptionVisible && (
+                {indexBalance > 0 && descriptionVisible && (
                   <LiquidityControls
                     min={-indexBalance / indexWeight}
                     max={isApples ? 0 : maxPossibleIndex}
