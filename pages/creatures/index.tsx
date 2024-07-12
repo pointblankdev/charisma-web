@@ -22,6 +22,7 @@ import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from '@stacks/connect-react';
 import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
+import useWallet from '@lib/hooks/use-wallet-balances';
 
 const creatures = [
   {
@@ -60,14 +61,20 @@ export default function Creatures() {
 
   const [farmers, setFarmers] = useState(0)
 
+  const { getBalanceByKey } = useWallet();
+
   function summon() {
+
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: 'creatures',
       functionName: "summon",
-      functionArgs: [uintCV(10), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
+      functionArgs: [
+        uintCV(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance),
+        principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')
+      ],
       postConditionMode: PostConditionMode.Allow,
       // postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
       postConditions: [],
@@ -129,18 +136,15 @@ export default function Creatures() {
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
                 <div className="space-y-4 text-sm">
                   <h3 className="font-bold text-lg">Creatures</h3>
-                  <p>Recruit and command creatures that passively earn tokens for you by staking Charisma LP tokens.</p>
+                  <p>Think of these creatures like little workers you can hire to collect valuable items for you.</p>
                   <p>
-                    Each creature is a special semi-fungible token (SFT) with its own strengths and weaknesses, making every creature distinct and valuable.
+                    To get a creature, you first need to put some special tokens (LP tokens) into the system. It's like giving them the resources they need to get started.
                   </p>
                   <p>
-                    By assigning your creatures to different tasks, they can spend their energy to gather resources, produce goods, or perform tasks, earning you tokens in return.
+                    Once you have deposited the LP tokens, you'll recieve creatures tokens. Your creatures will then automatically start working for you, gathering resources over time.
                   </p>
                   <p>
-                    The staking process for LP tokens to create creatures is secure and 100% trustless.
-                  </p>
-                  <p>
-                    There are no fees for creating or dismissing your creatures, allowing you to maximize their potential as often as you like.
+                    You can tell your creature to bring you the resources they've collected whenever you want. The first type of creature, called the Farmer, is great at collecting Fuji Apples.
                   </p>
                 </div>
               </div>
