@@ -22,10 +22,10 @@ const MicroDeposit = () => {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
-      contractName: 'dme000-governance-token',
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'fuji-apples',
       functionName: "transfer",
-      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'), noneCV()],
+      functionArgs: [uintCV(2019181284000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard'), noneCV()],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
@@ -42,7 +42,7 @@ const MicroDeposit = () => {
   }
 
   return (
-    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Micro-Deposit</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Micro-Deposit</Button>
   );
 };
 

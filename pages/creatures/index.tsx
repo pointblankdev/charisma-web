@@ -1,0 +1,202 @@
+import { GetStaticProps } from 'next';
+import { SkipNavContent } from '@reach/skip-nav';
+import Page from '@components/page';
+import { META_DESCRIPTION } from '@lib/constants';
+import Layout from '@components/layout';
+import { cn } from '@lib/utils';
+import Image from 'next/image';
+import { Card, CardContent, CardFooter, CardHeader } from '@components/ui/card';
+import Link from 'next/link';
+import { useEffect, useState } from 'react';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import { UrlObject } from 'url';
+import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png';
+import liquidStakedRoo from '@public/liquid-staked-roo.png';
+import liquidStakedOdin from '@public/liquid-staked-odin.png';
+import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
+import { Checkbox } from '@components/ui/checkbox';
+import { uniq, uniqBy } from 'lodash';
+import millify from 'millify';
+import { Button } from '@components/ui/button';
+import { userSession } from '@components/stacks-session/connect';
+import { useConnect } from '@stacks/connect-react';
+import { AnchorMode, callReadOnlyFunction, cvToJSON, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
+import { StacksMainnet } from "@stacks/network";
+
+const creatures = [
+  {
+    title: 'Farmers',
+    subtitle: 'Honest and hardworking farmers.',
+    power: 1,
+    cost: 1000000,
+    slug: '/creatures/farmers',
+    guild: {
+      logo: {
+        url: '/stations/fuji-apples.png'
+      }
+    },
+    apps: [
+      {
+        slug: '/creatures/farmers',
+        img: '/stations/apple-orchard.png'
+      }
+    ],
+    cardImage: {
+      url: '/creatures/img/1.png'
+    },
+  },
+]
+
+
+export default function Creatures() {
+  const meta = {
+    title: 'Charisma | Creatures',
+    description: META_DESCRIPTION,
+    image: '/creatures/img/1.png'
+  };
+  const { doContractCall } = useConnect();
+
+  function summon() {
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "summon",
+      functionArgs: [uintCV(1), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+
+  const [farmers, setFarmers] = useState(0)
+
+  useEffect(() => {
+    callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-balance",
+      functionArgs: [uintCV(1), principalCV(sender)],
+      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
+
+  }, [sender])
+
+
+
+
+  return (
+    <Page meta={meta} fullViewport>
+      <SkipNavContent />
+      <Layout>
+        <div className="m-2 sm:container sm:mx-auto sm:py-10">
+          <div className="grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+            <Card
+              className={cn(
+                'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+              )}
+            >
+              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
+                <div className="space-y-4 text-sm">
+                  <h3 className="font-bold text-lg">Creatures</h3>
+                  <p>Recruit and command creatures that passively earn tokens for you by staking Charisma LP tokens.</p>
+                  <p>
+                    Each creature is a special semi-fungible token (SFT) with its own strengths and weaknesses, making every creature distinct and valuable.
+                  </p>
+                  <p>
+                    By assigning your creatures to different tasks, they can spend their energy to gather resources, produce goods, or perform tasks, earning you tokens in return.
+                  </p>
+                  <p>
+                    The staking process for LP tokens to create creatures is secure and 100% trustless.
+                  </p>
+                  <p>
+                    There are no fees for creating or dismissing your creatures, allowing you to maximize their potential as often as you like.
+                  </p>
+                </div>
+              </div>
+            </Card>
+            {creatures.map((creature, i) => {
+              return (
+                <Card
+                  key={i}
+                  className={cn(
+                    'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}
+                >
+                  {/* <Link href={`${creature.slug}`} className="w-full"> */}
+                  <CardContent className="w-full p-0">
+                    <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                      <div className="flex justify-between align-top">
+                        <div className="flex gap-2">
+                          <div className="min-w-max">
+                            {creature.guild.logo.url ? (
+                              <Image
+                                src={creature.guild.logo.url}
+                                width={40}
+                                height={40}
+                                alt="guild-logo"
+                                className="w-10 h-10 rounded-full grow"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 bg-white border rounded-full" />
+                            )}
+                          </div>
+                          <div className="">
+                            <div className="text-sm font-semibold leading-none text-secondary">
+                              {creature.title}
+                            </div>
+                            <div className="mt-1 text-xs leading-tight font-fine text-secondary">
+                              {creature.subtitle}
+                            </div>
+                          </div>
+                        </div>
+                        <div className="flex flex-col items-end leading-[1.1]">
+                          <div className="text-white text-sm font-semibold">{millify(creature.cost)} STX-wCHA Staked / Farmer</div>
+                          <div className="text-white text-sm font-semibold">Earns {creature.power} FUJI / block / Farmer</div>
+                          {/* <div className='text-white'>${creature.value}</div> */}
+                        </div>
+                      </div>
+                    </CardHeader>
+                    <Image
+                      src={creature.cardImage.url}
+                      height={1200}
+                      width={1200}
+                      alt="creature-featured-image"
+                      className={cn(
+                        'w-full object-cover transition-all', // group-hover/card:scale-105',
+                        'aspect-[1]',
+                        'opacity-80',
+                        'group-hover/card:opacity-100',
+                        'flex',
+                        'z-10',
+                        'relative'
+                      )}
+                    />
+                    <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
+                  </CardContent>
+                  {/* </Link> */}
+                  <CardFooter
+                    className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}
+                  >
+                    <div className="z-20 p-2 flex w-full justify-between items-baseline">
+                      <div className='w-full text-lg px-4'>You command {farmers} Farmers</div>
+                      <Button className="z-30 w-48" onClick={summon}>Recruit 1 Farmer</Button>
+                    </div>
+                  </CardFooter>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </Layout>
+    </Page>
+  );
+}

@@ -34,6 +34,9 @@ import useWallet from '@lib/hooks/use-wallet-balances';
 import LiquidityControls from '@components/liquidity/controls';
 import velarApi from '@lib/velar-api';
 import { uniqBy } from 'lodash';
+import { useConnect } from '@stacks/connect-react';
+import { AnchorMode, callReadOnlyFunction, cvToJSON, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
+import { StacksMainnet } from "@stacks/network";
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -54,6 +57,7 @@ export default function IndexDetailPage({ data }: Props) {
     visible: { opacity: 1 }
   };
 
+  const { doContractCall } = useConnect();
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
 
   let maxPossibleIndex = Infinity;
@@ -94,6 +98,25 @@ export default function IndexDetailPage({ data }: Props) {
     (token: { weight: number }) => tokensRequested * token.weight
   );
 
+  function harvest() {
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'apple-orchard',
+      functionName: "harvest",
+      functionArgs: [uintCV(1)],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -112,7 +135,7 @@ export default function IndexDetailPage({ data }: Props) {
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
                   <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                    ${data.tokenPrice.toFixed(2)} / {data.symbol}
+                    ${data.tokenPrice.toFixed(2)} / {data.decimals < 6 && `${millify(Math.pow(10, 6 - data.decimals))}`} {data.symbol}
                   </div>
                   <div className="text-lg">${millify(data.tvl)} TVL</div>
                   <ActiveRecipeIndicator
@@ -188,7 +211,7 @@ export default function IndexDetailPage({ data }: Props) {
                                   {millify(
                                     Math.abs(
                                       (tokensRequired[k] * Math.pow(10, 6)) /
-                                        Math.pow(10, token.decimals)
+                                      Math.pow(10, token.decimals)
                                     )
                                   )}
                                 </div>
@@ -215,18 +238,23 @@ export default function IndexDetailPage({ data }: Props) {
                   Back
                 </Button>
               </Link>
-              {descriptionVisible && (
-                <LiquidityControls
-                  min={-indexBalance / indexWeight}
-                  max={maxPossibleIndex}
-                  onSetTokensSelected={setTokensSelected}
-                  tokensSelected={tokensSelected}
-                  indexWeight={indexWeight}
-                  tokensRequested={tokensRequested * indexWeight}
-                  tokensRequired={tokensRequired}
-                  data={data}
-                />
-              )}
+              <div className='flex flex-col justify-end space-y-2'>
+                <Button className="z-30" onClick={harvest}>
+                  Harvest Apples with Farmers
+                </Button>
+                {descriptionVisible && (
+                  <LiquidityControls
+                    min={-indexBalance / indexWeight}
+                    max={maxPossibleIndex}
+                    onSetTokensSelected={setTokensSelected}
+                    tokensSelected={tokensSelected}
+                    indexWeight={indexWeight}
+                    tokensRequested={tokensRequested * indexWeight}
+                    tokensRequired={tokensRequired}
+                    data={data}
+                  />
+                )}
+              </div>
             </CardFooter>
             <Image
               src={data.metadata.background}
@@ -328,7 +356,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     // if data.metadata.contains has multiple matching items, create a map to track them and sum of their weights of duplicates
     const uniqueTokens = metadata.contains.reduce((acc: any, token: any) => {
       if (acc[token.address]) {
-        acc[token.address].weight += token.weight;
+        acc[token.address].weight = Number(acc[token.address].weight) + Number(token.weight);
       } else {
         acc[token.address] = token;
       }
@@ -395,14 +423,12 @@ const ActiveRecipeIndicator = ({
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
-                active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
-              }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
+                }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
-                active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
-              }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
+                }`}
             />
           </div>
         </TooltipTrigger>
@@ -411,9 +437,8 @@ const ActiveRecipeIndicator = ({
         >
           {active
             ? 'Index fund is live'
-            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${
-                blocksUntilUnlock !== 1 ? 's' : ''
-              }`}
+            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
+            }`}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
