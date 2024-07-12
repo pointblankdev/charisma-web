@@ -70,6 +70,7 @@ export default function Creatures() {
       functionArgs: [uintCV(1), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
       postConditionMode: PostConditionMode.Allow,
       // postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
+      postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -87,8 +88,9 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "unsummon",
       functionArgs: [uintCV(1), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures').willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
+      postConditionMode: PostConditionMode.Allow,
+      // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures').willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
+      postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
