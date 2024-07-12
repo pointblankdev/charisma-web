@@ -27,8 +27,11 @@ import liquidStakedCharismaLogo from '@public/liquid-staked-charisma.png';
 import quietConfidenceLogo from '@public/indexes/quiet-confidence-logo.png';
 import charismaticCorgiLogo from '@public/indexes/charismatic-corgi-logo.png';
 import welshLogo from '@public/welsh-logo.png';
+import liquidWelshLogo from '@public/liquid-staked-welshcorgicoin.png';
 import rooLogo from '@public/roo-logo.png';
+import liquidRooLogo from '@public/liquid-staked-roo.png';
 import odinLogo from '@public/odin-logo.png';
+import liquidOdinLogo from '@public/liquid-staked-odin.png';
 import { GetServerSideProps } from 'next';
 import millify from 'millify';
 import { isEmpty } from 'lodash';
@@ -103,6 +106,14 @@ const tokenList = [
     image: welshLogo
   },
   {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2',
+    ft: 'liquid-staked-token',
+    name: 'Liquid Staked Welsh',
+    symbol: 'sWELSH',
+    decimals: 6,
+    image: liquidWelshLogo
+  },
+  {
     address: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo',
     ft: 'kangaroo',
     name: 'Kangaroo',
@@ -111,12 +122,28 @@ const tokenList = [
     image: rooLogo
   },
   {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-roo-v2',
+    ft: 'liquid-staked-token',
+    name: 'Liquid Staked Roo',
+    symbol: 'sROO',
+    decimals: 6,
+    image: liquidRooLogo
+  },
+  {
     address: 'SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn',
     ft: 'odin',
     name: 'Odin',
     symbol: 'ODIN',
     decimals: 6,
     image: odinLogo
+  },
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-odin',
+    ft: 'liquid-staked-odin',
+    name: 'Liquid Staked Odin',
+    symbol: 'sODIN',
+    decimals: 6,
+    image: liquidOdinLogo
   }
   // 'SP2F4QC563WN0A0949WPH5W1YXVC4M1R46QKE0G14.memegoatstx',
   // 'SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token',
@@ -181,7 +208,7 @@ function TokenBalances({ data }: Props) {
     const factor = token.proxy ? token.proxy.factor : 1;
     const balance = getBalanceByKey(`${token.address}::${token.ft}`)
     const tokenData = tokens.find((t: any) => t.contractAddress === address);
-    const amount = balance?.balance / Math.pow(10, token.decimals) || 1;
+    const amount = balance?.balance / (Math.pow(10, token.decimals) || 1);
     const totalValueUSD = amount * Number(tokenData.price || 0) * factor;
 
     return {
