@@ -20,6 +20,7 @@ import {
 import velarApi from '@lib/velar-api';
 
 // Import images
+import fujiApplesLogo from '@public/stations/fuji-apples.png';
 import charismaLogo from '@public/charisma.png';
 import wrappedCharismaLogo from '@public/indexes/wrapped-charisma-logo.png';
 import liquidStakedCharismaLogo from '@public/liquid-staked-charisma.png';
@@ -33,6 +34,18 @@ import millify from 'millify';
 import { isEmpty } from 'lodash';
 
 const tokenList = [
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
+    ft: 'index-token',
+    name: 'Fuji Apples',
+    symbol: 'FUJI',
+    decimals: 0,
+    image: fujiApplesLogo,
+    proxy: {
+      address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma',
+      factor: 0.000001
+    }
+  },
   {
     address: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token',
     ft: 'charisma',
@@ -168,8 +181,8 @@ function TokenBalances({ data }: Props) {
     const factor = token.proxy ? token.proxy.factor : 1;
     const balance = getBalanceByKey(`${token.address}::${token.ft}`)
     const tokenData = tokens.find((t: any) => t.contractAddress === address);
-    const amount = balance.balance * factor / Math.pow(10, token.decimals);
-    const totalValueUSD = amount * Number(tokenData.price || 0);
+    const amount = balance?.balance / Math.pow(10, token.decimals) || 1;
+    const totalValueUSD = amount * Number(tokenData.price || 0) * factor;
 
     return {
       ...token,

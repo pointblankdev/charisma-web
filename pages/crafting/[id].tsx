@@ -63,6 +63,21 @@ export default function IndexDetailPage({ data }: Props) {
   let maxPossibleIndex = Infinity;
   let limitingToken = null;
 
+  const [claimableAmount, setClaimableAmount] = useState(0)
+
+  useEffect(() => {
+    callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-claimable-amount",
+      functionArgs: [uintCV(1)],
+      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value)))
+
+  }, [])
+
+
   if (!data.metadata || !balances) return <div>Loading...</div>;
 
   const token = getKeyByContractAddress(data.address);
@@ -118,7 +133,6 @@ export default function IndexDetailPage({ data }: Props) {
     });
   }
 
-
   const isApples = maxPossibleIndex > 1000000000000
 
   return (
@@ -141,7 +155,7 @@ export default function IndexDetailPage({ data }: Props) {
                   <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
                     ${data.tokenPrice.toFixed(2)} / {data.decimals < 6 && `${millify(Math.pow(10, 6 - data.decimals))}`} {data.symbol}
                   </div>
-                  <div className="text-lg">${millify(data.tvl)} TVL</div>
+                  {!isApples && <div className="text-lg">${millify(data.tvl)} TVL</div>}
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
                     blocksUntilUnlock={data.blocksUntilUnlock}
@@ -243,8 +257,8 @@ export default function IndexDetailPage({ data }: Props) {
                 </Button>
               </Link>
               <div className='flex flex-col justify-end space-y-2'>
-                {isApples && <Button className="z-30" onClick={harvest}>
-                  Harvest Apples with Farmers
+                {isApples && <Button disabled={!claimableAmount} className="z-30" onClick={harvest}>
+                  {claimableAmount ? `Harvest ${claimableAmount} Fuji Apples with Farmers` : 'No Fuji Apples to Harvest'}
                 </Button>}
                 {descriptionVisible && (
                   <LiquidityControls

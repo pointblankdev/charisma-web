@@ -43,18 +43,10 @@ export const NAVIGATION = [
     name: 'Indexes',
     route: '/crafting'
   },
-  // {
-  //   name: 'Indexes',
-  //   route: '/indexes'
-  // },
-  // {
-  //   name: 'Tokenomics',
-  //   route: '/tokenomics'
-  // },
-  // {
-  //   name: 'Governance',
-  //   route: '/governance',
-  // },
+  {
+    name: 'Creatures',
+    route: '/creatures'
+  },
   {
     name: 'Portfolio',
     route: '/portfolio'

@@ -66,9 +66,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 >
                   <div className="relative flex flex-col items-center justify-center">
                     <div>{name}</div>
-                    {name === 'Arbitrage' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>early access</div>}
-                    {/* {name === 'Swap' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>}
-                    {name === 'Liquid Staking' && <div className='absolute text-xxs top-4 text-primary animate-pulse'>live</div>} */}
+                    {/* {name === 'Arbitrage' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>early access</div>} */}
+                    {name === 'Creatures' && <div className='text-xs whitespace-nowrap absolute top-4 text-primary animate-pulse'>early access</div>}
                     {name === 'Portfolio' && (
                       <div className="whitespace-nowrap absolute text-xs top-4 text-yellow-500 animate-pulse">
                         preview

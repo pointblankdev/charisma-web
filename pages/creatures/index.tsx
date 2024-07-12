@@ -74,6 +74,26 @@ export default function Creatures() {
       },
     });
   }
+
+  function unsummon() {
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "unsummon",
+      functionArgs: [uintCV(1), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: [],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
   const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
   const [farmers, setFarmers] = useState(0)
@@ -157,9 +177,9 @@ export default function Creatures() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex flex-col items-end leading-[1.1]">
-                          <div className="text-white text-sm font-semibold">{millify(creature.cost)} STX-wCHA Staked / Farmer</div>
-                          <div className="text-white text-sm font-semibold">Earns {creature.power} FUJI / block / Farmer</div>
+                        <div className="flex flex-col items-end leading-[1.1] space-y-2">
+                          <div className="text-white text-xs font-semibold">{millify(creature.cost)} STX-wCHA Deposited = 1 Farmer</div>
+                          <div className="text-white text-xs font-semibold">Farmer Earning Power: {creature.power}</div>
                           {/* <div className='text-white'>${creature.value}</div> */}
                         </div>
                       </div>
@@ -186,9 +206,12 @@ export default function Creatures() {
                   <CardFooter
                     className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}
                   >
-                    <div className="z-20 p-2 flex w-full justify-between items-baseline">
+                    <div className="z-20 p-2 flex w-full justify-between place-items-end">
                       <div className='w-full text-lg px-4'>You command {farmers} Farmers</div>
-                      <Button className="z-30 w-48" onClick={summon}>Recruit 1 Farmer</Button>
+                      <div className='flex space-x-2'>
+                        <Button className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
+                        <Button className="z-30" onClick={summon}>Recruit</Button>
+                      </div>
                     </div>
                   </CardFooter>
                 </Card>
