@@ -260,7 +260,7 @@ export default function IndexDetailPage({ data }: Props) {
                 {isApples && <Button disabled={!claimableAmount} className="z-30" onClick={harvest}>
                   {claimableAmount ? `Harvest ${claimableAmount} Fuji Apples with Farmers` : 'No Fuji Apples to Harvest'}
                 </Button>}
-                {indexBalance > 0 && descriptionVisible && (
+                {descriptionVisible && (
                   <LiquidityControls
                     min={-indexBalance / indexWeight}
                     max={isApples ? 0 : maxPossibleIndex}
