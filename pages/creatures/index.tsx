@@ -238,7 +238,7 @@ export default function Creatures() {
                     className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}
                   >
                     <div className="z-20 p-2 flex w-full justify-between place-items-end">
-                      <div className='w-full text-lg px-4'>You command {farmers} Farmers</div>
+                      <div className='w-full text-lg px-4'>You command {millify(farmers)} Farmers</div>
                       <div className='flex space-x-2'>
                         <Button className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
                         <Button disabled={lpAmount === 0} className="z-30" onClick={summon}>Recruit</Button>
