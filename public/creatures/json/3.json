@@ -1,10 +1,10 @@
 {
     "sip": 16,
-    "name": "Corgi Soldier",
-    "image": "https://charisma.rocks/creatures/img/2.png",
+    "name": "Corgi Soldiers",
+    "image": "https://charisma.rocks/creatures/img/3.png",
     "description": {
         "type": "string",
-        "description": "A loyal Welsh corgi soldier. Generates tokens each block for its owner."
+        "description": "Loyal welsh corgi soldiers."
     },
     "attributes": [
         {
@@ -18,17 +18,17 @@
         {
             "trait_type": "power",
             "display_type": "number",
-            "value": 1
+            "value": 2
         },
         {
             "trait_type": "cost",
             "display_type": "number",
-            "value": 1
+            "value": 10000000
         }
     ],
     "properties": {
         "collection": "Creatures",
-        "collection_image": "https://charisma.rocks/creatures/img/2.png",
+        "collection_image": "https://charisma.rocks/creatures/img/3.png",
         "category": "image",
         "symbol": "CREATURE",
         "decimals": 0
