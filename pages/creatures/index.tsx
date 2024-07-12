@@ -28,8 +28,6 @@ const creatures = [
   {
     title: 'Farmers',
     subtitle: 'Honest and hardworking farmers.',
-    power: 1,
-    cost: 1000000,
     slug: '/creatures/farmers',
     guild: {
       logo: {
@@ -60,11 +58,14 @@ export default function Creatures() {
   const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
   const [farmers, setFarmers] = useState(0)
+  const [power, setPower] = useState(0)
+  const [cost, setCost] = useState(0)
 
   const { getBalanceByKey } = useWallet();
 
-  function summon() {
+  const lpAmount = getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance
 
+  function summon() {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -72,7 +73,7 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "summon",
       functionArgs: [
-        uintCV(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance),
+        uintCV(lpAmount.balance),
         principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')
       ],
       postConditionMode: PostConditionMode.Allow,
@@ -116,6 +117,30 @@ export default function Creatures() {
       functionArgs: [uintCV(1), principalCV(sender)],
       senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
     }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
+
+  }, [sender])
+
+  useEffect(() => {
+    sender && callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-creature-power",
+      functionArgs: [uintCV(1)],
+      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    }).then(response => setPower(Number(cvToJSON(response).value)))
+
+  }, [sender])
+
+  useEffect(() => {
+    sender && callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-creature-cost",
+      functionArgs: [uintCV(1)],
+      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    }).then(response => setCost(Number(cvToJSON(response).value)))
 
   }, [sender])
 
@@ -184,8 +209,8 @@ export default function Creatures() {
                           </div>
                         </div>
                         <div className="flex flex-col items-end leading-[1.1] space-y-2">
-                          <div className="text-white text-xs font-semibold">{millify(creature.cost)} STX-wCHA Deposited = 1 Farmer</div>
-                          <div className="text-white text-xs font-semibold">Farmer Earning Power: {creature.power}</div>
+                          <div className="text-white text-xs font-semibold">{millify(cost)} STX-wCHA Deposited = 1 Farmer</div>
+                          <div className="text-white text-xs font-semibold">Farmer Earning Power: {power}</div>
                           {/* <div className='text-white'>${creature.value}</div> */}
                         </div>
                       </div>
@@ -216,7 +241,8 @@ export default function Creatures() {
                       <div className='w-full text-lg px-4'>You command {farmers} Farmers</div>
                       <div className='flex space-x-2'>
                         <Button className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
-                        <Button className="z-30" onClick={summon}>Recruit</Button>
+                        <Button disabled={lpAmount === 0} className="z-30" onClick={summon}>Recruit</Button>
+                        <div>{lpAmount === 0 && 'You need STX-wCHA LP Tokens to create Farmers'}</div>
                       </div>
                     </div>
                   </CardFooter>

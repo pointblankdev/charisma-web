@@ -43,7 +43,7 @@ export default function App({ Component, pageProps }: AppProps) {
   }
 
   const getBalanceByKey = (key: string) => {
-    return balances?.fungible_tokens?.[key]
+    return balances?.fungible_tokens?.[key] || 0
   }
 
   useEffect(() => {
