@@ -68,8 +68,8 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "summon",
       functionArgs: [uintCV(1), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
+      postConditionMode: PostConditionMode.Allow,
+      // postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
