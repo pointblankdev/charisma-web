@@ -37,6 +37,7 @@ import { uniqBy } from 'lodash';
 import { useConnect } from '@stacks/connect-react';
 import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
+import { userSession } from '@components/stacks-session/connect';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -59,11 +60,14 @@ export default function IndexDetailPage({ data }: Props) {
 
   const { doContractCall } = useConnect();
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
+  const [farmers, setFarmers] = useState(0)
 
   let maxPossibleIndex = Infinity;
   let limitingToken = null;
 
   const [claimableAmount, setClaimableAmount] = useState(0)
+
+  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
   useEffect(() => {
     callReadOnlyFunction({
@@ -76,6 +80,18 @@ export default function IndexDetailPage({ data }: Props) {
     }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value)))
 
   }, [])
+
+  useEffect(() => {
+    sender && callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-balance",
+      functionArgs: [uintCV(1), principalCV(sender)],
+      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+    }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
+
+  }, [sender])
 
 
   if (!data.metadata || !balances) return <div>Loading...</div>;
@@ -250,15 +266,16 @@ export default function IndexDetailPage({ data }: Props) {
                 </div>
               </div>
             </CardContent>
-            <CardFooter className="z-20 flex justify-between p-4 items-end">
+            <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end">
               <Link href="/crafting">
                 <Button variant="ghost" className="z-30">
                   Back
                 </Button>
               </Link>
-              <div className='flex flex-col justify-end space-y-2'>
-                {isApples && <Button disabled={!claimableAmount} className="z-30" onClick={harvest}>
-                  {claimableAmount ? `Harvest ${claimableAmount} Fuji Apples with Farmers` : 'No Fuji Apples to Harvest'}
+              <div className='flex flex-col justify-end space-y-1'>
+                <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>
+                {isApples && <Button size={'sm'} disabled={!claimableAmount} className="z-30" onClick={harvest}>
+                  {claimableAmount ? `Harvest ${claimableAmount} Fuji Apples` : 'No Fuji Apples to Harvest'}
                 </Button>}
                 {descriptionVisible && (
                   <LiquidityControls
