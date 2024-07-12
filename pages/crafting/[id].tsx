@@ -131,7 +131,7 @@ export default function IndexDetailPage({ data }: Props) {
             <CardHeader className="z-20 p-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="z-30 text-lg sm:text-xl font-semibold">
-                  Index: {data.symbol}
+                  {data.symbol[0] === 'i' ? `Index: ` : 'Token: '} {data.symbol}
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
                   <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
