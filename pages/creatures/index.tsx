@@ -68,8 +68,8 @@ export default function Creatures() {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "summon",
+      contractName: 'creatures-energy',
+      functionName: "recruit",
       functionArgs: [
         uintCV((amount / cost).toFixed(0)),
         principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')
@@ -91,9 +91,9 @@ export default function Creatures() {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "unsummon",
-      functionArgs: [uintCV(10), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
+      contractName: 'creatures-energy',
+      functionName: "dismiss",
+      functionArgs: [uintCV(farmers * cost), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
       postConditionMode: PostConditionMode.Allow,
       // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures').willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
       postConditions: [],
