@@ -121,7 +121,6 @@ export default function IndexDetailPage({ data }: Props) {
     }
   });
 
-
   // workaround for when 2 baseTokens are consolidated into one, the maxPossibleIndex is incorrectly doubled because it doesn't know it draws twice from the same token
   maxPossibleIndex = maxPossibleIndex / 2;
 
@@ -169,6 +168,8 @@ export default function IndexDetailPage({ data }: Props) {
   }
 
   const isApples = maxPossibleIndex > 1000000000000
+
+  const absValMin = Math.abs(-indexBalance / indexWeight)
 
   return (
     <Page meta={meta} fullViewport>
@@ -293,10 +294,10 @@ export default function IndexDetailPage({ data }: Props) {
               </Link>
               <div className='flex flex-col justify-end space-y-1'>
                 {isApples && claimableAmount > 0 && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
-                {isApples && <Button size={'sm'} className="z-30 animate-pulse" onClick={claimableAmount > 0 ? harvest : store}>
+                {isApples && <Button size={'sm'} className={`z-30 ${claimableAmount === 0 && "animate-pulse"}`} onClick={claimableAmount > 0 ? harvest : store}>
                   {claimableAmount > 0 ? `Harvest ${claimableAmount} Fuji Apples` : 'Assign farmers to work'}
                 </Button>}
-                {descriptionVisible && (
+                {descriptionVisible && (absValMin !== maxPossibleIndex) && (
                   <LiquidityControls
                     min={-indexBalance / indexWeight}
                     max={isApples ? 0 : maxPossibleIndex}
