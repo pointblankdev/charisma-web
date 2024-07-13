@@ -149,6 +149,25 @@ export default function IndexDetailPage({ data }: Props) {
     });
   }
 
+  function store() {
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures-energy',
+      functionName: "store",
+      functionArgs: [principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
+      postConditionMode: PostConditionMode.Deny,
+      // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(claimableAmount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
+      onFinish: (data) => {
+        console.log("onFinish:", data);
+      },
+      onCancel: () => {
+        console.log("onCancel:", "Transaction was canceled");
+      },
+    });
+  }
+
   const isApples = maxPossibleIndex > 1000000000000
 
   return (
@@ -274,7 +293,7 @@ export default function IndexDetailPage({ data }: Props) {
               </Link>
               <div className='flex flex-col justify-end space-y-1'>
                 {isApples && claimableAmount > 0 && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
-                {isApples && <Button size={'sm'} className="z-30" onClick={harvest}>
+                {isApples && <Button size={'sm'} className="z-30" onClick={claimableAmount > 0 ? harvest : store}>
                   {claimableAmount > 0 ? `Harvest ${claimableAmount} Fuji Apples` : 'Assign farmers to work'}
                 </Button>}
                 {descriptionVisible && (
