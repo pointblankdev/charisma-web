@@ -76,7 +76,7 @@ export default function IndexDetailPage({ data }: Props) {
       contractName: 'creatures-energy',
       functionName: "get-untapped-amount",
       functionArgs: [uintCV(1), principalCV(sender)],
-      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+      senderAddress: sender
     }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value)))
 
   }, [])
@@ -88,7 +88,7 @@ export default function IndexDetailPage({ data }: Props) {
       contractName: 'creatures',
       functionName: "get-balance",
       functionArgs: [uintCV(1), principalCV(sender)],
-      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+      senderAddress: sender
     }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
 
   }, [sender])
@@ -165,6 +165,8 @@ export default function IndexDetailPage({ data }: Props) {
       },
     });
   }
+
+  console.log(maxPossibleIndex)
 
   const isApples = maxPossibleIndex > 1000000000000
 
