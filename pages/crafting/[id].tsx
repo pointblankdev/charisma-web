@@ -166,8 +166,7 @@ export default function IndexDetailPage({ data }: Props) {
     });
   }
 
-  console.log(maxPossibleIndex)
-
+  // hack: my terrible way of determining if the index token is apples or not
   const isApples = maxPossibleIndex > 1000000000000
 
   const absValMin = Math.abs(-indexBalance / indexWeight)
