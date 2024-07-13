@@ -137,8 +137,8 @@ export default function IndexDetailPage({ data }: Props) {
       contractName: 'tranquil-orchard',
       functionName: "harvest",
       functionArgs: [uintCV(1)],
-      postConditionMode: PostConditionMode.Allow,
-      // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(claimableAmount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(claimableAmount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -157,7 +157,6 @@ export default function IndexDetailPage({ data }: Props) {
       functionName: "store",
       functionArgs: [principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
       postConditionMode: PostConditionMode.Deny,
-      // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(claimableAmount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -295,7 +294,7 @@ export default function IndexDetailPage({ data }: Props) {
               <div className='flex flex-col justify-end space-y-1'>
                 {isApples && claimableAmount > 0 && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
                 {isApples && <Button size={'sm'} className={`z-30 ${claimableAmount === 0 && "animate-pulse"}`} onClick={claimableAmount > 0 ? harvest : store}>
-                  {claimableAmount > 0 ? `Harvest ${claimableAmount} Fuji Apples` : 'Assign farmers to work'}
+                  {claimableAmount > 0 ? `Harvest ${millify(claimableAmount)} Fuji Apples` : 'Assign farmers to work'}
                 </Button>}
                 {descriptionVisible && (absValMin !== maxPossibleIndex) && (
                   <LiquidityControls
