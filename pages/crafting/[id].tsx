@@ -293,7 +293,7 @@ export default function IndexDetailPage({ data }: Props) {
               </Link>
               <div className='flex flex-col justify-end space-y-1'>
                 {isApples && claimableAmount > 0 && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
-                {isApples && <Button size={'sm'} className="z-30" onClick={claimableAmount > 0 ? harvest : store}>
+                {isApples && <Button size={'sm'} className="z-30 animate-pulse" onClick={claimableAmount > 0 ? harvest : store}>
                   {claimableAmount > 0 ? `Harvest ${claimableAmount} Fuji Apples` : 'Assign farmers to work'}
                 </Button>}
                 {descriptionVisible && (
