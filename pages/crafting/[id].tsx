@@ -73,9 +73,9 @@ export default function IndexDetailPage({ data }: Props) {
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-claimable-amount",
-      functionArgs: [uintCV(1)],
+      contractName: 'creatures-energy',
+      functionName: "get-untapped-amount",
+      functionArgs: [uintCV(1), principalCV(sender)],
       senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
     }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value)))
 
@@ -135,11 +135,11 @@ export default function IndexDetailPage({ data }: Props) {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'apple-orchard',
+      contractName: 'tranquil-orchard',
       functionName: "harvest",
       functionArgs: [uintCV(1)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
+      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(claimableAmount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -273,9 +273,9 @@ export default function IndexDetailPage({ data }: Props) {
                 </Button>
               </Link>
               <div className='flex flex-col justify-end space-y-1'>
-                {isApples && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
-                {isApples && <Button size={'sm'} disabled={!claimableAmount} className="z-30" onClick={harvest}>
-                  {claimableAmount ? `Harvest ${claimableAmount} Fuji Apples` : 'No Fuji Apples to Harvest'}
+                {isApples && claimableAmount > 0 && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
+                {isApples && <Button size={'sm'} className="z-30" onClick={harvest}>
+                  {claimableAmount > 0 ? `Harvest ${claimableAmount} Fuji Apples` : 'Assign farmers to work'}
                 </Button>}
                 {descriptionVisible && (
                   <LiquidityControls
