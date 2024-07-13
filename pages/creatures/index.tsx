@@ -113,7 +113,7 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "get-balance",
       functionArgs: [uintCV(1), principalCV(sender)],
-      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+      senderAddress: sender
     }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
 
   }, [sender])
@@ -125,7 +125,7 @@ export default function Creatures() {
       contractName: 'creatures',
       functionName: "get-creature-power",
       functionArgs: [uintCV(1)],
-      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS"
+      senderAddress: sender
     }).then(response => setPower(Number(cvToJSON(response).value)))
 
   }, [sender])
