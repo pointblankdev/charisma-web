@@ -163,7 +163,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       contractName: "champions-faucet",
       functionName: "get-last-claim",
       functionArgs: [],
-      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+      senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
     })
 
 
@@ -173,7 +173,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       contractName: "champions-faucet",
       functionName: "get-drip-amount",
       functionArgs: [],
-      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+      senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
     })
 
     const data = {

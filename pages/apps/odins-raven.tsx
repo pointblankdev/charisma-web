@@ -283,7 +283,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     //   contractName: "raven-faucet",
     //   functionName: "get-last-claim",
     //   functionArgs: [],
-    //   senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    //   senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
     // })
 
     // const d: any = await callReadOnlyFunction({
@@ -292,7 +292,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     //   contractName: "raven-faucet",
     //   functionName: "get-drip-amount",
     //   functionArgs: [],
-    //   senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    //   senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
     // })
 
     const data = {
@@ -323,14 +323,12 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
-                active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
-              }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
+                }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
-                active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
-              }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
+                }`}
             />
           </div>
         </TooltipTrigger>

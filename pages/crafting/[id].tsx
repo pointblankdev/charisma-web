@@ -137,8 +137,8 @@ export default function IndexDetailPage({ data }: Props) {
       contractName: 'tranquil-orchard',
       functionName: "harvest",
       functionArgs: [uintCV(1)],
-      postConditionMode: PostConditionMode.Allow,
-      // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(claimableAmount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-orchard').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },

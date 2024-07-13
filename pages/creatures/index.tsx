@@ -63,6 +63,8 @@ export default function Creatures() {
   const [amount, setAmount] = useState(0)
   const { getBalanceByKey } = useWallet();
 
+  const farmersToRecruit = Math.floor(amount / cost)
+
   function summon() {
     doContractCall({
       network: new StacksMainnet(),
@@ -71,7 +73,7 @@ export default function Creatures() {
       contractName: 'creatures-energy',
       functionName: "recruit",
       functionArgs: [
-        uintCV(Math.floor(amount / cost)),
+        uintCV(farmersToRecruit),
         principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')
       ],
       postConditionMode: PostConditionMode.Allow,
@@ -243,7 +245,7 @@ export default function Creatures() {
                     <div className="z-20 p-2 flex w-full justify-between place-items-end">
                       <div className='w-full text-lg px-4'>You command {millify(farmers)} Farmers</div>
                       <div className='flex space-x-2'>
-                        <Button className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
+                        <Button disabled={farmersToRecruit === 0} className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
                         <Button disabled={amount === 0} className="z-30" onClick={summon}>Recruit</Button>
                         <div>{amount === 0 && 'You need STX-wCHA LP Tokens to create Farmers'}</div>
                       </div>

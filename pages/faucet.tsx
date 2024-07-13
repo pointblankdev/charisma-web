@@ -108,7 +108,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       contractName: "dme005-token-faucet-v0",
       functionName: "get-last-claim",
       functionArgs: [],
-      senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+      senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
     })
 
 

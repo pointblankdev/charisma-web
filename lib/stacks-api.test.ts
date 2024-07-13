@@ -16,7 +16,7 @@ describe('Stacks API', () => {
             contractName: "balance-at-block-v2",
             functionName: "get-balance-at-block",
             functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), uintCV(118360)],
-            senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+            senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
         });
 
         console.log(r)
