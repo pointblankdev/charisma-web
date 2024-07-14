@@ -176,7 +176,7 @@ export default function IndexDetailPage({ data }: Props) {
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
                   <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                    $ {Number(data.tokenPrice).toFixed(fixedAmount)} / {data.symbol}
+                    ${Number(data.tokenPrice).toFixed(fixedAmount)} / {data.symbol}
                   </div>
                   <div className="text-lg">${millify(data.tvl)} TVL</div>
                   <ActiveRecipeIndicator
@@ -316,7 +316,7 @@ export default function IndexDetailPage({ data }: Props) {
                     </CardTitle>
                     <div className="flex space-x-4 items-center">
                       <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        $ {Number(data.tokenPrice * farmers * 6 * 24).toFixed(2)} / day
+                        {numeral(data.tokenPrice * farmers * 6 * 24).format('($0.0000a)')} / day
                       </div>
                       <div className="text-lg">{numeral(farmers).format('(0a)')} 🧑‍🌾</div>
                       <ActiveFarmIndicator
