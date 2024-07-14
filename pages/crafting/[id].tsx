@@ -562,7 +562,7 @@ const ActiveFarmIndicator = ({
           className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
         >
           {active
-            ? 'Creating are working the farm'
+            ? 'Creatures are working the farm'
             : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
             }`}
         </TooltipContent>
