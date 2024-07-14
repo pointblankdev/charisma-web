@@ -38,6 +38,7 @@ import { useConnect } from '@stacks/connect-react';
 import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import { userSession } from '@components/stacks-session/connect';
+import numeral from 'numeral';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -154,6 +155,7 @@ export default function IndexDetailPage({ data }: Props) {
   // variable to hide the liquidity controls if they have no index tokens or base tokens
   const absValMin = Math.abs(-indexBalance / indexWeight)
 
+  const fixedAmount = data.tokenPrice < 0.000001 ? 8 : data.tokenPrice < 1 ? 6 : 4
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -172,7 +174,7 @@ export default function IndexDetailPage({ data }: Props) {
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
                   <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                    ${data.tokenPrice.toFixed(2)} {data.symbol}
+                    $ {Number(data.tokenPrice).toFixed(fixedAmount)} / {data.symbol}
                   </div>
                   <div className="text-lg">${millify(data.tvl)} TVL</div>
                   <ActiveRecipeIndicator
@@ -205,18 +207,16 @@ export default function IndexDetailPage({ data }: Props) {
                             height={100}
                             className="z-30 w-full border rounded-full"
                           />
-                          {Math.abs(tokensRequested).toFixed(0) !== '0' && (
-                            <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                              {millify(Math.abs(tokensRequested * indexWeight))}
-                            </div>
-                          )}
+                          <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                            {numeral(Math.abs(tokensRequested * indexWeight)).format('(0.00a)')}
+                          </div>
                         </div>
                       </TooltipTrigger>
                       <TooltipContent
                         side="bottom"
                         className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
                       >
-                        {Math.floor(Math.abs(tokensRequested))} {data.metadata.symbol}
+                        {numeral(Math.abs(tokensRequested * indexWeight)).format('(0,0.000000)')} {data.metadata.symbol}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -243,23 +243,16 @@ export default function IndexDetailPage({ data }: Props) {
                                 height={100}
                                 className="z-30 w-full border rounded-full"
                               />
-                              {Math.abs(tokensRequired[k]).toFixed(0) !== '0' && (
-                                <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                                  {millify(
-                                    Math.abs(
-                                      (tokensRequired[k] * Math.pow(10, 6)) /
-                                      Math.pow(10, token.decimals)
-                                    )
-                                  )}
-                                </div>
-                              )}
+                              <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                                {numeral(Math.abs(tokensRequired[k])).format('(0.00a)')}
+                              </div>
                             </div>
                           </TooltipTrigger>
                           <TooltipContent
                             side="bottom"
                             className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
                           >
-                            {Math.floor(Math.abs(tokensRequired[k]))}{' '}
+                            {numeral(Math.abs(tokensRequired[k])).format('(0,0.000000)')}{' '}
                             {data.metadata.contains[k].symbol}
                           </TooltipContent>
                         </Tooltip>
@@ -333,6 +326,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     const supply = await getTotalSupply(params?.id as string);
     const symbol = await getSymbol(params?.id as string);
     const decimals = await getDecimals(params?.id as string);
+    const indexTokenWeight = metadata.weight || 1;
 
     // get price data from Velar API
     const prices = await velarApi.tokens();
@@ -354,7 +348,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
         const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress);
         const tokenWeight = metadata.contains[tokenIndex].weight;
         const tokenPrice = Number(baseToken.price);
-        return totalSupply * tokenWeight * tokenPrice;
+        return totalSupply * tokenWeight * tokenPrice / indexTokenWeight;
       });
       tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0);
     }
@@ -415,7 +409,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
           (baseToken: any) => baseToken.contractAddress === token.address
         );
         if (baseToken) {
-          tokenPrice += baseToken.price * token.weight;
+          tokenPrice += baseToken.price * token.weight / indexTokenWeight;
         }
       });
     }
