@@ -166,8 +166,8 @@ export default function IndexDetailPage({ data }: Props) {
     });
   }
 
-  // hack: my terrible way of determining if the index token is apples or not
-  const isApples = maxPossibleIndex > 1000000000000
+  // hack: short term workaround for apple specific stuff
+  const isApples = data.symbol === 'FUJI'
 
   const absValMin = Math.abs(-indexBalance / indexWeight)
 
