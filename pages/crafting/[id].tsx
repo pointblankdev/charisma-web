@@ -295,7 +295,7 @@ export default function IndexDetailPage({ data }: Props) {
               <div className='flex flex-col justify-end space-y-1'>
                 {isApples && farmers > 0 && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
                 {isApples && farmers > 0 && <Button disabled={claimableAmount === 0} size={'sm'} className={`z-30 ${claimableAmount === 0 && "animate-pulse"}`} onClick={harvest}>
-                  {`Harvest ${millify(claimableAmount)} Fuji Apples`}
+                  {claimableAmount === 0 ? `No Fuji Apples to harvest` : `Harvest ${millify(claimableAmount)} Fuji Apples`}
                 </Button>}
                 {descriptionVisible && (absValMin !== maxPossibleIndex) && (
                   <LiquidityControls
