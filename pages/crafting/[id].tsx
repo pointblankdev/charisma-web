@@ -527,7 +527,7 @@ const ActiveRecipeIndicator = ({
           className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
         >
           {active
-            ? 'Index fund is live'
+            ? 'Index token is unlocked'
             : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
             }`}
         </TooltipContent>
