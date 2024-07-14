@@ -39,6 +39,8 @@ import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, prin
 import { StacksMainnet } from "@stacks/network";
 import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
+import farmersImg from '@public/creatures/img/1.png'
+import tranquilOrchard from '@public/stations/apple-orchard.png'
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -164,7 +166,7 @@ export default function IndexDetailPage({ data }: Props) {
           initial="hidden"
           animate="visible"
           variants={fadeIn}
-          className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl lg:max-w-3xl"
+          className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl lg:max-w-3xl space-y-4"
         >
           <Card className="bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4">
@@ -269,10 +271,6 @@ export default function IndexDetailPage({ data }: Props) {
                 </Button>
               </Link>
               <div className='flex flex-col justify-end space-y-1'>
-                {isApples && farmers > 0 && <div className='animate-pulse text-center text-sm'>{farmers} farmers are working...</div>}
-                {isApples && farmers > 0 && <Button disabled={claimableAmount === 0} size={'sm'} className={`z-30 ${claimableAmount === 0 && "animate-pulse"}`} onClick={harvest}>
-                  {claimableAmount === 0 ? `No Fuji Apples to harvest` : `Harvest ${numeral(claimableAmount).format('(0a)')} Fuji Apples`}
-                </Button>}
                 {descriptionVisible && (absValMin !== maxPossibleIndex) && (
                   <LiquidityControls
                     min={-indexBalance / indexWeight}
@@ -307,6 +305,67 @@ export default function IndexDetailPage({ data }: Props) {
             />
             <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
           </Card>
+
+          <div className='grid grid-cols-1 sm:grid-cols-2'>
+            {isApples &&
+              <Card className="bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
+                <CardHeader className="z-20 p-4">
+                  <div className="flex items-center justify-between">
+                    <CardTitle className="z-30 text-lg sm:text-xl font-semibold">
+                      Farmers
+                    </CardTitle>
+                    <div className="flex space-x-4 items-center">
+                      <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
+                        $ {Number(data.tokenPrice * farmers * 6 * 24).toFixed(2)} / day
+                      </div>
+                      <div className="text-lg">{numeral(farmers).format('(0a)')} 🧑‍🌾</div>
+                      <ActiveFarmIndicator
+                        active={true}
+                        blocksUntilUnlock={0}
+                      />
+                    </div>
+                  </div>
+                  <CardDescription className="z-30 text-xs sm:text-sm font-fine text-secondary/40">
+                    Humble, hardworking farmers that tend to the orchard and harvest Fuji Apples.
+                  </CardDescription>
+                  <div className="z-20">
+                    {/* <CardTitle className="z-30 mt-2 text-xl font-semibold">Yield Farming</CardTitle> */}
+                    {descriptionVisible && (
+                      <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tranquil-orchard?chain=mainnet`}>
+                        <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground flex items-end space-x-1">
+                          <div>Tranquil Orchard</div> <Link1Icon className="mb-0.5" />
+                        </CardDescription>
+                      </Link>
+                    )}
+                  </div>
+                </CardHeader>
+                <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end mt-32">
+                  {farmers > 0 &&
+                    <Button disabled={claimableAmount === 0} size={'sm'} className={`z-30 w-full ${claimableAmount === 0 && "animate-pulse"}`} onClick={harvest}>
+                      {claimableAmount === 0 ? `No Fuji Apples to harvest` : `Harvest ${numeral(claimableAmount).format('(0a)')} Fuji Apples`}
+                    </Button>
+                  }
+                </CardFooter>
+                <Image
+                  src={farmersImg}
+                  width={800}
+                  height={1600}
+                  alt={'quest-background-image'}
+                  className={cn(
+                    'object-cover',
+                    'lg:aspect-square',
+                    'sm:aspect-[2/3]',
+                    'aspect-[1/2]',
+                    'opacity-10',
+                    'flex',
+                    'z-10',
+                    'absolute',
+                    'inset-0',
+                    'pointer-events-none'
+                  )}
+                />
+              </Card>}
+          </div>
         </motion.div>
       </Layout>
     </Page>
@@ -476,3 +535,39 @@ const ActiveRecipeIndicator = ({
     </TooltipProvider>
   );
 };
+
+const ActiveFarmIndicator = ({
+  active,
+  blocksUntilUnlock
+}: {
+  active: boolean;
+  blocksUntilUnlock: number;
+}) => {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <div className="relative w-4 h-4">
+            <div
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
+                }`}
+            />
+            <div
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
+                }`}
+            />
+          </div>
+        </TooltipTrigger>
+        <TooltipContent
+          className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
+        >
+          {active
+            ? 'Creating are working the farm'
+            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
+            }`}
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
