@@ -27,21 +27,6 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   const [priceFeedActive, setPriceFeedActive] = React.useState<boolean>(true);
 
-  // useEffect(() => {
-  //   try {
-
-  //     velarApi.tickers().then((prices) => {
-  //       console.log(prices);
-  //       if (prices.length === 0) {
-  //         console.error('Error fetching token prices')
-  //         setPriceFeedActive(false);
-  //       }
-  //     });
-  //   } catch (error) {
-  //     console.error(error)
-  //   }
-  // }, []);
-
   return (
     <>
       <div className={styles.background}>
@@ -67,12 +52,12 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   <div className="relative flex flex-col items-center justify-center">
                     <div>{name}</div>
                     {/* {name === 'Arbitrage' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>early access</div>} */}
-                    {name === 'Creatures' && <div className='text-xs whitespace-nowrap absolute top-4 text-primary animate-pulse'>early access</div>}
-                    {name === 'Portfolio' && (
+                    {/* {name === 'Creatures' && <div className='text-xs whitespace-nowrap absolute top-4 text-primary animate-pulse'>early access</div>} */}
+                    {/* {name === 'Portfolio' && (
                       <div className="whitespace-nowrap absolute text-xs top-4 text-yellow-500 animate-pulse">
                         preview
                       </div>
-                    )}
+                    )} */}
                   </div>
                 </Link>
               ))}

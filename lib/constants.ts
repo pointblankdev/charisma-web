@@ -23,25 +23,21 @@ export const NAVIGATION = [
   //   name: 'Quests',
   //   route: '/quests'
   // },
-  {
-    name: 'Apps',
-    route: '/apps'
-  },
-  {
-    name: 'Swap',
-    route: '/swap'
-  },
+  // {
+  //   name: 'Apps',
+  //   route: '/apps'
+  // },
+  // {
+  //   name: 'Swap',
+  //   route: '/swap'
+  // },
   // {
   //   name: 'Arbitrage',
   //   route: '/apps/arbitrage/cha'
   // },
   {
-    name: 'Liquid Staking',
-    route: '/liquid-staking'
-  },
-  {
-    name: 'Indexes',
-    route: '/crafting'
+    name: 'Tokens',
+    route: '/tokens'
   },
   {
     name: 'Creatures',

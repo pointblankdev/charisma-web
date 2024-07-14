@@ -278,7 +278,7 @@ export default function IndexDetailPage({ data }: Props) {
               </div>
             </CardContent>
             <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end">
-              <Link href="/crafting">
+              <Link href="/tokens">
                 <Button variant="ghost" className="z-30">
                   Back
                 </Button>

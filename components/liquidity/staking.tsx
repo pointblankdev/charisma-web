@@ -41,7 +41,7 @@ const StakingControls = ({
                 </div>
             </div>}
             <div className="z-20 flex items-center justify-between space-x-1 w-full">
-                <Link href="/liquid-staking">
+                <Link href="/tokens">
                     <Button variant="ghost" className="z-30">
                         Back
                     </Button>

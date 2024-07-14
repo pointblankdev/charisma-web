@@ -15,6 +15,15 @@ import { useConnect } from '@stacks/connect-react';
 import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import useWallet from '@lib/hooks/use-wallet-balances';
+import { UrlObject } from 'url';
+import { StaticImport } from 'next/dist/shared/lib/get-img-props';
+import tokenfaucet1 from '@public/token-faucet.png'
+import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
+import liquidStakedRoo from '@public/liquid-staked-roo.png'
+import liquidStakedOdin from '@public/liquid-staked-odin.png'
+import charisma from '@public/charisma.png'
+import raven from '@public/raven-of-odin.png'
+import odinsRaven from '@public/odins-raven/img/4.gif'
 
 const creatures = [
   {
@@ -36,6 +45,136 @@ const creatures = [
       url: '/creatures/img/1.png'
     },
   },
+]
+
+const activities = [
+  // {
+  //   title: 'Tranquil Orchard',
+  //   subtitle: 'Grow and harvest Fuji Apples.',
+  //   ticker: 'FUJI',
+  //   slug: '/farms/tranquil-orchard',
+  //   guild: {
+  //     logo: {
+  //       url: '/stations/fuji-apples.png'
+  //     }
+  //   },
+  //   apps: [
+  //     {
+  //       slug: '/farms/tranquil-orchard',
+  //       img: '/stations/apple-orchard.png'
+  //     }
+  //   ],
+  //   cardImage: {
+  //     url: '/stations/apple-orchard.png'
+  //   },
+  // },
+  {
+    title: "Charisma Faucet",
+    subtitle: "Get free Charisma tokens.",
+    ticker: "CHA",
+    slug: "/faucet",
+    guild: {
+      logo: {
+        url: "/charisma.png"
+      }
+    },
+    apps: [
+      {
+        slug: "/faucet",
+        img: "/charisma.png"
+      }
+    ],
+    cardImage: {
+      url: tokenfaucet1
+    },
+  },
+  {
+    guild: {
+      logo: {
+        url: '/wishing-well-1.png'
+      }
+    },
+    title: 'Wishing Well',
+    subtitle: 'Donate to the Corgi Wishing Well',
+    cardImage: {
+      url: '/wishing-well.png'
+    },
+    slug: 'wishing-well',
+    wip: false,
+    apps: [
+      { slug: '/stake/welsh', img: liquidStakedWelsh },
+    ]
+  },
+  {
+    guild: {
+      logo: {
+        url: '/kangaroo-borrow-1.png'
+      }
+    },
+    title: 'Kangaroo Burrow',
+    subtitle: 'Donate to the Kangaroo Burrow',
+    cardImage: {
+      url: '/kangaroo-burrow.png'
+    },
+    slug: 'kangaroo-burrow',
+    wip: false,
+    apps: [
+      { slug: '/stake/roo', img: liquidStakedRoo },
+    ]
+  },
+  {
+    guild: {
+      logo: {
+        url: '/uppsala-21.png'
+      }
+    },
+    title: 'The Temple at Uppsala',
+    subtitle: 'Donate to the Temple at Uppsala',
+    cardImage: {
+      url: '/uppsala-21.png'
+    },
+    slug: 'apps/uppsala',
+    wip: false,
+    apps: [
+      { slug: '/stake/odin', img: liquidStakedOdin },
+    ]
+  },
+  {
+    guild: {
+      logo: {
+        url: odinsRaven
+      }
+    },
+    title: "Odin's Raven",
+    subtitle: 'The Eyes and ears of the Allfather',
+    cardImage: {
+      url: raven
+    },
+    slug: 'apps/odins-raven',
+    wip: false,
+    apps: [
+      { slug: '/stake/welsh', img: liquidStakedWelsh },
+      { slug: '/stake/odin', img: liquidStakedOdin },
+    ]
+  },
+  {
+    guild: {
+      logo: {
+        url: '/green-room-icon.png'
+      }
+    },
+    title: 'The Green Room',
+    subtitle: 'Private faucet for AWC & VIPs',
+    cardImage: {
+      url: '/green-room-card.png'
+    },
+    slug: 'apps/the-green-room',
+    wip: false,
+    apps: [
+      { slug: '/faucet', img: charisma },
+    ]
+  },
+
 ]
 
 
@@ -147,7 +286,13 @@ export default function Creatures() {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="m-2 sm:container sm:mx-auto sm:py-10">
+        <div className="sm:container sm:mx-auto sm:py-10 space-y-6 m-2">
+          <div className="space-y-1">
+            <h2 className="text-4xl font-semibold tracking-tight text-secondary">Creatures</h2>
+            <p className="text-muted-foreground text-base">
+              Creatures are SIP13 tokens that represent workers in the Charisma ecosystem. They can be used to perform tasks and earn rewards.
+            </p>
+          </div>
           <div className="grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
             <Card
               className={cn(
@@ -255,6 +400,81 @@ export default function Creatures() {
                 </Card>
               );
             })}
+          </div>
+
+          <div className="space-y-1">
+            <h2 className="text-4xl font-semibold tracking-tight text-secondary">Activities</h2>
+            <p className="text-muted-foreground text-base">
+              Here are some things your can do in the Charisma ecosystem to earn tokens.
+            </p>
+          </div>
+
+          <div className="grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+            {activities.map((activity: any, i: number) => {
+              return (
+                <Card
+                  key={i}
+                  className={cn(
+                    'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card',
+                    activity.inactive && 'opacity-25 hover:opacity-60'
+                  )}
+                >
+                  <Link href={`${activity.slug}`} className="w-full">
+                    <CardContent className="w-full p-0">
+                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                        <div className="flex justify-between align-top">
+                          <div className="flex gap-2">
+                            <div className="min-w-max">
+                              {activity.guild.logo.url ? (
+                                <Image
+                                  src={activity.guild.logo.url}
+                                  width={40}
+                                  height={40}
+                                  alt="guild-logo"
+                                  className="w-10 h-10 rounded-full grow"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 bg-white border rounded-full" />
+                              )}
+                            </div>
+                            <div className="">
+                              <div className="text-sm font-semibold leading-none text-secondary">
+                                {activity.title}
+                              </div>
+                              <div className="mt-1 text-xs leading-tight font-fine text-secondary">
+                                {activity.subtitle}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end leading-[1.1]">
+                            <div className="text-white text-sm font-semibold">{activity.ticker}</div>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <Image
+                        src={activity.cardImage.url}
+                        height={1200}
+                        width={1200}
+                        alt="activity-featured-image"
+                        className={cn(
+                          'w-full object-cover transition-all group-hover/card:scale-105',
+                          'aspect-[1]',
+                          'opacity-80',
+                          'group-hover/card:opacity-100',
+                          'flex',
+                          'z-10',
+                          'relative'
+                        )}
+                      />
+                      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
+                    </CardContent>
+                  </Link>
+
+                </Card>
+              );
+            })}
+
           </div>
         </div>
       </Layout>
