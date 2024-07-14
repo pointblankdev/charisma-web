@@ -247,7 +247,7 @@ export default function Creatures() {
                       <div className='flex space-x-2'>
                         <Button disabled={amount === 0} className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
                         <Button disabled={farmersToRecruit === 0} className="z-30" onClick={summon}>Recruit</Button>
-                        <div>{amount === 0 && 'You need STX-wCHA LP Tokens to create Farmers'}</div>
+                        <div>{farmersToRecruit === 0 && 'You need STX-wCHA LP Tokens to create Farmers'}</div>
                       </div>
                     </div>
                   </CardFooter>
