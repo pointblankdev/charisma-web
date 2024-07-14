@@ -64,6 +64,7 @@ export default function IndexDetailPage({ data }: Props) {
   const { doContractCall } = useConnect();
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
   const [farmers, setFarmers] = useState(0)
+  const [power, setPower] = useState(0)
 
   let maxPossibleIndex = Infinity;
   let limitingToken = null;
@@ -81,6 +82,18 @@ export default function IndexDetailPage({ data }: Props) {
       functionArgs: [uintCV(1), principalCV(sender)],
       senderAddress: sender
     }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value) / Math.pow(10, data.decimals)))
+
+  }, [])
+
+  useEffect(() => {
+    callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-creature-power",
+      functionArgs: [uintCV(1)],
+      senderAddress: sender
+    }).then(response => setPower(Number(cvToJSON(response).value.value)))
 
   }, [])
 
@@ -316,7 +329,7 @@ export default function IndexDetailPage({ data }: Props) {
                     </CardTitle>
                     <div className="flex space-x-4 items-center">
                       <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        {numeral(data.tokenPrice * farmers * 6 * 24).format('($0.0000a)')} / day
+                        {numeral(data.tokenPrice * farmers * 2 * power * 6 * 24).format('($0.0000a)')} / day
                       </div>
                       <div className="text-lg">{numeral(farmers).format('(0a)')} 🧑‍🌾</div>
                       <ActiveFarmIndicator
