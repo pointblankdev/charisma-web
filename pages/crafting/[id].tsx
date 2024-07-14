@@ -39,10 +39,8 @@ import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, prin
 import { StacksMainnet } from "@stacks/network";
 import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
-import farmersImg from '@public/creatures/img/1.png'
-import tranquilOrchard from '@public/stations/apple-orchard.png'
-import TranquilOrchardCard from 'pages/stations/tranquil-orchard';
-import AppleOrchardCard from 'pages/stations/apple-orchard';
+import TranquilOrchardCard from '@components/stations/tranquil-orchard';
+import AppleOrchardCard from '@components/stations/apple-orchard';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
