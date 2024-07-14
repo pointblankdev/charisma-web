@@ -42,7 +42,7 @@ const tokenList = [
     ft: 'index-token',
     name: 'Fuji Apples',
     symbol: 'FUJI',
-    decimals: 0,
+    decimals: 6,
     image: fujiApplesLogo,
     proxy: {
       address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma',
