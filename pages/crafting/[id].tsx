@@ -148,27 +148,10 @@ export default function IndexDetailPage({ data }: Props) {
     });
   }
 
-  function store() {
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures-energy',
-      functionName: "store",
-      functionArgs: [principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
-      postConditionMode: PostConditionMode.Deny,
-      onFinish: (data) => {
-        console.log("onFinish:", data);
-      },
-      onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
-    });
-  }
-
   // hack: short term workaround for apple specific stuff
   const isApples = data.symbol === 'FUJI'
 
+  // variable to hide the liquidity controls if they have no index tokens or base tokens
   const absValMin = Math.abs(-indexBalance / indexWeight)
 
   return (
@@ -189,9 +172,9 @@ export default function IndexDetailPage({ data }: Props) {
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
                   <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                    ${data.tokenPrice.toFixed(2)} / {data.decimals < 6 && `${millify(Math.pow(10, 6 - data.decimals))}`} {data.symbol}
+                    ${data.tokenPrice.toFixed(2)} {data.symbol}
                   </div>
-                  {!isApples && <div className="text-lg">${millify(data.tvl)} TVL</div>}
+                  <div className="text-lg">${millify(data.tvl)} TVL</div>
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
                     blocksUntilUnlock={data.blocksUntilUnlock}
