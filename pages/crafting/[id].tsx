@@ -78,7 +78,7 @@ export default function IndexDetailPage({ data }: Props) {
       functionName: "get-untapped-amount",
       functionArgs: [uintCV(1), principalCV(sender)],
       senderAddress: sender
-    }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value)))
+    }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value) / Math.pow(10, data.decimals)))
 
   }, [])
 
