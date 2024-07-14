@@ -215,7 +215,7 @@ export default function Creatures() {
                         </div>
                         <div className="flex flex-col items-end leading-[1.1] space-y-2">
                           <div className="text-white text-xs font-semibold">1000 Farmers earn:</div>
-                          <div className="text-white text-xs font-semibold">~$1.50 / day</div>
+                          <div className="text-white text-xs font-semibold">~$7 / day</div>
                         </div>
                       </div>
                     </CardHeader>
