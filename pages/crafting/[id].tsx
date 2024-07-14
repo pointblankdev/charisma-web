@@ -189,7 +189,7 @@ export default function IndexDetailPage({ data }: Props) {
               <div className="z-20">
                 <CardTitle className="z-30 mt-2 text-xl font-semibold">Mintable Token</CardTitle>
                 {descriptionVisible && (
-                  <Link href={`https://stxscan.co/accounts/${data.address}`}>
+                  <Link href={`https://explorer.hiro.so/txid/${data.address}`}>
                     <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground flex items-end space-x-1">
                       <div>{data.metadata.name}</div> <Link1Icon className="mb-0.5" />
                     </CardDescription>
