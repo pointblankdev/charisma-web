@@ -64,7 +64,6 @@ export default function Creatures() {
   const { getBalanceByKey } = useWallet();
 
   const farmersToRecruit = Math.floor(amount / cost)
-
   function summon() {
     doContractCall({
       network: new StacksMainnet(),
@@ -179,6 +178,15 @@ export default function Creatures() {
                 </div>
               </div>
             </Card>
+            <Card
+              className={cn(
+                'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+              )}
+            >
+              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
+                <video src='vid/farm-tutorial.mp4' className="w-full rounded-lg" autoPlay loop muted />
+              </div>
+            </Card>
             {creatures.map((creature, i) => {
               return (
                 <Card
@@ -214,9 +222,8 @@ export default function Creatures() {
                           </div>
                         </div>
                         <div className="flex flex-col items-end leading-[1.1] space-y-2">
-                          <div className="text-white text-xs font-semibold">{millify(cost)} STX-wCHA Deposited = 1 Farmer</div>
-                          <div className="text-white text-xs font-semibold">Farmer Earning Power: {power}</div>
-                          {/* <div className='text-white'>${creature.value}</div> */}
+                          <div className="text-white text-xs font-semibold">1000 Farmers yield:</div>
+                          <div className="text-white text-xs font-semibold">~$1.50 / day</div>
                         </div>
                       </div>
                     </CardHeader>
@@ -243,7 +250,7 @@ export default function Creatures() {
                     className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}
                   >
                     <div className="z-20 p-2 flex w-full justify-between place-items-end">
-                      <div className='w-full text-lg px-4'>You command {millify(farmers)} Farmers</div>
+                      <div className='w-full text-lg px-4'>You have {millify(farmers)} Farmers</div>
                       <div className='flex flex-col justify-center space-y-2'>
                         {farmersToRecruit === 0 && <div className='text-sm text-center leading-tight'>You need STX-wCHA LP Tokens to create Farmers</div>}
                         <div className='flex space-x-2'>
