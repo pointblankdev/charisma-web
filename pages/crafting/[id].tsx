@@ -93,7 +93,7 @@ export default function IndexDetailPage({ data }: Props) {
       functionName: "get-creature-power",
       functionArgs: [uintCV(1)],
       senderAddress: sender
-    }).then(response => setPower(Number(cvToJSON(response).value.value)))
+    }).then(response => setPower(Number(cvToJSON(response).value)))
 
   }, [])
 
@@ -329,7 +329,7 @@ export default function IndexDetailPage({ data }: Props) {
                     </CardTitle>
                     <div className="flex space-x-4 items-center">
                       <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        {numeral(data.tokenPrice * farmers * 2 * power * 6 * 24).format('($0.0000a)')} / day
+                        {numeral(data.tokenPrice * farmers * 2 * power * 6 * 24 / Math.pow(10, data.decimals)).format('($0.0000a)')} / day
                       </div>
                       <div className="text-lg">{numeral(farmers).format('(0a)')} 🧑‍🌾</div>
                       <ActiveFarmIndicator
