@@ -244,10 +244,12 @@ export default function Creatures() {
                   >
                     <div className="z-20 p-2 flex w-full justify-between place-items-end">
                       <div className='w-full text-lg px-4'>You command {millify(farmers)} Farmers</div>
-                      <div className='flex space-x-2'>
-                        <Button disabled={amount === 0} className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
-                        <Button disabled={farmersToRecruit === 0} className="z-30" onClick={summon}>Recruit</Button>
-                        <div>{farmersToRecruit === 0 && 'You need STX-wCHA LP Tokens to create Farmers'}</div>
+                      <div className='flex flex-col justify-center space-y-2'>
+                        {farmersToRecruit === 0 && <div className='text-sm text-center leading-tight'>You need STX-wCHA LP Tokens to create Farmers</div>}
+                        <div className='flex space-x-2'>
+                          <Button disabled={amount === 0} className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
+                          <Button disabled={farmersToRecruit === 0} className="z-30" onClick={summon}>Recruit</Button>
+                        </div>
                       </div>
                     </div>
                   </CardFooter>
