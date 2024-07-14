@@ -8,14 +8,6 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from '@components/ui/card';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
-import { UrlObject } from 'url';
-import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png';
-import liquidStakedRoo from '@public/liquid-staked-roo.png';
-import liquidStakedOdin from '@public/liquid-staked-odin.png';
-import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
-import { Checkbox } from '@components/ui/checkbox';
-import { uniq, uniqBy } from 'lodash';
 import millify from 'millify';
 import { Button } from '@components/ui/button';
 import { userSession } from '@components/stacks-session/connect';
@@ -222,7 +214,7 @@ export default function Creatures() {
                           </div>
                         </div>
                         <div className="flex flex-col items-end leading-[1.1] space-y-2">
-                          <div className="text-white text-xs font-semibold">1000 Farmers yield:</div>
+                          <div className="text-white text-xs font-semibold">1000 Farmers earn:</div>
                           <div className="text-white text-xs font-semibold">~$1.50 / day</div>
                         </div>
                       </div>
