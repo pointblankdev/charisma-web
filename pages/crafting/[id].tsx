@@ -41,6 +41,8 @@ import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
 import farmersImg from '@public/creatures/img/1.png'
 import tranquilOrchard from '@public/stations/apple-orchard.png'
+import TranquilOrchardCard from 'pages/stations/tranquil-orchard';
+import AppleOrchardCard from 'pages/stations/apple-orchard';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -181,17 +183,17 @@ export default function IndexDetailPage({ data }: Props) {
           variants={fadeIn}
           className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl lg:max-w-3xl space-y-4"
         >
-          <Card className="bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
+          <Card className="bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4">
               <div className="flex items-center justify-between">
                 <CardTitle className="z-30 text-lg sm:text-xl font-semibold">
-                  {data.symbol[0] === 'i' ? `Index: ` : 'Token: '} {data.symbol}
+                  {data.symbol}
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
-                  <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
+                  <div className="z-30 bg-background border border-primary/40 rounded-full px-2 whitespace-nowrap">
                     ${Number(data.tokenPrice).toFixed(fixedAmount)} / {data.symbol}
                   </div>
-                  <div className="text-lg">${millify(data.tvl)} TVL</div>
+                  <div className="text-lg whitespace-nowrap">${millify(data.tvl)} TVL</div>
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
                     blocksUntilUnlock={data.blocksUntilUnlock}
@@ -319,65 +321,13 @@ export default function IndexDetailPage({ data }: Props) {
             <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
           </Card>
 
-          <div className='grid grid-cols-1 sm:grid-cols-2'>
+          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             {isApples &&
-              <Card className="bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
-                <CardHeader className="z-20 p-4">
-                  <div className="flex items-center justify-between">
-                    <CardTitle className="z-30 text-lg sm:text-xl font-semibold">
-                      Farmers
-                    </CardTitle>
-                    <div className="flex space-x-4 items-center">
-                      <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        {numeral(data.tokenPrice * farmers * 2 * power * 6 * 24 / Math.pow(10, data.decimals)).format('($0.0000a)')} / day
-                      </div>
-                      <div className="text-lg">{numeral(farmers).format('(0a)')} 🧑‍🌾</div>
-                      <ActiveFarmIndicator
-                        active={true}
-                        blocksUntilUnlock={0}
-                      />
-                    </div>
-                  </div>
-                  <CardDescription className="z-30 text-xs sm:text-sm font-fine text-secondary/40">
-                    Humble, hardworking farmers that tend to the orchard and harvest Fuji Apples.
-                  </CardDescription>
-                  <div className="z-20">
-                    {/* <CardTitle className="z-30 mt-2 text-xl font-semibold">Yield Farming</CardTitle> */}
-                    {descriptionVisible && (
-                      <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tranquil-orchard?chain=mainnet`}>
-                        <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground flex items-end space-x-1">
-                          <div>Tranquil Orchard</div> <Link1Icon className="mb-0.5" />
-                        </CardDescription>
-                      </Link>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end mt-32">
-                  {farmers > 0 &&
-                    <Button disabled={claimableAmount === 0} size={'sm'} className={`z-30 w-full ${claimableAmount === 0 && "animate-pulse"}`} onClick={harvest}>
-                      {claimableAmount === 0 ? `No Fuji Apples to harvest` : `Harvest ${numeral(claimableAmount).format('(0a)')} Fuji Apples`}
-                    </Button>
-                  }
-                </CardFooter>
-                <Image
-                  src={farmersImg}
-                  width={800}
-                  height={1600}
-                  alt={'quest-background-image'}
-                  className={cn(
-                    'object-cover',
-                    'lg:aspect-square',
-                    'sm:aspect-[2/3]',
-                    'aspect-[1/2]',
-                    'opacity-10',
-                    'flex',
-                    'z-10',
-                    'absolute',
-                    'inset-0',
-                    'pointer-events-none'
-                  )}
-                />
-              </Card>}
+              <TranquilOrchardCard data={data} />
+            }
+            {isApples &&
+              <AppleOrchardCard data={data} />
+            }
           </div>
         </motion.div>
       </Layout>
