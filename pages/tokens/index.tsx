@@ -128,7 +128,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           url: '/liquid-staked-leo.png'
         }
       },
-      title: 'Leopold the Cat',
+      title: 'Leo the Cat',
       subtitle: 'Liquid Staked Leo',
       cardImage: {
         url: '/liquid-leo-21.png'

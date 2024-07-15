@@ -83,7 +83,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
           url: '/liquid-staked-leo.png'
         }
       },
-      title: 'Leopold the Cat',
+      title: 'Leo the Cat',
       subtitle: 'Liquid Staked Leo',
       cardImage: {
         url: '/liquid-leo-21.png'
