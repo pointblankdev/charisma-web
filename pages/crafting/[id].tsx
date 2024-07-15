@@ -39,10 +39,8 @@ import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, prin
 import { StacksMainnet } from "@stacks/network";
 import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
-import TranquilOrchardCard from '@components/stations/tranquil-orchard';
-import AppleOrchardCard from '@components/stations/apple-orchard';
-import BountifulOrchardCard from '@components/stations/bountiful-orchard';
 import VerdantOrchardCard from '@components/stations/verdant-orchard';
+import BountifulOrchardCard from '@components/stations/bountiful-orchard';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -322,8 +320,11 @@ export default function IndexDetailPage({ data }: Props) {
           </Card>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-            {isApples &&
+            {/* {isApples &&
               <VerdantOrchardCard data={data} />
+            } */}
+            {isApples &&
+              <BountifulOrchardCard data={data} />
             }
           </div>
         </motion.div>
