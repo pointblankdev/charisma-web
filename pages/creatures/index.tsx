@@ -564,7 +564,7 @@ export default function Creatures() {
           <div className="space-y-1">
             <h2 className="text-4xl font-semibold tracking-tight text-secondary">Activities</h2>
             <p className="text-muted-foreground text-base">
-              Here are some things your can do in the Charisma ecosystem to earn tokens.
+              Here are some things you can do in the Charisma ecosystem to earn tokens.
             </p>
           </div>
 
