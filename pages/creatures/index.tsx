@@ -206,21 +206,21 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
       creaturesRecruitable: 0
     },
-    // {
-    //   title: 'Alchemists',
-    //   subtitle: 'Masters of potions and elixirs.',
-    //   slug: '/creatures/alchemists',
-    //   cardImage: {
-    //     url: '/creatures/img/alchemists.png'
-    //   },
-    //   requiredToken: 'STX-iMM LP',
-    //   cost: await getCreatureCost(4),
-    //   power: await getCreaturePower(4),
-    //   dailyYield: 0,
-    //   amount: 0,
-    //   tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
-    //   creaturesRecruitable: 0
-    // },
+    {
+      title: 'Alchemists',
+      subtitle: 'Masters of potions and elixirs.',
+      slug: '/creatures/alchemists',
+      cardImage: {
+        url: '/creatures/img/alchemists.png'
+      },
+      requiredToken: 'STX-iMM LP',
+      cost: await getCreatureCost(4),
+      power: await getCreaturePower(4),
+      dailyYield: 0,
+      amount: 0,
+      tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
+      creaturesRecruitable: 0
+    },
   ]
 
   return {
@@ -252,37 +252,37 @@ export default function Creatures({ creatures, quests }: Props) {
   const [amountWChaLP, setAmountWChaLP] = useState(0)
   const [amountSChaLP, setAmountSChaLP] = useState(0)
   const [amountiCCLP, setAmountiCCLP] = useState(0)
-  // const [amountiMMLP, setAmountiMMLP] = useState(0)
+  const [amountiMMLP, setAmountiMMLP] = useState(0)
 
   const [farmers, setFarmers] = useState(0)
   const [blacksmiths, setBlacksmiths] = useState(0)
   const [corgiSoldiers, setCorgiSoldiers] = useState(0)
-  // const [alchemists, setAlchemists] = useState(0)
+  const [alchemists, setAlchemists] = useState(0)
 
   const [farmersEnergy, setFarmersEnergy] = useState(0)
   const [blacksmithsEnergy, setBlacksmithsEnergy] = useState(0)
   const [corgiSoldiersEnergy, setCorgiSoldiersEnergy] = useState(0)
-  // const [alchemistsEnergy, setAlchemistsEnergy] = useState(0)
+  const [alchemistsEnergy, setAlchemistsEnergy] = useState(0)
 
   const farmersToRecruit = Math.floor(amountWChaLP / creatures[0].cost)
   const blacksmithsToRecruit = Math.floor(amountSChaLP / creatures[1].cost)
   const corgiSoldiersToRecruit = Math.floor(amountiCCLP / creatures[2].cost)
-  // const alchemistsToRecruit = Math.floor(amountiMMLP / creatures[3].cost)
+  const alchemistsToRecruit = Math.floor(amountiMMLP / creatures[3].cost)
 
   creatures[0].creaturesRecruitable = farmersToRecruit
   creatures[1].creaturesRecruitable = blacksmithsToRecruit
   creatures[2].creaturesRecruitable = corgiSoldiersToRecruit
-  // creatures[3].creaturesRecruitable = alchemistsToRecruit
+  creatures[3].creaturesRecruitable = alchemistsToRecruit
 
   creatures[0].amount = farmers
   creatures[1].amount = blacksmiths
   creatures[2].amount = corgiSoldiers
-  // creatures[3].amount = alchemists
+  creatures[3].amount = alchemists
 
   creatures[0].energy = farmersEnergy
   creatures[1].energy = blacksmithsEnergy
   creatures[2].energy = corgiSoldiersEnergy
-  // creatures[3].energy = alchemistsEnergy
+  creatures[3].energy = alchemistsEnergy
 
   function recruit(tokenContract: string, amount: number) {
     doContractCall({
@@ -328,24 +328,22 @@ export default function Creatures({ creatures, quests }: Props) {
     sender && getCreatureAmount(1, sender).then(amount => setFarmers(amount))
     sender && getCreatureAmount(2, sender).then(amount => setBlacksmiths(amount))
     sender && getCreatureAmount(3, sender).then(amount => setCorgiSoldiers(amount))
-    // sender && getCreatureAmount(4, sender).then(amount => setAlchemists(amount))
+    sender && getCreatureAmount(4, sender).then(amount => setAlchemists(amount))
   }, [sender])
 
   useEffect(() => {
     sender && getClaimableAmount(1, sender).then(amount => setFarmersEnergy(amount))
     sender && getClaimableAmount(2, sender).then(amount => setBlacksmithsEnergy(amount))
     sender && getClaimableAmount(3, sender).then(amount => setCorgiSoldiersEnergy(amount))
-    // sender && getClaimableAmount(4, sender).then(amount => setAlchemistsEnergy(amount))
+    sender && getClaimableAmount(4, sender).then(amount => setAlchemistsEnergy(amount))
   }, [sender, farmers, blacksmiths, corgiSoldiers])
 
   useEffect(() => {
     setAmountWChaLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance)
     setAmountSChaLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha::lp-token').balance)
     setAmountiCCLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc::lp-token').balance)
-    // setAmountiMMLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm::lp-token').balance)
+    setAmountiMMLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm::lp-token').balance)
   }, [getBalanceByKey])
-
-  console.log(creatures)
 
   return (
     <Page meta={meta} fullViewport>
