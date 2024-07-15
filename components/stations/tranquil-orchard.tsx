@@ -52,7 +52,6 @@ export default function TranquilOrchardCard({ data }: any) {
 
     const { doContractCall } = useConnect();
     const [farmers, setFarmers] = useState(0)
-    const [power, setPower] = useState(0)
 
     const [claimableAmount, setClaimableAmount] = useState(0)
 
@@ -67,18 +66,6 @@ export default function TranquilOrchardCard({ data }: any) {
             functionArgs: [uintCV(1), principalCV(sender)],
             senderAddress: sender
         }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value) / Math.pow(10, data.decimals) * 20000000))
-
-    }, [])
-
-    useEffect(() => {
-        callReadOnlyFunction({
-            network: new StacksMainnet(),
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'creatures',
-            functionName: "get-creature-power",
-            functionArgs: [uintCV(1)],
-            senderAddress: sender
-        }).then(response => setPower(Number(cvToJSON(response).value)))
 
     }, [])
 
@@ -121,18 +108,15 @@ export default function TranquilOrchardCard({ data }: any) {
                         Tranquil Orchard
                     </CardTitle>
                     <div className="flex space-x-3 items-center">
-                        <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                            {numeral(data.tokenPrice * farmers * 20000000 * 2 * power * 6 * 24 / Math.pow(10, data.decimals)).format('($0.00a)')} / day
-                        </div>
-                        <div className="text-lg">{numeral(farmers).format('(0a)')}</div>
                         <ActiveFarmIndicator
                             active={true}
                             blocksUntilUnlock={0}
                         />
                     </div>
                 </div>
-                <CardDescription className="z-30 text-xs sm:text-sm font-fine text-secondary/40">
-                    Humble, hardworking farmers that tend to the orchard and harvest Fuji Apples.
+                <CardDescription className="z-30 text-xs sm:text-sm font-fine text-secondary/40 text-red-500">
+                    If you are having issues collecting farm rewards from the Bountiful Orchard becuase of excess energy, use this farm to reset so you can continue earning rewards.
+                    Otherwise, do not harvest rewards from this farm.
                 </CardDescription>
                 <div className="z-20">
                     {/* <CardTitle className="z-30 mt-2 text-xl font-semibold">Yield Farming</CardTitle> */}
@@ -148,7 +132,7 @@ export default function TranquilOrchardCard({ data }: any) {
             <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end mt-auto flex-1">
                 {farmers > 0 &&
                     <Button disabled={claimableAmount === 0} size={'sm'} className={`z-30 w-full ${claimableAmount === 0 && "animate-pulse"}`} onClick={harvest}>
-                        {claimableAmount === 0 ? `No Fuji Apples to harvest` : `Harvest ${numeral(claimableAmount).format('(0a)')} Fuji Apples`}
+                        Reset Farmer Energy
                     </Button>
                 }
             </CardFooter>
