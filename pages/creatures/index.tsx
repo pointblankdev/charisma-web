@@ -22,7 +22,13 @@ import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import charisma from '@public/charisma.png'
 import raven from '@public/raven-of-odin.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
-import { getCreatureCost } from '@lib/stacks-api';
+import { getClaimableAmount, getCreatureAmount, getCreatureCost, getCreaturePower } from '@lib/stacks-api';
+import creatureIcon from '@public/creatures/img/creatures.png'
+import energyIcon from '@public/creatures/img/energy.png'
+import powerIcon from '@public/creatures/img/power.png'
+import numeral from 'numeral';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
+import { AlertDialogHeader } from '@components/ui/alert-dialog';
 
 
 
@@ -164,22 +170,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       title: 'Farmers',
       subtitle: 'Honest and hardworking farmers.',
       slug: '/creatures/farmers',
-      guild: {
-        logo: {
-          url: '/stations/fuji-apples.png'
-        }
-      },
-      apps: [
-        {
-          slug: '/creatures/farmers',
-          img: '/stations/apple-orchard.png'
-        }
-      ],
-      cardImage: {
-        url: '/creatures/img/farmers.png'
-      },
+      cardImage: { url: '/creatures/img/farmers.png' },
       requiredToken: 'STX-wCHA LP',
       cost: await getCreatureCost(1),
+      power: await getCreaturePower(1),
+      energy: 0,
       dailyYield: 7,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
@@ -189,22 +184,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       title: 'Blacksmiths',
       subtitle: 'Craftspeople who forge weapons and armor.',
       slug: '/creatures/blacksmiths',
-      guild: {
-        logo: {
-          url: '/stations/fuji-apples.png'
-        }
-      },
-      apps: [
-        {
-          slug: '/creatures/blacksmiths',
-          img: '/stations/apple-orchard.png'
-        }
-      ],
-      cardImage: {
-        url: '/creatures/img/blacksmiths.png'
-      },
+      cardImage: { url: '/creatures/img/blacksmiths.png' },
       requiredToken: 'STX-sCHA LP',
       cost: await getCreatureCost(2),
+      power: await getCreaturePower(2),
       dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha',
@@ -214,22 +197,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       title: 'Corgi Soldiers',
       subtitle: 'Loyal and fierce warriors.',
       slug: '/creatures/corgi-soldiers',
-      guild: {
-        logo: {
-          url: '/stations/fuji-apples.png'
-        }
-      },
-      apps: [
-        {
-          slug: '/creatures/corgi-soldiers',
-          img: '/stations/apple-orchard.png'
-        }
-      ],
-      cardImage: {
-        url: '/creatures/img/corgi-soldiers.png'
-      },
+      cardImage: { url: '/creatures/img/corgi-soldiers.png' },
       requiredToken: 'STX-iCC LP',
       cost: await getCreatureCost(3),
+      power: await getCreaturePower(3),
       dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
@@ -239,22 +210,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     //   title: 'Alchemists',
     //   subtitle: 'Masters of potions and elixirs.',
     //   slug: '/creatures/alchemists',
-    //   guild: {
-    //     logo: {
-    //       url: '/stations/fuji-apples.png'
-    //     }
-    //   },
-    //   apps: [
-    //     {
-    //       slug: '/creatures/alchemists',
-    //       img: '/stations/apple-orchard.png'
-    //     }
-    //   ],
     //   cardImage: {
     //     url: '/creatures/img/alchemists.png'
     //   },
     //   requiredToken: 'STX-iMM LP',
     //   cost: await getCreatureCost(4),
+    //   power: await getCreaturePower(4),
     //   dailyYield: 0,
     //   amount: 0,
     //   tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
@@ -280,10 +241,11 @@ export default function Creatures({ creatures, quests }: Props) {
   const meta = {
     title: 'Charisma | Creatures',
     description: META_DESCRIPTION,
-    image: '/creatures/img/1.png'
+    image: '/creatures/img/farmers.png'
   };
 
   const { doContractCall } = useConnect();
+  const { getBalanceByKey } = useWallet();
 
   const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
@@ -297,11 +259,10 @@ export default function Creatures({ creatures, quests }: Props) {
   const [corgiSoldiers, setCorgiSoldiers] = useState(0)
   // const [alchemists, setAlchemists] = useState(0)
 
-  console.log({ farmers, blacksmiths, corgiSoldiers })
-
-  const [power, setPower] = useState(0)
-
-  const { getBalanceByKey } = useWallet();
+  const [farmersEnergy, setFarmersEnergy] = useState(0)
+  const [blacksmithsEnergy, setBlacksmithsEnergy] = useState(0)
+  const [corgiSoldiersEnergy, setCorgiSoldiersEnergy] = useState(0)
+  // const [alchemistsEnergy, setAlchemistsEnergy] = useState(0)
 
   const farmersToRecruit = Math.floor(amountWChaLP / creatures[0].cost)
   const blacksmithsToRecruit = Math.floor(amountSChaLP / creatures[1].cost)
@@ -318,6 +279,11 @@ export default function Creatures({ creatures, quests }: Props) {
   creatures[2].amount = corgiSoldiers
   // creatures[3].amount = alchemists
 
+  creatures[0].energy = farmersEnergy
+  creatures[1].energy = blacksmithsEnergy
+  creatures[2].energy = corgiSoldiersEnergy
+  // creatures[3].energy = alchemistsEnergy
+
   function recruit(tokenContract: string, amount: number) {
     doContractCall({
       network: new StacksMainnet(),
@@ -325,10 +291,7 @@ export default function Creatures({ creatures, quests }: Props) {
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: 'creatures-energy',
       functionName: "recruit",
-      functionArgs: [
-        uintCV(amount),
-        principalCV(tokenContract)
-      ],
+      functionArgs: [uintCV(amount), principalCV(tokenContract)],
       postConditionMode: PostConditionMode.Allow,
       // postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
       postConditions: [],
@@ -362,52 +325,18 @@ export default function Creatures({ creatures, quests }: Props) {
   }
 
   useEffect(() => {
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-balance",
-      functionArgs: [uintCV(1), principalCV(sender)],
-      senderAddress: sender
-    }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-balance",
-      functionArgs: [uintCV(2), principalCV(sender)],
-      senderAddress: sender
-    }).then(response => setBlacksmiths(Number(cvToJSON(response).value.value)))
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-balance",
-      functionArgs: [uintCV(3), principalCV(sender)],
-      senderAddress: sender
-    }).then(response => setCorgiSoldiers(Number(cvToJSON(response).value.value)))
-    // sender && callReadOnlyFunction({
-    //   network: new StacksMainnet(),
-    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    //   contractName: 'creatures',
-    //   functionName: "get-balance",
-    //   functionArgs: [uintCV(4), principalCV(sender)],
-    //   senderAddress: sender
-    // }).then(response => setAlchemists(Number(cvToJSON(response).value.value)))
-
+    sender && getCreatureAmount(1, sender).then(amount => setFarmers(amount))
+    sender && getCreatureAmount(2, sender).then(amount => setBlacksmiths(amount))
+    sender && getCreatureAmount(3, sender).then(amount => setCorgiSoldiers(amount))
+    // sender && getCreatureAmount(4, sender).then(amount => setAlchemists(amount))
   }, [sender])
 
   useEffect(() => {
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-creature-power",
-      functionArgs: [uintCV(1)],
-      senderAddress: sender
-    }).then(response => setPower(Number(cvToJSON(response).value)))
-
-  }, [sender])
+    sender && getClaimableAmount(1, sender).then(amount => setFarmersEnergy(amount))
+    sender && getClaimableAmount(2, sender).then(amount => setBlacksmithsEnergy(amount))
+    sender && getClaimableAmount(3, sender).then(amount => setCorgiSoldiersEnergy(amount))
+    // sender && getClaimableAmount(4, sender).then(amount => setAlchemistsEnergy(amount))
+  }, [sender, farmers, blacksmiths, corgiSoldiers])
 
   useEffect(() => {
     setAmountWChaLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance)
@@ -416,8 +345,7 @@ export default function Creatures({ creatures, quests }: Props) {
     // setAmountiMMLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm::lp-token').balance)
   }, [getBalanceByKey])
 
-
-
+  console.log(creatures)
 
   return (
     <Page meta={meta} fullViewport>
@@ -468,24 +396,10 @@ export default function Creatures({ creatures, quests }: Props) {
                   className={cn(
                     'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}
                 >
-                  {/* <Link href={`${creature.slug}`} className="w-full"> */}
-                  <CardContent className="w-full p-0">
+                  <CardContent className="z-20 w-full p-0">
                     <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
                       <div className="flex justify-between align-top">
                         <div className="flex gap-2">
-                          {/* <div className="min-w-max">
-                            {creature.guild.logo.url ? (
-                              <Image
-                                src={creature.guild.logo.url}
-                                width={40}
-                                height={40}
-                                alt="guild-logo"
-                                className="w-10 h-10 rounded-full grow"
-                              />
-                            ) : (
-                              <div className="w-10 h-10 bg-white border rounded-full" />
-                            )}
-                          </div> */}
                           <div className="">
                             <div className="text-sm font-semibold leading-none text-secondary">
                               {creature.title}
@@ -495,10 +409,11 @@ export default function Creatures({ creatures, quests }: Props) {
                             </div>
                           </div>
                         </div>
-                        {creature.dailyYield > 0 && <div className="flex flex-col items-end leading-[1.1] space-y-2">
-                          <div className="text-white text-xs font-semibold">1000 {creature.title} earn:</div>
-                          <div className="text-white text-xs font-semibold">~${creature.dailyYield} / day</div>
-                        </div>}
+                        <div className="flex items-end space-x-3 mr-1">
+                          {creature.amount > 0 && <CreatureInfoDialog creature={creature} />}
+                          <PowerInfoDialog creature={creature} />
+                          <EnergyInfoDialog creature={creature} />
+                        </div>
                       </div>
                     </CardHeader>
                     <Image
@@ -513,21 +428,19 @@ export default function Creatures({ creatures, quests }: Props) {
                         'group-hover/card:opacity-100',
                         'flex',
                         'z-10',
-                        'relative'
+                        'relative',
                       )}
                     />
-                    <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
-                    <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
+                    <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30 pointer-events-none" />
+                    <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20 pointer-events-none" />
                   </CardContent>
-                  {/* </Link> */}
                   <CardFooter
-                    className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}
+                    className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all justify-between')}
                   >
                     <div className="z-20 p-2 flex w-full justify-between place-items-end">
-                      <div className='w-full text-base px-4'>You have {millify(creature.amount)} {creature.title}</div>
+                      {creature.creaturesRecruitable === 0 ? <div className='text-sm font-semibold text-center leading-tight'>You need more {creature.requiredToken} tokens to create {creature.title}</div> : <div className='w-full' />}
                       <div className='flex flex-col justify-center space-y-2'>
-                        {creature.creaturesRecruitable === 0 && <div className='text-sm font-semibold text-center leading-tight'>You need {creature.requiredToken} tokens to create {creature.title}</div>}
-                        <div className='flex space-x-2'>
+                        <div className='flex space-x-2 justify-end'>
                           <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.amount)}>Dismiss</Button>
                           <Button disabled={!(creature.creaturesRecruitable >= 1)} className="z-30" onClick={() => recruit(creature.tokenContract, creature.creaturesRecruitable)}>Recruit</Button>
                         </div>
@@ -617,4 +530,138 @@ export default function Creatures({ creatures, quests }: Props) {
       </Layout>
     </Page>
   );
+}
+
+export function CreatureInfoDialog({ creature }: any) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className="z-20 relative cursor-pointer">
+          <Image
+            alt={creature.title}
+            src={creatureIcon}
+            width={100}
+            height={100}
+            className="z-30 border rounded-full h-10 w-10 hover:scale-110 transition-all"
+          />
+          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent">
+            {numeral(creature.amount).format('(0a)')}
+          </div>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-2xl">
+        <AlertDialogHeader>
+          <DialogTitle>Creatures</DialogTitle>
+          <div className='flex items-center space-x-4'>
+
+            <Image
+              alt={creature.title}
+              src={creatureIcon}
+              width={100}
+              height={100}
+              className="z-30 border rounded-full h-16 w-16 hover:scale-110 transition-all"
+            />
+            <DialogDescription className='text-sm py-4 space-y-2'>
+              <p>Creatures are SIP13 tokens that tokenize yield farming in the Charisma ecosystem.</p>
+              <p>They can be used to perform tasks and earn rewards.</p>
+            </DialogDescription>
+          </div>
+        </AlertDialogHeader>
+
+        <DialogFooter>
+          You have {numeral(creature.amount).format('0a')} {creature.title} working for you.
+        </DialogFooter>
+      </DialogContent>
+    </Dialog >
+  )
+}
+
+
+export function PowerInfoDialog({ creature }: any) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className="z-20 relative cursor-pointer">
+          <Image
+            alt={creature.title}
+            src={powerIcon}
+            width={100}
+            height={100}
+            className="z-30 border rounded-full h-10 w-10 hover:scale-110 transition-all"
+          />
+          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent">
+            {numeral(creature.power).format('(0a)')}
+          </div>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-2xl">
+        <AlertDialogHeader>
+          <DialogTitle>Creature Power</DialogTitle>
+          <div className='flex items-center space-x-4'>
+
+            <Image
+              alt={creature.title}
+              src={powerIcon}
+              width={100}
+              height={100}
+              className="z-30 border rounded-full h-16 w-16 hover:scale-110 transition-all"
+            />
+            <DialogDescription className='text-sm py-4 space-y-2'>
+              <p>Each creature type has a power rating that determines how much energy each creature generates per block.</p>
+            </DialogDescription>
+          </div>
+        </AlertDialogHeader>
+
+        <DialogFooter>
+          {creature.title} have a power rating of {numeral(creature.power).format('0a')}.
+        </DialogFooter>
+      </DialogContent>
+    </Dialog >
+  )
+}
+
+
+export function EnergyInfoDialog({ creature }: any) {
+  return (
+    <Dialog>
+      <DialogTrigger asChild>
+        <div className="z-20 relative cursor-pointer">
+          <Image
+            alt={creature.title}
+            src={energyIcon}
+            width={100}
+            height={100}
+            className="z-30 border rounded-full h-10 w-10 hover:scale-110 transition-all"
+          />
+          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent">
+            {numeral(creature.energy).format('(0a)')}
+          </div>
+        </div>
+      </DialogTrigger>
+      <DialogContent className="sm:max-w-2xl">
+        <AlertDialogHeader>
+          <DialogTitle>Creature Energy</DialogTitle>
+          <div className='flex items-center space-x-4'>
+
+            <Image
+              alt={creature.title}
+              src={energyIcon}
+              width={100}
+              height={100}
+              className="z-30 border rounded-full h-16 w-16 hover:scale-110 transition-all"
+            />
+            <DialogDescription className='text-sm py-4 space-y-2'>
+              <p>Creatures generate what's called "energy" every block based on their power.</p>
+              <p>You can spend this energy to claim token rewards.</p>
+              <p>Whenever you use creatures to claim rewards, their energy is reset to zero.</p>
+            </DialogDescription>
+          </div>
+        </AlertDialogHeader>
+
+        <DialogFooter>
+          {creature.title} generate {numeral(creature.power).format('0a')} energy per block.
+        </DialogFooter>
+      </DialogContent>
+    </Dialog >
+  )
 }

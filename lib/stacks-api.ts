@@ -954,3 +954,39 @@ export async function getCreatureCost(creatureId: number, sender = 'SP2D5BGGJ956
     })
     return Number(cvToJSON(response).value)
 }
+
+export async function getCreatureAmount(creatureId: number, sender: string) {
+    const response = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'creatures',
+        functionName: "get-balance",
+        functionArgs: [uintCV(creatureId), principalCV(sender)],
+        senderAddress: sender
+    })
+    return Number(cvToJSON(response).value.value)
+}
+
+export async function getCreaturePower(creatureId: number, sender = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ') {
+    const response = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'creatures',
+        functionName: "get-creature-power",
+        functionArgs: [uintCV(creatureId)],
+        senderAddress: sender
+    })
+    return Number(cvToJSON(response).value)
+}
+
+export async function getClaimableAmount(creatureId: number, sender: string) {
+    const response = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'creatures-energy',
+        functionName: "get-untapped-amount",
+        functionArgs: [uintCV(creatureId), principalCV(sender)],
+        senderAddress: sender
+    })
+    return Number(cvToJSON(response).value.value)
+}
