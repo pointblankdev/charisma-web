@@ -36,6 +36,9 @@ import { GetServerSideProps } from 'next';
 import millify from 'millify';
 import { isEmpty } from 'lodash';
 
+// Import wallet
+import ConnectWallet from '@components/stacks-session/connect';
+
 const tokenList = [
   {
     address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
@@ -201,7 +204,12 @@ function TokenBalances({ data }: Props) {
   const tokens = data.tokens;
   const { balances, getBalanceByKey } = useWallet();
 
-  if (isEmpty(balances)) return <div>Connect Wallet</div>;
+  if (isEmpty(balances))
+    return (
+      <div className='w-40'>
+        <ConnectWallet></ConnectWallet>
+      </div>
+    );
 
   const tokenBalances = tokenList.map(token => {
     const address = token.proxy ? token.proxy.address : token.address;
