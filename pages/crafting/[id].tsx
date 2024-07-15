@@ -325,6 +325,9 @@ export default function IndexDetailPage({ data }: Props) {
               <BountifulOrchardCard data={data} />
             }
             {isApples &&
+              <TranquilOrchardCard data={data} />
+            }
+            {isApples &&
               <AppleOrchardCard data={data} />
             }
           </div>
