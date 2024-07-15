@@ -39,7 +39,7 @@ import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, prin
 import { StacksMainnet } from "@stacks/network";
 import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
-import farmersImg from '@public/creatures/img/1.png'
+import farmersImg from '@public/creatures/img/farmers.png'
 import tranquilOrchard from '@public/stations/apple-orchard.png'
 
 export default function AppleOrchardCard({ data }: any) {

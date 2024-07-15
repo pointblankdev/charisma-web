@@ -25,49 +25,9 @@ import charisma from '@public/charisma.png'
 import raven from '@public/raven-of-odin.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
 
-const creatures = [
-  {
-    title: 'Farmers',
-    subtitle: 'Honest and hardworking farmers.',
-    slug: '/creatures/farmers',
-    guild: {
-      logo: {
-        url: '/stations/fuji-apples.png'
-      }
-    },
-    apps: [
-      {
-        slug: '/creatures/farmers',
-        img: '/stations/apple-orchard.png'
-      }
-    ],
-    cardImage: {
-      url: '/creatures/img/1.png'
-    },
-  },
-]
+
 
 const activities = [
-  // {
-  //   title: 'Tranquil Orchard',
-  //   subtitle: 'Grow and harvest Fuji Apples.',
-  //   ticker: 'FUJI',
-  //   slug: '/farms/tranquil-orchard',
-  //   guild: {
-  //     logo: {
-  //       url: '/stations/fuji-apples.png'
-  //     }
-  //   },
-  //   apps: [
-  //     {
-  //       slug: '/farms/tranquil-orchard',
-  //       img: '/stations/apple-orchard.png'
-  //     }
-  //   ],
-  //   cardImage: {
-  //     url: '/stations/apple-orchard.png'
-  //   },
-  // },
   {
     title: "Charisma Faucet",
     subtitle: "Get free Charisma tokens.",
@@ -86,6 +46,26 @@ const activities = [
     ],
     cardImage: {
       url: tokenfaucet1
+    },
+  },
+  {
+    title: 'Tranquil Orchard',
+    subtitle: 'Grow and harvest Fuji Apples.',
+    ticker: 'FUJI',
+    slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
+    guild: {
+      logo: {
+        url: '/stations/fuji-apples.png'
+      }
+    },
+    apps: [
+      {
+        slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
+        img: '/stations/apple-orchard.png'
+      }
+    ],
+    cardImage: {
+      url: '/stations/apple-orchard.png'
     },
   },
   {
@@ -184,18 +164,146 @@ export default function Creatures() {
     description: META_DESCRIPTION,
     image: '/creatures/img/1.png'
   };
+
+  const creatures = [
+    {
+      title: 'Farmers',
+      subtitle: 'Honest and hardworking farmers.',
+      slug: '/creatures/farmers',
+      guild: {
+        logo: {
+          url: '/stations/fuji-apples.png'
+        }
+      },
+      apps: [
+        {
+          slug: '/creatures/farmers',
+          img: '/stations/apple-orchard.png'
+        }
+      ],
+      cardImage: {
+        url: '/creatures/img/farmers.png'
+      },
+      requiredToken: 'STX-wCHA LP',
+      dailyYield: 7,
+      amount: 0,
+      tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
+      creaturesRecruitable: 0
+    },
+    {
+      title: 'Blacksmiths',
+      subtitle: 'Craftspeople who forge weapons and armor.',
+      slug: '/creatures/blacksmiths',
+      guild: {
+        logo: {
+          url: '/stations/fuji-apples.png'
+        }
+      },
+      apps: [
+        {
+          slug: '/creatures/blacksmiths',
+          img: '/stations/apple-orchard.png'
+        }
+      ],
+      cardImage: {
+        url: '/creatures/img/blacksmiths.png'
+      },
+      requiredToken: 'STX-sCHA LP',
+      dailyYield: 0,
+      amount: 0,
+      tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha',
+      creaturesRecruitable: 0
+    },
+    {
+      title: 'Corgi Soldiers',
+      subtitle: 'Loyal and fierce warriors.',
+      slug: '/creatures/corgi-soldiers',
+      guild: {
+        logo: {
+          url: '/stations/fuji-apples.png'
+        }
+      },
+      apps: [
+        {
+          slug: '/creatures/corgi-soldiers',
+          img: '/stations/apple-orchard.png'
+        }
+      ],
+      cardImage: {
+        url: '/creatures/img/corgi-soldiers.png'
+      },
+      requiredToken: 'STX-iCC LP',
+      dailyYield: 0,
+      amount: 0,
+      tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
+      creaturesRecruitable: 0
+    },
+    // {
+    //   title: 'Alchemists',
+    //   subtitle: 'Masters of potions and elixirs.',
+    //   slug: '/creatures/alchemists',
+    //   guild: {
+    //     logo: {
+    //       url: '/stations/fuji-apples.png'
+    //     }
+    //   },
+    //   apps: [
+    //     {
+    //       slug: '/creatures/alchemists',
+    //       img: '/stations/apple-orchard.png'
+    //     }
+    //   ],
+    //   cardImage: {
+    //     url: '/creatures/img/alchemists.png'
+    //   },
+    //   requiredToken: 'STX-iMM LP',
+    //   dailyYield: 0,
+    //   amount: 0,
+    //   tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
+    //   creaturesRecruitable: 0
+    // },
+  ]
+
+
   const { doContractCall } = useConnect();
 
   const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
+  const [amountWChaLP, setAmountWChaLP] = useState(0)
+  const [amountSChaLP, setAmountSChaLP] = useState(0)
+  const [amountiCCLP, setAmountiCCLP] = useState(0)
+  // const [amountiMMLP, setAmountiMMLP] = useState(0)
+
   const [farmers, setFarmers] = useState(0)
+  const [blacksmiths, setBlacksmiths] = useState(0)
+  const [corgiSoldiers, setCorgiSoldiers] = useState(0)
+  // const [alchemists, setAlchemists] = useState(0)
+
   const [power, setPower] = useState(0)
-  const [cost, setCost] = useState(0)
-  const [amount, setAmount] = useState(0)
+
+  const [farmerCost, setFarmerCost] = useState(0)
+  const [blacksmithCost, setBlacksmithCost] = useState(0)
+  const [corgiSoldierCost, setCorgiSoldierCost] = useState(0)
+  // const [alchemistCost, setAlchemistCost] = useState(0)
+
   const { getBalanceByKey } = useWallet();
 
-  const farmersToRecruit = Math.floor(amount / cost)
-  function summon() {
+  const farmersToRecruit = Math.floor(amountWChaLP / farmerCost)
+  const blacksmithsToRecruit = Math.floor(amountSChaLP / blacksmithCost)
+  const corgiSoldiersToRecruit = Math.floor(amountiCCLP / corgiSoldierCost)
+  // const alchemistsToRecruit = Math.floor(amountiMMLP / alchemistCost)
+
+  creatures[0].creaturesRecruitable = farmersToRecruit
+  creatures[1].creaturesRecruitable = blacksmithsToRecruit
+  creatures[2].creaturesRecruitable = corgiSoldiersToRecruit
+  // creatures[3].creaturesRecruitable = alchemistsToRecruit
+
+  creatures[0].amount = farmers
+  creatures[1].amount = blacksmiths
+  creatures[2].amount = corgiSoldiers
+  // creatures[3].amount = alchemists
+
+  function recruit(tokenContract: string, amount: number) {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -203,8 +311,8 @@ export default function Creatures() {
       contractName: 'creatures-energy',
       functionName: "recruit",
       functionArgs: [
-        uintCV(farmersToRecruit),
-        principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')
+        uintCV(amount),
+        principalCV(tokenContract)
       ],
       postConditionMode: PostConditionMode.Allow,
       // postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
@@ -218,14 +326,14 @@ export default function Creatures() {
     });
   }
 
-  function unsummon() {
+  function dismiss(tokenContract: string, amount: number) {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: 'creatures-energy',
       functionName: "dismiss",
-      functionArgs: [uintCV(farmers), principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
+      functionArgs: [uintCV(amount), principalCV(tokenContract)],
       postConditionMode: PostConditionMode.Allow,
       // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures').willSendEq(1000000).ft("SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha", "lp-token")],
       postConditions: [],
@@ -247,6 +355,30 @@ export default function Creatures() {
       functionArgs: [uintCV(1), principalCV(sender)],
       senderAddress: sender
     }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
+    sender && callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-balance",
+      functionArgs: [uintCV(2), principalCV(sender)],
+      senderAddress: sender
+    }).then(response => setBlacksmiths(Number(cvToJSON(response).value.value)))
+    sender && callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-balance",
+      functionArgs: [uintCV(3), principalCV(sender)],
+      senderAddress: sender
+    }).then(response => setCorgiSoldiers(Number(cvToJSON(response).value.value)))
+    // sender && callReadOnlyFunction({
+    //   network: new StacksMainnet(),
+    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    //   contractName: 'creatures',
+    //   functionName: "get-balance",
+    //   functionArgs: [uintCV(4), principalCV(sender)],
+    //   senderAddress: sender
+    // }).then(response => setAlchemists(Number(cvToJSON(response).value.value)))
 
   }, [sender])
 
@@ -270,13 +402,40 @@ export default function Creatures() {
       functionName: "get-creature-cost",
       functionArgs: [uintCV(1)],
       senderAddress: sender
-    }).then(response => setCost(Number(cvToJSON(response).value)))
+    }).then(response => setFarmerCost(Number(cvToJSON(response).value)))
+    sender && callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-creature-cost",
+      functionArgs: [uintCV(2)],
+      senderAddress: sender
+    }).then(response => setBlacksmithCost(Number(cvToJSON(response).value)))
+    sender && callReadOnlyFunction({
+      network: new StacksMainnet(),
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'creatures',
+      functionName: "get-creature-cost",
+      functionArgs: [uintCV(3)],
+      senderAddress: sender
+    }).then(response => setCorgiSoldierCost(Number(cvToJSON(response).value)))
+    // sender && callReadOnlyFunction({
+    //   network: new StacksMainnet(),
+    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    //   contractName: 'creatures',
+    //   functionName: "get-creature-cost",
+    //   functionArgs: [uintCV(4)],
+    //   senderAddress: sender
+    // }).then(response => setAlchemistCost(Number(cvToJSON(response).value)))
 
   }, [sender])
 
 
   useEffect(() => {
-    setAmount(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance)
+    setAmountWChaLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance)
+    setAmountSChaLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha::lp-token').balance)
+    setAmountiCCLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc::lp-token').balance)
+    // setAmountiMMLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm::lp-token').balance)
   }, [getBalanceByKey])
 
 
@@ -336,7 +495,7 @@ export default function Creatures() {
                     <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
                       <div className="flex justify-between align-top">
                         <div className="flex gap-2">
-                          <div className="min-w-max">
+                          {/* <div className="min-w-max">
                             {creature.guild.logo.url ? (
                               <Image
                                 src={creature.guild.logo.url}
@@ -348,7 +507,7 @@ export default function Creatures() {
                             ) : (
                               <div className="w-10 h-10 bg-white border rounded-full" />
                             )}
-                          </div>
+                          </div> */}
                           <div className="">
                             <div className="text-sm font-semibold leading-none text-secondary">
                               {creature.title}
@@ -358,10 +517,10 @@ export default function Creatures() {
                             </div>
                           </div>
                         </div>
-                        <div className="flex flex-col items-end leading-[1.1] space-y-2">
-                          <div className="text-white text-xs font-semibold">1000 Farmers earn:</div>
-                          <div className="text-white text-xs font-semibold">~$7 / day</div>
-                        </div>
+                        {creature.dailyYield > 0 && <div className="flex flex-col items-end leading-[1.1] space-y-2">
+                          <div className="text-white text-xs font-semibold">1000 {creature.title} earn:</div>
+                          <div className="text-white text-xs font-semibold">~${creature.dailyYield} / day</div>
+                        </div>}
                       </div>
                     </CardHeader>
                     <Image
@@ -387,12 +546,12 @@ export default function Creatures() {
                     className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}
                   >
                     <div className="z-20 p-2 flex w-full justify-between place-items-end">
-                      <div className='w-full text-lg px-4'>You have {millify(farmers)} Farmers</div>
+                      <div className='w-full text-base px-4'>You have {millify(creature.amount)} {creature.title}</div>
                       <div className='flex flex-col justify-center space-y-2'>
-                        {farmersToRecruit === 0 && <div className='text-sm text-center leading-tight'>You need STX-wCHA LP Tokens to create Farmers</div>}
+                        {creature.creaturesRecruitable === 0 && <div className='text-sm font-semibold text-center leading-tight'>You need {creature.requiredToken} tokens to create {creature.title}</div>}
                         <div className='flex space-x-2'>
-                          <Button disabled={amount === 0} className="z-30" variant={'ghost'} onClick={unsummon}>Dismiss</Button>
-                          <Button disabled={farmersToRecruit === 0} className="z-30" onClick={summon}>Recruit</Button>
+                          <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.creaturesRecruitable)}>Dismiss</Button>
+                          <Button disabled={!(creature.creaturesRecruitable >= 1)} className="z-30" onClick={() => recruit(creature.tokenContract, creature.creaturesRecruitable)}>Recruit</Button>
                         </div>
                       </div>
                     </div>

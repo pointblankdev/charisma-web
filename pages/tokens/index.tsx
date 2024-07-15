@@ -495,7 +495,7 @@ export default function Tokens({ pools, indexes }: Props) {
                     </CardContent>
                   </Link>
                   <CardFooter className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}>
-                    <div className='z-20 p-2'>
+                    {/* <div className='z-20 p-2'>
                       <CardTitle className='z-30 mt-2 text-lg font-semibold leading-none text-white'>Staking Rewards</CardTitle>
                       {pool.apps && <CardDescription className='z-30 mb-2 text-sm text-white font-fine'>Apps and indexes that utilize this pool:</CardDescription>}
                       {pool.apps ? <div className='z-30 grid grid-cols-5 gap-2'>
@@ -504,13 +504,12 @@ export default function Tokens({ pools, indexes }: Props) {
                             <div className='relative z-30 none' key={i}>
                               <Link href={app.slug}>
                                 <Image src={app.img} width={40} height={40} alt='integrated apps' className='z-30 w-12 h-12 border rounded-full' />
-                                {/* <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground'>{0}</div> */}
                               </Link>
                             </div>
                           )
                         })}
                       </div> : <div className='z-30 text-sm font-fine text-white/90'>No utility has been setup for this pool yet</div>}
-                    </div>
+                    </div> */}
                   </CardFooter>
                 </Card>
               )

@@ -1,10 +1,10 @@
 {
     "sip": 16,
     "name": "Corgi Soldiers",
-    "image": "https://charisma.rocks/creatures/img/3.png",
+    "image": "https://charisma.rocks/creatures/img/corgi-soldiers.png",
     "description": {
         "type": "string",
-        "description": "Loyal welsh corgi soldiers."
+        "description": "Loyal, resilient welsh corgi soldiers."
     },
     "attributes": [
         {
@@ -18,17 +18,17 @@
         {
             "trait_type": "power",
             "display_type": "number",
-            "value": 2
+            "value": 5
         },
         {
             "trait_type": "cost",
             "display_type": "number",
-            "value": 10000000
+            "value": 5000000
         }
     ],
     "properties": {
         "collection": "Creatures",
-        "collection_image": "https://charisma.rocks/creatures/img/3.png",
+        "collection_image": "https://charisma.rocks/creatures/img/creatures.png",
         "category": "image",
         "symbol": "CREATURE",
         "decimals": 0

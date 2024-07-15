@@ -102,24 +102,6 @@ export const getStaticProps: GetStaticProps<Props> = () => {
         { slug: '/stake/odin', img: liquidStakedOdin },
       ]
     },
-    // {
-    //   guild: {
-    //     logo: {
-    //       url: '/wooo-title-belt-nft.gif'
-    //     }
-    //   },
-    //   title: 'Wooo! Title Fight',
-    //   subtitle: 'Do you have what it takes to be a champion?',
-    //   cardImage: {
-    //     url: '/wooo-title-belt-nft.gif'
-    //   },
-    //   slug: 'apps/title-fight',
-    //   wip: false,
-    //   apps: [
-    //     { slug: '/stake/welsh', img: liquidStakedWelsh },
-    //     { slug: '/stake/roo', img: liquidStakedRoo },
-    //   ]
-    // },
     {
       guild: {
         logo: {

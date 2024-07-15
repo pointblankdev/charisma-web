@@ -35,18 +35,18 @@ export async function runAll() {
         )
     );
 
-    console.log({
-        arbitrageJobs: config.jobs.map((job: { address: any; function: any; }) => `${job.address}::${job.function}`),
-        newJobs: newJobs.map((job: { address: any; function: any; }) => `${job.address}::${job.function}`),
-        fee: config.fee,
-        mempoolTxs: mempoolTxs.length
-    });
+    // console.log({
+    //     arbitrageJobs: config.jobs.map((job: { address: any; function: any; }) => `${job.address}::${job.function}`),
+    //     newJobs: newJobs.map((job: { address: any; function: any; }) => `${job.address}::${job.function}`),
+    //     fee: config.fee,
+    //     mempoolTxs: mempoolTxs.length
+    // });
 
     // Run all jobs concurrently
     const jobPromises = newJobs.map((job: { function: string | PromiseLike<string>; address: any; args: any; }, index: number) =>
         new Promise((resolve) => {
             setTimeout(() => {
-                console.log(`Running job: ${job.function}`);
+                // console.log(`Running job: ${job.function}`);
                 const strategy: any = {
                     address: job.address,
                     functionName: job.function,

@@ -1,10 +1,10 @@
 {
     "sip": 16,
-    "name": "Farmers",
-    "image": "https://charisma.rocks/creatures/img/farmers.png",
+    "name": "Blacksmiths",
+    "image": "https://charisma.rocks/creatures/img/blacksmiths.png",
     "description": {
         "type": "string",
-        "description": "Humble, hardworking farmers."
+        "description": "Skilled metalworkers, crafting weapons and armor."
     },
     "attributes": [
         {
@@ -13,17 +13,17 @@
         },
         {
             "trait_type": "class",
-            "value": "Farmer"
+            "value": "Blacksmith"
         },
         {
             "trait_type": "power",
             "display_type": "number",
-            "value": 1
+            "value": 100
         },
         {
             "trait_type": "cost",
             "display_type": "number",
-            "value": 1000000
+            "value": 100000000
         }
     ],
     "properties": {
