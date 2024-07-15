@@ -135,7 +135,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       },
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo',
       wip: false,
-      lowTVL: true,
+      lowTVL: false,
     },
     {
       guild: {
@@ -459,7 +459,7 @@ export default function Tokens({ pools, indexes }: Props) {
               />
             </label>
           </div>
-          <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5'>
+          <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
             {activePools.map((pool) => {
               return (
                 <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
