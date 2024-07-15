@@ -544,7 +544,7 @@ export function CreatureInfoDialog({ creature }: any) {
             height={100}
             className="z-30 border rounded-full h-10 w-10 hover:scale-110 transition-all"
           />
-          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent">
+          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent min-w-5 text-center">
             {numeral(creature.amount).format('(0a)')}
           </div>
         </div>
@@ -589,7 +589,7 @@ export function PowerInfoDialog({ creature }: any) {
             height={100}
             className="z-30 border rounded-full h-10 w-10 hover:scale-110 transition-all"
           />
-          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent">
+          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent min-w-5 text-center">
             {numeral(creature.power).format('(0a)')}
           </div>
         </div>
@@ -633,7 +633,7 @@ export function EnergyInfoDialog({ creature }: any) {
             height={100}
             className="z-30 border rounded-full h-10 w-10 hover:scale-110 transition-all"
           />
-          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent">
+          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent min-w-5 text-center">
             {numeral(creature.energy).format('(0a)')}
           </div>
         </div>
