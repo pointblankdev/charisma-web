@@ -174,8 +174,8 @@ export function SelectCreatureDialog({ data }: any) {
             contractName: 'verdant-orchard',
             functionName: "harvest",
             functionArgs: [uintCV(creatureId)],
-            postConditionMode: PostConditionMode.Deny,
-            postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.verdant-orchard').willSendGte(claimableTokens / Math.pow(10, data.decimals)).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
+            postConditionMode: PostConditionMode.Allow,
+            // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.verdant-orchard').willSendGte(claimableTokens / Math.pow(10, data.decimals)).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
             onFinish: (data) => {
                 console.log("onFinish:", data);
             },

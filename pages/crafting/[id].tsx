@@ -320,12 +320,12 @@ export default function IndexDetailPage({ data }: Props) {
           </Card>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-            {/* {isApples &&
-              <VerdantOrchardCard data={data} />
-            } */}
             {isApples &&
-              <BountifulOrchardCard data={data} />
+              <VerdantOrchardCard data={data} />
             }
+            {/* {isApples &&
+              <BountifulOrchardCard data={data} />
+            } */}
           </div>
         </motion.div>
       </Layout>
