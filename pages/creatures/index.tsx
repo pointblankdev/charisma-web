@@ -659,7 +659,7 @@ export function EnergyInfoDialog({ creature }: any) {
         </AlertDialogHeader>
 
         <DialogFooter>
-          {creature.title} generate {numeral(creature.power).format('0a')} energy per block.
+          Your {creature.title} have produced {numeral(creature.energy).format('0a')} energy to spend on token rewards.
         </DialogFooter>
       </DialogContent>
     </Dialog >
