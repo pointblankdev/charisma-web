@@ -57,8 +57,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       },
     },
     {
-      title: 'Tranquil Orchard',
-      subtitle: 'Grow and harvest Fuji Apples.',
+      title: 'Apple Farming',
+      subtitle: 'Put your farmers to working harvesting apples.',
       ticker: 'FUJI',
       slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
       guild: {

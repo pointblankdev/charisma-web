@@ -41,6 +41,7 @@ import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
 import TranquilOrchardCard from '@components/stations/tranquil-orchard';
 import AppleOrchardCard from '@components/stations/apple-orchard';
+import BountifulOrchardCard from '@components/stations/bountiful-orchard';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -321,7 +322,7 @@ export default function IndexDetailPage({ data }: Props) {
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
             {isApples &&
-              <TranquilOrchardCard data={data} />
+              <BountifulOrchardCard data={data} />
             }
             {isApples &&
               <AppleOrchardCard data={data} />
