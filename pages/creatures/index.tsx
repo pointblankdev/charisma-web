@@ -15,8 +15,6 @@ import { useConnect } from '@stacks/connect-react';
 import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import useWallet from '@lib/hooks/use-wallet-balances';
-import { UrlObject } from 'url';
-import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import tokenfaucet1 from '@public/token-faucet.png'
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png'
 import liquidStakedRoo from '@public/liquid-staked-roo.png'
@@ -24,146 +22,142 @@ import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import charisma from '@public/charisma.png'
 import raven from '@public/raven-of-odin.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
+import { getCreatureCost } from '@lib/stacks-api';
 
 
 
-const activities = [
-  {
-    title: "Charisma Faucet",
-    subtitle: "Get free Charisma tokens.",
-    ticker: "CHA",
-    slug: "/faucet",
-    guild: {
-      logo: {
-        url: "/charisma.png"
-      }
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+
+  const quests = [
+    {
+      title: "Charisma Faucet",
+      subtitle: "Get free Charisma tokens.",
+      ticker: "CHA",
+      slug: "/faucet",
+      guild: {
+        logo: {
+          url: "/charisma.png"
+        }
+      },
+      apps: [
+        {
+          slug: "/faucet",
+          img: "/charisma.png"
+        }
+      ],
+      cardImage: {
+        url: tokenfaucet1
+      },
     },
-    apps: [
-      {
-        slug: "/faucet",
-        img: "/charisma.png"
-      }
-    ],
-    cardImage: {
-      url: tokenfaucet1
+    {
+      title: 'Tranquil Orchard',
+      subtitle: 'Grow and harvest Fuji Apples.',
+      ticker: 'FUJI',
+      slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
+      guild: {
+        logo: {
+          url: '/stations/fuji-apples.png'
+        }
+      },
+      apps: [
+        {
+          slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
+          img: '/stations/apple-orchard.png'
+        }
+      ],
+      cardImage: {
+        url: '/stations/apple-orchard.png'
+      },
     },
-  },
-  {
-    title: 'Tranquil Orchard',
-    subtitle: 'Grow and harvest Fuji Apples.',
-    ticker: 'FUJI',
-    slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
-    guild: {
-      logo: {
-        url: '/stations/fuji-apples.png'
-      }
+    {
+      guild: {
+        logo: {
+          url: '/wishing-well-1.png'
+        }
+      },
+      title: 'Wishing Well',
+      subtitle: 'Donate to the Corgi Wishing Well',
+      cardImage: {
+        url: '/wishing-well.png'
+      },
+      slug: 'wishing-well',
+      wip: false,
+      apps: [
+        { slug: '/stake/welsh', img: liquidStakedWelsh },
+      ]
     },
-    apps: [
-      {
-        slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
-        img: '/stations/apple-orchard.png'
-      }
-    ],
-    cardImage: {
-      url: '/stations/apple-orchard.png'
+    {
+      guild: {
+        logo: {
+          url: '/kangaroo-borrow-1.png'
+        }
+      },
+      title: 'Kangaroo Burrow',
+      subtitle: 'Donate to the Kangaroo Burrow',
+      cardImage: {
+        url: '/kangaroo-burrow.png'
+      },
+      slug: 'kangaroo-burrow',
+      wip: false,
+      apps: [
+        { slug: '/stake/roo', img: liquidStakedRoo },
+      ]
     },
-  },
-  {
-    guild: {
-      logo: {
-        url: '/wishing-well-1.png'
-      }
-    },
-    title: 'Wishing Well',
-    subtitle: 'Donate to the Corgi Wishing Well',
-    cardImage: {
-      url: '/wishing-well.png'
-    },
-    slug: 'wishing-well',
-    wip: false,
-    apps: [
-      { slug: '/stake/welsh', img: liquidStakedWelsh },
-    ]
-  },
-  {
-    guild: {
-      logo: {
-        url: '/kangaroo-borrow-1.png'
-      }
-    },
-    title: 'Kangaroo Burrow',
-    subtitle: 'Donate to the Kangaroo Burrow',
-    cardImage: {
-      url: '/kangaroo-burrow.png'
-    },
-    slug: 'kangaroo-burrow',
-    wip: false,
-    apps: [
-      { slug: '/stake/roo', img: liquidStakedRoo },
-    ]
-  },
-  {
-    guild: {
-      logo: {
+    {
+      guild: {
+        logo: {
+          url: '/uppsala-21.png'
+        }
+      },
+      title: 'The Temple at Uppsala',
+      subtitle: 'Donate to the Temple at Uppsala',
+      cardImage: {
         url: '/uppsala-21.png'
-      }
+      },
+      slug: 'apps/uppsala',
+      wip: false,
+      apps: [
+        { slug: '/stake/odin', img: liquidStakedOdin },
+      ]
     },
-    title: 'The Temple at Uppsala',
-    subtitle: 'Donate to the Temple at Uppsala',
-    cardImage: {
-      url: '/uppsala-21.png'
+    {
+      guild: {
+        logo: {
+          url: odinsRaven
+        }
+      },
+      title: "Odin's Raven",
+      subtitle: 'The Eyes and ears of the Allfather',
+      cardImage: {
+        url: raven
+      },
+      slug: 'apps/odins-raven',
+      wip: false,
+      apps: [
+        { slug: '/stake/welsh', img: liquidStakedWelsh },
+        { slug: '/stake/odin', img: liquidStakedOdin },
+      ]
     },
-    slug: 'apps/uppsala',
-    wip: false,
-    apps: [
-      { slug: '/stake/odin', img: liquidStakedOdin },
-    ]
-  },
-  {
-    guild: {
-      logo: {
-        url: odinsRaven
-      }
+    {
+      guild: {
+        logo: {
+          url: '/green-room-icon.png'
+        }
+      },
+      title: 'The Green Room',
+      subtitle: 'Private faucet for AWC & VIPs',
+      cardImage: {
+        url: '/green-room-card.png'
+      },
+      slug: 'apps/the-green-room',
+      wip: false,
+      apps: [
+        { slug: '/faucet', img: charisma },
+      ]
     },
-    title: "Odin's Raven",
-    subtitle: 'The Eyes and ears of the Allfather',
-    cardImage: {
-      url: raven
-    },
-    slug: 'apps/odins-raven',
-    wip: false,
-    apps: [
-      { slug: '/stake/welsh', img: liquidStakedWelsh },
-      { slug: '/stake/odin', img: liquidStakedOdin },
-    ]
-  },
-  {
-    guild: {
-      logo: {
-        url: '/green-room-icon.png'
-      }
-    },
-    title: 'The Green Room',
-    subtitle: 'Private faucet for AWC & VIPs',
-    cardImage: {
-      url: '/green-room-card.png'
-    },
-    slug: 'apps/the-green-room',
-    wip: false,
-    apps: [
-      { slug: '/faucet', img: charisma },
-    ]
-  },
 
-]
-
-
-export default function Creatures() {
-  const meta = {
-    title: 'Charisma | Creatures',
-    description: META_DESCRIPTION,
-    image: '/creatures/img/1.png'
-  };
+  ]
 
   const creatures = [
     {
@@ -185,6 +179,7 @@ export default function Creatures() {
         url: '/creatures/img/farmers.png'
       },
       requiredToken: 'STX-wCHA LP',
+      cost: await getCreatureCost(1),
       dailyYield: 7,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
@@ -209,6 +204,7 @@ export default function Creatures() {
         url: '/creatures/img/blacksmiths.png'
       },
       requiredToken: 'STX-sCHA LP',
+      cost: await getCreatureCost(2),
       dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha',
@@ -233,6 +229,7 @@ export default function Creatures() {
         url: '/creatures/img/corgi-soldiers.png'
       },
       requiredToken: 'STX-iCC LP',
+      cost: await getCreatureCost(3),
       dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
@@ -257,6 +254,7 @@ export default function Creatures() {
     //     url: '/creatures/img/alchemists.png'
     //   },
     //   requiredToken: 'STX-iMM LP',
+    //   cost: await getCreatureCost(4),
     //   dailyYield: 0,
     //   amount: 0,
     //   tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
@@ -264,6 +262,26 @@ export default function Creatures() {
     // },
   ]
 
+  return {
+    props: {
+      creatures,
+      quests
+    }
+  };
+};
+
+type Props = {
+  creatures: any[];
+  quests: any[];
+};
+
+
+export default function Creatures({ creatures, quests }: Props) {
+  const meta = {
+    title: 'Charisma | Creatures',
+    description: META_DESCRIPTION,
+    image: '/creatures/img/1.png'
+  };
 
   const { doContractCall } = useConnect();
 
@@ -279,19 +297,16 @@ export default function Creatures() {
   const [corgiSoldiers, setCorgiSoldiers] = useState(0)
   // const [alchemists, setAlchemists] = useState(0)
 
-  const [power, setPower] = useState(0)
+  console.log({ farmers, blacksmiths, corgiSoldiers })
 
-  const [farmerCost, setFarmerCost] = useState(0)
-  const [blacksmithCost, setBlacksmithCost] = useState(0)
-  const [corgiSoldierCost, setCorgiSoldierCost] = useState(0)
-  // const [alchemistCost, setAlchemistCost] = useState(0)
+  const [power, setPower] = useState(0)
 
   const { getBalanceByKey } = useWallet();
 
-  const farmersToRecruit = Math.floor(amountWChaLP / farmerCost)
-  const blacksmithsToRecruit = Math.floor(amountSChaLP / blacksmithCost)
-  const corgiSoldiersToRecruit = Math.floor(amountiCCLP / corgiSoldierCost)
-  // const alchemistsToRecruit = Math.floor(amountiMMLP / alchemistCost)
+  const farmersToRecruit = Math.floor(amountWChaLP / creatures[0].cost)
+  const blacksmithsToRecruit = Math.floor(amountSChaLP / creatures[1].cost)
+  const corgiSoldiersToRecruit = Math.floor(amountiCCLP / creatures[2].cost)
+  // const alchemistsToRecruit = Math.floor(amountiMMLP / creatures[3].cost)
 
   creatures[0].creaturesRecruitable = farmersToRecruit
   creatures[1].creaturesRecruitable = blacksmithsToRecruit
@@ -393,43 +408,6 @@ export default function Creatures() {
     }).then(response => setPower(Number(cvToJSON(response).value)))
 
   }, [sender])
-
-  useEffect(() => {
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-creature-cost",
-      functionArgs: [uintCV(1)],
-      senderAddress: sender
-    }).then(response => setFarmerCost(Number(cvToJSON(response).value)))
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-creature-cost",
-      functionArgs: [uintCV(2)],
-      senderAddress: sender
-    }).then(response => setBlacksmithCost(Number(cvToJSON(response).value)))
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-creature-cost",
-      functionArgs: [uintCV(3)],
-      senderAddress: sender
-    }).then(response => setCorgiSoldierCost(Number(cvToJSON(response).value)))
-    // sender && callReadOnlyFunction({
-    //   network: new StacksMainnet(),
-    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    //   contractName: 'creatures',
-    //   functionName: "get-creature-cost",
-    //   functionArgs: [uintCV(4)],
-    //   senderAddress: sender
-    // }).then(response => setAlchemistCost(Number(cvToJSON(response).value)))
-
-  }, [sender])
-
 
   useEffect(() => {
     setAmountWChaLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance)
@@ -550,7 +528,7 @@ export default function Creatures() {
                       <div className='flex flex-col justify-center space-y-2'>
                         {creature.creaturesRecruitable === 0 && <div className='text-sm font-semibold text-center leading-tight'>You need {creature.requiredToken} tokens to create {creature.title}</div>}
                         <div className='flex space-x-2'>
-                          <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.creaturesRecruitable)}>Dismiss</Button>
+                          <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.amount)}>Dismiss</Button>
                           <Button disabled={!(creature.creaturesRecruitable >= 1)} className="z-30" onClick={() => recruit(creature.tokenContract, creature.creaturesRecruitable)}>Recruit</Button>
                         </div>
                       </div>
@@ -562,14 +540,14 @@ export default function Creatures() {
           </div>
 
           <div className="space-y-1">
-            <h2 className="text-4xl font-semibold tracking-tight text-secondary">Activities</h2>
+            <h2 className="text-4xl font-semibold tracking-tight text-secondary">Quests</h2>
             <p className="text-muted-foreground text-base">
-              Here are some things you can do in the Charisma ecosystem to earn tokens.
+              Here are some activities you can do in the Charisma ecosystem to earn tokens.
             </p>
           </div>
 
           <div className="grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
-            {activities.map((activity: any, i: number) => {
+            {quests.map((activity: any, i: number) => {
               return (
                 <Card
                   key={i}

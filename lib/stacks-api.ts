@@ -942,3 +942,15 @@ export async function getVelarSwapAmountOut({ amountIn, tokenIn, tokenOut }: { a
 
     return cvToJSON(response).value
 }
+
+export async function getCreatureCost(creatureId: number, sender = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ') {
+    const response = await callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'creatures',
+        functionName: "get-creature-cost",
+        functionArgs: [uintCV(creatureId)],
+        senderAddress: sender
+    })
+    return Number(cvToJSON(response).value)
+}
