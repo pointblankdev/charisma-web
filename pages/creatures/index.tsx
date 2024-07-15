@@ -436,7 +436,7 @@ export default function Creatures({ creatures, quests }: Props) {
                     className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all justify-between')}
                   >
                     <div className="z-20 p-2 flex w-full justify-between place-items-end">
-                      {creature.creaturesRecruitable === 0 ? <div className='text-sm font-semibold text-center leading-tight'>You need more {creature.requiredToken} tokens to create {creature.title}</div> : <div className='w-full' />}
+                      {!(creature.creaturesRecruitable >= 1) && <div className='text-sm font-semibold text-center leading-tight'>You need more {creature.requiredToken} tokens to create {creature.title}</div>}
                       <div className='flex flex-col justify-center space-y-2'>
                         <div className='flex space-x-2 justify-end'>
                           <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.amount)}>Dismiss</Button>

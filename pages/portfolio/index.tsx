@@ -228,12 +228,8 @@ function TokenBalances({ data }: Props) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px] sm:table-cell">
-                <span className="sr-only">Image</span>
-              </TableHead>
-              <TableHead>
-                <span className="sr-only">Name</span>
-              </TableHead>
+              <TableHead className="w-[100px] sm:table-cell"><span className="sr-only">Image</span></TableHead>
+              <TableHead><span className="sr-only">Name</span></TableHead>
               <TableHead className="md:table-cell text-right">Token Amount</TableHead>
               <TableHead className="md:table-cell text-right">Total Value (USD)</TableHead>
             </TableRow>
