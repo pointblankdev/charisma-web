@@ -155,17 +155,17 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     {
       guild: {
         logo: {
-          url: '/pepe-logo.png'
+          url: '/liquid-staked-pepe.png'
         }
       },
       title: 'Pepe the Frog',
       subtitle: 'Liquid Staked Pepe',
       cardImage: {
-        url: '/liquid-pepe-21.png'
+        url: '/liquid-staked-pepe-bg.jpeg'
       },
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe',
       wip: false,
-      lowTVL: true,
+      lowTVL: false,
     },
     {
       guild: {

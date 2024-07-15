@@ -49,10 +49,11 @@ const generateHeader = ({ name, sender, description }: any) => {
 ;; Created With Charisma
 ;; Description:
 ;; ${description}
-;; Unwrap Link:
-;; https://www.charisma.rocks/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples
 
 `}
+
+// ;; Unwrap Link:
+// ;; https://www.charisma.rocks/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples
 
 const fadeIn = {
     hidden: { opacity: 0 },
