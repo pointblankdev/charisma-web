@@ -327,9 +327,6 @@ export default function IndexDetailPage({ data }: Props) {
             {isApples &&
               <TranquilOrchardCard data={data} />
             }
-            {isApples &&
-              <AppleOrchardCard data={data} />
-            }
           </div>
         </motion.div>
       </Layout>

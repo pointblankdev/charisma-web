@@ -66,7 +66,7 @@ export default function TranquilOrchardCard({ data }: any) {
             functionName: "get-untapped-amount",
             functionArgs: [uintCV(1), principalCV(sender)],
             senderAddress: sender
-        }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value) / Math.pow(10, data.decimals)))
+        }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value) / Math.pow(10, data.decimals) * 20000000))
 
     }, [])
 
@@ -122,7 +122,7 @@ export default function TranquilOrchardCard({ data }: any) {
                     </CardTitle>
                     <div className="flex space-x-3 items-center">
                         <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                            {numeral(data.tokenPrice * farmers * 2 * power * 6 * 24 / Math.pow(10, data.decimals)).format('($0.00a)')} / day
+                            {numeral(data.tokenPrice * farmers * 20000000 * 2 * power * 6 * 24 / Math.pow(10, data.decimals)).format('($0.00a)')} / day
                         </div>
                         <div className="text-lg">{numeral(farmers).format('(0a)')}</div>
                         <ActiveFarmIndicator
