@@ -25,7 +25,8 @@ const generateTemplate = ({
     decimals,
     unlockBlock,
     blocksPerTx,
-    indexTokenRatio
+    indexTokenRatio,
+    lockAddLiquidity = false
 }: any) => {
     const safeName = name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
     const safeTicker = ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
@@ -116,8 +117,7 @@ const generateTemplate = ({
             (amount-a (* amount token-a-ratio))
             (amount-b (* amount token-b-ratio))
             (amount-index (* amount index-token-ratio))
-        )
-        (try! (is-unlocked))
+        )${lockAddLiquidity ? `\n        (try! (is-unlocked))` : ``}
         (try! (contract-call? '${baseTokenA} transfer amount-a tx-sender contract none))
         (try! (contract-call? '${baseTokenB} transfer amount-b tx-sender contract none))
         (try! (ft-mint? index-token amount-index tx-sender))
