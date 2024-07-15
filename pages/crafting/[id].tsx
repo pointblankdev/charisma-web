@@ -35,9 +35,17 @@ import LiquidityControls from '@components/liquidity/controls';
 import velarApi from '@lib/velar-api';
 import { uniqBy } from 'lodash';
 import { useConnect } from '@stacks/connect-react';
-import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
-import { StacksMainnet } from "@stacks/network";
-import { userSession } from '@components/stacks-session/connect';
+import {
+  AnchorMode,
+  callReadOnlyFunction,
+  cvToJSON,
+  Pc,
+  PostConditionMode,
+  principalCV,
+  uintCV
+} from '@stacks/transactions';
+import { StacksMainnet } from '@stacks/network';
+import ConnectWallet, { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
 import TranquilOrchardCard from '@components/stations/tranquil-orchard';
 import AppleOrchardCard from '@components/stations/apple-orchard';
@@ -65,15 +73,16 @@ export default function IndexDetailPage({ data }: Props) {
 
   const { doContractCall } = useConnect();
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
-  const [farmers, setFarmers] = useState(0)
-  const [power, setPower] = useState(0)
+  const [farmers, setFarmers] = useState(0);
+  const [power, setPower] = useState(0);
 
   let maxPossibleIndex = Infinity;
   let limitingToken = null;
 
-  const [claimableAmount, setClaimableAmount] = useState(0)
+  const [claimableAmount, setClaimableAmount] = useState(0);
+  const [sender, setSender] = useState(null); // tracks the status of user wallet
 
-  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+  /* const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
   useEffect(() => {
     callReadOnlyFunction({
@@ -85,32 +94,68 @@ export default function IndexDetailPage({ data }: Props) {
       senderAddress: sender
     }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value) / Math.pow(10, data.decimals)))
 
-  }, [])
+  }, []) */
+
+  /* I rewrote this to avoid the app crashing for indexed token when user wallet is not signed */
+  useEffect(() => {
+    if (userSession.isUserSignedIn()) {
+      const userData = userSession.loadUserData();
+      if (userData?.profile?.stxAddress?.mainnet) {
+        setSender(userData.profile.stxAddress.mainnet);
+      }
+    }
+  }, []);
 
   useEffect(() => {
-    callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-creature-power",
-      functionArgs: [uintCV(1)],
-      senderAddress: sender
-    }).then(response => setPower(Number(cvToJSON(response).value)))
-
-  }, [])
+    if (sender) {
+      callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'creatures-energy',
+        functionName: 'get-untapped-amount',
+        functionArgs: [uintCV(1), principalCV(sender)],
+        senderAddress: sender
+      }).then(response => {
+        setClaimableAmount(Number(cvToJSON(response).value.value) / Math.pow(10, data.decimals));
+      });
+    }
+  }, [sender]);
 
   useEffect(() => {
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-balance",
-      functionArgs: [uintCV(1), principalCV(sender)],
-      senderAddress: sender
-    }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
+    if (sender) {
+      callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'creatures',
+        functionName: 'get-creature-power',
+        functionArgs: [uintCV(1)],
+        senderAddress: sender
+      }).then(response => setPower(Number(cvToJSON(response).value)));
+    }
+  }, []);
 
-  }, [sender])
+  useEffect(() => {
+    sender &&
+      callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'creatures',
+        functionName: 'get-balance',
+        functionArgs: [uintCV(1), principalCV(sender)],
+        senderAddress: sender
+      }).then(response => setFarmers(Number(cvToJSON(response).value.value)));
+  }, [sender]);
 
+  // Connect wallet if user is not signed in
+  if (!sender) {
+    return (
+      <div className="flex justify-center items-center h-screen">
+        <div className="w-40">
+          <ConnectWallet />
+        </div>
+      </div>
+    );
+  }
 
   if (!data.metadata || !balances) return <div>Loading...</div>;
 
@@ -151,28 +196,32 @@ export default function IndexDetailPage({ data }: Props) {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'tranquil-orchard',
-      functionName: "harvest",
+      functionName: 'harvest',
       functionArgs: [uintCV(1)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tranquil-orchard').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
+      postConditions: [
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tranquil-orchard')
+          .willSendGte(1)
+          .ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples', 'index-token')
+      ],
+      onFinish: data => {
+        console.log('onFinish:', data);
       },
       onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+        console.log('onCancel:', 'Transaction was canceled');
+      }
     });
   }
 
   // hack: short term workaround for apple specific stuff
-  const isApples = data.symbol === 'FUJI'
+  const isApples = data.symbol === 'FUJI';
 
   // variable to hide the liquidity controls if they have no index tokens or base tokens
-  const absValMin = Math.abs(-indexBalance / indexWeight)
+  const absValMin = Math.abs(-indexBalance / indexWeight);
 
-  const fixedAmount = data.tokenPrice < 0.000001 ? 8 : data.tokenPrice < 1 ? 6 : 4
+  const fixedAmount = data.tokenPrice < 0.000001 ? 8 : data.tokenPrice < 1 ? 6 : 4;
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -233,7 +282,8 @@ export default function IndexDetailPage({ data }: Props) {
                         side="bottom"
                         className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
                       >
-                        {numeral(Math.abs(tokensRequested * indexWeight)).format('(0,0.000000)')} {data.metadata.symbol}
+                        {numeral(Math.abs(tokensRequested * indexWeight)).format('(0,0.000000)')}{' '}
+                        {data.metadata.symbol}
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
@@ -285,8 +335,8 @@ export default function IndexDetailPage({ data }: Props) {
                   Back
                 </Button>
               </Link>
-              <div className='flex flex-col justify-end space-y-1'>
-                {descriptionVisible && (absValMin !== maxPossibleIndex) && (
+              <div className="flex flex-col justify-end space-y-1">
+                {descriptionVisible && absValMin !== maxPossibleIndex && (
                   <LiquidityControls
                     min={-indexBalance / indexWeight}
                     max={isApples ? 0 : maxPossibleIndex}
@@ -321,10 +371,8 @@ export default function IndexDetailPage({ data }: Props) {
             <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
           </Card>
 
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-            {isApples &&
-              <VerdantOrchardCard data={data} />
-            }
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {isApples && <VerdantOrchardCard data={data} />}
           </div>
         </motion.div>
       </Layout>
@@ -367,7 +415,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
         const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress);
         const tokenWeight = metadata.contains[tokenIndex].weight;
         const tokenPrice = Number(baseToken.price);
-        return totalSupply * tokenWeight * tokenPrice / indexTokenWeight;
+        return (totalSupply * tokenWeight * tokenPrice) / indexTokenWeight;
       });
       tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0);
     }
@@ -428,7 +476,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
           (baseToken: any) => baseToken.contractAddress === token.address
         );
         if (baseToken) {
-          tokenPrice += baseToken.price * token.weight / indexTokenWeight;
+          tokenPrice += (baseToken.price * token.weight) / indexTokenWeight;
         }
       });
     }
@@ -474,12 +522,14 @@ const ActiveRecipeIndicator = ({
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
-                }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
+                active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
+              }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
-                }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
+                active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
+              }`}
             />
           </div>
         </TooltipTrigger>
@@ -488,8 +538,9 @@ const ActiveRecipeIndicator = ({
         >
           {active
             ? 'Index token is unlocked'
-            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
-            }`}
+            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${
+                blocksUntilUnlock !== 1 ? 's' : ''
+              }`}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
@@ -509,12 +560,14 @@ const ActiveFarmIndicator = ({
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
-                }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
+                active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
+              }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
-                }`}
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${
+                active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
+              }`}
             />
           </div>
         </TooltipTrigger>
@@ -523,11 +576,11 @@ const ActiveFarmIndicator = ({
         >
           {active
             ? 'Creatures are working the farm'
-            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
-            }`}
+            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${
+                blocksUntilUnlock !== 1 ? 's' : ''
+              }`}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>
   );
 };
-
