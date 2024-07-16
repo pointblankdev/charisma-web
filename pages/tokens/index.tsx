@@ -312,6 +312,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.presidential-pepe',
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe'
   ];
+
   const enabledContracts = uniq(contracts).filter((contract: any) => !blacklist.includes(contract));
 
   // lookup metadata for each contract
