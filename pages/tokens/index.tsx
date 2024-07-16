@@ -33,8 +33,6 @@ import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
 import { uniq, uniqBy } from 'lodash';
 import { Checkbox } from '@components/ui/checkbox';
 
-
-
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const pools = [
@@ -323,7 +321,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const blacklist = [
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund',
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.presidential-pepe',
-    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe'
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe',
   ];
 
   const enabledContracts = uniq(contracts).filter((contract: any) => !blacklist.includes(contract));
@@ -343,66 +341,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   });
 
   const tokenMetadata = await Promise.all(tokenMetadataPromises);
-
-  const apps = [
-    {
-      guild: {
-        logo: {
-          url: '/woo-icon.png'
-        }
-      },
-      title: `Roo Flair's Bizarre Adventure`,
-      ticker: 'WOO',
-      subtitle: 'sWELSH and sROO at a fixed 25:1 ratio',
-      cardImage: {
-        url: '/woo-1.png'
-      },
-      slug: '/crafting/woo',
-      inactive: true,
-      apps: [
-        { slug: '/stake/welsh', img: liquidStakedWelsh },
-        { slug: '/stake/roo', img: liquidStakedRoo }
-      ]
-    },
-    {
-      guild: {
-        logo: {
-          url: '/fenrir-icon-2.png'
-        }
-      },
-      title: 'Fenrir, Corgi of Ragnarok',
-      ticker: 'FENRIR',
-      subtitle: 'sWELSH and sODIN at a fixed 1:10 ratio',
-      cardImage: {
-        url: '/fenrir-21.png'
-      },
-      slug: '/crafting/fenrir',
-      inactive: true,
-      apps: [
-        { slug: '/stake/welsh', img: liquidStakedWelsh },
-        { slug: '/stake/odin', img: liquidStakedOdin }
-      ]
-    },
-    {
-      guild: {
-        logo: {
-          url: '/woooooo.webp'
-        }
-      },
-      title: 'Wooo! (Deprecated)',
-      ticker: 'WOOO',
-      subtitle: 'sWELSH + sROO = WOOO',
-      cardImage: {
-        url: '/wooo-title-belt.gif'
-      },
-      slug: '/crafting/wooo',
-      inactive: true,
-      apps: [
-        { slug: '/stake/welsh', img: liquidStakedWelsh },
-        { slug: '/stake/roo', img: liquidStakedRoo }
-      ]
-    }
-  ];
 
   const modifiedApps = tokenMetadata.map((metadata: any, k: number) => {
     return {
@@ -427,12 +365,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     };
   });
 
-  const finalApps = [...apps, ...modifiedApps];
-
   return {
     props: {
       pools,
-      indexes: finalApps
+      indexes: modifiedApps
     },
     revalidate: 60000
   };
