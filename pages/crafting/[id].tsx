@@ -97,6 +97,8 @@ export default function IndexDetailPage({ data }: Props) {
     (token: { weight: number }) => tokensRequested * token.weight
   );
 
+  console.log(data.metadata?.contains)
+
   // workaround for indexes of one token
   if (tokensRequired.length === 1) { tokensRequired[0] *= 2; }
 
