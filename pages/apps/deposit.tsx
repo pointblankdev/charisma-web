@@ -53,10 +53,10 @@ const MicroDeposit = () => {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP4M2C88EE8RQZPYTC4PZ88CE16YGP825EYF6KBQ",
-      contractName: 'stacks-rock',
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'iron-ingots',
       functionName: "transfer",
-      functionArgs: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-rock'), noneCV()],
+      functionArgs: [uintCV(100000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-forge'), noneCV()],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
