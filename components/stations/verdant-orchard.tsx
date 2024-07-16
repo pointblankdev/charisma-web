@@ -193,7 +193,7 @@ export function SelectCreatureDialog({ data }: any) {
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <AlertDialogHeader>
-                    <DialogTitle>Which creatures should harvest the Fuji Apples?</DialogTitle>
+                    <DialogTitle>Which creatures should harvest Fuji Apples?</DialogTitle>
                 </AlertDialogHeader>
 
                 <DialogDescription className='grid gap-2 grid-cols-4 space-x-4 py-4'>
