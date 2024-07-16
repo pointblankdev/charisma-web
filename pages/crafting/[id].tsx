@@ -64,7 +64,6 @@ export default function IndexDetailPage({ data }: Props) {
 
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
 
-  let maxPossibleIndex = Infinity;
 
   if (!data.metadata || !balances) return <div>Loading...</div>;
 
@@ -83,6 +82,7 @@ export default function IndexDetailPage({ data }: Props) {
   });
 
   // Calculate the maximum possible index tokens for each base token
+  let maxPossibleIndex = Infinity;
   baseTokens.forEach((token: { balance: number; weight: number; decimals: number }) => {
     // Calculate how many index tokens can be created from this base token
     const possibleIndex = token.balance / (token.weight / indexWeight);
