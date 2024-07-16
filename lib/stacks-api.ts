@@ -12,11 +12,33 @@ const apiConfig: Configuration = new Configuration({
     fetchApi: fetch,
     // for mainnet, replace `testnet` with `mainnet`
     basePath: 'https://api.mainnet.hiro.so', // defaults to http://localhost:3999
-    apiKey: process.env.STACKS_API_KEY,
+    // apiKey: process.env.STACKS_API_KEY,
     headers: {
         "x-hiro-api-key": String(process.env.STACKS_API_KEY)
     }
 });
+
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log(process.env.STACKS_API_KEY)
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+console.log("API KEY")
+
 
 const scApi = new SmartContractsApi(apiConfig);
 const blocksApi = new BlocksApi(apiConfig);
