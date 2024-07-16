@@ -10,15 +10,7 @@
                 }
             ],
             "name": "add-liquidity",
-            "access": "public",
-            "outputs": {
-                "type": {
-                    "response": {
-                        "ok": "bool",
-                        "error": "uint128"
-                    }
-                }
-            }
+            "access": "public"
         },
         {
             "args": [
@@ -28,15 +20,7 @@
                 }
             ],
             "name": "remove-liquidity",
-            "access": "public",
-            "outputs": {
-                "type": {
-                    "response": {
-                        "ok": "bool",
-                        "error": "uint128"
-                    }
-                }
-            }
+            "access": "public"
         },
         {
             "args": [],

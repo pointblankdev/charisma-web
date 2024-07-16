@@ -32,6 +32,8 @@ export default function Stake({ data }: Props) {
 
     const { balances, getBalanceByKey } = useWallet()
 
+    console.log(balances)
+
     const rebaseTokenBalance = getBalanceByKey(`${data.ca}::${data.metadata?.ft || 'liquid-staked-token'}`)?.balance || 0
     const baseTokenBalance = getBalanceByKey(`${data.baseToken?.address}::${data.baseToken?.ft}`)?.balance || 0
 

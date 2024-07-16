@@ -2,7 +2,7 @@ import { getContractMetadata, setContractMetadata } from "./user-api"
 
 describe('User API', () => {
     it('should get metadata', async () => {
-        const response = await getContractMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.presidential-pepe')
+        const response = await getContractMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-ingots')
         const result = await response.json()
         console.log(result)
     })
