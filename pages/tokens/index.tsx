@@ -20,13 +20,11 @@ import { useState } from 'react';
 import wishingWell from '@public/wishing-well-1.png'
 import kangarooBurrow from '@public/kangaroo-borrow-1.png'
 import uppsala from '@public/uppsala-21.png'
-import titleFight from '@public/wooo-title-belt-nft.gif'
 import woo from '@public/woo-icon.png'
 import fenrir from '@public/fenrir-icon-2.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
-import { useRouter } from 'next/navigation';
 import featherFallFund from '@public/feather-fall-fund-logo.png'
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png';
 import liquidStakedRoo from '@public/liquid-staked-roo.png';
