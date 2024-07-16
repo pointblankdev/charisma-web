@@ -116,14 +116,13 @@ export default function IndexDetailPage({ data }: Props) {
   const indexWeight = data.indexWeight;
   const indexBalance = getBalanceByKey(token)?.balance || 0;
 
-  const baseTokens = data.metadata?.contains.map((token: { address: any; weight: any }, i: number) => {
+  const baseTokens = data.metadata?.contains.map((token: { address: any; weight: any }) => {
     const baseToken = getKeyByContractAddress(token.address);
     const baseTokenBalance = getBalanceByKey(baseToken)?.balance || 0;
     return {
       token: baseToken,
       balance: baseTokenBalance,
       weight: token.weight,
-      decimals: data.baseTokens[i].decimals
     };
   });
 
@@ -131,7 +130,6 @@ export default function IndexDetailPage({ data }: Props) {
   baseTokens.forEach((token: { balance: number; weight: number; decimals: number }) => {
     // Calculate how many index tokens can be created from this base token
     const possibleIndex = token.balance / (token.weight / indexWeight);
-    console.log({ possibleIndex, token })
     if (possibleIndex < maxPossibleIndex) {
       maxPossibleIndex = possibleIndex;
       limitingToken = token;

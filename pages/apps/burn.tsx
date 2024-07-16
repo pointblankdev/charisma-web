@@ -61,7 +61,7 @@ const Burn = () => {
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: 'dme000-governance-token',
       functionName: "dmg-burn",
-      functionArgs: [uintCV(1000000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
+      functionArgs: [uintCV(60000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
@@ -78,6 +78,6 @@ const Burn = () => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Burn</Button>
+    <Button disabled className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Burn</Button>
   );
 };

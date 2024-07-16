@@ -307,7 +307,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const contracts = await getDeployedIndexes();
 
   // blacklist ones that are not active
-  const blacklist = ['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund'];
+  const blacklist = ['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.presidential-pepe'];
   const enabledContracts = uniq(contracts).filter((contract: any) => !blacklist.includes(contract));
 
   // lookup metadata for each contract
