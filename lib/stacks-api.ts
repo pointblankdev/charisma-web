@@ -1,10 +1,11 @@
 import { AccountsApi, BlocksApi, Configuration, FeesApi, NamesApi, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
-import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, makeContractCall, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
+import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToHex, hexToCV, makeContractCall, parseToCV, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
 import { getAllWallets } from "./cms-providers/dato";
 import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
+import { bytesToHex, hexToInt, intToHex, utf8ToBytes } from "@stacks/common";
 
 const network = new StacksMainnet();
 
@@ -17,27 +18,6 @@ const apiConfig: Configuration = new Configuration({
         "x-hiro-api-key": String(process.env.STACKS_API_KEY)
     }
 });
-
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log(process.env.STACKS_API_KEY)
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
-console.log("API KEY")
 
 
 const scApi = new SmartContractsApi(apiConfig);
@@ -745,47 +725,51 @@ export async function getTotalInPool(contract: string) {
 
     let response: any;
     if (name === 'liquid-staked-odin') {
-        response = await callReadOnlyFunction({
-            network: new StacksMainnet(),
+        response = await scApi.callReadOnlyFunction({
             contractAddress: address,
             contractName: name,
             functionName: "get-total-odin-in-pool",
-            functionArgs: [],
-            senderAddress: address
+            readOnlyFunctionArgs: {
+                sender: address,
+                arguments: []
+            }
         })
     } else if (name === 'liquid-staked-roo') {
-        response = await callReadOnlyFunction({
-            network: new StacksMainnet(),
+        response = await scApi.callReadOnlyFunction({
             contractAddress: address,
             contractName: name,
             functionName: "get-total-roo-in-pool",
-            functionArgs: [],
-            senderAddress: address
+            readOnlyFunctionArgs: {
+                sender: address,
+                arguments: []
+            }
         })
 
     } else if (name === 'liquid-staked-welsh') {
-        response = await callReadOnlyFunction({
-            network: new StacksMainnet(),
+        response = await scApi.callReadOnlyFunction({
             contractAddress: address,
             contractName: name,
             functionName: "get-total-welsh-in-pool",
-            functionArgs: [],
-            senderAddress: address
+            readOnlyFunctionArgs: {
+                sender: address,
+                arguments: []
+            }
         })
-        response = response.value
+
 
     } else {
-        response = await callReadOnlyFunction({
-            network: new StacksMainnet(),
+        response = await scApi.callReadOnlyFunction({
             contractAddress: address,
             contractName: name,
             functionName: "get-total-in-pool",
-            functionArgs: [],
-            senderAddress: address
+            readOnlyFunctionArgs: {
+                sender: address,
+                arguments: []
+            }
         })
     }
 
-    return Number(cvToJSON(response).value)
+    return Number(valueOut(response))
 }
 
 export async function getFenrirTotalSupply() {
@@ -1011,4 +995,10 @@ export async function getClaimableAmount(creatureId: number, sender: string) {
         senderAddress: sender
     })
     return Number(cvToJSON(response).value.value)
+}
+
+const valueOut = (value: any) => {
+    const cv = hexToCV(value.result)
+    const json = cvToJSON(cv)
+    return json.value?.value || json.value
 }
