@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
@@ -33,7 +33,7 @@ import { AlertDialogHeader } from '@components/ui/alert-dialog';
 
 
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   const quests = [
     {
