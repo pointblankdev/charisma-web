@@ -5,7 +5,6 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
 import { Card } from '@components/ui/card';
-import MicroDeposit from '@components/micro-deposit';
 import { useEffect, useState } from 'react';
 import { StacksMainnet } from "@stacks/network";
 import {
@@ -61,7 +60,7 @@ const Burn = () => {
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: 'dme000-governance-token',
       functionName: "dmg-burn",
-      functionArgs: [uintCV(60000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
+      functionArgs: [uintCV(50000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {

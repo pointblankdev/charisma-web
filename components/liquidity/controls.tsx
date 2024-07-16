@@ -12,7 +12,7 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
                 defaultValue={[0]}
                 min={min}
                 max={max}
-                step={1}
+                step={0.000001}
                 className="w-full p-4"
                 onValueChange={(v: any) => onSetTokensSelected(v[0])}
             />

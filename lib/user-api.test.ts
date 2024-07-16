@@ -2,7 +2,7 @@ import { getContractMetadata, setContractMetadata } from "./user-api"
 
 describe('User API', () => {
     it('should get metadata', async () => {
-        const response = await getContractMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples')
+        const response = await getContractMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.mr-president-pepe')
         const result = await response.json()
         console.log(result)
     })
@@ -21,13 +21,13 @@ describe('User API', () => {
                     "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe",
                     "symbol": "sPEPE",
                     "ft": "liquid-staked-token",
-                    "weight": "10000000"
+                    "weight": 10
                 },
                 {
                     "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
                     "symbol": "sCHA",
                     "ft": "liquid-staked-token",
-                    "weight": "1"
+                    "weight": 1
                 }
             ]
         })

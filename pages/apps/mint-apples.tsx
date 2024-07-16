@@ -5,7 +5,6 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
 import { Card } from '@components/ui/card';
-import MicroDeposit from '@components/micro-deposit';
 import { useEffect, useState } from 'react';
 import { StacksMainnet } from "@stacks/network";
 import {

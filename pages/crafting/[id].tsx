@@ -41,6 +41,7 @@ import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
 import VerdantOrchardCard from '@components/stations/verdant-orchard';
 import BountifulOrchardCard from '@components/stations/bountiful-orchard';
+import AddLiquidityToIndex from '@components/craft/add-liquidity';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -61,54 +62,9 @@ export default function IndexDetailPage({ data }: Props) {
     visible: { opacity: 1 }
   };
 
-  const { doContractCall } = useConnect();
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
-  const [farmers, setFarmers] = useState(0)
-  const [power, setPower] = useState(0)
 
   let maxPossibleIndex = Infinity;
-  let limitingToken = null;
-
-  const [claimableAmount, setClaimableAmount] = useState(0)
-
-  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
-
-  useEffect(() => {
-    callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures-energy',
-      functionName: "get-untapped-amount",
-      functionArgs: [uintCV(1), principalCV(sender)],
-      senderAddress: sender
-    }).then(response => setClaimableAmount(Number(cvToJSON(response).value.value) / Math.pow(10, data.decimals)))
-
-  }, [])
-
-  useEffect(() => {
-    callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-creature-power",
-      functionArgs: [uintCV(1)],
-      senderAddress: sender
-    }).then(response => setPower(Number(cvToJSON(response).value)))
-
-  }, [])
-
-  useEffect(() => {
-    sender && callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures',
-      functionName: "get-balance",
-      functionArgs: [uintCV(1), principalCV(sender)],
-      senderAddress: sender
-    }).then(response => setFarmers(Number(cvToJSON(response).value.value)))
-
-  }, [sender])
-
 
   if (!data.metadata || !balances) return <div>Loading...</div>;
 
@@ -121,8 +77,8 @@ export default function IndexDetailPage({ data }: Props) {
     const baseTokenBalance = getBalanceByKey(baseToken)?.balance || 0;
     return {
       token: baseToken,
-      balance: baseTokenBalance,
-      weight: token.weight,
+      balance: Number(baseTokenBalance),
+      weight: Number(token.weight),
     };
   });
 
@@ -132,40 +88,23 @@ export default function IndexDetailPage({ data }: Props) {
     const possibleIndex = token.balance / (token.weight / indexWeight);
     if (possibleIndex < maxPossibleIndex) {
       maxPossibleIndex = possibleIndex;
-      limitingToken = token;
     }
   });
 
-  // workaround for when 2 baseTokens are consolidated into one, the maxPossibleIndex is incorrectly doubled because it doesn't know it draws twice from the same token
-  maxPossibleIndex = maxPossibleIndex / 2;
+  // workaround for when 2 baseTokens are consolidated into one, 
+  // the maxPossibleIndex is incorrectly doubled because it doesn't know it draws twice from the same token
+  if (baseTokens.length === 1) {
+    maxPossibleIndex = maxPossibleIndex / 2
+  }
 
   const tokensRequested = tokensSelected / Math.pow(10, data.decimals);
   const tokensRequired = data.metadata?.contains.map(
+    // (token: { weight: number }) => tokensRequested * (token.weight / indexWeight)
     (token: { weight: number }) => tokensRequested * token.weight
   );
 
-  function harvest() {
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'tranquil-orchard',
-      functionName: "harvest",
-      functionArgs: [uintCV(1)],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tranquil-orchard').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
-      },
-      onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
-    });
-  }
-
   // hack: short term workaround for apple specific stuff
   const isApples = data.symbol === 'FUJI'
-  const isPresPepe = data.symbol === 'iPP'
 
   // variable to hide the liquidity controls if they have no index tokens or base tokens
   const absValMin = Math.abs(-indexBalance / indexWeight)
@@ -287,7 +226,7 @@ export default function IndexDetailPage({ data }: Props) {
                 {descriptionVisible && (absValMin !== maxPossibleIndex) && (
                   <LiquidityControls
                     min={-indexBalance / indexWeight}
-                    max={isApples ? 0 : maxPossibleIndex}
+                    max={maxPossibleIndex}
                     onSetTokensSelected={setTokensSelected}
                     tokensSelected={tokensSelected}
                     indexWeight={indexWeight}
