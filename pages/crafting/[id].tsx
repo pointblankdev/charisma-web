@@ -263,13 +263,16 @@ export default function IndexDetailPage({ data }: Props) {
             {isApples &&
               <TranquilOrchardCard data={data} />
             }
+          </div>
+
+          <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
             {isIron &&
               <IronForgeCard data={data} />
             }
           </div>
         </motion.div>
       </Layout>
-    </Page>
+    </Page >
   );
 }
 
@@ -439,7 +442,7 @@ const ActiveRecipeIndicator = ({
         >
           {active
             ? 'Index token is unlocked'
-            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
+            : `Asset withdraws and deposits are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
             }`}
         </TooltipContent>
       </Tooltip>

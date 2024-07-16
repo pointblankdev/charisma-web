@@ -113,14 +113,14 @@ export default function IronForgeCard({ data }: any) {
     }, [sender])
 
     return (
-        <Card className="h-80 flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
+        <Card className="h-80 flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4">
                 <div className="flex items-center justify-between">
                     <CardTitle className="z-30 text-sm font-semibold">
                         <div className="z-20">
                             {descriptionVisible && (
                                 <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bountiful-orchard?chain=mainnet`} target='_blank'>
-                                    <CardDescription className="z-30 text-md font-fine text-primary-foreground flex items-end space-x-1">
+                                    <CardDescription className="z-30 text-base font-fine text-primary-foreground flex items-end space-x-1">
                                         <div>Iron Forge</div> <Link1Icon className="mb-0.5" />
                                     </CardDescription>
                                 </Link>
@@ -128,13 +128,13 @@ export default function IronForgeCard({ data }: any) {
                         </div>
                     </CardTitle>
                 </div>
-                <CardDescription className="z-30 text-sm font-fine text-secondary/40 space-y-1 pb-4">
+                <CardDescription className="z-30 text-md font-fine text-secondary/40 space-y-1 pb-4">
                     <p>Only a certain amount of Iron Ingots can be forged per epoch.</p>
                     <p>Once they have all been forged, you must wait until the next epoch to start.</p>
                 </CardDescription>
 
 
-                <div className="flex space-x-3 items-center text-xs">
+                <div className="flex space-x-3 items-center text-sm pb-2">
                     <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
                         Blocks Per Epoch: {blocksPerEpoch}
                     </div>
@@ -143,7 +143,7 @@ export default function IronForgeCard({ data }: any) {
                     </div>
                 </div>
 
-                <div className="flex space-x-3 items-center text-xs">
+                <div className="flex space-x-3 items-center text-sm pb-2">
                     <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
                         Current Epoch: {currentEpoch}
                     </div>
@@ -152,7 +152,7 @@ export default function IronForgeCard({ data }: any) {
                     </div>
                 </div>
 
-                <div className="flex space-x-3 items-center text-xs">
+                <div className="flex space-x-3 items-center text-sm pb-2">
                     <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
                         Epoch Progress: {epochProgress}%
                     </div>
