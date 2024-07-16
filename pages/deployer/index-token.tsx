@@ -34,7 +34,8 @@ const generateTemplate = ({
     return `(impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v2.sip010-ft-trait)
 (impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dao-traits-v2.extension-trait)
 
-(define-constant err-unauthorized (err u3000))
+(define-constant err-unauthorized (err u401))
+(define-constant err-liquidity-lock (err u402))
 (define-constant err-not-token-owner (err u4))
 
 (define-constant contract (as-contract tx-sender))
@@ -53,49 +54,53 @@ const generateTemplate = ({
 (define-data-var blocks-per-tx uint u${Number(blocksPerTx).toFixed(0)})
 (define-data-var block-counter uint u0)
 
-;; --- Authorization check
+;; --- Authorization checks
 
-(define-read-only (is-dao-or-extension)
-	(ok (asserts! (or (is-eq tx-sender 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master) (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master is-extension contract-caller)) err-unauthorized))
+(define-private (is-dao-or-extension)
+    (or (is-eq tx-sender 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master) (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master is-extension contract-caller))
+)
+
+(define-read-only (is-authorized)
+	(ok (asserts! (is-dao-or-extension) err-unauthorized))
 )
 
 (define-read-only (is-unlocked)
-	(ok (asserts! (>= block-height (+ unlock-block (var-get block-counter))) err-unauthorized))
+	(ok (asserts! (or (>= block-height (+ unlock-block (var-get block-counter))) (is-dao-or-extension)) err-liquidity-lock))
 )
 
 ;; --- Internal DAO functions
 
 (define-public (set-name (new-name (string-ascii 32)))
 	(begin
-		(try! (is-dao-or-extension))
+		(try! (is-authorized))
 		(ok (var-set token-name new-name))
 	)
 )
 
 (define-public (set-symbol (new-symbol (string-ascii 10)))
 	(begin
-		(try! (is-dao-or-extension))
+		(try! (is-authorized))
 		(ok (var-set token-symbol new-symbol))
 	)
 )
 
 (define-public (set-decimals (new-decimals uint))
 	(begin
-		(try! (is-dao-or-extension))
+		(try! (is-authorized))
 		(ok (var-set token-decimals new-decimals))
 	)
 )
 
 (define-public (set-blocks-per-tx (new-blocks-per-tx uint))
 	(begin
-		(try! (is-dao-or-extension))
+		(try! (is-authorized))
 		(ok (var-set blocks-per-tx new-blocks-per-tx))
 	)
 )
 
 (define-public (set-token-uri (new-uri (optional (string-utf8 256))))
 	(begin
-		(try! (is-dao-or-extension))
+		(try! (is-authorized))
 		(var-set token-uri new-uri)
 		(ok 
 			(print {
