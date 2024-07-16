@@ -77,7 +77,7 @@ export default function IndexDetailPage({ data }: Props) {
     return {
       token: baseToken,
       balance: Number(baseTokenBalance),
-      weight: Number(token.weight),
+      weight: Number(token.weight)
     };
   });
 
@@ -93,7 +93,7 @@ export default function IndexDetailPage({ data }: Props) {
 
   const tokensRequested = tokensSelected / Math.pow(10, data.decimals);
   const tokensRequired = data.metadata?.contains.map(
-    (token: any) => tokensRequested * token.weight
+    (token: any) => tokensRequested * token.weight * Math.pow(10, 6 - token.decimals)
   );
 
   console.log(data.metadata)
@@ -335,9 +335,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     // get base token metadata from token-metadata-uri
     const baseTokens = await Promise.all(
-      metadata.contains.map(async (token: any) => {
+      metadata.contains.map(async (token: any, i: number) => {
         const tokenMetadata = await getTokenURI(token.address);
         const decimals = await getDecimals(token.address);
+        metadata.contains[i].decimals = Number(decimals);
         return { ...tokenMetadata, decimals };
       })
     );
