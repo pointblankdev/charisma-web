@@ -26,7 +26,6 @@ const generateTemplate = ({
     unlockBlock,
     blocksPerTx,
     indexTokenRatio,
-    lockAddLiquidity = false
 }: any) => {
     const safeName = name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
     const safeTicker = ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
@@ -65,7 +64,7 @@ const generateTemplate = ({
 )
 
 (define-read-only (is-unlocked)
-	(ok (asserts! (or (>= block-height (+ unlock-block (var-get block-counter))) (is-dao-or-extension)) err-liquidity-lock))
+	(ok (asserts! (>= block-height (+ unlock-block (var-get block-counter))) err-liquidity-lock))
 )
 
 ;; --- Internal DAO functions
@@ -122,12 +121,24 @@ const generateTemplate = ({
             (amount-a (* amount token-a-ratio))
             (amount-b (* amount token-b-ratio))
             (amount-index (* amount index-token-ratio))
-        )${lockAddLiquidity ? `\n        (try! (is-unlocked))` : ``}
+        )
+        (if 
+            (is-dao-or-extension)
+            true
+            (begin
+                (try! (is-unlocked))
+                (var-set block-counter (+ (var-get block-counter) (var-get blocks-per-tx)))
+                false
+            )
+        )
         (try! (contract-call? '${baseTokenA} transfer amount-a tx-sender contract none))
         (try! (contract-call? '${baseTokenB} transfer amount-b tx-sender contract none))
         (try! (ft-mint? index-token amount-index tx-sender))
-        (var-set block-counter (+ (var-get block-counter) (var-get blocks-per-tx)))
-        (ok true)
+        (ok {
+            a: amount-a,
+            b: amount-b,
+            x: amount-index
+        })
     )
 )
 
@@ -139,12 +150,23 @@ const generateTemplate = ({
             (amount-b (* amount token-b-ratio))
             (amount-index (* amount index-token-ratio))
         )
-        (try! (is-unlocked))
+        (if 
+            (is-dao-or-extension)
+            true
+            (begin
+                (try! (is-unlocked))
+                (var-set block-counter (+ (var-get block-counter) (var-get blocks-per-tx)))
+                false
+            )
+        )
         (try! (ft-burn? index-token amount-index tx-sender))
         (try! (as-contract (contract-call? '${baseTokenA} transfer amount-a contract sender none)))
         (try! (as-contract (contract-call? '${baseTokenB} transfer amount-b contract sender none)))
-        (var-set block-counter (+ (var-get block-counter) (var-get blocks-per-tx)))
-        (ok true)
+        (ok {
+            a: amount-a,
+            b: amount-b,
+            x: amount-index
+        })
     )
 )
     

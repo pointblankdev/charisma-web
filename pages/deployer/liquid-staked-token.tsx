@@ -56,7 +56,7 @@ const generateTemplate = ({
 				(amount-lst (/ (* amount inverse-rate) ONE_6))
 				(sender tx-sender)
 			)
-			(try! (contract-call? ${baseTokenContract} transfer amount sender contract none))
+			(try! (contract-call? '${baseTokenContract} transfer amount sender contract none))
 			(try! (mint amount-lst sender))
 		)
 		(ok true)
@@ -72,14 +72,14 @@ const generateTemplate = ({
 				(sender tx-sender)
 			)
 			(try! (burn amount sender))
-			(try! (as-contract (contract-call? ${baseTokenContract} transfer amount-token contract sender none)))
+			(try! (as-contract (contract-call? '${baseTokenContract} transfer amount-token contract sender none)))
 		)
 		(ok true)
 	)
 )
 
 (define-public (deposit (amount uint))
-    (contract-call? ${baseTokenContract} transfer amount tx-sender contract none)
+    (contract-call? '${baseTokenContract} transfer amount tx-sender contract none)
 )
 
 (define-public (deflate (amount uint))
@@ -155,7 +155,7 @@ const generateTemplate = ({
 )
 
 (define-read-only (get-total-in-pool)
-	(unwrap-panic (contract-call? ${baseTokenContract} get-balance contract))
+	(unwrap-panic (contract-call? '${baseTokenContract} get-balance contract))
 )
 
 (define-read-only (get-exchange-rate)
