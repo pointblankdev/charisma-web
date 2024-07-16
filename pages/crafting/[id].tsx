@@ -96,9 +96,6 @@ export default function IndexDetailPage({ data }: Props) {
     (token: any) => tokensRequested * token.weight * Math.pow(10, 6 - token.decimals)
   );
 
-  // workaround for indexes of one token
-  if (tokensRequired.length === 1) { tokensRequired[0] *= 2; }
-
   // hack: short term workaround for apple specific stuff
   const isApples = data.symbol === 'FUJI'
 

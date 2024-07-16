@@ -37,7 +37,7 @@ const generateTemplate = ({
 
 (define-data-var token-name (string-ascii 32) "${name}")
 (define-data-var token-symbol (string-ascii 10) "${safeTicker}")
-(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/${ca}.json"))
+(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/metadata/${ca}.json"))
 (define-data-var token-decimals uint u${decimals})
 
 ;; --- Authorization check
