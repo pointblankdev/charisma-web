@@ -16,46 +16,185 @@ import { useEffect } from "react"
 
 const generateTemplate = ({
     sender,
-    baseTokenA,
-    baseTokenB,
-    tokenARatio,
-    tokenBRatio,
+    baseTokenContract,
     name,
     ticker,
     decimals,
-    unlockBlock,
-    blocksPerTx,
-    indexTokenRatio,
-    lockAddLiquidity = false
 }: any) => {
     const safeName = name.toLowerCase().replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
     const safeTicker = ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
     const ca = `${sender}.${safeName}`
-    return ``
+    return `(impl-trait .dao-traits-v2.sip010-ft-trait)
+
+(define-fungible-token liquid-staked-token)
+
+(define-constant err-unauthorized (err u3000))
+(define-constant err-not-token-owner (err u4))
+
+(define-constant ONE_6 (pow u10 u6)) ;; 6 decimal places
+
+(define-constant contract (as-contract tx-sender))
+
+(define-data-var token-name (string-ascii 32) "${name}")
+(define-data-var token-symbol (string-ascii 10) "${safeTicker}")
+(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/${ca}.json"))
+(define-data-var token-decimals uint u${decimals})
+
+;; --- Authorization check
+
+(define-public (is-dao-or-extension)
+	(ok (asserts! (or (is-eq tx-sender 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master) (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master is-extension contract-caller)) err-unauthorized))
+)
+
+;; --- Public functions
+
+(define-public (stake (amount uint))
+	(begin
+		(let
+			(
+				(inverse-rate (get-inverse-rate))
+				(amount-lst (/ (* amount inverse-rate) ONE_6))
+				(sender tx-sender)
+			)
+			(try! (contract-call? ${baseTokenContract} transfer amount sender contract none))
+			(try! (mint amount-lst sender))
+		)
+		(ok true)
+	)
+)
+
+(define-public (unstake (amount uint))
+	(begin
+		(let
+			(
+				(exchange-rate (get-exchange-rate))
+				(amount-token (/ (* amount exchange-rate) ONE_6))
+				(sender tx-sender)
+			)
+			(try! (burn amount sender))
+			(try! (as-contract (contract-call? ${baseTokenContract} transfer amount-token contract sender none)))
+		)
+		(ok true)
+	)
+)
+
+(define-public (deposit (amount uint))
+    (contract-call? ${baseTokenContract} transfer amount tx-sender contract none)
+)
+
+(define-public (deflate (amount uint))
+    (burn amount tx-sender)
+)
+
+(define-public (set-name (new-name (string-ascii 32)))
+	(begin
+		(try! (is-dao-or-extension))
+		(ok (var-set token-name new-name))
+	)
+)
+
+(define-public (set-symbol (new-symbol (string-ascii 10)))
+	(begin
+		(try! (is-dao-or-extension))
+		(ok (var-set token-symbol new-symbol))
+	)
+)
+
+(define-public (set-decimals (new-decimals uint))
+	(begin
+		(try! (is-dao-or-extension))
+		(ok (var-set token-decimals new-decimals))
+	)
+)
+
+(define-public (set-token-uri (new-uri (optional (string-utf8 256))))
+	(begin
+		(try! (is-dao-or-extension))
+		(var-set token-uri new-uri)
+		(ok 
+			(print {
+				notification: "token-metadata-update",
+				payload: {
+					contract-id: (as-contract tx-sender),
+					token-class: "ft"
+				}
+			})
+		)
+	)
+)
+
+(define-public (transfer (amount uint) (sender principal) (recipient principal) (memo (optional (buff 34))))
+	(begin
+		(asserts! (or (is-eq tx-sender sender) (is-eq contract-caller sender)) err-not-token-owner)
+		(ft-transfer? liquid-staked-token amount sender recipient)
+	)
+)
+
+(define-read-only (get-name)
+	(ok (var-get token-name))
+)
+
+(define-read-only (get-symbol)
+	(ok (var-get token-symbol))
+)
+
+(define-read-only (get-decimals)
+	(ok (var-get token-decimals))
+)
+
+(define-read-only (get-balance (who principal))
+	(ok (ft-get-balance liquid-staked-token who))
+)
+
+(define-read-only (get-total-supply)
+	(ok (ft-get-supply liquid-staked-token))
+)
+
+(define-read-only (get-token-uri)
+	(ok (var-get token-uri))
+)
+
+(define-read-only (get-total-in-pool)
+	(unwrap-panic (contract-call? ${baseTokenContract} get-balance contract))
+)
+
+(define-read-only (get-exchange-rate)
+	(/ (* (get-total-in-pool) ONE_6) (ft-get-supply liquid-staked-token))
+)
+
+(define-read-only (get-inverse-rate)
+	(/ (* (ft-get-supply liquid-staked-token) ONE_6) (get-total-in-pool))
+)
+
+;; --- Private functions
+
+(define-private (mint (amount uint) (recipient principal))
+    (ft-mint? liquid-staked-token amount recipient)
+)
+
+(define-private (burn (amount uint) (owner principal))
+    (ft-burn? liquid-staked-token amount owner)
+)
+
+;; --- Init
+
+(mint u1 contract)`
 }
 
 const contractFormSchema = z.object({
     sender: z.string(),
-    baseTokenA: z.string(),
-    baseTokenB: z.string(),
-    tokenARatio: z.coerce.number(),
-    tokenBRatio: z.coerce.number(),
+    baseTokenContract: z.string(),
     name: z.string(),
-    description: z.string(),
     ticker: z.string(),
     decimals: z.coerce.number(),
     image: z.string(),
-    background: z.string(),
-    // time lock for remove-liquidity
-    unlockBlock: z.coerce.number(),
-    // rate limiting for remove-liquidity
-    blocksPerTx: z.coerce.number(),
-    indexTokenRatio: z.coerce.number(),
+    image1x2: z.string(),
+    image2x1: z.string(),
 })
 
 type ContractFormValues = z.infer<typeof contractFormSchema>
 
-export default function IndexTokenTemplate({ onFormChange }: any) {
+export default function LiquidStakedTemplate({ onFormChange }: any) {
 
 
 
@@ -88,36 +227,23 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
         const safeTicker = form.getValues().ticker.replace(/[^a-zA-Z ]/g, "").replace(/\s+/g, "-")
         const ca = `${sender}.${safeName}`
 
-        const baseTokenSymbolA = await getSymbol(form.getValues().baseTokenA)
-        const baseTokenSymbolB = await getSymbol(form.getValues().baseTokenB)
-        const baseTokenSourceA = await getContractSource({ contractAddress: form.getValues().baseTokenA.split('.')[0], contractName: form.getValues().baseTokenA.split('.')[1] })
-        const baseTokenSourceB = await getContractSource({ contractAddress: form.getValues().baseTokenB.split('.')[0], contractName: form.getValues().baseTokenB.split('.')[1] })
-        // find the string that comes after the first occurence of 'define-fungible-token' in the baseTokenSourceA.source string
-        const baseTokenFtA = baseTokenSourceA.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
-        const baseTokenFtB = baseTokenSourceB.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
-
+        const baseTokenSource = await getContractSource({ contractAddress: form.getValues().baseTokenContract.split('.')[0], contractName: form.getValues().baseTokenContract.split('.')[1] })
+        const baseTokenFt = baseTokenSource.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
+        const baseTokenSymbol = await getSymbol(form.getValues().baseTokenContract)
         // todo: this might be a good time to scan the source code with AI for malicious code or vulnerabilities
 
         const response = await setContractMetadata(ca, {
             name: form.getValues().name,
-            description: form.getValues().description,
             image: form.getValues().image,
-            background: form.getValues().background,
+            image1x2: form.getValues().image1x2,
+            cardImage: form.getValues().image2x1,
             symbol: safeTicker,
-            ft: "index-token",
-            weight: form.getValues().indexTokenRatio,
+            ft: "liquid-staked-token",
             contains: [
                 {
-                    address: form.getValues().baseTokenA,
-                    symbol: baseTokenSymbolA,
-                    ft: baseTokenFtA,
-                    weight: form.getValues().tokenARatio
-                },
-                {
-                    address: form.getValues().baseTokenB,
-                    symbol: baseTokenSymbolB,
-                    ft: baseTokenFtB,
-                    weight: form.getValues().tokenBRatio
+                    address: form.getValues().baseTokenContract,
+                    symbol: baseTokenSymbol,
+                    ft: baseTokenFt,
                 }
             ]
 
@@ -130,117 +256,39 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
             <form onChange={handleChange}>
                 <fieldset className="grid grid-cols-1 gap-4 rounded-lg border p-4">
                     <legend className="-ml-1 px-1 text-sm font-medium">
-                        Index Token
+                        Base Token
                     </legend>
-                    <div className="grid grid-cols-1 2xl:grid-cols-2 gap-4">
-                        <div className="flex items-end space-x-4">
-                            <FormField
-                                control={form.control}
-                                name="baseTokenA"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Base Token A - Contract Address</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2'} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        <div>
-                            <FormField
-                                control={form.control}
-                                name="tokenARatio"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Base Token A Weight (A:B)</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'To mint 1 index token, this many base tokens is required.'} type="number" min={1} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+                    <div className="flex items-end space-x-4">
+                        <FormField
+                            control={form.control}
+                            name="baseTokenContract"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>Base Token - Contract Address</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder={'SP4M2C88EE8RQZPYTC4PZ88CE16YGP825EYF6KBQ.stacks-rock'} {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div className="flex items-end space-x-4">
-                            <FormField
-                                control={form.control}
-                                name="baseTokenB"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Base Token B - Contract Address</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        <div>
-                            <FormField
-                                control={form.control}
-                                name="tokenBRatio"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Base Token B Weight (A:B)</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={`To mint 1 index token, this many base tokens is required.`} type="number" min={1} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
+
+                    <div>
+                        <FormField
+                            control={form.control}
+                            name="name"
+                            render={({ field }) => (
+                                <FormItem className="w-full">
+                                    <FormLabel>New Index Token - Name</FormLabel>
+                                    <FormControl>
+                                        <Input placeholder={'Charisma'} {...field} />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
                     </div>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        <div>
-                            <FormField
-                                control={form.control}
-                                name="name"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>New Index Token - Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={'Charismatic Corgi'} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                        <div>
-                            <FormField
-                                control={form.control}
-                                name="indexTokenRatio"
-                                render={({ field }) => (
-                                    <FormItem className="w-full">
-                                        <FormLabel>Index Token Weight</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder={`For each mint, this many index tokens are created.`} type="number" min={1} {...field} />
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-                        </div>
-                    </div>
-                    <FormField
-                        control={form.control}
-                        name="description"
-                        render={({ field }) => (
-                            <FormItem className="w-full">
-                                <FormLabel>New Index Token - Description</FormLabel>
-                                <FormControl>
-                                    <Input placeholder={'An index fund composed of sWELSH and sCHA at a fixed 100:1 ratio.'} {...field} />
-                                </FormControl>
-                                <FormMessage />
-                            </FormItem>
-                        )}
-                    />
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                         <div className="flex items-end space-x-4">
                             <FormField
@@ -248,9 +296,9 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
                                 name="ticker"
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel>New Index Token - Ticker</FormLabel>
+                                        <FormLabel>New Rebase Token - Ticker</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={'iCC, iGK, iTOKEN, etc.'} {...field} />
+                                            <Input placeholder={'sROCK'} {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -298,10 +346,10 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
                             <div className="flex items-end space-x-4">
                                 <FormField
                                     control={form.control}
-                                    name="background"
+                                    name="image1x2"
                                     render={({ field }) => (
                                         <FormItem className="w-full">
-                                            <FormLabel>Background Image</FormLabel>
+                                            <FormLabel>Image 1x2 Aspect Ratio</FormLabel>
                                             <FormControl>
                                                 <Input placeholder={'Publicly available URL of image'} {...field} />
                                             </FormControl>
@@ -310,43 +358,28 @@ export default function IndexTokenTemplate({ onFormChange }: any) {
                                     )}
                                 />
                             </div>
-                            {form.getValues().background && <Image src={form.getValues().background} width={400} height={400} alt="index background image" className="w-full rounded-lg cursor-pointer border mt-4" />}
+                            {form.getValues().image1x2 && <Image src={form.getValues().image1x2} width={400} height={400} alt="index image1x2 image" className="w-full rounded-lg cursor-pointer border mt-4" />}
 
                         </div>
-                    </div>
-                    <div className="border rounded-xl px-4 pb-4 pt-2">
-                        <h2 className="text-lg font-fine mb-4">Capital Controls</h2>
-                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <div>
+                        <div>
+
+                            <div className="flex items-end space-x-4">
                                 <FormField
                                     control={form.control}
-                                    name="unlockBlock"
+                                    name="image2x1"
                                     render={({ field }) => (
                                         <FormItem className="w-full">
-                                            <FormLabel>Unlock Block Height</FormLabel>
+                                            <FormLabel>Image 2x1 Aspect Ratio</FormLabel>
                                             <FormControl>
-                                                <Input placeholder={`What block height the remove-liquidity function should be unlocked.`} type="number" min={155500} max={200000} {...field} />
+                                                <Input placeholder={'Publicly available URL of image'} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
                             </div>
-                            <div>
-                                <FormField
-                                    control={form.control}
-                                    name="blocksPerTx"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full">
-                                            <FormLabel>Blocks per Transaction</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder={`Optional rate limiting of liquidity removal. Selecting 0 will disable rate limiting.`} type="number" min={0} max={1000} {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
+                            {form.getValues().image2x1 && <Image src={form.getValues().image2x1} width={400} height={400} alt="index image2x1 image" className="w-full rounded-lg cursor-pointer border mt-4" />}
+
                         </div>
                     </div>
                 </fieldset>

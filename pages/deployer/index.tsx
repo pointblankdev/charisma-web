@@ -34,7 +34,7 @@ import { useEffect, useState } from "react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form"
 import { motion } from 'framer-motion';
 import IndexTokenTemplate from "./index-token"
-import { BsCurrencyExchange } from "react-icons/bs"
+import { BsCurrencyExchange, BsWater } from "react-icons/bs"
 import { BiMath } from "react-icons/bi"
 import ArbitrageStrategyTemplate from "./strategy"
 import { userSession } from "@components/stacks-session/connect"
@@ -42,6 +42,7 @@ import { useConnect } from "@stacks/connect-react"
 import { PostConditionMode } from "@stacks/transactions"
 import { StacksMainnet } from "@stacks/network";
 import ProposalTemplate from "./proposal"
+import LiquidStakedTemplate from "./liquid-staked-token"
 
 const generateHeader = ({ name, sender, description }: any) => {
     return `;; Title: ${name}
@@ -187,6 +188,22 @@ export default function ContractDeployer({ data }: any) {
                                                                     </div>
                                                                 </div>
                                                             </SelectItem>
+                                                            <SelectItem value="pool">
+                                                                <div className="flex items-start gap-3 text-foreground">
+                                                                    <BsWater className="size-5" />
+                                                                    <div className="grid gap-0.5">
+                                                                        <p>
+                                                                            Liquid Staking{" "}
+                                                                            <span className="font-medium text-foreground">
+                                                                                Pool
+                                                                            </span>
+                                                                        </p>
+                                                                        <p className="text-xs" data-description>
+                                                                            Create a new Charisma liquid staking pool.
+                                                                        </p>
+                                                                    </div>
+                                                                </div>
+                                                            </SelectItem>
                                                             <SelectItem value="index">
                                                                 <div className="flex items-start gap-3 text-foreground">
                                                                     <Coins className="size-5" />
@@ -292,6 +309,22 @@ export default function ContractDeployer({ data }: any) {
                                                                                 </div>
                                                                             </div>
                                                                         </SelectItem>
+                                                                        <SelectItem value="pool">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <BsWater className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        Liquid Staking{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            Pool
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Create a new Charisma liquid staking pool.
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
                                                                         <SelectItem value="index">
                                                                             <div className="flex items-start gap-3 text-foreground">
                                                                                 <BsCurrencyExchange className="size-5" />
@@ -367,13 +400,15 @@ export default function ContractDeployer({ data }: any) {
                                         {!loading && <motion.div initial="hidden" animate="visible" variants={fadeIn}>
                                             {template === 'airdrop' ?
                                                 <AirdropTemplate onFormChange={handleContractChange} />
-                                                : template === 'index' ?
-                                                    <IndexTokenTemplate onFormChange={handleContractChange} />
-                                                    : template === 'proposal' ?
-                                                        <ProposalTemplate onFormChange={handleContractChange} />
-                                                        : template === 'strategy' ?
-                                                            <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
-                                                            : <div>...</div>
+                                                : template === 'pool' ?
+                                                    <LiquidStakedTemplate onFormChange={handleContractChange} />
+                                                    : template === 'index' ?
+                                                        <IndexTokenTemplate onFormChange={handleContractChange} />
+                                                        : template === 'proposal' ?
+                                                            <ProposalTemplate onFormChange={handleContractChange} />
+                                                            : template === 'strategy' ?
+                                                                <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
+                                                                : <div>...</div>
 
                                             }
                                         </motion.div>}
