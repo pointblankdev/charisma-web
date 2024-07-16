@@ -33,7 +33,7 @@ import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
 import { uniq, uniqBy } from 'lodash';
 import { Checkbox } from '@components/ui/checkbox';
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const pools = [
     {
