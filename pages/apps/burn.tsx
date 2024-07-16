@@ -60,7 +60,7 @@ const Burn = () => {
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: 'dme000-governance-token',
       functionName: "dmg-burn",
-      functionArgs: [uintCV(50000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
+      functionArgs: [uintCV(5000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
