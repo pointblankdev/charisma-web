@@ -140,21 +140,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     {
       guild: {
         logo: {
-          url: '/not-logo.png'
-        }
-      },
-      title: 'Nothing',
-      subtitle: 'Liquid Staked Nothing',
-      cardImage: {
-        url: '/liquid-nothing-21.png'
-      },
-      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-not',
-      wip: false,
-      lowTVL: true,
-    },
-    {
-      guild: {
-        logo: {
           url: '/liquid-staked-pepe.png'
         }
       },
@@ -166,6 +151,36 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe',
       wip: false,
       lowTVL: false,
+    },
+    {
+      guild: {
+        logo: {
+          url: '/liquid-staked-rock.gif'
+        }
+      },
+      title: 'Rock',
+      subtitle: 'Liquid Staked Rock',
+      cardImage: {
+        url: '/liquid-rock-12.png'
+      },
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-rock',
+      wip: false,
+      lowTVL: false,
+    },
+    {
+      guild: {
+        logo: {
+          url: '/not-logo.png'
+        }
+      },
+      title: 'Nothing',
+      subtitle: 'Liquid Staked Nothing',
+      cardImage: {
+        url: '/liquid-nothing-21.png'
+      },
+      slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-not',
+      wip: false,
+      lowTVL: true,
     },
     {
       guild: {
@@ -464,7 +479,7 @@ export default function Tokens({ pools, indexes }: Props) {
               />
             </label>
           </div>
-          <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6'>
+          <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7'>
             {activePools.map((pool) => {
               return (
                 <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
