@@ -157,7 +157,7 @@ export default function IronForgeCard({ data }: any) {
                         Epoch Progress: {epochProgress}%
                     </div>
                     <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        Ingots Forged This Epoc: {supplyUtilization}%
+                        Ingots Forged This Epoch: {supplyUtilization}%
                     </div>
                 </div>
             </CardHeader>
