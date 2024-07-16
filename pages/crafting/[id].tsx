@@ -385,8 +385,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       tokenPrice
     };
 
-    console.log(data)
-
     return {
       props: { data }
     };
