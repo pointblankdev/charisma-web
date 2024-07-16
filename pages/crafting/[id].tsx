@@ -91,16 +91,9 @@ export default function IndexDetailPage({ data }: Props) {
     }
   });
 
-  // workaround for when 2 baseTokens are consolidated into one, 
-  // the maxPossibleIndex is incorrectly doubled because it doesn't know it draws twice from the same token
-  if (baseTokens.length === 1) {
-    maxPossibleIndex = maxPossibleIndex / 2
-  }
-
   const tokensRequested = tokensSelected / Math.pow(10, data.decimals);
   const tokensRequired = data.metadata?.contains.map(
-    // (token: { weight: number }) => tokensRequested * (token.weight / indexWeight)
-    (token: { weight: number }) => tokensRequested * token.weight
+    (token: { weight: number }) => tokensRequested * (token.weight / indexWeight)
   );
 
   // hack: short term workaround for apple specific stuff
