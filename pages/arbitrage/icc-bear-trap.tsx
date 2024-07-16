@@ -100,7 +100,6 @@ export default function Swap({ data }: Props) {
     return swapConfig
   }, [swapConfig, data.tickers])
 
-  console.log(swapConfig)
 
   const stxwcha = data.tickers.find((ticker: any) => ticker.ticker_id === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma")
 

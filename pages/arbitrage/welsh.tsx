@@ -99,7 +99,6 @@ export default function Swap({ data }: Props) {
     return swapConfig
   }, [swapConfig, data.tickers])
 
-  console.log(swapConfig)
 
   return (
     <Page meta={meta} fullViewport>
@@ -219,7 +218,6 @@ const TokenAction = ({ config, stepNumber }: { config: StepConfig, stepNumber: n
 
   const handleToTokenChange = (newToken: string) => {
     setSwapConfig((prevConfig: any) => {
-      console.log(prevConfig)
       prevConfig.steps[stepNumber].toToken = newToken
       return { ...prevConfig, steps: prevConfig.steps };
     });
