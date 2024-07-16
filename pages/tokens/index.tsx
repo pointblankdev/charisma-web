@@ -37,7 +37,7 @@ import { Checkbox } from '@components/ui/checkbox';
 
 
 
-export const getServerSideProps: GetServerSideProps<Props> = async () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const pools = [
     {
@@ -436,7 +436,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       pools,
       indexes: finalApps
     },
-    // revalidate: 600
+    revalidate: 60000
   };
 };
 
