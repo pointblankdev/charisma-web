@@ -35,6 +35,7 @@ import liquidOdinLogo from '@public/liquid-staked-odin.png';
 import { GetServerSideProps } from 'next';
 import millify from 'millify';
 import { isEmpty } from 'lodash';
+import numeral from 'numeral';
 
 const tokenList = [
   {
@@ -213,8 +214,8 @@ function TokenBalances({ data }: Props) {
 
     return {
       ...token,
-      amount: millify(amount),
-      totalValueUSD: millify(totalValueUSD)
+      amount: numeral(amount).format('0.00 a'),
+      totalValueUSD: numeral(totalValueUSD).format('$0,0.00')
     };
   });
 
@@ -253,7 +254,7 @@ function TokenBalances({ data }: Props) {
                   {token.amount}
                 </TableCell>
                 <TableCell className="md:table-cell text-xl text-right">
-                  ${token.totalValueUSD}
+                  {token.totalValueUSD}
                 </TableCell>
               </TableRow>
             ))}

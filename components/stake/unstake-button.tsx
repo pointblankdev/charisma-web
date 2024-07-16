@@ -50,10 +50,10 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({
       contractName: contractName,
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        // Pc.principal(sender).willSendEq(tokens6Dec).ft(`${contractAddress}.${contractName}`, fungibleTokenName),
-        // Pc.principal(`${contractAddress}.${contractName}`).willSendGte(tokensOutMin).ft(`${baseTokenContractAddress}.${baseTokenContractName}`, baseFungibleTokenName),
+        Pc.principal(sender).willSendEq(tokens6Dec).ft(`${contractAddress}.${contractName}`, fungibleTokenName),
+        Pc.principal(`${contractAddress}.${contractName}`).willSendGte(tokensOutMin).ft(`${baseTokenContractAddress}.${baseTokenContractName}`, baseFungibleTokenName),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

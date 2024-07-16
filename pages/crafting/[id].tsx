@@ -116,21 +116,22 @@ export default function IndexDetailPage({ data }: Props) {
   const indexWeight = data.indexWeight;
   const indexBalance = getBalanceByKey(token)?.balance || 0;
 
-  const baseTokens = data.metadata?.contains.map((token: { address: any; weight: any }) => {
+  const baseTokens = data.metadata?.contains.map((token: { address: any; weight: any }, i: number) => {
     const baseToken = getKeyByContractAddress(token.address);
     const baseTokenBalance = getBalanceByKey(baseToken)?.balance || 0;
     return {
       token: baseToken,
       balance: baseTokenBalance,
-      weight: token.weight
+      weight: token.weight,
+      decimals: data.baseTokens[i].decimals
     };
   });
 
   // Calculate the maximum possible index tokens for each base token
-  baseTokens.forEach((token: { balance: number; weight: number }) => {
+  baseTokens.forEach((token: { balance: number; weight: number; decimals: number }) => {
     // Calculate how many index tokens can be created from this base token
     const possibleIndex = token.balance / (token.weight / indexWeight);
-
+    console.log({ possibleIndex, token })
     if (possibleIndex < maxPossibleIndex) {
       maxPossibleIndex = possibleIndex;
       limitingToken = token;
@@ -166,6 +167,7 @@ export default function IndexDetailPage({ data }: Props) {
 
   // hack: short term workaround for apple specific stuff
   const isApples = data.symbol === 'FUJI'
+  const isPresPepe = data.symbol === 'iPP'
 
   // variable to hide the liquidity controls if they have no index tokens or base tokens
   const absValMin = Math.abs(-indexBalance / indexWeight)
@@ -320,12 +322,12 @@ export default function IndexDetailPage({ data }: Props) {
           </Card>
 
           <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
-            {/* {isApples &&
-              <VerdantOrchardCard data={data} />
-            } */}
             {isApples &&
-              <BountifulOrchardCard data={data} />
+              <VerdantOrchardCard data={data} />
             }
+            {/* {isApples &&
+              <BountifulOrchardCard data={data} />
+            } */}
           </div>
         </motion.div>
       </Layout>
@@ -448,6 +450,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       tvl: tvl,
       tokenPrice
     };
+
+    console.log(data)
 
     return {
       props: { data }

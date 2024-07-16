@@ -6,7 +6,7 @@
         },
         {
             "path": "/api/arbitrage",
-            "schedule": "* 1 1 1 1"
+            "schedule": "* * * * *"
         }
     ]
 }

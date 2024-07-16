@@ -70,7 +70,7 @@ export default function VerdantOrchardCard({ data }: any) {
             <CardHeader className="z-20 p-4">
                 <div className="flex items-center justify-between">
                     <CardTitle className="z-30 text-sm font-semibold">
-                        Verdant Orchard
+                        Bountiful Orchard
                     </CardTitle>
                     {farmers > 0 && <div className="flex space-x-3 items-center">
                         <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
@@ -84,13 +84,13 @@ export default function VerdantOrchardCard({ data }: any) {
                     </div>}
                 </div>
                 <CardDescription className="z-30 text-xs sm:text-sm font-fine text-secondary/40 space-y-1">
-                    <p>Farmers can harvest 2x more apples than other creature types in the verdant orchard.</p>
+                    <p>Farmers can harvest 2x more apples than other creature types in the bountiful orchard.</p>
                     <p>Apples begin to rot after 1 million energy, so make sure to harvest them by then.</p>
                 </CardDescription>
                 <div className="z-20">
                     {/* <CardTitle className="z-30 mt-2 text-xl font-semibold">Yield Farming</CardTitle> */}
                     {descriptionVisible && (
-                        <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.verdant-orchard?chain=mainnet`} target='_blank'>
+                        <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bountiful-orchard?chain=mainnet`} target='_blank'>
                             <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground flex items-end space-x-1">
                                 <div>Verdant Orchard</div> <Link1Icon className="mb-0.5" />
                             </CardDescription>
@@ -161,7 +161,7 @@ export function SelectCreatureDialog({ data }: any) {
         const response = await callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'verdant-orchard',
+            contractName: 'bountiful-orchard',
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(creatureId)],
             senderAddress: sender
@@ -171,11 +171,11 @@ export function SelectCreatureDialog({ data }: any) {
             network: new StacksMainnet(),
             anchorMode: AnchorMode.Any,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'verdant-orchard',
+            contractName: 'bountiful-orchard',
             functionName: "harvest",
             functionArgs: [uintCV(creatureId)],
-            postConditionMode: PostConditionMode.Allow,
-            // postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.verdant-orchard').willSendGte(claimableTokens / Math.pow(10, data.decimals)).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bountiful-orchard').willSendGte(0).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
             onFinish: (data) => {
                 console.log("onFinish:", data);
             },

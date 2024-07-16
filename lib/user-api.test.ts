@@ -8,26 +8,26 @@ describe('User API', () => {
     })
 
     it('should set metadata', async () => {
-        const response = await setContractMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples', {
-            name: 'Fuji Apples',
-            description: 'Fresh Fuji apples grow in the orchard. They can be exchanged for sCHA at a 1M:1 ratio.',
-            image: 'https://www.charisma.rocks/stations/fuji-apples.png',
-            background: 'https://www.charisma.rocks/stations/apple-orchard.png',
-            symbol: 'FUJI',
-            ft: 'index-token',
-            weight: '2000000',
-            contains: [
+        const response = await setContractMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe', {
+            "name": "President Pepe",
+            "description": "An index token composed of sPEPE and sCHA at a fixed 10k:1 ratio.",
+            "image": "https://www.charisma.rocks/indexes/presidential-pepe-logo.jpg",
+            "background": "https://www.charisma.rocks/indexes/presidential-pepe-bg.jpg",
+            "symbol": "iPP",
+            "ft": "index-token",
+            "weight": "1",
+            "contains": [
                 {
-                    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma',
-                    symbol: 'sCHA',
-                    ft: 'liquid-staked-token',
-                    weight: '1'
+                    "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe",
+                    "symbol": "sPEPE",
+                    "ft": "liquid-staked-token",
+                    "weight": "10000000"
                 },
                 {
-                    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma',
-                    symbol: 'sCHA',
-                    ft: 'liquid-staked-token',
-                    weight: '1'
+                    "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
+                    "symbol": "sCHA",
+                    "ft": "liquid-staked-token",
+                    "weight": "1"
                 }
             ]
         })
