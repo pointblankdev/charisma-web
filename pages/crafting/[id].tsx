@@ -91,13 +91,12 @@ export default function IndexDetailPage({ data }: Props) {
     }
   });
 
-
   const tokensRequested = tokensSelected / Math.pow(10, data.decimals);
   const tokensRequired = data.metadata?.contains.map(
-    (token: { weight: number }) => tokensRequested * token.weight
+    (token: any) => tokensRequested * token.weight
   );
 
-  console.log(data.metadata?.contains)
+  console.log(data.metadata)
 
   // workaround for indexes of one token
   if (tokensRequired.length === 1) { tokensRequired[0] *= 2; }

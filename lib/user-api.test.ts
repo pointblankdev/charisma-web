@@ -21,7 +21,7 @@ describe('User API', () => {
                     "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe",
                     "symbol": "sPEPE",
                     "ft": "liquid-staked-token",
-                    "weight": 10000
+                    "weight": 10
                 },
                 {
                     "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
