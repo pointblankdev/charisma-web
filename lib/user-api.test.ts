@@ -8,7 +8,7 @@ describe('User API', () => {
     })
 
     it('should set metadata', async () => {
-        const response = await setContractMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe', {
+        const response = await setContractMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.presidential-pepe', {
             "name": "President Pepe",
             "description": "An index token composed of sPEPE and sCHA at a fixed 10k:1 ratio.",
             "image": "https://www.charisma.rocks/indexes/presidential-pepe-logo.jpg",
@@ -21,7 +21,7 @@ describe('User API', () => {
                     "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe",
                     "symbol": "sPEPE",
                     "ft": "liquid-staked-token",
-                    "weight": 10
+                    "weight": 10000
                 },
                 {
                     "address": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
