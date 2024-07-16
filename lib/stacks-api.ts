@@ -1,5 +1,5 @@
 import { AccountsApi, BlocksApi, Configuration, FeesApi, NamesApi, SmartContractsApi, TransactionsApi } from "@stacks/blockchain-api-client";
-import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToHex, hexToCV, makeContractCall, parseToCV, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
+import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, ClarityAbiTypeId, ClarityType, cvToHex, hexToCV, makeContractCall, parseToCV, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
 import { getAllWallets } from "./cms-providers/dato";
@@ -587,17 +587,20 @@ export async function getTokenURI(contract: string) {
 
     const [address, name] = contract.split('.')
 
-    const response: any = await callReadOnlyFunction({
-        network: new StacksMainnet(),
+    const response: any = await scApi.callReadOnlyFunction({
         contractAddress: address,
         contractName: name,
         functionName: "get-token-uri",
-        functionArgs: [],
-        senderAddress: address
+        readOnlyFunctionArgs: {
+            sender: address,
+            arguments: []
+            // cvToHex(parseToCV(contract, 'principal'))
+        }
     });
 
-    const metadata = (await fetch(cvToJSON(response).value.value.value)).json()
-
+    const result = hexToCV(response.result)
+    const cv = cvToJSON(result)
+    const metadata = (await fetch(cv.value.value.value)).json()
     return metadata
 }
 
