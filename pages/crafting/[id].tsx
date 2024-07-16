@@ -42,6 +42,7 @@ import numeral from 'numeral';
 import VerdantOrchardCard from '@components/stations/verdant-orchard';
 import BountifulOrchardCard from '@components/stations/bountiful-orchard';
 import AddLiquidityToIndex from '@components/craft/add-liquidity';
+import TranquilOrchardCard from '@components/stations/tranquil-orchard';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -95,8 +96,6 @@ export default function IndexDetailPage({ data }: Props) {
   const tokensRequired = data.metadata?.contains.map(
     (token: any) => tokensRequested * token.weight * Math.pow(10, 6 - token.decimals)
   );
-
-  console.log(data.metadata)
 
   // workaround for indexes of one token
   if (tokensRequired.length === 1) { tokensRequired[0] *= 2; }
@@ -260,9 +259,9 @@ export default function IndexDetailPage({ data }: Props) {
             {isApples &&
               <VerdantOrchardCard data={data} />
             }
-            {/* {isApples &&
-              <BountifulOrchardCard data={data} />
-            } */}
+            {isApples &&
+              <TranquilOrchardCard data={data} />
+            }
           </div>
         </motion.div>
       </Layout>
