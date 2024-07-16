@@ -43,6 +43,7 @@ import VerdantOrchardCard from '@components/stations/verdant-orchard';
 import BountifulOrchardCard from '@components/stations/bountiful-orchard';
 import AddLiquidityToIndex from '@components/craft/add-liquidity';
 import TranquilOrchardCard from '@components/stations/tranquil-orchard';
+import IronForgeCard from '@components/stations/iron-forge';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -96,8 +97,9 @@ export default function IndexDetailPage({ data }: Props) {
     (token: any) => tokensRequested * token.weight * Math.pow(10, 6 - token.decimals)
   );
 
-  // hack: short term workaround for apple specific stuff
+  // hack: short term workaround for quest specific stuff
   const isApples = data.symbol === 'FUJI'
+  const isIron = data.symbol === 'IRON'
 
   // variable to hide the liquidity controls if they have no index tokens or base tokens
   const absValMin = Math.abs(-indexBalance / indexWeight)
@@ -258,6 +260,9 @@ export default function IndexDetailPage({ data }: Props) {
             {isApples &&
               <TranquilOrchardCard data={data} />
             }
+            {isIron &&
+              <IronForgeCard data={data} />
+            }
           </div>
         </motion.div>
       </Layout>
@@ -296,11 +301,13 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     if (tokenInPriceList && tokenInPriceList.price > 0 && tokenInPriceList.symbol !== 'iQC') {
       tvl = totalSupply * Number(tokenInPriceList.price);
     } else {
-      const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
+
+      const tokenTVL = baseTokensPriceData.map(async (baseToken: any) => {
         const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress);
-        const tokenWeight = metadata.contains[tokenIndex].weight;
+        const tokenWeight = Number(metadata.contains[tokenIndex].weight);
         const tokenPrice = Number(baseToken.price);
-        return totalSupply * tokenWeight * tokenPrice / indexTokenWeight;
+        baseToken.decimals = await getDecimals(baseToken.contractAddress);
+        return totalSupply * tokenWeight * tokenPrice * Math.pow(10, 6 - baseToken.decimals) / indexTokenWeight;
       });
       tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0);
     }
@@ -330,11 +337,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     // get base token metadata from token-metadata-uri
     const baseTokens = await Promise.all(
-      metadata.contains.map(async (token: any, i: number) => {
+      metadata.contains.map(async (token: any) => {
         const tokenMetadata = await getTokenURI(token.address);
-        const decimals = await getDecimals(token.address);
-        metadata.contains[i].decimals = Number(decimals);
-        return { ...tokenMetadata, decimals };
+        return { ...tokenMetadata };
       })
     );
 
@@ -358,11 +363,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       tokenPrice = Number(tokenOnVelar.price);
     } else {
       metadata.contains.forEach((token: any) => {
-        const baseToken = prices.find(
-          (baseToken: any) => baseToken.contractAddress === token.address
-        );
+        const baseToken = prices.find((baseToken: any) => baseToken.contractAddress === token.address);
         if (baseToken) {
-          tokenPrice += baseToken.price * token.weight / indexTokenWeight;
+          tokenPrice += baseToken.price * Math.pow(10, 6 - baseToken.decimals) * token.weight / indexTokenWeight;
         }
       });
     }
