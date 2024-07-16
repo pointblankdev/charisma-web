@@ -65,7 +65,6 @@ export default function IndexDetailPage({ data }: Props) {
 
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
 
-
   if (!data.metadata || !balances) return <div>Loading...</div>;
 
   const token = getKeyByContractAddress(data.address);
