@@ -224,7 +224,7 @@ export function SelectCreatureDialog({ data }: any) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button size={'sm'} className={`z-30 w-full`}>Forge Iron Ingots</Button>
+                <Button disabled size={'sm'} className={`z-30 w-full`}>Forge Iron Ingots</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <AlertDialogHeader>
