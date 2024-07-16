@@ -33,7 +33,7 @@ import { getDeployedIndexes, getTokenURI } from '@lib/stacks-api';
 import { uniq, uniqBy } from 'lodash';
 import { Checkbox } from '@components/ui/checkbox';
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   const pools = [
     {
@@ -370,7 +370,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       pools,
       indexes: modifiedApps
     },
-    revalidate: 60000
+    // revalidate: 60000
   };
 };
 
