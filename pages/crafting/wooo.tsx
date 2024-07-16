@@ -208,7 +208,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           woooRecord: balance.value
         }
       },
-      revalidate: 60
+      revalidate: 600
     };
 
   } catch (error) {

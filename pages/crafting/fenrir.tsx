@@ -359,7 +359,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           craftingRewardFactor: Number(craftingRewardFactor.value.value)
         }
       },
-      revalidate: 60
+      revalidate: 600
     };
   } catch (error) {
     return {

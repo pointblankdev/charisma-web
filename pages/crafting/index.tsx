@@ -133,7 +133,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     props: {
       apps: finalApps
     },
-    revalidate: 60
+    revalidate: 600
   };
 };
 

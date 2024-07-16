@@ -43,7 +43,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       props: {
         data: { tokens, tickers }
       },
-      revalidate: 60
+      revalidate: 600
     };
 
   } catch (error) {

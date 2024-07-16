@@ -420,7 +420,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       pools,
       indexes: finalApps
     },
-    // revalidate: 60
+    // revalidate: 600
   };
 };
 

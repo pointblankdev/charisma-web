@@ -305,7 +305,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       props: {
         data: data
       },
-      revalidate: 6000
+      revalidate: 60000
     };
   } catch (error) {
     return {

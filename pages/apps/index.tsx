@@ -143,7 +143,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
     props: {
       pools
     },
-    revalidate: 6000
+    revalidate: 60000
   };
 };
 

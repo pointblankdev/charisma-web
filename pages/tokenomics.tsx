@@ -181,7 +181,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           wallets: wallets
         }
       },
-      revalidate: 60
+      revalidate: 600
     };
   } catch (error) {
     return {
