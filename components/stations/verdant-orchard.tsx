@@ -85,14 +85,14 @@ export default function VerdantOrchardCard({ data }: any) {
                 </div>
                 <CardDescription className="z-30 text-xs sm:text-sm font-fine text-secondary/40 space-y-1">
                     <p>Farmers can harvest 2x more apples than other creature types in the bountiful orchard.</p>
-                    <p>Apples begin to rot after 1 million energy, so make sure to harvest them by then.</p>
+                    {/* <p>Apples begin to rot after 1 million energy, so make sure to harvest them by then.</p> */}
                 </CardDescription>
                 <div className="z-20">
                     {/* <CardTitle className="z-30 mt-2 text-xl font-semibold">Yield Farming</CardTitle> */}
                     {descriptionVisible && (
                         <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bountiful-orchard?chain=mainnet`} target='_blank'>
                             <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground flex items-end space-x-1">
-                                <div>Verdant Orchard</div> <Link1Icon className="mb-0.5" />
+                                <div>Bountiful Orchard</div> <Link1Icon className="mb-0.5" />
                             </CardDescription>
                         </Link>
                     )}
