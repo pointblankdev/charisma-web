@@ -387,6 +387,8 @@ export default function Tokens({ pools, indexes }: Props) {
     image: '/liquid-welsh.png'
   };
 
+  // console.log(pools)
+
   // checkbox to enable/disable inactive pools
   const [showInactive, setShowInactive] = useState(false);
   const [showLowTVL, setShowLowTVL] = useState(false);
@@ -416,7 +418,7 @@ export default function Tokens({ pools, indexes }: Props) {
           <div className='grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-7'>
             {activePools.map((pool) => {
               return (
-                <Card key={pool.id} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
+                <Card key={pool.slug} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
                   <Link href={`${pool.slug}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
