@@ -66,19 +66,21 @@ export default function IndexDetailPage({ data }: Props) {
 
   const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
 
+
   if (!data.metadata || !balances) return <div>Loading...</div>;
 
   const token = getKeyByContractAddress(data.address);
   const indexWeight = data.indexWeight;
   const indexBalance = getBalanceByKey(token)?.balance || 0;
 
-  const baseTokens = data.metadata?.contains.map((token: { address: any; weight: any }) => {
+  const baseTokens = data.metadata?.contains.map((token: any) => {
     const baseToken = getKeyByContractAddress(token.address);
     const baseTokenBalance = getBalanceByKey(baseToken)?.balance || 0;
     return {
       token: baseToken,
       balance: Number(baseTokenBalance),
-      weight: Number(token.weight)
+      weight: Number(token.weight),
+      decimals: token.decimals
     };
   });
 
@@ -105,6 +107,7 @@ export default function IndexDetailPage({ data }: Props) {
   const absValMin = Math.abs(-indexBalance / indexWeight)
 
   const fixedAmount = data.tokenPrice < 0.000001 ? 8 : data.tokenPrice < 1 ? 6 : 4
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -296,21 +299,31 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       return tokenAddressList.includes(token.contractAddress);
     });
 
+    // assign decimals to each base token
+    metadata.contains.forEach((token: any) => {
+      const baseToken = prices.find((baseToken: any) => baseToken.contractAddress === token.address);
+      if (baseToken) {
+        token.decimals = Number(baseToken.decimal.slice(1));
+      }
+    })
+
     // loop for each matching token to get the TVL of base tokens
     const tokenInPriceList = prices.find((token: any) => token.contractAddress === params?.id);
     if (tokenInPriceList && tokenInPriceList.price > 0 && tokenInPriceList.symbol !== 'iQC') {
       tvl = totalSupply * Number(tokenInPriceList.price);
     } else {
 
-      const tokenTVL = baseTokensPriceData.map(async (baseToken: any) => {
+      const tokenTVL = baseTokensPriceData.map((baseToken: any) => {
         const tokenIndex = tokenAddressList.indexOf(baseToken.contractAddress);
-        const tokenWeight = Number(metadata.contains[tokenIndex].weight);
+        const token = metadata.contains[tokenIndex]
+        const tokenWeight = Number(token.weight);
         const tokenPrice = Number(baseToken.price);
-        baseToken.decimals = await getDecimals(baseToken.contractAddress);
-        return totalSupply * tokenWeight * tokenPrice * Math.pow(10, 6 - baseToken.decimals) / indexTokenWeight;
+        const upscale = Math.pow(10, 6 - token.decimals)
+        return totalSupply * tokenWeight * tokenPrice * upscale / indexTokenWeight;
       });
       tvl = tokenTVL.reduce((a: number, b: number) => a + b, 0);
     }
+
 
     // blocks until unlocked calculation
     let blockCounter = 0;
@@ -365,7 +378,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
       metadata.contains.forEach((token: any) => {
         const baseToken = prices.find((baseToken: any) => baseToken.contractAddress === token.address);
         if (baseToken) {
-          tokenPrice += baseToken.price * Math.pow(10, 6 - baseToken.decimals) * token.weight / indexTokenWeight;
+          const upscale = Math.pow(10, 6 - token.decimals)
+          tokenPrice += Number(baseToken.price) * upscale * token.weight / indexTokenWeight;
         }
       });
     }
