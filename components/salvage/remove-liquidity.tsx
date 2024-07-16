@@ -51,7 +51,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { 
       contractName,
       functionName: "remove-liquidity",
       functionArgs: [uintCV(tokens)],
-      postConditionMode: PostConditionMode.Deny,
+      postConditionMode: PostConditionMode.Allow,
       postConditions: combinedPostConditions,
       onFinish: (data) => { console.log("onFinish:", data) },
       onCancel: () => { console.log("onCancel:", "Transaction was canceled") },

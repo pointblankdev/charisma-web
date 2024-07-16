@@ -10,8 +10,8 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
         <div className="flex flex-col min-w-48">
             <Slider
                 defaultValue={[0]}
-                min={min}
-                max={max}
+                min={min < -Math.pow(10, 10) ? -Math.pow(10, 10) : min}
+                max={max > Math.pow(10, 10) ? Math.pow(10, 10) : max}
                 step={0.000001}
                 className="w-full p-4"
                 onValueChange={(v: any) => onSetTokensSelected(v[0])}

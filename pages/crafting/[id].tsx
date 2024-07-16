@@ -91,9 +91,10 @@ export default function IndexDetailPage({ data }: Props) {
     }
   });
 
+
   const tokensRequested = tokensSelected / Math.pow(10, data.decimals);
   const tokensRequired = data.metadata?.contains.map(
-    (token: { weight: number }) => tokensRequested * (token.weight / indexWeight)
+    (token: { weight: number }) => tokensRequested * token.weight
   );
 
   // workaround for indexes of one token
@@ -202,7 +203,7 @@ export default function IndexDetailPage({ data }: Props) {
                             side="bottom"
                             className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
                           >
-                            {numeral(Math.abs(tokensRequired[k])).format('(0,0.000000)')}{' '}
+                            {numeral(Math.abs(tokensRequired[k])).format(`(0,0.${'0'.repeat(token.decimals)})`)}{' '}
                             {data.metadata.contains[k].symbol}
                           </TooltipContent>
                         </Tooltip>
@@ -426,41 +427,6 @@ const ActiveRecipeIndicator = ({
         >
           {active
             ? 'Index token is unlocked'
-            : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
-            }`}
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};
-
-const ActiveFarmIndicator = ({
-  active,
-  blocksUntilUnlock
-}: {
-  active: boolean;
-  blocksUntilUnlock: number;
-}) => {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>
-          <div className="relative w-4 h-4">
-            <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
-                }`}
-            />
-            <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
-                }`}
-            />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent
-          className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
-        >
-          {active
-            ? 'Creatures are working the farm'
             : `Base token asset withdraws are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
             }`}
         </TooltipContent>
