@@ -99,9 +99,7 @@ export default function VerdantOrchardCard({ data }: any) {
                 </div>
             </CardHeader>
             <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end mt-auto flex-1">
-                {farmers > 0 &&
-                    <SelectCreatureDialog data={data} />
-                }
+                <SelectCreatureDialog data={data} />
             </CardFooter>
             <Image
                 src={farmersImg}

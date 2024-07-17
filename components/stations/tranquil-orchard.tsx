@@ -130,11 +130,9 @@ export default function TranquilOrchardCard({ data }: any) {
                 </div>
             </CardHeader>
             <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end mt-auto flex-1">
-                {farmers > 0 &&
-                    <Button disabled={claimableAmount === 0} size={'sm'} className={`z-30 w-full ${claimableAmount === 0 && "animate-pulse"}`} onClick={harvest}>
-                        Reset Farmer Energy
-                    </Button>
-                }
+                <Button disabled={claimableAmount === 0} size={'sm'} className={`z-30 w-full ${claimableAmount === 0 && "animate-pulse"}`} onClick={harvest}>
+                    Reset Farmer Energy
+                </Button>
             </CardFooter>
             <Image
                 src={farmersImg}
