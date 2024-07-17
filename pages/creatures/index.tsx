@@ -57,6 +57,26 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       },
     },
     {
+      title: 'Iron Forging',
+      subtitle: 'Put your blacksmiths to work forging iron ingots.',
+      ticker: 'IRON',
+      slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-ingots',
+      guild: {
+        logo: {
+          url: '/indexes/iron-ingots-logo.png'
+        }
+      },
+      apps: [
+        {
+          slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-ingots',
+          img: '/indexes/iron-ingots-bg.png'
+        }
+      ],
+      cardImage: {
+        url: '/indexes/iron-ingots-bg.png'
+      },
+    },
+    {
       title: 'Apple Farming',
       subtitle: 'Put your farmers to working harvesting apples.',
       ticker: 'FUJI',
