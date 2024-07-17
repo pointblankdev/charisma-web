@@ -128,13 +128,13 @@ export default function IronForgeCard({ data }: any) {
                         </div>
                     </CardTitle>
                 </div>
-                <CardDescription className="z-30 text-md font-fine text-secondary/40 space-y-1 pb-4">
+                <CardDescription className="z-30 text-sm sm:text-md font-fine text-secondary/40 space-y-1 pb-4">
                     <p>Only a certain amount of Iron Ingots can be forged per epoch.</p>
                     <p>Once they have all been forged, you must wait until the next epoch to start.</p>
                 </CardDescription>
 
 
-                <div className="flex space-x-3 items-center text-sm pb-2">
+                <div className="flex space-x-3 items-center text-sm sm:pb-2">
                     <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
                         Blocks Per Epoch: {blocksPerEpoch}
                     </div>
@@ -143,7 +143,7 @@ export default function IronForgeCard({ data }: any) {
                     </div>
                 </div>
 
-                <div className="flex space-x-3 items-center text-sm pb-2">
+                <div className="flex space-x-3 items-center text-sm sm:pb-2">
                     <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
                         Current Epoch: {currentEpoch}
                     </div>
@@ -152,7 +152,7 @@ export default function IronForgeCard({ data }: any) {
                     </div>
                 </div>
 
-                <div className="flex space-x-3 items-center text-sm pb-2">
+                <div className="flex space-x-3 items-center text-sm sm:pb-2">
                     <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
                         Epoch Progress: {epochProgress}%
                     </div>
@@ -224,14 +224,14 @@ export function SelectCreatureDialog({ disabled }: any) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button disabled size={'sm'} className={`z-30 w-full`}>{disabled ? 'No more Iron Ingots can be forged this epoch' : 'Forge Iron Ingots'}</Button>
+                <Button size={'sm'} className={`z-30 w-full`}>{disabled ? 'No more Iron Ingots can be forged this epoch' : 'Forge Iron Ingots'}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <AlertDialogHeader>
                     <DialogTitle>Which creatures should forge Iron Ingots?</DialogTitle>
                 </AlertDialogHeader>
 
-                <DialogDescription className='grid gap-2 grid-cols-4 space-x-4 py-4'>
+                <DialogDescription className='grid gap-2 grid-cols-2 sm:grid-cols-4 space-x-4 py-4'>
                     <div className='flex flex-col items-center space-y-2'>
                         <Image
                             alt={'asd'}
