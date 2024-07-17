@@ -113,7 +113,7 @@ export default function IronForgeCard({ data }: any) {
     }, [sender])
 
     return (
-        <Card className="h-80 flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
+        <Card className="flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4">
                 <div className="flex items-center justify-between">
                     <CardTitle className="z-30 text-sm font-semibold">
