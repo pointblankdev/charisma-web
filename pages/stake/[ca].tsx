@@ -168,7 +168,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
             tvl,
         }
 
-        console.log(data)
+
 
         return {
             props: { data }
