@@ -9,10 +9,12 @@ import Logo from './icons/icon-logo';
 import MobileMenu from './mobile-menu';
 import Footer from './footer';
 import React, { useEffect } from 'react';
-import { BsBookHalf, BsDiscord, BsTwitter } from 'react-icons/bs';
-import ConnectWallet from './stacks-session/connect';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from './ui/tooltip';
-import velarApi from '@lib/velar-api';
+import ConnectWallet, { userSession } from './stacks-session/connect';
+import { getClaimableAmount } from '@lib/stacks-api';
+import Image from 'next/image';
+import energyIcon from '@public/creatures/img/energy.png'
+import experienceIcon from '@public/experience.png'
+import useWallet from '@lib/hooks/use-wallet-balances';
 
 type Props = {
   children: React.ReactNode;
@@ -25,7 +27,28 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const router = useRouter();
   const activeRoute = router.asPath;
 
-  const [priceFeedActive, setPriceFeedActive] = React.useState<boolean>(true);
+  const { getBalanceByKey } = useWallet();
+
+  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+
+  const [energy, setEnergy] = React.useState<number>(0);
+
+  const experience = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance / Math.pow(10, 6)
+
+  useEffect(() => {
+    // get energy
+    let energy = 0
+    getClaimableAmount(1, sender).then((res) => { energy = + res }).then(
+      () => getClaimableAmount(2, sender).then((res) => { energy = + res }).then(
+        () => getClaimableAmount(3, sender).then((res) => { energy = + res }).then(
+          () => getClaimableAmount(4, sender).then((res) => { energy = + res }).then(
+            () => setEnergy(energy)
+          )
+        )
+      )
+    )
+
+  }, [sender])
 
   return (
     <>
@@ -62,17 +85,27 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 </Link>
               ))}
             </div>
-            <div className={cn(styles['header-right'], 'items-center', 'gap-4')}>
-              <PriceDataLiveMonitor active={priceFeedActive} />
-              <Link href={'https://twitter.com/CharismaBTC'}>
-                <BsTwitter className="hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex" />
-              </Link>
-              <Link href={'https://discord.gg/UTZmwWGC8C'}>
-                <BsDiscord className="hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex" />
-              </Link>
-              <Link href={'https://docs.charisma.rocks'}>
-                <BsBookHalf className="hidden cursor-pointer fill-gray-300 hover:fill-gray-100 sm:flex" />
-              </Link>
+            <div className={cn(styles['header-right'], 'items-center', 'gap-4', 'pr-4', ' whitespace-nowrap')}>
+              <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold'>
+                <Image
+                  alt={'Energy Icon'}
+                  src={energyIcon}
+                  width={100}
+                  height={100}
+                  className={`z-30 border rounded-full h-6 w-6`}
+                />
+                <div>{energy}</div>
+              </div>
+              <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold pl-2'>
+                <Image
+                  alt={'Experience Icon'}
+                  src={experienceIcon}
+                  width={100}
+                  height={100}
+                  className={`z-30 border rounded-full h-5 w-5`}
+                />
+                <div>{experience} EXP</div>
+              </div>
               <ConnectWallet />
             </div>
           </header>
@@ -88,36 +121,3 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     </>
   );
 }
-
-const PriceDataLiveMonitor = ({
-  active
-}: {
-  active: boolean;
-}) => {
-  return (
-    <TooltipProvider>
-      <Tooltip>
-        <TooltipTrigger>
-          <div className="relative w-4 h-4">
-            <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-red-500'
-                }`}
-            />
-            <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-red-500 animate-ping'
-                }`}
-            />
-          </div>
-        </TooltipTrigger>
-        <TooltipContent
-          className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
-        >
-          {active
-            ? 'Price data feed is live'
-            : `There is an error getting token pricing data. Expect liquidity pool TVLs and portfolio balances to be inaccurate until the price data feed is back online.`
-          }
-        </TooltipContent>
-      </Tooltip>
-    </TooltipProvider>
-  );
-};

@@ -42,9 +42,9 @@ export default function Footer() {
         </div>
 
         <div className={cn('items-center', 'gap-4', 'flex')}>
-          <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' size={16} /></Link>
-          <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' size={16} /></Link>
-          <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='cursor-pointer fill-gray-300 hover:fill-gray-100 sm:hidden' /></Link>
+          <Link href={'https://twitter.com/CharismaBTC'}><BsTwitter className='cursor-pointer fill-gray-300 hover:fill-gray-100' size={16} /></Link>
+          <Link href={'https://discord.gg/UTZmwWGC8C'}><BsDiscord className='cursor-pointer fill-gray-300 hover:fill-gray-100' size={16} /></Link>
+          <Link href={'https://docs.charisma.rocks'}><BsBookHalf className='cursor-pointer fill-gray-300 hover:fill-gray-100' /></Link>
         </div>
         <div className={cn('hidden', 'sm:flex')}>
           <p className={styles['footer-paragraph']}>
