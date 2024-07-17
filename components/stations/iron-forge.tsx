@@ -162,7 +162,7 @@ export default function IronForgeCard({ data }: any) {
                 </div>
             </CardHeader>
             <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end mt-auto flex-1">
-                <SelectCreatureDialog data={data} />
+                <SelectCreatureDialog data={data} disabled={supplyUtilization >= 100} />
             </CardFooter>
             <Image
                 src={blacksmithsImg}
@@ -186,7 +186,7 @@ export default function IronForgeCard({ data }: any) {
     );
 }
 
-export function SelectCreatureDialog({ data }: any) {
+export function SelectCreatureDialog({ disabled }: any) {
 
     const { doContractCall } = useConnect();
 
@@ -224,7 +224,7 @@ export function SelectCreatureDialog({ data }: any) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button size={'sm'} className={`z-30 w-full`}>Forge Iron Ingots</Button>
+                <Button disabled size={'sm'} className={`z-30 w-full`}>Forge Iron Ingots</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <AlertDialogHeader>
