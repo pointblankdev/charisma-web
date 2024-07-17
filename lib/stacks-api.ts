@@ -1006,7 +1006,7 @@ export async function getCreaturePower(creatureId: number, sender = 'SP2D5BGGJ95
 export async function getClaimableAmount(creatureId: number, sender: string) {
     const response = await scApi.callReadOnlyFunction({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: 'creatures-energy',
+        contractName: 'creatures-kit',
         functionName: "get-untapped-amount",
         readOnlyFunctionArgs: {
             sender: sender,
