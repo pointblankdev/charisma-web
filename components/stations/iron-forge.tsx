@@ -236,7 +236,7 @@ export function SelectCreatureDialog({ disabled }: any) {
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button disabled size={'sm'} className={`z-30 w-full`}>{disabled ? 'No more Iron Ingots can be forged this epoch' : 'Forge Iron Ingots'}</Button>
+                <Button disabled={disabled} size={'sm'} className={`z-30 w-full`}>{disabled ? 'No more Iron Ingots can be forged this epoch' : 'Forge Iron Ingots'}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <AlertDialogHeader>
