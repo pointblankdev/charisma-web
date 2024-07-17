@@ -54,9 +54,9 @@ const MicroDeposit = () => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'iron-ingots',
+      contractName: 'fuji-apples',
       functionName: "transfer",
-      functionArgs: [uintCV(100000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-forge'), noneCV()],
+      functionArgs: [uintCV(8000000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard'), noneCV()],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
