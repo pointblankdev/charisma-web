@@ -339,7 +339,7 @@ export default function Creatures({ creatures, quests }: Props) {
     }
     if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha' && oldblacksmiths > 0) {
       contractName = 'creatures-energy'
-      amount = oldblacksmiths * 10
+      amount = oldblacksmiths * 100
     }
     if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc' && oldcorgiSoldiers > 0) {
       contractName = 'creatures-energy'

@@ -44,6 +44,7 @@ import BountifulOrchardCard from '@components/stations/bountiful-orchard';
 import AddLiquidityToIndex from '@components/craft/add-liquidity';
 import TranquilOrchardCard from '@components/stations/tranquil-orchard';
 import IronForgeCard from '@components/stations/iron-forge';
+import AbundantOrchardCard from '@components/stations/abundant-orchard';
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -258,7 +259,7 @@ export default function IndexDetailPage({ data }: Props) {
 
           <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
             {isApples &&
-              <VerdantOrchardCard data={data} />
+              <AbundantOrchardCard data={data} />
             }
           </div>
 

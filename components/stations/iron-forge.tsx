@@ -39,6 +39,7 @@ export default function IronForgeCard({ data }: any) {
     const [blocksUntilNextEpoch, setBlocksUntilNextEpoch] = useState(0);
     const [epochProgress, setEpochProgress] = useState(0);
     const [supplyUtilization, setSupplyUtilization] = useState(0);
+    const [epochPassed, setEpochPassed] = useState(false);
 
     const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
@@ -50,7 +51,7 @@ export default function IronForgeCard({ data }: any) {
         sender && callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'iron-forge',
+            contractName: 'ironworks-forge',
             functionName: "get-blocks-per-epoch",
             functionArgs: [],
             senderAddress: sender
@@ -61,7 +62,7 @@ export default function IronForgeCard({ data }: any) {
         sender && callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'iron-forge',
+            contractName: 'ironworks-forge',
             functionName: "get-supply-per-epoch",
             functionArgs: [],
             senderAddress: sender
@@ -72,7 +73,7 @@ export default function IronForgeCard({ data }: any) {
         sender && callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'iron-forge',
+            contractName: 'ironworks-forge',
             functionName: "get-current-epoch",
             functionArgs: [],
             senderAddress: sender
@@ -83,7 +84,7 @@ export default function IronForgeCard({ data }: any) {
         sender && callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'iron-forge',
+            contractName: 'ironworks-forge',
             functionName: "get-blocks-until-next-epoch",
             functionArgs: [],
             senderAddress: sender
@@ -94,7 +95,7 @@ export default function IronForgeCard({ data }: any) {
         sender && callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'iron-forge',
+            contractName: 'ironworks-forge',
             functionName: "get-epoch-progress",
             functionArgs: [],
             senderAddress: sender
@@ -105,11 +106,22 @@ export default function IronForgeCard({ data }: any) {
         sender && callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'iron-forge',
+            contractName: 'ironworks-forge',
             functionName: "get-supply-utilization",
             functionArgs: [],
             senderAddress: sender
         }).then(response => setSupplyUtilization(Number(cvToJSON(response).value)))
+    }, [sender])
+
+    useEffect(() => {
+        sender && callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'ironworks-forge',
+            functionName: "epoch-passed",
+            functionArgs: [],
+            senderAddress: sender
+        }).then(response => setEpochPassed(cvToJSON(response).value))
     }, [sender])
 
     return (
@@ -119,7 +131,7 @@ export default function IronForgeCard({ data }: any) {
                     <CardTitle className="z-30 text-sm font-semibold">
                         <div className="z-20">
                             {descriptionVisible && (
-                                <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-forge?chain=mainnet`} target='_blank'>
+                                <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.ironworks-forge?chain=mainnet`} target='_blank'>
                                     <CardDescription className="z-30 text-base font-fine text-primary-foreground flex items-end space-x-1">
                                         <div>Iron Forge</div> <Link1Icon className="mb-0.5" />
                                     </CardDescription>
@@ -162,7 +174,7 @@ export default function IronForgeCard({ data }: any) {
                 </div>
             </CardHeader>
             <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end mt-auto flex-1">
-                <SelectCreatureDialog data={data} disabled={supplyUtilization >= 100} />
+                <SelectCreatureDialog data={data} disabled={supplyUtilization >= 100 && !epochPassed} />
             </CardFooter>
             <Image
                 src={blacksmithsImg}
@@ -196,7 +208,7 @@ export function SelectCreatureDialog({ disabled }: any) {
         const response = await callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'iron-forge',
+            contractName: 'ironworks-forge',
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(creatureId)],
             senderAddress: sender
@@ -206,11 +218,11 @@ export function SelectCreatureDialog({ disabled }: any) {
             network: new StacksMainnet(),
             anchorMode: AnchorMode.Any,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'iron-forge',
+            contractName: 'ironworks-forge',
             functionName: "forge",
             functionArgs: [uintCV(creatureId)],
             postConditionMode: PostConditionMode.Deny,
-            postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-forge').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-ingots", "index-token")],
+            postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.ironworks-forge').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-ingots", "index-token")],
             onFinish: (data) => {
                 console.log("onFinish:", data);
             },
