@@ -119,7 +119,7 @@ export default function IronForgeCard({ data }: any) {
                     <CardTitle className="z-30 text-sm font-semibold">
                         <div className="z-20">
                             {descriptionVisible && (
-                                <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bountiful-orchard?chain=mainnet`} target='_blank'>
+                                <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-forge?chain=mainnet`} target='_blank'>
                                     <CardDescription className="z-30 text-base font-fine text-primary-foreground flex items-end space-x-1">
                                         <div>Iron Forge</div> <Link1Icon className="mb-0.5" />
                                     </CardDescription>

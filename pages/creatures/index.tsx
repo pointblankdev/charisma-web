@@ -22,13 +22,14 @@ import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import charisma from '@public/charisma.png'
 import raven from '@public/raven-of-odin.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
-import { getClaimableAmount, getCreatureAmount, getCreatureCost, getCreaturePower } from '@lib/stacks-api';
+import { getClaimableAmount, getCreatureAmount, getCreatureCost, getCreaturePower, getOldCreatureAmount } from '@lib/stacks-api';
 import creatureIcon from '@public/creatures/img/creatures.png'
 import energyIcon from '@public/creatures/img/energy.png'
 import powerIcon from '@public/creatures/img/power.png'
 import numeral from 'numeral';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
+import { Toast } from '@components/ui/toast';
 
 
 
@@ -188,7 +189,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const creatures = [
     {
       title: 'Farmers',
-      subtitle: 'Honest and hardworking farmers.',
+      subtitle: 'Honest and humble farmers.',
       slug: '/creatures/farmers',
       cardImage: { url: '/creatures/img/farmers.png' },
       requiredToken: 'STX-wCHA LP',
@@ -202,7 +203,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     },
     {
       title: 'Blacksmiths',
-      subtitle: 'Craftspeople who forge weapons and armor.',
+      subtitle: 'Forger of weapons and armor.',
       slug: '/creatures/blacksmiths',
       cardImage: { url: '/creatures/img/blacksmiths.png' },
       requiredToken: 'STX-sCHA LP',
@@ -274,6 +275,11 @@ export default function Creatures({ creatures, quests }: Props) {
   const [amountiCCLP, setAmountiCCLP] = useState(0)
   const [amountiMMLP, setAmountiMMLP] = useState(0)
 
+  const [oldfarmers, setOldFarmers] = useState(0)
+  const [oldblacksmiths, setOldBlacksmiths] = useState(0)
+  const [oldcorgiSoldiers, setOldCorgiSoldiers] = useState(0)
+  const [oldalchemists, setOldAlchemists] = useState(0)
+
   const [farmers, setFarmers] = useState(0)
   const [blacksmiths, setBlacksmiths] = useState(0)
   const [corgiSoldiers, setCorgiSoldiers] = useState(0)
@@ -305,11 +311,12 @@ export default function Creatures({ creatures, quests }: Props) {
   creatures[3].energy = alchemistsEnergy
 
   function recruit(tokenContract: string, amount: number) {
+
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures-energy',
+      contractName: 'creatures-kit',
       functionName: "recruit",
       functionArgs: [uintCV(amount), principalCV(tokenContract)],
       postConditionMode: PostConditionMode.Allow,
@@ -325,11 +332,28 @@ export default function Creatures({ creatures, quests }: Props) {
   }
 
   function dismiss(tokenContract: string, amount: number) {
+    let contractName = 'creatures-kit'
+    if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha' && oldfarmers > 0) {
+      contractName = 'creatures-energy'
+      amount = oldfarmers
+    }
+    if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha' && oldblacksmiths > 0) {
+      contractName = 'creatures-energy'
+      amount = oldblacksmiths * 10
+    }
+    if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc' && oldcorgiSoldiers > 0) {
+      contractName = 'creatures-energy'
+      amount = oldcorgiSoldiers
+    }
+    if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm' && oldalchemists > 0) {
+      contractName = 'creatures-energy'
+      amount = oldalchemists
+    }
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'creatures-energy',
+      contractName: contractName,
       functionName: "dismiss",
       functionArgs: [uintCV(amount), principalCV(tokenContract)],
       postConditionMode: PostConditionMode.Allow,
@@ -343,6 +367,13 @@ export default function Creatures({ creatures, quests }: Props) {
       },
     });
   }
+
+  useEffect(() => {
+    sender && getOldCreatureAmount(1, sender).then(amount => setOldFarmers(amount))
+    sender && getOldCreatureAmount(2, sender).then(amount => setOldBlacksmiths(amount))
+    sender && getOldCreatureAmount(3, sender).then(amount => setOldCorgiSoldiers(amount))
+    sender && getOldCreatureAmount(4, sender).then(amount => setOldAlchemists(amount))
+  }, [sender])
 
   useEffect(() => {
     sender && getCreatureAmount(1, sender).then(amount => setFarmers(amount))
@@ -370,13 +401,14 @@ export default function Creatures({ creatures, quests }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="sm:container sm:mx-auto sm:py-10 space-y-6 m-2">
+          <div className='bg-primary rounded-full text-center py-2 font-bold border-2 text-base'> Note: The Creatures contract has been upgraded. To continue generating energy, make sure to "Dismiss" then "Recruit" each of your creatures once. Thank you!</div>
           <div className="space-y-1">
             <h2 className="text-4xl font-semibold tracking-tight text-secondary">Creatures</h2>
             <p className="text-muted-foreground text-base">
               Creatures are SIP13 tokens that represent workers in the Charisma ecosystem. They can be used to perform tasks and earn rewards.
             </p>
           </div>
-          <div className="grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <Card
               className={cn(
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
@@ -385,15 +417,14 @@ export default function Creatures({ creatures, quests }: Props) {
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
                 <div className="space-y-4 text-sm">
                   <h3 className="font-bold text-lg">Creatures</h3>
-                  <p>Think of these creatures like little workers you can hire to collect valuable items for you.</p>
                   <p>
-                    To get a creature, you first need to put some special tokens (LP tokens) into the system. It's like giving them the resources they need to get started.
+                    To recruit a creature, you'll need to deposit LP tokens into the system.
                   </p>
                   <p>
-                    Once you have deposited the LP tokens, you'll recieve creatures tokens. Your creatures will then automatically start working for you, gathering resources over time.
+                    Once you have deposited the LP tokens, you'll recieve creatures tokens. Your creatures will then automatically start generating "energy".
                   </p>
                   <p>
-                    You can tell your creature to bring you the resources they've collected whenever you want. The first type of creature, called the Farmer, is great at collecting Fuji Apples.
+                    There are lots to spend your creatures energy in the Charisma ecosystem, many of which yield valuable token rewards.
                   </p>
                 </div>
               </div>
@@ -456,7 +487,7 @@ export default function Creatures({ creatures, quests }: Props) {
                     className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all justify-between')}
                   >
                     <div className="z-20 p-2 flex w-full justify-between place-items-end">
-                      {!(creature.creaturesRecruitable >= 1) && <div className='text-sm font-semibold text-center leading-tight'>You need more {creature.requiredToken} tokens to create {creature.title}</div>}
+                      {!(creature.creaturesRecruitable >= 1) ? <div className='text-sm font-semibold text-center leading-tight'>You need more {creature.requiredToken} tokens to create {creature.title}</div> : <div></div>}
                       <div className='flex flex-col justify-center space-y-2'>
                         <div className='flex space-x-2 justify-end'>
                           <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.amount)}>Dismiss</Button>
@@ -477,7 +508,7 @@ export default function Creatures({ creatures, quests }: Props) {
             </p>
           </div>
 
-          <div className="grid gap-2 md:grid-cols-1 lg:grid-cols-2 xl:grid-cols-3">
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             {quests.map((activity: any, i: number) => {
               return (
                 <Card

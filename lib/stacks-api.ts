@@ -594,7 +594,6 @@ export async function getTokenURI(contract: string) {
         readOnlyFunctionArgs: {
             sender: address,
             arguments: []
-            // cvToHex(parseToCV(contract, 'principal'))
         }
     });
 
@@ -956,7 +955,7 @@ export async function getCreatureCost(creatureId: number, sender = 'SP2D5BGGJ956
     const response = await callReadOnlyFunction({
         network: new StacksMainnet(),
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: 'creatures',
+        contractName: 'creatures-core',
         functionName: "get-creature-cost",
         functionArgs: [uintCV(creatureId)],
         senderAddress: sender
@@ -965,6 +964,20 @@ export async function getCreatureCost(creatureId: number, sender = 'SP2D5BGGJ956
 }
 
 export async function getCreatureAmount(creatureId: number, sender: string) {
+    const response = await scApi.callReadOnlyFunction({
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'creatures-core',
+        functionName: "get-balance",
+        readOnlyFunctionArgs: {
+            sender: sender,
+            arguments: [cvToHex(parseToCV(String(creatureId), 'uint128')), cvToHex(parseToCV(sender, 'principal'))]
+        }
+    })
+    const result = hexToCV((response as any).result)
+    return Number(cvToJSON(result).value.value)
+}
+
+export async function getOldCreatureAmount(creatureId: number, sender: string) {
     const response = await callReadOnlyFunction({
         network: new StacksMainnet(),
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -977,27 +990,31 @@ export async function getCreatureAmount(creatureId: number, sender: string) {
 }
 
 export async function getCreaturePower(creatureId: number, sender = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ') {
-    const response = await callReadOnlyFunction({
-        network: new StacksMainnet(),
+    const response = await scApi.callReadOnlyFunction({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: 'creatures',
+        contractName: 'creatures-core',
         functionName: "get-creature-power",
-        functionArgs: [uintCV(creatureId)],
-        senderAddress: sender
+        readOnlyFunctionArgs: {
+            sender: sender,
+            arguments: [cvToHex(parseToCV(String(creatureId), 'uint128'))]
+        }
     })
-    return Number(cvToJSON(response).value)
+    const result = hexToCV((response as any).result)
+    return Number(cvToJSON(result).value)
 }
 
 export async function getClaimableAmount(creatureId: number, sender: string) {
-    const response = await callReadOnlyFunction({
-        network: new StacksMainnet(),
+    const response = await scApi.callReadOnlyFunction({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
         contractName: 'creatures-energy',
         functionName: "get-untapped-amount",
-        functionArgs: [uintCV(creatureId), principalCV(sender)],
-        senderAddress: sender
+        readOnlyFunctionArgs: {
+            sender: sender,
+            arguments: [cvToHex(parseToCV(String(creatureId), 'uint128')), cvToHex(parseToCV(sender, 'principal'))]
+        }
     })
-    return Number(cvToJSON(response).value.value)
+    const result = hexToCV((response as any).result)
+    return Number(cvToJSON(result).value.value)
 }
 
 const valueOut = (value: any) => {
