@@ -6,9 +6,8 @@ export function getConfig() {
         jobs: [
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0", function: "execute-strategy-a", args: [uintCV(1000000000)] },
             { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0", function: "execute-strategy-b", args: [uintCV(1000000000)] },
-            // { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf", function: "execute-strategy", args: [uintCV(100000000000)] },
-            // { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-a", args: [uintCV(1000000000)] },
-            // { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2", function: "execute-strategy-b", args: [uintCV(1000000000), uintCV(45)] },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-stabilizer-v0", function: "execute-strategy-a", args: [uintCV(1000000000)] },
+            { address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-stabilizer-v0", function: "execute-strategy-b", args: [uintCV(1000000000), uintCV(45)] },
         ],
         fee: 50000, // in uSTX
     };
@@ -18,14 +17,13 @@ export async function runAll() {
     const config = getConfig();
 
     // Fetch mempool transactions concurrently
-    const [mempoolTxs2] = await Promise.all([
+    const [mpt1, mpt2] = await Promise.all([
         getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0'),
-        // getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-arb-2'),
-        // getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.arbitrage-w-s-sw-w-zf')
+        getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-stabilizer-v0'),
     ]);
 
     // filter for only real mempool transactions and not stale ones
-    const mempoolTxs = [...mempoolTxs2].filter((tx: any) => tx.receipt_time > (Date.now() / 1000) - 5000);
+    const mempoolTxs = [...mpt1, ...mpt2].filter((tx: any) => tx.receipt_time > (Date.now() / 1000) - 5000);
 
     // Filter out jobs in mempool
     const newJobs = config.jobs.filter((job: any) =>
