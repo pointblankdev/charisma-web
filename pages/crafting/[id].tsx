@@ -256,12 +256,9 @@ export default function IndexDetailPage({ data }: Props) {
             <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
           </Card>
 
-          <div className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+          <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
             {isApples &&
               <VerdantOrchardCard data={data} />
-            }
-            {isApples &&
-              <TranquilOrchardCard data={data} />
             }
           </div>
 
