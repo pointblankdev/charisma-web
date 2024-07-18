@@ -140,6 +140,7 @@ export default function JourneyOfDiscovery({ data }: Props) {
                 'object-cover',
                 'opacity-10',
                 'aspect-[2/3]',
+                'sm:aspect-square',
                 'flex',
                 'z-10',
                 'absolute',
