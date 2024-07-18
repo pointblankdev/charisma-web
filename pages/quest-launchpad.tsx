@@ -12,7 +12,7 @@ export default function QuestLaunchpad() {
     const meta = {
         title: 'Charisma | Quest Launchpad',
         description: 'Get paid to integrate your project into the Charisma ecosystem.',
-        image: '/governance/quest-helper.png'
+        image: '/celebration-2.png'
     };
 
     return (
