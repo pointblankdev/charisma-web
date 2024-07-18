@@ -82,8 +82,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 </Link>
               ))}
             </div>
-            <div className={cn(styles['header-right'], 'items-center', 'gap-4', 'pr-4', ' whitespace-nowrap')}>
-              <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold'>
+            <div className={cn(styles['header-right'], 'items-center', 'gap-4', 'pr-4', ' whitespace-nowrap', 'sm:relative')}>
+              <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold sm:absolute sm:right-64 mr-2'>
                 <Image
                   alt={'Energy Icon'}
                   src={energyIcon}
@@ -93,7 +93,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 />
                 <div>{energy}</div>
               </div>
-              <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold pl-2'>
+              <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold pl-2 sm:absolute sm:right-40'>
                 <Image
                   alt={'Experience Icon'}
                   src={experienceIcon}
