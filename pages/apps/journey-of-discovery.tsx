@@ -50,6 +50,17 @@ export default function JourneyOfDiscovery({ data }: Props) {
   const title = "Journey of Discovery";
   const subtitle = 'Spend your energy to gain experience.';
 
+
+  const [descriptionVisible, setDescriptionVisible] = useState(false);
+
+  useEffect(() => {
+    try {
+      setDescriptionVisible(true);
+    } catch (error) {
+      console.error(error);
+    }
+  }, []);
+
   const fadeIn = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
@@ -91,6 +102,21 @@ export default function JourneyOfDiscovery({ data }: Props) {
                 </div>
               </div>
             </CardHeader>
+
+
+
+            <CardContent className="z-20 flex-grow p-4">
+              <div className="flex flex-col items-center justify-center space-y-4">
+                <p className='max-w-64'>
+                  {descriptionVisible && <Typewriter
+                    options={{ autoStart: true }}
+                    onInit={typewriter => {
+                      typewriter.pauseFor(2700).start().typeString('We shall not cease from exploration, and the end of all our exploring will be to arrive where we started and know the place for the first time.')
+                    }}
+                  />}
+                </p>
+              </div>
+            </CardContent>
 
             <CardFooter className="z-20 flex justify-between p-4 flex-grow items-end">
 
@@ -169,7 +195,7 @@ export function SelectCreatureDialog({ data }: any) {
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'abundant-orchard',
+      contractName: 'journey-of-discovery',
       functionName: "get-claimable-amount",
       functionArgs: [uintCV(1)],
       senderAddress: sender
@@ -178,7 +204,7 @@ export function SelectCreatureDialog({ data }: any) {
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'abundant-orchard',
+      contractName: 'journey-of-discovery',
       functionName: "get-claimable-amount",
       functionArgs: [uintCV(2)],
       senderAddress: sender
@@ -187,7 +213,7 @@ export function SelectCreatureDialog({ data }: any) {
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'abundant-orchard',
+      contractName: 'journey-of-discovery',
       functionName: "get-claimable-amount",
       functionArgs: [uintCV(3)],
       senderAddress: sender
@@ -196,7 +222,7 @@ export function SelectCreatureDialog({ data }: any) {
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'abundant-orchard',
+      contractName: 'journey-of-discovery',
       functionName: "get-claimable-amount",
       functionArgs: [uintCV(4)],
       senderAddress: sender
@@ -208,7 +234,7 @@ export function SelectCreatureDialog({ data }: any) {
     const response = await callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'abundant-orchard',
+      contractName: 'journey-of-discovery',
       functionName: "get-claimable-amount",
       functionArgs: [uintCV(creatureId)],
       senderAddress: sender
@@ -218,11 +244,11 @@ export function SelectCreatureDialog({ data }: any) {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'abundant-orchard',
-      functionName: "harvest",
+      contractName: 'journey-of-discovery',
+      functionName: "journey",
       functionArgs: [uintCV(creatureId)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
+      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.journey-of-discovery').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },

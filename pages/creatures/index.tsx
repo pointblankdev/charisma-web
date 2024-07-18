@@ -85,20 +85,20 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
         url: '/stations/apple-orchard.png'
       },
     },
-    // {
-    //   title: "Journey of Discovery",
-    //   subtitle: "Spend your energy to gain experience.",
-    //   ticker: "EXP",
-    //   slug: "/apps/journey-of-discovery",
-    //   guild: {
-    //     logo: {
-    //       url: "/experience.png"
-    //     }
-    //   },
-    //   cardImage: {
-    //     url: journeyOfDiscovery
-    //   },
-    // },
+    {
+      title: "Journey of Discovery",
+      subtitle: "Spend your energy to gain experience.",
+      ticker: "EXP",
+      slug: "/apps/journey-of-discovery",
+      guild: {
+        logo: {
+          url: "/experience.png"
+        }
+      },
+      cardImage: {
+        url: journeyOfDiscovery
+      },
+    },
     {
       guild: {
         logo: {
