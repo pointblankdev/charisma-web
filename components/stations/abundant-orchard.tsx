@@ -28,6 +28,7 @@ import corgiSoldiersImg from '@public/creatures/img/corgi-soldiers.png'
 import alchemistsImg from '@public/creatures/img/alchemists.png'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
+import energyIcon from '@public/creatures/img/energy.png'
 
 export default function AbundantOrchardCard({ data }: any) {
 
@@ -156,6 +157,51 @@ export function SelectCreatureDialog({ data }: any) {
 
     const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
+    const [farmerClaimableAmount, setFarmerClaimableAmount] = useState(0)
+    const [blacksmithClaimableAmount, setBlacksmithClaimableAmount] = useState(0)
+    const [corgiSoldierClaimableAmount, setCorgiSoldierClaimableAmount] = useState(0)
+    const [alchemistClaimableAmount, setAlchemistClaimableAmount] = useState(0)
+
+    useEffect(() => {
+
+        callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'aboundant-orchard',
+            functionName: "get-claimable-amount",
+            functionArgs: [uintCV(1)],
+            senderAddress: sender
+        }).then(response => setFarmerClaimableAmount(Number(cvToJSON(response).value)))
+
+        callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'aboundant-orchard',
+            functionName: "get-claimable-amount",
+            functionArgs: [uintCV(2)],
+            senderAddress: sender
+        }).then(response => setBlacksmithClaimableAmount(Number(cvToJSON(response).value)))
+
+        callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'aboundant-orchard',
+            functionName: "get-claimable-amount",
+            functionArgs: [uintCV(3)],
+            senderAddress: sender
+        }).then(response => setCorgiSoldierClaimableAmount(Number(cvToJSON(response).value)))
+
+        callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'aboundant-orchard',
+            functionName: "get-claimable-amount",
+            functionArgs: [uintCV(4)],
+            senderAddress: sender
+        }).then(response => setAlchemistClaimableAmount(Number(cvToJSON(response).value)))
+
+    }, [sender])
+
     async function harvest(creatureId: number) {
         const response = await callReadOnlyFunction({
             network: new StacksMainnet(),
@@ -195,7 +241,7 @@ export function SelectCreatureDialog({ data }: any) {
                     <DialogTitle>Which creatures should harvest Fuji Apples?</DialogTitle>
                 </AlertDialogHeader>
 
-                <DialogDescription className='grid gap-2 grid-cols-4 space-x-4 py-4'>
+                <DialogDescription className='grid gap-2 grid-cols-2 sm:grid-cols-4 space-x-4 py-4'>
                     <div className='flex flex-col items-center space-y-2'>
                         <Image
                             alt={'asd'}
@@ -203,9 +249,19 @@ export function SelectCreatureDialog({ data }: any) {
                             width={100}
                             height={100}
                             onClick={() => harvest(1)}
-                            className="z-30 border rounded-full h-32 w-32 hover:scale-110 transition-all cursor-pointer"
+                            className="z-30 border rounded-lg h-32 w-32 hover:scale-110 transition-all cursor-pointer"
                         />
                         <h2 className='text-base text-primary-foreground'>Farmers</h2>
+                        <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold mr-4'>
+                            <Image
+                                alt={'Energy Icon'}
+                                src={energyIcon}
+                                width={100}
+                                height={100}
+                                className={`z-30 border rounded-full h-6 w-6`}
+                            />
+                            <div>{farmerClaimableAmount}</div>
+                        </div>
                     </div>
                     <div className='flex flex-col items-center space-y-2'>
                         <Image
@@ -214,9 +270,19 @@ export function SelectCreatureDialog({ data }: any) {
                             width={100}
                             height={100}
                             onClick={() => harvest(2)}
-                            className="z-30 border rounded-full h-32 w-32 hover:scale-110 transition-all cursor-pointer"
+                            className="z-30 border rounded-lg h-32 w-32 hover:scale-110 transition-all cursor-pointer"
                         />
                         <h2 className='text-base text-primary-foreground'>Blacksmiths</h2>
+                        <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold mr-4'>
+                            <Image
+                                alt={'Energy Icon'}
+                                src={energyIcon}
+                                width={100}
+                                height={100}
+                                className={`z-30 border rounded-full h-6 w-6`}
+                            />
+                            <div>{blacksmithClaimableAmount}</div>
+                        </div>
                     </div>
                     <div className='flex flex-col items-center space-y-2'>
                         <Image
@@ -225,9 +291,19 @@ export function SelectCreatureDialog({ data }: any) {
                             width={100}
                             height={100}
                             onClick={() => harvest(3)}
-                            className="z-30 border rounded-full h-32 w-32 hover:scale-110 transition-all cursor-pointer"
+                            className="z-30 border rounded-lg h-32 w-32 hover:scale-110 transition-all cursor-pointer"
                         />
                         <h2 className='text-base text-primary-foreground'>Corgi Soldiers</h2>
+                        <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold mr-4'>
+                            <Image
+                                alt={'Energy Icon'}
+                                src={energyIcon}
+                                width={100}
+                                height={100}
+                                className={`z-30 border rounded-full h-6 w-6`}
+                            />
+                            <div>{corgiSoldierClaimableAmount}</div>
+                        </div>
                     </div>
                     <div className='flex flex-col items-center space-y-2'>
                         <Image
@@ -236,9 +312,19 @@ export function SelectCreatureDialog({ data }: any) {
                             width={100}
                             height={100}
                             onClick={() => harvest(4)}
-                            className="z-30 border rounded-full h-32 w-32 hover:scale-110 transition-all cursor-pointer"
+                            className="z-30 border rounded-lg h-32 w-32 hover:scale-110 transition-all cursor-pointer"
                         />
                         <h2 className='text-base text-primary-foreground'>Alchemists</h2>
+                        <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold mr-4'>
+                            <Image
+                                alt={'Energy Icon'}
+                                src={energyIcon}
+                                width={100}
+                                height={100}
+                                className={`z-30 border rounded-full h-6 w-6`}
+                            />
+                            <div>{alchemistClaimableAmount}</div>
+                        </div>
                     </div>
                 </DialogDescription>
             </DialogContent>
