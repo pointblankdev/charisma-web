@@ -38,23 +38,17 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   const quests = [
     {
-      title: "Charisma Faucet",
-      subtitle: "Get free Charisma tokens.",
-      ticker: "CHA",
-      slug: "/faucet",
+      title: "Journey of Discovery",
+      subtitle: "Spend your energy to gain experience.",
+      ticker: "EXP",
+      slug: "/apps/journey-of-discovery",
       guild: {
         logo: {
-          url: "/charisma.png"
+          url: "/experience.png"
         }
       },
-      apps: [
-        {
-          slug: "/faucet",
-          img: "/charisma.png"
-        }
-      ],
       cardImage: {
-        url: tokenfaucet1
+        url: journeyOfDiscovery
       },
     },
     {
@@ -86,17 +80,23 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       },
     },
     {
-      title: "Journey of Discovery",
-      subtitle: "Spend your energy to gain experience.",
-      ticker: "EXP",
-      slug: "/apps/journey-of-discovery",
+      title: "Charisma Faucet",
+      subtitle: "Get free Charisma tokens.",
+      ticker: "CHA",
+      slug: "/faucet",
       guild: {
         logo: {
-          url: "/experience.png"
+          url: "/charisma.png"
         }
       },
+      apps: [
+        {
+          slug: "/faucet",
+          img: "/charisma.png"
+        }
+      ],
       cardImage: {
-        url: journeyOfDiscovery
+        url: tokenfaucet1
       },
     },
     {
