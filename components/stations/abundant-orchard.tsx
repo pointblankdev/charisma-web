@@ -51,6 +51,7 @@ export default function AbundantOrchardCard({ data }: any) {
     const [orchardBalance, setOrchardBalance] = useState(0)
 
     const [creatureSelected, setCreatureSelected] = useState(1)
+    const [showUSDPreview, setShowUSDPreview] = useState(true)
     const [energyPerBlock, setEnergyPerBlock] = useState(0)
     const [factor, setFactor] = useState(1)
 
@@ -93,6 +94,7 @@ export default function AbundantOrchardCard({ data }: any) {
     const energyPerDay = energyPerBlock * 6 * 24
     const tokensPerDay = energyPerDay * factor * creatureFactor / Math.pow(10, data.decimals)
     const dollarsPerDay = tokensPerDay * data.tokenPrice
+    const amountPerDay = showUSDPreview ? numeral(dollarsPerDay).format('($0.00a)') : numeral(tokensPerDay).format('(0.00a)') + ' FUJI'
 
     const handleCreatureSwitch = () => {
         setCreatureSelected(creature => (creature >= 4 ? 1 : ++creature))
@@ -117,8 +119,8 @@ export default function AbundantOrchardCard({ data }: any) {
                             <div className='text-sm font-semibold text-secondary/70'>{numeral(orchardBalance).format('(0.00a)')} FUJI available in supply</div>
                         </div>
                         <div className="flex  space-x-3 items-center">
-                            <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                                {numeral(dollarsPerDay).format('($0.00a)')} / day
+                            <div onClick={() => setShowUSDPreview(t => !t)} className="z-30 bg-background border border-primary/40 rounded-full px-2 cursor-pointer">
+                                {amountPerDay} / day
                             </div>
                             <div onClick={handleCreatureSwitch} className='transition-all hover: cursor-pointer overflow-hidden border rounded-full hover:scale-110'><Image alt='creature icon' src={creatureIcon} className='rounded-full h-8 w-8' /></div>
                         </div>

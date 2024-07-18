@@ -42,7 +42,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({
 
   function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const tokensOutMin = (tokens6Dec * exchangeRate).toFixed(0)
+    const tokensOutMin = (tokens6Dec / exchangeRate).toFixed(0)
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
