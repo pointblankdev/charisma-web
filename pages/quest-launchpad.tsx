@@ -11,7 +11,7 @@ import Link from 'next/link';
 export default function QuestLaunchpad() {
     const meta = {
         title: 'Charisma | Quest Launchpad',
-        description: META_DESCRIPTION,
+        description: 'Get paid to integrate your project into the Charisma ecosystem.',
         image: '/governance/quest-helper.png'
     };
 
