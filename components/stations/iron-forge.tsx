@@ -380,3 +380,31 @@ export function SelectCreatureDialog({ disabled }: any) {
         </Dialog >
     )
 }
+
+
+
+const ActiveFarmIndicator = ({
+    active,
+    blocksUntilUnlock
+}: {
+    active: boolean;
+    blocksUntilUnlock: number;
+}) => {
+    return (
+        <TooltipProvider>
+            <Tooltip>
+                <TooltipTrigger>
+                    <div className={`pb-1 rounded-full ${active ? 'animate-pulse' : 'bg-yellow-500'}`}>🧑‍🌾</div>
+                </TooltipTrigger>
+                <TooltipContent
+                    className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
+                >
+                    {active
+                        ? 'Creatures are working the farm'
+                        : `No creatures availabe to work the farm.`
+                    }
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    );
+};
