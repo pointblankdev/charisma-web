@@ -248,7 +248,7 @@ export function SelectCreatureDialog({ data }: any) {
       functionName: "journey",
       functionArgs: [uintCV(creatureId)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.journey-of-discovery').willSendGte(1).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples", "index-token")],
+      postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
