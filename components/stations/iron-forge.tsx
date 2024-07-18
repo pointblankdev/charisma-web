@@ -29,6 +29,7 @@ import alchemistsImg from '@public/creatures/img/alchemists.png'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import energyIcon from '@public/creatures/img/energy.png'
+import ironIngots from '@public/indexes/iron-ingots-logo.png'
 
 export default function IronForgeCard({ data }: any) {
 
@@ -219,7 +220,7 @@ export function SelectCreatureDialog({ disabled }: any) {
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(1)],
             senderAddress: sender
-        }).then(response => setFarmerClaimableAmount(Number(cvToJSON(response).value)))
+        }).then(response => setFarmerClaimableAmount(Number(cvToJSON(response).value) / 1000000))
 
         callReadOnlyFunction({
             network: new StacksMainnet(),
@@ -228,7 +229,7 @@ export function SelectCreatureDialog({ disabled }: any) {
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(2)],
             senderAddress: sender
-        }).then(response => setBlacksmithClaimableAmount(Number(cvToJSON(response).value)))
+        }).then(response => setBlacksmithClaimableAmount(Number(cvToJSON(response).value) / 1000000))
 
         callReadOnlyFunction({
             network: new StacksMainnet(),
@@ -237,7 +238,7 @@ export function SelectCreatureDialog({ disabled }: any) {
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(3)],
             senderAddress: sender
-        }).then(response => setCorgiSoldierClaimableAmount(Number(cvToJSON(response).value)))
+        }).then(response => setCorgiSoldierClaimableAmount(Number(cvToJSON(response).value) / 1000000))
 
         callReadOnlyFunction({
             network: new StacksMainnet(),
@@ -246,7 +247,7 @@ export function SelectCreatureDialog({ disabled }: any) {
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(4)],
             senderAddress: sender
-        }).then(response => setAlchemistClaimableAmount(Number(cvToJSON(response).value)))
+        }).then(response => setAlchemistClaimableAmount(Number(cvToJSON(response).value) / 1000000))
 
     }, [sender])
 
@@ -302,8 +303,8 @@ export function SelectCreatureDialog({ disabled }: any) {
                         <h2 className='text-base text-primary-foreground'>Farmers</h2>
                         <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold mr-4'>
                             <Image
-                                alt={'Energy Icon'}
-                                src={energyIcon}
+                                alt={'Ingots Icon'}
+                                src={ironIngots}
                                 width={100}
                                 height={100}
                                 className={`z-30 border rounded-full h-6 w-6`}
@@ -323,8 +324,8 @@ export function SelectCreatureDialog({ disabled }: any) {
                         <h2 className='text-base text-primary-foreground'>Blacksmiths</h2>
                         <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold mr-4'>
                             <Image
-                                alt={'Energy Icon'}
-                                src={energyIcon}
+                                alt={'Ingots Icon'}
+                                src={ironIngots}
                                 width={100}
                                 height={100}
                                 className={`z-30 border rounded-full h-6 w-6`}
@@ -344,8 +345,8 @@ export function SelectCreatureDialog({ disabled }: any) {
                         <h2 className='text-base text-primary-foreground'>Corgi Soldiers</h2>
                         <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold mr-4'>
                             <Image
-                                alt={'Energy Icon'}
-                                src={energyIcon}
+                                alt={'Ingots Icon'}
+                                src={ironIngots}
                                 width={100}
                                 height={100}
                                 className={`z-30 border rounded-full h-6 w-6`}
@@ -365,8 +366,8 @@ export function SelectCreatureDialog({ disabled }: any) {
                         <h2 className='text-base text-primary-foreground'>Alchemists</h2>
                         <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold mr-4'>
                             <Image
-                                alt={'Energy Icon'}
-                                src={energyIcon}
+                                alt={'Ingots Icon'}
+                                src={ironIngots}
                                 width={100}
                                 height={100}
                                 className={`z-30 border rounded-full h-6 w-6`}
