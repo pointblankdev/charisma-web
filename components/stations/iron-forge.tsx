@@ -85,7 +85,7 @@ export default function IronForgeCard({ data }: any) {
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: 'ironworks-forge',
-            functionName: "get-blocks-until-next-epoch",
+            functionName: "get-epoch-ended",
             functionArgs: [],
             senderAddress: sender
         }).then(response => setBlocksUntilNextEpoch(Number(cvToJSON(response).value)))
