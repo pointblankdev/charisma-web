@@ -288,7 +288,7 @@ export function SelectCreatureDialog({ data }: any) {
                 height={100}
                 className={`z-30 border rounded-full h-6 w-6`}
               />
-              <div>{numeral(farmerClaimableAmount).format('0a')}</div>
+              <div>{numeral(farmerClaimableAmount).format('0.000000a')}</div>
             </div>
           </div>
           <div className='flex flex-col items-center space-y-2'>
@@ -309,7 +309,7 @@ export function SelectCreatureDialog({ data }: any) {
                 height={100}
                 className={`z-30 border rounded-full h-6 w-6`}
               />
-              <div>{numeral(blacksmithClaimableAmount).format('0a')}</div>
+              <div>{numeral(blacksmithClaimableAmount).format('0.000000a')}</div>
             </div>
           </div>
           <div className='flex flex-col items-center space-y-2'>
@@ -330,7 +330,7 @@ export function SelectCreatureDialog({ data }: any) {
                 height={100}
                 className={`z-30 border rounded-full h-6 w-6`}
               />
-              <div>{numeral(corgiSoldierClaimableAmount).format('0a')}</div>
+              <div>{numeral(corgiSoldierClaimableAmount).format('0.000000a')}</div>
             </div>
           </div>
           <div className='flex flex-col items-center space-y-2'>
@@ -351,7 +351,7 @@ export function SelectCreatureDialog({ data }: any) {
                 height={100}
                 className={`z-30 border rounded-full h-6 w-6`}
               />
-              <div>{numeral(alchemistClaimableAmount).format('0a')}</div>
+              <div>{numeral(alchemistClaimableAmount).format('0.000000a')}</div>
             </div>
           </div>
         </DialogDescription>
