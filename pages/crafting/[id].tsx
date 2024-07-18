@@ -29,7 +29,7 @@ import { cn } from '@lib/utils';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
 import millify from 'millify';
-import { Link1Icon } from '@radix-ui/react-icons';
+import { ArrowUpIcon, Link1Icon } from '@radix-ui/react-icons';
 import useWallet from '@lib/hooks/use-wallet-balances';
 import LiquidityControls from '@components/liquidity/controls';
 import velarApi from '@lib/velar-api';
@@ -39,12 +39,10 @@ import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, prin
 import { StacksMainnet } from "@stacks/network";
 import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
-import VerdantOrchardCard from '@components/stations/verdant-orchard';
-import BountifulOrchardCard from '@components/stations/bountiful-orchard';
-import AddLiquidityToIndex from '@components/craft/add-liquidity';
-import TranquilOrchardCard from '@components/stations/tranquil-orchard';
 import IronForgeCard from '@components/stations/iron-forge';
 import AbundantOrchardCard from '@components/stations/abundant-orchard';
+import { PiArrowFatLineDownFill, PiArrowFatLineUpFill } from "react-icons/pi";
+
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -95,7 +93,7 @@ export default function IndexDetailPage({ data }: Props) {
     }
   });
 
-  const tokensRequested = tokensSelected / Math.pow(10, data.decimals);
+  const tokensRequested = Number(Number(tokensSelected / Math.pow(10, data.decimals)).toFixed(data.decimals));
   const tokensRequired = data.metadata?.contains.map(
     (token: any) => tokensRequested * token.weight * Math.pow(10, 6 - token.decimals)
   );
@@ -108,6 +106,11 @@ export default function IndexDetailPage({ data }: Props) {
   const absValMin = Math.abs(-indexBalance / indexWeight)
 
   const fixedAmount = data.tokenPrice < 0.000001 ? 8 : data.tokenPrice < 1 ? 6 : 4
+
+  const indexTokensWithWeight = Math.abs(tokensRequested * indexWeight)
+
+  const indexFormat = indexTokensWithWeight < 1 ? '(0.000000)' : '(0,0.00a)'
+  const baseFormat = Math.abs(tokensRequired[0]) < 1 || Math.abs(tokensRequired[1]) < 1 ? '(0.000000)' : '(0,0.00a)'
 
   return (
     <Page meta={meta} fullViewport>
@@ -129,7 +132,7 @@ export default function IndexDetailPage({ data }: Props) {
                   <div className="z-30 bg-background border border-primary/40 rounded-full px-2 whitespace-nowrap">
                     ${Number(data.tokenPrice).toFixed(fixedAmount)} / {data.symbol}
                   </div>
-                  <div className="text-lg whitespace-nowrap">${millify(data.tvl)} TVL</div>
+                  <div className="text-lg whitespace-nowrap">${numeral(data.tvl).format('0a')} TVL</div>
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
                     blocksUntilUnlock={data.blocksUntilUnlock}
@@ -149,30 +152,20 @@ export default function IndexDetailPage({ data }: Props) {
                   </Link>
                 )}
                 <div className="grid grid-cols-4 gap-4 lg:grid-cols-6">
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <div className="relative">
-                          <Image
-                            alt={data.metadata.name}
-                            src={data.metadata.image}
-                            width={100}
-                            height={100}
-                            className="z-30 w-full border rounded-full"
-                          />
-                          {Math.abs(tokensRequested * indexWeight) > 0 && <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                            {numeral(Math.abs(tokensRequested * indexWeight)).format('(0.00a)')}
-                          </div>}
-                        </div>
-                      </TooltipTrigger>
-                      <TooltipContent
-                        side="bottom"
-                        className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
-                      >
-                        {numeral(Math.abs(tokensRequested * indexWeight)).format('(0,0.000000)')} {data.metadata.symbol}
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+
+                  <div className="relative">
+                    <Image
+                      alt={data.metadata.name}
+                      src={data.metadata.image}
+                      width={100}
+                      height={100}
+                      className="z-30 w-full border rounded-full"
+                    />
+                    {indexTokensWithWeight > 0 && <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                      {numeral(indexTokensWithWeight).format(indexFormat)}
+                      {tokensRequested > 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
+                    </div>}
+                  </div>
                 </div>
               </div>
             </CardHeader>
@@ -185,31 +178,19 @@ export default function IndexDetailPage({ data }: Props) {
                   </CardDescription>
                   <div className="z-20 grid grid-cols-4 gap-4 lg:grid-cols-6">
                     {data.baseTokens.map((token: any, k: any) => (
-                      <TooltipProvider>
-                        <Tooltip>
-                          <TooltipTrigger>
-                            <div className="z-20 relative">
-                              <Image
-                                alt={token.name}
-                                src={token.image}
-                                width={100}
-                                height={100}
-                                className="z-30 w-full border rounded-full"
-                              />
-                              {Math.abs(tokensRequired[k]) > 0 && <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                                {numeral(Math.abs(tokensRequired[k])).format('(0.00a)')}
-                              </div>}
-                            </div>
-                          </TooltipTrigger>
-                          <TooltipContent
-                            side="bottom"
-                            className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
-                          >
-                            {numeral(Math.abs(tokensRequired[k])).format(`(0,0.${'0'.repeat(token.decimals)})`)}{' '}
-                            {data.metadata.contains[k].symbol}
-                          </TooltipContent>
-                        </Tooltip>
-                      </TooltipProvider>
+                      <div className={`z-${20 - k} relative`}>
+                        <Image
+                          alt={token.name}
+                          src={token.image}
+                          width={100}
+                          height={100}
+                          className="z-20 w-full border rounded-full"
+                        />
+                        {Math.abs(indexTokensWithWeight) > 0 && <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                          {numeral(Math.abs(tokensRequired[k])).format(baseFormat)}
+                          {tokensRequired[k] < 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
+                        </div>}
+                      </div>
                     ))}
                   </div>
                 </div>
@@ -302,9 +283,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     // assign decimals to each base token
     metadata.contains.forEach((token: any) => {
-      const baseToken = prices.find((baseToken: any) => baseToken.contractAddress === token.address);
-      if (baseToken) {
-        token.decimals = Number(baseToken.decimal.slice(1));
+      const tokenOnVelar = prices.find((velarTokens: any) => velarTokens.contractAddress === token.address);
+      if (tokenOnVelar) {
+        token.decimals = Number(tokenOnVelar.decimal.slice(1));
+      } else {
+        token.decimals = 6;
       }
     })
 

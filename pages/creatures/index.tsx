@@ -29,7 +29,7 @@ import powerIcon from '@public/creatures/img/power.png'
 import numeral from 'numeral';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
-import { Toast } from '@components/ui/toast';
+import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 
 
 
@@ -95,6 +95,20 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       ],
       cardImage: {
         url: '/stations/apple-orchard.png'
+      },
+    },
+    {
+      title: "Journey of Discovery",
+      subtitle: "Spend your energy to gain experience.",
+      ticker: "EXP",
+      slug: "/apps/journey-of-discovery",
+      guild: {
+        logo: {
+          url: "/experience.png"
+        }
+      },
+      cardImage: {
+        url: journeyOfDiscovery
       },
     },
     {
