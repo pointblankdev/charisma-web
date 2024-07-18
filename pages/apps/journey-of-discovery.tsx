@@ -25,7 +25,7 @@ import { motion } from 'framer-motion';
 import odinsRaven from '@public/odins-raven/img/4.gif';
 import fenrirIcon from '@public/fenrir-icon-2.png';
 import goldEmbers from '@public/quests/gold-embers.gif'
-import journeyOfDiscovery from '@public/quests/journey-of-discovery-v1.png'
+import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 import experience from '@public/experience.png'
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from '@stacks/connect-react';
