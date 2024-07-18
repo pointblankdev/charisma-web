@@ -160,9 +160,9 @@ export default function IndexDetailPage({ data }: Props) {
                             height={100}
                             className="z-30 w-full border rounded-full"
                           />
-                          <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                          {Math.abs(tokensRequested * indexWeight) > 0 && <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
                             {numeral(Math.abs(tokensRequested * indexWeight)).format('(0.00a)')}
-                          </div>
+                          </div>}
                         </div>
                       </TooltipTrigger>
                       <TooltipContent
@@ -196,9 +196,9 @@ export default function IndexDetailPage({ data }: Props) {
                                 height={100}
                                 className="z-30 w-full border rounded-full"
                               />
-                              <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                              {Math.abs(tokensRequired[k]) > 0 && <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
                                 {numeral(Math.abs(tokensRequired[k])).format('(0.00a)')}
-                              </div>
+                              </div>}
                             </div>
                           </TooltipTrigger>
                           <TooltipContent
