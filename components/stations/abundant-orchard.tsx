@@ -167,7 +167,7 @@ export function SelectCreatureDialog({ data }: any) {
         callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'aboundant-orchard',
+            contractName: 'abundant-orchard',
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(1)],
             senderAddress: sender
@@ -176,7 +176,7 @@ export function SelectCreatureDialog({ data }: any) {
         callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'aboundant-orchard',
+            contractName: 'abundant-orchard',
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(2)],
             senderAddress: sender
@@ -185,7 +185,7 @@ export function SelectCreatureDialog({ data }: any) {
         callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'aboundant-orchard',
+            contractName: 'abundant-orchard',
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(3)],
             senderAddress: sender
@@ -194,7 +194,7 @@ export function SelectCreatureDialog({ data }: any) {
         callReadOnlyFunction({
             network: new StacksMainnet(),
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'aboundant-orchard',
+            contractName: 'abundant-orchard',
             functionName: "get-claimable-amount",
             functionArgs: [uintCV(4)],
             senderAddress: sender
