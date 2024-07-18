@@ -15,6 +15,7 @@ import Image from 'next/image';
 import energyIcon from '@public/creatures/img/energy.png'
 import experienceIcon from '@public/experience.png'
 import useWallet from '@lib/hooks/use-wallet-balances';
+import numeral from 'numeral';
 
 type Props = {
   children: React.ReactNode;
@@ -91,7 +92,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={100}
                   className={`z-30 border rounded-full h-6 w-6`}
                 />
-                <div>{energy}</div>
+                <div>{numeral(energy).format('0a')}</div>
               </div>
               <div className='flex items-center gap-2 text-lg text-muted/80 font-semibold pl-2 sm:absolute sm:right-40'>
                 <Image
@@ -101,7 +102,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={100}
                   className={`z-30 border rounded-full h-5 w-5`}
                 />
-                <div>{experience} EXP</div>
+                <div>{numeral(experience).format('0a')} EXP</div>
               </div>
               <ConnectWallet />
             </div>
