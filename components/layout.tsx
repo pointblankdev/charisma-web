@@ -37,13 +37,10 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   useEffect(() => {
     // get energy
-    let energy = 0
-    getClaimableAmount(1, sender).then((res) => { energy = + res }).then(
-      async () => await getClaimableAmount(2, sender).then((res) => { energy = + res }).then(
-        async () => await getClaimableAmount(3, sender).then((res) => { energy = + res }).then(
-          async () => await getClaimableAmount(4, sender).then((res) => { energy = + res }).then(
-            () => setEnergy(energy)
-          )
+    getClaimableAmount(1, sender).then((res) => { setEnergy(energy => energy + res) }).then(
+      async () => await getClaimableAmount(2, sender).then((res) => { setEnergy(energy => energy + res) }).then(
+        async () => await getClaimableAmount(3, sender).then((res) => { setEnergy(energy => energy + res) }).then(
+          async () => await getClaimableAmount(4, sender).then((res) => { setEnergy(energy => energy + res) })
         )
       )
     )
