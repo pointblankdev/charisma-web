@@ -67,12 +67,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
           url: '/indexes/iron-ingots-logo.png'
         }
       },
-      apps: [
-        {
-          slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.iron-ingots',
-          img: '/indexes/iron-ingots-bg.png'
-        }
-      ],
       cardImage: {
         url: '/indexes/iron-ingots-bg.png'
       },
@@ -87,30 +81,24 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
           url: '/stations/fuji-apples.png'
         }
       },
-      apps: [
-        {
-          slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
-          img: '/stations/apple-orchard.png'
-        }
-      ],
       cardImage: {
         url: '/stations/apple-orchard.png'
       },
     },
-    {
-      title: "Journey of Discovery",
-      subtitle: "Spend your energy to gain experience.",
-      ticker: "EXP",
-      slug: "/apps/journey-of-discovery",
-      guild: {
-        logo: {
-          url: "/experience.png"
-        }
-      },
-      cardImage: {
-        url: journeyOfDiscovery
-      },
-    },
+    // {
+    //   title: "Journey of Discovery",
+    //   subtitle: "Spend your energy to gain experience.",
+    //   ticker: "EXP",
+    //   slug: "/apps/journey-of-discovery",
+    //   guild: {
+    //     logo: {
+    //       url: "/experience.png"
+    //     }
+    //   },
+    //   cardImage: {
+    //     url: journeyOfDiscovery
+    //   },
+    // },
     {
       guild: {
         logo: {
