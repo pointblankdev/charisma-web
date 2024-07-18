@@ -74,16 +74,11 @@ export default function AbundantOrchardCard({ data }: any) {
                     <CardTitle className="z-30 text-sm font-semibold">
                         Abundant Orchard
                     </CardTitle>
-                    {farmers > 0 && <div className="flex space-x-3 items-center">
+                    <div className="flex space-x-3 items-center">
                         <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
                             {numeral(data.tokenPrice * farmers * 20000000 * 2 * power * 6 * 24 / Math.pow(10, data.decimals)).format('($0.00a)')} / day
                         </div>
-                        <div className="text-lg">{numeral(farmers).format('(0a)')}</div>
-                        <ActiveFarmIndicator
-                            active={true}
-                            blocksUntilUnlock={0}
-                        />
-                    </div>}
+                    </div>
                 </div>
                 <CardDescription className="z-30 text-xs sm:text-sm font-fine text-secondary/40 space-y-1">
                     <p>Farmers can harvest 2x more apples than other creature types in the abundant orchard.</p>
