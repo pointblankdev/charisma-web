@@ -34,7 +34,7 @@ export default function QuestLaunchpad() {
                             <h2 className="text-3xl font-semibold tracking-tight text-secondary">Here's How it Works</h2>
                             <div className="space-y-4">
                                 <p className='max-w-prose text-muted/90 font-light text-lg leading-snug'>
-                                    Leverage the flexible Creature power system to enable Charisma users to:
+                                    Leverage the powerful Charisma protocol to enable our users to:
                                 </p>
                                 <ul className='list-inside list-disc sm:text-md font-fine text-primary-foreground/60 space-y-2'>
                                     <li className='leading-tight'>Mint or buy from your NFT collections</li>
