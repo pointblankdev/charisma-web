@@ -118,7 +118,7 @@ export default function AbundantOrchardCard({ data }: any) {
                             </CardTitle>
                             <div className='text-sm font-semibold text-secondary/70'>{numeral(orchardBalance).format('(0.00a)')} FUJI available in supply</div>
                         </div>
-                        <div className="flex  space-x-3 items-center">
+                        <div className="flex space-x-3 items-center">
                             <div onClick={() => setShowUSDPreview(t => !t)} className="z-30 bg-background border border-primary/40 rounded-full px-2 cursor-pointer">
                                 {amountPerDay} / day
                             </div>

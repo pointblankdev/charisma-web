@@ -35,6 +35,8 @@ export default function IronForgeCard({ data }: any) {
 
     const [descriptionVisible, setDescriptionVisible] = useState(false);
 
+    const [creatureSelected, setCreatureSelected] = useState(1)
+
     const [blocksPerEpoch, setBlocksPerEpoch] = useState(0);
     const [supplyPerEpoch, setSupplyPerEpoch] = useState(0);
     const [currentEpoch, setCurrentEpoch] = useState(0);
@@ -42,6 +44,7 @@ export default function IronForgeCard({ data }: any) {
     const [epochProgress, setEpochProgress] = useState(0);
     const [supplyUtilization, setSupplyUtilization] = useState(0);
     const [epochPassed, setEpochPassed] = useState(false);
+    const [ingotBalance, setIngotBalance] = useState(0);
 
     const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
@@ -126,53 +129,47 @@ export default function IronForgeCard({ data }: any) {
         }).then(response => setEpochPassed(cvToJSON(response).value))
     }, [sender])
 
+    useEffect(() => {
+        sender && callReadOnlyFunction({
+            network: new StacksMainnet(),
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'iron-ingots',
+            functionName: "get-balance",
+            functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.ironworks-forge')],
+            senderAddress: sender
+        }).then((response: any) => setIngotBalance(Number(cvToJSON(response.value).value / 1000000)))
+    }, [sender])
+
+
     return (
         <Card className="flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4">
-                <div className="flex items-center justify-between">
-                    <CardTitle className="z-30 text-sm font-semibold">
-                        <div className="z-20">
-                            {descriptionVisible && (
-                                <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.ironworks-forge?chain=mainnet`} target='_blank'>
-                                    <CardDescription className="z-30 text-base font-fine text-primary-foreground flex items-end space-x-1">
-                                        <div>Iron Forge</div> <Link1Icon className="mb-0.5" />
-                                    </CardDescription>
-                                </Link>
-                            )}
-                        </div>
-                    </CardTitle>
+                <div className="flex items-start justify-between flex-row">
+                    <div>
+                        <CardTitle className="z-30 text-lg font-semibold">
+                            <Link href={`https://explorer.hiro.so/txid/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.ironworks-forge?chain=mainnet`} target='_blank'>
+                                <div className="z-30 text-primary-foreground flex items-center space-x-2">
+                                    <div>Quest: Forge Iron Ingots</div> <Link1Icon className="mt-0.5 text-primary-foreground/50" />
+                                </div>
+                            </Link>
+                        </CardTitle>
+                        <div className='text-sm font-semibold text-secondary/70'>{numeral(ingotBalance).format('(0.00a)')} IRON available in supply</div>
+                    </div>
+                    <ActiveFarmIndicator active={supplyUtilization < 100} blocksUntilUnlock={blocksUntilNextEpoch} />
                 </div>
-                <CardDescription className="z-30 text-sm sm:text-md font-fine text-secondary/40 space-y-1 pb-4">
-                    <p>Only a certain amount of Iron Ingots can be forged per epoch.</p>
-                    <p>Once they have all been forged, you must wait until the next epoch to start.</p>
+                <CardDescription className="z-30 text-xs space-y-2 py-4">
+                    <div className='text-base text-primary-foreground'>Quest Details</div>
+                    <ul className='list-inside list-disc sm:text-sm font-fine text-primary-foreground/60 space-y-2'>
+                        <li className='leading-tight'>Only {supplyPerEpoch / 1000000} Iron Ingots can be forged during each epoch.</li>
+                        <li className='leading-tight'>Each epoch is {blocksPerEpoch} blocks long, and it's currently epoch {currentEpoch}.</li>
+                        <li className='leading-tight'>The current epoch is {epochProgress}% complete, with {blocksUntilNextEpoch} blocks remaining.</li>
+                        <li className='leading-tight'>Blacksmiths forge 10x more Iron Ingots than other creatures.</li>
+                        {supplyUtilization < 100 && <li className='leading-tight'>{`So far this epoch, ${supplyUtilization}% of the Iron Ingots has been forged.`}</li>}
+                    </ul>
                 </CardDescription>
+                <div className="z-20">
+                    {/* <CardTitle className="z-30 mt-2 text-xl font-semibold">Yield Farming</CardTitle> */}
 
-
-                <div className="flex space-x-3 items-center text-sm sm:pb-2">
-                    <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        Blocks Per Epoch: {blocksPerEpoch}
-                    </div>
-                    <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        Supply Per Epoch: {supplyPerEpoch / 1000000} IRON
-                    </div>
-                </div>
-
-                <div className="flex space-x-3 items-center text-sm sm:pb-2">
-                    <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        Current Epoch: {currentEpoch}
-                    </div>
-                    <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        Blocks Until Next Epoch: {blocksUntilNextEpoch}
-                    </div>
-                </div>
-
-                <div className="flex space-x-3 items-center text-sm sm:pb-2">
-                    <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        Epoch Progress: {epochProgress}%
-                    </div>
-                    <div className="z-30 bg-background border border-primary/40 rounded-full px-2">
-                        Ingots Forged This Epoch: {supplyUtilization}%
-                    </div>
                 </div>
             </CardHeader>
             <CardFooter className="z-20 flex justify-between pb-4 px-4 items-end mt-auto flex-1">
@@ -394,17 +391,18 @@ const ActiveFarmIndicator = ({
         <TooltipProvider>
             <Tooltip>
                 <TooltipTrigger>
-                    <div className={`pb-1 rounded-full ${active ? 'animate-pulse' : 'bg-yellow-500'}`}>🧑‍🌾</div>
+                    <div className="relative w-4 h-4">
+                        <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'}`} />
+                        <div className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'}`} />
+                    </div>
                 </TooltipTrigger>
-                <TooltipContent
-                    className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
-                >
+                <TooltipContent className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}                >
                     {active
-                        ? 'Creatures are working the farm'
-                        : `No creatures availabe to work the farm.`
-                    }
+                        ? 'Iron Ingots can be forged during this epoch.'
+                        : `No more Iron Ingots can be forged this epoch. ${blocksUntilUnlock} blocks remaining.`}
                 </TooltipContent>
             </Tooltip>
         </TooltipProvider>
     );
 };
+
