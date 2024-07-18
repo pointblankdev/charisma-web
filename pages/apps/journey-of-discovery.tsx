@@ -121,7 +121,7 @@ export default function JourneyOfDiscovery({ data }: Props) {
               </div>
             </CardContent>
 
-            <CardFooter className="z-20 flex justify-between p-4 flex-grow items-end">
+            <CardFooter className="z-20 flex justify-between p-4 items-end">
 
               <Link href="/crafting">
                 <Button variant="ghost" className="z-30">
@@ -139,6 +139,7 @@ export default function JourneyOfDiscovery({ data }: Props) {
               className={cn(
                 'object-cover',
                 'opacity-10',
+                'aspect-[2/3]',
                 'flex',
                 'z-10',
                 'absolute',
