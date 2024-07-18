@@ -326,6 +326,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const tokenMetadata = await Promise.all(tokenMetadataPromises);
 
+
   const apps = [
     {
       guild: {
