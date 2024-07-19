@@ -178,15 +178,15 @@ export default function IndexDetailPage({ data }: Props) {
                   </CardDescription>
                   <div className="z-20 grid grid-cols-4 gap-4 lg:grid-cols-6">
                     {data.baseTokens.map((token: any, k: any) => (
-                      <div className={`z-${20 - k} relative`}>
+                      <div className={`z-${30 - k} relative`}>
                         <Image
                           alt={token.name}
                           src={token.image}
                           width={100}
                           height={100}
-                          className="z-20 w-full border rounded-full"
+                          className="z-20 w-full border rounded-full absolute"
                         />
-                        {Math.abs(indexTokensWithWeight) > 0 && <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                        {Math.abs(indexTokensWithWeight) > 0 && <div className="z-40 absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
                           {numeral(Math.abs(tokensRequired[k])).format(baseFormat)}
                           {tokensRequired[k] < 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
                         </div>}
