@@ -122,20 +122,6 @@ export default function OdinsRaven({ data }: Props) {
                       NFT
                     </div>
                   </div>
-
-                  {/* <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>{
-                        <motion.div initial="hidden" animate="visible" variants={fadeIn} className={cn('relative')}>
-                          <Image src={charismaToken} alt='charisma-token' className='z-30 w-full border border-white rounded-full' />
-                          <div className='absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground min-w-[24px]'>💧</div>
-                        </motion.div>
-                      }</TooltipTrigger>
-                      <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                        Raven NFT Holders can claim Charisma tokens from a private faucet.
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider> */}
                 </div>
               </div>
             </CardHeader>
@@ -220,27 +206,7 @@ export default function OdinsRaven({ data }: Props) {
 
               {descriptionVisible && (
                 <div className="flex items-center space-x-1">
-                  {/* <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger><ClaimFaucetButton tokensToClaim={lastClaimBlockHeight * dripAmount || 0} isHolder={true} /></TooltipTrigger>
-                    <TooltipContent className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}>
-                      Tokens are free to claim if you hold an Odin's Raven NFT.
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider> */}
-                  <TooltipProvider>
-                    <Tooltip>
-                      <TooltipTrigger>
-                        <MintRaven />
-                      </TooltipTrigger>
-                      <TooltipContent
-                        className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}
-                      >
-                        This mint is free, granted you possess the necessary amount of Fenrir
-                        tokens.
-                      </TooltipContent>
-                    </Tooltip>
-                  </TooltipProvider>
+                  <MintRaven />
                 </div>
               )}
             </CardFooter>
@@ -277,27 +243,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const { results } = await blocksApi.getBlockList({ limit: 1 });
 
-    // const lc: any = await callReadOnlyFunction({
-    //   network: new StacksMainnet(),
-    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    //   contractName: "raven-faucet",
-    //   functionName: "get-last-claim",
-    //   functionArgs: [],
-    //   senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-    // })
-
-    // const d: any = await callReadOnlyFunction({
-    //   network: new StacksMainnet(),
-    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    //   contractName: "raven-faucet",
-    //   functionName: "get-drip-amount",
-    //   functionArgs: [],
-    //   senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-    // })
-
     const data = {
-      // lastClaim: Number(lc.value.value),
-      // dripAmount: Number(d.value.value),
       latestBlock: results[0].height
     };
 
@@ -323,11 +269,11 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
         <TooltipTrigger>
           <div className="relative w-4 h-4">
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500 animate-ping' : 'bg-yellow-500'
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-red-500 animate-ping' : 'bg-yellow-500'
                 }`}
             />
             <div
-              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-green-500' : 'bg-yellow-500 animate-ping'
+              className={`absolute top-0 left-0 w-4 h-4 rounded-full ${active ? 'bg-red-500' : 'bg-yellow-500 animate-ping'
                 }`}
             />
           </div>
@@ -335,7 +281,7 @@ const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
         <TooltipContent
           className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}
         >
-          {active ? 'Minting is live' : 'Minting goes live on May 8th'}
+          {active ? 'Collection is minted out' : 'Minting goes live on May 8th'}
         </TooltipContent>
       </Tooltip>
     </TooltipProvider>

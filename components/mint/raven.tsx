@@ -39,7 +39,7 @@ const MintRaven = () => {
     }
 
     return (
-        <Button variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={mint}>Mint</Button>
+        <Button disabled variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30' onClick={mint}>Minted Out</Button>
     );
 };
 
