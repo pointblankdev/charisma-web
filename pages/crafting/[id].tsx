@@ -178,7 +178,7 @@ export default function IndexDetailPage({ data }: Props) {
                   </CardDescription>
                   <div className="z-20 grid grid-cols-4 gap-4 lg:grid-cols-6">
                     {data.baseTokens.map((token: any, k: any) => (
-                      <div className={`z-${20 - k} relative`}>
+                      <div className={`z-${25 - k} relative`}>
                         <Image
                           alt={token.name}
                           src={token.image}
