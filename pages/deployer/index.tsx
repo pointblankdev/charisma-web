@@ -48,6 +48,7 @@ const generateHeader = ({ name, sender, description }: any) => {
     return `;; Title: ${name}
 ;; Author: ${sender}
 ;; Created With Charisma
+;; https://charisma.rocks
 ;; Description:
 ;; ${description}
 

@@ -35,6 +35,7 @@ const generateTemplate = ({
 
 (define-constant err-unauthorized (err u401))
 (define-constant err-liquidity-lock (err u402))
+(define-constant err-forbidden (err u403))
 (define-constant err-not-token-owner (err u4))
 
 (define-constant contract (as-contract tx-sender))
@@ -53,14 +54,25 @@ const generateTemplate = ({
 (define-data-var blocks-per-tx uint u${Number(blocksPerTx).toFixed(0)})
 (define-data-var block-counter uint u0)
 
+(define-data-var required-exp-percentage uint (/ u100000 u1)) ;; 1% of total supply
+(define-data-var max-liquidity-flow uint (* u1000000 u1000)) ;; 1k tokens 
+
 ;; --- Authorization checks
 
 (define-private (is-dao-or-extension)
     (or (is-eq tx-sender 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master) (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master is-extension contract-caller))
 )
 
+(define-private (has-required-experience)
+    (unwrap-panic (contract-call? .experience has-percentage-balance (var-get required-exp-percentage) tx-sender))
+)
+
 (define-read-only (is-authorized)
 	(ok (asserts! (is-dao-or-extension) err-unauthorized))
+)
+
+(define-read-only (is-privileged)
+	(ok (asserts! (or (is-dao-or-extension) (has-required-experience)) err-forbidden))
 )
 
 (define-read-only (is-unlocked)
@@ -97,6 +109,20 @@ const generateTemplate = ({
 	)
 )
 
+(define-public (set-required-exp-percentage (new-required-exp-percentage uint))
+	(begin
+		(try! (is-authorized))
+		(ok (var-set required-exp-percentage new-required-exp-percentage))
+	)
+)
+
+(define-public (set-max-liquidity-flow (new-max-liquidity-flow uint))
+	(begin
+		(try! (is-authorized))
+		(ok (var-set max-liquidity-flow new-max-liquidity-flow))
+	)
+)
+
 (define-public (set-token-uri (new-uri (optional (string-utf8 256))))
 	(begin
 		(try! (is-authorized))
@@ -118,12 +144,15 @@ const generateTemplate = ({
 (define-public (add-liquidity (amount uint))
     (let
         (
-            (amount-a (* amount token-a-ratio))
-            (amount-b (* amount token-b-ratio))
-            (amount-index (* amount index-token-ratio))
+            (privileged (is-privileged))
+            (max-flow (var-get max-liquidity-flow))
+            (amount-in (if (and (not privileged) (> amount max-flow)) max-flow amount))
+            (amount-a (* amount-in token-a-ratio))
+            (amount-b (* amount-in token-b-ratio))
+            (amount-index (* amount-in index-token-ratio))
         )
         (if 
-            (is-dao-or-extension)
+            privileged
             true
             (begin
                 (try! (is-unlocked))
@@ -146,12 +175,15 @@ const generateTemplate = ({
     (let
         (
             (sender tx-sender)
-            (amount-a (* amount token-a-ratio))
-            (amount-b (* amount token-b-ratio))
-            (amount-index (* amount index-token-ratio))
+            (privileged (is-privileged))
+            (max-flow (var-get max-liquidity-flow))
+            (amount-in (if (and (not privileged) (> amount max-flow)) max-flow amount))
+            (amount-a (* amount-in token-a-ratio))
+            (amount-b (* amount-in token-b-ratio))
+            (amount-index (* amount-in index-token-ratio))
         )
         (if 
-            (is-dao-or-extension)
+            privileged
             true
             (begin
                 (try! (is-unlocked))
@@ -202,6 +234,14 @@ const generateTemplate = ({
         (asserts! (< block-height (+ unlock-block (var-get block-counter))) (ok u0))
 	    (ok (- (+ unlock-block (var-get block-counter)) block-height))
     )
+)
+
+(define-read-only (get-required-exp-percentage)
+	(ok (var-get required-exp-percentage))
+)
+
+(define-read-only (get-max-liquidity-flow)
+	(ok (var-get max-liquidity-flow))
 )
 
 ;; --- SIP-010 FT Trait

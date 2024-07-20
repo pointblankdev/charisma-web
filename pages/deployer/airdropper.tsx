@@ -3,7 +3,7 @@ import { UploadCloud } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 
 const MAX_LIST_LENGTH = 200;
-const DEFAULT_TOKEN_AMOUNT = 1000000;
+const DEFAULT_TOKEN_AMOUNT = 25000000;
 
 const generateTemplate = (parsedAddresses: any[]) => {
   const chunkedAddresses = chunkArray(parsedAddresses, MAX_LIST_LENGTH);
@@ -130,9 +130,8 @@ export default function AirdropTemplate({
 
   return (
     <div
-      className={`w-full h-48 border rounded-lg flex items-center justify-center cursor-pointer ${
-        isDragging ? 'bg-primary/10 animate-pulse' : ''
-      }`}
+      className={`w-full h-48 border rounded-lg flex items-center justify-center cursor-pointer ${isDragging ? 'bg-primary/10 animate-pulse' : ''
+        }`}
       onDragEnter={handleDragEnter}
       onDragLeave={handleDragLeave}
       onDragOver={handleDragOver}
