@@ -59,12 +59,12 @@ const generateTemplate = ({
 
 ;; --- Authorization checks
 
-(define-private (is-dao-or-extension)
+(define-read-only (is-dao-or-extension)
     (or (is-eq tx-sender 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master) (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master is-extension contract-caller))
 )
 
-(define-private (has-required-experience)
-    (unwrap-panic (contract-call? .experience has-percentage-balance (var-get required-exp-percentage) tx-sender))
+(define-read-only (has-required-experience (who principal))
+    (unwrap-panic (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience has-percentage-balance who (var-get required-exp-percentage)))
 )
 
 (define-read-only (is-authorized)
@@ -72,7 +72,7 @@ const generateTemplate = ({
 )
 
 (define-read-only (is-privileged)
-	(ok (asserts! (or (is-dao-or-extension) (has-required-experience)) err-forbidden))
+	(ok (asserts! (or (is-dao-or-extension) (has-required-experience tx-sender)) err-forbidden))
 )
 
 (define-read-only (is-unlocked)
@@ -144,7 +144,7 @@ const generateTemplate = ({
 (define-public (add-liquidity (amount uint))
     (let
         (
-            (privileged (is-privileged))
+            (privileged (try! (is-privileged)))
             (max-flow (var-get max-liquidity-flow))
             (amount-in (if (and (not privileged) (> amount max-flow)) max-flow amount))
             (amount-a (* amount-in token-a-ratio))
@@ -175,7 +175,7 @@ const generateTemplate = ({
     (let
         (
             (sender tx-sender)
-            (privileged (is-privileged))
+            (privileged (try! (is-privileged)))
             (max-flow (var-get max-liquidity-flow))
             (amount-in (if (and (not privileged) (> amount max-flow)) max-flow amount))
             (amount-a (* amount-in token-a-ratio))

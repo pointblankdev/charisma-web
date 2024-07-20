@@ -53,10 +53,28 @@ export default function IndexDetailPage({ data }: Props) {
 
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [tokensSelected, setTokensSelected] = useState(0);
+  const [isPrivileged, setIsPrivileged] = useState(false);
 
   useEffect(() => {
     setDescriptionVisible(true);
   }, []);
+
+  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+
+  console.log(isPrivileged)
+
+  useEffect(() => {
+    if (data.contractName === 'leo-unchained') {
+      sender && callReadOnlyFunction({
+        network: new StacksMainnet(),
+        contractAddress: data.contractAddress,
+        contractName: data.contractName,
+        functionName: "isPrivileged",
+        functionArgs: [],
+        senderAddress: sender
+      }).then(response => setIsPrivileged(cvToJSON(response).value))
+    }
+  }, [data.contractAddress, data.contractName, sender])
 
   const fadeIn = {
     hidden: { opacity: 0 },
@@ -212,6 +230,7 @@ export default function IndexDetailPage({ data }: Props) {
                     indexWeight={indexWeight}
                     tokensRequested={tokensRequested * indexWeight}
                     tokensRequired={tokensRequired}
+                    isPrivileged={isPrivileged}
                     data={data}
                   />
                 )}
@@ -261,6 +280,7 @@ type Props = {
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: any) => {
   try {
+    const contractAddress = params?.id.split('.')[0];
     const contractName = params?.id.split('.')[1];
 
     // get token metadata from Stacks API + metadata URL
@@ -370,6 +390,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     const data = {
       address: params?.id,
+      contractAddress: contractAddress,
+      contractName: contractName,
       metadata: metadata,
       totalSupply: totalSupply,
       symbol: symbol,
