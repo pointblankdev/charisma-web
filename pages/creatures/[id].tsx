@@ -105,7 +105,7 @@ export default function IndexDetailPage({ creature }: InferGetStaticPropsType<ty
                                         {creature?.subtitle}
                                     </CardDescription>
                                 </div>
-                                <Link href={creature?.poolLink} className='mt-2 hover:underline' target='_blank'>
+                                <Link href={creature?.poolLink} className='mt-2 hover:underline text-sm' target='_blank'>
                                     Get {creature?.requiredToken} tokens here
                                 </Link>
                             </div>
