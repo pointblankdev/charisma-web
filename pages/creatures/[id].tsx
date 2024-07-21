@@ -61,6 +61,7 @@ type Creature = {
     subtitle: string;
     flavorText: string;
     slug: string;
+    poolLink: string;
 };
 
 export default function IndexDetailPage({ creature }: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -104,6 +105,9 @@ export default function IndexDetailPage({ creature }: InferGetStaticPropsType<ty
                                         {creature?.subtitle}
                                     </CardDescription>
                                 </div>
+                                <Link href={creature?.poolLink} className='mt-2 hover:underline' target='_blank'>
+                                    Get {creature?.requiredToken} tokens here
+                                </Link>
                             </div>
 
                         </CardHeader>
@@ -187,6 +191,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Pr
             cost: 0,
             power: 0,
             tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
+            poolLink: 'https://app.velar.com/pool/STX-wCHA',
             flavorText: 'Farmers are the backbone of healthy economy. Farmers excel at harvesting FUJI tokens, making them a suitable choice for those looking to maximize profitablity. Their earnings are consistant and predictable.'
         },
         {
@@ -198,6 +203,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Pr
             cost: 0,
             power: 0,
             tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha',
+            poolLink: 'https://app.velar.com/pool/STX-sCHA',
             flavorText: 'Blacksmiths are skilled craftsmen who excel at forging essential materials required for crafting and building.'
         },
         {
@@ -209,6 +215,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Pr
             cost: 0,
             power: 0,
             tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
+            poolLink: 'https://app.velar.com/pool/STX-iCC',
             flavorText: 'Corgi Soldiers are loyal and fierce warriors who are known to charge head-first into battle. Corgi Soldiers are able to defeat powerful foes with ease. Their high power-to-cost ratio makes them a well rounded choice for any situation.'
         },
         {
@@ -220,6 +227,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Pr
             cost: 0,
             power: 0,
             tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
+            poolLink: 'https://app.velar.com/pool/STX-iMM',
             flavorText: 'Alchemists are masters of potions and elixirs.'
         },
     ]
