@@ -60,6 +60,7 @@ type Creature = {
     tokenContract: string;
     subtitle: string;
     flavorText: string;
+    slug: string;
 };
 
 export default function IndexDetailPage({ creature }: InferGetStaticPropsType<typeof getStaticProps>) {
@@ -224,14 +225,34 @@ const creatures = [
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Promise<GetStaticPropsResult<Props>> => {
 
-    const creatureId = await params.id;
-    const creature = creatures[creatureId - 1];
-    creature.cost = await getCreatureCost(creatureId)
-    creature.power = await getCreaturePower(creatureId)
+    try {
+        const creatureId = await params.id;
+        const creature = creatures[creatureId - 1];
+        creature.cost = await getCreatureCost(creatureId)
+        creature.power = await getCreaturePower(creatureId)
 
-    return {
-        props: { creature }
-    };
+        return {
+            props: { creature }
+        };
+
+    } catch (error) {
+        console.error(error);
+        return {
+            props: {
+                creature: {
+                    title: '...',
+                    subtitle: '...',
+                    slug: '/creatures/farmers',
+                    cardImage: '/creatures/img/farmers.png',
+                    requiredToken: 'STX-wCHA LP',
+                    cost: 0,
+                    power: 0,
+                    tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
+                    flavorText: 'Farmers are the backbone of healthy economy. Farmers excel at harvesting FUJI tokens, making them a suitable choice for those looking to maximize profitablity. Their earnings are consistant and predictable.'
+                }
+            }
+        };
+    }
 };
 
 export const getStaticPaths = () => {
