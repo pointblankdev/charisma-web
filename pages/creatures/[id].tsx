@@ -232,7 +232,8 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Pr
         creature.power = await getCreaturePower(creatureId)
 
         return {
-            props: { creature }
+            props: { creature },
+            revalidate: 6000
         };
 
     } catch (error) {
