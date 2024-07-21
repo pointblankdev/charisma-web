@@ -175,58 +175,57 @@ export default function IndexDetailPage({ creature }: InferGetStaticPropsType<ty
 
 }
 
-const creatures = [
-    {
-        title: 'Farmers',
-        subtitle: 'Honest and humble farmers.',
-        slug: '/creatures/farmers',
-        cardImage: '/creatures/img/farmers.png',
-        requiredToken: 'STX-wCHA LP',
-        cost: 0,
-        power: 0,
-        tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
-        flavorText: 'Farmers are the backbone of healthy economy. Farmers excel at harvesting FUJI tokens, making them a suitable choice for those looking to maximize profitablity. Their earnings are consistant and predictable.'
-    },
-    {
-        title: 'Blacksmiths',
-        subtitle: 'Forgers of crafting materials, weapons and armor.',
-        slug: '/creatures/blacksmiths',
-        cardImage: '/creatures/img/blacksmiths.png',
-        requiredToken: 'STX-sCHA LP',
-        cost: 0,
-        power: 0,
-        tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha',
-        flavorText: 'Blacksmiths are skilled craftsmen who excel at forging essential materials required for crafting and building.'
-    },
-    {
-        title: 'Corgi Soldiers',
-        subtitle: 'Loyal and fierce warriors.',
-        slug: '/creatures/corgi-soldiers',
-        cardImage: '/creatures/img/corgi-soldiers.png',
-        requiredToken: 'STX-iCC LP',
-        cost: 0,
-        power: 0,
-        tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
-        flavorText: 'Corgi Soldiers are loyal and fierce warriors who are known to charge head-first into battle. Corgi Soldiers are able to defeat powerful foes with ease. Their high power-to-cost ratio makes them a well rounded choice for any situation.'
-    },
-    {
-        title: 'Alchemists',
-        subtitle: 'Masters of potions and elixirs.',
-        slug: '/creatures/alchemists',
-        cardImage: '/creatures/img/alchemists.png',
-        requiredToken: 'STX-iMM LP',
-        cost: 0,
-        power: 0,
-        tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
-        flavorText: 'Alchemists are masters of potions and elixirs.'
-    },
-]
-
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Promise<GetStaticPropsResult<Props>> => {
+    const creatures = [
+        {
+            title: 'Farmers',
+            subtitle: 'Honest and humble farmers.',
+            slug: '/creatures/farmers',
+            cardImage: '/creatures/img/farmers.png',
+            requiredToken: 'STX-wCHA LP',
+            cost: 0,
+            power: 0,
+            tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
+            flavorText: 'Farmers are the backbone of healthy economy. Farmers excel at harvesting FUJI tokens, making them a suitable choice for those looking to maximize profitablity. Their earnings are consistant and predictable.'
+        },
+        {
+            title: 'Blacksmiths',
+            subtitle: 'Forgers of crafting materials, weapons and armor.',
+            slug: '/creatures/blacksmiths',
+            cardImage: '/creatures/img/blacksmiths.png',
+            requiredToken: 'STX-sCHA LP',
+            cost: 0,
+            power: 0,
+            tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha',
+            flavorText: 'Blacksmiths are skilled craftsmen who excel at forging essential materials required for crafting and building.'
+        },
+        {
+            title: 'Corgi Soldiers',
+            subtitle: 'Loyal and fierce warriors.',
+            slug: '/creatures/corgi-soldiers',
+            cardImage: '/creatures/img/corgi-soldiers.png',
+            requiredToken: 'STX-iCC LP',
+            cost: 0,
+            power: 0,
+            tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
+            flavorText: 'Corgi Soldiers are loyal and fierce warriors who are known to charge head-first into battle. Corgi Soldiers are able to defeat powerful foes with ease. Their high power-to-cost ratio makes them a well rounded choice for any situation.'
+        },
+        {
+            title: 'Alchemists',
+            subtitle: 'Masters of potions and elixirs.',
+            slug: '/creatures/alchemists',
+            cardImage: '/creatures/img/alchemists.png',
+            requiredToken: 'STX-iMM LP',
+            cost: 0,
+            power: 0,
+            tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
+            flavorText: 'Alchemists are masters of potions and elixirs.'
+        },
+    ]
 
     try {
-        const creatureId = await params.id;
+        const creatureId = Number(params.id);
         const creature = creatures[creatureId - 1];
         creature.cost = await getCreatureCost(creatureId)
         creature.power = await getCreaturePower(creatureId)
