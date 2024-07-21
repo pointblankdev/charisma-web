@@ -64,7 +64,8 @@ type Creature = {
     poolLink: string;
 };
 
-export default function IndexDetailPage({ creature }: InferGetStaticPropsType<typeof getStaticProps>) {
+// export default function IndexDetailPage({ creature }: InferGetStaticPropsType<typeof getStaticProps>) {
+export default function IndexDetailPage({ creature }: { creature: Creature }) {
     const meta = {
         title: `Charisma | ${creature?.title}`,
         description: META_DESCRIPTION,
@@ -180,7 +181,8 @@ export default function IndexDetailPage({ creature }: InferGetStaticPropsType<ty
 }
 
 
-export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Promise<GetStaticPropsResult<Props>> => {
+// export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Promise<GetStaticPropsResult<Props>> => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: any) => {
     const creatures = [
         {
             title: 'Farmers',
@@ -243,17 +245,17 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Pr
     };
 };
 
-export const getStaticPaths = () => {
-    return {
-        paths: [
-            { params: { id: '1' } },
-            { params: { id: '2' } },
-            { params: { id: '3' } },
-            { params: { id: '4' } },
-        ],
-        fallback: false, // false or "blocking"
-    }
-}
+// export const getStaticPaths = () => {
+//     return {
+//         paths: [
+//             { params: { id: '1' } },
+//             { params: { id: '2' } },
+//             { params: { id: '3' } },
+//             { params: { id: '4' } },
+//         ],
+//         fallback: false, // false or "blocking"
+//     }
+// }
 
 export function CostInfoDialog({ creature }: any) {
     return (
