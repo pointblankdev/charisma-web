@@ -241,7 +241,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     return {
         props: { creature },
-        revalidate: 6000
+        // revalidate: 6000
     };
 };
 
