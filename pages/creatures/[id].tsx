@@ -65,9 +65,9 @@ type Creature = {
 
 export default function IndexDetailPage({ creature }: InferGetStaticPropsType<typeof getStaticProps>) {
     const meta = {
-        title: `Charisma | ${creature.title}`,
+        title: `Charisma | ${creature?.title}`,
         description: META_DESCRIPTION,
-        image: creature.cardImage
+        image: creature?.cardImage
     };
 
     const [descriptionVisible, setDescriptionVisible] = useState(false);
@@ -99,9 +99,9 @@ export default function IndexDetailPage({ creature }: InferGetStaticPropsType<ty
                         <CardHeader className="z-20 p-4">
                             <div className="flex items-start justify-between">
                                 <div>
-                                    <CardTitle className="z-30 text-4xl font-semibold">{creature.title}</CardTitle>
+                                    <CardTitle className="z-30 text-4xl font-semibold">{creature?.title}</CardTitle>
                                     <CardDescription className="z-30 pb-6 text-md font-fine text-foreground">
-                                        {creature.subtitle}
+                                        {creature?.subtitle}
                                     </CardDescription>
                                 </div>
                             </div>
@@ -224,35 +224,15 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }: any): Pr
         },
     ]
 
-    try {
-        const creatureId = Number(params.id);
-        const creature = creatures[creatureId - 1];
-        creature.cost = await getCreatureCost(creatureId)
-        creature.power = await getCreaturePower(creatureId)
+    const creatureId = Number(params.id);
+    const creature = creatures[creatureId - 1];
+    creature.cost = await getCreatureCost(creatureId)
+    creature.power = await getCreaturePower(creatureId)
 
-        return {
-            props: { creature },
-            revalidate: 6000
-        };
-
-    } catch (error) {
-        console.error(error);
-        return {
-            props: {
-                creature: {
-                    title: '...',
-                    subtitle: '...',
-                    slug: '/creatures/farmers',
-                    cardImage: '/creatures/img/farmers.png',
-                    requiredToken: 'STX-wCHA LP',
-                    cost: 0,
-                    power: 0,
-                    tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
-                    flavorText: 'Farmers are the backbone of healthy economy. Farmers excel at harvesting FUJI tokens, making them a suitable choice for those looking to maximize profitablity. Their earnings are consistant and predictable.'
-                }
-            }
-        };
-    }
+    return {
+        props: { creature },
+        revalidate: 6000
+    };
 };
 
 export const getStaticPaths = () => {
@@ -263,7 +243,7 @@ export const getStaticPaths = () => {
             { params: { id: '3' } },
             { params: { id: '4' } },
         ],
-        fallback: true, // false or "blocking"
+        fallback: false, // false or "blocking"
     }
 }
 

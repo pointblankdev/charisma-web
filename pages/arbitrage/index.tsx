@@ -44,7 +44,7 @@ export default function ArbitrageInsights({ data }: Props) {
     image: '/liquid-charisma.png'
   };
 
-  console.log(data.tickers)
+  // console.log(data.tickers)
 
   console.log(data.tickers.filter((t: any) => t.ticker_id.includes('wrapped-charisma')
     || t.ticker_id.includes('liquid-staked-charisma')
