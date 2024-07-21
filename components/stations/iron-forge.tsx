@@ -140,7 +140,6 @@ export default function IronForgeCard({ data }: any) {
         }).then((response: any) => setIngotBalance(Number(cvToJSON(response.value).value / 1000000)))
     }, [sender])
 
-
     return (
         <Card className="flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4">
@@ -155,7 +154,7 @@ export default function IronForgeCard({ data }: any) {
                         </CardTitle>
                         <div className='text-sm font-semibold text-secondary/70'>{numeral(ingotBalance).format('(0.00a)')} IRON available in supply</div>
                     </div>
-                    <ActiveFarmIndicator active={supplyUtilization < 100} blocksUntilUnlock={blocksUntilNextEpoch} />
+                    <ActiveFarmIndicator active={!(supplyUtilization >= 100 && !epochPassed)} blocksUntilUnlock={blocksUntilNextEpoch} />
                 </div>
                 <CardDescription className="z-30 text-xs space-y-2 py-4">
                     <div className='text-base text-primary-foreground'>Quest Details</div>
@@ -210,41 +209,43 @@ export function SelectCreatureDialog({ disabled }: any) {
 
     useEffect(() => {
 
-        callReadOnlyFunction({
-            network: new StacksMainnet(),
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'ironworks-forge',
-            functionName: "get-claimable-amount",
-            functionArgs: [uintCV(1)],
-            senderAddress: sender
-        }).then(response => setFarmerClaimableAmount(Number(cvToJSON(response).value) / 1000000))
+        if (sender) {
+            callReadOnlyFunction({
+                network: new StacksMainnet(),
+                contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+                contractName: 'ironworks-forge',
+                functionName: "get-claimable-amount",
+                functionArgs: [uintCV(1)],
+                senderAddress: sender
+            }).then(response => setFarmerClaimableAmount(Number(cvToJSON(response).value) / 1000000))
 
-        callReadOnlyFunction({
-            network: new StacksMainnet(),
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'ironworks-forge',
-            functionName: "get-claimable-amount",
-            functionArgs: [uintCV(2)],
-            senderAddress: sender
-        }).then(response => setBlacksmithClaimableAmount(Number(cvToJSON(response).value) / 1000000))
+            callReadOnlyFunction({
+                network: new StacksMainnet(),
+                contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+                contractName: 'ironworks-forge',
+                functionName: "get-claimable-amount",
+                functionArgs: [uintCV(2)],
+                senderAddress: sender
+            }).then(response => setBlacksmithClaimableAmount(Number(cvToJSON(response).value) / 1000000))
 
-        callReadOnlyFunction({
-            network: new StacksMainnet(),
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'ironworks-forge',
-            functionName: "get-claimable-amount",
-            functionArgs: [uintCV(3)],
-            senderAddress: sender
-        }).then(response => setCorgiSoldierClaimableAmount(Number(cvToJSON(response).value) / 1000000))
+            callReadOnlyFunction({
+                network: new StacksMainnet(),
+                contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+                contractName: 'ironworks-forge',
+                functionName: "get-claimable-amount",
+                functionArgs: [uintCV(3)],
+                senderAddress: sender
+            }).then(response => setCorgiSoldierClaimableAmount(Number(cvToJSON(response).value) / 1000000))
 
-        callReadOnlyFunction({
-            network: new StacksMainnet(),
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'ironworks-forge',
-            functionName: "get-claimable-amount",
-            functionArgs: [uintCV(4)],
-            senderAddress: sender
-        }).then(response => setAlchemistClaimableAmount(Number(cvToJSON(response).value) / 1000000))
+            callReadOnlyFunction({
+                network: new StacksMainnet(),
+                contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+                contractName: 'ironworks-forge',
+                functionName: "get-claimable-amount",
+                functionArgs: [uintCV(4)],
+                senderAddress: sender
+            }).then(response => setAlchemistClaimableAmount(Number(cvToJSON(response).value) / 1000000))
+        }
 
     }, [sender])
 

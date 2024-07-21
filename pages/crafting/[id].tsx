@@ -195,7 +195,7 @@ export default function IndexDetailPage({ data }: Props) {
                   <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
                     These tokens will be staked to mint {data.symbol} index tokens
                   </CardDescription>
-                  <div className="z-20 grid grid-cols-4 gap-4 lg:grid-cols-6">
+                  <div className="z-20 grid grid-cols-4 gap-4 lg:grid-cols-6 h-48">
                     {data.baseTokens.map((token: any, k: any) => (
                       <div className={`z-${30 - k} relative`}>
                         <Image
@@ -259,13 +259,13 @@ export default function IndexDetailPage({ data }: Props) {
           </Card>
 
           <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
-            {isApples &&
+            {descriptionVisible && isApples &&
               <AbundantOrchardCard data={data} />
             }
           </div>
 
           <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
-            {isIron &&
+            {descriptionVisible && isIron &&
               <IronForgeCard data={data} />
             }
           </div>
