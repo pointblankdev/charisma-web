@@ -196,7 +196,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: { url: '/creatures/img/farmers.png' },
       requiredToken: 'STX-wCHA LP',
       cost: await getCreatureCost(1),
-      power: await getCreaturePower(1),
       energy: 0,
       dailyYield: 7,
       amount: 0,
@@ -210,7 +209,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: { url: '/creatures/img/blacksmiths.png' },
       requiredToken: 'STX-sCHA LP',
       cost: await getCreatureCost(2),
-      power: await getCreaturePower(2),
       dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha',
@@ -223,7 +221,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: { url: '/creatures/img/corgi-soldiers.png' },
       requiredToken: 'STX-iCC LP',
       cost: await getCreatureCost(3),
-      power: await getCreaturePower(3),
       dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
@@ -238,7 +235,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       },
       requiredToken: 'STX-iMM LP',
       cost: await getCreatureCost(4),
-      power: await getCreaturePower(4),
       dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
@@ -657,51 +653,6 @@ export function CreatureInfoDialog({ creature }: any) {
     </Dialog >
   )
 }
-
-
-export function PowerInfoDialog({ creature }: any) {
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <div className="z-20 relative cursor-pointer">
-          <Image
-            alt={creature.title}
-            src={powerIcon}
-            width={100}
-            height={100}
-            className="z-30 border rounded-full h-10 w-10 hover:scale-110 transition-all"
-          />
-          <div className="absolute px-1 font-bold rounded-full -top-1 -right-2 text-xs bg-background text-accent min-w-5 text-center">
-            {numeral(creature.power).format('(0a)')}
-          </div>
-        </div>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
-        <AlertDialogHeader>
-          <DialogTitle>Creature Power</DialogTitle>
-          <div className='flex items-center space-x-4'>
-
-            <Image
-              alt={creature.title}
-              src={powerIcon}
-              width={100}
-              height={100}
-              className="z-30 border rounded-full h-16 w-16 hover:scale-110 transition-all"
-            />
-            <DialogDescription className='text-sm py-4 space-y-2'>
-              <p>Each creature type has a power rating that determines how much energy each creature generates per block.</p>
-            </DialogDescription>
-          </div>
-        </AlertDialogHeader>
-
-        <DialogFooter>
-          {creature.title} have a power rating of {numeral(creature.power).format('0a')}.
-        </DialogFooter>
-      </DialogContent>
-    </Dialog >
-  )
-}
-
 
 export function EnergyInfoDialog({ creature }: any) {
   return (
