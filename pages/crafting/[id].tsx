@@ -43,6 +43,9 @@ import IronForgeCard from '@components/stations/iron-forge';
 import AbundantOrchardCard from '@components/stations/abundant-orchard';
 import { PiArrowFatLineDownFill, PiArrowFatLineUpFill } from "react-icons/pi";
 
+type Props = {
+  data: any;
+};
 
 export default function IndexDetailPage({ data }: Props) {
   const meta = {
@@ -61,18 +64,16 @@ export default function IndexDetailPage({ data }: Props) {
 
   const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
-  console.log(isPrivileged)
-
   useEffect(() => {
     if (data.contractName === 'leo-unchained') {
       sender && callReadOnlyFunction({
         network: new StacksMainnet(),
         contractAddress: data.contractAddress,
         contractName: data.contractName,
-        functionName: "isPrivileged",
+        functionName: "is-privileged",
         functionArgs: [],
         senderAddress: sender
-      }).then(response => setIsPrivileged(cvToJSON(response).value))
+      }).then(response => setIsPrivileged(cvToJSON(response).value.value))
     }
   }, [data.contractAddress, data.contractName, sender])
 
@@ -273,10 +274,6 @@ export default function IndexDetailPage({ data }: Props) {
     </Page >
   );
 }
-
-type Props = {
-  data: any;
-};
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: any) => {
   try {

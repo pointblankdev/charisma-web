@@ -18,6 +18,13 @@ const velarApi = {
                 price: data.find((token: any) => token.symbol === 'PEPE')?.price,
                 decimal: 'u3',
             })
+            data.push({
+                symbol: 'sLEO',
+                name: 'Liquid Staked Leo',
+                contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo',
+                price: data.find((token: any) => token.symbol === 'LEO')?.price,
+                decimal: 'u6',
+            })
         }
         return data
     },

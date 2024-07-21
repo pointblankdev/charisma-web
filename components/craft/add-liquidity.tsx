@@ -38,7 +38,7 @@ const AddLiquidityToIndex = ({ amount, address, metadata }: { amount: number, ad
     }
 
     function addLiquidity() {
-        const postConditions = metadata.contains.map((item: any) => Pc.principal(sender).willSendEq(Number(tokens) * Number(item.weight)).ft(item.address, item.ft));
+        const postConditions = metadata.contains.map((item: any) => Pc.principal(sender).willSendLte(Number(tokens) * Number(item.weight)).ft(item.address, item.ft));
         const combinedPostConditions: any[] = combinePostConditions(postConditions);
 
         doContractCall({

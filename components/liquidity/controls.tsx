@@ -1,7 +1,7 @@
 import { Slider } from '@components/ui/slider';
 import AddLiquidityToIndex from '@components/craft/add-liquidity';
 import RemoveLiquidityFromIndex from '@components/salvage/remove-liquidity';
-import { TimerOffIcon } from 'lucide-react';
+import { SparklesIcon, TimerOffIcon } from 'lucide-react';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@components/ui/tooltip';
 import millify from 'millify';
 
@@ -18,48 +18,25 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
                 onValueChange={(v: any) => onSetTokensSelected(v[0])}
             />
             <div className="z-20 flex items-center justify-evenly space-x-1">
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger className='w-full'>
-                            <RemoveLiquidityFromIndex
-                                amount={-tokensSelected}
-                                address={data.address}
-                                metadata={data.metadata}
-                                indexWeight={indexWeight}
-                            />
-                        </TooltipTrigger>
-                        <TooltipContent
-                            className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}
-                        >
-                            Unwrapping {millify(Math.abs(tokensRequested))} {data.symbol} returns{' '}
-                            {millify(Math.abs(tokensRequired[0]))}{' '}
-                            {data.metadata?.contains[0].symbol}
-                            {tokensRequired[1] && `and ${millify(Math.abs(tokensRequired[1]))} sCHA back to you.`}
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
-                <TooltipProvider>
-                    <Tooltip>
-                        <TooltipTrigger className='w-full'>
-                            <AddLiquidityToIndex
-                                amount={tokensSelected}
-                                address={data.address}
-                                metadata={data.metadata}
-                            />
-                        </TooltipTrigger>
-                        <TooltipContent
-                            className={`max-w-[99vw] max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl`}
-                        >
-                            Wrapping {millify(Math.abs(tokensRequested))} {data.symbol} requires{' '}
-                            {millify(Math.abs(tokensRequired[0]))} {data.metadata?.contains[0].symbol}{' '}
-                            {tokensRequired[1] && `and ${millify(Math.abs(tokensRequired[1]))} sCHA.`}
-                        </TooltipContent>
-                    </Tooltip>
-                </TooltipProvider>
+                <RemoveLiquidityFromIndex
+                    amount={-tokensSelected}
+                    address={data.address}
+                    metadata={data.metadata}
+                    indexWeight={indexWeight}
+                />
+                <AddLiquidityToIndex
+                    amount={tokensSelected}
+                    address={data.address}
+                    metadata={data.metadata}
+                />
             </div>
         </div>
     ) : isPrivileged ? (
-        <div className="flex flex-col min-w-48 border-2 border-yellow-300 rounded-lg">
+        <div className="flex flex-col min-w-48">
+            <div className='flex justify-center items-center space-x-1'>
+                <div className='text-sm text-yellow-300'>Liquidity lock bypassed</div>
+                <SparklesIcon size={16} color='rgb(253 224 71)' strokeWidth={1.5} />
+            </div>
             <Slider
                 defaultValue={[0]}
                 min={min < -Math.pow(10, 10) ? -Math.pow(10, 10) : min}

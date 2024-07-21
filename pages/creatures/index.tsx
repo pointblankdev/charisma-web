@@ -23,7 +23,7 @@ import charisma from '@public/charisma.png'
 import raven from '@public/raven-of-odin.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
 import { getClaimableAmount, getCreatureAmount, getCreatureCost, getCreaturePower, getOldCreatureAmount } from '@lib/stacks-api';
-import creatureIcon from '@public/creatures/img/creatures.png'
+import creatureIcon from '@public/creatures/img/creatures.jpg'
 import energyIcon from '@public/creatures/img/energy.png'
 import powerIcon from '@public/creatures/img/power.png'
 import numeral from 'numeral';
@@ -192,7 +192,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     {
       title: 'Farmers',
       subtitle: 'Honest and humble farmers.',
-      slug: '/creatures/farmers',
+      slug: '/creatures/1',
       cardImage: { url: '/creatures/img/farmers.png' },
       requiredToken: 'STX-wCHA LP',
       cost: await getCreatureCost(1),
@@ -206,7 +206,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     {
       title: 'Blacksmiths',
       subtitle: 'Forger of weapons and armor.',
-      slug: '/creatures/blacksmiths',
+      slug: '/creatures/2',
       cardImage: { url: '/creatures/img/blacksmiths.png' },
       requiredToken: 'STX-sCHA LP',
       cost: await getCreatureCost(2),
@@ -219,7 +219,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     {
       title: 'Corgi Soldiers',
       subtitle: 'Loyal and fierce warriors.',
-      slug: '/creatures/corgi-soldiers',
+      slug: '/creatures/3',
       cardImage: { url: '/creatures/img/corgi-soldiers.png' },
       requiredToken: 'STX-iCC LP',
       cost: await getCreatureCost(3),
@@ -232,7 +232,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     {
       title: 'Alchemists',
       subtitle: 'Masters of potions and elixirs.',
-      slug: '/creatures/alchemists',
+      slug: '/creatures/4',
       cardImage: {
         url: '/creatures/img/alchemists.png'
       },
@@ -410,7 +410,7 @@ export default function Creatures({ creatures, quests }: Props) {
               Creatures are SIP13 tokens that represent workers in the Charisma ecosystem. They can be used to perform tasks and earn rewards.
             </p>
           </div>
-          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
             <Card
               className={cn(
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
@@ -461,34 +461,39 @@ export default function Creatures({ creatures, quests }: Props) {
                           </div>
                         </div>
                         <div className="flex items-end space-x-3 mr-1">
-                          {creature.amount > 0 && <CreatureInfoDialog creature={creature} />}
-                          <PowerInfoDialog creature={creature} />
                           <EnergyInfoDialog creature={creature} />
                         </div>
                       </div>
                     </CardHeader>
-                    <Image
-                      src={creature.cardImage.url}
-                      height={1200}
-                      width={1200}
-                      alt="creature-featured-image"
-                      className={cn(
-                        'w-full object-cover transition-all', // group-hover/card:scale-105',
-                        'aspect-[1]',
-                        'opacity-80',
-                        'group-hover/card:opacity-100',
-                        'flex',
-                        'z-10',
-                        'relative',
-                      )}
-                    />
+                    <Link href={`${creature.slug}`} className='w-full'>
+                      <Image
+                        src={creature.cardImage.url}
+                        height={1200}
+                        width={1200}
+                        alt="creature-featured-image"
+                        className={cn(
+                          'w-full object-cover transition-all', // group-hover/card:scale-105',
+                          'aspect-[1]',
+                          'opacity-80',
+                          'group-hover/card:opacity-100',
+                          'group-hover/card:scale-105',
+                          'flex',
+                          'z-10',
+                          'relative',
+                        )}
+                      />
+                    </Link>
                     <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30 pointer-events-none" />
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20 pointer-events-none" />
                   </CardContent>
                   <CardFooter
                     className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all justify-between')}
                   >
-                    <div className="z-20 p-2 flex w-full justify-between place-items-end">
+                    <div className="z-20 p-2 flex w-full justify-between place-items-end space-x-2">
+
+                      <div className='w-20'>
+                        {creature.amount > 0 && <CreatureInfoDialog creature={creature} />}
+                      </div>
                       {!(creature.creaturesRecruitable >= 1) ? <div className='text-sm font-semibold text-center leading-tight'>You need more {creature.requiredToken} tokens to create {creature.title}</div> : <div></div>}
                       <div className='flex flex-col justify-center space-y-2'>
                         <div className='flex space-x-2 justify-end'>

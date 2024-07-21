@@ -39,8 +39,8 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { 
 
   function salvage() {
     const postConditions = [
-      Pc.principal(sender).willSendEq(Number(tokens) * Number(indexWeight)).ft(address, metadata.ft),
-      ...metadata.contains.map((item: any) => Pc.principal(address).willSendEq(Number(tokens) * Number(item.weight)).ft(item.address, item.ft))
+      Pc.principal(sender).willSendLte(Number(tokens) * Number(indexWeight)).ft(address, metadata.ft),
+      ...metadata.contains.map((item: any) => Pc.principal(address).willSendLte(Number(tokens) * Number(item.weight)).ft(item.address, item.ft))
     ]
     const combinedPostConditions: any[] = combinePostConditions(postConditions);
 
@@ -51,7 +51,7 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { 
       contractName,
       functionName: "remove-liquidity",
       functionArgs: [uintCV(tokens)],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: combinedPostConditions,
       onFinish: (data) => { console.log("onFinish:", data) },
       onCancel: () => { console.log("onCancel:", "Transaction was canceled") },
