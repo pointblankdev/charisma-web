@@ -1,4 +1,3 @@
-
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 
@@ -13,19 +12,19 @@ import {
   CardDescription,
   CardFooter,
   CardHeader,
-  CardTitle,
-} from "@components/ui/card"
+  CardTitle
+} from '@components/ui/card';
 import Link from 'next/link';
 import { useState } from 'react';
-import wishingWell from '@public/wishing-well-1.png'
-import kangarooBurrow from '@public/kangaroo-borrow-1.png'
-import uppsala from '@public/uppsala-21.png'
-import woo from '@public/woo-icon.png'
-import fenrir from '@public/fenrir-icon-2.png'
-import odinsRaven from '@public/odins-raven/img/4.gif'
+import wishingWell from '@public/wishing-well-1.png';
+import kangarooBurrow from '@public/kangaroo-borrow-1.png';
+import uppsala from '@public/uppsala-21.png';
+import woo from '@public/woo-icon.png';
+import fenrir from '@public/fenrir-icon-2.png';
+import odinsRaven from '@public/odins-raven/img/4.gif';
 import { StaticImport } from 'next/dist/shared/lib/get-img-props';
 import { UrlObject } from 'url';
-import featherFallFund from '@public/feather-fall-fund-logo.png'
+import featherFallFund from '@public/feather-fall-fund-logo.png';
 import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png';
 import liquidStakedRoo from '@public/liquid-staked-roo.png';
 import liquidStakedOdin from '@public/liquid-staked-odin.png';
@@ -34,7 +33,6 @@ import { uniq, uniqBy } from 'lodash';
 import { Checkbox } from '@components/ui/checkbox';
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
-
   const pools = [
     {
       guild: {
@@ -50,10 +48,16 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma',
       wip: false,
       apps: [
-        { slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1', img: featherFallFund },
-        { slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi', img: '/indexes/charismatic-corgi-logo.png' },
+        {
+          slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund-v1',
+          img: featherFallFund
+        },
+        {
+          slug: '/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi',
+          img: '/indexes/charismatic-corgi-logo.png'
+        }
       ],
-      lowTVL: false,
+      lowTVL: false
     },
     {
       guild: {
@@ -76,7 +80,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
         // { slug: '/apps/title-fight', img: titleFight },
         { slug: '/crafting/fenrir', img: fenrir }
       ],
-      lowTVL: false,
+      lowTVL: false
     },
     {
       guild: {
@@ -114,7 +118,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       lowTVL: false,
       apps: [
         { slug: '/kangaroo-burrow', img: kangarooBurrow },
-        { slug: '/crafting/woo', img: woo },
+        { slug: '/crafting/woo', img: woo }
         // { slug: '/apps/title-fight', img: titleFight },
       ]
     },
@@ -131,7 +135,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       },
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo',
       wip: false,
-      lowTVL: false,
+      lowTVL: false
     },
     {
       guild: {
@@ -146,7 +150,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       },
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe',
       wip: false,
-      lowTVL: false,
+      lowTVL: false
     },
     {
       guild: {
@@ -161,7 +165,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       },
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-rock',
       wip: false,
-      lowTVL: false,
+      lowTVL: false
     },
     {
       guild: {
@@ -176,7 +180,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       },
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-not',
       wip: false,
-      lowTVL: true,
+      lowTVL: true
     },
     {
       guild: {
@@ -191,7 +195,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       },
       slug: 'stake/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-long',
       wip: false,
-      lowTVL: true,
+      lowTVL: true
     },
     {
       guild: {
@@ -313,7 +317,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       wip: false,
       lowTVL: true
     }
-  ]
+  ];
 
   const contracts = await getDeployedIndexes();
 
@@ -321,26 +325,31 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
   const blacklist = [
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.feather-fall-fund',
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.presidential-pepe',
-    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe'
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe',
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.leo-unchained'
   ];
 
   const enabledContracts = uniq(contracts).filter((contract: any) => !blacklist.includes(contract));
+  let tokenMetadata = [];
+  try {
+    // lookup metadata for each contract
+    const tokenMetadataPromises = enabledContracts.map(async (contract: any) => {
+      const tokenMetadata = await getTokenURI(contract);
+      const unqiueTokens = uniqBy(tokenMetadata.contains, 'address');
+      const baseTokens = await Promise.all(
+        unqiueTokens.map(async (token: any) => {
+          const baseTokenMetadata = await getTokenURI(token.address);
+          return baseTokenMetadata;
+        })
+      );
+      tokenMetadata.tokens = baseTokens;
+      return tokenMetadata;
+    });
 
-  // lookup metadata for each contract
-  const tokenMetadataPromises = enabledContracts.map(async (contract: any) => {
-    const tokenMetadata = await getTokenURI(contract);
-    const unqiueTokens = uniqBy(tokenMetadata.contains, 'address');
-    const baseTokens = await Promise.all(
-      unqiueTokens.map(async (token: any) => {
-        const baseTokenMetadata = await getTokenURI(token.address);
-        return baseTokenMetadata;
-      })
-    );
-    tokenMetadata.tokens = baseTokens;
-    return tokenMetadata;
-  });
-
-  const tokenMetadata = await Promise.all(tokenMetadataPromises);
+    tokenMetadata = await Promise.all(tokenMetadataPromises);
+  } catch (error) {
+    console.log(error);
+  }
 
   const modifiedApps = tokenMetadata.map((metadata: any, k: number) => {
     return {
@@ -369,7 +378,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
     props: {
       pools,
       indexes: modifiedApps
-    },
+    }
     // revalidate: 60000
   };
 };
@@ -380,7 +389,6 @@ type Props = {
 };
 
 export default function Tokens({ pools, indexes }: Props) {
-
   const meta = {
     title: 'Charisma | Tokens',
     description: META_DESCRIPTION,
@@ -402,7 +410,9 @@ export default function Tokens({ pools, indexes }: Props) {
       <Layout>
         <div className="sm:container sm:mx-auto sm:py-10 space-y-6 m-2">
           <div className="space-y-1">
-            <h2 className="text-4xl font-semibold tracking-tight text-secondary">Liquid Staking Pools</h2>
+            <h2 className="text-4xl font-semibold tracking-tight text-secondary">
+              Liquid Staking Pools
+            </h2>
             <p className="text-muted-foreground text-base">
               Stake your tokens to earn rewards and participate in the Charisma ecosystem.
             </p>
@@ -415,25 +425,38 @@ export default function Tokens({ pools, indexes }: Props) {
               />
             </label>
           </div>
-          <div className='grid gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7'>
-            {activePools.map((pool) => {
+          <div className="grid gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-7">
+            {activePools.map(pool => {
               return (
-                <Card key={pool.slug} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', pool.wip && 'opacity-25 hover:opacity-60')}>
-                  <Link href={`${pool.slug}`} className='w-full'>
-                    <CardContent className='w-full p-0'>
+                <Card
+                  key={pool.slug}
+                  className={cn(
+                    'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card',
+                    pool.wip && 'opacity-25 hover:opacity-60'
+                  )}
+                >
+                  <Link href={`${pool.slug}`} className="w-full">
+                    <CardContent className="w-full p-0">
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
-                        <div className='flex gap-2'>
-                          <div className='min-w-max'>
-                            {pool.guild.logo.url ?
-                              <Image src={pool.guild.logo.url} width={40} height={40} alt='guild-logo' className='w-10 h-10 border rounded-full grow' />
-                              : <div className='w-10 h-10 bg-white border rounded-full' />
-                            }
+                        <div className="flex gap-2">
+                          <div className="min-w-max">
+                            {pool.guild.logo.url ? (
+                              <Image
+                                src={pool.guild.logo.url}
+                                width={40}
+                                height={40}
+                                alt="guild-logo"
+                                className="w-10 h-10 border rounded-full grow"
+                              />
+                            ) : (
+                              <div className="w-10 h-10 bg-white border rounded-full" />
+                            )}
                           </div>
-                          <div className=''>
-                            <div className='text-sm font-semibold leading-none text-secondary'>
+                          <div className="">
+                            <div className="text-sm font-semibold leading-none text-secondary">
                               {pool.title}
                             </div>
-                            <div className='mt-1 text-xs leading-tight font-fine text-secondary'>
+                            <div className="mt-1 text-xs leading-tight font-fine text-secondary">
                               {pool.subtitle}
                             </div>
                           </div>
@@ -443,14 +466,26 @@ export default function Tokens({ pools, indexes }: Props) {
                         src={pool.cardImage.url}
                         height={1200}
                         width={600}
-                        alt='pool-featured-image'
-                        className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-80', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
+                        alt="pool-featured-image"
+                        className={cn(
+                          'w-full object-cover transition-all group-hover/card:scale-105',
+                          'aspect-[1/2]',
+                          'opacity-80',
+                          'group-hover/card:opacity-100',
+                          'flex',
+                          'z-10',
+                          'relative'
+                        )}
                       />
-                      <div className='absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30' />
-                      <div className='absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20' />
+                      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
                     </CardContent>
                   </Link>
-                  <CardFooter className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}>
+                  <CardFooter
+                    className={cn(
+                      'z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all'
+                    )}
+                  >
                     {/* <div className='z-20 p-2'>
                       <CardTitle className='z-30 mt-2 text-lg font-semibold leading-none text-white'>Staking Rewards</CardTitle>
                       {pool.apps && <CardDescription className='z-30 mb-2 text-sm text-white font-fine'>Apps and indexes that utilize this pool:</CardDescription>}
@@ -468,7 +503,7 @@ export default function Tokens({ pools, indexes }: Props) {
                     </div> */}
                   </CardFooter>
                 </Card>
-              )
+              );
             })}
           </div>
 
@@ -577,7 +612,9 @@ export default function Tokens({ pools, indexes }: Props) {
                     </CardContent>
                   </Link>
                   <CardFooter
-                    className={cn('z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all')}
+                    className={cn(
+                      'z-20 absolute inset-0 top-auto flex p-0 mb-1 opacity-100 transition-all'
+                    )}
                   >
                     <div className="z-20 p-2">
                       {/* <CardTitle className='z-30 mt-2 text-lg font-semibold leading-none text-white'>Pool Funding</CardTitle> */}
@@ -617,13 +654,7 @@ export default function Tokens({ pools, indexes }: Props) {
               );
             })}
           </div>
-
-
-
         </div>
-
-
-
       </Layout>
     </Page>
   );

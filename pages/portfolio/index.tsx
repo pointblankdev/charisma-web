@@ -207,10 +207,10 @@ function TokenBalances({ data }: Props) {
   const tokenBalances = tokenList.map(token => {
     const address = token.proxy ? token.proxy.address : token.address;
     const factor = token.proxy ? token.proxy.factor : 1;
-    const balance = getBalanceByKey(`${token.address}::${token.ft}`)
+    const balance = getBalanceByKey(`${token.address}::${token.ft}`);
     const tokenData = tokens.find((t: any) => t.contractAddress === address);
     const amount = balance?.balance / (Math.pow(10, token.decimals) || 1);
-    const totalValueUSD = amount * Number(tokenData.price || 0) * factor;
+    const totalValueUSD = amount * Number(tokenData?.price || 0) * factor;
 
     return {
       ...token,
@@ -229,8 +229,12 @@ function TokenBalances({ data }: Props) {
         <Table>
           <TableHeader>
             <TableRow>
-              <TableHead className="w-[100px] sm:table-cell"><span className="sr-only">Image</span></TableHead>
-              <TableHead><span className="sr-only">Name</span></TableHead>
+              <TableHead className="w-[100px] sm:table-cell">
+                <span className="sr-only">Image</span>
+              </TableHead>
+              <TableHead>
+                <span className="sr-only">Name</span>
+              </TableHead>
               <TableHead className="md:table-cell text-right">Token Amount</TableHead>
               <TableHead className="md:table-cell text-right">Total Value (USD)</TableHead>
             </TableRow>
@@ -250,9 +254,7 @@ function TokenBalances({ data }: Props) {
                 <TableCell className="font-medium">
                   <div className="text-lg">{token.name}</div>
                 </TableCell>
-                <TableCell className="md:table-cell text-xl text-right">
-                  {token.amount}
-                </TableCell>
+                <TableCell className="md:table-cell text-xl text-right">{token.amount}</TableCell>
                 <TableCell className="md:table-cell text-xl text-right">
                   {token.totalValueUSD}
                 </TableCell>
