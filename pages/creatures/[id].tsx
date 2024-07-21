@@ -113,7 +113,7 @@ export default function IndexDetailPage({ creature }: InferGetStaticPropsType<ty
                         </CardHeader>
 
                         <CardContent className="z-20 flex-grow p-4">
-                            <div className="grid grid-cols-2 gap-4 items-center justify-center mb-20">
+                            <div className="grid grid-cols-2 gap-4 items-center justify-center mb-16">
                                 <div className="flex items-end space-x-3 mr-1 justify-self-end text-lg">
                                     Creature Cost
                                 </div>
