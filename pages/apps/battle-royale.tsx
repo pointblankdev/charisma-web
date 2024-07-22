@@ -46,7 +46,7 @@ export default function BattleRoyale({ data }: Props) {
   const meta = {
     title: "Charisma | Battle Royale",
     description: META_DESCRIPTION,
-    image: '/journey-of-discovery.png'
+    image: '/indexes/charismatic-corgi-bg.png'
   };
 
   const title = "Battle Royale";
