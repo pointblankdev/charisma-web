@@ -25,7 +25,6 @@ import { motion } from 'framer-motion';
 import odinsRaven from '@public/odins-raven/img/4.gif';
 import fenrirIcon from '@public/fenrir-icon-2.png';
 import goldEmbers from '@public/quests/gold-embers.gif'
-import charismaticCorgi from '@public/indexes/charismatic-corgi-bg.png'
 import experience from '@public/experience.png'
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from '@stacks/connect-react';
@@ -41,12 +40,13 @@ import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import energyIcon from '@public/creatures/img/energy.png'
 import fujiApples from '@public/stations/fuji-apples.png'
 import { Progress } from "@components/ui/progress"
+import battleRoyale from '@public/stations/battle-royale.png'
 
 export default function BattleRoyale({ data }: Props) {
   const meta = {
     title: "Charisma | Battle Royale",
     description: META_DESCRIPTION,
-    image: '/indexes/charismatic-corgi-bg.png'
+    image: '/stations/battle-royale.png'
   };
 
   const title = "Battle Royale";
@@ -210,7 +210,7 @@ export default function BattleRoyale({ data }: Props) {
               <SelectCreatureDialog />
             </CardFooter>
             <Image
-              src={charismaticCorgi}
+              src={battleRoyale}
               width={800}
               height={1600}
               alt={'quest-background-image'}

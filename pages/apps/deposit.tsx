@@ -56,7 +56,7 @@ const MicroDeposit = () => {
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: 'fuji-apples',
       functionName: "transfer",
-      functionArgs: [uintCV(8000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.battle-royale-v2'), noneCV()],
+      functionArgs: [uintCV(7000000000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.battle-royale-v2'), noneCV()],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {

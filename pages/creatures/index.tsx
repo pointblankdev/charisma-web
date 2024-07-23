@@ -30,6 +30,7 @@ import numeral from 'numeral';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
+import battleRoyale from '@public/stations/battle-royale.png'
 
 
 
@@ -37,6 +38,20 @@ import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   const quests = [
+    {
+      title: "Battle Royale",
+      subtitle: "Bid your energy for a shot at glory.",
+      // ticker: "FUJI",
+      slug: "/apps/battle-royale",
+      guild: {
+        logo: {
+          url: "/indexes/charismatic-corgi-logo.png"
+        }
+      },
+      cardImage: {
+        url: battleRoyale
+      },
+    },
     {
       title: "Journey of Discovery",
       subtitle: "Spend your energy to gain experience.",
