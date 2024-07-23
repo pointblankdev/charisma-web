@@ -20,6 +20,7 @@ import { GetStaticProps } from 'next';
 import tokenfaucet2 from '@public/token-faucet-2.png'
 import { Card } from '@components/ui/card';
 import { clamp } from 'framer-motion';
+import Leaderboard from '@components/leaderboard.tsx/table';
 
 
 export default function Faucet() {
@@ -32,9 +33,9 @@ export default function Faucet() {
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
+                <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
 
-                    Under contruction 🚧
+                    <Leaderboard />
                 </div>
             </Layout>
         </Page >
