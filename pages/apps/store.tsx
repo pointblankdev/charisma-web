@@ -18,11 +18,12 @@ import {
 import ConnectWallet, { userSession } from "@components/stacks-session/connect";
 import { Button } from "@components/ui/button";
 import { useConnect } from '@stacks/connect-react';
+import { Input } from '@components/ui/input';
 
 
 export default function App() {
   const meta = {
-    title: 'Charisma | DMG Transfer',
+    title: 'Charisma | Store',
     description: META_DESCRIPTION,
   };
 

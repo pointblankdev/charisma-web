@@ -18,6 +18,7 @@ import {
 import ConnectWallet, { userSession } from "@components/stacks-session/connect";
 import { Button } from "@components/ui/button";
 import { useConnect } from '@stacks/connect-react';
+import { Input } from '@components/ui/input';
 
 
 export default function App() {
@@ -52,6 +53,7 @@ const Transfer = () => {
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
+  const [recipient, setRecipient] = useState('');
 
   function deposit() {
     doContractCall({
@@ -60,7 +62,7 @@ const Transfer = () => {
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: 'creatures-core',
       functionName: "transfer",
-      functionArgs: [uintCV(1), uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')],
+      functionArgs: [uintCV(1), uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV(recipient)],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
@@ -72,11 +74,16 @@ const Transfer = () => {
     });
   }
 
+  console.log(recipient);
+
   if (!mounted || !userSession.isUserSignedIn()) {
     return <ConnectWallet />;
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Transfer</Button>
+    <>
+      <Input onChange={e => setRecipient(e.target.value)} className='w-full' placeholder='Recipient' />
+      <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Transfer</Button>
+    </>
   );
 };
