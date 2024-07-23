@@ -113,7 +113,7 @@ export default function BattleRoyale({ data }: Props) {
       functionName: "get-highest-bid",
       functionArgs: [uintCV(currentEpoch)],
       senderAddress: sender
-    }).then(response => setHighestBid(Number(cvToJSON(response).value)))
+    }).then(response => setHighestBid(Number(cvToJSON(response).value.value)))
   }, [sender, currentEpoch])
 
   useEffect(() => {
@@ -124,13 +124,15 @@ export default function BattleRoyale({ data }: Props) {
       functionName: "get-highest-bidder",
       functionArgs: [uintCV(currentEpoch)],
       senderAddress: sender
-    }).then(response => setHighestBidder(cvToJSON(response).value))
+    }).then(response => setHighestBidder(cvToJSON(response).value.value))
   }, [sender, currentEpoch])
 
   const fadeIn = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
   };
+
+  console.log(highestBidder)
 
   return (
     <Page meta={meta} fullViewport>
@@ -177,7 +179,7 @@ export default function BattleRoyale({ data }: Props) {
 
                   <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground space-y-2">
                     <Progress value={epochProgress} />
-                    <p>Highest Bid: {highestBidder ? `${highestBidder.slice(-4)} at ${highestBid}` : 'None'}</p>
+                    <p>Highest Bid: {highestBidder ? `${highestBidder.slice(0, 4)}...${highestBidder.slice(-4)} at ${numeral(highestBid).format('0a')}` : 'None'}</p>
                   </CardDescription>
                 </div>
               </div>
