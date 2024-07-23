@@ -234,31 +234,6 @@ export default function BattleRoyale({ data }: Props) {
   );
 }
 
-type Props = {
-  data: any;
-};
-
-export const getStaticProps: GetStaticProps<Props> = () => {
-  try {
-
-    const data = {
-    };
-
-    return {
-      props: {
-        data: data
-      },
-      revalidate: 6000
-    };
-  } catch (error) {
-    return {
-      props: {
-        data: {}
-      }
-    };
-  }
-};
-
 export function SelectCreatureDialog({ data }: any) {
 
   const { doContractCall } = useConnect();
