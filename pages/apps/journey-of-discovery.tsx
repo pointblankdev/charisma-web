@@ -235,16 +235,16 @@ export function SelectCreatureDialog({ data }: any) {
 
   }, [sender])
 
-  async function journey(creatureId: number) {
-    const response = await callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'journey-of-discovery-v2',
-      functionName: "get-claimable-amount",
-      functionArgs: [uintCV(creatureId)],
-      senderAddress: sender
-    })
-    const claimableTokens = Number(cvToJSON(response).value)
+  function journey(creatureId: number) {
+    // const response = await callReadOnlyFunction({
+    //   network: new StacksMainnet(),
+    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    //   contractName: 'journey-of-discovery-v2',
+    //   functionName: "get-claimable-amount",
+    //   functionArgs: [uintCV(creatureId)],
+    //   senderAddress: sender
+    // })
+    // const claimableTokens = Number(cvToJSON(response).value)
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
