@@ -53,7 +53,7 @@ const Transfer = () => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => { setMounted(true) }, []);
 
-  function deposit() {
+  function store() {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -61,7 +61,7 @@ const Transfer = () => {
       contractName: 'creatures-kit',
       functionName: "store",
       functionArgs: [principalCV('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -77,6 +77,6 @@ const Transfer = () => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={deposit}>Transfer</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={store}>Store</Button>
   );
 };
