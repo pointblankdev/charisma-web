@@ -258,7 +258,7 @@ export default function IndexDetailPage({ data }: Props) {
             <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
           </Card>
 
-          {data.contractName === 'leo-unchained-v1' && <Link href='/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.leo-unchained' className='text-center'>Looking for the old contract?</Link>}
+          {data.contractName === 'leo-unchained-v1' && <Link href='/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.leo-unchained'> <p className='text-center m-2 text-sm'>Looking for the old contract?</p></Link>}
 
           <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
             {descriptionVisible && isApples &&
