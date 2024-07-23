@@ -11,21 +11,12 @@ import {
   CardHeader,
   CardTitle
 } from '@components/ui/card';
-import MintRaven from '@components/mint/raven';
 import { Button } from '@components/ui/button';
-import {
-  blocksApi,
-} from '@lib/stacks-api';
-import { GetStaticProps } from 'next';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion';
-import odinsRaven from '@public/odins-raven/img/4.gif';
-import fenrirIcon from '@public/fenrir-icon-2.png';
-import goldEmbers from '@public/quests/gold-embers.gif'
-import experience from '@public/experience.png'
 import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from '@stacks/connect-react';
 import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
@@ -42,7 +33,7 @@ import fujiApples from '@public/stations/fuji-apples.png'
 import { Progress } from "@components/ui/progress"
 import battleRoyale from '@public/stations/battle-royale.png'
 
-export default function BattleRoyale({ data }: Props) {
+export default function BattleRoyale() {
   const meta = {
     title: "Charisma | Battle Royale",
     description: META_DESCRIPTION,
