@@ -132,8 +132,6 @@ export default function BattleRoyale({ data }: Props) {
     visible: { opacity: 1 }
   };
 
-  console.log(highestBidder)
-
   return (
     <Page meta={meta} fullViewport>
       {/* <Image src={goldEmbers} alt="bolt-background-image" layout="fill" objectFit="cover" priority /> */}
@@ -250,7 +248,7 @@ export const getStaticProps: GetStaticProps<Props> = () => {
       props: {
         data: data
       },
-      revalidate: 60000
+      revalidate: 6000
     };
   } catch (error) {
     return {
