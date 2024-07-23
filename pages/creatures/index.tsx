@@ -502,7 +502,7 @@ export default function Creatures({ creatures, quests }: Props) {
                   >
                     <div className="z-20 p-2 flex w-full justify-between place-items-end space-x-2">
 
-                      <div className='w-20'>
+                      <div className='min-w-[2.8rem]'>
                         {creature.amount > 0 && <CreatureInfoDialog creature={creature} />}
                       </div>
                       {!(creature.creaturesRecruitable >= 1) ? <div className='text-sm font-semibold text-center leading-tight'>You need more {creature.requiredToken} tokens to create {creature.title}</div> : <div></div>}
