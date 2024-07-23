@@ -421,7 +421,7 @@ export default function Creatures({ creatures, quests }: Props) {
               Creatures are SIP13 tokens that represent workers in the Charisma ecosystem. They can be used to perform tasks and earn rewards.
             </p>
           </div>
-          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <Card
               className={cn(
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
@@ -476,6 +476,7 @@ export default function Creatures({ creatures, quests }: Props) {
                         </div>
                       </div>
                     </CardHeader>
+
                     <Link href={`${creature.slug}`} className='w-full'>
                       <Image
                         src={creature.cardImage.url}
@@ -494,6 +495,8 @@ export default function Creatures({ creatures, quests }: Props) {
                         )}
                       />
                     </Link>
+                    {!(creature.creaturesRecruitable >= 1) ? <div className='z-40 absolute inset-0 top-36 text-lg font-semibold opacity-80 group-hover/card:opacity-0 transition-all text-center leading-tight pointer-events-none'>You need more {creature.requiredToken} tokens to create {creature.title}</div> : <div></div>}
+
                     <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30 pointer-events-none" />
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20 pointer-events-none" />
                   </CardContent>
@@ -505,7 +508,6 @@ export default function Creatures({ creatures, quests }: Props) {
                       <div className='min-w-[2.8rem]'>
                         {creature.amount > 0 && <CreatureInfoDialog creature={creature} />}
                       </div>
-                      {!(creature.creaturesRecruitable >= 1) ? <div className='text-sm font-semibold text-center leading-tight'>You need more {creature.requiredToken} tokens to create {creature.title}</div> : <div></div>}
                       <div className='flex flex-col justify-center space-y-2'>
                         <div className='flex space-x-2 justify-end'>
                           {/* <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.amount)}>Dismiss</Button> */}
