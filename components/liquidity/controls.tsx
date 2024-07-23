@@ -5,14 +5,16 @@ import { SparklesIcon, TimerOffIcon } from 'lucide-react';
 import { Tooltip, TooltipProvider, TooltipTrigger, TooltipContent } from '@components/ui/tooltip';
 import millify from 'millify';
 
+const MAX_FLOW = 12
+
 const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data = {}, tokensRequested, tokensRequired, indexWeight, isPrivileged }: any) => {
 
     return data.isRemoveLiquidityUnlocked ? (
         <div className="flex flex-col min-w-48">
             <Slider
                 defaultValue={[0]}
-                min={min < -Math.pow(10, 10) ? -Math.pow(10, 10) : min}
-                max={max > Math.pow(10, 10) ? Math.pow(10, 10) : max}
+                min={min < -Math.pow(10, MAX_FLOW) ? -Math.pow(10, MAX_FLOW) : min}
+                max={max > Math.pow(10, MAX_FLOW) ? Math.pow(10, MAX_FLOW) : max}
                 step={0.000001}
                 className="w-full p-4"
                 onValueChange={(v: any) => onSetTokensSelected(v[0])}
@@ -39,8 +41,8 @@ const LiquidityControls = ({ min, max, onSetTokensSelected, tokensSelected, data
             </div>
             <Slider
                 defaultValue={[0]}
-                min={min < -Math.pow(10, 10) ? -Math.pow(10, 10) : min}
-                max={max > Math.pow(10, 10) ? Math.pow(10, 10) : max}
+                min={min < -Math.pow(10, MAX_FLOW) ? -Math.pow(10, MAX_FLOW) : min}
+                max={max > Math.pow(10, MAX_FLOW) ? Math.pow(10, MAX_FLOW) : max}
                 step={0.000001}
                 className="w-full p-4"
                 onValueChange={(v: any) => onSetTokensSelected(v[0])}
