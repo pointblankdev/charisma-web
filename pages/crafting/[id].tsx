@@ -65,7 +65,7 @@ export default function IndexDetailPage({ data }: Props) {
   const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
   useEffect(() => {
-    if (data.contractName === 'leo-unchained') {
+    if (data.contractName === 'leo-unchained' || data.contractName === 'leo-unchained-v1') {
       sender && callReadOnlyFunction({
         network: new StacksMainnet(),
         contractAddress: data.contractAddress,
@@ -257,6 +257,8 @@ export default function IndexDetailPage({ data }: Props) {
             />
             <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
           </Card>
+
+          {data.contractName === 'leo-unchained-v1' && <Link href='/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.leo-unchained' className='text-center'>Looking for the old contract?</Link>}
 
           <div className='grid grid-cols-1 sm:grid-cols-1 gap-4'>
             {descriptionVisible && isApples &&
