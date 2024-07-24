@@ -288,11 +288,6 @@ export default function Creatures({ creatures, quests }: Props) {
   const [amountiCCLP, setAmountiCCLP] = useState(0)
   const [amountiMMLP, setAmountiMMLP] = useState(0)
 
-  const [oldfarmers, setOldFarmers] = useState(0)
-  const [oldblacksmiths, setOldBlacksmiths] = useState(0)
-  const [oldcorgiSoldiers, setOldCorgiSoldiers] = useState(0)
-  const [oldalchemists, setOldAlchemists] = useState(0)
-
   const [farmers, setFarmers] = useState(0)
   const [blacksmiths, setBlacksmiths] = useState(0)
   const [corgiSoldiers, setCorgiSoldiers] = useState(0)
@@ -324,7 +319,6 @@ export default function Creatures({ creatures, quests }: Props) {
   creatures[3].energy = alchemistsEnergy
 
   function recruit(tokenContract: string, amount: number) {
-
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -345,28 +339,11 @@ export default function Creatures({ creatures, quests }: Props) {
   }
 
   function dismiss(tokenContract: string, amount: number) {
-    let contractName = 'creatures-kit'
-    if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha' && oldfarmers > 0) {
-      contractName = 'creatures-energy'
-      amount = oldfarmers
-    }
-    if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha' && oldblacksmiths > 0) {
-      contractName = 'creatures-energy'
-      amount = oldblacksmiths * 100
-    }
-    if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc' && oldcorgiSoldiers > 0) {
-      contractName = 'creatures-energy'
-      amount = oldcorgiSoldiers
-    }
-    if (tokenContract === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm' && oldalchemists > 0) {
-      contractName = 'creatures-energy'
-      amount = oldalchemists
-    }
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: contractName,
+      contractName: 'creatures-kit',
       functionName: "dismiss",
       functionArgs: [uintCV(amount), principalCV(tokenContract)],
       postConditionMode: PostConditionMode.Allow,
@@ -380,13 +357,6 @@ export default function Creatures({ creatures, quests }: Props) {
       },
     });
   }
-
-  useEffect(() => {
-    sender && getOldCreatureAmount(1, sender).then(amount => setOldFarmers(amount))
-    sender && getOldCreatureAmount(2, sender).then(amount => setOldBlacksmiths(amount))
-    sender && getOldCreatureAmount(3, sender).then(amount => setOldCorgiSoldiers(amount))
-    sender && getOldCreatureAmount(4, sender).then(amount => setOldAlchemists(amount))
-  }, [sender])
 
   useEffect(() => {
     sender && getCreatureAmount(1, sender).then(amount => setFarmers(amount))
@@ -414,7 +384,6 @@ export default function Creatures({ creatures, quests }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="sm:container sm:mx-auto sm:py-10 space-y-6 m-2">
-          <div className='bg-primary rounded-full text-center py-2 font-bold border-2 text-base'> Note: The Creatures contract has been upgraded. To continue generating energy, make sure to "Dismiss" then "Recruit" each of your creatures once. Thank you!</div>
           <div className="space-y-1">
             <h2 className="text-4xl font-semibold tracking-tight text-secondary">Creatures</h2>
             <p className="text-muted-foreground text-base">
@@ -440,15 +409,6 @@ export default function Creatures({ creatures, quests }: Props) {
                     There are lots to spend your creatures energy in the Charisma ecosystem, many of which yield valuable token rewards.
                   </p>
                 </div>
-              </div>
-            </Card>
-            <Card
-              className={cn(
-                'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
-              )}
-            >
-              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
-                <video src='vid/farm-tutorial.mp4' className="w-full rounded-lg" autoPlay loop muted />
               </div>
             </Card>
             {creatures.map((creature, i) => {
