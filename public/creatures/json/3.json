@@ -28,7 +28,7 @@
     ],
     "properties": {
         "collection": "Creatures",
-        "collection_image": "https://charisma.rocks/creatures/img/creatures.png",
+        "collection_image": "https://charisma.rocks/creatures/img/creatures.jpg",
         "category": "image",
         "symbol": "CREATURE",
         "decimals": 0
