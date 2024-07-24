@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
+import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 
@@ -220,6 +220,12 @@ describe('Stacks API', () => {
 
     it('should get total in pool', async () => {
         const result = await getTotalInPool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    it('should get nft token uri', async () => {
+        const result = await getNftURI('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven', 9)
         console.log(result)
         expect(result).toBeDefined()
     })

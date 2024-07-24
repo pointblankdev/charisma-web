@@ -4,6 +4,8 @@ import {
     Send,
     Settings,
     Share,
+    Swords,
+    Trophy,
 } from "lucide-react"
 import { Badge } from "@components/ui/badge"
 import { Button } from "@components/ui/button"
@@ -43,6 +45,10 @@ import { PostConditionMode } from "@stacks/transactions"
 import { StacksMainnet } from "@stacks/network";
 import ProposalTemplate from "./proposal"
 import LiquidStakedTemplate from "./liquid-staked-token"
+import FarmTemplate from "./farm"
+import { PiPlant } from "react-icons/pi"
+import BattleRoyaleTemplate from "./battle-royale"
+import PrizeFightTemplate from "./prize-fight"
 
 const generateHeader = ({ name, sender, description }: any) => {
     return `;; Title: ${name}
@@ -53,9 +59,6 @@ const generateHeader = ({ name, sender, description }: any) => {
 ;; ${description}
 
 `}
-
-// ;; Unwrap Link:
-// ;; https://www.charisma.rocks/crafting/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples
 
 const fadeIn = {
     hidden: { opacity: 0 },
@@ -358,6 +361,54 @@ export default function ContractDeployer({ data }: any) {
                                                                                 </div>
                                                                             </div>
                                                                         </SelectItem>
+                                                                        <SelectItem value="farm">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <PiPlant className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        Yield{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            Farm
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Create an yield farm for rewards
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
+                                                                        <SelectItem value="battle-royale">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <Swords className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        Battle{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            Royale
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Create a battle royale quest for tokens
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
+                                                                        <SelectItem value="prize-fight">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <Trophy className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        Prize{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            Fight
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Create a prize fight quest for NFTs
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
                                                                     </SelectContent>
                                                                 </Select>
                                                             </FormControl>
@@ -409,7 +460,13 @@ export default function ContractDeployer({ data }: any) {
                                                             <ProposalTemplate onFormChange={handleContractChange} />
                                                             : template === 'strategy' ?
                                                                 <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
-                                                                : <div>...</div>
+                                                                : template === 'farm' ?
+                                                                    <FarmTemplate onFormChange={handleContractChange} />
+                                                                    : template === 'battle-royale' ?
+                                                                        <BattleRoyaleTemplate onFormChange={handleContractChange} />
+                                                                        : template === 'prize-fight' ?
+                                                                            <PrizeFightTemplate onFormChange={handleContractChange} />
+                                                                            : <div>...</div>
 
                                             }
                                         </motion.div>}

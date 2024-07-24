@@ -31,23 +31,26 @@ import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import energyIcon from '@public/creatures/img/energy.png'
 import fujiApples from '@public/stations/fuji-apples.png'
 import { Progress } from "@components/ui/progress"
-import battleRoyale from '@public/stations/battle-royale.png'
+import { getNftURI, getTokenURI } from '@lib/stacks-api';
+import treasureChest from '@public/governance/treasure-chest.png'
+import prizeFight from '@public/stations/prize-fight.png'
 
-export default function BattleRoyale() {
+export default function PrizeFight() {
   const meta = {
-    title: "Charisma | Battle Royale",
+    title: "Charisma | Prize Fight",
     description: META_DESCRIPTION,
     image: '/stations/battle-royale.png'
   };
 
-  const title = "Battle Royale";
-  const subtitle = 'Bid your energy for a shot at glory and the grand prize.';
+  const title = "Prize Fight";
+  const subtitle = 'Bid your energy for a shot at glory and a NFT prize.';
 
   const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [currentEpoch, setCurrentEpoch] = useState(0)
-  const [supplyPerEpoch, setSupplyPerEpoch] = useState(0)
+  const [currentEpochPrize, setCurrentEpochPrize] = useState({} as any)
+  const [currentEpochPrizeImg, setCurrentEpochPrizeImg] = useState('' as any)
   const [epochProgress, setEpochProgress] = useState(0)
   const [highestBid, setHighestBid] = useState(0)
   const [highestBidder, setHighestBidder] = useState('')
@@ -67,7 +70,7 @@ export default function BattleRoyale() {
     sender && callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
+      contractName: 'prize-fight',
       functionName: "get-current-epoch",
       functionArgs: [],
       senderAddress: sender
@@ -78,18 +81,37 @@ export default function BattleRoyale() {
     sender && callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
-      functionName: "get-per-epoch",
+      contractName: 'prize-fight',
+      functionName: "get-current-epoch-nft-data",
       functionArgs: [],
       senderAddress: sender
-    }).then(response => setSupplyPerEpoch(Number(cvToJSON(response).value)))
+    }).then(async response => {
+      try {
+        const data = cvToJSON(response).value.value
+        setCurrentEpochPrize(data)
+        const ca = data['nft-contract']?.value
+        const id = data['nft-id']?.value
+        let image = ''
+        if (ca === 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.bitgear-genesis') {
+          const metadata = await (await fetch(`https://cdn.bitgear.world/ipfs/QmPJFhVb2hPb5U3d8ZiR6h8ZQ4zLMV2kQWBGUmkr6xBYUS/${id}.json`)).json()
+          image = metadata.image10x
+        } else {
+          const metadata = await getNftURI(ca, id)
+          image = metadata.image
+        }
+        setCurrentEpochPrizeImg(image)
+      } catch (error) {
+        console.log(error)
+        setCurrentEpochPrizeImg(treasureChest)
+      }
+    })
   }, [sender])
 
   useEffect(() => {
     sender && callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
+      contractName: 'prize-fight',
       functionName: "get-epoch-progress",
       functionArgs: [],
       senderAddress: sender
@@ -100,28 +122,31 @@ export default function BattleRoyale() {
     sender && callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
+      contractName: 'prize-fight',
       functionName: "get-highest-bid",
       functionArgs: [uintCV(currentEpoch)],
       senderAddress: sender
-    }).then(response => setHighestBid(Number(cvToJSON(response).value.value)))
+    }).then(response => setHighestBid(Number(cvToJSON(response).value?.value || 0)))
   }, [sender, currentEpoch])
 
   useEffect(() => {
     sender && callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
+      contractName: 'prize-fight',
       functionName: "get-highest-bidder",
       functionArgs: [uintCV(currentEpoch)],
       senderAddress: sender
-    }).then(response => setHighestBidder(cvToJSON(response).value.value))
+    }).then(response => setHighestBidder(cvToJSON(response).value?.value))
   }, [sender, currentEpoch])
 
   const fadeIn = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
   };
+
+  const ca = currentEpochPrize['nft-contract']?.value
+  const id = currentEpochPrize['nft-id']?.value
 
   return (
     <Page meta={meta} fullViewport>
@@ -145,20 +170,22 @@ export default function BattleRoyale() {
               <div className='grid grid-cols-2'>
 
                 <div className="z-20">
-                  <CardTitle className="z-30 mt-2 text-xl font-semibold">Grand Prize</CardTitle>
+                  <CardTitle className="z-30 mt-2 text-xl font-semibold">Reward</CardTitle>
                   <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
                     The top bidder will recieve:
                   </CardDescription>
-                  <div className="grid grid-cols-3 gap-4">
+                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                     <div className="relative">
                       <Image
-                        alt="Fuji Apples"
-                        src={fujiApples}
-                        quality={10}
-                        className="z-30 w-full rounded-full"
+                        alt="NFT Prize"
+                        src={currentEpochPrizeImg}
+                        className="z-30 w-full"
+                        width={85}
+                        height={85}
                       />
-                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-base bg-accent text-accent-foreground">
-                        {numeral(supplyPerEpoch / Math.pow(10, 6)).format('0a')}
+                      <div className='text-center'>
+                        <p className='text-sm whitespace-nowrap'>{ca?.split('.')[1]}</p>
+                        <p className='text-md whitespace-nowrap font-bold'>#{id}</p>
                       </div>
                     </div>
                   </div>
@@ -198,10 +225,10 @@ export default function BattleRoyale() {
                 </Button>
               </Link>
 
-              <SelectCreatureDialog />
+              <SelectCreatureDialog data={currentEpochPrize} />
             </CardFooter>
             <Image
-              src={battleRoyale}
+              src={prizeFight}
               width={800}
               height={1600}
               alt={'quest-background-image'}
@@ -226,6 +253,7 @@ export default function BattleRoyale() {
 }
 
 export function SelectCreatureDialog({ data }: any) {
+  const ca = data['nft-contract']?.value
 
   const { doContractCall } = useConnect();
 
@@ -241,46 +269,46 @@ export function SelectCreatureDialog({ data }: any) {
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
-      functionName: "get-claimable-amount",
-      functionArgs: [uintCV(1)],
+      contractName: 'creatures-kit',
+      functionName: "get-untapped-amount",
+      functionArgs: [uintCV(1), principalCV(sender)],
       senderAddress: sender
     }).then(response => setFarmerClaimableAmount(Number(cvToJSON(response).value)))
 
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
-      functionName: "get-claimable-amount",
-      functionArgs: [uintCV(2)],
+      contractName: 'creatures-kit',
+      functionName: "get-untapped-amount",
+      functionArgs: [uintCV(2), principalCV(sender)],
       senderAddress: sender
     }).then(response => setBlacksmithClaimableAmount(Number(cvToJSON(response).value)))
 
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
-      functionName: "get-claimable-amount",
-      functionArgs: [uintCV(3)],
+      contractName: 'creatures-kit',
+      functionName: "get-untapped-amount",
+      functionArgs: [uintCV(3), principalCV(sender)],
       senderAddress: sender
     }).then(response => setCorgiSoldierClaimableAmount(Number(cvToJSON(response).value)))
 
     callReadOnlyFunction({
       network: new StacksMainnet(),
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
-      functionName: "get-claimable-amount",
-      functionArgs: [uintCV(4)],
+      contractName: 'creatures-kit',
+      functionName: "get-untapped-amount",
+      functionArgs: [uintCV(4), principalCV(sender)],
       senderAddress: sender
     }).then(response => setAlchemistClaimableAmount(Number(cvToJSON(response).value)))
 
   }, [sender])
 
-  function journey(creatureId: number) {
+  function tap(creatureId: number) {
     // const response = await callReadOnlyFunction({
     //   network: new StacksMainnet(),
     //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    //   contractName: 'battle-royale-v2',
+    //   contractName: 'prize-fight',
     //   functionName: "get-claimable-amount",
     //   functionArgs: [uintCV(creatureId)],
     //   senderAddress: sender
@@ -290,9 +318,9 @@ export function SelectCreatureDialog({ data }: any) {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'battle-royale-v2',
-      functionName: "battle",
-      functionArgs: [uintCV(creatureId)],
+      contractName: 'prize-fight',
+      functionName: "tap-creatures",
+      functionArgs: [uintCV(creatureId), principalCV(ca), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit')],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
@@ -308,7 +336,7 @@ export function SelectCreatureDialog({ data }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size={'sm'} className={`z-30`}>Bid for the Grand Prize</Button>
+        <Button size={'sm'} className={`z-30`}>Bid for the NFT Prize</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <AlertDialogHeader>
@@ -322,7 +350,7 @@ export function SelectCreatureDialog({ data }: any) {
               src={farmersImg}
               width={100}
               height={100}
-              onClick={() => journey(1)}
+              onClick={() => tap(1)}
               className="z-30 border rounded-lg h-32 w-32 hover:scale-110 transition-all cursor-pointer"
             />
             <h2 className='text-base text-primary-foreground'>Farmers</h2>
@@ -343,7 +371,7 @@ export function SelectCreatureDialog({ data }: any) {
               src={blacksmithsImg}
               width={100}
               height={100}
-              onClick={() => journey(2)}
+              onClick={() => tap(2)}
               className="z-30 border rounded-lg h-32 w-32 hover:scale-110 transition-all cursor-pointer"
             />
             <h2 className='text-base text-primary-foreground'>Blacksmiths</h2>
@@ -364,7 +392,7 @@ export function SelectCreatureDialog({ data }: any) {
               src={corgiSoldiersImg}
               width={100}
               height={100}
-              onClick={() => journey(3)}
+              onClick={() => tap(3)}
               className="z-30 border rounded-lg h-32 w-32 hover:scale-110 transition-all cursor-pointer"
             />
             <h2 className='text-base text-primary-foreground'>Corgi Soldiers</h2>
@@ -385,7 +413,7 @@ export function SelectCreatureDialog({ data }: any) {
               src={alchemistsImg}
               width={100}
               height={100}
-              onClick={() => journey(4)}
+              onClick={() => tap(4)}
               className="z-30 border rounded-lg h-32 w-32 hover:scale-110 transition-all cursor-pointer"
             />
             <h2 className='text-base text-primary-foreground'>Alchemists</h2>

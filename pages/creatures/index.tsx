@@ -31,6 +31,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, Di
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 import battleRoyale from '@public/stations/battle-royale.png'
+import prizeFight from '@public/stations/prize-fight.png'
 import { Checkbox } from '@components/ui/checkbox';
 
 
@@ -39,6 +40,20 @@ import { Checkbox } from '@components/ui/checkbox';
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
 
   const quests = [
+    {
+      title: "Prize Fight",
+      subtitle: "Bid your energy for a shot at glory.",
+      // ticker: "FUJI",
+      slug: "/apps/prize-fight",
+      guild: {
+        logo: {
+          url: "/indexes/charismatic-corgi-logo.png"
+        }
+      },
+      cardImage: {
+        url: prizeFight
+      },
+    },
     {
       title: "Battle Royale",
       subtitle: "Bid your energy for a shot at glory.",

@@ -615,8 +615,36 @@ export async function getTokenURI(contract: string) {
 
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
-  const metadata = (await fetch(cv.value.value.value)).json();
+  const metadata = await (await fetch(cv.value.value.value)).json();
   return metadata;
+}
+
+export async function getNftURI(contract: string, tokenId: number) {
+
+  try {
+    const [address, name] = contract.split('.');
+
+    const response: any = await scApi.callReadOnlyFunction({
+      contractAddress: address,
+      contractName: name,
+      functionName: 'get-token-uri',
+      readOnlyFunctionArgs: {
+        sender: address,
+        arguments: [
+          cvToHex(parseToCV(String(tokenId), 'uint128'))
+        ]
+      }
+    });
+
+    const result = hexToCV(response.result);
+    const cv = cvToJSON(result);
+    const url = cv.value.value.value.replace('{id}', tokenId)
+    const metadata = await (await fetch(url)).json();
+    return metadata;
+
+  } catch (error) {
+    return null
+  }
 }
 
 export async function getSymbol(contract: string): Promise<string> {
