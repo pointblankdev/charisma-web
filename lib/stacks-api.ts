@@ -640,6 +640,7 @@ export async function getNftURI(contract: string, tokenId: number) {
     const cv = cvToJSON(result);
     const url = cv.value.value.value.replace('{id}', tokenId)
     const metadata = await (await fetch(url)).json();
+    console.log(metadata)
     return metadata;
 
   } catch (error) {

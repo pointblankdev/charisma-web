@@ -95,8 +95,11 @@ export default function PrizeFight() {
         if (ca === 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.bitgear-genesis') {
           const metadata = await (await fetch(`https://cdn.bitgear.world/ipfs/QmPJFhVb2hPb5U3d8ZiR6h8ZQ4zLMV2kQWBGUmkr6xBYUS/${id}.json`)).json()
           image = metadata.image10x
+        } else if (ca === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven') {
+          image = `/odins-raven/img/${id}.gif`
         } else {
           const metadata = await getNftURI(ca, id)
+          console.log(metadata)
           image = metadata.image
         }
         setCurrentEpochPrizeImg(image)

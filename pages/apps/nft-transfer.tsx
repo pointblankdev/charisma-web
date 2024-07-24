@@ -59,10 +59,10 @@ const Transfer = () => {
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
-      contractName: 'bitgear-genesis',
+      contractAddress: "SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH",
+      contractName: 'welsh-punk',
       functionName: "transfer",
-      functionArgs: [uintCV(3632), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV(recipient)],
+      functionArgs: [uintCV(235), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), principalCV(recipient)],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
