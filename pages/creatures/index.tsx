@@ -31,6 +31,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, Di
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 import battleRoyale from '@public/stations/battle-royale.png'
+import { Checkbox } from '@components/ui/checkbox';
 
 
 
@@ -113,6 +114,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: {
         url: tokenfaucet1
       },
+      legacy: true
     },
     {
       guild: {
@@ -129,7 +131,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       wip: false,
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
-      ]
+      ],
+      legacy: true
     },
     {
       guild: {
@@ -146,7 +149,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       wip: false,
       apps: [
         { slug: '/stake/roo', img: liquidStakedRoo },
-      ]
+      ],
+      legacy: true
     },
     {
       guild: {
@@ -163,7 +167,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       wip: false,
       apps: [
         { slug: '/stake/odin', img: liquidStakedOdin },
-      ]
+      ],
+      legacy: true
     },
     {
       guild: {
@@ -181,7 +186,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       apps: [
         { slug: '/stake/welsh', img: liquidStakedWelsh },
         { slug: '/stake/odin', img: liquidStakedOdin },
-      ]
+      ],
+      legacy: true
     },
     {
       guild: {
@@ -198,7 +204,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       wip: false,
       apps: [
         { slug: '/faucet', img: charisma },
-      ]
+      ],
+      legacy: true
     },
 
   ]
@@ -379,6 +386,11 @@ export default function Creatures({ creatures, quests }: Props) {
     setAmountiMMLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm::lp-token').balance)
   }, [getBalanceByKey])
 
+
+  const [showLegacyApps, setShowLegacyApps] = useState(false);
+
+  quests = showLegacyApps ? quests : quests.filter((quest: any) => !quest.legacy)
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -488,6 +500,14 @@ export default function Creatures({ creatures, quests }: Props) {
               <p className="text-muted-foreground text-base">
                 Here are some activities you can do in the Charisma ecosystem to earn tokens.
               </p>
+              <label className="flex items-center gap-2">
+                <span>Show Legacy Apps</span>
+                <Checkbox
+                  className="mt-0.5"
+                  checked={showLegacyApps}
+                  onCheckedChange={() => setShowLegacyApps(!showLegacyApps)}
+                />
+              </label>
             </div>
             <Link passHref href={'/quest-launchpad'}>
               <Button className='h-full bg-primary-foreground/5'>Are you a web3 project founder?</Button>
