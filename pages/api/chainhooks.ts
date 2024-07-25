@@ -51,7 +51,7 @@ export default async function chainhooks(
         const messageMapping: { [key: string]: any } = {
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
             author: 'Abundant Orchard',
-            description: `${payload.author} has harvested Fuji Apples.`,
+            description: `${payload.sender} has harvested Fuji Apples.`,
             thumbnail: 'https://charisma.rocks/stations/apple-orchard.png',
           },
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-core-set-creature-power': {
