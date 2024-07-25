@@ -49,6 +49,7 @@ import FarmTemplate from "./farm"
 import { PiPlant } from "react-icons/pi"
 import BattleRoyaleTemplate from "./battle-royale"
 import PrizeFightTemplate from "./prize-fight"
+import RestockFarmsTemplate from "./restock"
 
 const generateHeader = ({ name, sender, description }: any) => {
     return `;; Title: ${name}
@@ -281,6 +282,22 @@ export default function ContractDeployer({ data }: any) {
                                                                         <SelectValue placeholder="Select a model" />
                                                                     </SelectTrigger>
                                                                     <SelectContent>
+                                                                        <SelectItem value="restock">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <Scale className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        Restock{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            Farms
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Mint tokens to restock farming rewards
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
                                                                         <SelectItem value="proposal">
                                                                             <div className="flex items-start gap-3 text-foreground">
                                                                                 <Scale className="size-5" />
@@ -458,15 +475,17 @@ export default function ContractDeployer({ data }: any) {
                                                         <IndexTokenTemplate onFormChange={handleContractChange} />
                                                         : template === 'proposal' ?
                                                             <ProposalTemplate onFormChange={handleContractChange} />
-                                                            : template === 'strategy' ?
-                                                                <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
-                                                                : template === 'farm' ?
-                                                                    <FarmTemplate onFormChange={handleContractChange} />
-                                                                    : template === 'battle-royale' ?
-                                                                        <BattleRoyaleTemplate onFormChange={handleContractChange} />
-                                                                        : template === 'prize-fight' ?
-                                                                            <PrizeFightTemplate onFormChange={handleContractChange} />
-                                                                            : <div>...</div>
+                                                            : template === 'restock' ?
+                                                                <RestockFarmsTemplate onFormChange={handleContractChange} />
+                                                                : template === 'strategy' ?
+                                                                    <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
+                                                                    : template === 'farm' ?
+                                                                        <FarmTemplate onFormChange={handleContractChange} />
+                                                                        : template === 'battle-royale' ?
+                                                                            <BattleRoyaleTemplate onFormChange={handleContractChange} />
+                                                                            : template === 'prize-fight' ?
+                                                                                <PrizeFightTemplate onFormChange={handleContractChange} />
+                                                                                : <div>...</div>
 
                                             }
                                         </motion.div>}
