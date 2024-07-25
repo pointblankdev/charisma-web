@@ -43,19 +43,24 @@ export default function chainhooks(
         //   success: true
         // }
 
-        const messageMapping: { [key: string]: string } = {
-          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': 'Creatures have harvested FUJI tokens',
+        const messageMapping: { [key: string]: any } = {
+          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
+            description: 'Creatures have harvested FUJI tokens',
+            thumbnail: 'https://charisma.rocks/stations/abundant-orchard.png',
+          },
           // Add more mappings here for other contract_identifier - method combinations
         };
 
         const messageKey = `${payload.contract_identifier}-${payload.method}`;
         const message = messageMapping[messageKey];
+        const success = payload.success === true
 
-        if (message && payload.success === true) {
+        if (message && success) {
           const embed = new MessageBuilder()
             .setTitle(payload.method)
             .setAuthor(payload.sender)
-            .setDescription(message)
+            .setDescription(message.description)
+            .setThumbnail(message.thumbnail)
             .setTimestamp();
 
           hook.send(embed);
