@@ -46,14 +46,14 @@ export default async function chainhooks(
 
         const messageMapping: { [key: string]: any } = {
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
-            description: 'Creatures have harvested FUJI tokens',
+            description: 'Creatures have harvested Fuji Apples.',
             thumbnail: 'https://charisma.rocks/stations/apple-orchard.png',
           },
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-core-set-creature-power': {
-            description: 'Creatures power has been updated',
+            description: 'Creatures power has been updated.',
           },
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-core-set-creature-cost': {
-            description: 'Creatures cost has been updated',
+            description: 'Creatures cost has been updated.',
           },
 
           // Add more mappings here for other contract_identifier - method combinations
