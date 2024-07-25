@@ -41,6 +41,7 @@ import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
 import farmersImg from '@public/creatures/img/farmers.png'
 import bountifulOrchard from '@public/stations/apple-orchard.png'
+import { getCreatureData } from '@lib/user-api';
 
 export default function BountifulOrchardCard({ data }: any) {
 
@@ -59,14 +60,7 @@ export default function BountifulOrchardCard({ data }: any) {
     const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
     useEffect(() => {
-        sender && callReadOnlyFunction({
-            network: new StacksMainnet(),
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'creatures',
-            functionName: "get-creature-power",
-            functionArgs: [uintCV(1)],
-            senderAddress: sender
-        }).then(response => setPower(Number(cvToJSON(response).value)))
+        getCreatureData(1).then(response => setPower(response.power))
     }, [sender])
 
     useEffect(() => {

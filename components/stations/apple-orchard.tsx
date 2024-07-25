@@ -41,6 +41,8 @@ import { userSession } from '@components/stacks-session/connect';
 import numeral from 'numeral';
 import farmersImg from '@public/creatures/img/farmers.png'
 import tranquilOrchard from '@public/stations/apple-orchard.png'
+import { getGlobalState } from '@lib/db-providers/kv';
+import { getCreatureData } from '@lib/user-api';
 
 export default function AppleOrchardCard({ data }: any) {
 
@@ -71,15 +73,7 @@ export default function AppleOrchardCard({ data }: any) {
     }, [])
 
     useEffect(() => {
-        callReadOnlyFunction({
-            network: new StacksMainnet(),
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'creatures',
-            functionName: "get-creature-power",
-            functionArgs: [uintCV(1)],
-            senderAddress: sender
-        }).then(response => setPower(Number(cvToJSON(response).value)))
-
+        getCreatureData(1).then(response => setPower(response.power))
     }, [])
 
     useEffect(() => {

@@ -112,3 +112,13 @@ export async function setContractMetadata(ca: string, metadata: any) {
     body: JSON.stringify(metadata)
   });
 }
+
+export async function getCreatureData(id: string | number) {
+  const response = await fetch(`http://localhost:3000/api/v0/creatures/${id}`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.json();
+}

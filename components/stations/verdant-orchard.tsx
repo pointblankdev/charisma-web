@@ -28,6 +28,7 @@ import corgiSoldiersImg from '@public/creatures/img/corgi-soldiers.png'
 import alchemistsImg from '@public/creatures/img/alchemists.png'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
+import { getCreatureData } from '@lib/user-api';
 
 export default function VerdantOrchardCard({ data }: any) {
 
@@ -43,14 +44,7 @@ export default function VerdantOrchardCard({ data }: any) {
     const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
     useEffect(() => {
-        sender && callReadOnlyFunction({
-            network: new StacksMainnet(),
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'creatures',
-            functionName: "get-creature-power",
-            functionArgs: [uintCV(1)],
-            senderAddress: sender
-        }).then(response => setPower(Number(cvToJSON(response).value)))
+        getCreatureData(1).then(response => setPower(response.power))
     }, [sender])
 
     useEffect(() => {

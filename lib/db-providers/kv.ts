@@ -76,7 +76,7 @@ export async function setContractMetadata(ca: string, data: any): Promise<void> 
 }
 
 export async function getGlobalState(key: string): Promise<any> {
-    return JSON.parse(await kv.get(`global:${key}}`) || '');
+    return await kv.get(`global:${key}`);
 }
 
 export async function cacheGlobalState(key: string, json: any): Promise<void> {
@@ -84,7 +84,7 @@ export async function cacheGlobalState(key: string, json: any): Promise<void> {
 }
 
 export async function getUserState(user: string, key: string): Promise<any> {
-    return JSON.parse(await kv.get(`user:${user}:${key}`) || '');
+    return await kv.get(`user:${user}:${key}`);
 }
 
 export async function cacheUserState(user: string, key: string, json: any): Promise<void> {

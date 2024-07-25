@@ -1,4 +1,4 @@
-import { getContractMetadata, setContractMetadata } from "./kv";
+import { cacheGlobalState, getContractMetadata, getGlobalState, setContractMetadata } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -33,6 +33,53 @@ describe('metadata api', () => {
             ]
         }
         const response = await setContractMetadata(ca, metadata)
+        console.log(response)
+    })
+
+    it('should get creature data', async () => {
+        const response = await getGlobalState('creatures:1')
+        console.log(response)
+        expect(response).toBeDefined()
+    });
+
+    it('should set creatures 1 data into global state', async () => {
+        const response = await cacheGlobalState('creatures:1', {
+            id: 1,
+            title: 'Farmers',
+            description: 'Farmers are the backbone of the economy.',
+            cost: 1000000,
+            power: 5
+        })
+        console.log(response)
+    })
+
+    it('should set creatures 2 data into global state', async () => {
+        const response = await cacheGlobalState('creatures:2', {
+            id: 2,
+            title: 'Blacksmiths',
+            cost: 1000000,
+            power: 5
+        })
+        console.log(response)
+    })
+
+    it('should set creatures 3 data into global state', async () => {
+        const response = await cacheGlobalState('creatures:3', {
+            id: 3,
+            title: 'Corgi Soldiers',
+            cost: 10000000,
+            power: 80
+        })
+        console.log(response)
+    })
+
+    it('should set creatures 4 data into global state', async () => {
+        const response = await cacheGlobalState('creatures:4', {
+            id: 4,
+            title: 'Alchemists',
+            cost: 10000000,
+            power: 25
+        })
         console.log(response)
     })
 
