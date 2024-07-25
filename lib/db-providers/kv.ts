@@ -74,3 +74,11 @@ export async function getContractMetadata(ca: string): Promise<any> {
 export async function setContractMetadata(ca: string, data: any): Promise<void> {
     await kv.set(`ca:${ca}`, data);
 }
+
+export async function getChainState(contractAddress: string, method: string): Promise<any> {
+    return JSON.parse(await kv.get(`chainstate:${contractAddress}:${method}`) || '');
+}
+
+export async function cacheChainState(contractAddress: string, method: string, json: any): Promise<void> {
+    await kv.set(`chainstate:${contractAddress}:${method}`, JSON.stringify(json));
+}

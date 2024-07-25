@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
+import { getChainState, cacheChainState } from '@lib/db-providers/kv';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
@@ -10,7 +11,7 @@ type ErrorResponse = {
   };
 };
 
-export default function chainhooks(
+export default async function chainhooks(
   req: NextApiRequest,
   res: NextApiResponse<any | ErrorResponse>
 ) {
@@ -46,8 +47,9 @@ export default function chainhooks(
         const messageMapping: { [key: string]: any } = {
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
             description: 'Creatures have harvested FUJI tokens',
-            thumbnail: 'https://charisma.rocks/stations/apple-orchard.png',
+            image: 'https://charisma.rocks/stations/apple-orchard.png',
           },
+          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit-get-untapped-amount': {},
           // Add more mappings here for other contract_identifier - method combinations
         };
 
@@ -59,10 +61,13 @@ export default function chainhooks(
           const embed = new MessageBuilder()
             .setTitle(payload.method)
             .setAuthor(payload.sender)
-            .setDescription(message.description)
-            .setThumbnail(message.thumbnail)
 
-          hook.send(embed);
+          message.description && embed.setDescription(message.description)
+          message.image && embed.setImage(message.image)
+
+          await cacheChainState(payload.contract_identifier, payload.method, { args: payload.args });
+
+          await hook.send(embed);
         }
       }
     }

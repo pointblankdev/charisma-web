@@ -1,0 +1,27 @@
+[
+    {
+        "name": "abundant-orchard-harvest",
+        "uuid": "77ee38fd-abe7-4a97-8623-3a64df97a4b3",
+        "chain": "stacks",
+        "version": 1,
+        "networks": {
+            "mainnet": {
+                "if_this": {
+                    "scope": "contract_call",
+                    "method": "harvest",
+                    "contract_identifier": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard"
+                },
+                "end_block": null,
+                "then_that": {
+                    "http_post": {
+                        "url": "https://charisma.rocks/api/chainhooks",
+                        "authorization_header": ""
+                    }
+                },
+                "start_block": 158201,
+                "decode_clarity_values": true,
+                "expire_after_occurrence": null
+            }
+        }
+    }
+]
