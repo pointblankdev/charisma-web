@@ -68,7 +68,7 @@ export default async function chainhooks(
         if (message && payload.success) {
           // send message to discord
           const embed = new MessageBuilder()
-            .setTitle(payload.method)
+            .setTitle(payload.method.toUpperCase())
             .setAuthor(payload.author)
           message.description && embed.setDescription(message.description)
           message.thumbnail && embed.setThumbnail(message.thumbnail)
