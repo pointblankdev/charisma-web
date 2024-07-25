@@ -49,8 +49,10 @@ export default async function chainhooks(
             description: 'Creatures have harvested FUJI tokens',
             image: 'https://charisma.rocks/stations/apple-orchard.png',
           },
-          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit-get-untapped-amount': {},
-          cacheUserState,
+          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit-get-untapped-amount': {
+            cacheUserState,
+          },
+
           // Add more mappings here for other contract_identifier - method combinations
         };
 
