@@ -52,6 +52,9 @@ export default async function chainhooks(
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit-get-untapped-amount': {
             cacheUserState,
           },
+          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit-tap': {
+            cacheUserState,
+          },
 
           // Add more mappings here for other contract_identifier - method combinations
         };
