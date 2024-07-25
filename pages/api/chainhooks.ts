@@ -43,13 +43,23 @@ export default function chainhooks(
         //   success: true
         // }
 
-        const embed = new MessageBuilder()
-          .setTitle('Harvest')
-          .setAuthor(payload.sender)
-          .setDescription('Creatures have havested FUJI tokens')
-          .setTimestamp();
+        const messageMapping: { [key: string]: string } = {
+          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': 'Creatures have harvested FUJI tokens',
+          // Add more mappings here for other contract_identifier - method combinations
+        };
 
-        payload.success === true && hook.send(embed);
+        const messageKey = `${payload.contract_identifier}-${payload.method}`;
+        const message = messageMapping[messageKey];
+
+        if (message && payload.success === true) {
+          const embed = new MessageBuilder()
+            .setTitle(payload.method)
+            .setAuthor(payload.sender)
+            .setDescription(message)
+            .setTimestamp();
+
+          hook.send(embed);
+        }
       }
     }
   } catch (error: any) {
