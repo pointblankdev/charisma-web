@@ -497,8 +497,7 @@ export default function Creatures({ creatures, quests }: Props) {
                       </div>
                       <div className='flex flex-col justify-center space-y-2'>
                         <div className='flex space-x-2 justify-end'>
-                          {/* <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.amount)}>Dismiss</Button> */}
-                          <Button className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.amount)}>Dismiss</Button>
+                          <Button disabled={creature.amount === 0} className="z-30" variant={'ghost'} onClick={() => dismiss(creature.tokenContract, creature.amount)}>Dismiss</Button>
                           <Button disabled={!(creature.creaturesRecruitable >= 1) || creature.cost === 0} className="z-30" onClick={() => recruit(creature.tokenContract, creature.creaturesRecruitable)}>Recruit</Button>
                         </div>
                       </div>
