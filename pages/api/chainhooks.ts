@@ -47,7 +47,7 @@ export default async function chainhooks(
         const messageMapping: { [key: string]: any } = {
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
             description: 'Creatures have harvested FUJI tokens',
-            image: 'https://charisma.rocks/stations/apple-orchard.png',
+            thumbnail: 'https://charisma.rocks/stations/apple-orchard.png',
           },
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit-get-untapped-amount': {
             cacheUserState,
@@ -69,7 +69,7 @@ export default async function chainhooks(
             .setTitle(payload.method)
             .setAuthor(payload.sender)
           message.description && embed.setDescription(message.description)
-          message.image && embed.setImage(message.image)
+          message.thumbnail && embed.setThumbnail(message.thumbnail)
           await hook.send(embed);
 
           // cache user state in KV
