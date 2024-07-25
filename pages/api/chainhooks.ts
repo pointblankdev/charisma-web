@@ -1,7 +1,4 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { ConfUser } from '@lib/types';
-import { checkQuestComplete, setQuestComplete } from '@lib/stacks-api';
-import { getAllQuests } from '@lib/cms-providers/dato';
 
 type ErrorResponse = {
   error: {
@@ -10,9 +7,9 @@ type ErrorResponse = {
   };
 };
 
-export default async function chainhooks(
+export default function chainhooks(
   req: NextApiRequest,
-  res: NextApiResponse<ConfUser | ErrorResponse>
+  res: NextApiResponse<any | ErrorResponse>
 ) {
   if (req.method !== 'POST') {
     return res.status(501).json({
@@ -24,7 +21,6 @@ export default async function chainhooks(
   }
 
   console.log('chainhooks called');
-  const quests = await getAllQuests();
 
   try {
     for (const a of req.body.apply) {
@@ -35,18 +31,7 @@ export default async function chainhooks(
           success: tx.metadata.success,
         };
 
-        const matchingQuest = quests.find(q => q.contractIdentifier === payload.contract_identifier && q.method === payload.method);
-
-        if (matchingQuest) {
-          console.log('Matching quest found:', matchingQuest);
-
-          const response = await checkQuestComplete(payload.sender, matchingQuest.id);
-          console.log(response);
-          if (Number(response.value) === 2001) {
-            console.log('marking quest as complete');
-            await setQuestComplete(payload.sender, matchingQuest.id, true);
-          }
-        }
+        console.log(payload)
       }
     }
   } catch (error: any) {
