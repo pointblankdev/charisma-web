@@ -61,17 +61,18 @@ export default async function chainhooks(
         const success = payload.success === true
 
         if (message && success) {
+          // send message to discord
           const embed = new MessageBuilder()
             .setTitle(payload.method)
             .setAuthor(payload.sender)
-
           message.description && embed.setDescription(message.description)
           message.image && embed.setImage(message.image)
+          await hook.send(embed);
 
+          // cache user state in KV
           if (message.cacheUserState) {
             await message.cacheUserState(payload.sender, messageKey, payload);
           }
-          await hook.send(embed);
         }
       }
     }
