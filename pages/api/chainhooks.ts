@@ -29,21 +29,21 @@ export default async function chainhooks(
     for (const a of req.body.apply) {
       for (const tx of a.transactions) {
 
-        console.log(tx)
-
         const payload = {
           ...tx.metadata.kind.data,
           sender: tx.metadata.sender,
           success: tx.metadata.success,
         };
 
-        // {
-        //   args: [ 'u1' ],
-        //   contract_identifier: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard',
-        //   method: 'harvest',
-        //   sender: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q',
-        //   success: true
-        // }
+        if (payload.contract_identifier?.startsWith('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
+          payload.contract_identifier?.startsWith('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')) {
+          // log transaction
+          console.log(tx)
+          // send message to discord
+          const embed = new MessageBuilder()
+            .setDescription(JSON.stringify(payload))
+          await hook.send(embed);
+        }
 
         const messageMapping: { [key: string]: any } = {
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
@@ -62,14 +62,6 @@ export default async function chainhooks(
 
         const messageKey = `${payload.contract_identifier}-${payload.method}`;
         const message = messageMapping[messageKey];
-
-        if (payload.contract_identifier?.startsWith('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
-          payload.contract_identifier?.startsWith('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')) {
-          // send message to discord
-          const embed = new MessageBuilder()
-            .setDescription(JSON.stringify(payload))
-          await hook.send(embed);
-        }
 
         if (message && payload.success) {
           // send message to discord
