@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
-import { getChainState, cacheChainState } from '@lib/db-providers/kv';
+import { cacheGlobalState, cacheUserState } from '@lib/db-providers/kv';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
@@ -50,6 +50,7 @@ export default async function chainhooks(
             image: 'https://charisma.rocks/stations/apple-orchard.png',
           },
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit-get-untapped-amount': {},
+          cacheUserState,
           // Add more mappings here for other contract_identifier - method combinations
         };
 
@@ -65,8 +66,9 @@ export default async function chainhooks(
           message.description && embed.setDescription(message.description)
           message.image && embed.setImage(message.image)
 
-          await cacheChainState(payload.contract_identifier, payload.method, { args: payload.args });
-
+          if (message.cacheUserState) {
+            await message.cacheUserState(payload.sender, messageKey, payload);
+          }
           await hook.send(embed);
         }
       }

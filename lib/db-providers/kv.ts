@@ -75,10 +75,18 @@ export async function setContractMetadata(ca: string, data: any): Promise<void> 
     await kv.set(`ca:${ca}`, data);
 }
 
-export async function getChainState(contractAddress: string, method: string): Promise<any> {
-    return JSON.parse(await kv.get(`chainstate:${contractAddress}:${method}`) || '');
+export async function getGlobalState(key: string): Promise<any> {
+    return JSON.parse(await kv.get(`global:${key}}`) || '');
 }
 
-export async function cacheChainState(contractAddress: string, method: string, json: any): Promise<void> {
-    await kv.set(`chainstate:${contractAddress}:${method}`, JSON.stringify(json));
+export async function cacheGlobalState(key: string, json: any): Promise<void> {
+    await kv.set(`global:${key}`, JSON.stringify(json));
+}
+
+export async function getUserState(user: string, key: string): Promise<any> {
+    return JSON.parse(await kv.get(`user:${user}:${key}`) || '');
+}
+
+export async function cacheUserState(user: string, key: string, json: any): Promise<void> {
+    await kv.set(`user:${user}:${key}`, JSON.stringify(json));
 }
