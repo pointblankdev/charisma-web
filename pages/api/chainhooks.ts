@@ -61,7 +61,6 @@ export default function chainhooks(
             .setAuthor(payload.sender)
             .setDescription(message.description)
             .setThumbnail(message.thumbnail)
-            .setTimestamp();
 
           hook.send(embed);
         }
