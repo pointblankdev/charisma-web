@@ -46,7 +46,7 @@ export default function chainhooks(
         const messageMapping: { [key: string]: any } = {
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
             description: 'Creatures have harvested FUJI tokens',
-            thumbnail: 'https://charisma.rocks/stations/abundant-orchard.png',
+            thumbnail: 'https://charisma.rocks/stations/apple-orchard.png',
           },
           // Add more mappings here for other contract_identifier - method combinations
         };
