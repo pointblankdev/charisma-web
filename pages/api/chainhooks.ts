@@ -42,6 +42,7 @@ export default async function chainhooks(
           // send message to discord
           const embed = new MessageBuilder()
             .setDescription(JSON.stringify(payload))
+            .setThumbnail('https://charisma.rocks/charisma.png')
           await hook.send(embed);
         }
 
