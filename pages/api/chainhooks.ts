@@ -48,7 +48,8 @@ export default async function chainhooks(
 
         const messageMapping: { [key: string]: any } = {
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
-            description: 'Creatures have harvested Fuji Apples.',
+            author: 'Abundant Orchard',
+            description: `${payload.author} has harvested Fuji Apples.`,
             thumbnail: 'https://charisma.rocks/stations/apple-orchard.png',
           },
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-core-set-creature-power': {
@@ -68,7 +69,7 @@ export default async function chainhooks(
           // send message to discord
           const embed = new MessageBuilder()
             .setTitle(payload.method)
-            .setAuthor(payload.sender)
+            .setAuthor(payload.author)
           message.description && embed.setDescription(message.description)
           message.thumbnail && embed.setThumbnail(message.thumbnail)
           await hook.send(embed);
