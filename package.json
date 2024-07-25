@@ -57,6 +57,7 @@
     "commafy-anything": "^4.0.0",
     "cookie": "0.4.1",
     "date-fns": "^2.30.0",
+    "discord-webhook-node": "^1.1.8",
     "framer-motion": "^10.15.2",
     "htmlescape": "1.1.1",
     "intersection-observer": "0.12.0",
