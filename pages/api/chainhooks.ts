@@ -29,14 +29,8 @@ export default async function chainhooks(
     for (const a of req.body.apply) {
       for (const tx of a.transactions) {
 
-        const payload = {
-          ...tx.metadata.kind.data,
-          sender: tx.metadata.sender,
-          success: tx.metadata.success,
-        };
-
-        if (payload.contract_identifier?.startsWith('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
-          payload.contract_identifier?.startsWith('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')) {
+        if (tx.metadata.kind.data.contract_identifier?.startsWith('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
+          tx.metadata.kind.data.contract_identifier?.startsWith('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')) {
           // log transaction always
           console.log(tx)
           // send message to discord if transaction was successful
@@ -47,6 +41,14 @@ export default async function chainhooks(
             await hook.send(embed);
           }
         }
+
+
+
+        const payload = {
+          ...tx.metadata.kind.data,
+          sender: tx.metadata.sender,
+          success: tx.metadata.success,
+        };
 
         const messageMapping: { [key: string]: any } = {
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
