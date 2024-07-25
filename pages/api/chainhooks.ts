@@ -42,7 +42,7 @@ export default async function chainhooks(
           // send message to discord if transaction was successful
           if (tx.metadata.success) {
             const embed = new MessageBuilder()
-              .setDescription(JSON.stringify(payload))
+              .setDescription(JSON.stringify(tx))
               .setThumbnail('https://charisma.rocks/charisma.png')
             await hook.send(embed);
           }
