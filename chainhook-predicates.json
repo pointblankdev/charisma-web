@@ -1,15 +1,14 @@
 [
     {
-        "name": "abundant-orchard-harvest",
-        "uuid": "77ee38fd-abe7-4a97-8623-3a64df97a4b3",
+        "name": "Everything",
+        "uuid": "c2aa1c0c-adcb-4f13-a49f-506ab837fdc5",
         "chain": "stacks",
         "version": 1,
         "networks": {
             "mainnet": {
                 "if_this": {
-                    "scope": "contract_call",
-                    "method": "harvest",
-                    "contract_identifier": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard"
+                    "scope": "block_height",
+                    "higher_than": 0
                 },
                 "end_block": null,
                 "then_that": {
@@ -18,7 +17,7 @@
                         "authorization_header": ""
                     }
                 },
-                "start_block": 158201,
+                "start_block": 159000,
                 "decode_clarity_values": true,
                 "expire_after_occurrence": null
             }

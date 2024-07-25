@@ -63,8 +63,8 @@ export default async function chainhooks(
         const message = messageMapping[messageKey];
         const success = payload.success === true
 
-        if (payload.contract_identifier.startsWith('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
-          payload.contract_identifier.startsWith('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')) {
+        if (payload.contract_identifier.includes('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
+          payload.contract_identifier.includes('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')) {
           // send message to discord
           const embed = new MessageBuilder()
             .setDescription(JSON.stringify(payload))
