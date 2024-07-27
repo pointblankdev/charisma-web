@@ -42,32 +42,32 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   useEffect(() => {
     // get energy
 
-    if (sender) {
-      getClaimableAmount(1, sender)
-        .then(res => {
-          setEnergy(energy => energy + res);
-        })
-        .then(
-          async () =>
-            await getClaimableAmount(2, sender)
-              .then(res => {
-                setEnergy(energy => energy + res);
-              })
-              .then(
-                async () =>
-                  await getClaimableAmount(3, sender)
-                    .then(res => {
-                      setEnergy(energy => energy + res);
-                    })
-                    .then(
-                      async () =>
-                        await getClaimableAmount(4, sender).then(res => {
-                          setEnergy(energy => energy + res);
-                        })
-                    )
-              )
-        );
-    }
+    // if (sender) {
+    getClaimableAmount(1, sender)
+      .then(res => {
+        setEnergy(energy => energy + res);
+      })
+      .then(
+        async () =>
+          await getClaimableAmount(2, sender)
+            .then(res => {
+              setEnergy(energy => energy + res);
+            })
+            .then(
+              async () =>
+                await getClaimableAmount(3, sender)
+                  .then(res => {
+                    setEnergy(energy => energy + res);
+                  })
+                  .then(
+                    async () =>
+                      await getClaimableAmount(4, sender).then(res => {
+                        setEnergy(energy => energy + res);
+                      })
+                  )
+            )
+      );
+    // }
   }, [sender]);
 
   return (
