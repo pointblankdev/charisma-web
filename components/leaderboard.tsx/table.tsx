@@ -1,9 +1,7 @@
 "use client"
 
-import Image from "next/image"
+import { useState } from "react"
 import { MoreHorizontal } from "lucide-react"
-
-import { Badge } from "@components/ui/badge"
 import { Button } from "@components/ui/button"
 import {
     Card,
@@ -87,7 +85,20 @@ const products = [
     }
 ]
 
+const ITEMS_PER_PAGE = 2;
+
 export default function Leaderboard() {
+    const [currentPage, setCurrentPage] = useState(1);
+    const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+
+    const handlePageChange = (page: number) => {
+        if (page < 1 || page > totalPages) return;
+        setCurrentPage(page);
+    };
+
+    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
+    const currentProducts = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
     return (
         <Card>
             <CardHeader>
@@ -145,8 +156,22 @@ export default function Leaderboard() {
                 </Table>
             </CardContent>
             <CardFooter>
-                <div className="text-xs text-muted-foreground">
-                    Showing <strong>1-6</strong> of <strong>6</strong> products
+                <div className="flex justify-between items-center text-xs text-muted-foreground">
+                    <Button
+                        onClick={() => handlePageChange(currentPage - 1)}
+                        disabled={currentPage === 1}
+                    >
+                        Previous
+                    </Button>
+                    <span className="mx-2">
+                        Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
+                    </span>
+                    <Button
+                        onClick={() => handlePageChange(currentPage + 1)}
+                        disabled={currentPage === totalPages}
+                    >
+                        Next
+                    </Button>
                 </div>
             </CardFooter>
         </Card>
