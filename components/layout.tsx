@@ -42,7 +42,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   useEffect(() => {
     // get energy
 
-    // if (sender) {
+    if (sender) {
     getClaimableAmount(1, sender)
       .then(res => {
         setEnergy(energy => energy + res);
@@ -67,7 +67,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   )
             )
       );
-    // }
+    }
   }, [sender]);
 
   return (
