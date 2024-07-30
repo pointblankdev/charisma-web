@@ -31,61 +31,61 @@ const products = [
     {
         id: 1,
         wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        category: "Appliance",
+        Token: "Appliance",
         price: "$499.99",
         sales: 25,
-        stock: 10,
+        Reward: 10,
         dateAdded: "2023-07-12",
         imageSrc: "/placeholder.svg"
     },
     {
         id: 2,
         wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        category: "Electronics",
+        Token: "Electronics",
         price: "$129.99",
         sales: 100,
-        stock: 50,
+        Reward: 50,
         dateAdded: "2023-10-18",
     },
     {
         id: 3,
         wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        category: "Lighting",
+        Token: "Lighting",
         price: "$39.99",
         sales: 50,
-        stock: 75,
+        Reward: 75,
         dateAdded: "2023-11-29",
     },
     {
         id: 4,
         wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        category: "Beverage",
+        Token: "Beverage",
         price: "$2.99",
         sales: 0,
-        stock: 200,
+        Reward: 200,
         dateAdded: "2023-12-25",
     },
     {
         id: 5,
         wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        category: "Accessories",
+        Token: "Accessories",
         price: "$59.99",
         sales: 75,
-        stock: 30,
+        Reward: 30,
         dateAdded: "2024-01-01",
     },
     {
         id: 6,
         wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        category: "Electronics",
+        Token: "Electronics",
         price: "$199.99",
         sales: 30,
-        stock: 20,
+        Reward: 20,
         dateAdded: "2024-02-14",
     }
 ]
 
-const ITEMS_PER_PAGE = 2;
+const ITEMS_PER_PAGE = 5;
 
 export default function Leaderboard() {
     const [currentPage, setCurrentPage] = useState(1);
@@ -115,10 +115,9 @@ export default function Leaderboard() {
                             <TableHead className="hidden md:table-cell">Rank</TableHead>
                             </TableHead>
                             <TableHead>Wallet Address</TableHead>
-                            <TableHead>Category</TableHead>
+                            <TableHead>Token</TableHead>
                             <TableHead className="hidden md:table-cell">Price</TableHead>
-                            <TableHead className="hidden md:table-cell">Total Sales</TableHead>
-                            <TableHead className="hidden md:table-cell">Stock</TableHead>
+                            <TableHead className="hidden md:table-cell">Reward</TableHead>
                             <TableHead className="hidden md:table-cell">Date Added</TableHead>
                             <TableHead>
                                 <span className="sr-only">Actions</span>
@@ -126,14 +125,13 @@ export default function Leaderboard() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {products.map(product => (
+                        {currentProducts.map(product => (
                             <TableRow key={product.id}>
                                 <TableCell className="font-medium">{product.id}</TableCell>
                                 <TableCell className="font-medium">{product.wallet}</TableCell>
-                                <TableCell>{product.category}</TableCell>
+                                <TableCell>{product.Token}</TableCell>
                                 <TableCell className="hidden md:table-cell">{product.price}</TableCell>
-                                <TableCell className="hidden md:table-cell">{product.sales}</TableCell>
-                                <TableCell className="hidden md:table-cell">{product.stock}</TableCell>
+                                <TableCell className="hidden md:table-cell">{product.Reward}</TableCell>
                                 <TableCell className="hidden md:table-cell">{product.dateAdded}</TableCell>
                                 <TableCell>
                                     <DropdownMenu>
