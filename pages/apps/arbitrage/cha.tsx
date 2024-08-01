@@ -28,28 +28,28 @@ type Props = {
   data: any;
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+// export const getStaticProps: GetStaticProps<Props> = async () => {
 
-  try {
+//   try {
 
-    const tickers = await velarApi.tickers()
-    const tokens = await velarApi.tokens()
+//     const tickers = await velarApi.tickers()
+//     const tokens = await velarApi.tokens()
 
-    return {
-      props: {
-        data: { tokens, tickers }
-      },
-      revalidate: 600
-    };
+//     return {
+//       props: {
+//         data: { tokens, tickers }
+//       },
+//       revalidate: 600
+//     };
 
-  } catch (error) {
-    return {
-      props: {
-        data: {}
-      },
-    }
-  }
-};
+//   } catch (error) {
+//     return {
+//       props: {
+//         data: {}
+//       },
+//     }
+//   }
+// };
 
 const fadeIn = {
   hidden: { opacity: 0 },
