@@ -138,6 +138,8 @@ const SwapDashboard = ({ lpConfig }: any) => {
   const arbitrageToken = tokenList.find((token: Token) => token.contractAddress === swapConfig.steps[swapConfig.steps.length - 1].toToken)
   const arbitrageProfitInUSD = arbitrageProfit * arbitrageToken?.price
 
+  return (<>Disabled</>)
+
   return (
     <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl'>
       <CardHeader className='z-20 p-4'>
