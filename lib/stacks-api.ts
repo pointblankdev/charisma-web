@@ -615,7 +615,8 @@ export async function getTokenURI(contract: string) {
 
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
-  const metadata = await (await fetch(cv.value.value.value)).json();
+  const tokenUri = cv.value.value.value
+  const metadata = await (await fetch(tokenUri.replace('charisma.rocks', 'charisma-web-omega.vercel.app'))).json();
   return metadata;
 }
 
