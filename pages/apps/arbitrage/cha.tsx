@@ -100,6 +100,8 @@ export default function Swap({ data }: Props) {
     return swapConfig
   }, [swapConfig, data.tickers])
 
+  return (<>Disabled</>)
+
 
   const stxwcha = data.tickers.find((ticker: any) => ticker.ticker_id === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma")
 
@@ -137,8 +139,6 @@ const SwapDashboard = ({ lpConfig }: any) => {
   const arbitrageProfit = swapConfig.steps[swapConfig.steps.length - 1].toAmount - swapConfig.steps[0].fromAmount
   const arbitrageToken = tokenList.find((token: Token) => token.contractAddress === swapConfig.steps[swapConfig.steps.length - 1].toToken)
   const arbitrageProfitInUSD = arbitrageProfit * arbitrageToken?.price
-
-  return (<>Disabled</>)
 
   return (
     <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl'>
