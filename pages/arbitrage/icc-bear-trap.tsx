@@ -28,28 +28,28 @@ type Props = {
   data: any;
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+// export const getStaticProps: GetStaticProps<Props> = async () => {
 
-  try {
+//   try {
 
-    const tickers = await velarApi.tickers()
-    const tokens = await velarApi.tokens()
+//     const tickers = await velarApi.tickers()
+//     const tokens = await velarApi.tokens()
 
-    return {
-      props: {
-        data: { tokens, tickers }
-      },
-      revalidate: 600
-    };
+//     return {
+//       props: {
+//         data: { tokens, tickers }
+//       },
+//       revalidate: 600
+//     };
 
-  } catch (error) {
-    return {
-      props: {
-        data: {}
-      },
-    }
-  }
-};
+//   } catch (error) {
+//     return {
+//       props: {
+//         data: {}
+//       },
+//     }
+//   }
+// };
 
 const fadeIn = {
   hidden: { opacity: 0 },
@@ -63,71 +63,73 @@ export default function Swap({ data }: Props) {
     image: '/liquid-charisma.png'
   };
 
-  const [tokenList, setTokenList] = useState<Token[]>([]);
-  const [swapConfig, setSwapConfig] = useState<SwapConfig>({
-    steps: [
-      { fromToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma', fromAmount: 10, action: 'SWAP', toToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', toAmount: 0 },
-      { fromToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', fromAmount: 0, action: 'SWAP', toToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', toAmount: 0 },
-      { fromToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', fromAmount: 0, action: 'UNSTAKE', toToken: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', toAmount: 0 },
-      { fromToken: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', fromAmount: 0, action: 'WRAP', toToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma', toAmount: 0 },
-    ],
-    options: {}
-  });
+  // const [tokenList, setTokenList] = useState<Token[]>([]);
+  // const [swapConfig, setSwapConfig] = useState<SwapConfig>({
+  //   steps: [
+  //     { fromToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma', fromAmount: 10, action: 'SWAP', toToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', toAmount: 0 },
+  //     { fromToken: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx', fromAmount: 0, action: 'SWAP', toToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', toAmount: 0 },
+  //     { fromToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', fromAmount: 0, action: 'UNSTAKE', toToken: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', toAmount: 0 },
+  //     { fromToken: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', fromAmount: 0, action: 'WRAP', toToken: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma', toAmount: 0 },
+  //   ],
+  //   options: {}
+  // });
 
-  useEffect(() => {
-    setTokenList([...data.tokens, {
-      symbol: 'CHA',
-      name: 'Charisma',
-      contractAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token',
-      imageUrl: 'https://charisma.rocks/charisma.png',
-      price: data.tokens.find((token: Token) => token.symbol === 'sCHA').price
-    }])
-  }, [setTokenList, data.tokens]);
+  // useEffect(() => {
+  //   setTokenList([...data.tokens, {
+  //     symbol: 'CHA',
+  //     name: 'Charisma',
+  //     contractAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token',
+  //     imageUrl: 'https://charisma.rocks/charisma.png',
+  //     price: data.tokens.find((token: Token) => token.symbol === 'sCHA').price
+  //   }])
+  // }, [setTokenList, data.tokens]);
 
-  const recalculateSwapConfig: SwapConfig = useMemo(() => {
+  // const recalculateSwapConfig: SwapConfig = useMemo(() => {
 
-    swapConfig.steps.forEach((step: StepConfig, index: number) => {
-      processStep(step, data.tickers);
-      // Update the next step
-      if (index < swapConfig.steps.length - 1) {
-        swapConfig.steps[index + 1].fromToken = step.toToken;
-        swapConfig.steps[index + 1].fromAmount = step.toAmount || 0;
-      }
-    });
+  //   swapConfig.steps.forEach((step: StepConfig, index: number) => {
+  //     processStep(step, data.tickers);
+  //     // Update the next step
+  //     if (index < swapConfig.steps.length - 1) {
+  //       swapConfig.steps[index + 1].fromToken = step.toToken;
+  //       swapConfig.steps[index + 1].fromAmount = step.toAmount || 0;
+  //     }
+  //   });
 
-    setSwapConfig(swapConfig)
+  //   setSwapConfig(swapConfig)
 
-    return swapConfig
-  }, [swapConfig, data.tickers])
+  //   return swapConfig
+  // }, [swapConfig, data.tickers])
 
 
-  const stxwcha = data.tickers.find((ticker: any) => ticker.ticker_id === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma")
+  // const stxwcha = data.tickers.find((ticker: any) => ticker.ticker_id === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma")
 
-  const amount0Desired = 1000000
-  const amount1Desired = Number((amount0Desired * stxwcha.last_price).toFixed(0))
-  const amount0Min = Number((amount0Desired * 0.80).toFixed(0))
-  const amount1Min = Number((amount1Desired * 0.80).toFixed(0))
+  // const amount0Desired = 1000000
+  // const amount1Desired = Number((amount0Desired * stxwcha.last_price).toFixed(0))
+  // const amount0Min = Number((amount0Desired * 0.80).toFixed(0))
+  // const amount1Min = Number((amount1Desired * 0.80).toFixed(0))
 
-  const lpConfig = {
-    amount0Desired,
-    amount1Desired,
-    amount0Min,
-    amount1Min,
-  }
+  // const lpConfig = {
+  //   amount0Desired,
+  //   amount1Desired,
+  //   amount0Min,
+  //   amount1Min,
+  // }
 
-  return (
-    <Page meta={meta} fullViewport>
-      <SkipNavContent />
-      <Layout>
-        <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl">
-          <SwapContext.Provider value={{ tokenList, setTokenList, swapConfig: recalculateSwapConfig, setSwapConfig }}>
-            <SwapDashboard lpConfig={lpConfig} />
-            <div className='text-center text-xs m-2 text-secondary/50'>*If your trade is profitable, a portion of earnings are deposited in the Velar STX-wCHA LP. This LP remains yours.</div>
-          </SwapContext.Provider>
-        </motion.div >
-      </Layout >
-    </Page >
-  );
+  return (<>Disabled</>)
+
+  // return (
+  //   <Page meta={meta} fullViewport>
+  //     <SkipNavContent />
+  //     <Layout>
+  //       <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl">
+  //         <SwapContext.Provider value={{ tokenList, setTokenList, swapConfig: recalculateSwapConfig, setSwapConfig }}>
+  //           <SwapDashboard lpConfig={lpConfig} />
+  //           <div className='text-center text-xs m-2 text-secondary/50'>*If your trade is profitable, a portion of earnings are deposited in the Velar STX-wCHA LP. This LP remains yours.</div>
+  //         </SwapContext.Provider>
+  //       </motion.div >
+  //     </Layout >
+  //   </Page >
+  // );
 }
 
 const SwapDashboard = ({ lpConfig }: any) => {

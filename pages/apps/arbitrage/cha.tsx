@@ -103,33 +103,33 @@ export default function Swap({ data }: Props) {
   return (<>Disabled</>)
 
 
-  const stxwcha = data.tickers.find((ticker: any) => ticker.ticker_id === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma")
+  // const stxwcha = data.tickers.find((ticker: any) => ticker.ticker_id === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma")
 
-  const amount0Desired = 1000000
-  const amount1Desired = Number((amount0Desired * stxwcha.last_price).toFixed(0))
-  const amount0Min = Number((amount0Desired * 0.80).toFixed(0))
-  const amount1Min = Number((amount1Desired * 0.80).toFixed(0))
+  // const amount0Desired = 1000000
+  // const amount1Desired = Number((amount0Desired * stxwcha.last_price).toFixed(0))
+  // const amount0Min = Number((amount0Desired * 0.80).toFixed(0))
+  // const amount1Min = Number((amount1Desired * 0.80).toFixed(0))
 
-  const lpConfig = {
-    amount0Desired,
-    amount1Desired,
-    amount0Min,
-    amount1Min,
-  }
+  // const lpConfig = {
+  //   amount0Desired,
+  //   amount1Desired,
+  //   amount0Min,
+  //   amount1Min,
+  // }
 
-  return (
-    <Page meta={meta} fullViewport>
-      <SkipNavContent />
-      <Layout>
-        <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl">
-          <SwapContext.Provider value={{ tokenList, setTokenList, swapConfig: recalculateSwapConfig, setSwapConfig }}>
-            <SwapDashboard lpConfig={lpConfig} />
-            <div className='text-center text-xs m-2 text-secondary/50'>*If your trade is profitable, a portion of earnings are deposited in the Velar STX-wCHA LP. This LP remains yours.</div>
-          </SwapContext.Provider>
-        </motion.div >
-      </Layout >
-    </Page >
-  );
+  // return (
+  //   <Page meta={meta} fullViewport>
+  //     <SkipNavContent />
+  //     <Layout>
+  //       <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl">
+  //         <SwapContext.Provider value={{ tokenList, setTokenList, swapConfig: recalculateSwapConfig, setSwapConfig }}>
+  //           <SwapDashboard lpConfig={lpConfig} />
+  //           <div className='text-center text-xs m-2 text-secondary/50'>*If your trade is profitable, a portion of earnings are deposited in the Velar STX-wCHA LP. This LP remains yours.</div>
+  //         </SwapContext.Provider>
+  //       </motion.div >
+  //     </Layout >
+  //   </Page >
+  // );
 }
 
 const SwapDashboard = ({ lpConfig }: any) => {
