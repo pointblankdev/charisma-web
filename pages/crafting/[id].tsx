@@ -42,6 +42,7 @@ import numeral from 'numeral';
 import IronForgeCard from '@components/stations/iron-forge';
 import AbundantOrchardCard from '@components/stations/abundant-orchard';
 import { PiArrowFatLineDownFill, PiArrowFatLineUpFill } from "react-icons/pi";
+import { getGlobalState } from '@lib/db-providers/kv';
 
 type Props = {
   data: any;
@@ -334,8 +335,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
     let isRemoveLiquidityUnlocked = true;
     if (contractName === 'quiet-confidence') {
       blockCounter = await getBlockCounter(params?.id as string);
-      const { results } = await blocksApi.getBlockList({ limit: 1 });
-      blocksUntilUnlock = 155550 + blockCounter - results[0].height;
+      const block = await getGlobalState(`blocks:latest`)
+      blocksUntilUnlock = 155550 + blockCounter - block.height;
       isRemoveLiquidityUnlocked = await getIsUnlocked(params?.id as string);
     } else if (
       // these contracts were made before the block counter was implemented

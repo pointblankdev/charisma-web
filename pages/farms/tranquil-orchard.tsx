@@ -1,5 +1,4 @@
 import { SkipNavContent } from '@reach/skip-nav';
-
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
@@ -15,33 +14,15 @@ import {
 } from '@components/ui/card';
 import MintRaven from '@components/mint/raven';
 import { Button } from '@components/ui/button';
-import {
-  blocksApi,
-  getNameFromAddress,
-  getTitleBeltHoldeBalance,
-  getTitleBeltHolder
-} from '@lib/stacks-api';
-import { GetStaticProps } from 'next';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
-import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion';
-import liquidStakedWelsh from '@public/liquid-staked-welshcorgicoin.png';
-import liquidStakedOdin from '@public/liquid-staked-odin.png';
 import tranquilOrchardCard from '@public/stations/apple-orchard.png';
 import fujiApplesIcon from '@public/stations/fuji-apples.png';
-import SalvageFenrir from '@components/salvage/salvage-fenrir';
-import fenrirIcon from '@public/fenrir-icon-2.png';
 import bolt from '@public/bolt.gif';
-import raven from '@public/raven-of-odin.png';
-import { callReadOnlyFunction } from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
-import { clamp } from 'lodash';
-import ClaimFaucetButton from '@components/faucet/raven-claim';
-import charismaToken from '@public/charisma.png';
 
-export default function TranquilOrchard({ data }: Props) {
+export default function TranquilOrchard() {
   const meta = {
     title: "Charisma | Tranquil Orchard",
     description: META_DESCRIPTION,
@@ -156,33 +137,6 @@ export default function TranquilOrchard({ data }: Props) {
     </Page>
   );
 }
-
-type Props = {
-  data: any;
-};
-
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  try {
-    const { results } = await blocksApi.getBlockList({ limit: 1 });
-
-    const data = {
-      latestBlock: results[0].height
-    };
-
-    return {
-      props: {
-        data: data
-      },
-      revalidate: 60000
-    };
-  } catch (error) {
-    return {
-      props: {
-        data: {}
-      }
-    };
-  }
-};
 
 const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
   return (

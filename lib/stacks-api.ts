@@ -28,6 +28,9 @@ import { getAllWallets } from './cms-providers/dato';
 import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
 import { bytesToHex, hexToInt, intToHex, utf8ToBytes } from '@stacks/common';
+import useLatestBlock from './hooks/use-latest-block';
+import { getLatestBlock } from './user-api';
+import { getGlobalState } from './db-providers/kv';
 
 const network = new StacksMainnet();
 
@@ -288,8 +291,9 @@ export function updateVoteData(proposals: any[], transactions: any[]) {
 }
 
 export async function getProposals() {
-  const { results } = await blocksApi.getBlockList({ limit: 1 });
-  const latestBlock = Number(results[0].height);
+
+  const block = await getGlobalState(`blocks:latest`)
+  const latestBlock = block.height
 
   const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
     principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',

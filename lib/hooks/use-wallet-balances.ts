@@ -1,8 +1,6 @@
 
 import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
-import { createContext, useContext, useState } from 'react';
-
-export type PageState = 'registration' | 'ticket';
+import { createContext, useContext } from 'react';
 
 export type WalletBalances = AddressBalanceResponse;
 
@@ -10,7 +8,7 @@ type WalletBalancesContextType = {
   balances: WalletBalances;
   setBalances: React.Dispatch<React.SetStateAction<WalletBalances>>;
   getKeyByContractAddress: any;
-  getBalanceByKey: any
+  getBalanceByKey: any;
 };
 
 export const WalletBalancesContext = createContext<WalletBalancesContextType | null>(null);

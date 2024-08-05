@@ -39,8 +39,9 @@ import { StacksMainnet } from '@stacks/network';
 import { clamp } from 'lodash';
 import ClaimFaucetButton from '@components/faucet/raven-claim';
 import charismaToken from '@public/charisma.png';
+import { getGlobalState } from '@lib/db-providers/kv';
 
-export default function OdinsRaven({ data }: Props) {
+export default function OdinsRaven() {
   const meta = {
     title: "Charisma | Odin's Raven",
     description: META_DESCRIPTION,
@@ -234,33 +235,6 @@ export default function OdinsRaven({ data }: Props) {
     </Page>
   );
 }
-
-type Props = {
-  data: any;
-};
-
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  try {
-    const { results } = await blocksApi.getBlockList({ limit: 1 });
-
-    const data = {
-      latestBlock: results[0].height
-    };
-
-    return {
-      props: {
-        data: data
-      },
-      revalidate: 60000
-    };
-  } catch (error) {
-    return {
-      props: {
-        data: {}
-      }
-    };
-  }
-};
 
 const ActiveRecipeIndicator = ({ active }: { active: boolean }) => {
   return (

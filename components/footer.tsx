@@ -1,44 +1,20 @@
-
-import VercelLogo from '@components/icons/icon-platform';
 import styles from './footer.module.css';
 import { cn } from '@lib/utils';
-import { useEffect, useState } from 'react';
-import { blocksApi } from '@lib/stacks-api';
 import IconStacks from './icons/icon-stacks';
 import Link from 'next/link';
 import { BsDiscord, BsTwitter, BsBookHalf } from 'react-icons/bs';
 import { BITCOIN_LEARN_MORE_URL, STACKS_LEARN_MORE_URL } from '@lib/constants';
-
-export function HostedByVercel() {
-  return (
-    <a
-      href="https://vercel.com"
-      className={cn(styles['footer-link'], styles['footer-logo'])}
-      target="_blank"
-      rel="noopener noreferrer"
-    >
-      <div className={styles['secondary-text']}>Created with </div>
-      <VercelLogo color="white" />
-    </a>
-  );
-}
+import useLatestBlock from '@lib/hooks/use-latest-block';
 
 export default function Footer() {
 
-  const [blockHeight, setBlockHeight] = useState<number>(0);
-
-  useEffect(() => {
-    blocksApi.getBlockList({ limit: 1 }).then((res) => {
-      const latestBlock = res.results[0]
-      setBlockHeight(latestBlock.height);
-    }).catch(console.error)
-  }, [])
+  const latestBlock = useLatestBlock()
 
   return (
     <footer className={cn(styles.footer)}>
       <div className={cn('flex', 'items-center', 'justify-between', 'w-full', 'm-4')}>
         <div className={cn(styles['footer-block-height'])}>
-          <IconStacks size={16} /><div>Block {blockHeight}</div>
+          <IconStacks size={16} /><div>Block {latestBlock.height}</div>
         </div>
 
         <div className={cn('items-center', 'gap-4', 'flex')}>
