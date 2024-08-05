@@ -1,4 +1,4 @@
-import { getGlobalState } from '@lib/db-providers/kv';
+import { getGlobalState, cacheGlobalState } from '@lib/db-providers/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -17,11 +17,13 @@ export default async function getBlocks(
     try {
         if (req.method === 'GET') {
             response = await getGlobalState(`blocks:latest`)
+        } else if (req.method === 'POST') {
+            response = await cacheGlobalState(`blocks:latest`, req.body)
         } else {
             code = 501
             response = new Object({
                 code: 'method_unknown',
-                message: 'This endpoint only responds to GET'
+                message: 'This endpoint only responds to GET and POST'
             })
         }
     } catch (error: any) {

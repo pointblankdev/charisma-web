@@ -21,6 +21,7 @@ import tokenfaucet2 from '@public/token-faucet-2.png'
 import { Card } from '@components/ui/card';
 import { clamp } from 'framer-motion';
 import millify from 'millify';
+import { setLatestBlock } from '@lib/user-api';
 
 
 export default function Faucet({ data }: Props) {
@@ -102,7 +103,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     const { results } = await blocksApi.getBlocks({ limit: 1 })
 
-    console.log(results)
+    await setLatestBlock(results[0])
 
     const lc: any = await callReadOnlyFunction({
       network: new StacksMainnet(),

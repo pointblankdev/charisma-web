@@ -43,7 +43,8 @@ export default async function chainhooks(
         //   }
         // }
         // log transaction always
-        console.log(Object.keys(tx))
+        console.log(Object.keys(tx.metadata))
+        console.log(Object.keys(tx.metadata.kind))
         // console.log(tx.metadata)
 
         // REACT TO SPECIFIC TRANSACTIONS

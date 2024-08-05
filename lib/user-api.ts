@@ -134,3 +134,14 @@ export async function getLatestBlock() {
   });
   return response.json();
 }
+
+export async function setLatestBlock(metadata: any) {
+  const response = await fetch(`${HOST}/api/v0/blocks`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(metadata)
+  });
+  return response.json();
+}
