@@ -15,7 +15,7 @@ import { Toaster } from "@components/ui/toaster"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { appDetails, userSession } from '@components/stacks-session/connect';
 import { WalletBalancesProvider } from '@lib/hooks/wallet-balance-provider';
-import { SocketProvider } from '@lib/hooks/use-latest-block';
+import { GlobalStateProvider } from '@lib/hooks/global-state-context';
 
 // If loading a variable font, you don't need to specify the font weight
 const font = Ysabeau_Infant({ subsets: ['latin'] })
@@ -34,7 +34,7 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <OverlayProvider>
       <Connect authOptions={authOptions}>
-        <SocketProvider>
+        <GlobalStateProvider>
           <WalletBalancesProvider>
             <main className={cn(font.className)}>
               <Component {...pageProps} />
@@ -45,7 +45,7 @@ export default function App({ Component, pageProps }: AppProps) {
             <Analytics />
             <SpeedInsights />
           </WalletBalancesProvider>
-        </SocketProvider>
+        </GlobalStateProvider>
       </Connect>
     </OverlayProvider>
   );

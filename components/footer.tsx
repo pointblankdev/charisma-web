@@ -4,17 +4,17 @@ import IconStacks from './icons/icon-stacks';
 import Link from 'next/link';
 import { BsDiscord, BsTwitter, BsBookHalf } from 'react-icons/bs';
 import { BITCOIN_LEARN_MORE_URL, STACKS_LEARN_MORE_URL } from '@lib/constants';
-import useLatestBlock from '@lib/hooks/use-latest-block';
+import { useGlobalState } from '@lib/hooks/global-state-context';
 
 export default function Footer() {
 
-  const latestBlock = useLatestBlock()
+  const { block } = useGlobalState()
 
   return (
     <footer className={cn(styles.footer)}>
       <div className={cn('flex', 'items-center', 'justify-between', 'w-full', 'm-4')}>
         <div className={cn(styles['footer-block-height'])}>
-          <IconStacks size={16} /><div>Block {latestBlock.height}</div>
+          <IconStacks size={16} /><div>Block {block.height}</div>
         </div>
 
         <div className={cn('items-center', 'gap-4', 'flex')}>

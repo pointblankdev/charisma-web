@@ -28,7 +28,6 @@ import { getAllWallets } from './cms-providers/dato';
 import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
 import { bytesToHex, hexToInt, intToHex, utf8ToBytes } from '@stacks/common';
-import useLatestBlock from './hooks/use-latest-block';
 import { getLatestBlock } from './user-api';
 import { getGlobalState } from './db-providers/kv';
 
