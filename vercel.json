@@ -9,7 +9,7 @@
             "schedule": "* * * * *"
         },
         {
-            "path": "/api/blocks/cache",
+            "path": "/api/v0/blocks/cache",
             "schedule": "* * * * *"
         }
     ]
