@@ -44,7 +44,7 @@ export default async function chainhooks(
         // }
         // log transaction always
         console.log(Object.keys(tx))
-        console.log(tx.metadata)
+        // console.log(tx.metadata)
 
         // REACT TO SPECIFIC TRANSACTIONS
         const payload = {
