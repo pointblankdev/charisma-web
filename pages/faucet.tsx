@@ -100,7 +100,9 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
-    const { results } = await blocksApi.getBlockList({ limit: 1 })
+    const { results } = await blocksApi.getBlocks({ limit: 1 })
+
+    console.log(results)
 
     const lc: any = await callReadOnlyFunction({
       network: new StacksMainnet(),

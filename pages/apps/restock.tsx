@@ -22,7 +22,7 @@ import { useConnect } from '@stacks/connect-react';
 
 export default function App() {
   const meta = {
-    title: 'Charisma | Mint Apples',
+    title: 'Charisma | Restock',
     description: META_DESCRIPTION,
   };
 
@@ -58,9 +58,9 @@ const MintApples = () => {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'verdant-orchard',
-      functionName: "mint",
-      functionArgs: [uintCV(1000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bountiful-orchard')],
+      contractName: 'fuji-helper-v1',
+      functionName: "restock",
+      functionArgs: [uintCV(50000000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard')],
       postConditionMode: PostConditionMode.Allow,
       postConditions: [],
       onFinish: (data) => {
@@ -77,6 +77,6 @@ const MintApples = () => {
   }
 
   return (
-    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={mint}>Mint Apples</Button>
+    <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={mint}>Restock</Button>
   );
 };

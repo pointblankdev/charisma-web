@@ -29,19 +29,19 @@ export default async function chainhooks(
     for (const a of req.body.apply) {
       for (const tx of a.transactions) {
 
+        console.log(tx)
         // INSPECTION OF ALL TRANSACTIONS
-        if (tx.metadata.kind.data.contract_identifier?.startsWith('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
-          tx.metadata.kind.data.contract_identifier?.startsWith('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')) {
-          // log transaction always
-          console.log(tx)
-          // send message to discord if transaction was successful
-          if (tx.metadata.success) {
-            const embed = new MessageBuilder()
-              .setDescription(JSON.stringify(tx))
-              .setThumbnail('https://charisma.rocks/charisma.png')
-            await hook.send(embed);
-          }
-        }
+        // if (tx.metadata.kind.data.contract_identifier?.startsWith('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
+        //   tx.metadata.kind.data.contract_identifier?.startsWith('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ')) {
+        //   // log transaction always
+        //   // send message to discord if transaction was successful
+        //   if (tx.metadata.success) {
+        //     const embed = new MessageBuilder()
+        //       .setDescription(JSON.stringify(tx))
+        //       .setThumbnail('https://charisma.rocks/charisma.png')
+        //     await hook.send(embed);
+        //   }
+        // }
 
         // REACT TO SPECIFIC TRANSACTIONS
         const payload = {

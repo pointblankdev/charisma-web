@@ -45,6 +45,7 @@ import { CreatureInfoDialog, EnergyInfoDialog } from '.';
 import creatureIcon from '@public/creatures/img/creatures.jpg'
 import costIcon from '@public/creatures/img/creature-cost.png'
 import powerIcon from '@public/creatures/img/power.png'
+import { getCreatureData } from '@lib/user-api';
 
 
 type Props = {
@@ -236,8 +237,9 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
 
     const creatureId = Number(params.id);
     const creature = creatures[creatureId - 1];
-    creature.cost = await getCreatureCost(creatureId)
-    creature.power = await getCreaturePower(creatureId)
+    const response = await getCreatureData(creatureId)
+    creature.cost = response.cost //await getCreatureCost(creatureId)
+    creature.power = response.power //await getCreaturePower(creatureId)
 
     return {
         props: { creature },
