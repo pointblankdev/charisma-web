@@ -26,6 +26,7 @@ export default async function chainhooks(
 
 
   try {
+    console.log(req.body.apply.transactions[0])
     for (const a of req.body.apply) {
       for (const tx of a.transactions) {
 
@@ -45,7 +46,7 @@ export default async function chainhooks(
         // log transaction always
         // console.log(Object.keys(tx.metadata))
         // console.log(Object.keys(tx.metadata.kind))
-        console.log(tx.metadata.kind.data)
+        // console.log(tx.metadata.kind.data)
 
         // REACT TO SPECIFIC TRANSACTIONS
         const payload = {
