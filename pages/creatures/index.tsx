@@ -93,6 +93,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: {
         url: '/indexes/iron-ingots-bg.png'
       },
+      legacy: true
     },
     {
       title: 'Apple Farming',
