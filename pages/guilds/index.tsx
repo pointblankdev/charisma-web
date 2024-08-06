@@ -25,7 +25,7 @@ export default function Governance({ data }: Props) {
                 <div className="m-2 sm:container sm:mx-auto sm:py-10">
                     <div className='flex justify-between items-end'>
                         <h1 className='text-xl text-left mt-8 mb-2 text-gray-200'>Guilds</h1>
-                        <Link href='https://docs.charisma.rocks/for-project-teams/submitting-projects' target='_blank'><Button variant={'link'} className='my-2 px-0'>Want to list your project?</Button></Link>
+                        <Link href='https://doc.charisma.rocks/for-project-teams/submitting-projects' target='_blank'><Button variant={'link'} className='my-2 px-0'>Want to list your project?</Button></Link>
                     </div>
                     <DataTable columns={columns} data={data} />
                 </div>
