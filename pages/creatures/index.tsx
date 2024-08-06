@@ -49,6 +49,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: {
         url: prizeFight
       },
+      legacy: true
     },
     {
       title: "Battle Royale",
@@ -63,6 +64,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: {
         url: battleRoyale
       },
+      legacy: true
     },
     {
       title: "Journey of Discovery",
