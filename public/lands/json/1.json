@@ -10,7 +10,7 @@
         {
             "trait_type": "power",
             "display_type": "number",
-            "value": 5
+            "value": 1
         },
         {
             "trait_type": "cost",
