@@ -25,7 +25,7 @@ export default function RewardsIndex({ quests }: Props) {
             <div className="space-y-1">
               <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary"><>Quests</></h2>
               <p className="flex items-center text-base text-muted-foreground">
-                Spend your accumulated Energy on Quests to claim unique token and NFT rewards.
+                Spend your accumulated energy on quests to claim unique token and NFT rewards.
               </p>
             </div>
           </div>
