@@ -19,29 +19,13 @@ export const BITCOIN_LEARN_MORE_URL = 'https://bitcoin.org/en/';
 export const STACKS_LEARN_MORE_URL = 'https://stacks.org/';
 
 export const NAVIGATION = [
-  // {
-  //   name: 'Quests',
-  //   route: '/quests'
-  // },
-  // {
-  //   name: 'Apps',
-  //   route: '/apps'
-  // },
-  // {
-  //   name: 'Swap',
-  //   route: '/swap'
-  // },
-  // {
-  //   name: 'Arbitrage',
-  //   route: '/apps/arbitrage/cha'
-  // },
   {
-    name: 'Tokens',
-    route: '/tokens'
+    name: 'Staking',
+    route: '/staking'
   },
   {
-    name: 'Creatures',
-    route: '/creatures'
+    name: 'Rewards',
+    route: '/rewards'
   },
   {
     name: 'Portfolio',

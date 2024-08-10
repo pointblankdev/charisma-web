@@ -1,4 +1,4 @@
-import { getGlobalState } from '@lib/db-providers/kv';
+import { addLand, getLand, setLand } from '@lib/db-providers/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -15,9 +15,13 @@ export default async function getMetadata(
 
     let response, code = 200
     try {
-        const id = req.query.id as string
-        if (req.method === 'GET') {
-            response = await getGlobalState(`lands:${id}`)
+        const ca = req.query.ca as string
+        if (req.method === 'POST') {
+            console.log(req.body)
+            response = await setLand(ca, req.body)
+            await addLand(ca)
+        } else if (req.method === 'GET') {
+            response = await getLand(ca)
         } else {
             code = 501
             response = new Object({
