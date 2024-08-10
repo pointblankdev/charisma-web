@@ -1,6 +1,5 @@
 import Layout from '../layout';
 import Hero from './hero';
-import LearnMore from './learn-more';
 import styleUtils from '@components/utils.module.css';
 
 export default function LandingPage() {
@@ -10,7 +9,6 @@ export default function LandingPage() {
       <div className={styleUtils.container}>
         <>
           <Hero />
-          <LearnMore />
         </>
       </div>
     </Layout>

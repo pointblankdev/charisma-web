@@ -242,11 +242,11 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className='h-full'>Create New Stake-to-Earn Pool</Button>
+        <Button className='h-full'>Create New Pool</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>
-          <DialogTitle>Create New Stake-to-Earn Pool</DialogTitle>
+          <DialogTitle>New Stake-to-Earn Pool</DialogTitle>
         </DialogHeader>
         <DialogDescription className='grid'>
           <Form {...form}>
@@ -257,7 +257,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
                   name="contractAddress"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Token Contract Address</FormLabel>
+                      <FormLabel>Memecoin Contract Address</FormLabel>
                       <FormControl>
                         <Input placeholder={'...'} {...field} className='text-white' />
                       </FormControl>
