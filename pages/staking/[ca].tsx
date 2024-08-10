@@ -102,16 +102,17 @@ export default function StakingDetailPage({ metadata }: Props) {
               </CardDescription>
             </CardHeader>
             <div className='p-4 space-y-2'>
-              {metadata.whitelisted ? <LandControls
-                min={-landTokenBalance}
-                max={baseTokenBalance}
-                onSetTokensSelected={setTokensSelected}
-                tokensSelected={tokensSelected}
-                metadata={metadata}
-              /> : <p className='space-y-2'>
-                <p>This Stake-to-Earn pool must first pass a governance proposal vote before it is enabled.</p>
-                <GovernanceProposalButton metadata={metadata} />
-              </p>}
+              {metadata.whitelisted ?
+                <LandControls
+                  min={-landTokenBalance}
+                  max={baseTokenBalance}
+                  onSetTokensSelected={setTokensSelected}
+                  tokensSelected={tokensSelected}
+                  metadata={metadata}
+                /> : <p className='space-y-2'>
+                  <p>This Stake-to-Earn pool must first pass a governance proposal vote before it is enabled.</p>
+                  <GovernanceProposalButton metadata={metadata} />
+                </p>}
             </div>
             <Image
               src={metadata.cardImage}
