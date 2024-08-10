@@ -19,6 +19,7 @@ import {
   getBlocksUntilUnlocked,
   getDecimals,
   getIsUnlocked,
+  getIsWhitelisted,
   getSymbol,
   getTokenURI,
   getTotalSupply
@@ -26,24 +27,12 @@ import {
 import { GetServerSideProps, GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
-import Link from 'next/link';
 import { motion } from 'framer-motion';
-import millify from 'millify';
-import { ArrowUpIcon, Link1Icon } from '@radix-ui/react-icons';
 import useWallet from '@lib/hooks/use-wallet-balances';
-import LiquidityControls from '@components/liquidity/controls';
-import velarApi from '@lib/velar-api';
-import { uniqBy } from 'lodash';
 import { useConnect } from '@stacks/connect-react';
 import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
-import { userSession } from '@components/stacks-session/connect';
-import numeral from 'numeral';
-import IronForgeCard from '@components/stations/iron-forge';
-import AbundantOrchardCard from '@components/stations/abundant-orchard';
-import { PiArrowFatLineDownFill, PiArrowFatLineUpFill } from "react-icons/pi";
-import { getGlobalState, getLand, getLands } from '@lib/db-providers/kv';
-import StakingControls from '@components/liquidity/staking';
+import { getGlobalState, getLand, getLands, setLandWhitelisted } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 
@@ -61,6 +50,12 @@ export const getStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => {
   // get land metadata from db
   const metadata = await getLand(params.ca)
+  if (!metadata.whitelisted) {
+    const isWhitelisted = await getIsWhitelisted(params.ca)
+    if (isWhitelisted) {
+      await setLandWhitelisted(params.ca, true)
+    }
+  }
   return {
     props: { metadata },
     revalidate: 60000

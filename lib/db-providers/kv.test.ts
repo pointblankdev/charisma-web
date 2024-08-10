@@ -195,5 +195,13 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    it('should update welsh land', async () => {
+        const land = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        land.wraps.description = 'The OG meme and mascot of Stacks'
+        land.description.description = 'The OG meme and mascot of Stacks'
+        const response = await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', land)
+        console.log(response)
+    })
+
 
 });

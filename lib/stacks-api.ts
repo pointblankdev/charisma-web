@@ -896,6 +896,19 @@ export async function getCraftingRewards(contract: string) {
   return cvToJSON(response);
 }
 
+export async function getIsWhitelisted(contract: string) {
+  const response: any = await callReadOnlyFunction({
+    network: new StacksMainnet(),
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'lands',
+    functionName: 'is-whitelisted',
+    functionArgs: [principalCV(contract)],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+  });
+
+  return cvToJSON(response).value;
+}
+
 export async function getContractSource({ contractAddress, contractName }: any) {
   const proposalSourceResp = await scApi.getContractSource({ contractAddress, contractName });
   return proposalSourceResp;
