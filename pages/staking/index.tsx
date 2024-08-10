@@ -69,7 +69,7 @@ export default function StakingIndex({ lands }: Props) {
             <div className="space-y-1">
               <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary"><>Stake-to-Earn</><Image alt='energy-icon' src={energyIcon} className='mx-2 rounded-full w-9 h-9' /></h2>
               <p className="flex items-center text-base text-muted-foreground">
-                The more you stake, the more Energy you earn on every block– used to unlock rewards in the Charisma ecosystem.
+                The more you stake, the more Energy you earn on every block– used to unlock community rewards.
               </p>
             </div>
             <CreateNewPool whitelistedContracts={lands} />
