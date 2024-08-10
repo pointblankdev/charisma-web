@@ -83,5 +83,33 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    it('should set land 3 data into global state', async () => {
+        const response = await cacheGlobalState('lands:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', {
+            "sip": 16,
+            "name": "Liquid Staked Charisma",
+            "image": "https://charisma.rocks/liquid-staked-charisma.png",
+            "description": {
+                "type": "string",
+                "description": "Charisma ecosystem rebase token."
+            },
+            'ft': 'liquid-staked-token',
+            "attributes": [
+                {
+                    "trait_type": "difficulty",
+                    "display_type": "number",
+                    "value": 1000000
+                }
+            ],
+            "properties": {
+                "collection": "Charisma Lands",
+                "collection_image": "https://charisma.rocks/lands/img/lands.jpg",
+                "category": "image",
+                "symbol": "LAND",
+                "decimals": 6
+            }
+        })
+        console.log(response)
+    })
+
 
 });
