@@ -45,6 +45,7 @@ import { PiArrowFatLineDownFill, PiArrowFatLineUpFill } from "react-icons/pi";
 import { getGlobalState, getLand, getLands } from '@lib/db-providers/kv';
 import StakingControls from '@components/liquidity/staking';
 import LandControls from '@components/liquidity/lands';
+import { useGlobalState } from '@lib/hooks/global-state-context';
 
 
 export const getStaticPaths = async () => {
@@ -106,13 +107,16 @@ export default function StakingDetailPage({ metadata }: Props) {
               </CardDescription>
             </CardHeader>
             <div className='p-4 space-y-2'>
-              <LandControls
+              {metadata.whitelisted ? <LandControls
                 min={-landTokenBalance}
                 max={baseTokenBalance}
                 onSetTokensSelected={setTokensSelected}
-                tokensSelected={1}
+                tokensSelected={tokensSelected}
                 metadata={metadata}
-              />
+              /> : <p className='space-y-2'>
+                <p>This Stake-to-Earn pool must first pass a governance proposal vote before it is enabled.</p>
+                <GovernanceProposalButton metadata={metadata} />
+              </p>}
             </div>
             <Image
               src={metadata.cardImage}
@@ -137,5 +141,26 @@ export default function StakingDetailPage({ metadata }: Props) {
         </motion.div>
       </Layout>
     </Page>
+  )
+}
+
+const GovernanceProposalButton = ({ metadata }: any) => {
+  const { doContractCall } = useConnect();
+  const { block } = useGlobalState()
+
+  function submitProposal() {
+    doContractCall({
+      network: new StacksMainnet(),
+      anchorMode: AnchorMode.Any,
+      contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
+      contractName: 'dme002-proposal-submission',
+      functionName: "propose",
+      functionArgs: [principalCV(metadata.proposal), uintCV(Number(block.height) + 15)],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+    });
+  }
+  return (
+    <Button onClick={submitProposal}>Submit Proposal to Vote</Button>
   )
 }

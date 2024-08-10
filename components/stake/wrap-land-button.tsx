@@ -13,14 +13,12 @@ import { Button } from "@components/ui/button";
 
 interface StakeButtonProps {
   tokens: number;
-  contractAddress: `${string}.${string}`;
   baseTokenContractAddress: `${string}.${string}`;
   baseFungibleTokenName: string;
 }
 
 const WrapLandButton: React.FC<StakeButtonProps> = ({
   tokens,
-  contractAddress,
   baseTokenContractAddress,
   baseFungibleTokenName,
 }) => {
@@ -42,8 +40,8 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
-      contractAddress: contractAddress.split('.')[0],
-      contractName: contractAddress.split('.')[1],
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'land-helper-v0',
       functionName: "wrap",
       functionArgs: [uintCV(tokens6Dec), principalCV(baseTokenContractAddress)],
       postConditionMode: PostConditionMode.Deny,

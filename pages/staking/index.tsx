@@ -69,7 +69,7 @@ export default function StakingIndex({ lands }: Props) {
             <div className="space-y-1">
               <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary"><>Stake-to-Earn</><Image alt='energy-icon' src={energyIcon} className='mx-2 rounded-full w-9 h-9' /></h2>
               <p className="flex items-center text-base text-muted-foreground">
-                The more you stake, the more Energy you earn with every block– used to unlock rewards in the Charisma ecosystem.
+                The more you stake, the more Energy you earn on every block– used to unlock rewards in the Charisma ecosystem.
               </p>
             </div>
             <CreateNewPool whitelistedContracts={lands} />
@@ -78,7 +78,7 @@ export default function StakingIndex({ lands }: Props) {
             {lands.map((land) => {
               return (
                 <Card key={land.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card', !land.whitelisted && 'opacity-25 hover:opacity-60')}>
-                  <Link href={land.whitelisted ? `staking/${land.wraps.ca}` : 'governance'} className='w-full'>
+                  <Link href={`staking/${land.wraps.ca}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
                         <div className='flex gap-2'>
@@ -184,6 +184,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
 
     const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
     const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
+    const proposalName = `pool-proposal-${safeName}`
 
     const landMetadata = {
       sip: 16,
@@ -194,6 +195,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
         type: "string",
         description: description
       },
+      proposal: proposalName,
       whitelisted: isWhitelisted,
       wraps: {
         ca: contractAddress,
@@ -223,7 +225,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
 
     if (!isWhitelisted) {
       doContractDeploy({
-        contractName: `pool-proposal-${safeName}`,
+        contractName: proposalName,
         codeBody: template,
         postConditionMode: PostConditionMode.Allow,
         network: new StacksMainnet(),

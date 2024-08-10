@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, getContractMetadata, getGlobalState, getLand, getLands, removeLand, setContractMetadata, setLand } from "./kv";
+import { addLand, cacheGlobalState, getContractMetadata, getGlobalState, getLand, getLands, removeLand, setContractMetadata, setLand, setLandWhitelisted } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -99,7 +99,12 @@ describe('metadata api', () => {
     })
 
     it('should get land', async () => {
-        const response = await getLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        const response = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        console.log(response)
+    })
+
+    it('should set welsh land whitelisted', async () => {
+        const response = await setLandWhitelisted('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', false)
         console.log(response)
     })
 
@@ -114,6 +119,7 @@ describe('metadata api', () => {
         const decimals = 6
         const totalSupply = 2777401042359
         const difficulty = 1000000
+        const proposalName = `pool-proposal-${name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")}`
         const response = await setLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', {
             sip: 16,
             name: name,
@@ -123,6 +129,7 @@ describe('metadata api', () => {
                 type: "string",
                 description: description
             },
+            proposal: proposalName,
             whitelisted: true,
             wraps: {
                 ca: contractAddress,
@@ -146,6 +153,42 @@ describe('metadata api', () => {
                 collection_image: "https://charisma.rocks/lands/img/lands.jpg",
                 category: "image",
                 symbol: "LAND",
+                decimals: 6
+            }
+        })
+        console.log(response)
+    })
+
+    it('should set welsh land metadata into db', async () => {
+        const response = await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', {
+            sip: 16,
+            name: 'Welshcorgicoin',
+            image: 'https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png',
+            cardImage: 'https://charisma.rocks/liquid-welsh-21.png',
+            description: { type: 'string', description: 'The first memecoin on Stacks' },
+            whitelisted: false,
+            wraps: {
+                ca: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
+                name: 'Welshcorgicoin',
+                description: 'The first memecoin on Stacks',
+                image: 'https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png',
+                asset: 'welshcorgicoin',
+                symbol: 'WELSH',
+                decimals: 6,
+                totalSupply: 10000000000000000
+            },
+            attributes: [
+                {
+                    trait_type: 'difficulty',
+                    display_type: 'number',
+                    value: 10000000000
+                }
+            ],
+            properties: {
+                collection: 'Charisma Lands',
+                collection_image: 'https://charisma.rocks/lands/img/lands.jpg',
+                category: 'image',
+                symbol: 'LAND',
                 decimals: 6
             }
         })

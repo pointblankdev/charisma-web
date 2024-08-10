@@ -42,14 +42,11 @@ const LandControls = ({
                 </Link>
                 <div>
                     <UnwrapLandButton
-                        contractAddress={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v0'}
-                        fungibleTokenName={'lands'}
                         tokens={-tokensSelected}
                         baseTokenContractAddress={metadata.wraps.ca}
                         baseFungibleTokenName={metadata.wraps.asset}
                     />
                     <WrapLandButton
-                        contractAddress={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v0'}
                         tokens={tokensSelected}
                         baseTokenContractAddress={metadata.wraps.ca}
                         baseFungibleTokenName={metadata.wraps.asset}

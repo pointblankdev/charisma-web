@@ -87,6 +87,12 @@ export async function setLand(ca: string, data: any): Promise<any> {
     return await kv.set(`land:${ca}`, data);
 }
 
+export async function setLandWhitelisted(ca: string, whitelisted: boolean): Promise<any> {
+    const land = await kv.get(`land:${ca}`) as any;
+    land.whitelisted = whitelisted
+    return await kv.set(`land:${ca}`, land);
+}
+
 export async function getContractMetadata(ca: string): Promise<any> {
     return await kv.get(`ca:${ca}`);
 }
