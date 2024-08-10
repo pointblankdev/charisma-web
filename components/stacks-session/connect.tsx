@@ -60,14 +60,14 @@ const ConnectWallet = () => {
             <NavigationMenuTrigger>{address}</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                <li className="row-span-3 relative overflow-hidden rounded-md">
-                  <NavigationMenuLink asChild className="z-20 absolute inset-0">
+                <li className="relative row-span-3 overflow-hidden rounded-md">
+                  <NavigationMenuLink asChild className="absolute inset-0 z-20">
                     <Link
-                      className="flex h-full w-full select-none flex-col justify-end bg-gradient-to-b from-accent-foreground/25 to-black/90 p-6 no-underline outline-none focus:shadow-md"
+                      className="flex flex-col justify-end w-full h-full p-6 no-underline outline-none select-none bg-gradient-to-b from-accent-foreground/25 to-black/90 focus:shadow-md"
                       href="/portfolio"
                     >
-                      <BiSolidUserPin className="h-6 w-6" />
-                      <div className="mb-2 mt-4 text-lg font-medium">
+                      <BiSolidUserPin className="w-6 h-6" />
+                      <div className="mt-4 mb-2 text-lg font-medium">
                         {address}
                       </div>
                       <p className="text-sm leading-tight text-muted-foreground">
@@ -102,7 +102,7 @@ const ConnectWallet = () => {
 
   return (
     <Button onClick={authenticate} id="cta-btn" className={cn(styles['cta-btn'], 'whitespace-nowrap', 'w-full')}>
-      Connect Wallet
+      Connect
     </Button>
   );
 };
@@ -126,7 +126,7 @@ const ListItem = React.forwardRef<
           {...props}
         >
           <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+          <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">
             {children}
           </p>
         </Link>
