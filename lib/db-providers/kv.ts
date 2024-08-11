@@ -83,8 +83,16 @@ export async function getLand(ca: string): Promise<any> {
     return await kv.get(`land:${ca}`);
 }
 
+export async function getLandById(id: number): Promise<any> {
+    return await kv.get(`land:id:${id}`);
+}
+
 export async function setLand(ca: string, data: any): Promise<any> {
     return await kv.set(`land:${ca}`, data);
+}
+
+export async function setLandById(id: number, data: any): Promise<any> {
+    return await kv.set(`land:id:${id}`, data);
 }
 
 export async function setLandWhitelisted(ca: string, whitelisted: boolean): Promise<any> {

@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, getContractMetadata, getGlobalState, getLand, getLands, removeLand, setContractMetadata, setLand, setLandWhitelisted } from "./kv";
+import { addLand, cacheGlobalState, getContractMetadata, getGlobalState, getLand, getLands, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -197,6 +197,14 @@ describe('metadata api', () => {
                 decimals: 6
             }
         })
+        console.log(response)
+    })
+
+    it('should update welsh land by id', async () => {
+        const land = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        // land.wraps.description = 'The OG meme and mascot of Stacks'
+        // land.description.description = 'The OG meme and mascot of Stacks'
+        const response = await setLandById(4, land)
         console.log(response)
     })
 
