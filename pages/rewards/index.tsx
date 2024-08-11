@@ -54,9 +54,9 @@ export default function RewardsIndex({ quests }: Props) {
                 Spend your accumulated energy to complete quests and claim their token and NFT rewards.
               </p>
             </div>
-            <Link passHref href={'/quest-deployer'}>
-              <Button disabled className='bg-primary-foreground/5'>Create New Quest</Button>
-            </Link>
+            {/* <Link passHref href={'/quest-deployer'}>
+              <Button className='bg-primary-foreground/5'>Create New Quest</Button>
+            </Link> */}
           </div>
           <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <Card
