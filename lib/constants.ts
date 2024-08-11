@@ -25,7 +25,7 @@ export const NAVIGATION = [
   },
   {
     name: 'Rewards',
-    route: '/rewards'
+    route: '/quests'
   },
   {
     name: 'Leaderboard',

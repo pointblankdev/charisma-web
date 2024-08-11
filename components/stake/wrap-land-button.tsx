@@ -35,7 +35,10 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
   function stake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     const isUsingBurnToken = baseTokenContractAddress === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
-    const postConditions = [Pc.principal(sender).willSendEq(tokens6Dec + (isUsingBurnToken ? 1000000 : 0)).ft(baseTokenContractAddress, baseFungibleTokenName)]
+    const postConditions = [
+      Pc.principal(sender).willSendEq(tokens6Dec + (isUsingBurnToken ? 1000000 : 0)).ft(baseTokenContractAddress, baseFungibleTokenName),
+      Pc.principal(sender).willSendAsset().nft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands::land', uintCV(3)),
+    ]
     if (!isUsingBurnToken) postConditions.push(Pc.principal(sender).willSendEq(1000000).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', 'liquid-staked-token'))
     doContractCall({
       network: new StacksMainnet(),

@@ -10,12 +10,21 @@ import Link from 'next/link';
 import { Button } from '@components/ui/button';
 import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { cn } from '@lib/utils';
+import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
   const questContractAddresses = await getQuests()
 
-  const quests = []
+  const quests = [
+    {
+      name: "Adventure",
+      description: "Spend your energy to gain experience.",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0",
+      image: "/experience.png",
+      cardImage: journeyOfDiscovery,
+    }
+  ]
   for (const ca of questContractAddresses) {
     const metadata = await getQuest(ca)
     quests.push(metadata)
@@ -34,7 +43,7 @@ type Props = {
 };
 
 
-export default function RewardsIndex({ quests }: Props) {
+export default function QuestsIndex({ quests }: Props) {
   const meta = {
     title: 'Charisma | Rewards',
     description: META_DESCRIPTION,
@@ -51,7 +60,7 @@ export default function RewardsIndex({ quests }: Props) {
             <div className="space-y-1">
               <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary"><>Quests</><Image alt='energy-icon' src={energyIcon} className='mx-2 rounded-full w-9 h-9' /></h2>
               <p className="flex items-center text-base text-muted-foreground">
-                Spend your accumulated energy to complete quests and claim their token and NFT rewards.
+                Spend your accumulated energy to complete quests and claim their token or NFT rewards.
               </p>
             </div>
             {/* <Link passHref href={'/quest-deployer'}>
@@ -87,7 +96,7 @@ export default function RewardsIndex({ quests }: Props) {
                     'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
                   )}
                 >
-                  <Link href={`${quest.ca}`} className="w-full">
+                  <Link href={`/quests/${quest.ca}`} className="w-full">
                     <CardContent className="w-full p-0">
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
                         <div className="flex justify-between align-top">

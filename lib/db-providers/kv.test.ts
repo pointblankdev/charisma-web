@@ -98,7 +98,12 @@ describe('metadata api', () => {
         console.log(response)
     })
 
-    it('should get land', async () => {
+    it('should get land 3', async () => {
+        const response = await getLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        console.log(response)
+    })
+
+    it('should get land 4', async () => {
         const response = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
         console.log(response)
     })
