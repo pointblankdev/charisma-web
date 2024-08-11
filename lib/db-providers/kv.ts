@@ -116,3 +116,25 @@ export async function getUserState(user: string, key: string): Promise<any> {
 export async function cacheUserState(user: string, key: string, json: any): Promise<void> {
     await kv.set(`user:${user}:${key}`, JSON.stringify(json));
 }
+
+// quests
+
+export async function getQuests(): Promise<any> {
+    return await kv.smembers('quests')
+}
+
+export async function addQuest(ca: string): Promise<any> {
+    return await kv.sadd('quests', ca)
+}
+
+export async function removeQuest(ca: string): Promise<any> {
+    return await kv.srem('quests', ca)
+}
+
+export async function getQuest(ca: string): Promise<any> {
+    return await kv.get(`quest:${ca}`);
+}
+
+export async function setQuest(ca: string, data: any): Promise<any> {
+    return await kv.set(`quest:${ca}`, data);
+}

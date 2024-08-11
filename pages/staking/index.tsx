@@ -242,7 +242,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className='h-full'>Create New Pool</Button>
+        <Button className='h-full bg-primary-foreground/5'>Create New Pool</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <DialogHeader>

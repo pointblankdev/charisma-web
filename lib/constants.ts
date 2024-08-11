@@ -28,9 +28,13 @@ export const NAVIGATION = [
     route: '/rewards'
   },
   {
-    name: 'Portfolio',
-    route: '/portfolio'
+    name: 'Leaderboard',
+    route: '/leaderboard'
   },
+  // {
+  //   name: 'Portfolio',
+  //   route: '/portfolio'
+  // },
 ];
 
 export type TicketGenerationState = 'default' | 'loading';

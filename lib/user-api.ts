@@ -155,3 +155,13 @@ export async function setLatestBlock(metadata: any) {
   });
   return response.json();
 }
+
+export async function getExperienceHolders() {
+  const response = await fetch(`https://stacks.hashhavoc.com/extended/v1/address/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience/holders`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.json();
+}

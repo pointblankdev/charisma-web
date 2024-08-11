@@ -83,8 +83,8 @@ const ConnectWallet = () => {
                     className={cn("w-full object-cover transition-all", "aspect-[1/2]", 'flex', 'z - 0', 'absolute', 'inset-0')}
                   />
                 </li>
-                <ListItem href="/faucet" title="Faucet">
-                  Collect Charisma tokens from the faucet. Supply increases every block.
+                <ListItem href="/portfolio" title="Portfolio">
+                  View your Charisma supported token balances.
                 </ListItem>
                 <ListItem href="/governance" title="Governance">
                   Participate in governance proposals and voting for the Charisma token.

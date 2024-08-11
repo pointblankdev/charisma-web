@@ -85,11 +85,21 @@ const products = [
     }
 ]
 
-const ITEMS_PER_PAGE = 5;
+const ITEMS_PER_PAGE = 10;
 
-export default function Leaderboard() {
+export default function Leaderboard({ holders }: any) {
     const [currentPage, setCurrentPage] = useState(1);
-    const totalPages = Math.ceil(products.length / ITEMS_PER_PAGE);
+
+    function sortObjectByValue(obj: any) {
+        return Object.entries(obj)
+            .map(([key, value]: any) => ({ address: key, balance: parseInt(value) }))
+            .sort((a, b) => b.balance - a.balance);
+    }
+
+
+    const leaderboardData = sortObjectByValue(holders).map((holder: any, rank: number) => ({ ...holder, rank: rank + 1 }));
+
+    const totalPages = Math.ceil(leaderboardData.length / ITEMS_PER_PAGE);
 
     const handlePageChange = (page: number) => {
         if (page < 1 || page > totalPages) return;
@@ -97,14 +107,14 @@ export default function Leaderboard() {
     };
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const currentProducts = products.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const pageData = leaderboardData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Leaderboard</CardTitle>
+                <CardTitle>Experience Leaderboard</CardTitle>
                 <CardDescription>
-                    Overview of top-performing users and their details.
+                    High experience grants you greater access to rewards and perks.
                 </CardDescription>
             </CardHeader>
             <CardContent>
@@ -112,42 +122,19 @@ export default function Leaderboard() {
                     <TableHeader>
                         <TableRow>
                             <TableHead className="hidden w-[100px] sm:table-cell">
-                            <TableHead className="hidden md:table-cell">Rank</TableHead>
+                                <TableHead className="hidden md:table-cell">Rank</TableHead>
                             </TableHead>
                             <TableHead>Wallet Address</TableHead>
-                            <TableHead>Token</TableHead>
-                            <TableHead className="hidden md:table-cell">Price</TableHead>
-                            <TableHead className="hidden md:table-cell">Reward</TableHead>
-                            <TableHead className="hidden md:table-cell">Date Added</TableHead>
-                            <TableHead>
-                                <span className="sr-only">Actions</span>
-                            </TableHead>
+                            <TableHead>Experience</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {currentProducts.map(product => (
-                            <TableRow key={product.id}>
-                                <TableCell className="font-medium">{product.id}</TableCell>
-                                <TableCell className="font-medium">{product.wallet}</TableCell>
-                                <TableCell>{product.Token}</TableCell>
-                                <TableCell className="hidden md:table-cell">{product.price}</TableCell>
-                                <TableCell className="hidden md:table-cell">{product.Reward}</TableCell>
-                                <TableCell className="hidden md:table-cell">{product.dateAdded}</TableCell>
-                                <TableCell>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button aria-haspopup="true" size="icon" variant="ghost">
-                                                <MoreHorizontal className="h-4 w-4" />
-                                                <span className="sr-only">Toggle menu</span>
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent align="end">
-                                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                                            <DropdownMenuItem>Edit</DropdownMenuItem>
-                                            <DropdownMenuItem>Delete</DropdownMenuItem>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
-                                </TableCell>
+                        {pageData.map((holder: any) => (
+                            <TableRow key={holder.address}>
+                                <TableCell className="font-medium text-center">{holder.rank}</TableCell>
+                                <TableCell className="font-medium">{holder.address}</TableCell>
+                                <TableCell>{holder.balance}</TableCell>
+
                             </TableRow>
                         ))}
                     </TableBody>
@@ -156,6 +143,7 @@ export default function Leaderboard() {
             <CardFooter>
                 <div className="flex justify-between items-center text-xs text-muted-foreground">
                     <Button
+                        variant={'ghost'}
                         onClick={() => handlePageChange(currentPage - 1)}
                         disabled={currentPage === 1}
                     >
@@ -165,6 +153,7 @@ export default function Leaderboard() {
                         Page <strong>{currentPage}</strong> of <strong>{totalPages}</strong>
                     </span>
                     <Button
+                        variant={'ghost'}
                         onClick={() => handlePageChange(currentPage + 1)}
                         disabled={currentPage === totalPages}
                     >

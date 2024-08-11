@@ -21,11 +21,27 @@ import tokenfaucet2 from '@public/token-faucet-2.png'
 import { Card } from '@components/ui/card';
 import { clamp } from 'framer-motion';
 import Leaderboard from '@components/leaderboard.tsx/table';
+import { getExperienceHolders } from '@lib/user-api';
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+    const experienceHolders = await getExperienceHolders()
 
 
-export default function Faucet() {
+
+    return {
+        props: {
+            holders: experienceHolders
+        },
+        revalidate: 60000
+    };
+};
+
+type Props = {
+    holders: any[];
+};
+export default function LeaderboardPage({ holders }: Props) {
     const meta = {
-        title: 'Charisma | Profile',
+        title: 'Charisma | Leaderboard',
         description: META_DESCRIPTION
     };
 
@@ -35,7 +51,7 @@ export default function Faucet() {
             <Layout>
                 <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
 
-                    <Leaderboard />
+                    <Leaderboard holders={holders} />
                 </div>
             </Layout>
         </Page >
