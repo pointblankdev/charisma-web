@@ -77,7 +77,7 @@ export default function StakingIndex({ lands }: Props) {
           <div className='grid gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
             {lands.map((land) => {
               return (
-                <Card key={land.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
+                <Card key={land.wraps.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
                   <Link href={`staking/${land.wraps.ca}`} className='w-full'>
                     <CardContent className='w-full p-0'>
                       <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">

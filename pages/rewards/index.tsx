@@ -8,6 +8,8 @@ import Image from 'next/image';
 import energyIcon from '@public/creatures/img/energy.png';
 import Link from 'next/link';
 import { Button } from '@components/ui/button';
+import { Card, CardContent, CardHeader } from '@components/ui/card';
+import { cn } from '@lib/utils';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
@@ -49,15 +51,98 @@ export default function RewardsIndex({ quests }: Props) {
             <div className="space-y-1">
               <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary"><>Quests</><Image alt='energy-icon' src={energyIcon} className='mx-2 rounded-full w-9 h-9' /></h2>
               <p className="flex items-center text-base text-muted-foreground">
-                Spend your accumulated energy on quests to claim unique token and NFT rewards.
+                Spend your accumulated energy to complete quests and claim their token and NFT rewards.
               </p>
             </div>
             <Link passHref href={'/quest-deployer'}>
-              <Button className='bg-primary-foreground/5'>Create New Quest</Button>
+              <Button disabled className='bg-primary-foreground/5'>Create New Quest</Button>
             </Link>
           </div>
-          <div className='grid gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
-            Coming soon...
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            <Card
+              className={cn(
+                'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+              )}
+            >
+              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
+                <div className="space-y-4 text-sm">
+                  <h3 className="font-bold text-lg">How to Claim Rewards</h3>
+                  <p>
+                    You can claim rewards by completing quests in the Charisma ecosystem.
+                  </p>
+                  <p>
+                    To start a quest, click on the card to view more information about it's requirements, and rewards.
+                  </p>
+                  <p>
+                    Quests require spending energy generated through staking to complete.
+                  </p>
+                </div>
+              </div>
+            </Card>
+            {quests.map((quest: any, i: number) => {
+              return (
+                <Card
+                  key={i}
+                  className={cn(
+                    'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+                  )}
+                >
+                  <Link href={`${quest.ca}`} className="w-full">
+                    <CardContent className="w-full p-0">
+                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                        <div className="flex justify-between align-top">
+                          <div className="flex gap-2">
+                            <div className="min-w-max">
+                              {quest.image ? (
+                                <Image
+                                  src={quest.image}
+                                  width={40}
+                                  height={40}
+                                  alt="guild-logo"
+                                  className="w-10 h-10 rounded-full grow"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 bg-white border rounded-full" />
+                              )}
+                            </div>
+                            <div className="">
+                              <div className="text-sm font-semibold leading-none text-secondary">
+                                {quest.name}
+                              </div>
+                              <div className="mt-1 text-xs leading-tight font-fine text-secondary">
+                                {quest.description}
+                              </div>
+                            </div>
+                          </div>
+                          {/* <div className="flex flex-col items-end leading-[1.1]">
+                            <div className="text-white text-sm font-semibold">{quest.ticker}</div>
+                          </div> */}
+                        </div>
+                      </CardHeader>
+                      <Image
+                        src={quest.cardImage}
+                        height={1200}
+                        width={1200}
+                        alt="quest-featured-image"
+                        className={cn(
+                          'w-full object-cover transition-all group-hover/card:scale-105',
+                          'aspect-[1]',
+                          'opacity-80',
+                          'group-hover/card:opacity-100',
+                          'flex',
+                          'z-10',
+                          'relative'
+                        )}
+                      />
+                      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
+                      <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
+                    </CardContent>
+                  </Link>
+
+                </Card>
+              );
+            })}
+
           </div>
         </div>
       </Layout>
