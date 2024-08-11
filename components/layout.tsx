@@ -45,7 +45,6 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     })
   }, [creatures])
 
-
   return (
     <>
       <div className={styles.background}>
