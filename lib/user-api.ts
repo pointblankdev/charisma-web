@@ -1,7 +1,9 @@
 import crypto from 'crypto';
 
+const HOST = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://charisma.rocks';
+
 export async function register(email: string, token?: string) {
-  return await fetch('/api/register', {
+  return await fetch(`${HOST}/api/register`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -11,7 +13,7 @@ export async function register(email: string, token?: string) {
 }
 
 export async function linkWallet({ wallet, user }: { wallet: any; user: any }) {
-  return await fetch('/api/link-wallet', {
+  return await fetch(`${HOST}/api/link-wallet`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -24,7 +26,7 @@ export async function linkWallet({ wallet, user }: { wallet: any; user: any }) {
 }
 
 export async function newWallet({ wallet }: { wallet: any }) {
-  return await fetch('/api/new-wallet', {
+  return await fetch(`${HOST}/api/new-wallet`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -47,7 +49,7 @@ export function emailToId(email: string) {
 }
 
 export async function createQuestDraft(args: any) {
-  return await fetch('/api/create-quest-draft', {
+  return await fetch(`${HOST}/api/create-quest-draft`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -57,7 +59,7 @@ export async function createQuestDraft(args: any) {
 }
 
 export async function updateQuest(args: any) {
-  return await fetch('/api/update-quest', {
+  return await fetch(`${HOST}/api/update-quest`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -67,7 +69,7 @@ export async function updateQuest(args: any) {
 }
 
 export async function createQuestSession(args: any) {
-  return await fetch('/api/create-quest-session', {
+  return await fetch(`${HOST}/api/create-quest-session`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -77,7 +79,7 @@ export async function createQuestSession(args: any) {
 }
 
 export async function getQuestById(args: any) {
-  return await fetch(`/api/get-quest-by-id/${args.id}`, {
+  return await fetch(`${HOST}/api/get-quest-by-id/${args.id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -86,7 +88,7 @@ export async function getQuestById(args: any) {
 }
 
 export async function getQuestsByOwner(address: string) {
-  return await fetch(`/api/get-quests-by-owner/${address}`, {
+  return await fetch(`${HOST}/api/get-quests-by-owner/${address}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -95,7 +97,7 @@ export async function getQuestsByOwner(address: string) {
 }
 
 export async function getContractMetadata(ca: string) {
-  return await fetch(`http://localhost:3000/api/metadata/${ca}`, {
+  return await fetch(`${HOST}/api/metadata/${ca}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
@@ -104,7 +106,17 @@ export async function getContractMetadata(ca: string) {
 }
 
 export async function setContractMetadata(ca: string, metadata: any) {
-  return await fetch(`http://localhost:3000/api/metadata/${ca}`, {
+  return await fetch(`${HOST}/api/metadata/${ca}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(metadata)
+  });
+}
+
+export async function setLandMetadata(ca: string, metadata: any) {
+  return await fetch(`${HOST}/api/v0/lands/${ca}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
@@ -114,11 +126,32 @@ export async function setContractMetadata(ca: string, metadata: any) {
 }
 
 export async function getCreatureData(id: string | number) {
-  const response = await fetch(`http://localhost:3000/api/v0/creatures/${id}`, {
+  const response = await fetch(`${HOST}/api/v0/creatures/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
     }
+  });
+  return response.json();
+}
+
+export async function getLatestBlock() {
+  const response = await fetch(`${HOST}/api/v0/blocks`, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
+  return response.json();
+}
+
+export async function setLatestBlock(metadata: any) {
+  const response = await fetch(`${HOST}/api/v0/blocks`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(metadata)
   });
   return response.json();
 }

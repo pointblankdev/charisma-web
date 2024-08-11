@@ -16,6 +16,8 @@ import energyIcon from '@public/creatures/img/energy.png';
 import experienceIcon from '@public/experience.png';
 import useWallet from '@lib/hooks/use-wallet-balances';
 import numeral from 'numeral';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { forEach } from 'lodash';
 
 type Props = {
   children: React.ReactNode;
@@ -30,45 +32,18 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   const { getBalanceByKey } = useWallet();
 
-  const sender =
-    userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet;
-
   const [energy, setEnergy] = React.useState<number>(0);
 
   const experience =
     getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
     Math.pow(10, 6);
 
+  const { creatures } = useGlobalState()
   useEffect(() => {
-    // get energy
-
-    if (sender) {
-    getClaimableAmount(1, sender)
-      .then(res => {
-        setEnergy(energy => energy + res);
-      })
-      .then(
-        async () =>
-          await getClaimableAmount(2, sender)
-            .then(res => {
-              setEnergy(energy => energy + res);
-            })
-            .then(
-              async () =>
-                await getClaimableAmount(3, sender)
-                  .then(res => {
-                    setEnergy(energy => energy + res);
-                  })
-                  .then(
-                    async () =>
-                      await getClaimableAmount(4, sender).then(res => {
-                        setEnergy(energy => energy + res);
-                      })
-                  )
-            )
-      );
-    }
-  }, [sender]);
+    forEach(creatures, (creature: any) => {
+      setEnergy(energy => energy + Number(creature.energy))
+    })
+  }, [creatures])
 
   return (
     <>

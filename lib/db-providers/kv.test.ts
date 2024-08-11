@@ -1,4 +1,4 @@
-import { cacheGlobalState, getContractMetadata, getGlobalState, setContractMetadata } from "./kv";
+import { addLand, cacheGlobalState, getContractMetadata, getGlobalState, getLand, getLands, removeLand, setContractMetadata, setLand, setLandWhitelisted } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -80,6 +80,126 @@ describe('metadata api', () => {
             cost: 10000000,
             power: 25
         })
+        console.log(response)
+    })
+
+    it('should get lands', async () => {
+        const response = await getLands()
+        console.log(response)
+    })
+
+    it('should add land', async () => {
+        const response = await addLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        console.log(response)
+    })
+
+    it('should remove land', async () => {
+        const response = await removeLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        console.log(response)
+    })
+
+    it('should get land', async () => {
+        const response = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        console.log(response)
+    })
+
+    it('should set welsh land whitelisted', async () => {
+        const response = await setLandWhitelisted('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', false)
+        console.log(response)
+    })
+
+    it('should set land 3 data into db', async () => {
+        const name = "Liquid Staked Charisma"
+        const image = "https://charisma.rocks/liquid-staked-charisma.png"
+        const cardImage = "https://charisma.rocks/liquid-charisma-21.png"
+        const description = "Charisma ecosystem rebase token"
+        const contractAddress = "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma"
+        const assetIdentifier = "liquid-staked-token"
+        const symbol = "sCHA"
+        const decimals = 6
+        const totalSupply = 2777401042359
+        const difficulty = 1000000
+        const proposalName = `pool-proposal-${name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")}`
+        const response = await setLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', {
+            sip: 16,
+            name: name,
+            image: image,
+            cardImage: cardImage,
+            description: {
+                type: "string",
+                description: description
+            },
+            proposal: proposalName,
+            whitelisted: true,
+            wraps: {
+                ca: contractAddress,
+                name: name,
+                description: description,
+                image: image,
+                asset: assetIdentifier,
+                symbol: symbol,
+                decimals: Number(decimals),
+                totalSupply: Number(totalSupply)
+            },
+            attributes: [
+                {
+                    trait_type: "difficulty",
+                    display_type: "number",
+                    value: difficulty
+                }
+            ],
+            properties: {
+                collection: "Charisma Lands",
+                collection_image: "https://charisma.rocks/lands/img/lands.jpg",
+                category: "image",
+                symbol: "LAND",
+                decimals: 6
+            }
+        })
+        console.log(response)
+    })
+
+    it('should set welsh land metadata into db', async () => {
+        const response = await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', {
+            sip: 16,
+            name: 'Welshcorgicoin',
+            image: 'https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png',
+            cardImage: 'https://charisma.rocks/liquid-welsh-21.png',
+            description: { type: 'string', description: 'The first memecoin on Stacks' },
+            whitelisted: false,
+            wraps: {
+                ca: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
+                name: 'Welshcorgicoin',
+                description: 'The first memecoin on Stacks',
+                image: 'https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png',
+                asset: 'welshcorgicoin',
+                symbol: 'WELSH',
+                decimals: 6,
+                totalSupply: 10000000000000000
+            },
+            attributes: [
+                {
+                    trait_type: 'difficulty',
+                    display_type: 'number',
+                    value: 10000000000
+                }
+            ],
+            properties: {
+                collection: 'Charisma Lands',
+                collection_image: 'https://charisma.rocks/lands/img/lands.jpg',
+                category: 'image',
+                symbol: 'LAND',
+                decimals: 6
+            }
+        })
+        console.log(response)
+    })
+
+    it('should update welsh land', async () => {
+        const land = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        land.wraps.description = 'The OG meme and mascot of Stacks'
+        land.description.description = 'The OG meme and mascot of Stacks'
+        const response = await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', land)
         console.log(response)
     })
 

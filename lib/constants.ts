@@ -6,9 +6,9 @@ export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
-  'You decide the tokenomics, governance, and future of Charisma. Join the community-run DAO.';
+  'The creator economy toolkit for memecoins';
 export const SITE_DESCRIPTION =
-  'You decide the tokenomics, governance, and future of Charisma. Join the community-run DAO.';
+  'The creator economy toolkit for memecoins';
 export const DATE = '31 October 2023';
 export const SHORT_DATE = 'Jan 1 - 9:00am PST';
 export const FULL_DATE = 'Jan 1st 9am Pacific Time (GMT-7)';
@@ -19,29 +19,13 @@ export const BITCOIN_LEARN_MORE_URL = 'https://bitcoin.org/en/';
 export const STACKS_LEARN_MORE_URL = 'https://stacks.org/';
 
 export const NAVIGATION = [
-  // {
-  //   name: 'Quests',
-  //   route: '/quests'
-  // },
-  // {
-  //   name: 'Apps',
-  //   route: '/apps'
-  // },
-  // {
-  //   name: 'Swap',
-  //   route: '/swap'
-  // },
-  // {
-  //   name: 'Arbitrage',
-  //   route: '/apps/arbitrage/cha'
-  // },
   {
-    name: 'Tokens',
-    route: '/tokens'
+    name: 'Staking',
+    route: '/staking'
   },
   {
-    name: 'Creatures',
-    route: '/creatures'
+    name: 'Rewards',
+    route: '/rewards'
   },
   {
     name: 'Portfolio',

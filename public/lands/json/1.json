@@ -1,0 +1,28 @@
+{
+    "sip": 16,
+    "name": "Plains",
+    "image": "https://charisma.rocks/lands/img/plains.png",
+    "description": {
+        "type": "string",
+        "description": "Fertile and expansive grasslands."
+    },
+    "attributes": [
+        {
+            "trait_type": "power",
+            "display_type": "number",
+            "value": 1
+        },
+        {
+            "trait_type": "cost",
+            "display_type": "number",
+            "value": 1000000
+        }
+    ],
+    "properties": {
+        "collection": "Charisma Lands",
+        "collection_image": "https://charisma.rocks/lands/img/lands.jpg",
+        "category": "image",
+        "symbol": "LAND",
+        "decimals": 0
+    }
+}

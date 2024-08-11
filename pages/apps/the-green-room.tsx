@@ -16,6 +16,7 @@ import { clamp } from 'framer-motion';
 import millify from 'millify';
 import { userSession } from '@components/stacks-session/connect';
 import { useEffect, useState } from 'react';
+import { getGlobalState } from '@lib/db-providers/kv';
 
 
 export default function TheGreenRoom({ data }: Props) {
@@ -63,7 +64,8 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   try {
-    const { results } = await blocksApi.getBlockList({ limit: 1 })
+    const block = await getGlobalState(`blocks:latest`)
+    const latestBlock = block.height
 
     const lc: any = await callReadOnlyFunction({
       network: new StacksMainnet(),
@@ -87,7 +89,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const data = {
       lastClaim: Number(lc.value.value),
       dripAmount: Number(d.value.value),
-      latestBlock: results[0].height
+      latestBlock: latestBlock
     }
 
     return {

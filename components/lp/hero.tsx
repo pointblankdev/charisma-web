@@ -39,7 +39,7 @@ export default function Hero() {
         {SITE_DESCRIPTION}
       </h2>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <p>The largest community-run DAO on Stacks</p>
+        <p>Create your own yield farms, quests, and more.</p>
       </div>
     </div>
   );

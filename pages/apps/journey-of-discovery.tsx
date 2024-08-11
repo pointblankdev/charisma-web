@@ -40,7 +40,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, Di
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import experienceIcon from '@public/experience.png'
 
-export default function JourneyOfDiscovery({ data }: Props) {
+export default function JourneyOfDiscovery() {
   const meta = {
     title: "Charisma | Journey of Discovery",
     description: META_DESCRIPTION,
@@ -155,34 +155,6 @@ export default function JourneyOfDiscovery({ data }: Props) {
     </Page>
   );
 }
-
-type Props = {
-  data: any;
-};
-
-export const getStaticProps: GetStaticProps<Props> = async () => {
-  try {
-    const { results } = await blocksApi.getBlockList({ limit: 1 });
-
-
-    const data = {
-      latestBlock: results[0].height
-    };
-
-    return {
-      props: {
-        data: data
-      },
-      revalidate: 60000
-    };
-  } catch (error) {
-    return {
-      props: {
-        data: {}
-      }
-    };
-  }
-};
 
 export function SelectCreatureDialog({ data }: any) {
 

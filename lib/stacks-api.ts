@@ -28,6 +28,8 @@ import { getAllWallets } from './cms-providers/dato';
 import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
 import { bytesToHex, hexToInt, intToHex, utf8ToBytes } from '@stacks/common';
+import { getLatestBlock } from './user-api';
+import { getGlobalState } from './db-providers/kv';
 
 const network = new StacksMainnet();
 
@@ -288,8 +290,9 @@ export function updateVoteData(proposals: any[], transactions: any[]) {
 }
 
 export async function getProposals() {
-  const { results } = await blocksApi.getBlockList({ limit: 1 });
-  const latestBlock = Number(results[0].height);
+
+  const block = await getGlobalState(`blocks:latest`)
+  const latestBlock = block.height
 
   const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
     principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
@@ -615,7 +618,8 @@ export async function getTokenURI(contract: string) {
 
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
-  const metadata = await (await fetch(cv.value.value.value)).json();
+  const tokenUri = cv.value.value.value
+  const metadata = await (await fetch(tokenUri)).json();
   return metadata;
 }
 
@@ -892,6 +896,19 @@ export async function getCraftingRewards(contract: string) {
   return cvToJSON(response);
 }
 
+export async function getIsWhitelisted(contract: string) {
+  const response: any = await callReadOnlyFunction({
+    network: new StacksMainnet(),
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'lands',
+    functionName: 'is-whitelisted',
+    functionArgs: [principalCV(contract)],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+  });
+
+  return cvToJSON(response).value;
+}
+
 export async function getContractSource({ contractAddress, contractName }: any) {
   const proposalSourceResp = await scApi.getContractSource({ contractAddress, contractName });
   return proposalSourceResp;
@@ -1005,7 +1022,7 @@ export async function getCreatureCost(
 export async function getCreatureAmount(creatureId: number, sender: string) {
   const response = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'creatures-core',
+    contractName: 'lands',
     functionName: 'get-balance',
     readOnlyFunctionArgs: {
       sender: sender,
@@ -1051,7 +1068,7 @@ export async function getCreaturePower(
 export async function getClaimableAmount(creatureId: number, sender: string) {
   const response = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'creatures-kit',
+    contractName: 'lands',
     functionName: 'get-untapped-amount',
     readOnlyFunctionArgs: {
       sender: sender,

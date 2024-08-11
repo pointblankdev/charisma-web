@@ -8,9 +8,7 @@ import Image from 'next/image';
 import { Card, CardContent, CardFooter, CardHeader } from '@components/ui/card';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
-import millify from 'millify';
 import { Button } from '@components/ui/button';
-import { userSession } from '@components/stacks-session/connect';
 import { useConnect } from '@stacks/connect-react';
 import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
@@ -22,10 +20,8 @@ import liquidStakedOdin from '@public/liquid-staked-odin.png'
 import charisma from '@public/charisma.png'
 import raven from '@public/raven-of-odin.png'
 import odinsRaven from '@public/odins-raven/img/4.gif'
-import { getClaimableAmount, getCreatureAmount, getCreatureCost, getCreaturePower, getOldCreatureAmount } from '@lib/stacks-api';
 import creatureIcon from '@public/creatures/img/creatures.jpg'
 import energyIcon from '@public/creatures/img/energy.png'
-import powerIcon from '@public/creatures/img/power.png'
 import numeral from 'numeral';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
@@ -33,8 +29,8 @@ import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 import battleRoyale from '@public/stations/battle-royale.png'
 import prizeFight from '@public/stations/prize-fight.png'
 import { Checkbox } from '@components/ui/checkbox';
-
-
+import { getGlobalState } from '@lib/db-providers/kv';
+import { useGlobalState } from '@lib/hooks/global-state-context';
 
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
@@ -53,6 +49,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: {
         url: prizeFight
       },
+      legacy: true
     },
     {
       title: "Battle Royale",
@@ -67,6 +64,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: {
         url: battleRoyale
       },
+      legacy: true
     },
     {
       title: "Journey of Discovery",
@@ -95,6 +93,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       cardImage: {
         url: '/indexes/iron-ingots-bg.png'
       },
+      legacy: true
     },
     {
       title: 'Apple Farming',
@@ -232,12 +231,11 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       slug: '/creatures/1',
       cardImage: { url: '/creatures/img/farmers.png' },
       requiredToken: 'STX-wCHA LP',
-      cost: await getCreatureCost(1),
       energy: 0,
-      dailyYield: 7,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
-      creaturesRecruitable: 0
+      creaturesRecruitable: 0,
+      ...(await getGlobalState(`creatures:1`))
     },
     {
       title: 'Blacksmiths',
@@ -245,11 +243,10 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       slug: '/creatures/2',
       cardImage: { url: '/creatures/img/blacksmiths.png' },
       requiredToken: 'STX-sCHA LP',
-      cost: await getCreatureCost(2),
-      dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha',
-      creaturesRecruitable: 0
+      creaturesRecruitable: 0,
+      ...(await getGlobalState(`creatures:2`))
     },
     {
       title: 'Corgi Soldiers',
@@ -257,25 +254,21 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       slug: '/creatures/3',
       cardImage: { url: '/creatures/img/corgi-soldiers.png' },
       requiredToken: 'STX-iCC LP',
-      cost: await getCreatureCost(3),
-      dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-icc',
-      creaturesRecruitable: 0
+      creaturesRecruitable: 0,
+      ...(await getGlobalState(`creatures:3`))
     },
     {
       title: 'Alchemists',
       subtitle: 'Masters of potions and elixirs.',
       slug: '/creatures/4',
-      cardImage: {
-        url: '/creatures/img/alchemists.png'
-      },
+      cardImage: { url: '/creatures/img/alchemists.png' },
       requiredToken: 'STX-iMM LP',
-      cost: await getCreatureCost(4),
-      dailyYield: 0,
       amount: 0,
       tokenContract: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-imm',
-      creaturesRecruitable: 0
+      creaturesRecruitable: 0,
+      ...(await getGlobalState(`creatures:4`))
     },
   ]
 
@@ -302,23 +295,12 @@ export default function Creatures({ creatures, quests }: Props) {
 
   const { doContractCall } = useConnect();
   const { getBalanceByKey } = useWallet();
-
-  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+  const { creatures: creatureState } = useGlobalState()
 
   const [amountWChaLP, setAmountWChaLP] = useState(0)
   const [amountSChaLP, setAmountSChaLP] = useState(0)
   const [amountiCCLP, setAmountiCCLP] = useState(0)
   const [amountiMMLP, setAmountiMMLP] = useState(0)
-
-  const [farmers, setFarmers] = useState(0)
-  const [blacksmiths, setBlacksmiths] = useState(0)
-  const [corgiSoldiers, setCorgiSoldiers] = useState(0)
-  const [alchemists, setAlchemists] = useState(0)
-
-  const [farmersEnergy, setFarmersEnergy] = useState(0)
-  const [blacksmithsEnergy, setBlacksmithsEnergy] = useState(0)
-  const [corgiSoldiersEnergy, setCorgiSoldiersEnergy] = useState(0)
-  const [alchemistsEnergy, setAlchemistsEnergy] = useState(0)
 
   const farmersToRecruit = Math.floor(amountWChaLP / creatures[0].cost)
   const blacksmithsToRecruit = Math.floor(amountSChaLP / creatures[1].cost)
@@ -330,15 +312,15 @@ export default function Creatures({ creatures, quests }: Props) {
   creatures[2].creaturesRecruitable = corgiSoldiersToRecruit
   creatures[3].creaturesRecruitable = alchemistsToRecruit
 
-  creatures[0].amount = farmers
-  creatures[1].amount = blacksmiths
-  creatures[2].amount = corgiSoldiers
-  creatures[3].amount = alchemists
+  creatures[0].amount = creatureState?.['farmers']?.amount
+  creatures[1].amount = creatureState?.['blacksmiths']?.amount
+  creatures[2].amount = creatureState?.['corgiSoldiers']?.amount
+  creatures[3].amount = creatureState?.['alchemists']?.amount
 
-  creatures[0].energy = farmersEnergy
-  creatures[1].energy = blacksmithsEnergy
-  creatures[2].energy = corgiSoldiersEnergy
-  creatures[3].energy = alchemistsEnergy
+  creatures[0].energy = creatureState?.['farmers']?.energy
+  creatures[1].energy = creatureState?.['blacksmiths']?.energy
+  creatures[2].energy = creatureState?.['corgiSoldiers']?.energy
+  creatures[3].energy = creatureState?.['alchemists']?.energy
 
   function recruit(tokenContract: string, amount: number) {
     doContractCall({
@@ -379,20 +361,6 @@ export default function Creatures({ creatures, quests }: Props) {
       },
     });
   }
-
-  useEffect(() => {
-    sender && getCreatureAmount(1, sender).then(amount => setFarmers(amount))
-    sender && getCreatureAmount(2, sender).then(amount => setBlacksmiths(amount))
-    sender && getCreatureAmount(3, sender).then(amount => setCorgiSoldiers(amount))
-    sender && getCreatureAmount(4, sender).then(amount => setAlchemists(amount))
-  }, [sender])
-
-  useEffect(() => {
-    sender && getClaimableAmount(1, sender).then(amount => setFarmersEnergy(amount))
-    sender && getClaimableAmount(2, sender).then(amount => setBlacksmithsEnergy(amount))
-    sender && getClaimableAmount(3, sender).then(amount => setCorgiSoldiersEnergy(amount))
-    sender && getClaimableAmount(4, sender).then(amount => setAlchemistsEnergy(amount))
-  }, [sender, farmers, blacksmiths, corgiSoldiers])
 
   useEffect(() => {
     setAmountWChaLP(getBalanceByKey('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha::lp-token').balance)

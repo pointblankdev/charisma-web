@@ -67,6 +67,32 @@ export async function updateUserWithWallet(
     return data;
 }
 
+export async function getLands(): Promise<any> {
+    return await kv.smembers('lands')
+}
+
+export async function addLand(ca: string): Promise<any> {
+    return await kv.sadd('lands', ca)
+}
+
+export async function removeLand(ca: string): Promise<any> {
+    return await kv.srem('lands', ca)
+}
+
+export async function getLand(ca: string): Promise<any> {
+    return await kv.get(`land:${ca}`);
+}
+
+export async function setLand(ca: string, data: any): Promise<any> {
+    return await kv.set(`land:${ca}`, data);
+}
+
+export async function setLandWhitelisted(ca: string, whitelisted: boolean): Promise<any> {
+    const land = await kv.get(`land:${ca}`) as any;
+    land.whitelisted = whitelisted
+    return await kv.set(`land:${ca}`, land);
+}
+
 export async function getContractMetadata(ca: string): Promise<any> {
     return await kv.get(`ca:${ca}`);
 }
