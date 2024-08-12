@@ -59,35 +59,12 @@ const ConnectWallet = () => {
           <NavigationMenuItem>
             <NavigationMenuTrigger>{address}</NavigationMenuTrigger>
             <NavigationMenuContent>
-              <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                <li className="relative row-span-3 overflow-hidden rounded-md">
-                  <NavigationMenuLink asChild className="absolute inset-0 z-20">
-                    <Link
-                      className="flex flex-col justify-end w-full h-full p-6 no-underline outline-none select-none bg-gradient-to-b from-accent-foreground/25 to-black/90 focus:shadow-md"
-                      href="/portfolio"
-                    >
-                      <BiSolidUserPin className="w-6 h-6" />
-                      <div className="mt-4 mb-2 text-lg font-medium">
-                        {address}
-                      </div>
-                      <p className="text-sm leading-tight text-muted-foreground">
-                        View and manage your Charisma tokens.
-                      </p>
-                    </Link>
-                  </NavigationMenuLink>
-                  <Image
-                    src={charisma}
-                    height={1200}
-                    width={600}
-                    alt='profile background'
-                    className={cn("w-full object-cover transition-all", "aspect-[1/2]", 'flex', 'z - 0', 'absolute', 'inset-0')}
-                  />
-                </li>
+              <ul className="grid gap-3 p-6 md:w-[400px]">
                 <ListItem href="/portfolio" title="Portfolio">
                   View your Charisma supported token balances.
                 </ListItem>
                 <ListItem href="/governance" title="Governance">
-                  Participate in governance proposals and voting for the Charisma token.
+                  Vote on DAO proposals using the Charisma token.
                 </ListItem>
                 <ListItem title="Sign Out" onClick={disconnect} className="cursor-pointer">
                   Securely disconnect your wallet.

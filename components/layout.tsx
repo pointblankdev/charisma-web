@@ -40,8 +40,10 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   const { creatures } = useGlobalState()
   useEffect(() => {
+    let totalEnergy = 0
     forEach(creatures, (creature: any) => {
-      setEnergy(energy => energy + Number(creature.energy))
+      totalEnergy += Number(creature.energy)
+      setEnergy(totalEnergy)
     })
   }, [creatures])
 
@@ -98,7 +100,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={100}
                   className={`z-30 border rounded-full h-6 w-6`}
                 />
-                <div>{numeral(energy).format('0a')}</div>
+                <div>{numeral(energy).format('0.0a')}</div>
               </div>
               <div className="flex items-center gap-2 text-lg text-muted/80 font-semibold pl-2 sm:absolute sm:right-40">
                 <Image
