@@ -302,39 +302,47 @@ export async function getProposals() {
   const proposals: any[] = [];
 
   for (const r of accountsResp.results) {
+    // only process successful proposal submissions
+    if (r.tx?.contract_call?.function_name !== 'propose') continue;
     if (r.tx.tx_status !== 'success') continue;
-    const args = r.tx.contract_call?.function_args;
-    if (args) {
-      const startBlockHeight = Number(args[1].repr.slice(1));
-      const endBlockHeight = startBlockHeight + 1000; // update 1000 to use the parameter from the contract
-      let status = '';
-      if (latestBlock < startBlockHeight) {
-        status = 'Pending';
-      } else if (latestBlock < endBlockHeight) {
-        status = 'Voting Active';
-      } else {
-        status = 'Voting Ended';
+
+    try {
+      const args = r.tx.contract_call?.function_args;
+      if (args) {
+        const startBlockHeight = Number(args[1].repr.slice(1));
+        const endBlockHeight = startBlockHeight + 1000; // update 1000 to use the parameter from the contract
+        let status = '';
+        if (latestBlock < startBlockHeight) {
+          status = 'Pending';
+        } else if (latestBlock < endBlockHeight) {
+          status = 'Voting Active';
+        } else {
+          status = 'Voting Ended';
+        }
+
+        const [contractAddress, contractName] = args[0].repr.slice(1).split('.');
+
+        const proposalSourceResp: any = await scApi.getContractSource({
+          contractAddress,
+          contractName
+        });
+
+        const contractPrincipal = `${contractAddress}.${contractName}`;
+        proposals.push({
+          id: args[0].repr.split('.')[1],
+          name: contractPrincipal,
+          source: proposalSourceResp.source,
+          startBlockHeight,
+          endBlockHeight: endBlockHeight,
+          amount: 0,
+          against: 0,
+          status,
+          url: `https://explorer.hiro.so/txid/${contractPrincipal}?chain=mainnet`
+        });
       }
 
-      const [contractAddress, contractName] = args[0].repr.slice(1).split('.');
-
-      const proposalSourceResp: any = await scApi.getContractSource({
-        contractAddress,
-        contractName
-      });
-
-      const contractPrincipal = `${contractAddress}.${contractName}`;
-      proposals.push({
-        id: args[0].repr.split('.')[1],
-        name: contractPrincipal,
-        source: proposalSourceResp.source,
-        startBlockHeight,
-        endBlockHeight: endBlockHeight,
-        amount: 0,
-        against: 0,
-        status,
-        url: `https://explorer.hiro.so/txid/${contractPrincipal}?chain=mainnet`
-      });
+    } catch (error) {
+      console.error(error)
     }
   }
   return proposals;

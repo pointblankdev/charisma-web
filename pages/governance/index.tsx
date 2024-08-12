@@ -193,7 +193,7 @@ export default function Governance({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="m-2 sm:container sm:mx-auto sm:py-10">
+        <div className="m-2 sm:w-4xl sm:mx-auto sm:py-10">
           <Tabs defaultValue="proposals" className="">
             <TabsList className='mb-2'>
               <TabsTrigger value="proposals">Proposals</TabsTrigger>
@@ -226,6 +226,8 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       getProposals(),
       fetchAllContractTransactions('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting')
     ]);
+
+    console.log(proposals)
 
     const updatedProposals = updateVoteData(proposals, transactions);
 
