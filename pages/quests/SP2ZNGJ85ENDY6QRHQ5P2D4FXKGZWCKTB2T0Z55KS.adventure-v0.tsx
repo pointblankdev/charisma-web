@@ -38,6 +38,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, Di
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import experienceIcon from '@public/experience.png'
 import { getLand, getLands } from '@lib/db-providers/kv';
+import { Flame, FlameIcon, LucideFlame, ScrollIcon, SparkleIcon, SparklesIcon } from 'lucide-react';
+import { BsMagic } from 'react-icons/bs';
+import { PiFlameFill } from 'react-icons/pi';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all lands from db
@@ -101,45 +104,77 @@ export default function Adventure({ lands }: Props) {
           className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl"
         >
           <Card className="min-h-[600px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
-            <CardHeader className="z-20 p-4">
+            <CardHeader className="z-20 p-4 space-y-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="z-30 text-xl font-semibold">{title}</CardTitle>
               </div>
-              <CardDescription className="z-30 pb-6 text-md font-fine text-foreground">
+              <CardDescription className="z-30 text-md font-fine text-muted-foreground">
                 {subtitle}
               </CardDescription>
-              <div className="z-20">
-                <CardTitle className="z-30 mt-2 text-xl font-semibold">Rewards</CardTitle>
-                <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
-                  You will recieve:
-                </CardDescription>
-                <div className="grid grid-cols-4 gap-4 md:grid-cols-6 lg:grid-cols-8 xl:grid-cols-10">
-                  <div className="relative">
-                    <Image
-                      alt="Experience"
-                      src={experience}
-                      quality={10}
-                      className="z-30 w-full rounded-full"
-                    />
-                    <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground">
-                      EXP
+            </CardHeader>
+            <CardContent className="z-20 flex-grow p-4">
+              <section className='grid grid-cols-2'>
+
+                <div className="z-20">
+                  <CardTitle className="z-30 mt-2 text-xl font-semibold">Rewards</CardTitle>
+                  <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
+                    You will recieve:
+                  </CardDescription>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="relative">
+                      <Image
+                        alt="Experience"
+                        src={experience}
+                        quality={10}
+                        className="z-30 w-full rounded-full"
+                      />
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                        EXP
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </CardHeader>
+                <div className="z-20">
+                  <CardTitle className="z-30 mt-2 text-xl font-semibold">Quest Details</CardTitle>
+                  <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
+                    On this quest, your energy is spent in exchange for Experience tokens. The conversion rate is log2 squared, so frequent quest completions will yield the most Experience over time.
+                  </CardDescription>
+                </div>
+              </section>
 
-            <CardContent className="z-20 flex-grow p-4">
-              <div className="flex flex-col items-center justify-center space-y-4">
-                <p className='max-w-64'>
-                  {descriptionVisible && <Typewriter
-                    options={{ autoStart: true }}
-                    onInit={typewriter => {
-                      typewriter.pauseFor(2700).start().typeString('We shall not cease from exploration, and the end of all our exploring will be to arrive where we started and know the place for the first time.')
-                    }}
-                  />}
-                </p>
-              </div>
+              <section className='grid grid-cols-2 mt-6'>
+                <div className="z-20">
+                  <CardTitle className="z-30 mt-2 text-xl font-semibold">Requirements</CardTitle>
+                  <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
+                    Burn 1 sCHA to complete:
+                  </CardDescription>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="relative">
+                      <Image
+                        alt="protocol-fee-token-image"
+                        src={schaImg}
+                        quality={10}
+                        className="z-30 w-full rounded-full"
+                      />
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
+                        1
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="z-20">
+                  <CardTitle className="z-30 mt-2 text-xl font-semibold">&nbsp;</CardTitle>
+                  <CardDescription className='z-30 mb-4 font-fine max-w-64 text-muted-foreground'>
+                    {descriptionVisible && <Typewriter
+                      options={{ autoStart: true }}
+                      onInit={typewriter => {
+                        typewriter.pauseFor(2700).start().typeString('"We shall not cease from exploration, and the end of all our exploring will be to arrive where we started and know the place for the first time."')
+                      }}
+                    />}
+                  </CardDescription>
+                </div>
+              </section>
             </CardContent>
 
             <CardFooter className="z-20 flex justify-between p-4 items-end">
@@ -219,7 +254,7 @@ export function SelectCreatureDialog({ lands }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size={'sm'} className={`z-30`}>Gain Experience</Button>
+        <Button size={'sm'} className={`z-30`}>Complete Quest</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <AlertDialogHeader>
