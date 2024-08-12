@@ -143,7 +143,22 @@ export default function StakingIndex({ lands }: Props) {
 
 const generateTemplate = ({ contractAddress }: any) => {
   return `(define-public (execute (sender principal))
-  (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands set-whitelisted '${contractAddress} true)
+  (begin
+    ;; enable the token for staking
+    (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands set-whitelisted '${contractAddress} true)
+    (try 
+      (
+        ;; create a unique id for the staked token
+        (land-id (try! (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands get-or-create-land-id '${contractAddress})))
+        ;; lookup the total supply of the staked token
+        (total-supply (try! (contract-call? '${contractAddress} get-total-supply)))
+        ;; calculate the initial difficulty based on the total supply
+        (land-difficulty (/ total-supply (pow u10 u6)))
+      )
+    )
+    ;; set initial difficulty based on total supply to normalize energy output
+    (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands set-land-difficulty land-id land-difficulty)
+  )
 )
 `}
 
