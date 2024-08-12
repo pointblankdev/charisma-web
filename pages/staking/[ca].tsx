@@ -35,12 +35,7 @@ import { StacksMainnet } from "@stacks/network";
 import { getGlobalState, getLand, getLands, setLandWhitelisted } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
-import charismaLogo from '@public/charisma.png';
-import wrappedCharismaLogo from '@public/indexes/wrapped-charisma-logo.png';
-import liquidStakedCharismaLogo from '@public/liquid-staked-charisma.png';
-import quietConfidenceLogo from '@public/indexes/quiet-confidence-logo.png';
-import charismaticCorgiLogo from '@public/indexes/charismatic-corgi-logo.png';
-import welshLogo from '@public/welsh-logo.png';
+import schaImg from '@public/liquid-staked-charisma.png'
 
 
 export const getStaticPaths = async () => {
@@ -96,25 +91,25 @@ export default function StakingDetailPage({ metadata }: Props) {
           variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
           className="m-2 space-y-4 sm:container sm:mx-auto sm:py-10 md:max-w-2xl lg:max-w-3xl"
         >
-          <Card className="bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
+          <Card className="grid bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4">
               <div className="flex items-center justify-start space-x-4">
-                <Image src={metadata.image} width={200} height={200} alt='token-logo' className='h-20 w-20 rounded-full' />
+                <Image src={metadata.image} width={200} height={200} alt='token-logo' className='h-[4.5rem] w-[4.5rem] rounded-full' />
                 <div>
                   <CardTitle className="z-30 text-lg font-semibold sm:text-3xl">
                     {metadata.name}
                   </CardTitle>
-                  <CardDescription className="z-30 text-sm sm:text-md font-fine text-foreground">
+                  <CardDescription className="z-30 text-sm sm:text-md font-fine text-muted-foreground">
                     {metadata.wraps.description}
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-4">
-              <div className="z-20 min-h-[220px]">
+            <CardContent className="grid p-4">
+              <div className="z-20">
                 <div className="z-30 text-xl font-semibold">Overview</div>
                 <CardDescription className="z-30 mb-6 text-sm font-fine text-foreground">
-                  <p className="leading-normal">
+                  <p className="leading-normal text-primary-foreground/60">
                     Staking is a simple way to earn rewards by locking up your tokens. When you stake your tokens in the pool, you start earning Energy over time, which you can later use to get special rewards like tokens, NFTs, or access to exclusive activites. All you need to do is stake your tokens, and as long as they stay in the pool, you'll keep earning Energy. This is an easy way to earn extra perks and be more involved in your favorite memecoin community.
                   </p>
                 </CardDescription>
@@ -123,14 +118,36 @@ export default function StakingDetailPage({ metadata }: Props) {
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">How to Use</div>
                   <CardDescription className="z-30 mb-6 text-sm font-fine text-foreground">
-                    <p className="leading-normal">
+                    <p className="leading-normal text-primary-foreground/60">
                       To use the Stake-to-Earn pool, simply move the slider to the right to select the amount of tokens you want to stake, then press the Stake button. Make sure you're holding the tokens you want to stake in your wallet. To unstake, just move the slider to the left to choose the amount you want to withdraw, then press the Unstake button.
                     </p>
                   </CardDescription>
                 </div>
               }
+
+              <section className='grid grid-cols-2'>
+                <div className="z-20">
+                  <div className="z-30 text-xl font-semibold">Requirements</div>
+                  <div className="z-30 mb-4 text-sm font-fine text-primary-foreground/60">
+                    It costs 1 sCHA to stake or unstake tokens in this pool.
+                  </div>
+                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                    <div className="relative">
+                      <Image
+                        alt="protocol-fee-token-image"
+                        src={schaImg}
+                        quality={10}
+                        className="z-30 w-full rounded-full"
+                      />
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
+                        1
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </section>
             </CardContent>
-            <div className='p-4'>
+            <div className='grid p-4'>
               {metadata.whitelisted ?
                 <LandControls
                   min={-landTokenBalance}
@@ -141,7 +158,7 @@ export default function StakingDetailPage({ metadata }: Props) {
                 /> :
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Community Approval Required</div>
-                  <CardDescription className="z-30 mb-6 text-sm font-fine text-foreground">
+                  <CardDescription className="z-30 mb-6 text-sm font-fine text-primary-foreground/60">
                     <p className="leading-normal">
                       Before this Stake-to-Earn pool can be activated, it needs to pass a governance proposal vote. To request community approval, you must hold at least 0.01% of the total supply of the CHA token. This requirement ensures that only invested and committed members can propose new pools, maintaining the integrity of the ecosystem. Once a proposal is submitted, community members who hold governance tokens can review and vote on it. If the proposal receives majority approval, the pool will be enabled for staking. This process empowers the community to collectively shape the future of the Charisma ecosystem while ensuring that proposals are made by those with a meaningful stake in the platform.
                     </p>
@@ -157,8 +174,6 @@ export default function StakingDetailPage({ metadata }: Props) {
               alt={'card-background-image'}
               className={cn(
                 'object-cover',
-                'lg:aspect-square',
-                'sm:aspect-[2/3]',
                 'aspect-[1/2]',
                 'opacity-10',
                 'flex',
