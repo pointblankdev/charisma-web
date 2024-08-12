@@ -7,6 +7,7 @@ import {
   PostCondition,
   PostConditionMode,
   principalCV,
+  tupleCV,
   uintCV,
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
@@ -44,8 +45,7 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
     const postConditions: PostCondition[] = [
       Pc.principal(sender).willSendEq(tokens6Dec + (isUsingBurnToken ? 1000000 : 0)).ft(metadata.wraps.ca, metadata.wraps.asset)
     ]
-    if (hasLands) postConditions.push(Pc.principal(sender).willSendAsset().nft(landNftKey, uintCV(String(metadata.id))))
-    // if (hasLands) postConditions.push(Pc.principal(sender).willNotSendAsset().nft(landNftKey, uintCV(String(metadata.id))))
+    if (hasLands) postConditions.push(Pc.principal(sender).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(sender) })))
     if (!isUsingBurnToken) postConditions.push(Pc.principal(sender).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset))
     doContractCall({
       network: new StacksMainnet(),

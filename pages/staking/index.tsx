@@ -75,6 +75,26 @@ export default function StakingIndex({ lands }: Props) {
             <CreateNewPool whitelistedContracts={lands} />
           </div>
           <div className='grid gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5'>
+            <Card
+              className={cn(
+                'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+              )}
+            >
+              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
+                <div className="space-y-4 text-sm">
+                  <h3 className="font-bold text-lg">Stake Memecoins to Earn</h3>
+                  <p>
+                    Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
+                  </p>
+                  <p>
+                    Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
+                  </p>
+                  <p>
+                    In addition, anyone can claim Charisma rewards through Quests, making your staked memecoins a gateway to both unique community offerings and broader ecosystem rewards.
+                  </p>
+                </div>
+              </div>
+            </Card>
             {lands.map((land) => {
               return (
                 <Card key={land.wraps.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
