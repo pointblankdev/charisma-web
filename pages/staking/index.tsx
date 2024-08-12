@@ -219,7 +219,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
     const safeName = `list-${name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")}`
 
     const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
-    const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split(' ')[0].split('\n')[0].replace(')', '').trim()
+    const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split(' ')[1].split(')')[0]
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     const proposalName = `${sender}.${safeName}`
 
@@ -266,9 +266,12 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
         codeBody: template,
         postConditionMode: PostConditionMode.Deny,
         network: new StacksMainnet(),
+        onCancel: async () => {
+          await setLandMetadata(contractAddress, landMetadata)
+        },
         onFinish: async () => {
           await setLandMetadata(contractAddress, landMetadata)
-        }
+        },
       });
     } else {
       await setLandMetadata(contractAddress, landMetadata)

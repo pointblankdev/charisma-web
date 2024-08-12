@@ -94,7 +94,7 @@ describe('metadata api', () => {
     })
 
     it('should remove land', async () => {
-        const response = await removeLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        const response = await removeLand('SP1B46TPZD8Y3ETHGZYJAPHD9GHJK81K08WRB127X.list-fair')
         console.log(response)
     })
 
@@ -105,6 +105,13 @@ describe('metadata api', () => {
 
     it('should get land 4', async () => {
         const response = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        console.log(response)
+    })
+
+    it('should get fair land', async () => {
+        const response = await getLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve')
+        response.wraps.asset = 'FAIR'
+        await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', response)
         console.log(response)
     })
 
