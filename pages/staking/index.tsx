@@ -216,7 +216,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
   const handleCreatePool = async () => {
     const template = generateTemplate(form.getValues())
     const { name, image, cardImage, contractAddress, symbol, totalSupply, decimals, description } = form.getValues()
-    const safeName = `pool-proposal-${name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")}`
+    const safeName = `list-${name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")}`
 
     const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
     const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split(' ')[0].split('\n')[0].replace(')', '').trim()
