@@ -22,7 +22,6 @@ import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
 const font = Ysabeau_Infant({ subsets: ['latin'] })
 
 
-
 export default function App({ Component, pageProps }: AppProps) {
   useEffect(() => {
     document.body.classList?.remove('loading');
