@@ -193,7 +193,7 @@ export default function Governance({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="m-2 sm:w-4xl sm:mx-auto sm:py-10">
+        <div className="m-2 sm:w-[1400px] sm:mx-auto sm:py-10">
           <Tabs defaultValue="proposals" className="">
             <TabsList className='mb-2'>
               <TabsTrigger value="proposals">Proposals</TabsTrigger>
@@ -204,7 +204,7 @@ export default function Governance({ data }: Props) {
               <DataTable columns={columns} data={data} />
             </TabsContent>
             <TabsContent value="extentions">
-              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-5'>
+              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-6'>
                 {cards.map((card, index) => (
                   <Card key={index} {...card} />
                 ))}
