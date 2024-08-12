@@ -112,14 +112,13 @@ export default function Adventure({ lands }: Props) {
                 {subtitle}
               </CardDescription>
             </CardHeader>
-            <CardContent className="z-20 flex-grow p-4">
+            <CardContent className="z-20 flex-grow p-4 space-y-4">
               <section className='grid grid-cols-2'>
-
                 <div className="z-20">
-                  <CardTitle className="z-30 mt-2 text-xl font-semibold">Rewards</CardTitle>
-                  <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
+                  <div className="z-30 text-xl font-semibold">Rewards</div>
+                  <div className="z-30 mb-4 text-sm font-fine text-foreground">
                     You will recieve:
-                  </CardDescription>
+                  </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="relative">
                       <Image
@@ -135,19 +134,19 @@ export default function Adventure({ lands }: Props) {
                   </div>
                 </div>
                 <div className="z-20">
-                  <CardTitle className="z-30 mt-2 text-xl font-semibold">Quest Details</CardTitle>
-                  <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
+                  <div className="z-30 text-xl font-semibold">Quest Details</div>
+                  <div className="z-30 mb-4 text-sm font-fine text-foreground">
                     On this quest, your energy is spent in exchange for Experience tokens. The conversion rate is log2 squared, so frequent quest completions will yield the most Experience over time.
-                  </CardDescription>
+                  </div>
                 </div>
               </section>
 
-              <section className='grid grid-cols-2 mt-6'>
+              <section className='grid grid-cols-2'>
                 <div className="z-20">
-                  <CardTitle className="z-30 mt-2 text-xl font-semibold">Requirements</CardTitle>
-                  <CardDescription className="z-30 mb-4 text-sm font-fine text-foreground">
+                  <div className="z-30 text-xl font-semibold">Requirements</div>
+                  <div className="z-30 mb-4 text-sm font-fine text-foreground">
                     Burn 1 sCHA to complete:
-                  </CardDescription>
+                  </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="relative">
                       <Image
@@ -162,17 +161,16 @@ export default function Adventure({ lands }: Props) {
                     </div>
                   </div>
                 </div>
-
                 <div className="z-20">
-                  <CardTitle className="z-30 mt-2 text-xl font-semibold">&nbsp;</CardTitle>
-                  <CardDescription className='z-30 mb-4 font-fine max-w-64 text-muted-foreground'>
+                  <div className="z-30 text-xl font-semibold">&nbsp;</div>
+                  <div className='z-30 mb-4 font-fine max-w-64 text-muted-foreground'>
                     {descriptionVisible && <Typewriter
                       options={{ autoStart: true }}
                       onInit={typewriter => {
                         typewriter.pauseFor(2700).start().typeString('"We shall not cease from exploration, and the end of all our exploring will be to arrive where we started and know the place for the first time."')
                       }}
                     />}
-                  </CardDescription>
+                  </div>
                 </div>
               </section>
             </CardContent>
@@ -195,7 +193,7 @@ export default function Adventure({ lands }: Props) {
               className={cn(
                 'object-cover',
                 'opacity-10',
-                'aspect-[2/3]',
+                'aspect-[1/2]',
                 'sm:aspect-square',
                 'flex',
                 'z-10',
