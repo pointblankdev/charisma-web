@@ -41,16 +41,8 @@ const LandControls = ({
                     </Button>
                 </Link>
                 <div>
-                    <UnwrapLandButton
-                        tokens={-tokensSelected}
-                        baseTokenContractAddress={metadata.wraps.ca}
-                        baseFungibleTokenName={metadata.wraps.asset}
-                    />
-                    <WrapLandButton
-                        tokens={tokensSelected}
-                        baseTokenContractAddress={metadata.wraps.ca}
-                        baseFungibleTokenName={metadata.wraps.asset}
-                    />
+                    <UnwrapLandButton tokens={-tokensSelected} metadata={metadata} />
+                    <WrapLandButton tokens={tokensSelected} metadata={metadata} />
                 </div>
             </div>
         </div>

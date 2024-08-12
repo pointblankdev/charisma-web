@@ -26,8 +26,6 @@ import { getExperienceHolders } from '@lib/user-api';
 export const getStaticProps: GetStaticProps<Props> = async () => {
     const experienceHolders = await getExperienceHolders()
 
-
-
     return {
         props: {
             holders: experienceHolders
@@ -50,7 +48,6 @@ export default function LeaderboardPage({ holders }: Props) {
             <SkipNavContent />
             <Layout>
                 <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
-
                     <Leaderboard holders={holders} />
                 </div>
             </Layout>

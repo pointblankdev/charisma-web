@@ -113,7 +113,8 @@ describe('metadata api', () => {
         console.log(response)
     })
 
-    it('should set land 3 data into db', async () => {
+    it('should set land 1 data into db', async () => {
+        const id = 1
         const name = "Liquid Staked Charisma"
         const image = "https://charisma.rocks/liquid-staked-charisma.png"
         const cardImage = "https://charisma.rocks/liquid-charisma-21.png"
@@ -127,6 +128,7 @@ describe('metadata api', () => {
         const proposalName = `pool-proposal-${name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")}`
         const response = await setLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', {
             sip: 16,
+            id: id,
             name: name,
             image: image,
             cardImage: cardImage,
@@ -164,6 +166,12 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    it('should update land by id', async () => {
+        const land = await getLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        const response = await setLandById(1, land)
+        console.log(response)
+    })
+
     it('should set welsh land metadata into db', async () => {
         const response = await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', {
             sip: 16,
@@ -197,14 +205,6 @@ describe('metadata api', () => {
                 decimals: 6
             }
         })
-        console.log(response)
-    })
-
-    it('should update welsh land by id', async () => {
-        const land = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
-        // land.wraps.description = 'The OG meme and mascot of Stacks'
-        // land.description.description = 'The OG meme and mascot of Stacks'
-        const response = await setLandById(4, land)
         console.log(response)
     })
 

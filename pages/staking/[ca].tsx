@@ -109,10 +109,12 @@ export default function StakingDetailPage({ metadata }: Props) {
                   onSetTokensSelected={setTokensSelected}
                   tokensSelected={tokensSelected}
                   metadata={metadata}
-                /> : <p className='space-y-2'>
+                /> :
+                <p className='space-y-2'>
                   <p>This Stake-to-Earn pool must first pass a governance proposal vote before it is enabled.</p>
                   <GovernanceProposalButton metadata={metadata} />
-                </p>}
+                </p>
+              }
             </div>
             <Image
               src={metadata.cardImage}

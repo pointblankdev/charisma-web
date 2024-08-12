@@ -13,14 +13,12 @@ import { Button } from "@components/ui/button";
 
 interface UnstakeButtonProps {
   tokens: number;
-  baseTokenContractAddress: `${string}.${string}`;
-  baseFungibleTokenName: string;
+  metadata: any;
 }
 
 const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
   tokens,
-  baseTokenContractAddress,
-  baseFungibleTokenName,
+  metadata
 }) => {
   const { doContractCall } = useConnect();
 
@@ -29,13 +27,18 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
 
   const tokens6Dec = Number(tokens)
 
+  const landsContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands'
+  const landsAsset = 'lands'
+  const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
+  const burnTokenAsset = 'liquid-staked-token'
+
   function unstake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     const tokensOut = tokens6Dec
     const postConditions = [
-      Pc.principal(sender).willSendEq(tokens6Dec).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands', 'lands'),
-      Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands').willSendEq(tokensOut).ft(baseTokenContractAddress, baseFungibleTokenName),
-      Pc.principal(sender).willSendEq(1000000).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', 'liquid-staked-token')
+      Pc.principal(sender).willSendEq(tokens6Dec).ft(landsContract, landsAsset),
+      Pc.principal(landsContract).willSendEq(tokensOut).ft(metadata.wraps.ca, metadata.wraps.asset),
+      Pc.principal(sender).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset)
     ]
     doContractCall({
       network: new StacksMainnet(),
@@ -43,7 +46,7 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'land-helper-v0',
       functionName: "unwrap",
-      functionArgs: [uintCV(tokens6Dec), principalCV(baseTokenContractAddress)],
+      functionArgs: [uintCV(tokens6Dec), principalCV(metadata.wraps.ca)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: postConditions,
       onFinish: (data) => {

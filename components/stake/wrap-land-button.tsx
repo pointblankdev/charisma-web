@@ -4,25 +4,26 @@ import { StacksMainnet } from "@stacks/network";
 import {
   AnchorMode,
   Pc,
+  PostCondition,
   PostConditionMode,
   principalCV,
   uintCV,
 } from "@stacks/transactions";
 import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
+import useWallet from "@lib/hooks/use-wallet-balances";
 
 interface StakeButtonProps {
   tokens: number;
-  baseTokenContractAddress: `${string}.${string}`;
-  baseFungibleTokenName: string;
+  metadata: any;
 }
 
 const WrapLandButton: React.FC<StakeButtonProps> = ({
   tokens,
-  baseTokenContractAddress,
-  baseFungibleTokenName,
+  metadata,
 }) => {
   const { doContractCall } = useConnect();
+  const { balances } = useWallet()
 
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -31,22 +32,28 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
 
   const tokens6Dec = Number(tokens)
 
+  const landNftKey = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands::land'
+  const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
+  const burnTokenAsset = 'liquid-staked-token'
+
+  const hasLands = balances?.non_fungible_tokens?.[landNftKey]
 
   function stake() {
     const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const isUsingBurnToken = baseTokenContractAddress === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
-    const postConditions = [
-      Pc.principal(sender).willSendEq(tokens6Dec + (isUsingBurnToken ? 1000000 : 0)).ft(baseTokenContractAddress, baseFungibleTokenName),
-      Pc.principal(sender).willSendAsset().nft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands::land', uintCV(3)),
+    const isUsingBurnToken = metadata.wraps.ca === burnTokenContract
+    const postConditions: PostCondition[] = [
+      Pc.principal(sender).willSendEq(tokens6Dec + (isUsingBurnToken ? 1000000 : 0)).ft(metadata.wraps.ca, metadata.wraps.asset)
     ]
-    if (!isUsingBurnToken) postConditions.push(Pc.principal(sender).willSendEq(1000000).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', 'liquid-staked-token'))
+    if (hasLands) postConditions.push(Pc.principal(sender).willSendAsset().nft(landNftKey, uintCV(String(metadata.id))))
+    // if (hasLands) postConditions.push(Pc.principal(sender).willNotSendAsset().nft(landNftKey, uintCV(String(metadata.id))))
+    if (!isUsingBurnToken) postConditions.push(Pc.principal(sender).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset))
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'land-helper-v0',
       functionName: "wrap",
-      functionArgs: [uintCV(tokens6Dec), principalCV(baseTokenContractAddress)],
+      functionArgs: [uintCV(tokens6Dec), principalCV(metadata.wraps.ca)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: postConditions,
       onFinish: (data) => {

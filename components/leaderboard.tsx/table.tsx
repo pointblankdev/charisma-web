@@ -26,6 +26,7 @@ import {
     TableHeader,
     TableRow,
 } from "@components/ui/table"
+import numeral from "numeral"
 
 const products = [
     {
@@ -131,9 +132,9 @@ export default function Leaderboard({ holders }: any) {
                     <TableBody>
                         {pageData.map((holder: any) => (
                             <TableRow key={holder.address}>
-                                <TableCell className="font-medium text-center">{holder.rank}</TableCell>
+                                <TableCell className="font-normal text-center">{holder.rank}</TableCell>
                                 <TableCell className="font-medium">{holder.address}</TableCell>
-                                <TableCell>{holder.balance}</TableCell>
+                                <TableCell className="font-medium">{numeral(holder.balance / 1000000).format('0.0 a')}</TableCell>
 
                             </TableRow>
                         ))}
