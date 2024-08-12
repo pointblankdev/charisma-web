@@ -37,15 +37,38 @@ import welshImg from '@public/welsh-logo.png'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import experienceIcon from '@public/experience.png'
+import { getLand, getLands } from '@lib/db-providers/kv';
 
-export default function JourneyOfDiscovery() {
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  // get all lands from db
+  const landContractAddresses = await getLands()
+
+  const lands = []
+  for (const ca of landContractAddresses) {
+    const metadata = await getLand(ca)
+    lands.push(metadata)
+  }
+
+  return {
+    props: {
+      lands
+    },
+    revalidate: 60000
+  };
+};
+
+type Props = {
+  lands: any[];
+};
+
+export default function Adventure({ lands }: Props) {
   const meta = {
-    title: "Charisma | Journey of Discovery",
+    title: "Charisma | Adventure",
     description: META_DESCRIPTION,
     image: '/journey-of-discovery.png'
   };
 
-  const title = "Journey of Discovery";
+  const title = "Adventure";
   const subtitle = 'Spend your energy to gain experience.';
 
 
@@ -63,6 +86,8 @@ export default function JourneyOfDiscovery() {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
   };
+
+  console.log(lands)
 
   return (
     <Page meta={meta} fullViewport>
@@ -104,8 +129,6 @@ export default function JourneyOfDiscovery() {
               </div>
             </CardHeader>
 
-
-
             <CardContent className="z-20 flex-grow p-4">
               <div className="flex flex-col items-center justify-center space-y-4">
                 <p className='max-w-64'>
@@ -127,7 +150,7 @@ export default function JourneyOfDiscovery() {
                 </Button>
               </Link>
 
-              <SelectCreatureDialog />
+              <SelectCreatureDialog lands={lands} />
             </CardFooter>
             <Image
               src={journeyOfDiscovery}
@@ -154,7 +177,7 @@ export default function JourneyOfDiscovery() {
   );
 }
 
-export function SelectCreatureDialog({ data }: any) {
+export function SelectCreatureDialog({ lands }: any) {
 
   const { doContractCall } = useConnect();
 
@@ -170,6 +193,10 @@ export function SelectCreatureDialog({ data }: any) {
     //   senderAddress: sender
     // })
     // const claimableTokens = Number(cvToJSON(response).value)
+
+    const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
+    const burnTokenAsset = 'liquid-staked-token'
+
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -178,7 +205,7 @@ export function SelectCreatureDialog({ data }: any) {
       functionName: "tap",
       functionArgs: [uintCV(creatureId), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v0')],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [],
+      postConditions: [Pc.principal(sender).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset)],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -200,26 +227,18 @@ export function SelectCreatureDialog({ data }: any) {
         </AlertDialogHeader>
 
         <DialogDescription className='grid gap-2 grid-cols-2 sm:grid-cols-4 space-x-4 py-4'>
-          <div className='flex flex-col items-center space-y-2'>
-            <Image
-              alt={'asd'}
-              src={schaImg}
-              width={100}
-              height={100}
-              onClick={() => journey(3)}
-              className="z-30 border rounded-full h-32 w-32 hover:scale-110 transition-all cursor-pointer"
-            />
-          </div>
-          <div className='flex flex-col items-center space-y-2'>
-            <Image
-              alt={'asd'}
-              src={welshImg}
-              width={100}
-              height={100}
-              onClick={() => journey(4)}
-              className="z-30 border rounded-full h-32 w-32 hover:scale-110 transition-all cursor-pointer"
-            />
-          </div>
+          {lands.map((land: any) => (
+            <div className={`flex flex-col items-center space-y-2 ${!land.whitelisted && 'opacity-20 grayscale'}`}>
+              <Image
+                alt={'token-logo'}
+                src={land.image}
+                width={100}
+                height={100}
+                onClick={() => journey(land.id)}
+                className={`z-30 border rounded-full h-32 w-32 ${land.whitelisted && 'hover:scale-110 transition-all cursor-pointer'}`}
+              />
+            </div>
+          ))}
         </DialogDescription>
       </DialogContent>
     </Dialog >
