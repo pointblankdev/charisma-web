@@ -29,6 +29,7 @@ import { StacksMainnet } from "@stacks/network";
 import { PostConditionMode } from '@stacks/transactions';
 import { setLandMetadata } from '@lib/user-api';
 import energyIcon from '@public/creatures/img/energy.png';
+import { userSession } from '@components/stacks-session/connect';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
@@ -145,19 +146,19 @@ const generateTemplate = ({ contractAddress }: any) => {
   return `(define-public (execute (sender principal))
   (begin
     ;; enable the token for staking
-    (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands set-whitelisted '${contractAddress} true)
-    (try 
+    (try! (contract-call? .lands set-whitelisted '${contractAddress} true))
+    (let 
       (
         ;; create a unique id for the staked token
-        (land-id (try! (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands get-or-create-land-id '${contractAddress})))
+        (land-id (try! (contract-call? .lands get-or-create-land-id '${contractAddress})))
         ;; lookup the total supply of the staked token
-        (total-supply (try! (contract-call? '${contractAddress} get-total-supply)))
+        (total-supply (unwrap-panic (contract-call? '${contractAddress} get-total-supply)))
         ;; calculate the initial difficulty based on the total supply
         (land-difficulty (/ total-supply (pow u10 u6)))
       )
+      ;; set initial difficulty based on total supply to normalize energy output
+      (contract-call? .lands set-land-difficulty land-id land-difficulty)
     )
-    ;; set initial difficulty based on total supply to normalize energy output
-    (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands set-land-difficulty land-id land-difficulty)
   )
 )
 `}
@@ -180,7 +181,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
     contractAddress: "",
   }
 
-  const { doContractDeploy, doContractCall } = useConnect();
+  const { doContractDeploy } = useConnect();
 
   const form = useForm<ProposalFormValues>({
     resolver: zodResolver(proposalFormSchema),
@@ -215,11 +216,12 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
   const handleCreatePool = async () => {
     const template = generateTemplate(form.getValues())
     const { name, image, cardImage, contractAddress, symbol, totalSupply, decimals, description } = form.getValues()
-    const safeName = name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")
+    const safeName = `pool-proposal-${name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")}`
 
     const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
-    const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split('\n')[0].replace(')', '').trim()
-    const proposalName = `pool-proposal-${safeName}`
+    const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split(' ')[0].split('\n')[0].replace(')', '').trim()
+    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+    const proposalName = `${sender}.${safeName}`
 
     const landMetadata = {
       sip: 16,
@@ -260,9 +262,9 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
 
     if (!isWhitelisted) {
       doContractDeploy({
-        contractName: proposalName,
+        contractName: safeName,
         codeBody: template,
-        postConditionMode: PostConditionMode.Allow,
+        postConditionMode: PostConditionMode.Deny,
         network: new StacksMainnet(),
         onFinish: async () => {
           await setLandMetadata(contractAddress, landMetadata)
@@ -273,92 +275,136 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
     }
   }
 
+  const card = form.watch()
+
+  function isValidUrl(string: string) {
+    try {
+      new URL(string);
+      return true;
+    } catch (_) {
+      return false;
+    }
+  }
+
 
   return (
     <Dialog>
       <DialogTrigger asChild>
         <Button className='h-full bg-primary-foreground/5'>Create New Pool</Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
+      <DialogContent className="sm:max-w-5xl">
         <DialogHeader>
           <DialogTitle>New Stake-to-Earn Pool</DialogTitle>
         </DialogHeader>
-        <DialogDescription className='grid'>
-          <Form {...form}>
-            <form onChange={handleChange}>
-              <fieldset className="grid gap-4">
-                <FormField
-                  control={form.control}
-                  name="contractAddress"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Memecoin Contract Address</FormLabel>
-                      <FormControl>
-                        <Input placeholder={'...'} {...field} className='text-white' />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="name"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Name</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Token Name" {...field} className='text-white' />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (1 sentence)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="Brief description..." {...field} className='text-white' />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="image"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Image URL</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://..." {...field} className='text-white' />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-                <FormField
-                  control={form.control}
-                  name="cardImage"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Card Image URL (1w by 2h aspect ratio)</FormLabel>
-                      <FormControl>
-                        <Input placeholder="https://..." {...field} className='text-white' />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-              </fieldset>
-            </form>
-          </Form>
+        <DialogDescription className='flex space-x-4'>
+          <Card className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card w-96')}>
+            <CardContent className='w-full p-0'>
+              <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                <div className='flex gap-2'>
+                  <div className='min-w-max'>
+                    {isValidUrl(card.image) ?
+                      <Image src={card.image} width={40} height={40} alt='guild-logo' className='w-10 h-10 border rounded-full grow' />
+                      : <div className='w-10 h-10 bg-white border rounded-full' />
+                    }
+                  </div>
+                  <div className=''>
+                    <div className='text-sm font-semibold leading-none text-secondary'>
+                      {card.name}
+                    </div>
+                    <div className='mt-1 text-xs leading-tight font-fine text-secondary'>
+                      {card.description}
+                    </div>
+                  </div>
+                </div>
+              </CardHeader>
+              {isValidUrl(card.cardImage) && <Image
+                src={card.cardImage}
+                height={1200}
+                width={600}
+                alt='land-featured-image'
+                className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-80', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
+              />}
+              <div className='absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30' />
+              <div className='absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20' />
+            </CardContent>
+          </Card>
+          <div className='grid w-full'>
+            <Form {...form}>
+              <form onChange={handleChange}>
+                <fieldset className="grid gap-4">
+                  <FormField
+                    control={form.control}
+                    name="contractAddress"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Memecoin Contract Address</FormLabel>
+                        <FormControl>
+                          <Input placeholder={'...'} {...field} className='text-white' />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="name"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Name</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Token Name" {...field} className='text-white' />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description (1 sentence)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="Brief description..." {...field} className='text-white' />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="image"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Image URL</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://..." {...field} className='text-white' />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="cardImage"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Card Image URL (1w by 2h aspect ratio)</FormLabel>
+                        <FormControl>
+                          <Input placeholder="https://..." {...field} className='text-white' />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+                </fieldset>
+              </form>
+              <div className='flex justify-end'>
+                <Button disabled={isWhitelisted} onClick={handleCreatePool}>Create Pool</Button>
+              </div>
+            </Form>
+          </div>
         </DialogDescription>
-        <DialogFooter>
-          <Button disabled={isWhitelisted} onClick={handleCreatePool}>Create Pool</Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   )

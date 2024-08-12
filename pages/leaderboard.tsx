@@ -8,7 +8,7 @@ import ClaimFaucetButton from '@components/faucet/claim';
 import Image from 'next/image';
 import { StacksMainnet } from "@stacks/network";
 import { callReadOnlyFunction } from '@stacks/transactions';
-import { blocksApi } from '@lib/stacks-api';
+import { blocksApi, getTotalSupply } from '@lib/stacks-api';
 import {
     Tooltip,
     TooltipContent,
@@ -25,6 +25,9 @@ import { getExperienceHolders } from '@lib/user-api';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
     const experienceHolders = await getExperienceHolders()
+    const charismaTotalSupply = await getTotalSupply('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token')
+
+    console.log(charismaTotalSupply)
 
     return {
         props: {

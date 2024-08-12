@@ -98,7 +98,7 @@ describe('metadata api', () => {
         console.log(response)
     })
 
-    it('should get land 3', async () => {
+    it('should get land 1', async () => {
         const response = await getLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
         console.log(response)
     })
@@ -106,6 +106,13 @@ describe('metadata api', () => {
     it('should get land 4', async () => {
         const response = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
         console.log(response)
+    })
+
+    it('should update land 5', async () => {
+        const response = await getLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam')
+        // response.proposal = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pool-proposal-the-fellowship-of-the-meme'
+        console.log(response)
+        // await setLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam', response)
     })
 
     it('should set welsh land whitelisted', async () => {
