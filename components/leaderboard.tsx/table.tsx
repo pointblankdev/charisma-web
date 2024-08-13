@@ -32,7 +32,7 @@ import energyIcon from '@public/creatures/img/energy.png';
 
 const ITEMS_PER_PAGE = 10;
 
-export default function Leaderboard({ holders }: any) {
+export default function Leaderboard({ holders, expTotalSupply }: any) {
     const [currentPage, setCurrentPage] = useState(1);
 
     const totalPages = Math.ceil(holders.length / ITEMS_PER_PAGE);
@@ -60,9 +60,10 @@ export default function Leaderboard({ holders }: any) {
                             <TableHead className="md:table-cell">Rank</TableHead>
                             <TableHead>Wallet Address</TableHead>
                             <TableHead>Experience</TableHead>
+                            <TableHead>% of TS</TableHead>
+                            <TableHead>&gt; 10% TS</TableHead>
                             <TableHead>&gt; 1% TS</TableHead>
                             <TableHead>&gt; 0.1% TS</TableHead>
-                            <TableHead>&gt; 0.01% TS</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -71,9 +72,10 @@ export default function Leaderboard({ holders }: any) {
                                 <TableCell className="font-normal text-center">{holder.rank}</TableCell>
                                 <TableCell className="font-medium">{holder.bns.names[0] || holder.address}</TableCell>
                                 <TableCell className="font-medium">{numeral(holder.experience / 1000000).format('0.0 a')}</TableCell>
-                                <TableCell className="font-medium">{holder.gt001p ? "🌞" : "✖️"}</TableCell>
-                                <TableCell className="font-medium">{holder.gt01p ? "🌟" : "✖️"}</TableCell>
-                                <TableCell className="font-medium">{holder.gt1p ? "✨" : "✖️"}</TableCell>
+                                <TableCell className="font-medium">{numeral(holder.experience / expTotalSupply).format('0.00 %')}</TableCell>
+                                <TableCell className="font-medium">{holder.experience / expTotalSupply >= 0.1 ? "🌞" : "✖️"}</TableCell>
+                                <TableCell className="font-medium">{holder.experience / expTotalSupply >= 0.01 ? "🌟" : "✖️"}</TableCell>
+                                <TableCell className="font-medium">{holder.experience / expTotalSupply >= 0.001 ? "✨" : "✖️"}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>

@@ -1,5 +1,5 @@
 import { getExperienceLeaderboard, updateExperienceLeaderboard } from '@lib/db-providers/kv';
-import { getNameFromAddress, getTokenBalance, hasPercentageBalance } from '@lib/stacks-api';
+import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -32,13 +32,10 @@ export default async function getMetadata(
                     if (payload.success) {
 
                         const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
-
+                        const experienceSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
 
                         const bns = await getNameFromAddress(payload.sender)
-                        const gt001p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 1000)
-                        const gt01p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 10000)
-                        const gt1p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 100000)
-                        const jsonData = JSON.stringify({ address: payload.sender, bns, gt001p, gt01p, gt1p });
+                        const jsonData = JSON.stringify({ address: payload.sender, bns });
 
                         // update leaderboard
                         await updateExperienceLeaderboard(payload.sender, experienceAmount, jsonData)
@@ -47,9 +44,9 @@ export default async function getMetadata(
                             .setTitle('Adventure')
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
-                            .addField('> 1% TS', gt001p ? "🌞" : "✖️", true)
-                            .addField('> 0.1% TS', gt01p ? "🌟" : "✖️", true)
-                            .addField('> 0.01% TS', gt1p ? "✨" : "✖️", true)
+                            .addField('> 100% TS', experienceAmount / experienceSupply >= 0.1 ? "🌞" : "✖️", true)
+                            .addField('> 10% TS', experienceAmount / experienceSupply >= 0.01 ? "🌟" : "✖️", true)
+                            .addField('> 1% TS', experienceAmount / experienceSupply >= 0.001 ? "✨" : "✖️", true)
                             .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP')
                             .addField('Wallet Address', payload.sender)
                         await hook.send(embed);

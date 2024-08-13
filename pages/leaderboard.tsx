@@ -25,13 +25,15 @@ import { getExperienceHolders } from '@lib/user-api';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
     const experienceHolders = await getExperienceHolders()
-    const charismaTotalSupply = await getTotalSupply('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token')
+    // const charismaTotalSupply = await getTotalSupply('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token')
+    const experienceTotalSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
 
-    console.log(charismaTotalSupply)
+    // console.log(experienceTotalSupply)
 
     return {
         props: {
-            holders: experienceHolders
+            holders: experienceHolders,
+            expTotalSupply: Number(experienceTotalSupply),
         },
         revalidate: 60000
     };
@@ -39,8 +41,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 type Props = {
     holders: any[];
+    expTotalSupply: number;
 };
-export default function LeaderboardPage({ holders }: Props) {
+export default function LeaderboardPage({ holders, expTotalSupply }: Props) {
     const meta = {
         title: 'Charisma | Leaderboard',
         description: META_DESCRIPTION
@@ -51,7 +54,7 @@ export default function LeaderboardPage({ holders }: Props) {
             <SkipNavContent />
             <Layout>
                 <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
-                    <Leaderboard holders={holders} />
+                    <Leaderboard holders={holders} expTotalSupply={expTotalSupply} />
                 </div>
             </Layout>
         </Page >
