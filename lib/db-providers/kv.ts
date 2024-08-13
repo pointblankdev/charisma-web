@@ -190,3 +190,11 @@ export async function getExperienceLeaderboard(startRank: number, endRank: numbe
         console.error('Error fetching leaderboard:', error);
     }
 }
+
+export async function clearLeaderboard() {
+    try {
+        return await kv.del('leaderboard:exp');
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+    }
+}

@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -227,6 +227,12 @@ describe('metadata api', () => {
         land.wraps.description = 'The OG meme and mascot of Stacks'
         land.description.description = 'The OG meme and mascot of Stacks'
         const response = await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', land)
+        console.log(response)
+    })
+
+    // delete experience leaderboard
+    it('should delete experience lb', async () => {
+        const response = await clearLeaderboard()
         console.log(response)
     })
 
