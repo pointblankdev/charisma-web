@@ -69,6 +69,11 @@ export default async function chainhooks(
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-core-set-creature-cost': {
             description: 'Creatures cost has been updated.',
           },
+          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v0': {
+            title: 'WANTED: Hogger',
+            description: `${payload.sender} is fighting Hogger!`,
+            thumbnail: 'https://charisma.rocks/quests/wanted-hogger.png',
+          },
         };
 
         const messageKey = `${payload.contract_identifier}-${payload.method}`;
