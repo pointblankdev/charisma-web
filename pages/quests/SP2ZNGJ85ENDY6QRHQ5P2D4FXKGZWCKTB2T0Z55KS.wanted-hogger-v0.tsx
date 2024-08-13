@@ -156,7 +156,7 @@ export default function WantedHogger({ lands }: Props) {
                 <div className="z-20 row-span-2">
                   <div className="z-30 text-xl font-semibold">Quest Details</div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    Hogger is an on-chain monster terrorizing the Stacks ecosystem. Attacks him deals damage based on your energy spent and experience level.
+                    Hogger is an on-chain monster terrorizing the Stacks ecosystem. Attacking him deals damage based on your energy spent and experience level.
                   </div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
                     If Hogger is defeated, all participants receive rewards: equal experience points and proportional CHA tokens based on damage dealt.
