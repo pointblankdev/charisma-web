@@ -117,7 +117,7 @@ export default function WantedHogger({ lands }: Props) {
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
                     You will recieve:
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
                     {/* <div className="relative">
                       <Image
                         alt="Huge Knoll Claw"
@@ -136,7 +136,7 @@ export default function WantedHogger({ lands }: Props) {
                         quality={10}
                         className="z-30 w-full rounded-md border shadow-lg"
                       />
-                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground">
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-base lg:text-xs bg-accent text-accent-foreground">
                         1000
                       </div>
                     </div>
@@ -147,7 +147,7 @@ export default function WantedHogger({ lands }: Props) {
                         quality={10}
                         className="z-30 w-full rounded-full border shadow-lg"
                       />
-                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground">
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-base lg:text-xs bg-accent text-accent-foreground">
                         1000
                       </div>
                     </div>
@@ -170,7 +170,7 @@ export default function WantedHogger({ lands }: Props) {
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
                     Burns 1 sCHA per attack
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
                     <div className="relative">
                       <Image
                         alt="protocol-fee-token-image"
@@ -178,7 +178,7 @@ export default function WantedHogger({ lands }: Props) {
                         quality={10}
                         className="z-30 w-full rounded-full border shadow-lg"
                       />
-                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
                         1
                       </div>
                     </div>
