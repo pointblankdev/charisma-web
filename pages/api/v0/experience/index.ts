@@ -69,8 +69,7 @@ export default async function getMetadata(
         }
     } catch (error: any) {
         console.error(error)
-        response = new Object(error)
-        code = error.response.status
+        response = {}
     }
 
     return res.status(code).json(response);
