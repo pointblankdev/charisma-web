@@ -46,7 +46,7 @@ export default async function chainhooks(
         // log transaction always
         // console.log(Object.keys(tx.metadata))
         // console.log(Object.keys(tx.metadata.kind))
-        // console.log(tx.metadata.kind.data)
+        console.log(tx?.metadata?.kind?.data)
 
         // REACT TO SPECIFIC TRANSACTIONS
         const payload = {
@@ -56,6 +56,11 @@ export default async function chainhooks(
         };
 
         const messageMapping: { [key: string]: any } = {
+          'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience': {
+            title: 'Experience',
+            description: `${payload.sender} has gained Experience.`,
+            thumbnail: 'https://charisma.rocks/quests/journey-of-discovery.png',
+          },
           'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abundant-orchard-harvest': {
             title: 'Abundant Orchard',
             description: `${payload.sender} has harvested Fuji Apples.`,
