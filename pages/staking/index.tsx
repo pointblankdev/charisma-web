@@ -75,7 +75,7 @@ export default function StakingIndex({ lands }: Props) {
             </div>
             <CreateNewPool whitelistedContracts={lands} />
           </div>
-          <div className='grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4'>
+          <div className='grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
             <Card
               className={cn(
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
