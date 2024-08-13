@@ -246,7 +246,7 @@ export function SelectCreatureDialog({ lands }: any) {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'wanted-hogger-v0',
+      contractName: 'wanted-hogger-v1',
       functionName: "tap",
       functionArgs: [uintCV(creatureId), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v0')],
       postConditionMode: PostConditionMode.Deny,
