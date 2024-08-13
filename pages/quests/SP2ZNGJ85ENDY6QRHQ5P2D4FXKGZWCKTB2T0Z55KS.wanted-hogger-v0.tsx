@@ -168,7 +168,7 @@ export default function WantedHogger({ lands }: Props) {
                 <div className="z-20 mt-4">
                   <div className="z-30 text-xl font-semibold">Requirements</div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    Burn 1 sCHA per attack
+                    Burns 1 sCHA per attack
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="relative">
