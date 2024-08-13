@@ -27,6 +27,8 @@ import {
     TableRow,
 } from "@components/ui/table"
 import numeral from "numeral"
+import Image from "next/image"
+import energyIcon from '@public/creatures/img/energy.png';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -46,7 +48,7 @@ export default function Leaderboard({ holders }: any) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Experience Leaderboard</CardTitle>
+                <CardTitle className="flex items-center"><>Leaderboard</><Image alt='energy-icon' src={energyIcon} className='mx-2 rounded-full w-6 h-6' /></CardTitle>
                 <CardDescription>
                     High experience grants you greater access to rewards and perks.
                 </CardDescription>
@@ -69,9 +71,9 @@ export default function Leaderboard({ holders }: any) {
                                 <TableCell className="font-normal text-center">{holder.rank}</TableCell>
                                 <TableCell className="font-medium">{holder.bns.names[0] || holder.address}</TableCell>
                                 <TableCell className="font-medium">{numeral(holder.experience / 1000000).format('0.0 a')}</TableCell>
-                                <TableCell className="font-medium">{holder.gt001p ? "🥇" : "✖️"}</TableCell>
-                                <TableCell className="font-medium">{holder.gt01p ? "🥈" : "✖️"}</TableCell>
-                                <TableCell className="font-medium">{holder.gt1p ? "🥉" : "✖️"}</TableCell>
+                                <TableCell className="font-medium">{holder.gt001p ? "🌞" : "✖️"}</TableCell>
+                                <TableCell className="font-medium">{holder.gt01p ? "🌟" : "✖️"}</TableCell>
+                                <TableCell className="font-medium">{holder.gt1p ? "✨" : "✖️"}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
