@@ -47,9 +47,9 @@ export default async function getMetadata(
                             .setTitle('Adventure')
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
-                            .addField('Top 0.01%', gt001p ? "🥇" : "✖️", true)
-                            .addField('Top 0.1%', gt01p ? "🥈" : "✖️", true)
-                            .addField('Top 1%', gt1p ? "🥉" : "✖️", true)
+                            .addField('> 1% TS', gt001p ? "🥇" : "✖️", true)
+                            .addField('> 0.1% TS', gt01p ? "🥈" : "✖️", true)
+                            .addField('> 0.01% TS', gt1p ? "🥉" : "✖️", true)
                             .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP')
                             .addField('Wallet Address', payload.sender)
                         await hook.send(embed);

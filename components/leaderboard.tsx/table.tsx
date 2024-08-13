@@ -43,6 +43,7 @@ export default function Leaderboard({ holders }: any) {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const pageData = holders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
+    console.log(pageData);
     return (
         <Card>
             <CardHeader>
@@ -60,6 +61,9 @@ export default function Leaderboard({ holders }: any) {
                             </TableHead>
                             <TableHead>Wallet Address</TableHead>
                             <TableHead>Experience</TableHead>
+                            <TableHead>&gt; 1% TS</TableHead>
+                            <TableHead>&gt; 0.1% TS</TableHead>
+                            <TableHead>&gt; 0.01% TS</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -68,7 +72,9 @@ export default function Leaderboard({ holders }: any) {
                                 <TableCell className="font-normal text-center">{holder.rank}</TableCell>
                                 <TableCell className="font-medium">{holder.bns.names[0] || holder.address}</TableCell>
                                 <TableCell className="font-medium">{numeral(holder.experience / 1000000).format('0.0 a')}</TableCell>
-
+                                <TableCell className="font-medium">{holder.gt001p ? "🥇" : "✖️"}</TableCell>
+                                <TableCell className="font-medium">{holder.gt01p ? "🥈" : "✖️"}</TableCell>
+                                <TableCell className="font-medium">{holder.gt1p ? "🥉" : "✖️"}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
