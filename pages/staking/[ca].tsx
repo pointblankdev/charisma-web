@@ -195,8 +195,6 @@ const GovernanceProposalButton = ({ metadata }: any) => {
   const { doContractCall } = useConnect();
   const { block } = useGlobalState()
 
-  console.log(metadata)
-
   function submitProposal() {
     doContractCall({
       network: new StacksMainnet(),

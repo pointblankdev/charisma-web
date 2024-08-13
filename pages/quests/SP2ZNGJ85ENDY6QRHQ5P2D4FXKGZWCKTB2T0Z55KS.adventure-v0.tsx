@@ -90,8 +90,6 @@ export default function Adventure({ lands }: Props) {
     visible: { opacity: 1 }
   };
 
-  console.log(lands)
-
   return (
     <Page meta={meta} fullViewport>
       {/* <Image src={goldEmbers} alt="bolt-background-image" layout="fill" objectFit="cover" priority /> */}

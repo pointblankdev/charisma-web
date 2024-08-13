@@ -150,7 +150,7 @@ export async function setQuest(ca: string, data: any): Promise<any> {
 
 // experience
 
-export async function updateExperienceLeaderboard(address: string, experience: number, jsonData: any) {
+export async function updateExperienceLeaderboard(experience: number, jsonData: any) {
     try {
         await kv.zadd('leaderboard:exp', { score: experience, member: jsonData });
     } catch (error) {
@@ -168,21 +168,19 @@ export async function getExperienceLeaderboard(startRank: number, endRank: numbe
             const experience: any = leaderboard[i + 1]; // The corresponding score
 
             // Parse the JSON string back into an object
-            const { address, bns, gt001p, gt01p, gt1p } = memberJson
+            const { address, bns } = memberJson
 
             resultArray.push({
                 rank: i / 2 + 1,
                 address,
                 bns,
                 experience: Number(experience),
-                gt001p,
-                gt01p,
-                gt1p
             });
         }
         return resultArray;
     } catch (error) {
         console.error('Error fetching leaderboard:', error);
+        return [];
     }
 }
 

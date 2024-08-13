@@ -38,7 +38,7 @@ export default async function getMetadata(
                         const jsonData = JSON.stringify({ address: payload.sender, bns });
 
                         // update leaderboard
-                        await updateExperienceLeaderboard(payload.sender, experienceAmount, jsonData)
+                        await updateExperienceLeaderboard(experienceAmount, jsonData)
                         // send message to discord
                         const embed = new MessageBuilder()
                             .setTitle('Adventure')
