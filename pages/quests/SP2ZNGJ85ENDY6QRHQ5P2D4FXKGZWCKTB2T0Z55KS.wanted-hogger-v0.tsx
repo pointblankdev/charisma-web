@@ -156,7 +156,7 @@ export default function WantedHogger({ lands }: Props) {
                 <div className="z-20 row-span-2">
                   <div className="z-30 text-xl font-semibold">Quest Details</div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    WANTED: Hogger is an epoch-based group challenge. Players attack Hogger with damage dealt based on energy spent and player's experience level.
+                    WANTED: Hogger is an epoch-based group challenge. Players' attack deal damage based on the energy spent and player's experience level.
                   </div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
                     If Hogger is defeated, all participants receive rewards: equal experience points and proportional CHA tokens based on damage dealt.
