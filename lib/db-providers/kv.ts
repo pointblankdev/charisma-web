@@ -147,30 +147,11 @@ export async function setQuest(ca: string, data: any): Promise<any> {
     return await kv.set(`quest:${ca}`, data);
 }
 
-// experience leaderboard
+// experience
 
 export async function updateExperienceLeaderboard(playerId: string, experience: number) {
     try {
-        // Get the current score
-        const currentScoreArray: any[] = await kv.zrange('leaderboard:exp', 0, -1, { withScores: true });
-        let currentScore = 0;
-
-        // Find the player's current score
-        for (let i = 0; i < currentScoreArray.length; i += 2) {
-            if (currentScoreArray[i] === playerId) {
-                currentScore = parseFloat(currentScoreArray[i + 1]);
-                break;
-            }
-        }
-
-        // Calculate the new score
-        const newScore = currentScore + experience;
-
-        // Update the leaderboard with the new score
-        await kv.zadd(
-            'leaderboard:exp',
-            { score: newScore, member: playerId }
-        );
+        await kv.zadd('leaderboard:exp', { score: experience, member: playerId });
     } catch (error) {
         console.error('Error updating player score:', error);
     }
