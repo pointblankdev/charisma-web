@@ -51,12 +51,12 @@ export const getStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => {
   // get land metadata from db
   const metadata = await getLand(params.ca)
-  if (!metadata.whitelisted) {
-    const isWhitelisted = await getIsWhitelisted(params.ca)
-    if (isWhitelisted) {
-      await setLandWhitelisted(params.ca, true)
-    }
-  }
+  // if (!metadata.whitelisted) {
+  //   const isWhitelisted = await getIsWhitelisted(params.ca)
+  //   if (isWhitelisted) {
+  //     await setLandWhitelisted(params.ca, true)
+  //   }
+  // }
   return {
     props: { metadata },
     revalidate: 60000

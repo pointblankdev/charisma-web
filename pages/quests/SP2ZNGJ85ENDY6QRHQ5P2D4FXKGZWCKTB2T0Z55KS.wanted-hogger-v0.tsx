@@ -65,12 +65,12 @@ type Props = {
 
 export default function WantedHogger({ lands }: Props) {
   const meta = {
-    title: `Charisma | Wanted: "Hogger"`,
+    title: `Charisma | WANTED: "Hogger"`,
     description: META_DESCRIPTION,
     image: '/quests/wanted-hogger/hogger.png'
   };
 
-  const title = `Wanted: "Hogger"`;
+  const title = `WANTED: "Hogger"`;
   const subtitle = 'Slay the huge gnoll Hogger.';
 
 
@@ -144,10 +144,10 @@ export default function WantedHogger({ lands }: Props) {
                 <div className="z-20 row-span-2">
                   <div className="z-30 text-xl font-semibold">Quest Details</div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    Wanted: Hogger is an epoch-based group challenge. Players attack Hogger using energy, with damage based on energy spent and player experience. Hogger regenerates health over time. The quest tracks each player's total damage dealt.
+                    WANTED: Hogger is an epoch-based group challenge. Players attack Hogger using energy, with damage based on energy spent and player experience. Hogger regenerates health over time. The quest tracks each player's total damage dealt.
                   </div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    If Hogger is defeated, all participants receive rewards: equal experience points and proportional sCHA tokens based on damage dealt. The quest resets each epoch, potentially increasing in difficulty, encouraging ongoing participation and teamwork.
+                    If Hogger is defeated, all participants receive rewards: equal experience points and proportional sCHA tokens based on damage dealt. The quest resets each epoch, increasing in difficulty.
                   </div>
                 </div>
                 <div className="z-20 mt-4">
