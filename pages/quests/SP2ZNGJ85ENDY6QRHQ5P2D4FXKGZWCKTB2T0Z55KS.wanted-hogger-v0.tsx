@@ -159,7 +159,7 @@ export default function WantedHogger({ lands }: Props) {
                     Hogger is an on-chain monster terrorizing the Stacks ecosystem. Attacking him deals damage based on your energy spent and experience level. You must have at least 0.1% of the total supply of EXP for your attacks to deal any damage.
                   </div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    Hogger regenerates health over time, respawns each 14 blocks if slain, and returns with more health and faster regeneration each time.
+                    Hogger is tough, and regenerates health over time. If slain, he'll respawn within 14 blocks with greater health and even faster regeneration.
                   </div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
                     If Hogger is defeated, all participants receive rewards: equal experience points and proportional CHA tokens based on damage dealt.
