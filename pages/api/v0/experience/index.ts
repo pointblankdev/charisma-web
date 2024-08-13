@@ -2,6 +2,7 @@ import { getExperienceLeaderboard, updateExperienceLeaderboard } from '@lib/db-p
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
+import numeral from 'numeral';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
@@ -44,10 +45,11 @@ export default async function getMetadata(
                             .setTitle('Adventure')
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
-                            .addField('> 100% TS', experienceAmount / experienceSupply >= 0.1 ? "🌞" : "✖️", true)
-                            .addField('> 10% TS', experienceAmount / experienceSupply >= 0.01 ? "🌟" : "✖️", true)
-                            .addField('> 1% TS', experienceAmount / experienceSupply >= 0.001 ? "✨" : "✖️", true)
-                            .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP')
+                            .addField('&gt; 10% TS', experienceAmount / experienceSupply >= 0.1 ? "🌞" : "✖️", true)
+                            .addField('&gt; 1% TS', experienceAmount / experienceSupply >= 0.01 ? "🌟" : "✖️", true)
+                            .addField('&gt; 0.1% TS', experienceAmount / experienceSupply >= 0.001 ? "✨" : "✖️", true)
+                            .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP', true)
+                            .addField('% of Total Supply', numeral(experienceAmount / experienceSupply).format('0.0%'), true)
                             .addField('Wallet Address', payload.sender)
                         await hook.send(embed);
                     }
