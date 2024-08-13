@@ -28,79 +28,12 @@ import {
 } from "@components/ui/table"
 import numeral from "numeral"
 
-const products = [
-    {
-        id: 1,
-        wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        Token: "Appliance",
-        price: "$499.99",
-        sales: 25,
-        Reward: 10,
-        dateAdded: "2023-07-12",
-        imageSrc: "/placeholder.svg"
-    },
-    {
-        id: 2,
-        wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        Token: "Electronics",
-        price: "$129.99",
-        sales: 100,
-        Reward: 50,
-        dateAdded: "2023-10-18",
-    },
-    {
-        id: 3,
-        wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        Token: "Lighting",
-        price: "$39.99",
-        sales: 50,
-        Reward: 75,
-        dateAdded: "2023-11-29",
-    },
-    {
-        id: 4,
-        wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        Token: "Beverage",
-        price: "$2.99",
-        sales: 0,
-        Reward: 200,
-        dateAdded: "2023-12-25",
-    },
-    {
-        id: 5,
-        wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        Token: "Accessories",
-        price: "$59.99",
-        sales: 75,
-        Reward: 30,
-        dateAdded: "2024-01-01",
-    },
-    {
-        id: 6,
-        wallet: "SP1234567890ABCDEFGH1234567890ABCDEFGH",
-        Token: "Electronics",
-        price: "$199.99",
-        sales: 30,
-        Reward: 20,
-        dateAdded: "2024-02-14",
-    }
-]
-
 const ITEMS_PER_PAGE = 10;
 
 export default function Leaderboard({ holders }: any) {
     const [currentPage, setCurrentPage] = useState(1);
 
-    function sortObjectByValue(obj: any) {
-        return Object.entries(obj)
-            .map(([key, value]: any) => ({ address: key, balance: parseInt(value) }))
-            .sort((a, b) => b.balance - a.balance);
-    }
-
-
-    const leaderboardData = sortObjectByValue(holders).map((holder: any, rank: number) => ({ ...holder, rank: rank + 1 }));
-
-    const totalPages = Math.ceil(leaderboardData.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(holders.length / ITEMS_PER_PAGE);
 
     const handlePageChange = (page: number) => {
         if (page < 1 || page > totalPages) return;
@@ -108,7 +41,7 @@ export default function Leaderboard({ holders }: any) {
     };
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const pageData = leaderboardData.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const pageData = holders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
         <Card>
@@ -122,8 +55,8 @@ export default function Leaderboard({ holders }: any) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="hidden w-[100px] sm:table-cell">
-                                <TableHead className="hidden md:table-cell">Rank</TableHead>
+                            <TableHead className="w-[100px] sm:table-cell">
+                                <TableHead className="md:table-cell">Rank</TableHead>
                             </TableHead>
                             <TableHead>Wallet Address</TableHead>
                             <TableHead>Experience</TableHead>
@@ -131,10 +64,10 @@ export default function Leaderboard({ holders }: any) {
                     </TableHeader>
                     <TableBody>
                         {pageData.map((holder: any) => (
-                            <TableRow key={holder.address}>
+                            <TableRow key={holder.rank}>
                                 <TableCell className="font-normal text-center">{holder.rank}</TableCell>
-                                <TableCell className="font-medium">{holder.address}</TableCell>
-                                <TableCell className="font-medium">{numeral(holder.balance / 1000000).format('0.0 a')}</TableCell>
+                                <TableCell className="font-medium">{holder.bns.names[0] || holder.address}</TableCell>
+                                <TableCell className="font-medium">{numeral(holder.experience / 1000000).format('0.0 a')}</TableCell>
 
                             </TableRow>
                         ))}

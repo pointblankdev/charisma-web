@@ -157,7 +157,7 @@ export async function setLatestBlock(metadata: any) {
 }
 
 export async function getExperienceHolders() {
-  const response = await fetch(`https://stacks.hashhavoc.com/extended/v1/address/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience/holders`, {
+  const response = await fetch(`${HOST}/api/v0/experience`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'
