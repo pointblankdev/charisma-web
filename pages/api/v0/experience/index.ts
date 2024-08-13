@@ -33,7 +33,7 @@ export default async function getMetadata(
                         // send message to discord
                         const embed = new MessageBuilder().setTitle('Experience')
                         embed.setDescription(`${payload.sender} has gained Experience.`)
-                        embed.setText(JSON.stringify(payload))
+                        embed.setText(JSON.stringify(tx))
                         embed.setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
                         await hook.send(embed);
 
@@ -41,6 +41,8 @@ export default async function getMetadata(
                     }
                 }
             }
+        } else if (req.method === 'GET') {
+            console.log(req)
         } else {
             code = 501
             response = new Object({
