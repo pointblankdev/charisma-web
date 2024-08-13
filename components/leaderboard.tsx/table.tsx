@@ -61,9 +61,9 @@ export default function Leaderboard({ holders, expTotalSupply }: any) {
                             <TableHead>Wallet Address</TableHead>
                             <TableHead className="text-center">Experience</TableHead>
                             <TableHead className="text-center">% of TS</TableHead>
-                            <TableHead className="text-center">{'\>'} 10% TS</TableHead>
-                            <TableHead className="text-center">{'\>'} 1% TS</TableHead>
-                            <TableHead className="text-center">{'\>'} 0.1% TS</TableHead>
+                            <TableHead className="text-center">&gt; 10% TS</TableHead>
+                            <TableHead className="text-center">&gt; 1% TS</TableHead>
+                            <TableHead className="text-center">&gt; 0.1% TS</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

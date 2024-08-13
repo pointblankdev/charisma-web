@@ -34,6 +34,7 @@ import { StacksMainnet } from "@stacks/network";
 import numeral from 'numeral';
 import schaImg from '@public/liquid-staked-charisma.png'
 import welshImg from '@public/welsh-logo.png'
+import chaIcon from '@public/charisma.png'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import experienceIcon from '@public/experience.png'
@@ -117,7 +118,7 @@ export default function WantedHogger({ lands }: Props) {
                     You will recieve:
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
-                    <div className="relative">
+                    {/* <div className="relative">
                       <Image
                         alt="Huge Knoll Claw"
                         src={hugeKnollClaw}
@@ -127,6 +128,17 @@ export default function WantedHogger({ lands }: Props) {
                       <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
                         NFT
                       </div>
+                    </div> */}
+                    <div className="relative">
+                      <Image
+                        alt="Charisma"
+                        src={chaIcon}
+                        quality={10}
+                        className="z-30 w-full rounded-md border shadow-lg"
+                      />
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground">
+                        1000
+                      </div>
                     </div>
                     <div className="relative">
                       <Image
@@ -135,8 +147,8 @@ export default function WantedHogger({ lands }: Props) {
                         quality={10}
                         className="z-30 w-full rounded-full border shadow-lg"
                       />
-                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                        100
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-xs bg-accent text-accent-foreground">
+                        1000
                       </div>
                     </div>
                   </div>
@@ -144,10 +156,13 @@ export default function WantedHogger({ lands }: Props) {
                 <div className="z-20 row-span-2">
                   <div className="z-30 text-xl font-semibold">Quest Details</div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    WANTED: Hogger is an epoch-based group challenge. Players attack Hogger using energy, with damage based on energy spent and player experience. Hogger regenerates health over time. The quest tracks each player's total damage dealt.
+                    WANTED: Hogger is an epoch-based group challenge. Players attack Hogger using energy, with damage based on energy spent and player experience.
                   </div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    If Hogger is defeated, all participants receive rewards: equal experience points and proportional sCHA tokens based on damage dealt. The quest resets each epoch, increasing in difficulty.
+                    If Hogger is defeated, all participants receive rewards: equal experience points and proportional CHA tokens based on damage dealt.
+                  </div>
+                  <div className="z-30 mb-4 text-sm font-fine text-foreground">
+                    Hogger regenerates health over time, respawns each 14 blocks if slain, and returns with more health and faster regeneration each time.
                   </div>
                 </div>
                 <div className="z-20 mt-4">
