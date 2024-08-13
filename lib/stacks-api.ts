@@ -616,6 +616,7 @@ export async function getDeployedIndexes() {
 }
 
 export async function getTokenURI(contract: string) {
+
   const [address, name] = contract.split('.');
 
   const response: any = await scApi.callReadOnlyFunction({
@@ -631,8 +632,9 @@ export async function getTokenURI(contract: string) {
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
   const tokenUri = cv.value.value.value
-  const metadata = await (await fetch(tokenUri)).json();
-  return metadata;
+  const res = await fetch(`/api/proxy?url=${tokenUri}`, { method: 'POST' });
+  const metadata = await res.json();
+  return metadata
 }
 
 export async function getNftURI(contract: string, tokenId: number) {
