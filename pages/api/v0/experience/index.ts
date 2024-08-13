@@ -35,9 +35,9 @@ export default async function getMetadata(
 
 
                         const bns = await getNameFromAddress(payload.sender)
-                        const gt001p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.01)
-                        const gt01p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.1)
-                        const gt1p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 1)
+                        const gt001p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 1000)
+                        const gt01p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 10000)
+                        const gt1p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 100000)
                         const jsonData = JSON.stringify({ address: payload.sender, bns, gt001p, gt01p, gt1p });
 
                         // update leaderboard

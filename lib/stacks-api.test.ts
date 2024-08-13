@@ -243,7 +243,7 @@ describe('Stacks API', () => {
     })
 
     it('should get if has 1% percentage balance', async () => {
-        const result = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 1)
+        const result = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 100000)
         console.log(result)
         expect(result).toBeDefined()
     })
