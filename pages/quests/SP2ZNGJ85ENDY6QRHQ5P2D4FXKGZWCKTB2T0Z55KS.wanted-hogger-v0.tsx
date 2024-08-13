@@ -228,11 +228,11 @@ export function SelectCreatureDialog({ lands }: any) {
 
   const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
 
-  function journey(creatureId: number) {
+  function fight(creatureId: number) {
     // const response = await callReadOnlyFunction({
     //   network: new StacksMainnet(),
     //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    //   contractName: 'journey-of-discovery-v2',
+    //   contractName: 'fight-of-discovery-v2',
     //   functionName: "get-claimable-amount",
     //   functionArgs: [uintCV(creatureId)],
     //   senderAddress: sender
@@ -246,7 +246,7 @@ export function SelectCreatureDialog({ lands }: any) {
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'adventure-v0',
+      contractName: 'wanted-hogger-v0',
       functionName: "tap",
       functionArgs: [uintCV(creatureId), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v0')],
       postConditionMode: PostConditionMode.Deny,
@@ -264,7 +264,7 @@ export function SelectCreatureDialog({ lands }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button disabled size={'sm'} className={`z-30`}>Fight Hogger</Button>
+        <Button size={'sm'} className={`z-30`}>Fight Hogger</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <AlertDialogHeader>
@@ -279,7 +279,7 @@ export function SelectCreatureDialog({ lands }: any) {
                 src={land.image}
                 width={100}
                 height={100}
-                onClick={() => journey(land.id)}
+                onClick={() => fight(land.id)}
                 className={`z-30 border rounded-full h-32 w-32 ${land.whitelisted && 'hover:scale-110 transition-all cursor-pointer'}`}
               />
             </div>
