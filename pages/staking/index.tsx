@@ -353,7 +353,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
                       <FormItem>
                         <FormLabel>Memecoin Contract Address</FormLabel>
                         <FormControl>
-                          <Input placeholder={'...'} {...field} className='text-white' />
+                          <Input placeholder={'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'} {...field} className='text-white' />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
