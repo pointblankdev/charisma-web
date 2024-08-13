@@ -36,10 +36,13 @@ export default async function getMetadata(
                         // send message to discord
                         const embed = new MessageBuilder()
                             .setTitle('Adventure')
-                            .setDescription(`${bns.names?.[0] || 'A player'} has gained ${experienceAmount / Math.pow(10, 6)} EXP.`)
+                            .setDescription(`${bns.names?.[0] || 'A player'} has gained experience.`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
-                            .addField('First field', 'this is inline', true)
-                            .addField('Second field', 'this is not inline')
+                            .addField('Address', payload.sender, true)
+                            .addField('Total EXP', String(experienceAmount / Math.pow(10, 6)))
+                            .addField('Top 1%', '?')
+                            .addField('Top 0.1%', '?')
+                            .addField('Top 0.01%', '?')
                         await hook.send(embed);
 
                         // update leaderboard

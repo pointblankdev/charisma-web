@@ -1094,6 +1094,25 @@ export async function getClaimableAmount(creatureId: number, sender: string) {
   return Number(cvToJSON(result).value.value);
 }
 
+export async function hasPercentageBalance(contract: string, who: string, topPercent: number) {
+  const [address, name] = contract.split('.');
+  const factor = topPercent * 100000
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: address,
+    contractName: name,
+    functionName: 'has-percentage-balance',
+    readOnlyFunctionArgs: {
+      sender: who,
+      arguments: [
+        cvToHex(parseToCV(who, 'principal')),
+        cvToHex(parseToCV(String(factor), 'uint128'))
+      ]
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return cvToJSON(result).value.value;
+}
+
 const valueOut = (value: any) => {
   const cv = hexToCV(value.result);
   const json = cvToJSON(cv);
