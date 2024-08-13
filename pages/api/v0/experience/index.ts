@@ -36,7 +36,9 @@ export default async function getMetadata(
                         const experienceSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
 
                         const bns = await getNameFromAddress(payload.sender)
-                        const jsonData = JSON.stringify({ address: payload.sender, bns: bns.names?.[0] });
+                        const data = { address: payload.sender } as any
+                        if (bns.names?.[0]) data.bns = bns.names?.[0]
+                        const jsonData = JSON.stringify(data);
 
                         // update leaderboard
                         await updateExperienceLeaderboard(experienceAmount, jsonData)
