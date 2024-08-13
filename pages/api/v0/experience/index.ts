@@ -45,7 +45,7 @@ export default async function getMetadata(
                             .addField('Top 1%', top1Percent ? "🥇" : "❌", true)
                             .addField('Top 0.1%', top01Percent ? "🥈" : "❌", true)
                             .addField('Top 0.01%', top001Percent ? "🥉" : "❌", true)
-                            .addField('Address', payload.sender, true)
+                            .addField('Address', payload.sender)
                         await hook.send(embed);
 
                         // update leaderboard
