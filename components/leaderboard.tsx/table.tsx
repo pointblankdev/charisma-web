@@ -28,7 +28,7 @@ import {
 } from "@components/ui/table"
 import numeral from "numeral"
 import Image from "next/image"
-import energyIcon from '@public/creatures/img/energy.png';
+import expIcon from '@public/experience.png';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -48,9 +48,9 @@ export default function Leaderboard({ holders, expTotalSupply }: any) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center"><>Leaderboard</><Image alt='energy-icon' src={energyIcon} className='mx-2 rounded-full w-6 h-6' /></CardTitle>
+                <CardTitle className="flex items-center text-4xl font-semibold tracking-tight">Experience</CardTitle>
                 <CardDescription>
-                    High experience grants you greater access to rewards and perks.
+                    Top experience holders gain exclusive access to rewards and perks.
                 </CardDescription>
             </CardHeader>
             <CardContent>

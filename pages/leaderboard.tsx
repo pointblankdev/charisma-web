@@ -53,7 +53,16 @@ export default function LeaderboardPage({ holders, expTotalSupply }: Props) {
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
+                <div className="m-2 space-y-6 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
+                    <div className='flex justify-between'>
+                        <div className="space-y-1">
+                            <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">Leaderboard</h2>
+                            <p className="flex items-center text-base text-muted-foreground">
+                                Top ranked players and teams in the Charisma ecosystem.
+                            </p>
+                        </div>
+                        {/* button placeholder */}
+                    </div>
                     <Leaderboard holders={holders} expTotalSupply={expTotalSupply} />
                 </div>
             </Layout>
