@@ -41,11 +41,11 @@ export default async function getMetadata(
                             .setTitle('Adventure')
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
+                            .addField('Total EXP', Math.round(experienceAmount / Math.pow(10, 6)).toString(), true)
+                            .addField('Top 1%', top1Percent, true)
+                            .addField('Top 0.1%', top01Percent, true)
+                            .addField('Top 0.01%', top001Percent, true)
                             .addField('Address', payload.sender, true)
-                            .addField('Total EXP', Math.round(experienceAmount / Math.pow(10, 6)).toString())
-                            .addField('Top 1%', top1Percent)
-                            .addField('Top 0.1%', top01Percent)
-                            .addField('Top 0.01%', top001Percent)
                         await hook.send(embed);
 
                         // update leaderboard
