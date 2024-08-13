@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
-import { cacheGlobalState, cacheUserState } from '@lib/db-providers/kv';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
@@ -15,18 +14,16 @@ export default async function chainhooks(
   req: NextApiRequest,
   res: NextApiResponse<any | ErrorResponse>
 ) {
-  // if (req.method !== 'POST') {
-  //   return res.status(501).json({
-  //     error: {
-  //       code: 'method_unknown',
-  //       message: 'This endpoint only responds to POST'
-  //     }
-  //   });
-  // }
-
+  if (req.method !== 'POST') {
+    return res.status(501).json({
+      error: {
+        code: 'method_unknown',
+        message: 'This endpoint only responds to POST'
+      }
+    });
+  }
 
   try {
-    console.log(req.body.apply.transactions[0])
     for (const a of req.body.apply) {
       for (const tx of a.transactions) {
 
