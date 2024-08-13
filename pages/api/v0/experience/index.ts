@@ -1,4 +1,5 @@
 import { updateExperienceLeaderboard } from '@lib/db-providers/kv';
+import { getNameFromAddress, getTokenBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -28,16 +29,18 @@ export default async function getMetadata(
                         success: tx.metadata.success,
                     };
 
-                    console.log(payload)
                     if (payload.success) {
+
+                        const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
+                        const bns = await getNameFromAddress(payload.sender)
                         // send message to discord
-                        const embed = new MessageBuilder().setTitle('Experience')
-                        embed.setDescription(`${payload.sender} has gained Experience.`)
-                        embed.setText(JSON.stringify(tx))
+                        const embed = new MessageBuilder().setTitle('Adventure')
+                        embed.setDescription(`${bns.names?.[0] || payload.sender} has gained ${experienceAmount / Math.pow(10, 6)} EXP.`)
                         embed.setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
                         await hook.send(embed);
 
-                        // updateExperienceLeaderboard
+                        // update leaderboard
+                        await updateExperienceLeaderboard(payload.sender, experienceAmount)
                     }
                 }
             }

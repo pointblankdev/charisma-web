@@ -589,19 +589,23 @@ export async function getStakedTokenExchangeRate(contract: string) {
   return cvToJSON(response).value;
 }
 
-export async function getFenrirBalance(contract: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: contract,
+export async function getTokenBalance(contract: string, user: string) {
+  const [address, name] = contract.split('.');
+  const response: any = await scApi.callReadOnlyFunction({
+    contractAddress: address,
+    contractName: name,
     functionName: 'get-balance',
-    functionArgs: [
-      principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok')
-    ],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    readOnlyFunctionArgs: {
+      sender: address,
+      arguments: [
+        cvToHex(parseToCV(String(user), 'principal'))
+      ]
+    }
   });
 
-  return cvToJSON(response);
+  const result = hexToCV(response.result);
+  const cv = cvToJSON(result).value.value;
+  return Number(cv);
 }
 
 export async function getDeployedIndexes() {
