@@ -58,7 +58,7 @@ export default function StakingIndex({ lands }: Props) {
 
   const meta = {
     title: 'Charisma | Staking',
-    description: META_DESCRIPTION,
+    description: `Stake memecoins. Earn Yield. It's that simple.`,
   };
 
   return (
