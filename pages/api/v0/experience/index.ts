@@ -1,5 +1,5 @@
 import { updateExperienceLeaderboard } from '@lib/db-providers/kv';
-import { getNameFromAddress, getTokenBalance } from '@lib/stacks-api';
+import { getNameFromAddress, getTokenBalance, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -33,16 +33,19 @@ export default async function getMetadata(
 
                         const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
                         const bns = await getNameFromAddress(payload.sender)
+                        const top1Percent = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 1)
+                        const top01Percent = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.1)
+                        const top001Percent = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.01)
                         // send message to discord
                         const embed = new MessageBuilder()
                             .setTitle('Adventure')
-                            .setDescription(`${bns.names?.[0] || 'A player'} has gained experience.`)
+                            .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
                             .addField('Address', payload.sender, true)
                             .addField('Total EXP', String(experienceAmount / Math.pow(10, 6)))
-                            .addField('Top 1%', '?')
-                            .addField('Top 0.1%', '?')
-                            .addField('Top 0.01%', '?')
+                            .addField('Top 1%', top1Percent)
+                            .addField('Top 0.1%', top01Percent)
+                            .addField('Top 0.01%', top001Percent)
                         await hook.send(embed);
 
                         // update leaderboard
