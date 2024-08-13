@@ -43,7 +43,6 @@ export default function Leaderboard({ holders }: any) {
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const pageData = holders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-    console.log(pageData);
     return (
         <Card>
             <CardHeader>
@@ -56,9 +55,7 @@ export default function Leaderboard({ holders }: any) {
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead className="w-[100px] sm:table-cell">
-                                <TableHead className="md:table-cell">Rank</TableHead>
-                            </TableHead>
+                            <TableHead className="md:table-cell">Rank</TableHead>
                             <TableHead>Wallet Address</TableHead>
                             <TableHead>Experience</TableHead>
                             <TableHead>&gt; 1% TS</TableHead>
