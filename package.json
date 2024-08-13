@@ -48,7 +48,7 @@
     "@stacks/transactions": "^6.16.1",
     "@stacks/wallet-sdk": "^6.7.0",
     "@tanstack/react-table": "^8.9.3",
-    "@vercel/analytics": "^1.0.2",
+    "@vercel/analytics": "^1.1.0",
     "@vercel/kv": "^0.2.2",
     "@vercel/speed-insights": "^1.0.10",
     "class-variance-authority": "^0.7.0",

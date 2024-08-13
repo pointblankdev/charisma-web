@@ -30,6 +30,7 @@ import { PostConditionMode } from '@stacks/transactions';
 import { setLandMetadata } from '@lib/user-api';
 import energyIcon from '@public/creatures/img/energy.png';
 import { userSession } from '@components/stacks-session/connect';
+import { track } from '@vercel/analytics';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
@@ -248,7 +249,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
         {
           trait_type: "difficulty",
           display_type: "number",
-          value: Math.floor(totalSupply / Math.pow(10, 6))
+          value: Math.floor(totalSupply / Math.pow(10, 5))
         }
       ],
       properties: {
@@ -259,6 +260,16 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
         decimals: 6
       }
     }
+
+    track('CreateNewPool', {
+      contractAddress,
+      name,
+      description,
+      image,
+      cardImage,
+      proposalName,
+      isWhitelisted
+    })
 
     if (!isWhitelisted) {
       doContractDeploy({
@@ -293,7 +304,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className='h-full bg-primary-foreground/5'>Create New Pool</Button>
+        <Button className='h-full bg-primary-foreground/5' onClick={() => track('ViewCreateNewPool')}>Create New Pool</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-5xl">
         <DialogHeader>
