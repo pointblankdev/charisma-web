@@ -16,7 +16,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
             holders: experienceHolders,
             expTotalSupply: Number(experienceTotalSupply),
         },
-        revalidate: 60000
+        revalidate: 60
     };
 };
 
