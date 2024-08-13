@@ -1,6 +1,6 @@
 import crypto from 'crypto';
 
-const HOST = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://charisma.rocks';
+const HOST = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://beta.charisma.rocks';
 
 export async function register(email: string, token?: string) {
   return await fetch(`${HOST}/api/register`, {
