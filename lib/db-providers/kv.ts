@@ -150,13 +150,8 @@ export async function setQuest(ca: string, data: any): Promise<any> {
 
 // experience
 
-export async function updateExperienceLeaderboard(address: string, experience: number) {
+export async function updateExperienceLeaderboard(address: string, experience: number, jsonData: any) {
     try {
-        const bns = await getNameFromAddress(address)
-        const gt1p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address, 1)
-        const gt01p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address, 0.1)
-        const gt001p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address, 0.01)
-        const jsonData = JSON.stringify({ address, bns, gt1p, gt01p, gt001p });
         await kv.zadd('leaderboard:exp', { score: experience, member: jsonData });
     } catch (error) {
         console.error('Error updating player score:', error);

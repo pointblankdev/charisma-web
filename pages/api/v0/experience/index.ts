@@ -32,24 +32,27 @@ export default async function getMetadata(
                     if (payload.success) {
 
                         const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
+
+
                         const bns = await getNameFromAddress(payload.sender)
-                        const top1p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 1)
-                        const top01p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.1)
-                        const top001p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.01)
+                        const gt1p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 1)
+                        const gt01p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.1)
+                        const gt001p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.01)
+                        const jsonData = JSON.stringify({ address: payload.sender, bns, gt1p, gt01p, gt001p });
+
+                        // update leaderboard
+                        await updateExperienceLeaderboard(payload.sender, experienceAmount, jsonData)
                         // send message to discord
                         const embed = new MessageBuilder()
                             .setTitle('Adventure')
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
-                            .addField('Top 0.01%', top001p ? "🥇" : "❌", true)
-                            .addField('Top 0.1%', top01p ? "🥈" : "❌", true)
-                            .addField('Top 1%', top1p ? "🥉" : "❌", true)
+                            .addField('Top 0.01%', gt001p ? "🥇" : "❌", true)
+                            .addField('Top 0.1%', gt01p ? "🥈" : "❌", true)
+                            .addField('Top 1%', gt1p ? "🥉" : "❌", true)
                             .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP')
                             .addField('Wallet Address', payload.sender)
                         await hook.send(embed);
-
-                        // update leaderboard
-                        await updateExperienceLeaderboard(payload.sender, experienceAmount)
                     }
                     response = {}
                 }
