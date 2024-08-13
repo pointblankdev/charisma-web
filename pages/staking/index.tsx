@@ -59,7 +59,6 @@ export default function StakingIndex({ lands }: Props) {
   const meta = {
     title: 'Charisma | Staking',
     description: META_DESCRIPTION,
-    image: '/liquid-welsh.png'
   };
 
   return (
