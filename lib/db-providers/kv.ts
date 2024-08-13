@@ -1,3 +1,4 @@
+import { getNameFromAddress, hasPercentageBalance } from "../../lib/stacks-api";
 import { ConfUser } from "@lib/types";
 import { kv } from "@vercel/kv";
 
@@ -149,9 +150,14 @@ export async function setQuest(ca: string, data: any): Promise<any> {
 
 // experience
 
-export async function updateExperienceLeaderboard(playerId: string, experience: number) {
+export async function updateExperienceLeaderboard(address: string, experience: number) {
     try {
-        await kv.zadd('leaderboard:exp', { score: experience, member: playerId });
+        const bns = await getNameFromAddress(address)
+        const gt1p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address, 1)
+        const gt01p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address, 0.1)
+        const gt001p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address, 0.01)
+        const jsonData = JSON.stringify({ address, bns, gt1p, gt01p, gt001p });
+        await kv.zadd('leaderboard:exp', { score: experience, member: jsonData });
     } catch (error) {
         console.error('Error updating player score:', error);
     }
@@ -159,9 +165,27 @@ export async function updateExperienceLeaderboard(playerId: string, experience: 
 
 export async function getExperienceLeaderboard(startRank: number, endRank: number) {
     try {
-        const leaderboard = await kv.zrange('leaderboard:exp', startRank, endRank, { withScores: true });
-        console.log('Leaderboard:exp:', leaderboard);
-        return leaderboard;
+        const leaderboard = await kv.zrange('leaderboard:exp', startRank, endRank, { withScores: true, rev: true });
+        const resultArray = [];
+
+        for (let i = 0; i < leaderboard.length; i += 2) {
+            const memberJson: any = leaderboard[i]; // The stored JSON string
+            const experience: any = leaderboard[i + 1]; // The corresponding score
+
+            // Parse the JSON string back into an object
+            const { address, bns, top1p, top10p, top100p } = JSON.parse(memberJson);
+
+            resultArray.push({
+                rank: i / 2 + 1,
+                address,
+                bns,
+                experience: Number(experience),
+                top1p,
+                top10p,
+                top100p
+            });
+        }
+        return resultArray;
     } catch (error) {
         console.error('Error fetching leaderboard:', error);
     }
