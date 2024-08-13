@@ -69,9 +69,9 @@ export default function StakingIndex({ lands }: Props) {
           <div className='flex justify-between'>
             <div className="space-y-1">
               <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary"><>Stake-to-Earn</><Image alt='energy-icon' src={energyIcon} className='mx-2 rounded-full w-9 h-9' /></h2>
-              <p className="flex items-center text-base text-muted-foreground">
+              <div className="flex items-center text-base text-muted-foreground">
                 The more you stake, the more energy you earn on every block– used to unlock community rewards.
-              </p>
+              </div>
             </div>
             <CreateNewPool whitelistedContracts={lands} />
           </div>
@@ -84,15 +84,15 @@ export default function StakingIndex({ lands }: Props) {
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
                 <div className="space-y-6 text-sm">
                   <h3 className="font-bold text-lg">Stake Memecoins to Earn</h3>
-                  <p className="font-light text-sm">
+                  <div className="font-light text-sm">
                     Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
-                  </p>
-                  <p className="font-light text-sm">
+                  </div>
+                  <div className="font-light text-sm">
                     Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
-                  </p>
-                  <p className="font-light text-sm">
+                  </div>
+                  <div className="font-light text-sm">
                     In addition, anyone can claim Charisma rewards through Quests, making your staked memecoins a gateway to both unique community offerings and broader ecosystem rewards.
-                  </p>
+                  </div>
                 </div>
               </div>
             </Card>
