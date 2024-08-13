@@ -61,16 +61,16 @@ export default function Leaderboard({ holders, expTotalSupply }: any) {
                             <TableHead>Wallet Address</TableHead>
                             <TableHead className="text-center">Experience</TableHead>
                             <TableHead className="text-center">% of TS</TableHead>
-                            <TableHead className="text-center">&gt; 10% TS</TableHead>
-                            <TableHead className="text-center">&gt; 1% TS</TableHead>
-                            <TableHead className="text-center">&gt; 0.1% TS</TableHead>
+                            <TableHead className="text-center">{'\>'} 10% TS</TableHead>
+                            <TableHead className="text-center">{'\>'} 1% TS</TableHead>
+                            <TableHead className="text-center">{'\>'} 0.1% TS</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
                         {pageData.map((holder: any) => (
                             <TableRow key={holder.rank}>
                                 <TableCell className="font-normal text-center">{holder.rank}</TableCell>
-                                <TableCell className="font-medium">{holder.bns.names[0] || holder.address}</TableCell>
+                                <TableCell className="font-medium">{holder.bns || holder.address}</TableCell>
                                 <TableCell className="font-medium text-center">{numeral(holder.experience / 1000000).format('0.0 a')}</TableCell>
                                 <TableCell className="font-medium text-center">{numeral(holder.experience / expTotalSupply).format('0.00 %')}</TableCell>
                                 <TableCell className="font-medium text-center">{holder.experience / expTotalSupply >= 0.1 ? "🌞" : "✖️"}</TableCell>

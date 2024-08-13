@@ -11,6 +11,8 @@ import { Button } from '@components/ui/button';
 import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { cn } from '@lib/utils';
 import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
+import wantedHogger from '@public/quests/wanted-hogger/hogger.png'
+import hugeKnollClaw from '@public/quests/wanted-hogger/huge-knoll-claw.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
@@ -23,6 +25,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0",
       image: "/experience.png",
       cardImage: journeyOfDiscovery,
+    },
+    {
+      name: `Wanted: "Hogger"`,
+      description: "Slay the huge gnoll Hogger.",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v0",
+      image: hugeKnollClaw,
+      cardImage: wantedHogger,
     }
   ]
   for (const ca of questContractAddresses) {
@@ -74,7 +83,7 @@ export default function QuestsIndex({ quests }: Props) {
               )}
             >
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
-                <div className="space-y-4 text-sm">
+                <div className="space-y-6 text-sm">
                   <h3 className="font-bold text-lg">How to Claim Rewards</h3>
                   <p>
                     You can claim rewards by completing quests in the Charisma ecosystem.
@@ -108,7 +117,7 @@ export default function QuestsIndex({ quests }: Props) {
                                   width={40}
                                   height={40}
                                   alt="guild-logo"
-                                  className="w-10 h-10 rounded-full grow"
+                                  className="w-10 h-10 rounded-md border grow"
                                 />
                               ) : (
                                 <div className="w-10 h-10 bg-white border rounded-full" />
@@ -135,7 +144,7 @@ export default function QuestsIndex({ quests }: Props) {
                         alt="quest-featured-image"
                         className={cn(
                           'w-full object-cover transition-all group-hover/card:scale-105',
-                          'aspect-[1]',
+                          'aspect-[2/3]',
                           'opacity-80',
                           'group-hover/card:opacity-100',
                           'flex',
