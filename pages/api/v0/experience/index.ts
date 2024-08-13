@@ -42,7 +42,7 @@ export default async function getMetadata(
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
                             .addField('Address', payload.sender, true)
-                            .addField('Total EXP', String(experienceAmount / Math.pow(10, 6)))
+                            .addField('Total EXP', Math.round(experienceAmount / Math.pow(10, 6)).toString())
                             .addField('Top 1%', top1Percent)
                             .addField('Top 0.1%', top01Percent)
                             .addField('Top 0.01%', top001Percent)
