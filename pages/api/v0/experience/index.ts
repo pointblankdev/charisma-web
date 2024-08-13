@@ -34,9 +34,12 @@ export default async function getMetadata(
                         const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
                         const bns = await getNameFromAddress(payload.sender)
                         // send message to discord
-                        const embed = new MessageBuilder().setTitle('Adventure')
-                        embed.setDescription(`${bns.names?.[0] || payload.sender} has gained ${experienceAmount / Math.pow(10, 6)} EXP.`)
-                        embed.setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
+                        const embed = new MessageBuilder()
+                            .setTitle('Adventure')
+                            .setDescription(`${bns.names?.[0] || 'A player'} has gained ${experienceAmount / Math.pow(10, 6)} EXP.`)
+                            .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
+                            .addField('First field', 'this is inline', true)
+                            .addField('Second field', 'this is not inline')
                         await hook.send(embed);
 
                         // update leaderboard
