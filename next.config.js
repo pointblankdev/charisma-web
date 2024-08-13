@@ -14,6 +14,11 @@ module.exports = {
         port: '',
         pathname: '/**',
       },
+      // TODO: REMOVE THIS
+      {
+        protocol: "https",
+        hostname: "**",
+      },
     ],
   },
   async redirects() {
