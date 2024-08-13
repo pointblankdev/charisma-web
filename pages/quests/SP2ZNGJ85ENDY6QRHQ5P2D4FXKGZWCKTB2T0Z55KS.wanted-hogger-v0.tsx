@@ -162,7 +162,7 @@ export default function WantedHogger({ lands }: Props) {
                     Hogger is tough, and regenerates health over time. If slain, he'll respawn within 14 blocks with greater health and even faster regeneration.
                   </div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    If Hogger is defeated, everyone receives rewards. Experience is divide up evenly, and CHA tokens are split based on damage dealt.
+                    If Hogger is defeated, everyone who contributed to the battle receives rewards. Experience is divide up evenly, and CHA tokens are split based on damage dealt.
                   </div>
                 </div>
                 <div className="z-20 mt-4">
