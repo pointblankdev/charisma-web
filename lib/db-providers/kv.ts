@@ -166,13 +166,13 @@ export async function getExperienceLeaderboard(startRank: number, endRank: numbe
         for (let i = 0; i < leaderboard.length; i += 2) {
             const memberJson: any = leaderboard[i]; // The stored JSON string
             const experience: any = leaderboard[i + 1]; // The corresponding score
-
-            resultArray.push({
+            const data: any = {
                 rank: i / 2 + 1,
                 address: memberJson.address,
-                bns: memberJson.bns,
                 experience: Number(experience),
-            });
+            }
+            if (memberJson.bns) data.bns = memberJson.bns
+            resultArray.push(data);
         }
         return resultArray;
     } catch (error) {
