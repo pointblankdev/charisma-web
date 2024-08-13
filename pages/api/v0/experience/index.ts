@@ -33,17 +33,17 @@ export default async function getMetadata(
 
                         const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
                         const bns = await getNameFromAddress(payload.sender)
-                        const top001Percent = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.01)
-                        const top01Percent = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.1)
-                        const top1Percent = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 1)
+                        const top1p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 1)
+                        const top01p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.1)
+                        const top001p = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender, 0.01)
                         // send message to discord
                         const embed = new MessageBuilder()
                             .setTitle('Adventure')
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
-                            .addField('Top 0.01%', top001Percent ? "🥇" : "❌", true)
-                            .addField('Top 0.1%', top01Percent ? "🥈" : "❌", true)
-                            .addField('Top 1%', top1Percent ? "🥉" : "❌", true)
+                            .addField('Top 0.01%', top001p ? "🥇" : "❌", true)
+                            .addField('Top 0.1%', top01p ? "🥈" : "❌", true)
+                            .addField('Top 1%', top1p ? "🥉" : "❌", true)
                             .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP')
                             .addField('Wallet Address', payload.sender)
                         await hook.send(embed);
