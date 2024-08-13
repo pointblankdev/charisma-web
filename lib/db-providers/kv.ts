@@ -168,7 +168,7 @@ export async function getExperienceLeaderboard(startRank: number, endRank: numbe
             const experience: any = leaderboard[i + 1]; // The corresponding score
 
             // Parse the JSON string back into an object
-            const { address, bns, gt001p, gt01p, gt1p } = JSON.parse(memberJson);
+            const { address, bns, gt001p, gt01p, gt1p } = memberJson
 
             resultArray.push({
                 rank: i / 2 + 1,
