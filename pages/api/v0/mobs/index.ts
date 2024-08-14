@@ -109,8 +109,8 @@ export default async function getMetadata(
 
                     // send message to discord
                     const embed = new MessageBuilder()
-                        .setTitle(metadata.title)
-                        .setDescription(metadata.description)
+                        .setTitle(metadata.title || 'Unknown Contract')
+                        .setDescription(metadata.description || 'Unknown Description')
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
                     // .setImage('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
