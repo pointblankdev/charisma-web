@@ -95,7 +95,7 @@ export default async function getMetadata(
 
                     const contractMetadata: Record<string, any> = {
                         'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1::tap': {
-                            title: 'WANTED: Hogger',
+                            title: 'WANTED: "Hogger"',
                             description: 'A player is fighting Hogger!'
                         },
 
@@ -110,8 +110,9 @@ export default async function getMetadata(
                     // send message to discord
                     const embed = new MessageBuilder()
                         .setTitle(metadata?.title || 'Unknown Contract')
+                        .setAuthor('Hogger', 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v0')
                         .setDescription(metadata?.description || 'Unknown Description')
-                        .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
+                        .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
                     // .setImage('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
