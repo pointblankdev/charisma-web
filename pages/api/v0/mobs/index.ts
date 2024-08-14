@@ -3,6 +3,7 @@ import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalan
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
 import numeral from 'numeral';
+import safeJsonStringify from 'safe-json-stringify';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
@@ -181,6 +182,16 @@ export default async function getMetadata(
     } catch (error: any) {
         console.error(error)
         response = {}
+
+        try {
+            const embed = new MessageBuilder()
+                .setTitle('Error Parsing Transaction')
+                .setDescription(safeJsonStringify(error))
+            await hook.send(embed);
+        } catch (error) {
+
+            console.error(error)
+        }
     }
 
     return res.status(code).json(response as ChainhookResponse | ErrorResponse);
