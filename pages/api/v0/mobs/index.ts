@@ -91,9 +91,11 @@ export default async function getMetadata(
     let response, code = 200
     try {
         if (req.method === 'POST') {
+            await hook.send(new MessageBuilder().setText(`Processing ${chainhookPayload.apply.length} apply events`));
             for (const a of chainhookPayload.apply) {
+                await hook.send(new MessageBuilder().setText(`Processing ${a.transactions.length} transactions`));
                 for (const tx of a.transactions) {
-
+                    await hook.send(new MessageBuilder().setText(`Processing transaction ${tx.metadata.description}`));
                     const contractMetadata: Record<string, any> = {
                         'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1::tap': {
                             author: 'WANTED: "Hogger"',
@@ -141,32 +143,6 @@ export default async function getMetadata(
                     })
 
                     await hook.send(embed);
-
-                    // if (payload.success) {
-
-                    //     const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
-                    //     const experienceSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
-
-                    //     const bns = await getNameFromAddress(payload.sender)
-                    //     const data = { address: payload.sender } as any
-                    //     if (bns.names?.[0]) data.bns = bns.names?.[0]
-                    //     const jsonData = JSON.stringify(data);
-
-                    //     // update leaderboard
-                    //     await updateExperienceLeaderboard(experienceAmount, jsonData)
-                    //     // send message to discord
-                    //     const embed = new MessageBuilder()
-                    //         .setTitle('Adventure')
-                    //         .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
-                    //         .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
-                    //         .addField('\\> 10% TS', experienceAmount / experienceSupply >= 0.1 ? "🌞" : "✖️", true)
-                    //         .addField('\\> 1% TS', experienceAmount / experienceSupply >= 0.01 ? "🌟" : "✖️", true)
-                    //         .addField('\\> 0.1% TS', experienceAmount / experienceSupply >= 0.001 ? "✨" : "✖️", true)
-                    //         .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP', true)
-                    //         .addField('% of Total Supply', numeral(experienceAmount / experienceSupply).format('0.0%'), true)
-                    //         .addField('Wallet Address', payload.sender)
-                    //     await hook.send(embed);
-                    // }
                     response = {}
                 }
             }
@@ -183,14 +159,10 @@ export default async function getMetadata(
         console.error(error)
         response = {}
 
-        try {
-            const embed = new MessageBuilder()
-                .setTitle('Error Parsing Transaction')
-                .setDescription(safeJsonStringify(error))
-            await hook.send(embed);
-        } catch (error) {
-            console.error(error)
-        }
+        const embed = new MessageBuilder()
+            .setTitle('Error Parsing Transaction')
+            .setDescription(safeJsonStringify(error))
+        await hook.send(embed);
     }
 
     return res.status(code).json(response as ChainhookResponse | ErrorResponse);
