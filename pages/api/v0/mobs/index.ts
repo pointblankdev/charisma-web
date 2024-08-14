@@ -98,10 +98,6 @@ export default async function getMetadata(
                             title: 'WANTED: Hogger',
                             description: 'A player is fighting Hogger!'
                         },
-                        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0::tap': {
-                            title: 'Hogger',
-                            description: 'Hogger is on the loose!'
-                        },
 
                     }
 
@@ -113,8 +109,8 @@ export default async function getMetadata(
 
                     // send message to discord
                     const embed = new MessageBuilder()
-                        .setTitle(metadata.title || 'Unknown Contract')
-                        .setDescription(metadata.description || 'Unknown Description')
+                        .setTitle(metadata?.title || 'Unknown Contract')
+                        .setDescription(metadata?.description || 'Unknown Description')
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
                     // .setImage('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
