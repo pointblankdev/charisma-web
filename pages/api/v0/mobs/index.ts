@@ -92,6 +92,9 @@ export default async function getMetadata(
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
                         embed.addField(event.data.value.event, JSON.stringify(event.data.value))
                     })
+
+                    console.log(embed)
+
                     await hook.send(embed);
 
                     // if (payload.success) {
