@@ -131,6 +131,8 @@ export default async function getMetadata(
                         }
                     }
 
+                    console.log(embed)
+
                     await hook.send(embed);
                     response = tx.metadata.receipt.events
                 }
