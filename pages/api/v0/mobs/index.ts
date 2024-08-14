@@ -21,17 +21,16 @@ interface Transaction {
 }
 
 interface TransactionMetadata {
-    kind: {
-        data: TransactionData;
-    };
+    kind: TransactionKind;
     sender: string;
     success: boolean;
 }
 
-// You'll need to define the structure of TransactionData
-// based on the actual data you're receiving
-interface TransactionData {
-    args: any[]
+interface TransactionKind {
+    data: {
+        args: any[]
+        contract_identifier: string
+    }
 }
 
 // Helper type for the response
@@ -63,7 +62,7 @@ export default async function getMetadata(
                         .setTitle('Hogger')
                         .setDescription(`Hogger event`)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
-                        .setText(JSON.stringify(tx.metadata).slice(0, 1000))
+                        .setText(JSON.stringify(tx).slice(0, 1500))
                     await hook.send(embed);
 
                     // if (payload.success) {
