@@ -88,7 +88,6 @@ export default async function getMetadata(
 
     const chainhookPayload: ChainhookPayload = req.body
 
-    const hoggerEvents = []
 
     let response, code = 200
     try {
@@ -96,17 +95,17 @@ export default async function getMetadata(
             const m1 = new MessageBuilder()
                 .setTitle('Chainhook Received')
                 .setDescription(`Processing ${chainhookPayload.apply.length} apply events`)
-            hook.send(m1).catch(console.error);
+            await hook.send(m1);
             for (const a of chainhookPayload.apply) {
                 const m2 = new MessageBuilder()
                     .setTitle('Apply Event')
                     .setDescription(`Processing ${a.transactions.length} transactions`)
-                hook.send(m2).catch(console.error);;
+                await hook.send(m2);
                 for (const tx of a.transactions) {
                     const m3 = new MessageBuilder()
                         .setTitle('Transaction')
                         .setDescription(`Processing transaction ${tx.metadata.description}`)
-                    hook.send(m3).catch(console.error);;
+                    await hook.send(m3);
 
                     // map of contract addresss and methods to metadata
                     const contractMetadata: Record<string, any> = {
@@ -138,25 +137,24 @@ export default async function getMetadata(
                             if (event.type === 'SmartContractEvent' && 'value' in event.data) {
                                 if (event.data.value.event === 'attack-result') {
                                     // critical hogger event, add to hogger events
-                                    hoggerEvents.push(event.data.value)
                                     const newHealth = event.data.value['new-hogger-health']
                                     const hogger = await getMob('hogger')
                                     if (hogger.maxHealth || 0 < newHealth) { hogger.maxHealth = newHealth }
                                     hogger.health = newHealth
                                     await setMob('hogger', hogger)
                                 }
-                                // loop through all values in the value object
-                                if (typeof event.data.value === 'object' && event.data.value !== null) {
-                                    embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
-                                    Object.entries(event.data.value).forEach(([key, value]) => {
-                                        // Convert the value to a string, handling potential nested objects
-                                        const stringValue = typeof value === 'object' ? safeJsonStringify(value) : String(value);
-                                        embed.addField(key, stringValue, true);
-                                    });
-                                } else {
-                                    // If value is not an object, add it as a single field
-                                    embed.addField(event.data.topic, safeJsonStringify(event.data.value));
-                                }
+                                // // loop through all values in the value object
+                                // if (typeof event.data.value === 'object' && event.data.value !== null) {
+                                //     embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
+                                //     Object.entries(event.data.value).forEach(([key, value]) => {
+                                //         // Convert the value to a string, handling potential nested objects
+                                //         const stringValue = typeof value === 'object' ? safeJsonStringify(value) : String(value);
+                                //         embed.addField(key, stringValue, true);
+                                //     });
+                                // } else {
+                                //     // If value is not an object, add it as a single field
+                                //     embed.addField(event.data.topic, safeJsonStringify(event.data.value));
+                                // }
                             } else if (event.type === 'FTBurnEvent' && 'sender' in event.data) {
                                 embed.addField('Protocol Fee', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
                             } else {
