@@ -40,7 +40,12 @@ interface ContractEvent {
     data: {
         contract_identifier: string
         topic: string
+        //SmartContractEvent
         value?: ContractPrintEvent
+        //FTBurnEvent
+        sender?: string
+        amount?: number
+        asset_identifier?: string
     }
     position: any
     type: string
@@ -106,11 +111,18 @@ export default async function getMetadata(
                     // .setImage('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
-                        if (event.type === 'SmartContractEvent') {
-                            embed.addField(event.data.topic, JSON.stringify(event.data.value?.event))
-                        } else {
+                        try {
+                            if (event.type === 'SmartContractEvent') {
+                                embed.addField(event.data.topic, JSON.stringify(event.data.value?.event))
+                            } else if (event.type === 'FTBurnEvent') {
+                                embed.addField('Protocol Fee', `${event.data.sender} burned ${event.data.amount} ${event.data.asset_identifier} tokens.`)
+                            } else {
 
-                            embed.addField(event.type, JSON.stringify(event.data))
+                                embed.addField(event.type, JSON.stringify(event.data))
+                            }
+
+                        } catch (error) {
+                            embed.addField('Error Parsing Event', JSON.stringify(event.data))
                         }
                     })
 
