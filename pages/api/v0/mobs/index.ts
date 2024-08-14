@@ -106,7 +106,12 @@ export default async function getMetadata(
                         .setImage('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
-                        embed.addField(event.type, JSON.stringify(event.data))
+                        if (event.type === 'SmartContractEvent') {
+                            embed.addField(event.data.topic, JSON.stringify(event.data.value?.event))
+                        } else {
+
+                            embed.addField(event.type, JSON.stringify(event.data))
+                        }
                     })
 
                     console.log(embed)
