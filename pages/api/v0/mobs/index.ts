@@ -93,11 +93,20 @@ export default async function getMetadata(
     let response, code = 200
     try {
         if (req.method === 'POST') {
-            await hook.send(new MessageBuilder().setText(`Processing ${chainhookPayload.apply.length} apply events`));
+            const m1 = new MessageBuilder()
+                .setTitle('Chainhook Received')
+                .setDescription(`Processing ${chainhookPayload.apply.length} apply events`)
+            await hook.send(m1);
             for (const a of chainhookPayload.apply) {
-                await hook.send(new MessageBuilder().setText(`Processing ${a.transactions.length} transactions`));
+                const m2 = new MessageBuilder()
+                    .setTitle('Apply Event')
+                    .setDescription(`Processing ${a.transactions.length} transactions`)
+                await hook.send(m2);
                 for (const tx of a.transactions) {
-                    await hook.send(new MessageBuilder().setText(`Processing transaction ${tx.metadata.description}`));
+                    const m3 = new MessageBuilder()
+                        .setTitle('Transaction')
+                        .setDescription(`Processing transaction ${tx.metadata.description}`)
+                    await hook.send(m3);
                     const contractMetadata: Record<string, any> = {
                         'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1::tap': {
                             author: 'WANTED: "Hogger"',
@@ -133,7 +142,7 @@ export default async function getMetadata(
                                 }
                                 // loop through all values in the value object
                                 if (typeof event.data.value === 'object' && event.data.value !== null) {
-                                    embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, ' ');
+                                    embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
                                     Object.entries(event.data.value).forEach(([key, value]) => {
                                         // Convert the value to a string, handling potential nested objects
                                         const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
