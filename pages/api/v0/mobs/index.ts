@@ -72,10 +72,11 @@ export default async function getMetadata(
 
 
     let response, code = 200
-    try {
-        if (req.method === 'POST') {
-            for (const a of chainhookPayload.apply) {
-                for (const tx of a.transactions) {
+    if (req.method === 'POST') {
+        for (const a of chainhookPayload.apply) {
+            for (const tx of a.transactions) {
+
+                try {
 
                     // map of contract addresss and methods to metadata
                     const contractMetadata: Record<string, any> = {
@@ -135,25 +136,24 @@ export default async function getMetadata(
 
                     await hook.send(embed);
                     response = {}
+
+                } catch (error: any) {
+                    const embed = new MessageBuilder()
+                        .setTitle('Error Parsing Transaction')
+                        .setDescription(safeJsonStringify(error))
+                    await hook.send(embed);
+
                 }
             }
-        } else if (req.method === 'GET') {
-            response = {}
-        } else {
-            code = 501
-            response = new Object({
-                code: 'method_unknown',
-                message: 'This endpoint only responds to GET'
-            })
         }
-    } catch (error: any) {
-        console.error(error)
+    } else if (req.method === 'GET') {
         response = {}
-
-        const embed = new MessageBuilder()
-            .setTitle('Error Parsing Transaction')
-            .setDescription(safeJsonStringify(error))
-        await hook.send(embed);
+    } else {
+        code = 501
+        response = new Object({
+            code: 'method_unknown',
+            message: 'This endpoint only responds to GET'
+        })
     }
 
     return res.status(code).json(response as ChainhookResponse | ErrorResponse);
