@@ -130,7 +130,7 @@ export default async function getMetadata(
                                     embed.addField(event.data.topic, JSON.stringify(event.data.value));
                                 }
                             } else if (event.type === 'FTBurnEvent' && 'sender' in event.data) {
-                                embed.addField('Protocol Fee', `${event.data.sender} burned ${event.data.amount} ${event.data.asset_identifier} tokens.`);
+                                embed.addField('Protocol Fee', `Player burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[0]} tokens.`);
                             } else {
                                 embed.addField(event.type, JSON.stringify(event.data));
                             }
