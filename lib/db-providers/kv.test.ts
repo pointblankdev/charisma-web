@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, clearLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getMob, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -239,6 +239,19 @@ describe('metadata api', () => {
     // get experience holders
     it('should get experience holders', async () => {
         const response = await getExperienceLeaderboard(0, -1)
+        console.log(response)
+    })
+
+    it('should get hogger', async () => {
+        const response = await getMob('hogger')
+        console.log(response)
+    })
+
+    it('should set hogger', async () => {
+        const response = await setMob('hogger', {
+            health: 1670439,
+            maxHealth: 1700000
+        })
         console.log(response)
     })
 
