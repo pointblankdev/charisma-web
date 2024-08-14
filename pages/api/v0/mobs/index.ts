@@ -113,14 +113,13 @@ export default async function getMetadata(
                         .setAuthor('Hogger', 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v0')
                         .setDescription(metadata?.description || 'Unknown Description')
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
-                    // .setImage('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
                         try {
                             if (event.type === 'SmartContractEvent' && 'topic' in event.data) {
                                 // loop through all values in the value object
                                 if (typeof event.data.value === 'object' && event.data.value !== null) {
-                                    embed.addField('↳', '');
+                                    embed.addField(event.data.value.event ? event.data.value.event : 'event', '↳');
                                     Object.entries(event.data.value).forEach(([key, value]) => {
                                         // Convert the value to a string, handling potential nested objects
                                         const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
