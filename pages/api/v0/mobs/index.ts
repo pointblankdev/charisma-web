@@ -40,9 +40,10 @@ interface ContractEvent {
     data: {
         contract_identifier: string
         topic: string
-        value: ContractPrintEvent
+        value?: ContractPrintEvent
     }
     position: any
+    type: string
 }
 
 type ContractPrintEvent = {
@@ -90,7 +91,7 @@ export default async function getMetadata(
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
-                        embed.addField('Event', JSON.stringify(event.data))
+                        embed.addField(event.type, JSON.stringify(event.data))
                     })
 
                     console.log(embed)
