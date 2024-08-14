@@ -21,16 +21,27 @@ interface Transaction {
 }
 
 interface TransactionMetadata {
+    description: string;
+    execution_cost: any;
+    fee: number;
     kind: TransactionKind;
-    sender: string;
-    success: boolean;
+    nonce: number;
+    position: { index: number };
+    raw_tx: string;
+    receipt: ReceiptData
 }
 
+interface ReceiptData {
+    contract_calls_stacks: any[]
+    events: any[]
+}
 interface TransactionKind {
     data: {
         args: any[]
         contract_identifier: string
+        method: string
     }
+    type: string
 }
 
 // Helper type for the response
@@ -60,9 +71,9 @@ export default async function getMetadata(
                     // send message to discord
                     const embed = new MessageBuilder()
                         .setTitle('Hogger')
-                        .setDescription(`Hogger event`)
+                        .setDescription(`Hogger Receipt`)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
-                        .setText(JSON.stringify(tx).slice(0, 1500))
+                        .setText(JSON.stringify(tx.metadata.receipt).slice(0, 1800))
                     await hook.send(embed);
 
                     // if (payload.success) {
