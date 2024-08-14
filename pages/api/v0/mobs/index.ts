@@ -98,6 +98,10 @@ export default async function getMetadata(
                             title: 'WANTED: Hogger',
                             description: 'A player is fighting Hogger!'
                         },
+                        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0::tap': {
+                            title: 'Hogger',
+                            description: 'Hogger is on the loose!'
+                        },
 
                     }
 
