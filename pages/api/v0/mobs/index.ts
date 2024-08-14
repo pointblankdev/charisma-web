@@ -94,7 +94,7 @@ export default async function getMetadata(
                                 hogger.health = newHealth
                                 await setMob('hogger', hogger)
                             }
-                            embed.addField(event.data.topic, safeJsonStringify(event.data));
+                            embed.addField(`📜 ${event.data.topic}`, safeJsonStringify(event.data));
                         } else if (event.type === 'FTBurnEvent') {
                             embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
                         } else if (event.type === 'FTMintEvent') {
