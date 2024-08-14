@@ -80,7 +80,7 @@ export default async function getMetadata(
                     const embed = new MessageBuilder()
                         .setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
                         .setTitle('A player is fighting Hogger!')
-                        .setDescription(tx.metadata?.description.split('::')[1] || '')
+                        .setDescription(safeJsonStringify(Object.keys(tx.metadata)))
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     for (const event of tx.metadata.receipt.events) {
