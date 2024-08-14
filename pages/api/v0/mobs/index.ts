@@ -73,7 +73,7 @@ export default async function getMetadata(
                         .setTitle('Hogger')
                         .setDescription(`Hogger event`)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
-                        .setText(JSON.stringify(payload))
+                        .setText(JSON.stringify(tx.metadata))
                     await hook.send(embed);
 
                     // if (payload.success) {
