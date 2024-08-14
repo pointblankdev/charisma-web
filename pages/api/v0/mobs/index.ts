@@ -122,7 +122,7 @@ export default async function getMetadata(
                             if (event.type === 'SmartContractEvent' && 'topic' in event.data) {
                                 // loop through all values in the value object
                                 if (typeof event.data.value === 'object' && event.data.value !== null) {
-                                    embed.addField(event.data.value.event ? event.data.value.event : 'event', '↳');
+                                    embed.addField(event.data.value.event ? event.data.value.event : 'event', '⤥');
                                     Object.entries(event.data.value).forEach(([key, value]) => {
                                         // Convert the value to a string, handling potential nested objects
                                         const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
