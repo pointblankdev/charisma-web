@@ -1,4 +1,4 @@
-import { getExperienceLeaderboard, updateExperienceLeaderboard } from '@lib/db-providers/kv';
+import { getExperienceLeaderboard, setMob, updateExperienceLeaderboard } from '@lib/db-providers/kv';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -88,6 +88,8 @@ export default async function getMetadata(
 
     const chainhookPayload: ChainhookPayload = req.body
 
+    const hoggerEvents = []
+
     let response, code = 200
     try {
         if (req.method === 'POST') {
@@ -120,6 +122,11 @@ export default async function getMetadata(
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
                         try {
                             if (event.type === 'SmartContractEvent' && 'topic' in event.data) {
+                                if (event.data.value.event === 'attack-result') {
+                                    // critical hogger event, add to hogger events
+                                    hoggerEvents.push(event.data.value)
+                                    setMob('hogger', { health: event.data.value['new-hogger-health'] })
+                                }
                                 // loop through all values in the value object
                                 if (typeof event.data.value === 'object' && event.data.value !== null) {
                                     embed.addField(' ', ' ');
