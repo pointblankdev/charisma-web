@@ -74,20 +74,8 @@ export default async function getMetadata(
     let response, code = 200
     try {
         if (req.method === 'POST') {
-            const m1 = new MessageBuilder()
-                .setTitle('Chainhook Received')
-                .setDescription(`Processing ${chainhookPayload.apply.length} apply events`)
-            await hook.send(m1);
             for (const a of chainhookPayload.apply) {
-                const m2 = new MessageBuilder()
-                    .setTitle('Apply Event')
-                    .setDescription(`Processing ${a.transactions.length} transactions`)
-                await hook.send(m2);
                 for (const tx of a.transactions) {
-                    const m3 = new MessageBuilder()
-                        .setTitle('Transaction')
-                        .setDescription(`Processing transaction ${tx.metadata?.description}`)
-                    await hook.send(m3);
 
                     // map of contract addresss and methods to metadata
                     const contractMetadata: Record<string, any> = {
