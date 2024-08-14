@@ -115,11 +115,11 @@ export default async function getMetadata(
                     response = {}
 
                 } catch (error: any) {
+                    console.log(error)
                     const embed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
                         .setDescription(safeJsonStringify(Object.keys(tx.metadata)))
                     await hook.send(embed);
-
                 }
             }
         }
