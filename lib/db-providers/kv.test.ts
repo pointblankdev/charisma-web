@@ -249,8 +249,10 @@ describe('metadata api', () => {
 
     it('should set hogger', async () => {
         const response = await setMob('hogger', {
-            health: 1670439,
-            maxHealth: 1700000
+            level: 5,
+            health: 1005059,
+            maxHealth: 1700000,
+            regenRate: 50
         })
         console.log(response)
     })

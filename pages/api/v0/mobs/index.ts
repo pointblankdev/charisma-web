@@ -85,12 +85,19 @@ export default async function getMetadata(
 
                     for (const event of tx.metadata.receipt.events) {
                         if (event.type === 'SmartContractEvent') {
-                            if (event?.data?.value?.event === 'attack-result') {
-                                const newHealth = event.data.value['new-hogger-health']
+                            if (event?.data?.value?.event === 'reset-complete') {
+                                const newLevel = Number(event.data.value['new-epoch'])
+                                const newMaxHp = Number(event.data.value['new-max-health'])
+                                const newRegen = Number(event.data.value['new-regen-rate'])
                                 const hogger = await getMob('hogger')
-                                if (hogger.maxHealth || 0 < newHealth) {
-                                    hogger.maxHealth = newHealth
-                                }
+                                hogger.level = newLevel
+                                hogger.maxHealth = newMaxHp
+                                hogger.regenRate = newRegen
+                                await setMob('hogger', hogger)
+                            }
+                            if (event?.data?.value?.event === 'attack-result') {
+                                const newHealth = Number(event.data.value['new-hogger-health'])
+                                const hogger = await getMob('hogger')
                                 hogger.health = newHealth
                                 await setMob('hogger', hogger)
                             }
