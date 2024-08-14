@@ -126,26 +126,48 @@ export async function cacheUserState(user: string, key: string, json: any): Prom
     await kv.set(`user:${user}:${key}`, JSON.stringify(json));
 }
 
-// quests
+// mobs
 
 export async function getQuests(): Promise<any> {
-    return await kv.smembers('quests')
+    return await kv.smembers('mobs')
 }
 
 export async function addQuest(ca: string): Promise<any> {
-    return await kv.sadd('quests', ca)
+    return await kv.sadd('mobs', ca)
 }
 
 export async function removeQuest(ca: string): Promise<any> {
-    return await kv.srem('quests', ca)
+    return await kv.srem('mobs', ca)
 }
 
 export async function getQuest(ca: string): Promise<any> {
-    return await kv.get(`quest:${ca}`);
+    return await kv.get(`mob:${ca}`);
 }
 
 export async function setQuest(ca: string, data: any): Promise<any> {
-    return await kv.set(`quest:${ca}`, data);
+    return await kv.set(`mob:${ca}`, data);
+}
+
+// mobs
+
+export async function getMobs(): Promise<any> {
+    return await kv.smembers('mobs')
+}
+
+export async function addMob(ca: string): Promise<any> {
+    return await kv.sadd('mobs', ca)
+}
+
+export async function removeMob(ca: string): Promise<any> {
+    return await kv.srem('mobs', ca)
+}
+
+export async function getMob(ca: string): Promise<any> {
+    return await kv.get(`mob:${ca}`);
+}
+
+export async function setMob(ca: string, data: any): Promise<any> {
+    return await kv.set(`mob:${ca}`, data);
 }
 
 // experience
