@@ -1,4 +1,4 @@
-import { getExperienceLeaderboard, setMob, updateExperienceLeaderboard } from '@lib/db-providers/kv';
+import { getExperienceLeaderboard, getMob, setMob, updateExperienceLeaderboard } from '@lib/db-providers/kv';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -114,7 +114,7 @@ export default async function getMetadata(
 
                     // send message to discord
                     const embed = new MessageBuilder()
-                        .setAuthor(metadata?.author, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v0')
+                        .setAuthor(metadata?.author, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
                         .setTitle(metadata?.title || 'Unknown Title')
                         .setDescription(tx.metadata.description)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
@@ -125,7 +125,11 @@ export default async function getMetadata(
                                 if (event.data.value.event === 'attack-result') {
                                     // critical hogger event, add to hogger events
                                     hoggerEvents.push(event.data.value)
-                                    await setMob('hogger', { health: event.data.value['new-hogger-health'] })
+                                    const newHealth = event.data.value['new-hogger-health']
+                                    const hogger = await getMob('hogger')
+                                    if (hogger.maxHealth < newHealth) { hogger.maxHealth = newHealth }
+                                    hogger.health = newHealth
+                                    await setMob('hogger', hogger)
                                 }
                                 // loop through all values in the value object
                                 if (typeof event.data.value === 'object' && event.data.value !== null) {
