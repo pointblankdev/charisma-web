@@ -33,8 +33,20 @@ interface TransactionMetadata {
 
 interface ReceiptData {
     contract_calls_stacks: any[]
-    events: any[]
+    events: ContractEvents
 }
+
+interface ContractEvents {
+    data: {
+        contract_identifier: string
+        topic: string
+        value: ContractPrintEvent
+    }
+    position: any
+}
+
+type ContractPrintEvent = Record<string, any>;
+
 interface TransactionKind {
     data: {
         args: any[]
@@ -73,7 +85,7 @@ export default async function getMetadata(
                         .setTitle('Hogger')
                         .setDescription(`Hogger Receipt`)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
-                        .setText(JSON.stringify(tx.metadata.receipt).slice(0, 1800))
+                        .setText(JSON.stringify(tx.metadata.receipt.events).slice(0, 2000))
                     await hook.send(embed);
 
                     // if (payload.success) {
