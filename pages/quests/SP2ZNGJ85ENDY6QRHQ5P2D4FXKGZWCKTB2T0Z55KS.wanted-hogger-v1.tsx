@@ -80,22 +80,9 @@ export default function WantedHogger({ lands, mob }: Props) {
   const title = `WANTED: "Hogger"`;
   const subtitle = 'Slay the huge gnoll Hogger.';
 
-
   const healthPercentage = mob.health * 100 / mob.maxHealth
 
-  console.log({ healthPercentage, mob })
-
-
-  const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [showHoggerCard, setShowHoggerCard] = useState(false);
-
-  useEffect(() => {
-    try {
-      setDescriptionVisible(true);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
 
   const fadeVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
 
@@ -258,8 +245,8 @@ export default function WantedHogger({ lands, mob }: Props) {
 
                       className="z-10 h-[4.5rem] w-[4.5rem] absolute top-[32px] left-[60px] transform scale-x-[-1] rounded-full"
                     />
-                    <div className="z-20 top-[80px] left-[60px] absolute px-1 font-semibold rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
-                      10
+                    <div className="z-20 top-[80px] left-[60px] absolute px-1 font-semibold text-center min-w-6 rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
+                      {mob.level}
                     </div>
                     <CardTitle className="z-30 text-xl text-primary-foreground/90 font-semibold text-center pt-[1.4rem] leading-none">Hogger</CardTitle>
                     <CardDescription className="z-30 text-md font-light text-center text-muted/70 pb-4">
