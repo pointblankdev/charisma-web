@@ -92,12 +92,6 @@ export default async function getMetadata(
                                 hogger.health = newHealth
                                 await setMob('hogger', hogger)
                             }
-                            // try {
-                            //     embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
-                            //     Object.entries(event.data.value).forEach(([key, value]: any) => {
-                            //         const stringValue = typeof value === 'object' ? safeJsonStringify(value) : String(value);
-                            //         embed.addField(key, stringValue, true);
-                            //     });
                             embed.addField(event.data.topic, safeJsonStringify(event.data));
                         } else if (event.type === 'FTBurnEvent') {
                             embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
