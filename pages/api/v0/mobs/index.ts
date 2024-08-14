@@ -135,7 +135,7 @@ export default async function getMetadata(
 
                     for (const event of tx.metadata.receipt.events) {
                         try {
-                            if (event.type === 'SmartContractEvent' && 'topic' in event.data) {
+                            if (event.type === 'SmartContractEvent' && 'value' in event.data) {
                                 if (event.data.value.event === 'attack-result') {
                                     // critical hogger event, add to hogger events
                                     hoggerEvents.push(event.data.value)
@@ -158,7 +158,7 @@ export default async function getMetadata(
                                     embed.addField(event.data.topic, safeJsonStringify(event.data.value));
                                 }
                             } else if (event.type === 'FTBurnEvent' && 'sender' in event.data) {
-                                embed.addField('Protocol Fee', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1]} tokens.`);
+                                embed.addField('Protocol Fee', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
                             } else {
                                 embed.addField(event.type, safeJsonStringify(event.data));
                             }
