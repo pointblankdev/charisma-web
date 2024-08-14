@@ -84,10 +84,24 @@ export default async function getMetadata(
             for (const a of chainhookPayload.apply) {
                 for (const tx of a.transactions) {
 
+                    const contractMetadata: Record<string, any> = {
+                        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1::tap': {
+                            title: 'WANTED: Hogger',
+                            description: 'A player is fighting Hogger!'
+                        },
+
+                    }
+
+                    const contractIdentifier = tx.metadata.kind.data.contract_identifier
+                    const contractMethod = tx.metadata.kind.data.method
+                    const contractKey = `${contractIdentifier}::${contractMethod}`
+
+                    const metadata = contractMetadata[contractKey]
+
                     // send message to discord
                     const embed = new MessageBuilder()
-                        .setTitle(tx.metadata.kind.data.contract_identifier)
-                        .setDescription(tx.metadata.kind.data.method)
+                        .setTitle(metadata.title)
+                        .setDescription(metadata.description)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
