@@ -128,7 +128,7 @@ export default async function getMetadata(
 
                     // send message to discord
                     const embed = new MessageBuilder()
-                        .setAuthor(metadata?.author, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
+                        .setAuthor(metadata?.author || 'Unknown Author', 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
                         .setTitle(metadata?.title || 'Unknown Title')
                         .setDescription(tx.metadata.description.split('::')[1])
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
