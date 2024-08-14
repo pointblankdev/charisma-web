@@ -104,7 +104,7 @@ export default async function getMetadata(
                 for (const tx of a.transactions) {
                     const m3 = new MessageBuilder()
                         .setTitle('Transaction')
-                        .setDescription(`Processing transaction ${tx.metadata.description}`)
+                        .setDescription(`Processing transaction ${tx.metadata?.description}`)
                     await hook.send(m3);
 
                     // map of contract addresss and methods to metadata
@@ -129,7 +129,7 @@ export default async function getMetadata(
                     const embed = new MessageBuilder()
                         .setAuthor(metadata?.author || 'Unknown Author', 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
                         .setTitle(metadata?.title || 'Unknown Title')
-                        .setDescription(tx.metadata.description.split('::')[1] || '')
+                        .setDescription(tx.metadata?.description.split('::')[1] || '')
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     for (const event of tx.metadata.receipt.events) {
