@@ -22,7 +22,7 @@ interface Transaction {
 
 interface TransactionMetadata {
     kind: {
-        data: any;
+        data: TransactionData;
     };
     sender: string;
     success: boolean;
@@ -30,13 +30,9 @@ interface TransactionMetadata {
 
 // You'll need to define the structure of TransactionData
 // based on the actual data you're receiving
-// interface TransactionData {
-//     // Add properties based on the actual data structure
-//     // For example:
-//     // amount?: number;
-//     // recipient?: string;
-//     // ... other properties
-// }
+interface TransactionData {
+    args: any[]
+}
 
 // Helper type for the response
 type ChainhookResponse = Record<string, any>;
@@ -62,18 +58,12 @@ export default async function getMetadata(
             for (const a of chainhookPayload.apply) {
                 for (const tx of a.transactions) {
 
-                    const payload = {
-                        ...tx.metadata.kind.data,
-                        sender: tx.metadata.sender,
-                        success: tx.metadata.success,
-                    };
-
                     // send message to discord
                     const embed = new MessageBuilder()
                         .setTitle('Hogger')
                         .setDescription(`Hogger event`)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
-                        .setText(JSON.stringify(tx.metadata))
+                        .setText(JSON.stringify(tx.metadata).slice(0, 2000))
                     await hook.send(embed);
 
                     // if (payload.success) {
