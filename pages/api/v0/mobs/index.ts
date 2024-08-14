@@ -83,36 +83,30 @@ export default async function getMetadata(
                         .setDescription(safeJsonStringify(Object.keys(tx.metadata)))
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
-                    for (const event of tx.metadata.receipt.events) {
-                        try {
-                            if (event.type === 'SmartContractEvent') {
-                                if (event.data.value.event === 'attack-result') {
-                                    const newHealth = event.data.value['new-hogger-health']
-                                    const hogger = await getMob('hogger')
-                                    if (hogger.maxHealth || 0 < newHealth) { hogger.maxHealth = newHealth }
-                                    hogger.health = newHealth
-                                    await setMob('hogger', hogger)
-                                }
-                                try {
-                                    embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
-                                    Object.entries(event.data.value).forEach(([key, value]: any) => {
-                                        const stringValue = typeof value === 'object' ? safeJsonStringify(value) : String(value);
-                                        embed.addField(key, stringValue, true);
-                                    });
-                                } catch (error) {
-                                    embed.addField(event.data.topic, safeJsonStringify(event.data.value));
-                                }
-                            } else if (event.type === 'FTBurnEvent') {
-                                embed.addField('Protocol Fee', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
-                            } else {
-                                embed.addField(event.type, safeJsonStringify(event.data));
-                            }
-                        } catch (error) {
-                            embed.addField('Error Parsing Event', safeJsonStringify(event.data));
-                        }
-                    }
-
-                    console.log(embed)
+                    // for (const event of tx.metadata.receipt.events) {
+                    //     if (event.type === 'SmartContractEvent') {
+                    //         if (event.data.value.event === 'attack-result') {
+                    //             const newHealth = event.data.value['new-hogger-health']
+                    //             const hogger = await getMob('hogger')
+                    //             if (hogger.maxHealth || 0 < newHealth) { hogger.maxHealth = newHealth }
+                    //             hogger.health = newHealth
+                    //             await setMob('hogger', hogger)
+                    //         }
+                    //         try {
+                    //             embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
+                    //             Object.entries(event.data.value).forEach(([key, value]: any) => {
+                    //                 const stringValue = typeof value === 'object' ? safeJsonStringify(value) : String(value);
+                    //                 embed.addField(key, stringValue, true);
+                    //             });
+                    //         } catch (error) {
+                    //             embed.addField(event.data.topic, safeJsonStringify(event.data.value));
+                    //         }
+                    //     } else if (event.type === 'FTBurnEvent') {
+                    //         embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+                    //     } else {
+                    //         embed.addField(event.type, safeJsonStringify(event.data));
+                    //     }
+                    // }
 
                     await hook.send(embed);
                     response = {}
@@ -120,7 +114,7 @@ export default async function getMetadata(
                 } catch (error: any) {
                     const embed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
-                        .setDescription(safeJsonStringify(error))
+                        .setDescription(safeJsonStringify(Object.keys(tx.metadata)))
                     await hook.send(embed);
 
                 }
