@@ -927,7 +927,22 @@ export async function getContractSource({ contractAddress, contractName }: any) 
   return proposalSourceResp;
 }
 
-export async function getArbitrageTxsFromMempool(contractAddress: string) {
+export async function checkIfEpochIsEnding(contractAddress: string) {
+  const [address, name] = contractAddress.split('.');
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: address,
+    contractName: name,
+    functionName: 'get-blocks-until-next-epoch',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: []
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return cvToJSON(result).value === 1;
+}
+
+export async function getTxsFromMempool(contractAddress: string) {
   let offset = 0;
   const limit = 50;
   const transactions: any[] = [];
@@ -949,6 +964,44 @@ export async function getArbitrageTxsFromMempool(contractAddress: string) {
     offset += limit; // increment the offset for the next page
   }
   return transactions;
+}
+
+export async function callContractPublicFunction({ address, functionName, fee, nonce, args }: any) {
+  // reset the epoch so that state can be updated
+  const password = String(process.env.STACKS_ORACLE_PASSWORD);
+  const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY);
+
+  const wallet = await generateWallet({ secretKey, password });
+
+  const account = wallet.accounts[0];
+
+  const txOptions = {
+    contractAddress: address.split('.')[0],
+    contractName: address.split('.')[1],
+    functionName: functionName,
+    functionArgs: args || [],
+    senderKey: account.stxPrivateKey,
+    network,
+    postConditionMode: PostConditionMode.Allow
+  } as any;
+
+  if (nonce) {
+    txOptions.nonce = nonce;
+  }
+
+  // set a tx fee if you don't want the builder to estimate
+  if (fee) {
+    txOptions.fee = fee;
+  }
+
+  // console.log(txOptions)
+
+  const transaction = await makeContractCall(txOptions);
+
+  const broadcastResponse = await broadcastTransaction(transaction, network);
+
+  return broadcastResponse;
+
 }
 
 export async function executeArbitrageStrategy({ address, functionName, fee, nonce, args }: any) {

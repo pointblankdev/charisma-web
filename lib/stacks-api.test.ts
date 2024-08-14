@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete } from "./stacks-api";
+import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 
@@ -190,7 +190,7 @@ describe('Stacks API', () => {
     }, 20000)
 
     it('should get arbitrage txs from mempool', async () => {
-        const result = await getArbitrageTxsFromMempool('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router')
+        const result = await getTxsFromMempool('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router')
         console.log(JSON.stringify(result, null, 4))
         // console.log(result.map(r => JSON.stringify(r.post_conditions)))
         expect(result).toBeDefined()
@@ -244,6 +244,13 @@ describe('Stacks API', () => {
 
     it('should get if has 1% percentage balance', async () => {
         const result = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 100000)
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    // checkIfEpochIsEnding
+    it('should check if epoch is ending', async () => {
+        const result = await checkIfEpochIsEnding('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
         console.log(result)
         expect(result).toBeDefined()
     })

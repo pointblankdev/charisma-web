@@ -85,27 +85,17 @@ export default async function getMetadata(
 
                     for (const event of tx.metadata.receipt.events) {
                         if (event.type === 'SmartContractEvent') {
-                            if (event?.data?.value?.event === 'reset-complete') {
-                                const newLevel = Number(event.data.value['new-epoch'])
-                                const newMaxHp = Number(event.data.value['new-max-health'])
-                                const newRegen = Number(event.data.value['new-regen-rate'])
-                                const hogger = await getMob('hogger')
-                                hogger.level = newLevel
-                                hogger.maxHealth = newMaxHp
-                                hogger.regenRate = newRegen
-                                await setMob('hogger', hogger)
-                            }
-                            if (event?.data?.value?.event === 'attack-result') {
-                                const newHealth = Number(event.data.value['new-hogger-health'])
-                                const hogger = await getMob('hogger')
-                                hogger.health = newHealth
-                                await setMob('hogger', hogger)
-                            }
                             embed.addField(`📜 ${event.data.topic}`, safeJsonStringify(event.data));
+
+                            // cache data to the db based on the print event data
+                            await handleContractPrintEvent(event)
+
                         } else if (event.type === 'FTBurnEvent') {
                             embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+
                         } else if (event.type === 'FTMintEvent') {
                             embed.addField('💰 quest-reward', safeJsonStringify(event.data));
+
                         } else {
                             embed.addField(event.type, safeJsonStringify(event.data));
                         }
@@ -134,4 +124,29 @@ export default async function getMetadata(
     }
 
     return res.status(code).json(response as ChainhookResponse | ErrorResponse);
+}
+
+const handleContractPrintEvent = async (event: ContractEvent) => {
+    try {
+        // reset-complete: cache data for new hogger repawn
+        if (event?.data?.value?.event === 'reset-complete') {
+            const newLevel = Number(event.data.value['new-epoch'])
+            const newMaxHp = Number(event.data.value['new-max-health'])
+            const newRegen = Number(event.data.value['new-regen-rate'])
+            const hogger = await getMob('hogger')
+            hogger.level = newLevel
+            hogger.maxHealth = newMaxHp
+            hogger.regenRate = newRegen
+            await setMob('hogger', hogger)
+        }
+        // attack-result: cache data for hogger health
+        if (event?.data?.value?.event === 'attack-result') {
+            const newHealth = Number(event.data.value['new-hogger-health'])
+            const hogger = await getMob('hogger')
+            hogger.health = newHealth
+            await setMob('hogger', hogger)
+        }
+    } catch (error) {
+        console.log('handlePrintEvent error:', error)
+    }
 }

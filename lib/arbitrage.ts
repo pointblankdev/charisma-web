@@ -1,5 +1,5 @@
 import { TxBroadcastResult, uintCV } from "@stacks/transactions";
-import { executeArbitrageStrategy, getArbitrageTxsFromMempool } from "./stacks-api";
+import { executeArbitrageStrategy, getTxsFromMempool } from "./stacks-api";
 
 export function getConfig() {
     return {
@@ -18,8 +18,8 @@ export async function runAll() {
 
     // Fetch mempool transactions concurrently
     const [mpt1] = await Promise.all([
-        getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0'),
-        // getArbitrageTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-stabilizer-v0'),
+        getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-stabilizer-v0'),
+        // getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.icc-stabilizer-v0'),
     ]);
 
     // filter for only real mempool transactions and not stale ones

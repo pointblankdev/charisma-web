@@ -11,6 +11,10 @@
         {
             "path": "/api/v0/blocks/cache",
             "schedule": "* * * * *"
+        },
+        {
+            "path": "/api/v0/crons/try-reset-epochs",
+            "schedule": "* * * * *"
         }
     ]
 }
