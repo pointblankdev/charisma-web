@@ -110,6 +110,10 @@ export default async function getMetadata(
 
                     // map of contract addresss and methods to metadata
                     const contractMetadata: Record<string, any> = {
+                        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v0::tap': {
+                            author: 'WANTED: "Hogger"',
+                            title: 'A player is fighting Hogger!'
+                        },
                         'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1::tap': {
                             author: 'WANTED: "Hogger"',
                             title: 'A player is fighting Hogger!'
@@ -146,25 +150,25 @@ export default async function getMetadata(
                                     embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
                                     Object.entries(event.data.value).forEach(([key, value]) => {
                                         // Convert the value to a string, handling potential nested objects
-                                        const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+                                        const stringValue = typeof value === 'object' ? safeJsonStringify(value) : String(value);
                                         embed.addField(key, stringValue, true);
                                     });
                                 } else {
                                     // If value is not an object, add it as a single field
-                                    embed.addField(event.data.topic, JSON.stringify(event.data.value));
+                                    embed.addField(event.data.topic, safeJsonStringify(event.data.value));
                                 }
                             } else if (event.type === 'FTBurnEvent' && 'sender' in event.data) {
                                 embed.addField('Protocol Fee', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1]} tokens.`);
                             } else {
-                                embed.addField(event.type, JSON.stringify(event.data));
+                                embed.addField(event.type, safeJsonStringify(event.data));
                             }
                         } catch (error) {
-                            embed.addField('Error Parsing Event', JSON.stringify(event.data));
+                            embed.addField('Error Parsing Event', safeJsonStringify(event.data));
                         }
                     }
 
                     await hook.send(embed);
-                    response = {}
+                    response = tx.metadata.receipt.events
                 }
             }
         } else if (req.method === 'GET') {
