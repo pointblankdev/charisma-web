@@ -119,18 +119,17 @@ export default async function getMetadata(
                         .setDescription(tx.metadata.description)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
-                    tx.metadata.receipt.events.forEach((event: ContractEvent) => {
+                    for (const event of tx.metadata.receipt.events) {
                         try {
                             if (event.type === 'SmartContractEvent' && 'topic' in event.data) {
                                 if (event.data.value.event === 'attack-result') {
                                     // critical hogger event, add to hogger events
                                     hoggerEvents.push(event.data.value)
-                                    setMob('hogger', { health: event.data.value['new-hogger-health'] })
+                                    await setMob('hogger', { health: event.data.value['new-hogger-health'] })
                                 }
                                 // loop through all values in the value object
                                 if (typeof event.data.value === 'object' && event.data.value !== null) {
-                                    // embed.addField(' ', ' ');
-                                    embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '⤥');
+                                    embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
                                     Object.entries(event.data.value).forEach(([key, value]) => {
                                         // Convert the value to a string, handling potential nested objects
                                         const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
@@ -148,7 +147,7 @@ export default async function getMetadata(
                         } catch (error) {
                             embed.addField('Error Parsing Event', JSON.stringify(event.data));
                         }
-                    })
+                    }
 
                     await hook.send(embed);
                     response = {}
