@@ -75,31 +75,11 @@ export default async function getMetadata(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
-
                 try {
-
-                    // map of contract addresss and methods to metadata
-                    const contractMetadata: Record<string, any> = {
-                        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v0::tap': {
-                            author: 'WANTED: "Hogger"',
-                            title: 'A player is fighting Hogger!'
-                        },
-                        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1::tap': {
-                            author: 'WANTED: "Hogger"',
-                            title: 'A player is fighting Hogger!'
-                        },
-                    }
-
-                    const contractIdentifier = tx.metadata.kind.data.contract_identifier
-                    const contractMethod = tx.metadata.kind.data.method
-                    const contractKey = `${contractIdentifier}::${contractMethod}`
-
-                    const metadata = contractMetadata[contractKey]
-
                     // send message to discord
                     const embed = new MessageBuilder()
-                        .setAuthor(metadata?.author || 'Unknown Author', 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
-                        .setTitle(metadata?.title || 'Unknown Title')
+                        .setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
+                        .setTitle('A player is fighting Hogger!')
                         .setDescription(tx.metadata?.description.split('::')[1] || '')
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
