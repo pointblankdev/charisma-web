@@ -37,24 +37,28 @@ interface ReceiptData {
 }
 
 interface ContractEvent {
-    data: {
-        contract_identifier: string
-        topic: string
-        //SmartContractEvent
-        value?: ContractPrintEvent
-        //FTBurnEvent
-        sender?: string
-        amount?: number
-        asset_identifier?: string
-    }
+    data: SmartContractEvent | FTBurnEvent
     position: any
     type: string
 }
 
+type SmartContractEvent = {
+
+    contract_identifier: string
+    topic: string
+    value: ContractPrintEvent
+}
+
 type ContractPrintEvent = {
-    event: string; // This will always be present
-    [key: string]: any; // Other properties are unknown and can vary
-};
+    event: string; // This should always be present
+    [key: string]: any; // Other properties are unknown and can vary}
+}
+
+type FTBurnEvent = {
+    sender: string
+    amount: number
+    asset_identifier: string
+}
 
 interface TransactionKind {
     data: {
@@ -112,21 +116,17 @@ export default async function getMetadata(
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
                         try {
-                            if (event.type === 'SmartContractEvent') {
-                                embed.addField(event.data.topic, JSON.stringify(event.data.value?.event))
-                            } else if (event.type === 'FTBurnEvent') {
-                                embed.addField('Protocol Fee', `${event.data.sender} burned ${event.data.amount} ${event.data.asset_identifier} tokens.`)
-                            } else {
-
-                                embed.addField(event.type, JSON.stringify(event.data))
-                            }
-
+                            // if (event.type === 'SmartContractEvent' && 'value' in event.data) {
+                            //     embed.addField(event.data.topic, JSON.stringify(event.data.value.event));
+                            // } else if (event.type === 'FTBurnEvent' && 'sender' in event.data) {
+                            //     embed.addField('Protocol Fee', `${event.data.sender} burned ${event.data.amount} ${event.data.asset_identifier} tokens.`);
+                            // } else {
+                            embed.addField(event.type, JSON.stringify(event.data));
+                            // }
                         } catch (error) {
-                            embed.addField('Error Parsing Event', JSON.stringify(event.data))
+                            embed.addField('Error Parsing Event', JSON.stringify(event.data));
                         }
                     })
-
-                    console.log(embed)
 
                     await hook.send(embed);
 
