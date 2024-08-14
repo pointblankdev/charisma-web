@@ -8,7 +8,7 @@ type ErrorResponse = {
     };
 };
 
-export default async function getMetadata(
+export default async function landsApi(
     req: NextApiRequest,
     res: NextApiResponse<any | ErrorResponse>
 ) {
