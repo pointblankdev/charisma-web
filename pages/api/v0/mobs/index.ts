@@ -96,17 +96,17 @@ export default async function getMetadata(
             const m1 = new MessageBuilder()
                 .setTitle('Chainhook Received')
                 .setDescription(`Processing ${chainhookPayload.apply.length} apply events`)
-            await hook.send(m1);
+            hook.send(m1).catch(console.error);
             for (const a of chainhookPayload.apply) {
                 const m2 = new MessageBuilder()
                     .setTitle('Apply Event')
                     .setDescription(`Processing ${a.transactions.length} transactions`)
-                await hook.send(m2);
+                hook.send(m2).catch(console.error);;
                 for (const tx of a.transactions) {
                     const m3 = new MessageBuilder()
                         .setTitle('Transaction')
                         .setDescription(`Processing transaction ${tx.metadata.description}`)
-                    await hook.send(m3);
+                    hook.send(m3).catch(console.error);;
 
                     // map of contract addresss and methods to metadata
                     const contractMetadata: Record<string, any> = {
@@ -130,7 +130,7 @@ export default async function getMetadata(
                     const embed = new MessageBuilder()
                         .setAuthor(metadata?.author || 'Unknown Author', 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
                         .setTitle(metadata?.title || 'Unknown Title')
-                        .setDescription(tx.metadata.description.split('::')[1])
+                        .setDescription(tx.metadata.description.split('::')[1] || '')
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     for (const event of tx.metadata.receipt.events) {
