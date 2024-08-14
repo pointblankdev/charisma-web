@@ -122,7 +122,7 @@ export default async function getMetadata(
                                     Object.entries(event.data.value).forEach(([key, value]) => {
                                         // Convert the value to a string, handling potential nested objects
                                         const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
-                                        embed.addField(`:charisma: ${key}`, stringValue, true);
+                                        embed.addField(key, stringValue, true);
                                     });
                                 } else {
                                     // If value is not an object, add it as a single field
