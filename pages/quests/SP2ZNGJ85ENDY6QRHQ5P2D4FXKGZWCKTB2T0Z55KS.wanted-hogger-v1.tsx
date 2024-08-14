@@ -61,7 +61,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       lands,
       mob
     },
-    revalidate: 60000
+    revalidate: 60
   };
 };
 
