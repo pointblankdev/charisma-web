@@ -90,7 +90,7 @@ export default async function getMetadata(
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
-                        embed.addField(event.data.value.event, JSON.stringify(event.data.value))
+                        embed.addField('Event', JSON.stringify(event))
                     })
 
                     console.log(embed)
