@@ -38,27 +38,9 @@ interface ReceiptData {
 }
 
 interface ContractEvent {
-    data: SmartContractEvent | FTBurnEvent
+    data: any
     position: any
     type: string
-}
-
-type SmartContractEvent = {
-
-    contract_identifier: string
-    topic: string
-    value: ContractPrintEvent
-}
-
-type ContractPrintEvent = {
-    event: string; // This should always be present
-    [key: string]: any; // Other properties are unknown and can vary}
-}
-
-type FTBurnEvent = {
-    sender: string
-    amount: number
-    asset_identifier: string
 }
 
 interface TransactionKind {
@@ -134,28 +116,24 @@ export default async function getMetadata(
 
                     for (const event of tx.metadata.receipt.events) {
                         try {
-                            if (event.type === 'SmartContractEvent' && 'value' in event.data) {
+                            if (event.type === 'SmartContractEvent') {
                                 if (event.data.value.event === 'attack-result') {
-                                    // critical hogger event, add to hogger events
                                     const newHealth = event.data.value['new-hogger-health']
                                     const hogger = await getMob('hogger')
                                     if (hogger.maxHealth || 0 < newHealth) { hogger.maxHealth = newHealth }
                                     hogger.health = newHealth
                                     await setMob('hogger', hogger)
                                 }
-                                // // loop through all values in the value object
-                                // if (typeof event.data.value === 'object' && event.data.value !== null) {
-                                //     embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
-                                //     Object.entries(event.data.value).forEach(([key, value]) => {
-                                //         // Convert the value to a string, handling potential nested objects
-                                //         const stringValue = typeof value === 'object' ? safeJsonStringify(value) : String(value);
-                                //         embed.addField(key, stringValue, true);
-                                //     });
-                                // } else {
-                                //     // If value is not an object, add it as a single field
-                                //     embed.addField(event.data.topic, safeJsonStringify(event.data.value));
-                                // }
-                            } else if (event.type === 'FTBurnEvent' && 'sender' in event.data) {
+                                try {
+                                    embed.addField(`🔻 ${event.data.value.event ? event.data.value.event : 'event'}`, '');
+                                    Object.entries(event.data.value).forEach(([key, value]: any) => {
+                                        const stringValue = typeof value === 'object' ? safeJsonStringify(value) : String(value);
+                                        embed.addField(key, stringValue, true);
+                                    });
+                                } catch (error) {
+                                    embed.addField(event.data.topic, safeJsonStringify(event.data.value));
+                                }
+                            } else if (event.type === 'FTBurnEvent') {
                                 embed.addField('Protocol Fee', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
                             } else {
                                 embed.addField(event.type, safeJsonStringify(event.data));
