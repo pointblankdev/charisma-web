@@ -45,7 +45,10 @@ interface ContractEvent {
     position: any
 }
 
-type ContractPrintEvent = Record<string, any>;
+type ContractPrintEvent = {
+    event: string; // This will always be present
+    [key: string]: any; // Other properties are unknown and can vary
+};
 
 interface TransactionKind {
     data: {
@@ -82,13 +85,12 @@ export default async function getMetadata(
 
                     // send message to discord
                     const embed = new MessageBuilder()
-                        .setTitle('Hogger')
-                        .setDescription(`Hogger Receipt`)
+                        .setTitle(tx.metadata.kind.data.contract_identifier)
+                        .setDescription(tx.metadata.kind.data.method)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
-                    // .setText(JSON.stringify(tx.metadata.receipt.events).slice(0, 2000))
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
-                        embed.addField(event.data.contract_identifier, JSON.stringify(event.data.value))
+                        embed.addField(event.data.value.event, JSON.stringify(event.data.value))
                     })
                     await hook.send(embed);
 
