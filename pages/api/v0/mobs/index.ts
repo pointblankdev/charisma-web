@@ -116,13 +116,25 @@ export default async function getMetadata(
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
                         try {
-                            // if (event.type === 'SmartContractEvent' && 'value' in event.data) {
-                            //     embed.addField(event.data.topic, JSON.stringify(event.data.value.event));
-                            // } else if (event.type === 'FTBurnEvent' && 'sender' in event.data) {
-                            //     embed.addField('Protocol Fee', `${event.data.sender} burned ${event.data.amount} ${event.data.asset_identifier} tokens.`);
-                            // } else {
-                            embed.addField(event.type, JSON.stringify(event.data));
-                            // }
+                            if (event.type === 'SmartContractEvent' && 'topic' in event.data) {
+                                // loop through all values in the value object
+
+
+                                if (typeof event.data.value === 'object' && event.data.value !== null) {
+                                    Object.entries(event.data.value).forEach(([key, value]) => {
+                                        // Convert the value to a string, handling potential nested objects
+                                        const stringValue = typeof value === 'object' ? JSON.stringify(value) : String(value);
+                                        embed.addField(key, stringValue);
+                                    });
+                                } else {
+                                    // If value is not an object, add it as a single field
+                                    embed.addField(event.data.topic, JSON.stringify(event.data.value));
+                                }
+                            } else if (event.type === 'FTBurnEvent' && 'sender' in event.data) {
+                                embed.addField('Protocol Fee', `${event.data.sender} burned ${event.data.amount} ${event.data.asset_identifier} tokens.`);
+                            } else {
+                                embed.addField(event.type, JSON.stringify(event.data));
+                            }
                         } catch (error) {
                             embed.addField('Error Parsing Event', JSON.stringify(event.data));
                         }
