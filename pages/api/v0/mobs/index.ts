@@ -6,6 +6,42 @@ import numeral from 'numeral';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
+
+// Main payload structure
+interface ChainhookPayload {
+    apply: ApplyEvent[];
+}
+
+interface ApplyEvent {
+    transactions: Transaction[];
+}
+
+interface Transaction {
+    metadata: TransactionMetadata;
+}
+
+interface TransactionMetadata {
+    kind: {
+        data: any;
+    };
+    sender: string;
+    success: boolean;
+}
+
+// You'll need to define the structure of TransactionData
+// based on the actual data you're receiving
+// interface TransactionData {
+//     // Add properties based on the actual data structure
+//     // For example:
+//     // amount?: number;
+//     // recipient?: string;
+//     // ... other properties
+// }
+
+// Helper type for the response
+type ChainhookResponse = Record<string, any>;
+
+
 type ErrorResponse = {
     error: {
         code: string;
@@ -15,13 +51,15 @@ type ErrorResponse = {
 
 export default async function getMetadata(
     req: NextApiRequest,
-    res: NextApiResponse<any | ErrorResponse>
+    res: NextApiResponse<ChainhookResponse | ErrorResponse>
 ) {
+
+    const chainhookPayload: ChainhookPayload = req.body
 
     let response, code = 200
     try {
         if (req.method === 'POST') {
-            for (const a of req.body.apply) {
+            for (const a of chainhookPayload.apply) {
                 for (const tx of a.transactions) {
 
                     const payload = {
@@ -35,7 +73,7 @@ export default async function getMetadata(
                         .setTitle('Hogger')
                         .setDescription(`Hogger event`)
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
-                        .setText(JSON.stringify(tx))
+                        .setText(JSON.stringify(payload))
                     await hook.send(embed);
 
                     // if (payload.success) {
@@ -67,7 +105,7 @@ export default async function getMetadata(
                 }
             }
         } else if (req.method === 'GET') {
-            // response = await getExperienceLeaderboard(0, -1)
+            response = {}
         } else {
             code = 501
             response = new Object({
@@ -80,5 +118,5 @@ export default async function getMetadata(
         response = {}
     }
 
-    return res.status(code).json(response);
+    return res.status(code).json(response as ChainhookResponse | ErrorResponse);
 }
