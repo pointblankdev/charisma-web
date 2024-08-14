@@ -102,7 +102,8 @@ export default async function getMetadata(
                     const embed = new MessageBuilder()
                         .setTitle(metadata.title)
                         .setDescription(metadata.description)
-                        .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
+                        // .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
+                        .setImage('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     tx.metadata.receipt.events.forEach((event: ContractEvent) => {
                         embed.addField(event.type, JSON.stringify(event.data))
