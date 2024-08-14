@@ -141,7 +141,7 @@ export default async function getMetadata(
                                     hoggerEvents.push(event.data.value)
                                     const newHealth = event.data.value['new-hogger-health']
                                     const hogger = await getMob('hogger')
-                                    if (hogger.maxHealth < newHealth) { hogger.maxHealth = newHealth }
+                                    if (hogger.maxHealth || 0 < newHealth) { hogger.maxHealth = newHealth }
                                     hogger.health = newHealth
                                     await setMob('hogger', hogger)
                                 }
