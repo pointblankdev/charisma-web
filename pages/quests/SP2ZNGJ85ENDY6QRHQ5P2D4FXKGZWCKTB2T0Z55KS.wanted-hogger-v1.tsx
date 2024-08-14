@@ -38,7 +38,7 @@ import chaIcon from '@public/charisma.png'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import experienceIcon from '@public/experience.png'
-import { getLand, getLands } from '@lib/db-providers/kv';
+import { getLand, getLands, getMob } from '@lib/db-providers/kv';
 import wantedHogger from '@public/quests/wanted-hogger/hogger.png'
 import hugeKnollClaw from '@public/quests/wanted-hogger/huge-knoll-claw.png'
 import hoggerIcon from '@public/quests/wanted-hogger/hogger-icon.png'
@@ -48,6 +48,7 @@ import eliteFrame from '@public/quests/wanted-hogger/elite.webp'
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all lands from db
   const landContractAddresses = await getLands()
+  const mob = await getMob('hogger')
 
   const lands = []
   for (const ca of landContractAddresses) {
@@ -57,7 +58,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   return {
     props: {
-      lands
+      lands,
+      mob
     },
     revalidate: 60000
   };
@@ -65,9 +67,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 type Props = {
   lands: any[];
+  mob: any
 };
 
-export default function WantedHogger({ lands }: Props) {
+export default function WantedHogger({ lands, mob }: Props) {
   const meta = {
     title: `Charisma | WANTED: "Hogger"`,
     description: META_DESCRIPTION,
@@ -76,6 +79,11 @@ export default function WantedHogger({ lands }: Props) {
 
   const title = `WANTED: "Hogger"`;
   const subtitle = 'Slay the huge gnoll Hogger.';
+
+
+  const healthPercentage = mob.health * 100 / mob.maxHealth
+
+  console.log({ healthPercentage, mob })
 
 
   const [descriptionVisible, setDescriptionVisible] = useState(false);
@@ -199,7 +207,7 @@ export default function WantedHogger({ lands }: Props) {
 
                   <CardFooter className="z-20 flex justify-between p-4 items-end">
 
-                    <Link href="/crafting">
+                    <Link href="/quests">
                       <Button variant="ghost" className="z-30">
                         Back
                       </Button>
@@ -250,14 +258,14 @@ export default function WantedHogger({ lands }: Props) {
 
                       className="z-10 h-[4.5rem] w-[4.5rem] absolute top-[32px] left-[60px] transform scale-x-[-1] rounded-full"
                     />
-                    <div className="z-20 top-[80px] left-[60px] absolute px-1 font-semibold rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground">
+                    <div className="z-20 top-[80px] left-[60px] absolute px-1 font-semibold rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
                       10
                     </div>
                     <CardTitle className="z-30 text-xl text-primary-foreground/90 font-semibold text-center pt-[1.4rem] leading-none">Hogger</CardTitle>
                     <CardDescription className="z-30 text-md font-light text-center text-muted/70 pb-4">
                       Chieftain of the Riverpaw gnolls
                     </CardDescription>
-                    <HealthBar className='absolute rounded-md h-[3.2rem] w-96 top-[2.4rem] left-[8.2rem]' value={50} max={100} />
+                    <HealthBar className='absolute rounded-md h-[3.2rem] w-96 top-[2.4rem] left-[8.2rem]' value={healthPercentage} />
                   </CardHeader>
                   <CardContent className="z-20 flex-grow p-4 space-y-4">
                     {/* Add content for the Hogger fight card */}
@@ -271,7 +279,14 @@ export default function WantedHogger({ lands }: Props) {
                       Attack
                     </Button>
                   </CardFooter> */}
+
                   <CardFooter className="z-20 flex justify-between p-4 items-end">
+
+                    <Button variant="ghost" size={'lg'} onClick={() => setShowHoggerCard(false)} className="z-30">
+                      Back
+                    </Button>
+
+                    <SelectCreatureDialog lands={lands} />
                   </CardFooter>
                   <Image
                     src={wantedHogger}
@@ -343,7 +358,7 @@ export function SelectCreatureDialog({ lands }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size={'sm'} className={`z-30`}>Fight Hogger</Button>
+        <Button size={'lg'} className={`z-30`}>Attack</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <AlertDialogHeader>
