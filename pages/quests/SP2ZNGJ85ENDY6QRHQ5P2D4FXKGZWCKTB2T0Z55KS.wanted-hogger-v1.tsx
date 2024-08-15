@@ -26,7 +26,7 @@ import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import { getLand, getLands, getMob } from '@lib/db-providers/kv';
 import wantedHogger from '@public/quests/wanted-hogger/hogger.png'
 import hoggerIcon from '@public/quests/wanted-hogger/hogger-icon.png'
-import hoggerDefeated from '@public/quests/wanted-hogger/hogger-defeated.png'
+import hoggerDefeated from '@public/quests/wanted-hogger/hogger-defeated-2.png'
 import { HealthBar } from '@components/ui/health-bar';
 import eliteFrame from '@public/quests/wanted-hogger/elite.webp'
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
