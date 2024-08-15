@@ -14,7 +14,7 @@ import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 import wantedHogger from '@public/quests/wanted-hogger/hogger.png'
 import hugeKnollClaw from '@public/quests/wanted-hogger/hogger-icon.png'
 import hoggerDefeated from '@public/quests/wanted-hogger/hogger-camp.png'
-import wantedPoster from '@public/quests/wanted-hogger/wanted-poster.png'
+import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db

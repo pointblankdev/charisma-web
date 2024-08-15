@@ -13,7 +13,6 @@ import {
 } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { GetStaticProps } from 'next';
-import { useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -32,9 +31,8 @@ import eliteFrame from '@public/quests/wanted-hogger/elite.webp'
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { makeStandardFungiblePostCondition, FungibleConditionCode } from '@stacks/transactions';
 import { useSearchParams } from 'next/navigation';
-import { useNavigation } from 'react-day-picker';
 import { useRouter } from 'next/router';
-import wantedPoster from '@public/quests/wanted-hogger/wanted-poster.png'
+import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all lands from db
