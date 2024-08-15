@@ -269,7 +269,9 @@ export default function WantedHogger({ lands, mob }: Props) {
                       Back
                     </Button>
 
-                    <SelectCreatureDialog lands={lands} />
+                    {mob.health > 0 &&
+                      <SelectCreatureDialog lands={lands} />
+                    }
                   </CardFooter>
                   <Image
                     src={wantedHogger}
@@ -290,6 +292,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                   />
                   <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
                 </Card>
+                <div className='p-3 text-md font-semibold justify-center text-center text-primary-foreground/90 animate-pulse rounded-b-lg border'>Hogger has been slain. He will respawn in less than 14 blocks.</div>
               </motion.div>
             )}
           </AnimatePresence>
