@@ -13,7 +13,6 @@ import ConnectWallet from "@components/stacks-session/connect";
 
 const AddLiquidityToIndex = ({ amount, address, metadata }: { amount: number, address: `${string}.${string}`, metadata: any }) => {
 
-
     const { openContractCall } = useOpenContractCall();
 
     const { stxAddress } = useAccount()

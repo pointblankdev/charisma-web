@@ -1,10 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { StacksMainnet } from "@stacks/network";
-import {
-  PostConditionMode,
-  makeStandardFungiblePostCondition,
-  FungibleConditionCode
-} from "@stacks/transactions";
+import React from "react";
+import { makeStandardFungiblePostCondition, FungibleConditionCode } from "@stacks/transactions";
 import { DropdownMenuItem } from "@components/ui/dropdown-menu";
 import { useAccount, useOpenContractCall } from "@micro-stacks/react";
 import { uintCV, boolCV, contractPrincipalCV } from 'micro-stacks/clarity';
