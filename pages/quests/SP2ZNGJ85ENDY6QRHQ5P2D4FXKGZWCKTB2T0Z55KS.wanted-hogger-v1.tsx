@@ -75,7 +75,7 @@ export default function WantedHogger({ lands, mob }: Props) {
   const { get } = useSearchParams()
 
   const handleViewToggle = () => {
-    const newView = get('view') === 'view1' ? 'view2' : 'view1';
+    const newView = get('view') === 'quest' ? 'mob' : 'quest';
     router.push(`?view=${newView}`, undefined, { shallow: true });
   }
 
@@ -93,7 +93,7 @@ export default function WantedHogger({ lands, mob }: Props) {
           className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl"
         >
           <AnimatePresence mode="wait">
-            {get('view') === 'view1' ? (
+            {get('view') === 'quest' ? (
               <motion.div
                 key="original-card"
                 initial="hidden"
