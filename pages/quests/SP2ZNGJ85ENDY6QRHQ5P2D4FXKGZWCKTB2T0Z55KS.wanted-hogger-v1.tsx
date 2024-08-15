@@ -33,8 +33,10 @@ import { makeStandardFungiblePostCondition, FungibleConditionCode } from '@stack
 import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
+import { GetServerSidePropsContext } from 'next';
+import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
   const landContractAddresses = await getLands()
   const mob = await getMob('hogger')
@@ -48,11 +50,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   return {
     props: {
       lands,
-      mob
+      mob,
+      dehydratedState: await getDehydratedStateFromSession(ctx),
     },
-    revalidate: 60
   };
-};
+}
 
 type Props = {
   lands: any[];
