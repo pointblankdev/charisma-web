@@ -34,6 +34,7 @@ import { makeStandardFungiblePostCondition, FungibleConditionCode } from '@stack
 import { useSearchParams } from 'next/navigation';
 import { useNavigation } from 'react-day-picker';
 import { useRouter } from 'next/router';
+import wantedPoster from '@public/quests/wanted-hogger/wanted-poster.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all lands from db
@@ -201,7 +202,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                     {/* <SelectCreatureDialog lands={lands} /> */}
                   </CardFooter>
                   <Image
-                    src={wantedHogger}
+                    src={wantedPoster}
                     width={800}
                     height={1600}
                     alt={'quest-background-image'}
@@ -230,21 +231,23 @@ export default function WantedHogger({ lands, mob }: Props) {
               >
                 <Card className="sm:min-h-[900px] min-h-[720px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
                   <CardHeader className="z-20 p-4 space-y-0 relative">
-                    <Image
-                      alt="Elite Monster"
-                      src={eliteFrame}
+                    {mob.health > 0 ? <>
+                      <Image
+                        alt="Elite Monster"
+                        src={eliteFrame}
 
-                      className="z-30 h-36 w-36 absolute top-0 left-2 transform scale-x-[-1]"
-                    />
-                    <Image
-                      alt="Hogger Icon"
-                      src={hoggerIcon}
+                        className="z-30 h-36 w-36 absolute top-0 left-2 transform scale-x-[-1]"
+                      />
+                      <Image
+                        alt="Hogger Icon"
+                        src={hoggerIcon}
 
-                      className="z-10 h-[4.5rem] w-[4.5rem] absolute top-[32px] left-[60px] transform scale-x-[-1] rounded-full"
-                    />
-                    <div className="z-20 top-[80px] left-[60px] absolute px-1 font-semibold text-center min-w-6 rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
-                      {mob.level}
-                    </div>
+                        className="z-10 h-[4.5rem] w-[4.5rem] absolute top-[32px] left-[60px] transform scale-x-[-1] rounded-full"
+                      />
+                      <div className="z-20 top-[80px] left-[60px] absolute px-1 font-semibold text-center min-w-6 rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
+                        {mob.level}
+                      </div>
+                    </> : ''}
                     <CardTitle className="z-30 text-xl text-primary-foreground/90 font-semibold text-center pt-[1.4rem] leading-none">Hogger</CardTitle>
                     <CardDescription className="z-30 text-md font-light text-center text-muted/70 pb-4 grow">
                       Chieftain of the Riverpaw gnolls

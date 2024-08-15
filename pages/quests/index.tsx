@@ -12,7 +12,9 @@ import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { cn } from '@lib/utils';
 import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 import wantedHogger from '@public/quests/wanted-hogger/hogger.png'
-import hugeKnollClaw from '@public/quests/wanted-hogger/huge-knoll-claw.png'
+import hugeKnollClaw from '@public/quests/wanted-hogger/hogger-icon.png'
+import hoggerDefeated from '@public/quests/wanted-hogger/hogger-camp.png'
+import wantedPoster from '@public/quests/wanted-hogger/wanted-poster.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
@@ -31,7 +33,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       description: "Slay the huge gnoll Hogger.",
       ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1?view=quest",
       image: hugeKnollClaw,
-      cardImage: wantedHogger,
+      cardImage: wantedPoster,
     }
   ]
   for (const ca of questContractAddresses) {
