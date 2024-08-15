@@ -1,4 +1,5 @@
 import crypto from 'crypto';
+import { API_URL } from './constants';
 
 const HOST = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://beta.charisma.rocks';
 
@@ -165,3 +166,23 @@ export async function getExperienceHolders() {
   });
   return response.json();
 }
+
+export const saveSession = async (dehydratedState: string) => {
+  await fetch(API_URL + '/api/v0/session/save', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ dehydratedState }),
+  });
+};
+
+export const destroySession = async () => {
+  try {
+    await fetch(API_URL + '/api/v0/session/destroy', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: null,
+    });
+  } catch (e) {
+    console.log(e);
+  }
+};

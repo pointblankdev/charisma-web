@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { WalletBalances, WalletBalancesContext } from '@lib/hooks/use-wallet-balances';
 import { getAccountBalance } from '@lib/stacks-api';
-import { userSession } from '@components/stacks-session/connect';
 import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
+import { useAccount } from '@micro-stacks/react';
 
 export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { stxAddress } = useAccount()
+
   const [balances, setBalances] = useState<WalletBalances>({} as AddressBalanceResponse);
 
   const getKeyByContractAddress = (contractAddress: string) => {
@@ -18,13 +20,12 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
   };
 
   useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      const ca = userSession.loadUserData().profile.stxAddress.mainnet;
-      getAccountBalance(ca).then((balances) => {
+    if (stxAddress) {
+      getAccountBalance(stxAddress).then((balances) => {
         setBalances(balances);
       });
     }
-  }, []);
+  }, [stxAddress]);
 
   return (
     <WalletBalancesContext.Provider

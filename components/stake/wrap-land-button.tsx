@@ -1,18 +1,15 @@
-import React, { useEffect, useState } from "react";
-import { useConnect } from "@stacks/connect-react";
-import { StacksMainnet } from "@stacks/network";
+import React from "react";
 import {
-  AnchorMode,
   Pc,
   PostCondition,
   PostConditionMode,
   principalCV,
   tupleCV,
-  uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import useWallet from "@lib/hooks/use-wallet-balances";
+import { useAccount, useOpenContractCall } from "@micro-stacks/react";
+import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 
 interface StakeButtonProps {
   tokens: number;
@@ -23,13 +20,9 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
   tokens,
   metadata,
 }) => {
-  const { doContractCall } = useConnect();
+  const { openContractCall } = useOpenContractCall();
+  const { stxAddress } = useAccount()
   const { balances } = useWallet()
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => {
-    setMounted(true);
-  }, []);
 
   const tokens6Dec = Number(tokens)
 
@@ -40,33 +33,20 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
   const hasLands = balances?.non_fungible_tokens?.[landNftKey]
 
   function stake() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     const isUsingBurnToken = metadata.wraps.ca === burnTokenContract
     const postConditions: PostCondition[] = [
-      Pc.principal(sender).willSendEq(tokens6Dec + (isUsingBurnToken ? 1000000 : 0)).ft(metadata.wraps.ca, metadata.wraps.asset)
+      Pc.principal(stxAddress!).willSendEq(tokens6Dec + (isUsingBurnToken ? 1000000 : 0)).ft(metadata.wraps.ca, metadata.wraps.asset)
     ]
-    if (hasLands) postConditions.push(Pc.principal(sender).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(sender) })))
-    if (!isUsingBurnToken) postConditions.push(Pc.principal(sender).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset))
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
+    if (hasLands) postConditions.push(Pc.principal(stxAddress!).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(stxAddress!) })))
+    if (!isUsingBurnToken) postConditions.push(Pc.principal(stxAddress!).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset))
+    openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'land-helper-v0',
       functionName: "wrap",
-      functionArgs: [uintCV(tokens6Dec), principalCV(metadata.wraps.ca)],
+      functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: postConditions,
-      onFinish: (data) => {
-        console.log("onFinish:", data);
-      },
-      onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+      postConditions: postConditions as any[],
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
   }
 
   return (

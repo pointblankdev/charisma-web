@@ -10,16 +10,12 @@ import {
   Pc
 } from "@stacks/transactions";
 import { DropdownMenuItem } from "@components/ui/dropdown-menu";
-import { userSession } from "@components/stacks-session/connect";
 
 const ContractCallVote = ({ proposalPrincipal }: any) => {
   const { doContractCall } = useConnect();
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
   function vote(pick: boolean) {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+    const sender = ''
     console.log(sender)
     doContractCall({
       network: new StacksMainnet(),
@@ -37,10 +33,6 @@ const ContractCallVote = ({ proposalPrincipal }: any) => {
         console.log("onCancel:", "Transaction was canceled");
       },
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return null;
   }
 
   return (

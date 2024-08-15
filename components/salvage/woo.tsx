@@ -7,14 +7,10 @@ import {
   principalCV,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
 const SalvageFenrir = ({ amount }: { amount: number }) => {
   const { doContractCall } = useConnect();
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
 
   function salvage() {
     doContractCall({
@@ -42,10 +38,6 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
         console.log("onCancel:", "Transaction was canceled");
       },
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
   }
 
   return (

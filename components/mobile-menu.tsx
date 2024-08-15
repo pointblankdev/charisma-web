@@ -10,12 +10,14 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
-import { userSession } from './stacks-session/connect';
+import { useAuth } from '@micro-stacks/react';
 
 const mobileNav = [...NAVIGATION, { name: 'Governance', route: '/governance' }]
 
 
 function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof useDialog>[0]) {
+  const { isSignedIn, signOut } = useAuth();
+
   const router = useRouter();
   const activeRoute = router.asPath;
 
@@ -39,7 +41,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
               {name}
             </Link>
           ))}
-          {userSession.isUserSignedIn() && <Link href='/' className={cn(styles['nav-item'])} onClick={() => userSession.signUserOut('/')}>Sign out</Link>}
+          {isSignedIn && <Link href='/' className={cn(styles['nav-item'])} onClick={() => signOut()}>Sign out</Link>}
         </nav>
       </FocusScope>
     </div >

@@ -8,17 +8,13 @@ import {
   principalCV,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
 const SalvageFenrir = ({ amount }: { amount: number }) => {
   const { doContractCall } = useConnect();
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
-
   function salvage() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+    const sender = ''
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -42,32 +38,6 @@ const SalvageFenrir = ({ amount }: { amount: number }) => {
         console.log("onCancel:", "Transaction was canceled");
       },
     });
-  }
-
-  // function salvage() {
-  //   const sender = userSession.loadUserData().profile.stxAddress.mainnet
-  //   doContractCall({
-  //     network: new StacksMainnet(),
-  //     anchorMode: AnchorMode.Any,
-  //     contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-  //     contractName: "fenrir-token",
-  //     functionName: "salvage",
-  //     functionArgs: [uintCV(90000000), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
-  //     postConditionMode: PostConditionMode.Allow,
-  //     postConditions: [
-  //       // Pc.principal(sender).willSendEq(amount).ft("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok", 'fenrir'),
-  //     ],
-  //     onFinish: (data) => {
-  //       console.log("onFinish:", data);
-  //     },
-  //     onCancel: () => {
-  //       console.log("onCancel:", "Transaction was canceled");
-  //     },
-  //   });
-  // }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
   }
 
   return (

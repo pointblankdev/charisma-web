@@ -24,13 +24,12 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useState } from 'react';
 import { getContractSource, getDecimals, getSymbol, getTokenURI, getTotalSupply } from '@lib/stacks-api';
-import { useConnect } from '@stacks/connect-react';
-import { StacksMainnet } from "@stacks/network";
 import { PostConditionMode } from '@stacks/transactions';
 import { setLandMetadata } from '@lib/user-api';
 import energyIcon from '@public/creatures/img/energy.png';
-import { userSession } from '@components/stacks-session/connect';
 import { track } from '@vercel/analytics';
+import { useAccount } from '@micro-stacks/react';
+import { useOpenContractDeploy } from '@micro-stacks/react';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
@@ -177,11 +176,13 @@ const proposalFormSchema = z.object({
 type ProposalFormValues = z.infer<typeof proposalFormSchema>
 
 const CreateNewPool = ({ whitelistedContracts }: any) => {
+
+  const { stxAddress } = useAccount()
   const defaultValues: Partial<ProposalFormValues> = {
     contractAddress: "",
   }
 
-  const { doContractDeploy } = useConnect();
+  const { openContractDeploy } = useOpenContractDeploy();
 
   const form = useForm<ProposalFormValues>({
     resolver: zodResolver(proposalFormSchema),
@@ -220,8 +221,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
 
     const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
     const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split(' ')[1].split(')')[0]
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const proposalName = `${sender}.${safeName}`
+    const proposalName = `${stxAddress}.${safeName}`
 
     const landMetadata = {
       sip: 16,
@@ -271,11 +271,9 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
     })
 
     if (!isWhitelisted) {
-      doContractDeploy({
+      await openContractDeploy({
         contractName: safeName,
         codeBody: template,
-        postConditionMode: PostConditionMode.Deny,
-        network: new StacksMainnet(),
         onCancel: async () => {
           await setLandMetadata(contractAddress, landMetadata)
         },

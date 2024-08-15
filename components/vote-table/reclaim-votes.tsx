@@ -5,32 +5,41 @@ import {
   AnchorMode,
   PostConditionMode,
   principalCV,
-  Pc
+  Pc,
+  makeStandardFungiblePostCondition,
+  FungibleConditionCode
 } from "@stacks/transactions";
-import { userSession } from "@components/stacks-session/connect";
 import { Button } from "@components/ui/button";
+import { useAccount, useOpenContractCall } from "@micro-stacks/react";
+import { contractPrincipalCV } from 'micro-stacks/clarity';
 
 type Props = {
   proposalPrincipal: string;
 };
 
 const ReclaimVotes = ({ proposalPrincipal }: Props) => {
-  const { doContractCall } = useConnect();
+  const proposal = proposalPrincipal.split('.')
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
+  const { openContractCall } = useOpenContractCall();
+  const { stxAddress } = useAccount();
+
+  if (!stxAddress) {
+    return null;
+  }
+
+  const burnTokenContract = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma-locked'
+
+  const postConditions = [
+    makeStandardFungiblePostCondition(stxAddress, FungibleConditionCode.GreaterEqual, '1000000', burnTokenContract),
+  ];
 
   function reclaimVotes() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
+    openContractCall({
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: "dme001-proposal-voting",
       functionName: "reclaim-votes",
-      functionArgs: [principalCV(proposalPrincipal)],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal(sender).willSendGte(1).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma-locked')],
+      functionArgs: [contractPrincipalCV(proposal[0], proposal[1])],
+      postConditions: postConditions as any[],
       onFinish: (data) => {
         console.log("onFinish:", data);
       },
@@ -38,10 +47,6 @@ const ReclaimVotes = ({ proposalPrincipal }: Props) => {
         console.log("onCancel:", "Transaction was canceled");
       },
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return null;
   }
 
   return (

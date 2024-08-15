@@ -7,9 +7,6 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { getContractSource, getSymbol } from "@lib/stacks-api"
-import { userSession } from '@components/stacks-session/connect';
-import { useConnect } from "@stacks/connect-react"
-import { StacksMainnet } from "@stacks/network";
 import { setContractMetadata } from "@lib/user-api"
 import { useEffect } from "react"
 
@@ -196,9 +193,7 @@ type ContractFormValues = z.infer<typeof contractFormSchema>
 
 export default function LiquidStakedTemplate({ onFormChange }: any) {
 
-
-
-    const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+    const sender = ''
 
     const defaultValues: Partial<ContractFormValues> = {
         sender: sender,

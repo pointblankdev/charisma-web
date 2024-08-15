@@ -17,47 +17,25 @@ import Link from "next/link";
 import { BiSolidUserPin } from "react-icons/bi";
 import Image from "next/image";
 import charisma from "@public/quests/a1.png";
-
-export const appConfig = new AppConfig(["store_write", "publish_data"]);
-
-export const userSession = new UserSession({ appConfig });
-
-export const appDetails = {
-  name: "Charisma",
-  icon: "https://charisma.rocks/charisma.png",
-};
-
-function authenticate() {
-  showConnect({
-    appDetails,
-    redirectTo: "/",
-    onFinish: () => {
-      window.location.reload();
-    },
-    userSession,
-  });
-}
-
-function disconnect() {
-  userSession.signUserOut("/");
-}
+import { useAccount, useAuth } from '@micro-stacks/react';
 
 const ConnectWallet = () => {
-  const [mounted, setMounted] = useState(false);
-  const [address, setAddress] = useState('');
-  useEffect(() => {
-    setMounted(true)
-    if (userSession.isUserSignedIn()) {
-      setAddress(`${userSession.loadUserData().profile.stxAddress.mainnet.slice(0, 4)}...${userSession.loadUserData().profile.stxAddress.mainnet.slice(-4)}`)
-    }
-  }, []);
+  const { openAuthRequest, isRequestPending, signOut, isSignedIn } = useAuth();
+  const { stxAddress } = useAccount();
 
-  if (mounted && userSession.isUserSignedIn()) {
+  const shortAddress = `${stxAddress?.slice(0, 4)}...${stxAddress?.slice(-4)}`
+
+  const handleConnect = async () => {
+    if (isSignedIn) await signOut();
+    else await openAuthRequest();
+  }
+
+  if (isSignedIn) {
     return (
       <NavigationMenu className="hidden sm:block">
         <NavigationMenuList>
           <NavigationMenuItem>
-            <NavigationMenuTrigger>{address}</NavigationMenuTrigger>
+            <NavigationMenuTrigger>{shortAddress}</NavigationMenuTrigger>
             <NavigationMenuContent>
               <ul className="grid gap-3 p-6 md:w-[400px]">
                 <ListItem href="/portfolio" title="Portfolio">
@@ -66,7 +44,7 @@ const ConnectWallet = () => {
                 <ListItem href="/governance" title="Governance">
                   Vote on DAO proposals using the Charisma token.
                 </ListItem>
-                <ListItem title="Sign Out" onClick={disconnect} className="cursor-pointer">
+                <ListItem title="Sign Out" onClick={() => signOut()} className="cursor-pointer">
                   Securely disconnect your wallet.
                 </ListItem>
               </ul>
@@ -77,9 +55,10 @@ const ConnectWallet = () => {
     );
   }
 
+  const label = isRequestPending ? 'Loading...' : isSignedIn ? shortAddress : 'Connect';
   return (
-    <Button onClick={authenticate} id="cta-btn" className={cn(styles['cta-btn'], 'whitespace-nowrap', 'w-full')}>
-      Connect
+    <Button onClick={handleConnect} id="cta-btn" className={cn(styles['cta-btn'], 'whitespace-nowrap', 'w-full')}>
+      {label}
     </Button>
   );
 };

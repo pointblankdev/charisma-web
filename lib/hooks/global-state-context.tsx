@@ -1,9 +1,9 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { usePersistedState } from './use-persisted-state';
-import { userSession } from '@components/stacks-session/connect';
 import { getClaimableAmount, getCreatureAmount } from '@lib/stacks-api';
 import { getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
+import { useAccount } from '@micro-stacks/react';
 
 
 const socketUrl = "https://api.mainnet.hiro.so";
@@ -19,6 +19,7 @@ interface GlobalState {
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const { stxAddress } = useAccount()
     const [creatures, setCreatures] = usePersistedState('creatures', {});
     const [block, setBlock] = usePersistedState('block', {});
 
@@ -37,24 +38,25 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         const CREATURES = ['farmers', 'blacksmiths', 'corgiSoldiers', 'alchemists'];
 
         const getCreatureData = async () => {
-            const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet;
+            if (stxAddress) {
 
-            const newCreatureState: CreatureState = {};
+                const newCreatureState: CreatureState = {};
 
-            let i = 0;
-            for (const creature of CREATURES) {
-                const creatureName = creature;
-                const creatureId = ++i;
-                const amount = await getCreatureAmount(creatureId, sender);
-                const energy = await getClaimableAmount(creatureId, sender);
+                let i = 0;
+                for (const creature of CREATURES) {
+                    const creatureName = creature;
+                    const creatureId = ++i;
+                    const amount = await getCreatureAmount(creatureId, stxAddress);
+                    const energy = await getClaimableAmount(creatureId, stxAddress);
 
-                newCreatureState[creatureName] = { amount, energy };
+                    newCreatureState[creatureName] = { amount, energy };
+                }
+
+                setCreatures(newCreatureState)
             }
-
-            setCreatures(newCreatureState)
         }
         getCreatureData()
-    }, [setCreatures])
+    }, [stxAddress, setCreatures])
 
     useEffect(() => {
 

@@ -34,16 +34,12 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { useEffect, useState } from "react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form"
 import { motion } from 'framer-motion';
-import { BsCurrencyExchange, BsWater } from "react-icons/bs"
-import { BiMath } from "react-icons/bi"
-import { userSession } from "@components/stacks-session/connect"
-import { useConnect } from "@stacks/connect-react"
-import { PostConditionMode } from "@stacks/transactions"
-import { StacksMainnet } from "@stacks/network";
+import { BsWater } from "react-icons/bs"
 import FarmTemplate from "./farm"
 import { PiPlant } from "react-icons/pi"
 import BattleRoyaleTemplate from "./battle-royale"
 import PrizeFightTemplate from "./prize-fight"
+import { useAccount, useOpenContractDeploy } from "@micro-stacks/react"
 
 const generateHeader = ({ name, sender, description }: any) => {
     return `;; Title: ${name}
@@ -70,6 +66,8 @@ type ContractFormValues = z.infer<typeof contractFormSchema>
 
 export default function ContractDeployer({ data }: any) {
 
+    const { stxAddress } = useAccount()
+
     const [loading, setLoading] = useState(true);
 
     const [template, setTemplate] = useState<string>('proposal')
@@ -80,7 +78,7 @@ export default function ContractDeployer({ data }: any) {
         setLoading(false);
     }, []);
 
-    const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+    const sender = stxAddress!
 
     const defaultValues: Partial<ContractFormValues> = {
         template: 'prize-fight'
@@ -104,17 +102,16 @@ export default function ContractDeployer({ data }: any) {
         setHeader(generateHeader({ sender, ...form.getValues() }))
     }
 
-    const { doContractDeploy, doContractCall } = useConnect();
+
+    const { openContractDeploy } = useOpenContractDeploy();
 
     const deployContract = (e: any) => {
         e.preventDefault()
         const name = form.getValues().name
         const safeName = name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")
-        doContractDeploy({
+        openContractDeploy({
             contractName: safeName,
             codeBody: `${header}${body}`,
-            postConditionMode: PostConditionMode.Allow,
-            network: new StacksMainnet(),
         });
     }
 

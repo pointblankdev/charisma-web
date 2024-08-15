@@ -6,10 +6,11 @@ import {
   Pc,
   PostConditionMode,
   principalCV,
-  uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
+import { useAccount, useAuth, useOpenContractCall } from "@micro-stacks/react";
+import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
+import { makeStandardFungiblePostCondition, FungibleConditionCode } from '@stacks/transactions';
 
 interface UnstakeButtonProps {
   tokens: number;
@@ -20,10 +21,10 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
   tokens,
   metadata
 }) => {
-  const { doContractCall } = useConnect();
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
+  const { openContractCall } = useOpenContractCall();
+
+  const { stxAddress } = useAccount();
 
   const tokens6Dec = Number(tokens)
 
@@ -33,33 +34,19 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
   const burnTokenAsset = 'liquid-staked-token'
 
   function unstake() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
     const tokensOut = tokens6Dec
     const postConditions = [
-      Pc.principal(sender).willSendEq(tokens6Dec).ft(landsContract, landsAsset),
+      Pc.principal(stxAddress as string).willSendEq(tokens6Dec).ft(landsContract, landsAsset),
       Pc.principal(landsContract).willSendEq(tokensOut).ft(metadata.wraps.ca, metadata.wraps.asset),
-      Pc.principal(sender).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset)
+      Pc.principal(stxAddress as string).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset)
     ]
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
+    openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'land-helper-v0',
       functionName: "unwrap",
-      functionArgs: [uintCV(tokens6Dec), principalCV(metadata.wraps.ca)],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: postConditions,
-      onFinish: (data) => {
-        console.log("onFinish:", data);
-      },
-      onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+      functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
+      postConditions: postConditions as any[],
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
   }
 
   return (

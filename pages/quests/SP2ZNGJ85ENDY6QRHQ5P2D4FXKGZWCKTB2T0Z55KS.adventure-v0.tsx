@@ -11,36 +11,22 @@ import {
   CardHeader,
   CardTitle
 } from '@components/ui/card';
-import MintRaven from '@components/mint/raven';
 import { Button } from '@components/ui/button';
-import {
-  blocksApi,
-} from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
-import { useEffect, useLayoutEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion';
-import odinsRaven from '@public/odins-raven/img/4.gif';
-import fenrirIcon from '@public/fenrir-icon-2.png';
-import goldEmbers from '@public/quests/gold-embers.gif'
 import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 import experience from '@public/experience.png'
-import { userSession } from '@components/stacks-session/connect';
-import { useConnect } from '@stacks/connect-react';
-import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
-import { StacksMainnet } from "@stacks/network";
-import numeral from 'numeral';
 import schaImg from '@public/liquid-staked-charisma.png'
-import welshImg from '@public/welsh-logo.png'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
-import experienceIcon from '@public/experience.png'
 import { getLand, getLands } from '@lib/db-providers/kv';
-import { Flame, FlameIcon, LucideFlame, ScrollIcon, SparkleIcon, SparklesIcon } from 'lucide-react';
-import { BsMagic } from 'react-icons/bs';
-import { PiFlameFill } from 'react-icons/pi';
+import { useAccount, useOpenContractCall } from '@micro-stacks/react';
+import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
+import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all lands from db
@@ -210,39 +196,24 @@ export default function Adventure({ lands }: Props) {
 
 export function SelectCreatureDialog({ lands }: any) {
 
-  const { doContractCall } = useConnect();
+  const { openContractCall } = useOpenContractCall();
 
-  const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet
+  const { stxAddress } = useAccount()
 
   function journey(creatureId: number) {
-    // const response = await callReadOnlyFunction({
-    //   network: new StacksMainnet(),
-    //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    //   contractName: 'journey-of-discovery-v2',
-    //   functionName: "get-claimable-amount",
-    //   functionArgs: [uintCV(creatureId)],
-    //   senderAddress: sender
-    // })
-    // const claimableTokens = Number(cvToJSON(response).value)
 
-    const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
-    const burnTokenAsset = 'liquid-staked-token'
+    const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
 
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
+    const postConditions = [
+      makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, '1000000', burnTokenContract),
+    ];
+
+    openContractCall({
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: 'adventure-v0',
       functionName: "tap",
-      functionArgs: [uintCV(creatureId), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v0')],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal(sender).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset)],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
-      },
-      onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+      functionArgs: [uintCV(creatureId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v0')],
+      postConditions: postConditions as any[]
     });
   }
 

@@ -7,9 +7,10 @@ import {
   PostConditionMode,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "./stacks-session/connect";
+import ConnectWallet from "./stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
+import { useAccount } from "@micro-stacks/react";
 
 const Deposit = ({
   amount,
@@ -25,12 +26,9 @@ const Deposit = ({
   tokenTicker: string
 }) => {
   const { doContractCall } = useConnect();
-
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
+  const { stxAddress } = useAccount();
 
   function deposit() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -40,7 +38,7 @@ const Deposit = ({
       functionArgs: [uintCV(amount * 1000000)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(sender).willSendEq(amount * 1000000).ft(contractPrincipal, contractToken),
+        Pc.principal(stxAddress as string).willSendEq(amount * 1000000).ft(contractPrincipal, contractToken),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);
@@ -49,10 +47,6 @@ const Deposit = ({
         console.log("onCancel:", "Transaction was canceled");
       },
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
   }
 
   return (

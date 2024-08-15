@@ -18,6 +18,9 @@ export const COOKIE = 'user-id';
 export const BITCOIN_LEARN_MORE_URL = 'https://bitcoin.org/en/';
 export const STACKS_LEARN_MORE_URL = 'https://stacks.org/';
 
+const VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL;
+export const API_URL = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:3000';
+
 export const NAVIGATION = [
   {
     name: 'Staking',

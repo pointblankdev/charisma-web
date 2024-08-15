@@ -30,12 +30,17 @@ import { cn } from '@lib/utils';
 import { motion } from 'framer-motion';
 import useWallet from '@lib/hooks/use-wallet-balances';
 import { useConnect } from '@stacks/connect-react';
-import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
+import { PostConditionMode, principalCV } from '@stacks/transactions';
 import { StacksMainnet } from "@stacks/network";
 import { getGlobalState, getLand, getLands, setLandWhitelisted } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import schaImg from '@public/liquid-staked-charisma.png'
+
+
+import { useAccount, useOpenContractCall } from '@micro-stacks/react';
+import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
+import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 
 
 export const getStaticPaths = async () => {
@@ -192,19 +197,19 @@ export default function StakingDetailPage({ metadata }: Props) {
 }
 
 const GovernanceProposalButton = ({ metadata }: any) => {
-  const { doContractCall } = useConnect();
+  const proposal = metadata?.proposal?.split('.')
+  console.log(metadata)
+
+  const { openContractCall } = useOpenContractCall();
+
   const { block } = useGlobalState()
 
   function submitProposal() {
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
+    openContractCall({
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: 'dme002-proposal-submission',
       functionName: "propose",
-      functionArgs: [principalCV(metadata.proposal), uintCV(Number(block.height) + 15)],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [],
+      functionArgs: [contractPrincipalCV(proposal[0], proposal[1]), uintCV(Number(block.height) + 15)],
     });
   }
   return (
