@@ -1,37 +1,35 @@
 import React, { useEffect, useState } from "react";
-import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
 import {
-  AnchorMode,
   PostConditionMode,
-  uintCV,
-  boolCV,
-  principalCV,
-  Pc
+  makeStandardFungiblePostCondition,
+  FungibleConditionCode
 } from "@stacks/transactions";
 import { DropdownMenuItem } from "@components/ui/dropdown-menu";
+import { useAccount, useOpenContractCall } from "@micro-stacks/react";
+import { uintCV, boolCV, contractPrincipalCV } from 'micro-stacks/clarity';
 
 const ContractCallVote = ({ proposalPrincipal }: any) => {
-  const { doContractCall } = useConnect();
+
+  const { openContractCall } = useOpenContractCall();
+  const { stxAddress } = useAccount();
 
   function vote(pick: boolean) {
+
+    const tokenContract = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma'
+
+    const postConditions = [
+      makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, '1000000', tokenContract),
+    ];
     const sender = ''
     console.log(sender)
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
+    openContractCall({
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: "dme001-proposal-voting",
       functionName: "vote",
-      functionArgs: [uintCV(1000000), boolCV(pick), principalCV(proposalPrincipal)],
+      functionArgs: [uintCV(1000000), boolCV(pick), contractPrincipalCV(proposalPrincipal)],
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [Pc.principal(sender).willSendEq(1000000).ft("SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token", 'charisma')],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
-      },
-      onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+      postConditions: postConditions as any[],
     });
   }
 
