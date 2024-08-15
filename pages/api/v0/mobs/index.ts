@@ -76,6 +76,7 @@ export default async function getMetadata(
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
                 try {
+                    console.log(tx?.metadata?.receipt?.events)
                     // send message to discord
                     const embed = new MessageBuilder()
                         .setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
@@ -108,7 +109,7 @@ export default async function getMetadata(
                     console.log(error)
                     const embed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
-                        .setDescription(safeJsonStringify(Object.keys(tx.metadata)))
+                        .setDescription(safeJsonStringify(Object.keys(tx.metadata.receipt)))
                     await hook.send(embed);
                 }
             }
