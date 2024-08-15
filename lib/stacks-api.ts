@@ -940,12 +940,13 @@ export async function checkIfEpochIsEnding(contractAddress: string) {
     }
   });
   const result = hexToCV((response as any).result);
-  const blocksUntilNextEpoch = Number(cvToJSON(result).value);
+  let blocksUntilNextEpoch = Number(cvToJSON(result).value);
+  if (blocksUntilNextEpoch === 14) blocksUntilNextEpoch = 0
   console.log('Blocks until next epoch: ', blocksUntilNextEpoch);
   const mob = await getMob('hogger');
   mob.blocksUntilRespawn = blocksUntilNextEpoch;
   await setMob('hogger', mob);
-  return blocksUntilNextEpoch === 1;
+  return blocksUntilNextEpoch === 1 || blocksUntilNextEpoch === 0;
 }
 
 export async function getTxsFromMempool(contractAddress: string) {
