@@ -1,44 +1,19 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout';
 import Image from 'next/image';
-import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle
-} from '@components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import {
-  blocksApi,
-  getBlockCounter,
-  getBlocksUntilUnlocked,
-  getDecimals,
-  getIsUnlocked,
-  getIsWhitelisted,
-  getSymbol,
-  getTokenURI,
-  getTotalSupply
-} from '@lib/stacks-api';
-import { GetServerSideProps, GetStaticProps } from 'next';
-import { useEffect, useState } from 'react';
+import { GetStaticProps } from 'next';
+import { useState } from 'react';
 import { cn } from '@lib/utils';
 import { motion } from 'framer-motion';
 import useWallet from '@lib/hooks/use-wallet-balances';
-import { useConnect } from '@stacks/connect-react';
-import { PostConditionMode, principalCV } from '@stacks/transactions';
-import { StacksMainnet } from "@stacks/network";
-import { getGlobalState, getLand, getLands, setLandWhitelisted } from '@lib/db-providers/kv';
+import { getLand, getLands } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import schaImg from '@public/liquid-staked-charisma.png'
-
-
-import { useAccount, useOpenContractCall } from '@micro-stacks/react';
+import { useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 
@@ -198,7 +173,6 @@ export default function StakingDetailPage({ metadata }: Props) {
 
 const GovernanceProposalButton = ({ metadata }: any) => {
   const proposal = metadata?.proposal?.split('.')
-  console.log(metadata)
 
   const { openContractCall } = useOpenContractCall();
 
