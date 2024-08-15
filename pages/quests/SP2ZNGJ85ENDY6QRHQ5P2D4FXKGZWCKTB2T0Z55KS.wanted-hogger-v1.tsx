@@ -26,6 +26,7 @@ import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import { getLand, getLands, getMob } from '@lib/db-providers/kv';
 import wantedHogger from '@public/quests/wanted-hogger/hogger.png'
 import hoggerIcon from '@public/quests/wanted-hogger/hogger-icon.png'
+import hoggerDefeated from '@public/quests/wanted-hogger/hogger-defeated.png'
 import { HealthBar } from '@components/ui/health-bar';
 import eliteFrame from '@public/quests/wanted-hogger/elite.webp'
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
@@ -274,7 +275,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                     }
                   </CardFooter>
                   <Image
-                    src={wantedHogger}
+                    src={mob.health > 0 ? wantedHogger : hoggerDefeated}
                     width={800}
                     height={1600}
                     alt={'quest-background-image'}
@@ -292,8 +293,8 @@ export default function WantedHogger({ lands, mob }: Props) {
                   />
                   <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
                 </Card>
-                <div className='mt-[-1px] z-0 p-3 text-sm sm:text-md font-semibold justify-center text-center text-primary-foreground/90 animate-pulse rounded-b-lg border'>
-                  Hogger has been slain. He will respawn in {mob.blocksUntilRespawn} {`block${mob.blocksUntilRespawn !== 1 ? 's' : ''}`}. (~{mob.blocksUntilRespawn * 10} minutes)
+                <div className='-mt-1 z-0 p-3 text-sm sm:text-md font-semibold justify-center text-center text-primary-foreground/90 animate-pulse rounded-b-lg border'>
+                  Hogger has been defeated. He will respawn in {mob.blocksUntilRespawn} {`block${mob.blocksUntilRespawn !== 1 ? 's' : ''}`}. (~{mob.blocksUntilRespawn * 10} minutes)
                 </div>
               </motion.div>
             )}
