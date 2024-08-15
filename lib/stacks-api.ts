@@ -939,7 +939,9 @@ export async function checkIfEpochIsEnding(contractAddress: string) {
     }
   });
   const result = hexToCV((response as any).result);
-  return cvToJSON(result).value === 1;
+  const blocksUntilNextEpoch = Number(cvToJSON(result).value);
+  console.log('Blocks until next epoch: ', blocksUntilNextEpoch);
+  return blocksUntilNextEpoch === 1;
 }
 
 export async function getTxsFromMempool(contractAddress: string) {
