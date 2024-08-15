@@ -76,7 +76,7 @@ export default async function getMetadata(
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
                 try {
-                    console.log(tx?.metadata?.receipt?.events)
+                    console.log(tx.metadata)
                     // send message to discord
                     const embed = new MessageBuilder()
                         .setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
@@ -96,9 +96,6 @@ export default async function getMetadata(
                         } else if (event.type === 'FTMintEvent') {
                             embed.addField('💰 quest-reward', safeJsonStringify(event.data));
 
-                        } else {
-                            console.log('Unknown Event', event)
-                            embed.addField('Unknown Event', 'x');
                         }
                     }
 
