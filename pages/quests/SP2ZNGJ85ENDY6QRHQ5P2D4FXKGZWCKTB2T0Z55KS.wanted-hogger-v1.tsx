@@ -227,7 +227,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                 variants={fadeVariants}
                 transition={{ duration: 0.5 }}
               >
-                <Card className="min-h-[900px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
+                <Card className="sm:min-h-[900px] min-h-[720px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
                   <CardHeader className="z-20 p-4 space-y-0 relative">
                     <Image
                       alt="Elite Monster"
@@ -245,7 +245,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                       {mob.level}
                     </div>
                     <CardTitle className="z-30 text-xl text-primary-foreground/90 font-semibold text-center pt-[1.4rem] leading-none">Hogger</CardTitle>
-                    <CardDescription className="z-30 text-md font-light text-center text-muted/70 pb-4">
+                    <CardDescription className="z-30 text-md font-light text-center text-muted/70 pb-4 grow">
                       Chieftain of the Riverpaw gnolls
                     </CardDescription>
                     <HealthBar className='absolute rounded-md h-[3.2rem] w-96 top-[2.4rem] left-[8.2rem]' value={healthPercentage} />
@@ -292,7 +292,9 @@ export default function WantedHogger({ lands, mob }: Props) {
                   />
                   <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
                 </Card>
-                <div className='p-3 text-md font-semibold justify-center text-center text-primary-foreground/90 animate-pulse rounded-b-lg border'>Hogger has been slain. He will respawn in less than 14 blocks.</div>
+                <div className='mt-[-1px] z-0 p-3 text-sm sm:text-md font-semibold justify-center text-center text-primary-foreground/90 animate-pulse rounded-b-lg border'>
+                  Hogger has been slain. He will respawn in less than 14 blocks.
+                </div>
               </motion.div>
             )}
           </AnimatePresence>
