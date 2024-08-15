@@ -29,7 +29,8 @@ import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
 import { bytesToHex, hexToInt, intToHex, utf8ToBytes } from '@stacks/common';
 import { getLatestBlock } from './user-api';
-import { getGlobalState } from './db-providers/kv';
+import { getGlobalState, getMob, setMob } from './db-providers/kv';
+import { get } from 'lodash';
 
 const network = new StacksMainnet();
 
@@ -941,6 +942,9 @@ export async function checkIfEpochIsEnding(contractAddress: string) {
   const result = hexToCV((response as any).result);
   const blocksUntilNextEpoch = Number(cvToJSON(result).value);
   console.log('Blocks until next epoch: ', blocksUntilNextEpoch);
+  const mob = await getMob('hogger');
+  mob.blocksUntilRespawn = blocksUntilNextEpoch;
+  await setMob('hogger', mob);
   return blocksUntilNextEpoch === 1;
 }
 
