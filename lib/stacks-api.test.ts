@@ -4,6 +4,7 @@ import { generateWallet } from "@stacks/wallet-sdk";
 import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
+import { tryResetEpochs } from "./try-reset-epochs";
 
 const network = new StacksMainnet();
 
@@ -251,6 +252,24 @@ describe('Stacks API', () => {
     // checkIfEpochIsEnding
     it('should check if epoch is ending', async () => {
         const result = await checkIfEpochIsEnding('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    // getTxsFromMempool
+    it('should get txs from mempool', async () => {
+        const result = await getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    //tryResetEpochs
+    it('should try reset epochs', async () => {
+        const result = await tryResetEpochs([{
+            address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1",
+            function: "try-reset-epoch",
+            args: []
+        }])
         console.log(result)
         expect(result).toBeDefined()
     })
