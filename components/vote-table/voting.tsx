@@ -21,14 +21,12 @@ const ContractCallVote = ({ proposalPrincipal }: any) => {
     const postConditions = [
       makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, '1000000', tokenContract),
     ];
-    const sender = ''
-    console.log(sender)
+
     openContractCall({
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: "dme001-proposal-voting",
       functionName: "vote",
       functionArgs: [uintCV(1000000), boolCV(pick), contractPrincipalCV(proposalPrincipal)],
-      postConditionMode: PostConditionMode.Deny,
       postConditions: postConditions as any[],
     });
   }
