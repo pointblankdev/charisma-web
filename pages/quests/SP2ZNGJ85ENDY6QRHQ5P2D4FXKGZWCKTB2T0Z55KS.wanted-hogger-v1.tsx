@@ -30,6 +30,9 @@ import { HealthBar } from '@components/ui/health-bar';
 import eliteFrame from '@public/quests/wanted-hogger/elite.webp'
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { makeStandardFungiblePostCondition, FungibleConditionCode } from '@stacks/transactions';
+import { useSearchParams } from 'next/navigation';
+import { useNavigation } from 'react-day-picker';
+import { useRouter } from 'next/router';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all lands from db
@@ -68,7 +71,14 @@ export default function WantedHogger({ lands, mob }: Props) {
 
   const healthPercentage = mob.health * 100 / mob.maxHealth
 
-  const [showHoggerCard, setShowHoggerCard] = useState(false);
+  const router = useRouter();
+  const { get } = useSearchParams()
+
+  const handleViewToggle = () => {
+    const newView = get('view') === 'view1' ? 'view2' : 'view1';
+    router.push(`?view=${newView}`, undefined, { shallow: true });
+  }
+
 
   const fadeVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
 
@@ -83,7 +93,7 @@ export default function WantedHogger({ lands, mob }: Props) {
           className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl"
         >
           <AnimatePresence mode="wait">
-            {!showHoggerCard ? (
+            {get('view') === 'view1' ? (
               <motion.div
                 key="original-card"
                 initial="hidden"
@@ -186,7 +196,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                       </Button>
                     </Link>
 
-                    <Button size={'sm'} className="z-30" onClick={() => setShowHoggerCard(true)}> Fight Hogger</Button>
+                    <Button size={'sm'} className="z-30" onClick={() => handleViewToggle()}> Fight Hogger</Button>
                     {/* <SelectCreatureDialog lands={lands} /> */}
                   </CardFooter>
                   <Image
@@ -255,7 +265,7 @@ export default function WantedHogger({ lands, mob }: Props) {
 
                   <CardFooter className="z-20 flex justify-between p-4 items-end">
 
-                    <Button variant="ghost" size={'lg'} onClick={() => setShowHoggerCard(false)} className="z-30">
+                    <Button variant="ghost" size={'lg'} onClick={() => handleViewToggle()} className="z-30">
                       Back
                     </Button>
 
