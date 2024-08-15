@@ -4,9 +4,9 @@ import { useRouter } from 'next/router';
 import { SkipNavContent } from '@reach/skip-nav';
 import { NAVIGATION } from '@lib/constants';
 import styles from './layout.module.css';
-import styleUtils from './utils.module.css';
-import Logo from './icons/icon-logo';
-import MobileMenu from './mobile-menu';
+import styleUtils from '../utils.module.css';
+import Logo from '../icons/icon-logo';
+import MobileMenu from '../mobile-menu';
 import Footer from './footer';
 import React, { useEffect } from 'react';
 import Image from 'next/image';
@@ -16,7 +16,7 @@ import useWallet from '@lib/hooks/use-wallet-balances';
 import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { forEach } from 'lodash';
-import ConnectWallet from './stacks-session/connect';
+import ConnectWallet from '../stacks-session/connect';
 
 type Props = {
   children: React.ReactNode;

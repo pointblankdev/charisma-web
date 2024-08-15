@@ -3,7 +3,7 @@ import { SkipNavContent } from '@reach/skip-nav';
 
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
-import Layout from '@components/layout';
+import Layout from '@components/layout/layout';
 import { DataTable } from '@components/vote-table/data-table';
 import { columns } from '@components/vote-table/columns';
 import { cn } from '@lib/utils';

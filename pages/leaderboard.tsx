@@ -1,7 +1,7 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
-import Layout from '@components/layout';
+import Layout from '@components/layout/layout';
 import { getTotalSupply } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { getExperienceLeaderboard } from '@lib/db-providers/kv';

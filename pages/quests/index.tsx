@@ -1,7 +1,7 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
-import Layout from '@components/layout';
+import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
 import { getQuest, getQuests } from '@lib/db-providers/kv';
 import Image from 'next/image';

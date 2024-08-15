@@ -1,6 +1,6 @@
 import { Separator } from "@components/ui/separator"
 import { SidebarNav } from "@components/settings/sidebar-nav"
-import Layout from "@components/layout"
+import Layout from "@components/layout/layout"
 import Page from "@components/page"
 import Link from "next/link"
 import { META_DESCRIPTION } from "@lib/constants"

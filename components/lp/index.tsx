@@ -1,4 +1,4 @@
-import Layout from '../layout';
+import Layout from '../layout/layout';
 import Hero from './hero';
 import styleUtils from '@components/utils.module.css';
 

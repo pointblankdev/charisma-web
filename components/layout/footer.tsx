@@ -1,6 +1,6 @@
 import styles from './footer.module.css';
 import { cn } from '@lib/utils';
-import IconStacks from './icons/icon-stacks';
+import IconStacks from '../icons/icon-stacks';
 import Link from 'next/link';
 import { BsDiscord, BsTwitter, BsBookHalf } from 'react-icons/bs';
 import { BITCOIN_LEARN_MORE_URL, STACKS_LEARN_MORE_URL } from '@lib/constants';

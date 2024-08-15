@@ -1,6 +1,6 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import Layout from '@components/layout';
+import Layout from '@components/layout/layout';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';

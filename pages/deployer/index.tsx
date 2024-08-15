@@ -26,7 +26,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@components/ui/select"
-import Layout from "@components/layout"
+import Layout from "@components/layout/layout"
 import AirdropTemplate from "./airdropper"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
