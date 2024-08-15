@@ -9,6 +9,8 @@ export async function tryResetEpochs(contractJobs: any[]) {
         getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1'),
     ]);
 
+    console.log(mpt1)
+
     // filter for only real mempool transactions and not stale ones
     const mempoolTxs = [mpt1].filter((tx: any) => tx.receipt_time > (Date.now() / 1000) - 5000);
 
