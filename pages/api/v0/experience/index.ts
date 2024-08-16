@@ -97,12 +97,12 @@ const handleContractEvent = (event: any, embed: any) => {
 
         // burn event
         else if (event.type === 'FTBurnEvent') {
-            embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+            embed.addField(`🔥 ${event.type}`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
         }
 
         // mint event
         else if (event.type === 'FTMintEvent') {
-            embed.addField('💰 quest-reward', JSON.stringify(event.data).slice(0, 300));
+            embed.addField(`💰 ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} points.`);
         }
 
         // unknown event
