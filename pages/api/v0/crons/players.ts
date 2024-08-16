@@ -34,22 +34,22 @@ const players: any[] = [
         seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_5,
         publicAddress: process.env.STACKS_ORACLE_ADDRESS_5,
     },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_6,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_6,
-    // },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_7,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_7,
-    // },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_8,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_8,
-    // },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_9,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_9,
-    // },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_6,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_6,
+    },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_7,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_7,
+    },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_8,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_8,
+    },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_9,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_9,
+    },
 ]
 
 

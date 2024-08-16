@@ -98,8 +98,8 @@ describe('metadata api', () => {
         console.log(response)
     })
 
-    it('should get land pepe', async () => {
-        const response = await getLand('SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz')
+    it('should get land bitty', async () => {
+        const response = await getLand('SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kr5skoysg')
         console.log(response)
     })
 
@@ -116,10 +116,11 @@ describe('metadata api', () => {
     })
 
     it('should update land 5', async () => {
-        const response = await getLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam')
-        // response.proposal = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pool-proposal-the-fellowship-of-the-meme'
-        console.log(response)
-        // await setLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam', response)
+        const contract = 'SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kr5skoysg'
+        const land = await getLand(contract)
+        land.cardImage = 'https://i.ibb.co/wczPttp/2da1e0b934a1166f76cf6ba42ecb4b24.jpg'
+        console.log(land)
+        await setLand(contract, land)
     })
 
     it('should set welsh land whitelisted', async () => {
