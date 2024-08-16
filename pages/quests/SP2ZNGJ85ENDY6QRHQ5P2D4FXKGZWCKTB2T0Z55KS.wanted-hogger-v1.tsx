@@ -244,7 +244,7 @@ export default function WantedHogger({ lands, mob }: Props) {
 
                         className="z-10 h-[4.5rem] w-[4.5rem] absolute top-[32px] left-[60px] transform scale-x-[-1] rounded-full"
                       />
-                      <div className="z-20 top-[80px] left-[60px] absolute px-1 font-semibold text-center min-w-6 rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
+                      <div className="z-20 top-[79.2px] left-[59.8px] absolute px-1 font-semibold text-center min-w-6 rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
                         {mob.level}
                       </div>
                     </> : ''}
