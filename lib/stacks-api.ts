@@ -633,12 +633,9 @@ export async function getTokenURI(contract: string) {
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
   const tokenUri = cv.value.value.value
-  const res = await fetch(tokenUri, {
-    method: 'GET',
-    headers: {
-      'Content-Type': 'application/json'
-    }
-  });
+  console.log(tokenUri)
+  const corsProxy = 'https://corsproxy.io/?';
+  const res = await fetch(`${corsProxy}${tokenUri}`);
   const metadata = await res.json();
   return metadata
 }
