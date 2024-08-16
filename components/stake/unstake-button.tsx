@@ -39,7 +39,7 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({
 
   const postConditions = [
     makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, tokens6Dec, tokenContract),
-    makeStandardFungiblePostCondition(`${contractAddress}.${contractName}`, FungibleConditionCode.GreaterEqual, (tokens6Dec / exchangeRate).toFixed(0), `${baseTokenContractAddress}.${baseTokenContractName}::${baseFungibleTokenName}`),
+    // makeStandardFungiblePostCondition(`${contractAddress}.${contractName}`, FungibleConditionCode.GreaterEqual, (tokens6Dec / exchangeRate).toFixed(0), `${baseTokenContractAddress}.${baseTokenContractName}::${baseFungibleTokenName}`),
   ];
 
   function unstake() {
