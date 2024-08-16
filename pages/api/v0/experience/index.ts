@@ -33,7 +33,7 @@ export default async function getMetadata(
                     try {
                         const embed = new MessageBuilder()
                             .setTitle('Experience Event')
-                            .setText(JSON.stringify(tx.metadata.receipt).slice(0, 2000))
+                            .setText(JSON.stringify(tx.metadata.receipt.events).slice(0, 2000))
                         await hook.send(embed);
                     } catch (error) {
                         console.error(error)
