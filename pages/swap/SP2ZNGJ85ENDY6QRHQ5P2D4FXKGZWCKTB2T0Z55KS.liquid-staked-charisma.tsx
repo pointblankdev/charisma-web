@@ -57,6 +57,8 @@ export const getServerSideProps: GetServerSideProps<Props> = ({ params }: any) =
     name: 'Liquid Staked Charisma',
     symbol: 'sCHA',
     baseTokenImage: '/charisma.png',
+    isRemoveLiquidityUnlocked: true,
+    blocksUntilUnlock: 0,
   };
 
   return {
@@ -109,10 +111,10 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                   {data.name}
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
-                  <div className="z-30 bg-background border border-primary/40 rounded-full px-2 whitespace-nowrap">
+                  {/* <div className="z-30 bg-background border border-primary/40 rounded-full px-2 whitespace-nowrap">
                     ${Number(data.tokenPrice).toFixed(2)} / {data.symbol}
                   </div>
-                  <div className="text-lg whitespace-nowrap">${numeral(data.tvl).format('0a')} TVL</div>
+                  <div className="text-lg whitespace-nowrap">${numeral(data.tvl).format('0a')} TVL</div> */}
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
                     blocksUntilUnlock={data.blocksUntilUnlock}
@@ -141,9 +143,9 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                       height={100}
                       className="z-30 w-full border rounded-full"
                     />
-                    {tokensSelected > 0 &&
+                    {Math.abs(tokensSelected) > 0 &&
                       <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                        {numeral(tokensSelected).format('0a')}
+                        {numeral(Math.abs(tokensSelected / Math.pow(10, 6))).format('0a')}
                         {tokensSelected > 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
                       </div>
                     }
@@ -168,8 +170,8 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                         className="z-20 w-full border rounded-full absolute"
                       />
                       {Math.abs(tokensSelected) > 0 && <div className="z-40 absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                        {numeral(Math.abs(tokensRequired)).format('0a')}
-                        {tokensRequired < 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
+                        {numeral(Math.abs(tokensRequired / Math.pow(10, 6))).format('0a')}
+                        {tokensRequired / Math.pow(10, 6) < 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
                       </div>}
                     </div>
                   </div>
@@ -247,7 +249,7 @@ const ActiveRecipeIndicator = ({
           className={`overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}
         >
           {active
-            ? 'Index token is unlocked'
+            ? 'Token liquidity is unlocked'
             : `Asset withdraws and deposits are locked for ${blocksUntilUnlock} more block${blocksUntilUnlock !== 1 ? 's' : ''
             }`}
         </TooltipContent>
