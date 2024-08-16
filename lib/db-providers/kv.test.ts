@@ -231,6 +231,7 @@ describe('metadata api', () => {
             }
         })
         console.log(response)
+        // await addLand('SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin')
     })
 
     it('should update land by id', async () => {

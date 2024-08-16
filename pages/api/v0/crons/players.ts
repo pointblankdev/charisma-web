@@ -1,5 +1,5 @@
 import { tryCallContractPublicFunction } from '@lib/stacks-api';
-import { uintCV } from '@stacks/transactions';
+import { principalCV, uintCV } from '@stacks/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -33,7 +33,7 @@ export default async function arbitrage(
                 password: player.password,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0',
                 functionName: 'tap',
-                args: [uintCV(1)]
+                args: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v0')],
             })
             transactions.push(transaction)
         }
