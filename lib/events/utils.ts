@@ -45,6 +45,10 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 }
 
                 else if (event?.data?.value?.event === 'damage-result') {
+                    const newHealth = Number(event.data.value['new-health'])
+                    const hogger = await getMob('hogger')
+                    hogger.health = newHealth
+                    await setMob('hogger', hogger)
                     embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
                 }
 
