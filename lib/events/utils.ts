@@ -83,14 +83,14 @@ export const handleContractEvent = async (event: any, embed: any) => {
             else if (event?.data?.value?.event === 'result-epoch') {
                 embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
             }
-
-            else if (event?.data?.value?.event === 'reset-for-new-epoch') {
-                embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
-            }
         } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0") {
             symbol = '🐗'
 
             if (event?.data?.value?.event === 'take-damage') {
+                embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+            }
+
+            else if (event?.data?.value?.event === 'reset-for-new-epoch') {
                 embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
             }
         }
