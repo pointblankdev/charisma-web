@@ -50,6 +50,11 @@ export const handleContractEvent = async (event: any, embed: any) => {
             embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
         }
 
+        // damage-result: cache data for hogger health
+        else if (event?.data?.value?.event === 'damage-result') {
+            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+        }
+
         // burn event
         else if (event.type === 'FTBurnEvent') {
             embed.addField(`${symbol} ${event.type}`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
