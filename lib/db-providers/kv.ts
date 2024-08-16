@@ -214,9 +214,9 @@ export async function clearLeaderboard() {
 
 // rewards
 
-export async function updateRewardLeaderboard(token: string, amount: number, data: any) {
+export async function incrementRewardLeaderboard(token: string, amount: number, data: any) {
     try {
-        await kv.zadd(`leaderboard:rewards:${token}`, { score: amount, member: data });
+        await kv.zincrby(`leaderboard:rewards:${token}`, amount, data);
     } catch (error) {
         console.error('Error updating player score:', error);
     }

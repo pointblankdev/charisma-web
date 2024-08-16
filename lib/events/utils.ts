@@ -1,4 +1,5 @@
-import { getMob, setMob, updateRewardLeaderboard } from "@lib/db-providers/kv";
+import { getMob, getRewardLeaderboard, incrementRewardLeaderboard, setMob, updateRewardLeaderboard } from "@lib/db-providers/kv";
+import { getTokenBalance } from "@lib/stacks-api";
 
 export const handleContractEvent = async (event: any, embed: any) => {
 
@@ -56,7 +57,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
         // mint event
         else if (event.type === 'FTMintEvent') {
-            await updateRewardLeaderboard(event.data.asset_identifier, event.data.amount, event.data.recipient_address);
+            await incrementRewardLeaderboard(event.data.asset_identifier, event.data.amount, event.data.recipient_address);
             embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} points.`);
         }
 
