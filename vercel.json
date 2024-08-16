@@ -11,6 +11,10 @@
         {
             "path": "/api/v0/crons/try-reset-epochs",
             "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/v0/crons/players",
+            "schedule": "* * * * *"
         }
     ]
 }

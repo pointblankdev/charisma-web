@@ -973,6 +973,49 @@ export async function getTxsFromMempool(contractAddress: string) {
   return transactions;
 }
 
+export async function tryCallContractPublicFunction({ seedPhrase, password, publicAddress, contractAddress, functionName, fee, nonce, args }: any) {
+  const txsInMempool = await getTxsFromMempool(contractAddress);
+
+  const isInMempool = txsInMempool.some((tx: any) => tx.contract_call.function_name === functionName && tx.sender_address === publicAddress);
+
+  if (!isInMempool) {
+
+    const wallet = await generateWallet({ secretKey: seedPhrase, password });
+
+    const account = wallet.accounts[0];
+
+    const txOptions = {
+      contractAddress: contractAddress.split('.')[0],
+      contractName: contractAddress.split('.')[1],
+      functionName: functionName,
+      functionArgs: args || [],
+      senderKey: account.stxPrivateKey,
+      network,
+      postConditionMode: PostConditionMode.Allow
+    } as any;
+
+    if (nonce) {
+      txOptions.nonce = nonce;
+    }
+
+    // set a tx fee if you don't want the builder to estimate
+    if (fee) {
+      txOptions.fee = fee;
+    }
+
+    // console.log(txOptions)
+
+    const transaction = await makeContractCall(txOptions);
+
+    const broadcastResponse = await broadcastTransaction(transaction, network);
+
+    return broadcastResponse;
+  } else {
+    return 'Transaction already in mempool';
+  }
+
+}
+
 export async function callContractPublicFunction({ address, functionName, fee, nonce, args }: any) {
   // reset the epoch so that state can be updated
   const password = String(process.env.STACKS_ORACLE_PASSWORD);

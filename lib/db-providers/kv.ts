@@ -243,3 +243,11 @@ export async function getRewardLeaderboard(token: string, startRank: number, end
         return [];
     }
 }
+
+export async function clearRewardsLeaderboard(token: string) {
+    try {
+        return await kv.del(`leaderboard:rewards:${token}`);
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+    }
+}

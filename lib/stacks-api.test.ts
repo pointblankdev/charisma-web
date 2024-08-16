@@ -1,6 +1,6 @@
-import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
+import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, TransactionVersion, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
-import { generateWallet } from "@stacks/wallet-sdk";
+import { generateSecretKey, generateWallet, getStxAddress } from "@stacks/wallet-sdk";
 import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
@@ -272,6 +272,25 @@ describe('Stacks API', () => {
         }])
         console.log(result)
         expect(result).toBeDefined()
+    })
+
+    it('should generate a seed phrase', () => {
+        const secretKey128 = generateSecretKey(128);
+        console.log(secretKey128)
+        expect(secretKey128).toBeDefined()
+    })
+
+    it('should generate a wallet', async () => {
+        const secretKey128 = ''
+        const wallet = await generateWallet({
+            secretKey: secretKey128,
+            password: '',
+        });
+        // get an account from the user's wallet
+        const account = wallet.accounts[0];
+        const mainnetAddress = getStxAddress({ account, transactionVersion: TransactionVersion.Mainnet });
+        console.log(mainnetAddress)
+        expect(mainnetAddress).toBeDefined()
     })
 
 })

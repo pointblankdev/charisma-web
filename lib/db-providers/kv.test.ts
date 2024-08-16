@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, clearLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getMob, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getMob, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -232,6 +232,12 @@ describe('metadata api', () => {
     // delete experience leaderboard
     it('should delete experience lb', async () => {
         const response = await clearLeaderboard()
+        console.log(response)
+    })
+
+    // delete experience leaderboard
+    it('should delete cha rewards lb', async () => {
+        const response = await clearRewardsLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma')
         console.log(response)
     })
 
