@@ -946,7 +946,7 @@ export async function checkIfEpochIsEnding(contractAddress: string) {
   const mob = await getMob('hogger');
   mob.blocksUntilRespawn = blocksUntilNextEpoch;
   await setMob('hogger', mob);
-  return blocksUntilNextEpoch === 1 || blocksUntilNextEpoch === 0;
+  return blocksUntilNextEpoch === 1;
 }
 
 export async function getTxsFromMempool(contractAddress: string) {
