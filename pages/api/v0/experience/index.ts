@@ -88,11 +88,8 @@ const handleContractEvent = (event: any, embed: any) => {
     try {
 
         // reset-complete: cache data for new hogger repawn
-        if (event?.data?.value?.event === 'reset-complete') {
-        }
-
-        // attack-result: cache data for hogger health
-        else if (event?.data?.value?.event === 'attack-result') {
+        if (event?.data?.value?.type === 'tap-energy') {
+            embed.addField(`💥 ${event.type}`, JSON.stringify(event.data).slice(0, 300));
         }
 
         // burn event
