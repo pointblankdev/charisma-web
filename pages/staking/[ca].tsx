@@ -88,20 +88,20 @@ export default function StakingDetailPage({ metadata }: Props) {
             <CardContent className="grid p-4">
               <div className="z-20">
                 <div className="z-30 text-xl font-semibold">Overview</div>
-                <CardDescription className="z-30 mb-6 text-sm font-fine text-foreground">
-                  <p className="leading-normal text-primary-foreground/60">
+                <div className="z-30 mb-6 text-sm font-fine text-foreground">
+                  <div className="leading-normal text-primary-foreground/60">
                     Staking is a simple way to earn rewards by locking up your tokens. When you stake your tokens in the pool, you start earning Energy over time, which you can later use to get special rewards like tokens, NFTs, or access to exclusive activites. All you need to do is stake your tokens, and as long as they stay in the pool, you'll keep earning Energy. This is an easy way to earn extra perks and be more involved in your favorite memecoin community.
-                  </p>
-                </CardDescription>
+                  </div>
+                </div>
               </div>
               {metadata.whitelisted &&
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">How to Use</div>
-                  <CardDescription className="z-30 mb-6 text-sm font-fine text-foreground">
-                    <p className="leading-normal text-primary-foreground/60">
+                  <div className="z-30 mb-6 text-sm font-fine text-foreground">
+                    <div className="leading-normal text-primary-foreground/60">
                       To use the Stake-to-Earn pool, simply move the slider to the right to select the amount of tokens you want to stake, then press the Stake button. Make sure you're holding the tokens you want to stake in your wallet. To unstake, just move the slider to the left to choose the amount you want to withdraw, then press the Unstake button.
-                    </p>
-                  </CardDescription>
+                    </div>
+                  </div>
                 </div>
               }
 
@@ -138,11 +138,11 @@ export default function StakingDetailPage({ metadata }: Props) {
                 /> :
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Community Approval Required</div>
-                  <CardDescription className="z-30 mb-6 text-sm font-fine text-primary-foreground/60">
-                    <p className="leading-normal">
+                  <div className="z-30 mb-6 text-sm font-fine text-primary-foreground/60">
+                    <div className="leading-normal">
                       Before this Stake-to-Earn pool can be activated, it needs to pass a governance proposal vote. To request community approval, you must hold at least 0.01% of the total supply of the CHA token. This requirement ensures that only invested and committed members can propose new pools, maintaining the integrity of the ecosystem. Once a proposal is submitted, community members who hold governance tokens can review and vote on it. If the proposal receives majority approval, the pool will be enabled for staking. This process empowers the community to collectively shape the future of the Charisma ecosystem while ensuring that proposals are made by those with a meaningful stake in the platform.
-                    </p>
-                  </CardDescription>
+                    </div>
+                  </div>
                   <GovernanceProposalButton metadata={metadata} />
                 </div>
               }

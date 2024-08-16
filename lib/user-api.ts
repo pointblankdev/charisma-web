@@ -117,7 +117,7 @@ export async function setContractMetadata(ca: string, metadata: any) {
 }
 
 export async function setLandMetadata(ca: string, metadata: any) {
-  return await fetch(`/api/proxy?url=${HOST}/api/v0/lands/${ca}`, {
+  return await fetch(`${HOST}/api/v0/lands/${ca}`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json'
