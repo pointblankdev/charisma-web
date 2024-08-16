@@ -97,7 +97,7 @@ export default async function getMetadata(
                             embed.addField('💰 quest-reward', safeJsonStringify(event.data));
 
                         } else {
-                            embed.addField(`📜 ${event.type}`, safeJsonStringify(event.data).slice(0, 300));
+                            embed.addField(`❓ ${event.type}`, safeJsonStringify(event.data).slice(0, 300));
                         }
                     }
 
