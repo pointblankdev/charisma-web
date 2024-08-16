@@ -94,7 +94,7 @@ describe('metadata api', () => {
     })
 
     it('should remove land', async () => {
-        const response = await removeLand('SP1B46TPZD8Y3ETHGZYJAPHD9GHJK81K08WRB127X.list-fair')
+        const response = await removeLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.test')
         console.log(response)
     })
 

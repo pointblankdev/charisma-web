@@ -19,7 +19,7 @@ export default async function landsApi(
         if (req.method === 'POST') {
             console.log(req.body)
             response = await setLand(ca, req.body)
-            await addLand(ca)
+            // await addLand(ca)
         } else if (req.method === 'GET') {
             response = await getLand(ca)
         } else {
