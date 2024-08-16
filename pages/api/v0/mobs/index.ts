@@ -77,7 +77,7 @@ export default async function getMetadata(
             for (const tx of a.transactions) {
                 const embed = new MessageBuilder()
                 try {
-                    console.log(Object.keys(tx.metadata))
+
                     // send message to discord
                     embed.setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
                     embed.setTitle('Hogger Event!')
