@@ -824,6 +824,12 @@ export async function getTotalInPool(contract: string) {
     });
   }
 
+  const valueOut = (value: any) => {
+    const cv = hexToCV(value.result);
+    const json = cvToJSON(cv);
+    return json.value?.value || json.value;
+  };
+
   return Number(valueOut(response));
 }
 
@@ -1217,9 +1223,3 @@ export async function hasPercentageBalance(contract: string, who: string, factor
   const result = hexToCV((response as any).result);
   return cvToJSON(result).value.value;
 }
-
-const valueOut = (value: any) => {
-  const cv = hexToCV(value.result);
-  const json = cvToJSON(cv);
-  return json.value?.value || json.value;
-};

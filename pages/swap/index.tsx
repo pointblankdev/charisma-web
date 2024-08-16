@@ -97,7 +97,7 @@ export default function SwapIndex({ tokens }: Props) {
                     'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card border bg-accent-foreground'
                   )}
                 >
-                  <Link href={`/tokens/${token.ca}`} className="w-full">
+                  <Link href={`/swap/${token.ca}`} className="w-full">
                     <div className="w-full p-0">
                       <div className="z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
                         <div className="flex justify-between align-top">

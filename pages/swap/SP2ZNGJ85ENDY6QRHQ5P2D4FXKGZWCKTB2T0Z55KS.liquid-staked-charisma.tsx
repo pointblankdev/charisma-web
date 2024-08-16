@@ -18,8 +18,10 @@ import {
   getBlocksUntilUnlocked,
   getDecimals,
   getIsUnlocked,
+  getStakedTokenExchangeRate,
   getSymbol,
   getTokenURI,
+  getTotalInPool,
   getTotalSupply
 } from '@lib/stacks-api';
 import { GetServerSideProps } from 'next';
@@ -45,7 +47,18 @@ import { symbol } from 'zod';
 import StakingControls from '@components/liquidity/staking';
 
 
-export const getServerSideProps: GetServerSideProps<Props> = ({ params }: any) => {
+export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: any) => {
+
+  const exchangeRate = await getStakedTokenExchangeRate('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+
+  const tokensInPool = await getTotalInPool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+
+  // if rebase token has a price on velar, calculate TVL with that
+  // if not, check base token price on velar, and calculate TVL with that
+  // otherwise, set TVL to 0
+  const [rebaseToken] = await velarApi.tokens('sCHA')
+  const tvl = tokensInPool * Number(rebaseToken.price) / Math.pow(10, 6)
+
 
   const data = {
     // address: params?.id,
@@ -59,6 +72,9 @@ export const getServerSideProps: GetServerSideProps<Props> = ({ params }: any) =
     baseTokenImage: '/charisma.png',
     isRemoveLiquidityUnlocked: true,
     blocksUntilUnlock: 0,
+    tokenPrice: rebaseToken.price,
+    exchangeRate: exchangeRate / Math.pow(10, 6),
+    tvl: tvl
   };
 
   return {
@@ -82,7 +98,7 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [tokensSelected, setTokensSelected] = useState(0);
 
-  const tokensRequired = tokensSelected * 1.07;
+  const tokensRequired = Number((tokensSelected * data.exchangeRate).toFixed(0));
 
   useEffect(() => {
     setDescriptionVisible(true);
@@ -111,10 +127,10 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                   {data.name}
                 </CardTitle>
                 <div className="flex space-x-4 items-center">
-                  {/* <div className="z-30 bg-background border border-primary/40 rounded-full px-2 whitespace-nowrap">
+                  <div className="z-30 bg-background border border-primary/40 rounded-full px-2 whitespace-nowrap">
                     ${Number(data.tokenPrice).toFixed(2)} / {data.symbol}
                   </div>
-                  <div className="text-lg whitespace-nowrap">${numeral(data.tvl).format('0a')} TVL</div> */}
+                  <div className="text-lg whitespace-nowrap">${numeral(data.tvl).format('0a')} TVL</div>
                   <ActiveRecipeIndicator
                     active={data.isRemoveLiquidityUnlocked}
                     blocksUntilUnlock={data.blocksUntilUnlock}
@@ -184,7 +200,7 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                   min={-rebaseTokenBalance}
                   max={baseTokenBalance}
                   onSetTokensSelected={setTokensSelected}
-                  tokensSelected={tokensSelected}
+                  tokensSelected={tokensRequired}
                   contractAddress={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'}
                   contractName={'liquid-staked-charisma'}
                   fungibleTokenName={'liquid-staked-token'}
@@ -193,7 +209,7 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                   baseTokenContractAddress={'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'}
                   baseTokenContractName={'dme000-governance-token'}
                   baseFungibleTokenName={'charisma'}
-                  exchangeRate={1.07}
+                  exchangeRate={data.exchangeRate}
                 />
               </div>
             </CardFooter>
