@@ -85,7 +85,7 @@ export default async function getMetadata(
 
                     for (const event of tx.metadata.receipt.events) {
                         if (event.type === 'SmartContractEvent') {
-                            embed.addField(`📜 ${event.data.topic}`, safeJsonStringify(event.data));
+                            embed.addField(`📜 ${event.data.topic}`, safeJsonStringify(event.data?.value || event.data));
 
                             // cache data to the db based on the print event data
                             await handleContractPrintEvent(event)
@@ -108,7 +108,7 @@ export default async function getMetadata(
                     console.log(error)
                     const embed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
-                        .setDescription(safeJsonStringify(Object.keys(tx.metadata.receipt)))
+                        .setDescription(safeJsonStringify(tx.metadata.receipt.events).slice(0, 300))
                     await hook.send(embed);
                 }
             }
@@ -128,23 +128,28 @@ export default async function getMetadata(
 
 const handleContractPrintEvent = async (event: ContractEvent) => {
     try {
-        // reset-complete: cache data for new hogger repawn
-        if (event?.data?.value?.event === 'reset-complete') {
-            const newLevel = Number(event.data.value['new-epoch'])
-            const newMaxHp = Number(event.data.value['new-max-health'])
-            const newRegen = Number(event.data.value['new-regen-rate'])
-            const hogger = await getMob('hogger')
-            hogger.level = newLevel
-            hogger.maxHealth = newMaxHp
-            hogger.regenRate = newRegen
-            await setMob('hogger', hogger)
-        }
-        // attack-result: cache data for hogger health
-        if (event?.data?.value?.event === 'attack-result') {
-            const newHealth = Number(event.data.value['new-hogger-health'])
-            const hogger = await getMob('hogger')
-            hogger.health = newHealth
-            await setMob('hogger', hogger)
+        const eventType = event?.data?.value?.event
+        if (eventType) {
+
+            // reset-complete: cache data for new hogger repawn
+            if (eventType === 'reset-complete') {
+                const newLevel = Number(event.data.value['new-epoch'])
+                const newMaxHp = Number(event.data.value['new-max-health'])
+                const newRegen = Number(event.data.value['new-regen-rate'])
+                const hogger = await getMob('hogger')
+                hogger.level = newLevel
+                hogger.maxHealth = newMaxHp
+                hogger.regenRate = newRegen
+                await setMob('hogger', hogger)
+            }
+
+            // attack-result: cache data for hogger health
+            if (eventType === 'attack-result') {
+                const newHealth = Number(event.data.value['new-hogger-health'])
+                const hogger = await getMob('hogger')
+                hogger.health = newHealth
+                await setMob('hogger', hogger)
+            }
         }
     } catch (error) {
         console.log('handlePrintEvent error:', error)
