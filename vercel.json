@@ -2,7 +2,7 @@
     "crons": [
         {
             "path": "/api/arbitrage",
-            "schedule": "* * * * *"
+            "schedule": "0 * * * *"
         },
         {
             "path": "/api/v0/blocks/cache",

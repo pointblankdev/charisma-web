@@ -251,3 +251,13 @@ export async function clearRewardsLeaderboard(token: string) {
         console.error('Error fetching leaderboard:', error);
     }
 }
+
+// tokens
+
+export function getTokens() {
+    return []
+}
+
+export function getToken(contractAddress: string) {
+    return {}
+}
