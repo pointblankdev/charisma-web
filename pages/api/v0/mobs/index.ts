@@ -124,7 +124,7 @@ const handleContractPrintEvent = async (event: ContractEvent, embed: any) => {
             hogger.maxHealth = newMaxHp
             hogger.regenRate = newRegen
             await setMob('hogger', hogger)
-            embed.addField(`👻 ${event?.data?.value?.event}`, JSON.stringify(event.data).slice(0, 300));
+            embed.addField(`👻 ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
         }
 
         // attack-result: cache data for hogger health
@@ -133,7 +133,7 @@ const handleContractPrintEvent = async (event: ContractEvent, embed: any) => {
             const hogger = await getMob('hogger')
             hogger.health = newHealth
             await setMob('hogger', hogger)
-            embed.addField(`⚔️ ${event?.data?.value?.event}`, JSON.stringify(event.data).slice(0, 300));
+            embed.addField(`⚔️ ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
         }
 
         // burn event
