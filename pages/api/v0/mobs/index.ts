@@ -79,15 +79,12 @@ export default async function getMetadata(
                     // send message to discord
                     const embed = new MessageBuilder()
                         .setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
-                        .setTitle('A player is fighting Hogger!')
+                        .setTitle('Hogger Event!')
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     for (const event of tx.metadata.receipt.events) {
                         if (event.type === 'SmartContractEvent') {
-                            embed.addField(`📜 ${event.data.topic}`, JSON.stringify(event.data?.value || event.data));
-
-                            // cache data to the db based on the print event data
-                            await handleContractPrintEvent(event)
+                            await handleContractPrintEvent(event, embed)
 
                         } else if (event.type === 'FTBurnEvent') {
                             embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
@@ -107,7 +104,7 @@ export default async function getMetadata(
                     console.log(error)
                     const embed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
-                        .setDescription(JSON.stringify(tx.metadata.receipt.events).slice(0, 300))
+                        .setDescription(JSON.stringify(tx.metadata.receipt).slice(0, 300))
                     await hook.send(embed);
                 }
             }
@@ -125,7 +122,7 @@ export default async function getMetadata(
     return res.status(code).json(response as ChainhookResponse | ErrorResponse);
 }
 
-const handleContractPrintEvent = async (event: ContractEvent) => {
+const handleContractPrintEvent = async (event: ContractEvent, embed: any) => {
     try {
         const eventType = event?.data?.value?.event
         if (eventType) {
@@ -140,16 +137,23 @@ const handleContractPrintEvent = async (event: ContractEvent) => {
                 hogger.maxHealth = newMaxHp
                 hogger.regenRate = newRegen
                 await setMob('hogger', hogger)
+                embed.addField(`👻 ${eventType}`, JSON.stringify(event.data));
             }
 
             // attack-result: cache data for hogger health
-            if (eventType === 'attack-result') {
+            else if (eventType === 'attack-result') {
                 const newHealth = Number(event.data.value['new-hogger-health'])
                 const hogger = await getMob('hogger')
                 hogger.health = newHealth
                 await setMob('hogger', hogger)
+                embed.addField(`⚔️ ${eventType}`, JSON.stringify(event.data));
+            }
+
+            else {
+                embed.addField(`📜 ${event.data.topic}`, JSON.stringify(event.data));
             }
         }
+
     } catch (error) {
         console.log('handlePrintEvent error:', error)
     }
