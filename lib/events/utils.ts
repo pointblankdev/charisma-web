@@ -23,7 +23,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
         // reset-complete: cache data for new hogger repawn
         if (event?.data?.value?.type === 'tap-energy') {
-            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300));
+            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
         }
 
         // reset-complete: cache data for new hogger repawn
@@ -36,7 +36,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
             hogger.maxHealth = newMaxHp
             hogger.regenRate = newRegen
             await setMob('hogger', hogger)
-            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
+            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
         }
 
         // attack-result: cache data for hogger health
@@ -45,7 +45,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
             const hogger = await getMob('hogger')
             hogger.health = newHealth
             await setMob('hogger', hogger)
-            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
+            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
         }
 
         // burn event
@@ -60,7 +60,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
         // unknown event
         else {
-            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300));
+            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
         }
 
     } catch (error) {

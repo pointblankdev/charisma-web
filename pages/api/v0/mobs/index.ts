@@ -94,7 +94,7 @@ export default async function getMetadata(
                     console.log(error)
                     const embed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
-                        .setDescription(JSON.stringify(tx.metadata.receipt).slice(0, 300))
+                        .setDescription(JSON.stringify(tx.metadata.receipt.events).slice(0, 300))
                     await hook.send(embed);
                 }
             }
