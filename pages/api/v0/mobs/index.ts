@@ -112,6 +112,22 @@ export default async function getMetadata(
 }
 
 const handleContractPrintEvent = async (event: ContractEvent, embed: any) => {
+
+    let symbol;
+    if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0") {
+        symbol = '👻'
+    } else if (event?.data?.value?.event === 'attack-result') {
+        symbol = '⚔️'
+    } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
+        symbol = '📜'
+    } else if (event.type === 'FTBurnEvent') {
+        symbol = '🔥'
+    } else if (event.type === 'FTMintEvent') {
+        symbol = '💰'
+    } else {
+        symbol = '❓'
+    }
+
     try {
 
         // reset-complete: cache data for new hogger repawn
@@ -124,7 +140,7 @@ const handleContractPrintEvent = async (event: ContractEvent, embed: any) => {
             hogger.maxHealth = newMaxHp
             hogger.regenRate = newRegen
             await setMob('hogger', hogger)
-            embed.addField(`👻 ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
+            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
         }
 
         // attack-result: cache data for hogger health
@@ -133,22 +149,22 @@ const handleContractPrintEvent = async (event: ContractEvent, embed: any) => {
             const hogger = await getMob('hogger')
             hogger.health = newHealth
             await setMob('hogger', hogger)
-            embed.addField(`⚔️ ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
+            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
         }
 
         // burn event
         else if (event.type === 'FTBurnEvent') {
-            embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+            embed.addField(`${symbol} protocol-burn`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
         }
 
         // mint event
         else if (event.type === 'FTMintEvent') {
-            embed.addField('💰 quest-reward', JSON.stringify(event.data).slice(0, 300));
+            embed.addField(`${symbol} quest-reward`, JSON.stringify(event.data).slice(0, 300));
         }
 
         // unknown event
         else {
-            embed.addField(`❓ ${event.type}`, JSON.stringify(event.data).slice(0, 300));
+            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300));
         }
 
     } catch (error) {
