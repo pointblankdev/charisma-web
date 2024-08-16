@@ -6,17 +6,17 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
     try {
 
-        // burn event
-        if (event.type === 'FTBurnEvent') {
-            symbol = '🔥'
-            embed.addField(`${symbol} ${event.type}`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
-        }
+        // // burn event
+        // if (event.type === 'FTBurnEvent') {
+        //     symbol = '🔥'
+        //     embed.addField(`${symbol} ${event.type}`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+        // }
 
-        // mint event
-        else if (event.type === 'FTMintEvent') {
-            symbol = '💰'
-            embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} points.`);
-        }
+        // // mint event
+        // else if (event.type === 'FTMintEvent') {
+        //     symbol = '💰'
+        //     embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} points.`);
+        // }
 
 
         if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
