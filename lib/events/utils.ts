@@ -1,5 +1,4 @@
-import { getMob, getRewardLeaderboard, incrementRewardLeaderboard, setMob, updateRewardLeaderboard } from "@lib/db-providers/kv";
-import { getTokenBalance } from "@lib/stacks-api";
+import { getMob, incrementRewardLeaderboard, setMob } from "@lib/db-providers/kv";
 
 export const handleContractEvent = async (event: any, embed: any) => {
 
