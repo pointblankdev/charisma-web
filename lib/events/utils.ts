@@ -52,6 +52,15 @@ export const handleContractEvent = async (event: any, embed: any) => {
             embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
         }
 
+        else if (event?.data?.value?.event === 'attack-hogger') {
+            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+        }
+
+        else if (event.data.contract_identifier === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1' && event?.data?.value?.event === 'rewards-distributed') {
+            await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data['cha-amount'], event.data.player);
+            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+        }
+
         // burn event
         else if (event.type === 'FTBurnEvent') {
             embed.addField(`${symbol} ${event.type}`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
@@ -59,7 +68,6 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
         // mint event
         else if (event.type === 'FTMintEvent') {
-            await incrementRewardLeaderboard(event.data.asset_identifier, event.data.amount, event.data.player);
             embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} points.`);
         }
 
