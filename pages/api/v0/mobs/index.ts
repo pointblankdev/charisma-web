@@ -96,6 +96,8 @@ export default async function getMetadata(
                         } else if (event.type === 'FTMintEvent') {
                             embed.addField('💰 quest-reward', safeJsonStringify(event.data));
 
+                        } else {
+                            embed.addField(`📜 ${event.type}`, safeJsonStringify(event.data).slice(0, 300));
                         }
                     }
 

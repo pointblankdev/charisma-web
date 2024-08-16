@@ -32,10 +32,10 @@ import expIcon from '@public/experience.png';
 
 const ITEMS_PER_PAGE = 10;
 
-export default function Leaderboard({ holders, expTotalSupply }: any) {
+export default function RewardsTable({ topRewardedPlayers }: any) {
     const [currentPage, setCurrentPage] = useState(1);
 
-    const totalPages = Math.ceil(holders.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(topRewardedPlayers.length / ITEMS_PER_PAGE);
 
     const handlePageChange = (page: number) => {
         if (page < 1 || page > totalPages) return;
@@ -43,7 +43,7 @@ export default function Leaderboard({ holders, expTotalSupply }: any) {
     };
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const pageData = holders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const pageData = topRewardedPlayers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
     return (
         <Card>

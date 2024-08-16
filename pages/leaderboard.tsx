@@ -4,7 +4,7 @@ import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout/layout';
 import { getTotalSupply } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
-import { getExperienceLeaderboard } from '@lib/db-providers/kv';
+import { getExperienceLeaderboard, getRewardLeaderboard } from '@lib/db-providers/kv';
 import ExperienceLeaderboardTable from '@components/leaderboards/exp-table';
 import RewardsLeaderboardTable from '@components/leaderboards/rewards-table';
 
@@ -12,10 +12,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const experienceHolders = await getExperienceLeaderboard(0, -1)
     const experienceTotalSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
 
+    const topRewardedPlayers = await getRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', 0, -1)
+
     return {
         props: {
             holders: experienceHolders,
             expTotalSupply: Number(experienceTotalSupply),
+            topRewardedPlayers,
         },
         revalidate: 60
     };
@@ -24,8 +27,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 type Props = {
     holders: any[];
     expTotalSupply: number;
+    topRewardedPlayers: any[];
 };
-export default function LeaderboardPage({ holders, expTotalSupply }: Props) {
+export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPlayers }: Props) {
     const meta = {
         title: 'Charisma | Leaderboard',
         description: META_DESCRIPTION
@@ -46,7 +50,7 @@ export default function LeaderboardPage({ holders, expTotalSupply }: Props) {
                         {/* button placeholder */}
                     </div>
                     <ExperienceLeaderboardTable holders={holders} expTotalSupply={expTotalSupply} />
-                    {/* <RewardsLeaderboardTable holders={holders} /> */}
+                    <RewardsLeaderboardTable holders={holders} topRewardedPlayers={topRewardedPlayers} />
                 </div>
             </Layout>
         </Page >
