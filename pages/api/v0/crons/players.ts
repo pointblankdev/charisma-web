@@ -9,11 +9,11 @@ type ErrorResponse = {
 };
 
 const players: any[] = [
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_0,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_0,
-    //     password: process.env.STACKS_ORACLE_PASSWORD
-    // }
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_0,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_0,
+        password: process.env.STACKS_ORACLE_PASSWORD
+    }
 ]
 
 

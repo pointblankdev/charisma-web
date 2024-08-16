@@ -15,7 +15,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
         else if (event.type === 'FTMintEvent') {
             symbol = '💰'
 
-            embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} points.`);
+            embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
         }
 
         else if (event.type === 'SmartContractEvent') {
@@ -88,27 +88,6 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     console.error('Unknown lands event:', event.data)
                     embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
                 }
-            }
-
-            else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience") {
-                symbol = '✨'
-
-                console.error('Unknown experience event:', event.data)
-                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
-            }
-
-            else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma") {
-                symbol = '🔴'
-
-                console.error('Unknown staked charisma token event:', event.data)
-                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
-            }
-
-            else if (event?.data?.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token") {
-                symbol = '🔴'
-
-                console.error('Unknown charisma token event:', event.data)
-                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
             }
 
             else {
