@@ -75,13 +75,13 @@ export default async function getMetadata(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
+                const embed = new MessageBuilder()
                 try {
                     console.log(Object.keys(tx.metadata))
                     // send message to discord
-                    const embed = new MessageBuilder()
-                        .setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
-                        .setTitle('Hogger Event!')
-                        .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
+                    embed.setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
+                    embed.setTitle('Hogger Event!')
+                    embed.setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
 
                     for (const event of tx.metadata.receipt.events) {
                         await handleContractEvent(event, embed)
@@ -91,11 +91,12 @@ export default async function getMetadata(
                     response = {}
 
                 } catch (error: any) {
-                    console.log(error)
-                    const embed = new MessageBuilder()
+                    console.error(error)
+                    console.error(embed.getJSON())
+                    const errorEmbed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
                         .setDescription(JSON.stringify(tx.metadata.receipt.events).slice(0, 300))
-                    await hook.send(embed);
+                    await hook.send(errorEmbed);
                 }
             }
         }
