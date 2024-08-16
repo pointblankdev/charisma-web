@@ -183,9 +183,9 @@ describe('metadata api', () => {
     it('should set land 8 data into db', async () => {
         const id = 8
         const name = "Edmund Fitzgerald Coin"
-        const image = "https://gaia.hiro.so/hub/1LYfc7Pkd1GmbApq8KJRjNMgAU91QvY5xB/Edmund-Fitzgerald-Wreck.webp"
+        const image = "https://edmund-fitzgerald-coin.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F6b0ac1c0-4974-4204-830a-82830a622dc5%2Fa1fd1d53-47fe-4fa3-bf65-0126b4af88a1%2Fedmund.png?table=block&id=5548e486-8a78-4408-9866-a6a306d35613&spaceId=6b0ac1c0-4974-4204-830a-82830a622dc5&width=480&userId=&cache=v2"
         const cardImage = "https://charisma.rocks/lands/img/card/edmund.png"
-        const description = "Never forget the Edmund Fitzgerald"
+        const description = "The legend lives on from the Chippewa on down"
         const contractAddress = "SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin"
         const assetIdentifier = "EDMUND"
         const symbol = "EDMUND"

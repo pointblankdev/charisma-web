@@ -28,7 +28,7 @@ import { getAllWallets } from './cms-providers/dato';
 import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
 import { bytesToHex, hexToInt, intToHex, utf8ToBytes } from '@stacks/common';
-import { getLatestBlock } from './user-api';
+import { getLatestBlock, HOST } from './user-api';
 import { getGlobalState, getMob, setMob } from './db-providers/kv';
 import { get } from 'lodash';
 
@@ -633,7 +633,12 @@ export async function getTokenURI(contract: string) {
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
   const tokenUri = cv.value.value.value
-  const res = await fetch(`/api/proxy?url=${tokenUri}`, { method: 'POST' });
+  const res = await fetch(tokenUri, {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json'
+    }
+  });
   const metadata = await res.json();
   return metadata
 }
