@@ -155,6 +155,7 @@ const generateTemplate = ({ contractAddress }: any) => {
         ;; calculate the initial difficulty based on the total supply
         (land-difficulty (/ total-supply (pow u10 u5)))
       )
+      (print {event: "enable-listing", land-id: land-id, total-supply: total-supply, land-difficulty: land-difficulty})
       ;; set initial difficulty based on total supply to normalize energy output
       (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands set-land-difficulty land-id land-difficulty)
     )
