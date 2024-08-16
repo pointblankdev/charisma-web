@@ -59,8 +59,8 @@ export default function RewardsTable({ topRewardedPlayers }: any) {
                         <TableRow>
                             <TableHead className="text-center">Rank</TableHead>
                             <TableHead>Wallet Address</TableHead>
-                            <TableHead className="text-center">Total (USD)</TableHead>
-                            <TableHead className="text-center">CHA</TableHead>
+                            <TableHead className="text-right">Total (USD)</TableHead>
+                            <TableHead className="text-right">CHA</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -68,8 +68,8 @@ export default function RewardsTable({ topRewardedPlayers }: any) {
                             <TableRow key={holder.rank}>
                                 <TableCell className="font-normal text-center">{holder.rank}</TableCell>
                                 <TableCell className="font-medium">{holder.bns || holder.address}</TableCell>
-                                <TableCell className="font-medium text-center">{0}</TableCell>
-                                <TableCell className="font-medium text-center">{0}</TableCell>
+                                <TableCell className="font-medium text-right">{numeral((holder.amount / Math.pow(10, 6)) * 0.15).format('$0.00')}</TableCell>
+                                <TableCell className="font-medium text-right">{(holder.amount / Math.pow(10, 6))}</TableCell>
                             </TableRow>
                         ))}
                     </TableBody>
