@@ -65,11 +65,12 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
         // unknown event
         else {
-            console.log('Unknown event:', event.data)
+            console.error('Unknown event:', event.data)
             embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
         }
 
     } catch (error) {
-        console.log('handlePrintEvent error:', error)
+        console.error('handlePrintEvent error:', error)
+        console.log(event.data)
     }
 }
