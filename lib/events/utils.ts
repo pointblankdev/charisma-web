@@ -11,7 +11,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
     } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit") {
         symbol = '🧑‍🌾'
     } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0") {
-        symbol = '👻'
+        symbol = '🐗'
     } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
         symbol = '📜'
     } else if (event.type === 'FTBurnEvent') {
