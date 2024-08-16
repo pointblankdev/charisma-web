@@ -85,7 +85,7 @@ export default async function getMetadata(
 
                     for (const event of tx.metadata.receipt.events) {
                         if (event.type === 'SmartContractEvent') {
-                            embed.addField(`📜 ${event.data.topic}`, safeJsonStringify(event.data?.value || event.data));
+                            embed.addField(`📜 ${event.data.topic}`, JSON.stringify(event.data?.value || event.data));
 
                             // cache data to the db based on the print event data
                             await handleContractPrintEvent(event)
@@ -94,10 +94,10 @@ export default async function getMetadata(
                             embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
 
                         } else if (event.type === 'FTMintEvent') {
-                            embed.addField('💰 quest-reward', safeJsonStringify(event.data));
+                            embed.addField('💰 quest-reward', JSON.stringify(event.data));
 
                         } else {
-                            embed.addField(`❓ ${event.type}`, safeJsonStringify(event.data).slice(0, 300));
+                            embed.addField(`❓ ${event.type}`, JSON.stringify(event.data).slice(0, 300));
                         }
                     }
 
@@ -108,7 +108,7 @@ export default async function getMetadata(
                     console.log(error)
                     const embed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
-                        .setDescription(safeJsonStringify(tx.metadata.receipt.events).slice(0, 300))
+                        .setDescription(JSON.stringify(tx.metadata.receipt.events).slice(0, 300))
                     await hook.send(embed);
                 }
             }
