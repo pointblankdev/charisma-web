@@ -95,7 +95,10 @@ export default async function getMetadata(
                     console.error(embed.getJSON())
                     const errorEmbed = new MessageBuilder()
                         .setTitle('Error Parsing Transaction')
-                        .setDescription(JSON.stringify(tx.metadata.receipt.events).slice(0, 300))
+
+                    for (const event of tx.metadata.receipt.events) {
+                        errorEmbed.addField("⚠️", JSON.stringify(event).slice(0, 300))
+                    }
                     await hook.send(errorEmbed);
                 }
             }
