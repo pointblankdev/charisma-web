@@ -44,16 +44,17 @@ export default async function getMetadata(
                         const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
                         const experienceSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
 
-                        const bns = await getNameFromAddress(payload.sender)
                         const data = { address: payload.sender } as any
+                        const bns = await getNameFromAddress(payload.sender)
                         if (bns.names?.[0]) data.bns = bns.names?.[0]
                         const jsonData = JSON.stringify(data);
+
 
                         // update leaderboard
                         await updateExperienceLeaderboard(experienceAmount, jsonData)
                         // send message to discord
                         const embed = new MessageBuilder()
-                            .setTitle('Adventure')
+                            .setTitle('Experience Gained')
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
                             .setThumbnail('https://charisma.rocks/experience.png')
                             .addField('\\> 10% TS', experienceAmount / experienceSupply >= 0.1 ? "🌞" : "✖️", true)
@@ -62,6 +63,12 @@ export default async function getMetadata(
                             .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP', true)
                             .addField('% of Total Supply', numeral(experienceAmount / experienceSupply).format('0.0%'), true)
                             .addField('Wallet Address', payload.sender)
+
+
+                        for (const event of tx.metadata.receipt.events) {
+                            embed.addField(`❓ ${event.type}`, JSON.stringify(event.data).slice(0, 300));
+                        }
+
                         await hook.send(embed);
                     }
                     response = {}
