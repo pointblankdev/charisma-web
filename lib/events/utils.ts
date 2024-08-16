@@ -91,6 +91,13 @@ export const handleContractEvent = async (event: any, embed: any) => {
             embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
         }
 
+        else if (event?.data?.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token") {
+            symbol = '🔴'
+
+            console.error('Unknown charisma token event:', event.data)
+            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+        }
+
         else {
 
             console.error('Unknown event:', event.data)
