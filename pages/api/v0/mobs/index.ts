@@ -1,4 +1,5 @@
 import { getExperienceLeaderboard, getMob, setMob, updateExperienceLeaderboard } from '@lib/db-providers/kv';
+import { handleContractEvent } from '@lib/events/utils';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -83,7 +84,7 @@ export default async function getMetadata(
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     for (const event of tx.metadata.receipt.events) {
-                        await handleContractPrintEvent(event, embed)
+                        await handleContractEvent(event, embed)
                     }
 
                     await hook.send(embed);
@@ -109,65 +110,4 @@ export default async function getMetadata(
     }
 
     return res.status(code).json(response as ChainhookResponse | ErrorResponse);
-}
-
-const handleContractPrintEvent = async (event: ContractEvent, embed: any) => {
-
-    let symbol;
-    if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0") {
-        symbol = '👻'
-    } else if (event?.data?.value?.event === 'attack-result') {
-        symbol = '⚔️'
-    } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
-        symbol = '📜'
-    } else if (event.type === 'FTBurnEvent') {
-        symbol = '🔥'
-    } else if (event.type === 'FTMintEvent') {
-        symbol = '💰'
-    } else {
-        symbol = '❓'
-    }
-
-    try {
-
-        // reset-complete: cache data for new hogger repawn
-        if (event?.data?.value?.event === 'reset-complete') {
-            const newLevel = Number(event.data.value['new-epoch'])
-            const newMaxHp = Number(event.data.value['new-max-health'])
-            const newRegen = Number(event.data.value['new-regen-rate'])
-            const hogger = await getMob('hogger')
-            hogger.level = newLevel
-            hogger.maxHealth = newMaxHp
-            hogger.regenRate = newRegen
-            await setMob('hogger', hogger)
-            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
-        }
-
-        // attack-result: cache data for hogger health
-        else if (event?.data?.value?.event === 'attack-result') {
-            const newHealth = Number(event.data.value['new-hogger-health'])
-            const hogger = await getMob('hogger')
-            hogger.health = newHealth
-            await setMob('hogger', hogger)
-            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300));
-        }
-
-        // burn event
-        else if (event.type === 'FTBurnEvent') {
-            embed.addField(`${symbol} protocol-burn`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
-        }
-
-        // mint event
-        else if (event.type === 'FTMintEvent') {
-            embed.addField(`${symbol} quest-reward`, JSON.stringify(event.data).slice(0, 300));
-        }
-
-        // unknown event
-        else {
-            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300));
-        }
-
-    } catch (error) {
-        console.log('handlePrintEvent error:', error)
-    }
 }

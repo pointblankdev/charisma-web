@@ -1,4 +1,5 @@
 import { getExperienceLeaderboard, updateExperienceLeaderboard } from '@lib/db-providers/kv';
+import { handleContractEvent } from '@lib/events/utils';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { AnyRecord } from 'dns';
@@ -81,45 +82,4 @@ export default async function getMetadata(
     }
 
     return res.status(code).json(response);
-}
-
-
-const handleContractEvent = (event: any, embed: any) => {
-
-    let symbol;
-    if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands") {
-        symbol = '⛰'
-    } else if (event.type === 'FTBurnEvent') {
-        symbol = '🔥'
-    } else if (event.type === 'FTMintEvent') {
-        symbol = '💰'
-    } else {
-        symbol = '❓'
-    }
-
-    try {
-
-        // reset-complete: cache data for new hogger repawn
-        if (event?.data?.value?.type === 'tap-energy') {
-            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300));
-        }
-
-        // burn event
-        else if (event.type === 'FTBurnEvent') {
-            embed.addField(`${symbol} ${event.type}`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
-        }
-
-        // mint event
-        else if (event.type === 'FTMintEvent') {
-            embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} points.`);
-        }
-
-        // unknown event
-        else {
-            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300));
-        }
-
-    } catch (error) {
-        console.log('handlePrintEvent error:', error)
-    }
 }
