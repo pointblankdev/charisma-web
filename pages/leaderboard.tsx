@@ -5,7 +5,8 @@ import Layout from '@components/layout/layout';
 import { getTotalSupply } from '@lib/stacks-api';
 import { GetStaticProps } from 'next';
 import { getExperienceLeaderboard } from '@lib/db-providers/kv';
-import Leaderboard from '@components/leaderboard.tsx/table';
+import ExperienceLeaderboardTable from '@components/leaderboards/exp-table';
+import RewardsLeaderboardTable from '@components/leaderboards/rewards-table';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
     const experienceHolders = await getExperienceLeaderboard(0, -1)
@@ -44,7 +45,8 @@ export default function LeaderboardPage({ holders, expTotalSupply }: Props) {
                         </div>
                         {/* button placeholder */}
                     </div>
-                    <Leaderboard holders={holders} expTotalSupply={expTotalSupply} />
+                    <ExperienceLeaderboardTable holders={holders} expTotalSupply={expTotalSupply} />
+                    {/* <RewardsLeaderboardTable holders={holders} /> */}
                 </div>
             </Layout>
         </Page >
