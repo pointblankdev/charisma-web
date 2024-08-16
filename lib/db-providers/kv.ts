@@ -203,33 +203,43 @@ export async function getExperienceLeaderboard(startRank: number, endRank: numbe
     }
 }
 
+export async function clearLeaderboard() {
+    try {
+        return await kv.del('leaderboard:exp');
+    } catch (error) {
+        console.error('Error fetching leaderboard:', error);
+    }
+}
+
+
+// rewards
+
+export async function updateRewardLeaderboard(token: string, amount: number, data: any) {
+    try {
+        await kv.zadd(`leaderboard:rewards:${token}`, { score: amount, member: data });
+    } catch (error) {
+        console.error('Error updating player score:', error);
+    }
+}
+
 export async function getRewardLeaderboard(token: string, startRank: number, endRank: number) {
     try {
         const leaderboard = await kv.zrange(`leaderboard:rewards:${token}`, startRank, endRank, { withScores: true, rev: true });
         const resultArray = [];
 
         for (let i = 0; i < leaderboard.length; i += 2) {
-            const memberJson: any = leaderboard[i]; // The stored JSON string
+            const address: any = leaderboard[i]; // The stored JSON string
             const amount: any = leaderboard[i + 1]; // The corresponding score
             const data: any = {
                 rank: i / 2 + 1,
-                address: memberJson.address,
+                address: address,
                 amount: Number(amount),
             }
-            if (memberJson.bns) data.bns = memberJson.bns
             resultArray.push(data);
         }
         return resultArray;
     } catch (error) {
         console.error('Error fetching leaderboard:', error);
         return [];
-    }
-}
-
-export async function clearLeaderboard() {
-    try {
-        return await kv.del('leaderboard:exp');
-    } catch (error) {
-        console.error('Error fetching leaderboard:', error);
     }
 }

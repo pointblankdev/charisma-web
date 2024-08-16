@@ -1,4 +1,4 @@
-import { getMob, setMob } from "@lib/db-providers/kv";
+import { getMob, setMob, updateRewardLeaderboard } from "@lib/db-providers/kv";
 
 export const handleContractEvent = async (event: any, embed: any) => {
 
@@ -56,11 +56,13 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
         // mint event
         else if (event.type === 'FTMintEvent') {
+            await updateRewardLeaderboard(event.data.asset_identifier, event.data.amount, event.data.recipient_address);
             embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} points.`);
         }
 
         // unknown event
         else {
+            console.log('Unknown event:', event.data)
             embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
         }
 
