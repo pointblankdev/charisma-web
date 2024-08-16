@@ -70,13 +70,6 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 >
                   <div className="relative flex flex-col items-center justify-center">
                     <div>{name}</div>
-                    {/* {name === 'Arbitrage' && <div className='text-xxs absolute top-4 text-primary animate-pulse'>early access</div>} */}
-                    {/* {name === 'Creatures' && <div className='text-xs whitespace-nowrap absolute top-4 text-primary animate-pulse'>early access</div>} */}
-                    {/* {name === 'Portfolio' && (
-                      <div className="whitespace-nowrap absolute text-xs top-4 text-yellow-500 animate-pulse">
-                        preview
-                      </div>
-                    )} */}
                   </div>
                 </Link>
               ))}
@@ -91,7 +84,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'sm:relative'
               )}
             >
-              <div className="flex items-center gap-2 text-lg text-muted/80 font-semibold sm:absolute sm:right-64 mr-2">
+              <div className="flex items-center gap-2 text-md text-muted font-medium sm:absolute sm:right-64 mr-2">
                 <Image
                   alt={'Energy Icon'}
                   src={energyIcon}
@@ -101,7 +94,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 />
                 <div>{numeral(energy).format('0.0a')}</div>
               </div>
-              <div className="flex items-center gap-2 text-lg text-muted/80 font-semibold pl-2 sm:absolute sm:right-40">
+              <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-48">
                 <Image
                   alt={'Experience Icon'}
                   src={experienceIcon}
@@ -109,7 +102,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={100}
                   className={`z-30 border rounded-full h-5 w-5`}
                 />
-                <div>{numeral(experience).format('0a')} EXP</div>
+                <div>{numeral(experience).format('0a')}</div>
               </div>
               <ConnectWallet />
             </div>
