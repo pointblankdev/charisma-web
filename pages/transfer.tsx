@@ -47,7 +47,7 @@ const Transfer = () => {
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: 'lands',
             functionName: "transfer",
-            functionArgs: [uintCV(1), uintCV(1), standardPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), standardPrincipalCV(recipient)],
+            functionArgs: [uintCV(1), uintCV(1000000), standardPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), standardPrincipalCV(recipient)],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
         });

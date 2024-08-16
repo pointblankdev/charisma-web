@@ -248,7 +248,14 @@ describe('metadata api', () => {
     })
 
     it('should get hogger', async () => {
-        const response = await getMob('hogger')
+        const hogger = await getMob('hogger')
+        console.log(hogger)
+    })
+
+    it('should update hogger health', async () => {
+        const hogger = await getMob('hogger')
+        hogger.health = 0
+        const response = await setMob('hogger', hogger)
         console.log(response)
     })
 
