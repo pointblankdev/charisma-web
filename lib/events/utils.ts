@@ -4,9 +4,7 @@ import { getTokenBalance } from "@lib/stacks-api";
 export const handleContractEvent = async (event: any, embed: any) => {
 
     let symbol;
-    if (event?.data?.value?.event === 'attack-result') {
-        symbol = '⚔️'
-    } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands") {
+    if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands") {
         symbol = '⛰'
     } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit") {
         symbol = '🧑‍🌾'
