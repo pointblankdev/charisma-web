@@ -24,7 +24,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
     try {
 
         if (event?.data?.value?.type === 'tap-energy') {
-            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
         }
 
         // reset-complete: cache data for new hogger repawn
