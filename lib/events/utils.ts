@@ -2,7 +2,8 @@ import { getMob, incrementRewardLeaderboard, setMob } from "@lib/db-providers/kv
 
 export const handleContractEvent = async (event: any, embed: any) => {
 
-    let symbol;
+    let symbol = '❓';
+
     if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands") {
         symbol = '⛰'
     } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.creatures-kit") {
@@ -15,8 +16,6 @@ export const handleContractEvent = async (event: any, embed: any) => {
         symbol = '🔥'
     } else if (event.type === 'FTMintEvent') {
         symbol = '💰'
-    } else {
-        symbol = '❓'
     }
 
     try {
@@ -56,11 +55,6 @@ export const handleContractEvent = async (event: any, embed: any) => {
             embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
         }
 
-        else if (event.data.contract_identifier === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1' && event?.data?.value?.event === 'rewards-distributed') {
-            await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data['cha-amount'], event.data.player);
-            embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
-        }
-
         // burn event
         else if (event.type === 'FTBurnEvent') {
             embed.addField(`${symbol} ${event.type}`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
@@ -75,6 +69,30 @@ export const handleContractEvent = async (event: any, embed: any) => {
         else {
             console.error('Unknown event:', event.data)
             embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+        }
+
+
+        if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
+            symbol = '📜'
+
+            if (event?.data?.value?.event === 'rewards-distributed') {
+                await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data['cha-amount'], event.data.player);
+                embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+            }
+
+            else if (event?.data?.value?.event === 'result-epoch') {
+                embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+            }
+
+            else if (event?.data?.value?.event === 'reset-for-new-epoch') {
+                embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+            }
+        } else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0") {
+            symbol = '🐗'
+
+            if (event?.data?.value?.event === 'take-damage') {
+                embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+            }
         }
 
     } catch (error) {
