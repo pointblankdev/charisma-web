@@ -98,8 +98,8 @@ describe('metadata api', () => {
         console.log(response)
     })
 
-    it('should get land 1', async () => {
-        const response = await getLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+    it('should get land pepe', async () => {
+        const response = await getLand('SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz')
         console.log(response)
     })
 
