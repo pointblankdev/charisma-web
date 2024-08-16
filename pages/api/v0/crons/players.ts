@@ -14,26 +14,26 @@ const players: any[] = [
         seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_0,
         publicAddress: process.env.STACKS_ORACLE_ADDRESS_0,
     },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_1,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_1,
-    // },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_2,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_2,
-    // },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_3,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_3,
-    // },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_4,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_4,
-    // },
-    // {
-    //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_5,
-    //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_5,
-    // },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_1,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_1,
+    },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_2,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_2,
+    },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_3,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_3,
+    },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_4,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_4,
+    },
+    {
+        seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_5,
+        publicAddress: process.env.STACKS_ORACLE_ADDRESS_5,
+    },
     // {
     //     seedPhrase: process.env.STACKS_ORACLE_SECRET_KEY_6,
     //     publicAddress: process.env.STACKS_ORACLE_ADDRESS_6,
