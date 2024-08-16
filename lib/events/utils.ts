@@ -92,6 +92,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
         }
 
         else {
+
             console.error('Unknown event:', event.data)
             embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
         }
