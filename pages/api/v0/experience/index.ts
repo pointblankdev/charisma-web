@@ -55,7 +55,7 @@ export default async function getMetadata(
                         const embed = new MessageBuilder()
                             .setTitle('Adventure')
                             .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
-                            .setThumbnail('https://charisma.rocks/quests/journey-of-discovery.png')
+                            .setThumbnail('https://charisma.rocks/experience.png')
                             .addField('\\> 10% TS', experienceAmount / experienceSupply >= 0.1 ? "🌞" : "✖️", true)
                             .addField('\\> 1% TS', experienceAmount / experienceSupply >= 0.01 ? "🌟" : "✖️", true)
                             .addField('\\> 0.1% TS', experienceAmount / experienceSupply >= 0.001 ? "✨" : "✖️", true)
