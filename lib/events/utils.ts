@@ -91,6 +91,13 @@ export const handleContractEvent = async (event: any, embed: any) => {
             embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
         }
 
+        else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma") {
+            symbol = '🔴'
+
+            console.error('Unknown staked charisma token event:', event.data)
+            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+        }
+
         else if (event?.data?.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token") {
             symbol = '🔴'
 
