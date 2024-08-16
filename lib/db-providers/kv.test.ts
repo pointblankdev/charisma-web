@@ -180,6 +180,59 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    it('should set land 8 data into db', async () => {
+        const id = 8
+        const name = "Edmund Fitzgerald Coin"
+        const image = "https://gaia.hiro.so/hub/1LYfc7Pkd1GmbApq8KJRjNMgAU91QvY5xB/Edmund-Fitzgerald-Wreck.webp"
+        const cardImage = "https://charisma.rocks/lands/img/card/edmund.png"
+        const description = "Never forget the Edmund Fitzgerald"
+        const contractAddress = "SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin"
+        const assetIdentifier = "EDMUND"
+        const symbol = "EDMUND"
+        const decimals = 6
+        const totalSupply = 11101975290000
+        const difficulty = 111019753
+        const proposalName = `SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.list-edmund-fitzgerald-coin`
+        const response = await setLand('SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin', {
+            sip: 16,
+            id: id,
+            name: name,
+            image: image,
+            cardImage: cardImage,
+            description: {
+                type: "string",
+                description: description
+            },
+            proposal: proposalName,
+            whitelisted: false,
+            wraps: {
+                ca: contractAddress,
+                name: name,
+                description: description,
+                image: image,
+                asset: assetIdentifier,
+                symbol: symbol,
+                decimals: Number(decimals),
+                totalSupply: Number(totalSupply)
+            },
+            attributes: [
+                {
+                    trait_type: "difficulty",
+                    display_type: "number",
+                    value: difficulty
+                }
+            ],
+            properties: {
+                collection: "Charisma Lands",
+                collection_image: "https://charisma.rocks/lands/img/lands.jpg",
+                category: "image",
+                symbol: "LAND",
+                decimals: 6
+            }
+        })
+        console.log(response)
+    })
+
     it('should update land by id', async () => {
         const land = await getLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
         const response = await setLandById(1, land)
