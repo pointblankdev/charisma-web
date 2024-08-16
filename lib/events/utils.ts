@@ -23,7 +23,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
             symbol = '📜'
 
             if (event?.data?.value?.event === 'rewards-distributed') {
-                await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data['cha-amount'], event.data.player);
+                await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.event.player);
                 embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
             }
 
@@ -104,6 +104,10 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
             console.error('Unknown charisma token event:', event.data)
             embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+        }
+
+        else if (event.data.asset_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma") {
+
         }
 
         else {
