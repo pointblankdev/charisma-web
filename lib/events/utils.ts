@@ -75,7 +75,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
         else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands") {
             symbol = '⛰'
 
-            if (event?.data?.value?.event === 'tap-energy') {
+            if (event?.data?.value?.type === 'tap-energy') {
 
                 embed.addField(`${symbol} ${event?.data?.value?.type}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
             } else {
