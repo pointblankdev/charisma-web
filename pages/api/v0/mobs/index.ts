@@ -83,18 +83,7 @@ export default async function getMetadata(
                         .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger.png')
 
                     for (const event of tx.metadata.receipt.events) {
-                        if (event.type === 'SmartContractEvent') {
-                            await handleContractPrintEvent(event, embed)
-
-                        } else if (event.type === 'FTBurnEvent') {
-                            embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
-
-                        } else if (event.type === 'FTMintEvent') {
-                            embed.addField('💰 quest-reward', JSON.stringify(event.data));
-
-                        } else {
-                            embed.addField(`❓ ${event.type}`, JSON.stringify(event.data).slice(0, 300));
-                        }
+                        await handleContractPrintEvent(event, embed)
                     }
 
                     await hook.send(embed);
@@ -124,34 +113,42 @@ export default async function getMetadata(
 
 const handleContractPrintEvent = async (event: ContractEvent, embed: any) => {
     try {
-        const eventType = event?.data?.value?.event
-        if (eventType) {
 
-            // reset-complete: cache data for new hogger repawn
-            if (eventType === 'reset-complete') {
-                const newLevel = Number(event.data.value['new-epoch'])
-                const newMaxHp = Number(event.data.value['new-max-health'])
-                const newRegen = Number(event.data.value['new-regen-rate'])
-                const hogger = await getMob('hogger')
-                hogger.level = newLevel
-                hogger.maxHealth = newMaxHp
-                hogger.regenRate = newRegen
-                await setMob('hogger', hogger)
-                embed.addField(`👻 ${eventType}`, JSON.stringify(event.data));
-            }
+        // reset-complete: cache data for new hogger repawn
+        if (event?.data?.value?.event === 'reset-complete') {
+            const newLevel = Number(event.data.value['new-epoch'])
+            const newMaxHp = Number(event.data.value['new-max-health'])
+            const newRegen = Number(event.data.value['new-regen-rate'])
+            const hogger = await getMob('hogger')
+            hogger.level = newLevel
+            hogger.maxHealth = newMaxHp
+            hogger.regenRate = newRegen
+            await setMob('hogger', hogger)
+            embed.addField(`👻 ${event?.data?.value?.event}`, JSON.stringify(event.data).slice(0, 300));
+        }
 
-            // attack-result: cache data for hogger health
-            else if (eventType === 'attack-result') {
-                const newHealth = Number(event.data.value['new-hogger-health'])
-                const hogger = await getMob('hogger')
-                hogger.health = newHealth
-                await setMob('hogger', hogger)
-                embed.addField(`⚔️ ${eventType}`, JSON.stringify(event.data));
-            }
+        // attack-result: cache data for hogger health
+        else if (event?.data?.value?.event === 'attack-result') {
+            const newHealth = Number(event.data.value['new-hogger-health'])
+            const hogger = await getMob('hogger')
+            hogger.health = newHealth
+            await setMob('hogger', hogger)
+            embed.addField(`⚔️ ${event?.data?.value?.event}`, JSON.stringify(event.data).slice(0, 300));
+        }
 
-            else {
-                embed.addField(`📜 ${event.data.topic}`, JSON.stringify(event.data));
-            }
+        // burn event
+        else if (event.type === 'FTBurnEvent') {
+            embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+        }
+
+        // mint event
+        else if (event.type === 'FTMintEvent') {
+            embed.addField('💰 quest-reward', JSON.stringify(event.data).slice(0, 300));
+        }
+
+        // unknown event
+        else {
+            embed.addField(`❓ ${event.type}`, JSON.stringify(event.data).slice(0, 300));
         }
 
     } catch (error) {

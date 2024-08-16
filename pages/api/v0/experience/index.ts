@@ -1,6 +1,7 @@
 import { getExperienceLeaderboard, updateExperienceLeaderboard } from '@lib/db-providers/kv';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
+import { AnyRecord } from 'dns';
 import { NextApiRequest, NextApiResponse } from 'next';
 import numeral from 'numeral';
 
@@ -30,15 +31,6 @@ export default async function getMetadata(
                         success: tx.metadata.success,
                     };
 
-                    try {
-                        const embed = new MessageBuilder()
-                            .setTitle('Experience Event')
-                            .setText(JSON.stringify(tx.metadata.receipt.events).slice(0, 2000))
-                        await hook.send(embed);
-                    } catch (error) {
-                        console.error(error)
-                    }
-
                     if (payload.success) {
 
                         const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
@@ -66,7 +58,7 @@ export default async function getMetadata(
 
 
                         for (const event of tx.metadata.receipt.events) {
-                            embed.addField(`❓ ${event.type}`, JSON.stringify(event.data).slice(0, 300));
+                            handleContractEvent(event, embed);
                         }
 
                         await hook.send(embed);
@@ -89,4 +81,36 @@ export default async function getMetadata(
     }
 
     return res.status(code).json(response);
+}
+
+
+const handleContractEvent = (event: any, embed: any) => {
+    try {
+
+        // reset-complete: cache data for new hogger repawn
+        if (event?.data?.value?.event === 'reset-complete') {
+        }
+
+        // attack-result: cache data for hogger health
+        else if (event?.data?.value?.event === 'attack-result') {
+        }
+
+        // burn event
+        else if (event.type === 'FTBurnEvent') {
+            embed.addField('🔥 protocol-burn', `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+        }
+
+        // mint event
+        else if (event.type === 'FTMintEvent') {
+            embed.addField('💰 quest-reward', JSON.stringify(event.data).slice(0, 300));
+        }
+
+        // unknown event
+        else {
+            embed.addField(`❓ ${event.type}`, JSON.stringify(event.data).slice(0, 300));
+        }
+
+    } catch (error) {
+        console.log('handlePrintEvent error:', error)
+    }
 }
