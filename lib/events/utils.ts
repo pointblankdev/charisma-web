@@ -1,4 +1,7 @@
 import { getMob, incrementRewardLeaderboard, setMob } from "@lib/db-providers/kv";
+import { Webhook, MessageBuilder } from 'discord-webhook-node'
+
+const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
 export const handleContractEvent = async (event: any, embed: any) => {
 
@@ -99,6 +102,22 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     hogger.regenRate = newRegen
                     await setMob('hogger', hogger)
                     embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+
+                    // hogger respawn alert for general chat
+                    try {
+                        const hoggerRespawnedAlert = new MessageBuilder()
+                            .setTitle('Hogger has respawned!')
+                            .addField('Level', String(newLevel), true)
+                            .addField('Max Health', String(newMaxHp), true)
+                            .addField('Regen Rate', String(newRegen), true)
+                            .setDescription(`If defeated, everyone who contributes to the battle receives a share of the rewards. Experience is divided up evenly, and CHA tokens are split based on damage dealt to Hogger.`)
+                            .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
+                            .setUrl('http://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=mob')
+
+                        await generalChatHook.send(hoggerRespawnedAlert);
+                    } catch (error) {
+                        console.error('generalChatHook error:', error)
+                    }
                 }
             }
 
