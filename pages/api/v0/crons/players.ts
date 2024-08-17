@@ -1,3 +1,4 @@
+import { getMob } from '@lib/db-providers/kv';
 import { tryCallContractPublicFunction } from '@lib/stacks-api';
 import { principalCV, uintCV } from '@stacks/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -58,16 +59,31 @@ export default async function playersApi(
     res: NextApiResponse<any | ErrorResponse>
 ) {
 
+
+    const mob = await getMob('hogger');
+
     const response: any = {}
     try {
         const transactions: any = []
         for (const player of players) {
             try {
+                let targetContractAddress;
+
+                // if hogger is alive, fight him
+                if (mob.health > 0) {
+                    targetContractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2'
+                }
+
+                // otherwise, try to farm experience
+                else {
+                    targetContractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience'
+                }
+
                 const transaction = await tryCallContractPublicFunction({
                     seedPhrase: player.seedPhrase,
                     publicAddress: player.publicAddress,
                     password: process.env.STACKS_ORACLE_PASSWORD,
-                    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0',
+                    contractAddress: targetContractAddress,
                     functionName: 'tap',
                     args: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v1')],
                 })
