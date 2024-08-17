@@ -12,7 +12,7 @@ import {
   CardTitle
 } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { GetStaticProps } from 'next';
+import { GetServerSidePropsContext, GetStaticProps } from 'next';
 import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
@@ -27,8 +27,21 @@ import { getLand, getLands } from '@lib/db-providers/kv';
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
+import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
+import { getTokenBalance } from '@lib/stacks-api';
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+function parseAddress(str: string) {
+  // Parse the string into a JavaScript object
+  const parsedData = JSON.parse(str);
+
+  // Navigate through the nested structure to find the address
+  const addressObj = parsedData[1][1][0];
+
+  // Return the address
+  return addressObj.address;
+}
+
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
   const landContractAddresses = await getLands()
 
@@ -38,19 +51,26 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     lands.push(metadata)
   }
 
+  const state = await getDehydratedStateFromSession(ctx)
+
+  const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
+  const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
+
   return {
     props: {
-      lands
-    },
-    revalidate: 60000
+      lands,
+      burnAmount,
+      dehydratedState: state,
+    }
   };
 };
 
 type Props = {
   lands: any[];
+  burnAmount: string
 };
 
-export default function Adventure({ lands }: Props) {
+export default function Adventure({ lands, burnAmount }: Props) {
   const meta = {
     title: "Charisma | Adventure",
     description: META_DESCRIPTION,
@@ -129,7 +149,7 @@ export default function Adventure({ lands }: Props) {
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Requirements</div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    Burn 1 sCHA to complete:
+                    Burn {burnAmount} sCHA to complete:
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="relative">
@@ -140,7 +160,7 @@ export default function Adventure({ lands }: Props) {
                         className="z-30 w-full rounded-full"
                       />
                       <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
-                        1
+                        {burnAmount >= 0.1 && Number(burnAmount).toFixed(1)}
                       </div>
                     </div>
                   </div>

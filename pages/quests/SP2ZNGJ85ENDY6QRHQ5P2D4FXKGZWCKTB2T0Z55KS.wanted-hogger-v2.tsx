@@ -77,7 +77,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 type Props = {
   lands: any[];
   mob: any
-  burnAmount: number
+  burnAmount: string
 };
 
 export default function WantedHogger({ lands, mob, burnAmount }: Props) {
