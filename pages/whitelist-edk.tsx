@@ -47,7 +47,7 @@ const WhitelistEDK = () => {
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: 'adventure-v0',
             functionName: "set-whitelisted-edk",
-            functionArgs: [contractPrincipalCV(contractAddress), boolCV(true)],
+            functionArgs: [contractPrincipalCV(contractAddress), boolCV(false)],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
         });
