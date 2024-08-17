@@ -35,6 +35,18 @@ import { useRouter } from 'next/router';
 import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 import { GetServerSidePropsContext } from 'next';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
+import { getTokenBalance } from '@lib/stacks-api';
+
+function parseAddress(str: string) {
+  // Parse the string into a JavaScript object
+  const parsedData = JSON.parse(str);
+
+  // Navigate through the nested structure to find the address
+  const addressObj = parsedData[1][1][0];
+
+  // Return the address
+  return addressObj.address;
+}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
@@ -47,11 +59,17 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     lands.push(metadata)
   }
 
+  const state = await getDehydratedStateFromSession(ctx)
+
+  const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
+  const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
+
   return {
     props: {
       lands,
       mob,
-      dehydratedState: await getDehydratedStateFromSession(ctx),
+      burnAmount,
+      dehydratedState: state,
     },
   };
 }
@@ -59,9 +77,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 type Props = {
   lands: any[];
   mob: any
+  burnAmount: number
 };
 
-export default function WantedHogger({ lands, mob }: Props) {
+export default function WantedHogger({ lands, mob, burnAmount }: Props) {
   const meta = {
     title: `Charisma | WANTED: "Hogger"`,
     description: META_DESCRIPTION,
@@ -171,7 +190,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                       <div className="z-20 mt-4">
                         <div className="z-30 text-xl font-semibold">Requirements</div>
                         <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                          Burns 1 sCHA per attack
+                          Burns {burnAmount} sCHA per attack
                         </div>
                         <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
                           <div className="relative">
@@ -182,7 +201,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                               className="z-30 w-full rounded-full border shadow-lg"
                             />
                             <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
-                              1
+                              {burnAmount >= 0.1 && Number(burnAmount).toFixed(1)}
                             </div>
                           </div>
                         </div>
