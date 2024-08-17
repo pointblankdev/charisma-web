@@ -59,17 +59,17 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     lands.push(metadata)
   }
 
-  const state = await getDehydratedStateFromSession(ctx) as string
+  // const state = await getDehydratedStateFromSession(ctx) as string
 
-  const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
-  const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
+  // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
+  // const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
 
   return {
     props: {
       lands,
       mob,
-      burnAmount,
-      dehydratedState: state,
+      // burnAmount,
+      // dehydratedState: await getDehydratedStateFromSession(ctx),
     },
   };
 }
@@ -77,10 +77,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 type Props = {
   lands: any[];
   mob: any
-  burnAmount: string
+  // burnAmount: string
 };
 
-export default function WantedHogger({ lands, mob, burnAmount }: Props) {
+export default function WantedHogger({ lands, mob }: Props) {
   const meta = {
     title: `Charisma | WANTED: "Hogger"`,
     description: META_DESCRIPTION,
@@ -190,7 +190,7 @@ export default function WantedHogger({ lands, mob, burnAmount }: Props) {
                       <div className="z-20 mt-4">
                         <div className="z-30 text-xl font-semibold">Requirements</div>
                         <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                          Burns {burnAmount} sCHA per attack
+                          Burns sCHA per attack
                         </div>
                         <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
                           <div className="relative">
@@ -200,9 +200,9 @@ export default function WantedHogger({ lands, mob, burnAmount }: Props) {
                               quality={10}
                               className="z-30 w-full rounded-full border shadow-lg"
                             />
-                            <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
+                            {/* <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
                               {Number(burnAmount) >= 0.1 && Number(burnAmount).toFixed(1)}
-                            </div>
+                            </div> */}
                           </div>
                         </div>
                       </div>
