@@ -27,12 +27,6 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
 
   const { stxAddress } = useAccount();
 
-  const { getBalanceByKey } = useWallet();
-
-  const experience =
-    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
-    Math.pow(10, 6);
-
   const tokens6Dec = Number(tokens)
 
   const landsContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands'
@@ -45,11 +39,11 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
     const postConditions = [
       Pc.principal(stxAddress as string).willSendEq(tokens6Dec).ft(landsContract, landsAsset),
       Pc.principal(landsContract).willSendEq(tokensOut).ft(metadata.wraps.ca, metadata.wraps.asset),
-      experience >= 0.001 && Pc.principal(stxAddress as string).willSendGte(1).ft(burnTokenContract, burnTokenAsset)
+      Pc.principal(stxAddress as string).willSendGte(1).ft(burnTokenContract, burnTokenAsset)
     ]
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'land-helper-v1',
+      contractName: 'land-helper-v2',
       functionName: "unwrap",
       functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
       postConditions: postConditions as any[],

@@ -85,7 +85,7 @@ export default async function playersApi(
                     password: process.env.STACKS_ORACLE_PASSWORD,
                     contractAddress: targetContractAddress,
                     functionName: 'tap',
-                    args: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v1')],
+                    args: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v2')],
                 })
                 transactions.push(transaction)
             } catch (error) {

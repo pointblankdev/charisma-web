@@ -9,6 +9,8 @@ import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
 import { useOpenContractCall } from '@micro-stacks/react';
 import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
+import { Check } from 'lucide-react';
+import { Checkbox } from '@components/ui/checkbox';
 
 
 export default function WhitelistEDKPage() {
@@ -40,14 +42,16 @@ const WhitelistEDK = () => {
 
     const { openContractCall } = useOpenContractCall();
 
-    const [contractAddress, setContractAddress] = useState('');
+    const [questContractName, setQuestContractName] = useState('adventure-v0');
+    const [edkContractAddress, setEDKContractAddress] = useState('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v2');
+    const [whitelist, setWhitelist] = useState(false);
 
     function setExtension() {
         openContractCall({
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'adventure-v0',
+            contractName: questContractName,
             functionName: "set-whitelisted-edk",
-            functionArgs: [contractPrincipalCV(contractAddress), boolCV(false)],
+            functionArgs: [contractPrincipalCV(edkContractAddress), boolCV(whitelist)],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
         });
@@ -55,7 +59,13 @@ const WhitelistEDK = () => {
 
     return (
         <>
-            <Input onChange={e => setContractAddress(e.target.value)} className='w-full' placeholder='ContractAddress' />
+            <div className='flex items-center'>
+                <div className='w-full items-stretch'>
+                    <Input onChange={e => setQuestContractName(e.target.value)} className='w-full' placeholder='ContractName' />
+                    <Input onChange={e => setEDKContractAddress(e.target.value)} className='w-full' placeholder='ContractAddress' />
+                </div>
+                <Checkbox onCheckedChange={e => setWhitelist(e as any)} className='w-16 h-16 m-2'>Whitelist</Checkbox>
+            </div>
             <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={setExtension}>Whitelist EDK</Button>
         </>
     );

@@ -103,8 +103,8 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     await setMob('hogger', hogger)
                     embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
 
-                    // hogger respawn alert for general chat
                     try {
+                        // hogger respawn alert for general chat
                         const hoggerRespawnedAlert = new MessageBuilder()
                             .setTitle('Hogger has respawned!')
                             .addField('Level', String(newLevel), true)

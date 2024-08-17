@@ -22,11 +22,8 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
 }) => {
   const { openContractCall } = useOpenContractCall();
   const { stxAddress } = useAccount()
-  const { balances, getBalanceByKey } = useWallet()
+  const { balances } = useWallet()
 
-  const experience =
-    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
-    Math.pow(10, 6);
 
   const tokens6Dec = Number(tokens)
 
@@ -42,10 +39,10 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
       Pc.principal(stxAddress!).willSendGte(tokens6Dec).ft(metadata.wraps.ca, metadata.wraps.asset)
     ]
     if (hasLands) postConditions.push(Pc.principal(stxAddress!).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(stxAddress!) })))
-    if (!isUsingBurnToken && experience >= 0.001) postConditions.push(Pc.principal(stxAddress!).willSendGte(1).ft(burnTokenContract, burnTokenAsset))
+    if (!isUsingBurnToken) postConditions.push(Pc.principal(stxAddress!).willSendGte(1).ft(burnTokenContract, burnTokenAsset))
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'land-helper-v1',
+      contractName: 'land-helper-v2',
       functionName: "wrap",
       functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
       postConditionMode: PostConditionMode.Deny,
