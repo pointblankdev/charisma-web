@@ -109,7 +109,7 @@ export default function StakingDetailPage({ metadata }: Props) {
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Requirements</div>
                   <div className="z-30 mb-4 text-sm font-fine text-primary-foreground/60">
-                    One sCHA is burned when staking or unstaking in this pool. This burn helps to support new token rewards.
+                    sCHA is burned when staking or unstaking in this pool. This burn helps to support new token rewards.
                   </div>
                   <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                     <div className="relative">
@@ -119,9 +119,9 @@ export default function StakingDetailPage({ metadata }: Props) {
                         quality={10}
                         className="z-30 w-full rounded-full"
                       />
-                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
+                      {/* <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
                         1
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
