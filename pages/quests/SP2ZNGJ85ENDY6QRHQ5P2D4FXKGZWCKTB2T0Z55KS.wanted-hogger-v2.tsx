@@ -37,6 +37,7 @@ import { GetServerSidePropsContext } from 'next';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
 import useWallet from '@lib/hooks/use-wallet-balances';
+import { useGlobalState } from '@lib/hooks/global-state-context';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -102,6 +103,7 @@ export default function WantedHogger({ lands, mob }: Props) {
   }
 
   const { getBalanceByKey } = useWallet()
+  const { block } = useGlobalState()
 
   const experience =
     getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
@@ -324,7 +326,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                 </Card>
                 {mob.health > 0 ? '' : <div className='-mt-1 z-0 p-3 text-sm sm:text-md font-semibold justify-center text-center text-primary-foreground/90 animate-pulse rounded-b-lg border'>
                   {/* Hogger has been defeated. He will respawn in {mob.blocksUntilRespawn} {`block${mob.blocksUntilRespawn !== 1 ? 's' : ''}`}. (~{mob.blocksUntilRespawn * 10} minutes) */}
-                  Hogger has been defeated. He will respawn within 10 blocks.
+                  Hogger has been defeated. He will respawn in {Number(mob.hoggerDefeatBlock) + 10 - block.height} blocks.
                 </div>}
               </motion.div>
             )}
