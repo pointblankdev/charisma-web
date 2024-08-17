@@ -76,7 +76,7 @@ export default async function playersApi(
 
                 // otherwise, try to farm experience
                 else {
-                    targetContractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v1'
+                    targetContractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0'
                 }
 
                 const transaction = await tryCallContractPublicFunction({
