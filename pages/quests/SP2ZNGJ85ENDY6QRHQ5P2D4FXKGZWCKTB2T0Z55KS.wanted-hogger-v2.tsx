@@ -16,7 +16,7 @@ import { GetStaticProps } from 'next';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
 import { motion, AnimatePresence } from 'framer-motion';
-import experience from '@public/experience.png'
+import experienceIcon from '@public/experience.png'
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import schaImg from '@public/liquid-staked-charisma.png'
 import chaIcon from '@public/charisma.png'
@@ -36,6 +36,7 @@ import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 import { GetServerSidePropsContext } from 'next';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
+import useWallet from '@lib/hooks/use-wallet-balances';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -99,6 +100,12 @@ export default function WantedHogger({ lands, mob }: Props) {
     const newView = get('view') === 'quest' ? 'mob' : 'quest';
     router.push(`?view=${newView}`, undefined, { shallow: true });
   }
+
+  const { getBalanceByKey } = useWallet()
+
+  const experience =
+    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
+    Math.pow(10, 6);
 
 
   const fadeVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
@@ -165,7 +172,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                           <div className="relative">
                             <Image
                               alt="Experience"
-                              src={experience}
+                              src={experienceIcon}
                               quality={10}
                               className="z-30 w-full rounded-full border shadow-lg"
                             />
@@ -217,7 +224,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                       </Button>
                     </Link>
 
-                    <Button size={'sm'} className="z-30" onClick={() => handleViewToggle()}> Fight Hogger</Button>
+                    <Button disabled={experience === 0} size={'sm'} className="z-30" onClick={() => handleViewToggle()}> Fight Hogger</Button>
                     {/* <SelectCreatureDialog lands={lands} /> */}
                   </CardFooter>
                   <Image

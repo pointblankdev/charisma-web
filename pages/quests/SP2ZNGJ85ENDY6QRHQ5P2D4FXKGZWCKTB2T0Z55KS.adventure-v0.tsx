@@ -29,6 +29,7 @@ import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
+import useWallet from '@lib/hooks/use-wallet-balances';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -219,13 +220,18 @@ export function SelectCreatureDialog({ lands }: any) {
   const { openContractCall } = useOpenContractCall();
 
   const { stxAddress } = useAccount()
+  const { getBalanceByKey } = useWallet()
+
+  const experience =
+    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
+    Math.pow(10, 6);
 
   function journey(creatureId: number) {
 
     const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
 
     const postConditions = [
-      makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, '1', burnTokenContract),
+      experience >= 0.001 && makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, '1', burnTokenContract),
     ];
 
     openContractCall({
