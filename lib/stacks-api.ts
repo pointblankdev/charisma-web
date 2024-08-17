@@ -941,19 +941,22 @@ export async function checkIfEpochIsEnding(contractAddress: string) {
   const response = await scApi.callReadOnlyFunction({
     contractAddress: address,
     contractName: name,
-    functionName: 'can-start-new-epoch',
+    functionName: 'get-epoch-info',
     readOnlyFunctionArgs: {
       sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       arguments: []
     }
   });
   const result = hexToCV((response as any).result);
-  const canStartNewEpoch = cvToJSON(result).value;
-  console.log('Can start new epoch: ', canStartNewEpoch);
-  // const mob = await getMob('hogger');
-  // mob.blocksUntilRespawn = blocksUntilNextEpoch;
-  // await setMob('hogger', mob);
-  return canStartNewEpoch
+  const epochInfo = cvToJSON(result).value.value;
+  console.log('Epoch Info: ', epochInfo);
+  const mob = await getMob('hogger');
+  mob.hoggerDefeatBlock = Number(epochInfo['hogger-defeat-block'].value)
+  mob.canStartNewEpoch = epochInfo['can-start-new-epoch'].value
+  if (mob.canStartNewEpoch) mob.health = Number(mob.maxHealth)
+  console.log('Mob: ', mob);
+  await setMob('Hogger', mob);
+  return epochInfo
 }
 
 export async function getTxsFromMempool(contractAddress: string) {
