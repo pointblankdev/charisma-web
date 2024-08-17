@@ -51,7 +51,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     lands.push(metadata)
   }
 
-  const state = await getDehydratedStateFromSession(ctx)
+  const state = await getDehydratedStateFromSession(ctx) as string
 
   const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
   const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
@@ -160,7 +160,7 @@ export default function Adventure({ lands, burnAmount }: Props) {
                         className="z-30 w-full rounded-full"
                       />
                       <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
-                        {burnAmount >= 0.1 && Number(burnAmount).toFixed(1)}
+                        {Number(burnAmount) >= 0.1 && Number(burnAmount).toFixed(1)}
                       </div>
                     </div>
                   </div>
