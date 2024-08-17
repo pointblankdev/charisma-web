@@ -38,7 +38,7 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
     const postConditions = [
       Pc.principal(stxAddress as string).willSendEq(tokens6Dec).ft(landsContract, landsAsset),
       Pc.principal(landsContract).willSendEq(tokensOut).ft(metadata.wraps.ca, metadata.wraps.asset),
-      Pc.principal(stxAddress as string).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset)
+      Pc.principal(stxAddress as string).willSendGte(1).ft(burnTokenContract, burnTokenAsset)
     ]
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
