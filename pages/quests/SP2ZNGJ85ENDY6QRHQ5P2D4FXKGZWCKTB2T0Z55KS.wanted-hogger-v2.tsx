@@ -319,14 +319,14 @@ export function SelectCreatureDialog({ lands }: any) {
     const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
 
     const postConditions = [
-      makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, '1000000', burnTokenContract),
+      makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, '1', burnTokenContract),
     ];
 
     openContractCall({
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'wanted-hogger-v1',
+      contractName: 'wanted-hogger-v2',
       functionName: "tap",
-      functionArgs: [uintCV(creatureId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v0')],
+      functionArgs: [uintCV(creatureId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v1')],
       postConditions: postConditions as any[]
     });
   }

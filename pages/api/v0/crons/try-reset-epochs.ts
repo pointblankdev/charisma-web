@@ -17,14 +17,14 @@ export default async function tryResetEpochsApi(
     const response: any = {}
     try {
         const contractJobs = []
-        const isEnding = await checkIfEpochIsEnding('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
+        const isEnding = await checkIfEpochIsEnding('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2')
 
         console.log("Try Reset Epochs: ", isEnding)
 
         if (isEnding) {
             contractJobs.push({
-                address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1",
-                function: "try-reset-epoch",
+                address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2",
+                function: "start-new-epoch",
                 args: []
             })
         }

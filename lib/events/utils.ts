@@ -37,6 +37,31 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 }
             }
 
+            else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2") {
+                symbol = '📜'
+
+                if (event?.data?.value?.event === 'distributing-rewards') {
+                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                }
+
+                else if (event?.data?.value?.event === 'rewards-distributed') {
+                    await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
+                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                }
+
+                else if (event?.data?.value?.event === 'attack-hogger') {
+                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                }
+
+                else if (event?.data?.value?.event === 'new-epoch-started') {
+                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                }
+
+                else if (event?.data?.value?.event === 'attack-result') {
+                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                }
+            }
+
             else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0") {
                 symbol = '🐗'
 

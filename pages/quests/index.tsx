@@ -31,7 +31,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     {
       name: `WANTED: "Hogger"`,
       description: "Slay the huge gnoll Hogger.",
-      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1?view=quest",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=quest",
       image: hugeKnollClaw,
       cardImage: wantedPoster,
     }

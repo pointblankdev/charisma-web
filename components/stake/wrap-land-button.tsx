@@ -35,13 +35,13 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
   function stake() {
     const isUsingBurnToken = metadata.wraps.ca === burnTokenContract
     const postConditions: PostCondition[] = [
-      Pc.principal(stxAddress!).willSendEq(tokens6Dec + (isUsingBurnToken ? 1000000 : 0)).ft(metadata.wraps.ca, metadata.wraps.asset)
+      Pc.principal(stxAddress!).willSendGte(tokens6Dec + (isUsingBurnToken ? 1 : 0)).ft(metadata.wraps.ca, metadata.wraps.asset)
     ]
     if (hasLands) postConditions.push(Pc.principal(stxAddress!).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(stxAddress!) })))
-    if (!isUsingBurnToken) postConditions.push(Pc.principal(stxAddress!).willSendEq(1000000).ft(burnTokenContract, burnTokenAsset))
+    if (!isUsingBurnToken) postConditions.push(Pc.principal(stxAddress!).willSendGte(1).ft(burnTokenContract, burnTokenAsset))
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'land-helper-v0',
+      contractName: 'land-helper-v1',
       functionName: "wrap",
       functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
       postConditionMode: PostConditionMode.Deny,

@@ -6,7 +6,7 @@ export async function tryResetEpochs(contractJobs: any[]) {
 
     // Fetch mempool transactions concurrently
     const [mpt1] = await Promise.all([
-        getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1'),
+        getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2'),
     ]);
 
     // if there as a try-reset-epoch or tap transaction in the mempoolTxs dont run job

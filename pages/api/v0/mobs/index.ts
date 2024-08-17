@@ -79,7 +79,7 @@ export default async function getMetadata(
                 try {
 
                     // send message to discord
-                    embed.setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1')
+                    embed.setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2')
                     embed.setTitle('Hogger Event!')
                     embed.setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
 

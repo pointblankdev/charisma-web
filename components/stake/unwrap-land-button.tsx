@@ -42,7 +42,7 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
     ]
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'land-helper-v0',
+      contractName: 'land-helper-v1',
       functionName: "unwrap",
       functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
       postConditions: postConditions as any[],
