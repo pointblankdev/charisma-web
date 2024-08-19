@@ -19,9 +19,7 @@ export default async function tryResetEpochsApi(
         const contractJobs = []
         const isEnding = await checkIfEpochIsEnding('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2')
 
-        console.log("Try Reset Epochs: ", isEnding)
-
-        if (isEnding) {
+        if (isEnding.canStartNewEpoch) {
             contractJobs.push({
                 address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2",
                 function: "start-new-epoch",
