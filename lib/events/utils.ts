@@ -143,7 +143,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 }
             }
 
-            else if (event?.data?.contract_identifier === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router") {
+            else if (event?.data?.contract_identifier === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core") {
                 symbol = '💱'
 
                 console.error('Unknown velar swap event:', event.data)

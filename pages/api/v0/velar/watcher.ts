@@ -63,7 +63,7 @@ type ErrorResponse = {
     };
 };
 
-export default async function jeetWatcher(
+export default async function velarWatcher(
     req: NextApiRequest,
     res: NextApiResponse<ChainhookResponse | ErrorResponse>
 ) {
@@ -79,7 +79,7 @@ export default async function jeetWatcher(
                 try {
 
                     // send message to discord
-                    embed.setAuthor(`Jeet Watcher`, 'https://beta.charisma.rocks/charisma.png', 'https://beta.charisma.rocks/staking')
+                    embed.setAuthor(`Velar Watcher`, 'https://beta.charisma.rocks/charisma.png', 'https://beta.charisma.rocks/staking')
                     embed.setTitle('New Event')
                     embed.setThumbnail('https://beta.charisma.rocks/charisma.png')
 
