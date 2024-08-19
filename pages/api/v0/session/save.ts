@@ -3,6 +3,8 @@ import { withIronSessionApiRoute } from 'iron-session/next';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 async function saveSessionRoute(req: NextApiRequest, res: NextApiResponse) {
+
+    console.log(req)
     const { dehydratedState } = await req.body;
 
     if (!dehydratedState)
