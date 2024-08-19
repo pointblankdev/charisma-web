@@ -4,7 +4,6 @@ import { NextApiRequest, NextApiResponse } from 'next';
 
 async function saveSessionRoute(req: NextApiRequest, res: NextApiResponse) {
 
-    console.log(req)
     const { dehydratedState } = await req.body;
 
     if (!dehydratedState)
@@ -13,6 +12,7 @@ async function saveSessionRoute(req: NextApiRequest, res: NextApiResponse) {
         });
 
     try {
+        console.log({ dehydratedState })
         req.session.dehydratedState = dehydratedState;
         await req.session.save();
         res.json({ dehydratedState });

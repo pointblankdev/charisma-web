@@ -21,8 +21,6 @@ import { getDehydratedStateFromSession } from '@components/stacks-session/sessio
 
 function parseAddress(str: string) {
 
-  console.log(str)
-
   // Parse the string into a JavaScript object
   const parsedData = JSON.parse(str);
 
@@ -45,15 +43,19 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   //   }
   // }
 
-  const state = await getDehydratedStateFromSession(ctx) as string
+  let landBalance = 0
+  try {
 
-  console.log({ state })
+    const state = await getDehydratedStateFromSession(ctx) as string
 
-  // const user = parseAddress(state)
+    const user = parseAddress(state)
 
-  // check if they have the land nft already for post conditions
-  // const landBalance = await getLandsBalance(contractAddress, user)
-  const landBalance = 0
+    // check if they have the land nft already for post conditions
+    landBalance = await getLandsBalance(contractAddress, user) as number
+
+  } catch (error) {
+    console.error('Error fetching land balance:', error);
+  }
 
   return {
     props: {
@@ -78,8 +80,6 @@ export default function StakingDetailPage({ metadata, landBalance }: Props) {
   const [tokensSelected, setTokensSelected] = useState(0);
 
   const { getBalanceByKey } = useWallet()
-
-  console.log(landBalance)
 
   const landTokenBalance = landBalance
   const baseTokenBalance = getBalanceByKey(`${metadata.wraps.ca}::${metadata.wraps.asset}`)?.balance || 0

@@ -1,5 +1,3 @@
-import { API_URL } from './constants';
-
 export const HOST = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://beta.charisma.rocks';
 
 export async function getContractMetadata(ca: string) {
@@ -73,7 +71,7 @@ export async function getExperienceHolders() {
 }
 
 export const saveSession = async (dehydratedState: string) => {
-  await fetch(API_URL + '/api/v0/session/save', {
+  await fetch(`${HOST}/api/v0/session/save`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ dehydratedState }),
@@ -82,7 +80,7 @@ export const saveSession = async (dehydratedState: string) => {
 
 export const destroySession = async () => {
   try {
-    await fetch(API_URL + '/api/v0/session/destroy', {
+    await fetch(`${HOST}/api/v0/session/destroy`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: null,
