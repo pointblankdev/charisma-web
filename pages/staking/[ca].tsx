@@ -20,6 +20,8 @@ import { getIsWhitelisted, getLandBalance, getLandId } from '@lib/stacks-api';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 
 function parseAddress(str: string) {
+
+  console.log(str)
   // Parse the string into a JavaScript object
   const parsedData = JSON.parse(str);
 
@@ -43,8 +45,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // }
 
   const state = await getDehydratedStateFromSession(ctx) as string
-
-  console.log(state)
 
   const user = parseAddress(state)
 
