@@ -129,7 +129,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     embed.addField(`${symbol} ${event?.data?.value?.type}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
                 }
 
-                else if (event?.data?.value?.type === 'sft-mint') {
+                else if (event?.data?.value?.type === 'sft_mint') {
                     const landId = Number(event.data.value['token-id'])
                     const recipient = event.data.value['recipient']
                     await setLandsBalance(landId, recipient)

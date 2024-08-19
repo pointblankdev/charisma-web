@@ -50,6 +50,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     const user = parseAddress(state)
 
+    console.log(state)
+
     // check if they have the land nft already for post conditions
     landBalance = await getLandsBalance(contractAddress, user) as number
 
@@ -59,6 +61,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   return {
     props: {
+      dehydratedState: await getDehydratedStateFromSession(ctx),
       metadata,
       landBalance
     }
