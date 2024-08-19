@@ -39,7 +39,7 @@ const ConnectWallet = () => {
               {isClientSide && label}
             </div>
           </NavigationMenuTrigger>
-          <NavigationMenuContent>
+          {isSignedIn && <NavigationMenuContent>
             <ul className="grid gap-3 p-6 md:w-[400px]">
               <ListItem href="/portfolio" title="Portfolio">
                 View your Charisma supported token balances.
@@ -51,7 +51,7 @@ const ConnectWallet = () => {
                 Securely disconnect your wallet.
               </ListItem>
             </ul>
-          </NavigationMenuContent>
+          </NavigationMenuContent>}
         </NavigationMenuItem>
       </NavigationMenuList>
     </NavigationMenu>
