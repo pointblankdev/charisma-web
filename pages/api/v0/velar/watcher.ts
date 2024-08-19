@@ -79,9 +79,9 @@ export default async function velarWatcher(
                 try {
 
                     // send message to discord
-                    embed.setAuthor(`Velar Watcher`, 'https://beta.charisma.rocks/charisma.png', 'https://beta.charisma.rocks/staking')
+                    embed.setAuthor(`Velar Watcher`, 'https://app.velar.com/assets/imgs/velar-logo.svg', 'https://beta.charisma.rocks/staking')
                     embed.setTitle('New Event')
-                    embed.setThumbnail('https://beta.charisma.rocks/charisma.png')
+                    embed.setThumbnail('https://app.velar.com/assets/imgs/velar-logo.svg')
 
                     for (const event of tx.metadata.receipt.events) {
                         await handleContractEvent(event, embed)
