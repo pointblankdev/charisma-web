@@ -13,13 +13,13 @@ import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 interface StakeButtonProps {
   tokens: number;
   metadata: any;
-  hasLands: boolean;
+  hadLand: boolean;
 }
 
 const WrapLandButton: React.FC<StakeButtonProps> = ({
   tokens,
   metadata,
-  hasLands
+  hadLand
 }) => {
   const { openContractCall } = useOpenContractCall();
   const { stxAddress } = useAccount()
@@ -34,7 +34,7 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
     const postConditions: PostCondition[] = [
       Pc.principal(stxAddress!).willSendGte(tokens6Dec).ft(metadata.wraps.ca, metadata.wraps.asset)
     ]
-    if (hasLands) postConditions.push(Pc.principal(stxAddress!).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(stxAddress!) })))
+    if (hadLand) postConditions.push(Pc.principal(stxAddress!).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(stxAddress!) })))
     if (!isUsingBurnToken) postConditions.push(Pc.principal(stxAddress!).willSendGte(1).ft(burnTokenContract, burnTokenAsset))
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',

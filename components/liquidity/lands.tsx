@@ -12,7 +12,8 @@ const LandControls = ({
     max,
     onSetTokensSelected,
     tokensSelected,
-    metadata
+    metadata,
+    hadLand
 }: any) => {
     const hasRequiredTokens = Math.abs(min) !== Math.abs(max)
 
@@ -49,7 +50,7 @@ const LandControls = ({
                 </Link>
                 <div>
                     <UnwrapLandButton tokens={-tokensSelected} metadata={metadata} />
-                    <WrapLandButton tokens={tokensSelected} metadata={metadata} hasLands={min !== 0} />
+                    <WrapLandButton tokens={tokensSelected} metadata={metadata} hadLand={hadLand} />
                 </div>
             </div>
         </div>

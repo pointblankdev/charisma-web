@@ -264,7 +264,8 @@ export async function setLandsBalance(landId: number, user: string) {
 }
 
 
-export async function hadLandBefore(landId: number, user: string) {
+export async function hadLandBefore(contractAddress: string, user: string) {
+    const landId = await getLandId(contractAddress);
     return await kv.get(`user:${user}:had-land:${landId}`) || false;
 }
 

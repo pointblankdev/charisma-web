@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { cn } from '@lib/utils';
 import { motion } from 'framer-motion';
 import useWallet from '@lib/hooks/use-wallet-balances';
-import { getLand, getLands, getLandsBalance, setLandWhitelisted } from '@lib/db-providers/kv';
+import { getLand, getLands, getLandsBalance, hadLandBefore, setLandWhitelisted } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import schaImg from '@public/liquid-staked-charisma.png'
@@ -43,6 +43,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   //   }
   // }
 
+  let hadLand = false
   let landBalance = 0
   try {
 
@@ -52,16 +53,19 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
     // check if they have the land nft already for post conditions
     landBalance = await getLandsBalance(contractAddress, user) as number
+    hadLand = await hadLandBefore(contractAddress, user) as boolean
 
   } catch (error) {
     console.error('Error fetching land balance:', error);
   }
 
+
   return {
     props: {
       dehydratedState: await getDehydratedStateFromSession(ctx),
       metadata,
-      landBalance
+      landBalance,
+      hadLand
     }
   };
 };
@@ -159,6 +163,7 @@ export default function StakingDetailPage({ metadata, landBalance }: Props) {
                   onSetTokensSelected={setTokensSelected}
                   tokensSelected={tokensSelected}
                   metadata={metadata}
+                  hadLand={hadLand}
                 /> :
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Community Approval Required</div>
