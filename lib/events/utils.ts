@@ -143,6 +143,15 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 }
             }
 
+            else if (event?.data?.contract_identifier === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router") {
+                symbol = '💱'
+
+                console.error('Unknown velar swap event:', event.data)
+                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+
+            }
+
+
             else if (event?.data?.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission") {
                 symbol = '⚖️'
 
