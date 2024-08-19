@@ -125,6 +125,14 @@ describe('metadata api', () => {
         await setLand(contract, land)
     })
 
+    it('should update edel land', async () => {
+        const contract = 'SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.edelcoin'
+        const land = await getLand(contract)
+        land.cardImage = 'https://charisma.rocks/lands/img/card/edel.png'
+        console.log(land)
+        await setLand(contract, land)
+    })
+
     it('should set welsh land whitelisted', async () => {
         const response = await setLandWhitelisted('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', false)
         console.log(response)
