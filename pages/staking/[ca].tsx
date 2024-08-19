@@ -73,9 +73,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 type Props = {
   metadata: any;
   landBalance: number
+  hadLand: boolean
 };
 
-export default function StakingDetailPage({ metadata, landBalance }: Props) {
+export default function StakingDetailPage({ metadata, landBalance, hadLand }: Props) {
   const meta = {
     title: `Charisma | ${metadata.name}`,
     description: metadata.description.description,
