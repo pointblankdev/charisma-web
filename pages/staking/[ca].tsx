@@ -9,13 +9,14 @@ import { useState } from 'react';
 import { cn } from '@lib/utils';
 import { motion } from 'framer-motion';
 import useWallet from '@lib/hooks/use-wallet-balances';
-import { getLand, getLands } from '@lib/db-providers/kv';
+import { getLand, getLands, setLandWhitelisted } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import schaImg from '@public/liquid-staked-charisma.png'
 import { useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
+import { getIsWhitelisted } from '@lib/stacks-api';
 
 
 export const getStaticPaths = async () => {

@@ -103,9 +103,11 @@ describe('metadata api', () => {
         console.log(response)
     })
 
-    it('should get land 4', async () => {
-        const response = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
-        console.log(response)
+    it('should update welsh land', async () => {
+        const land = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        land.id = 4
+        await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', land)
+        console.log(land)
     })
 
     it('should get fair land', async () => {

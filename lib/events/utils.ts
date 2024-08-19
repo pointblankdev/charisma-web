@@ -147,6 +147,19 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 // }
             }
 
+            else if (event?.data?.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting") {
+                symbol = '⚖️'
+
+                // if (event?.data?.value?.type === 'propose') {
+
+                //     embed.addField(`${symbol} ${event?.data?.value?.type}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                // } else {
+
+                console.error('Unknown governance proposal event:', event.data)
+                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+                // }
+            }
+
             else {
 
                 console.error('Unknown contract identifier:', event.data)
