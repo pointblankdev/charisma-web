@@ -3,7 +3,6 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
-import { getToken, getTokens } from '@lib/db-providers/kv';
 import Image from 'next/image';
 import energyIcon from '@public/creatures/img/energy.png';
 import Link from 'next/link';
