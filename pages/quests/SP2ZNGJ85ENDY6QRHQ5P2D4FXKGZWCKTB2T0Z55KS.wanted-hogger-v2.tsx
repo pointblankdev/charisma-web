@@ -179,7 +179,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                               className="z-30 w-full rounded-full border shadow-lg"
                             />
                             <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-base lg:text-xs bg-accent text-accent-foreground">
-                              1000
+                              100
                             </div>
                           </div>
                         </div>
