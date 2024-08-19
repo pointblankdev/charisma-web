@@ -45,7 +45,9 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   //   }
   // }
 
-  // const state = await getDehydratedStateFromSession(ctx) as string
+  const state = await getDehydratedStateFromSession(ctx) as string
+
+  console.log({ state })
 
   // const user = parseAddress(state)
 
