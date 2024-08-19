@@ -1239,3 +1239,36 @@ export async function hasPercentageBalance(contract: string, who: string, factor
   const result = hexToCV((response as any).result);
   return cvToJSON(result).value.value;
 }
+
+export async function getLandBalance(landId: number, sender: string) {
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'lands',
+    functionName: 'get-balance',
+    readOnlyFunctionArgs: {
+      sender: sender,
+      arguments: [
+        cvToHex(parseToCV(String(landId), 'uint128')),
+        cvToHex(parseToCV(sender, 'principal'))
+      ]
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return Number(cvToJSON(result).value.value);
+}
+
+// get land id from contract address
+export async function getLandId(contractAddress: string) {
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'lands',
+    functionName: 'get-land-id',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: [
+        cvToHex(parseToCV(contractAddress, 'principal'))]
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return Number(cvToJSON(result).value.value);
+}

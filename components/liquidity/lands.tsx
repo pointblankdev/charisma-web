@@ -49,7 +49,7 @@ const LandControls = ({
                 </Link>
                 <div>
                     <UnwrapLandButton tokens={-tokensSelected} metadata={metadata} />
-                    <WrapLandButton tokens={tokensSelected} metadata={metadata} />
+                    <WrapLandButton tokens={tokensSelected} metadata={metadata} hasLands={min !== 0} />
                 </div>
             </div>
         </div>

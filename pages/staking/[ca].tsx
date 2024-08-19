@@ -4,7 +4,7 @@ import Layout from '@components/layout/layout';
 import Image from 'next/image';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { GetStaticProps } from 'next';
+import { GetServerSidePropsContext, GetStaticProps } from 'next';
 import { useState } from 'react';
 import { cn } from '@lib/utils';
 import { motion } from 'framer-motion';
@@ -16,39 +16,37 @@ import schaImg from '@public/liquid-staked-charisma.png'
 import { useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
-import { getIsWhitelisted } from '@lib/stacks-api';
+import { getIsWhitelisted, getLandBalance, getLandId } from '@lib/stacks-api';
 
+export async function getServerSideProps(ctx: GetServerSidePropsContext) {
+  const contractAddress = ctx.params!.ca as string
 
-export const getStaticPaths = async () => {
-  // get all staking lands from db
-  const landContractAddresses = await getLands()
-  const paths = landContractAddresses.map((ca: string) => ({ params: { ca: ca } }))
-  return {
-    paths: paths,
-    fallback: false, // false or "blocking"
-  }
-}
-
-export const getStaticProps: GetStaticProps<Props> = async ({ params }: any) => {
   // get land metadata from db
-  const metadata = await getLand(params.ca)
+  const metadata = await getLand(contractAddress)
   // if (!metadata.whitelisted) {
   //   const isWhitelisted = await getIsWhitelisted(params.ca)
   //   if (isWhitelisted) {
   //     await setLandWhitelisted(params.ca, true)
   //   }
   // }
+
+  // check if they have the land nft already for post conditions
+  const landId = await getLandId(contractAddress)
+  const landBalance = await getLandBalance(landId, contractAddress)
   return {
-    props: { metadata },
-    revalidate: 60000
+    props: {
+      metadata,
+      landBalance
+    }
   };
 };
 
 type Props = {
   metadata: any;
+  landBalance: number
 };
 
-export default function StakingDetailPage({ metadata }: Props) {
+export default function StakingDetailPage({ metadata, landBalance }: Props) {
   const meta = {
     title: `Charisma | ${metadata.name}`,
     description: metadata.description.description,
@@ -59,7 +57,7 @@ export default function StakingDetailPage({ metadata }: Props) {
 
   const { getBalanceByKey } = useWallet()
 
-  const landTokenBalance = getBalanceByKey(`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands::lands`)?.balance || 0
+  const landTokenBalance = landBalance
   const baseTokenBalance = getBalanceByKey(`${metadata.wraps.ca}::${metadata.wraps.asset}`)?.balance || 0
 
   return (

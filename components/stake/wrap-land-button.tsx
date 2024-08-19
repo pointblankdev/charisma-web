@@ -7,31 +7,27 @@ import {
   tupleCV,
 } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
-import useWallet from "@lib/hooks/use-wallet-balances";
 import { useAccount, useOpenContractCall } from "@micro-stacks/react";
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 
 interface StakeButtonProps {
   tokens: number;
   metadata: any;
+  hasLands: boolean;
 }
 
 const WrapLandButton: React.FC<StakeButtonProps> = ({
   tokens,
   metadata,
+  hasLands
 }) => {
   const { openContractCall } = useOpenContractCall();
   const { stxAddress } = useAccount()
-  const { balances } = useWallet()
-
 
   const tokens6Dec = Number(tokens)
-
   const landNftKey = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands::land'
   const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
   const burnTokenAsset = 'liquid-staked-token'
-
-  const hasLands = balances?.non_fungible_tokens?.[landNftKey]
 
   function stake() {
     const isUsingBurnToken = metadata.wraps.ca === burnTokenContract

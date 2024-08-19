@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, TransactionVersion, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateSecretKey, generateWallet, getStxAddress } from "@stacks/wallet-sdk";
-import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete } from "./stacks-api";
+import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 import { tryResetEpochs } from "./try-reset-epochs";
@@ -291,6 +291,20 @@ describe('Stacks API', () => {
         const mainnetAddress = getStxAddress({ account, transactionVersion: TransactionVersion.Mainnet });
         console.log(mainnetAddress)
         expect(mainnetAddress).toBeDefined()
+    })
+
+    // should get land balance
+    it('should get land balance', async () => {
+        const result = await getLandBalance(4, 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    // should get land id
+    it('should get land id', async () => {
+        const result = await getLandId('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        console.log(result)
+        expect(result).toEqual(1)
     })
 
 })
