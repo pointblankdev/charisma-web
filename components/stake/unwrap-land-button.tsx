@@ -6,6 +6,7 @@ import {
   Pc,
   PostConditionMode,
   principalCV,
+  tupleCV,
 } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { useAccount, useAuth, useOpenContractCall } from "@micro-stacks/react";
@@ -33,13 +34,15 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
   const landsAsset = 'lands'
   const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
   const burnTokenAsset = 'liquid-staked-token'
+  const landNftKey = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands::land'
 
   function unstake() {
     const tokensOut = tokens6Dec
     const postConditions = [
-      Pc.principal(stxAddress as string).willSendEq(tokens6Dec).ft(landsContract, landsAsset),
+      Pc.principal(stxAddress!).willSendEq(tokens6Dec).ft(landsContract, landsAsset),
       Pc.principal(landsContract).willSendEq(tokensOut).ft(metadata.wraps.ca, metadata.wraps.asset),
-      Pc.principal(stxAddress as string).willSendGte(1).ft(burnTokenContract, burnTokenAsset)
+      Pc.principal(stxAddress!).willSendGte(1).ft(burnTokenContract, burnTokenAsset),
+      Pc.principal(stxAddress!).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(stxAddress!) }))
     ]
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
