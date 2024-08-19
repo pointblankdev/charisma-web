@@ -42,7 +42,7 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
       Pc.principal(stxAddress!).willSendEq(tokens6Dec).ft(landsContract, landsAsset),
       Pc.principal(landsContract).willSendEq(tokensOut).ft(metadata.wraps.ca, metadata.wraps.asset),
       Pc.principal(stxAddress!).willSendGte(1).ft(burnTokenContract, burnTokenAsset),
-      Pc.principal(stxAddress!).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(stxAddress!) }))
+      // Pc.principal(stxAddress!).willSendAsset().nft(landNftKey, tupleCV({ 'land-id': uintCV(metadata.id), owner: principalCV(stxAddress!) }))
     ]
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
