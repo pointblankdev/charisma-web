@@ -255,7 +255,8 @@ export async function clearRewardsLeaderboard(token: string) {
 // tokens
 
 export async function getLandsBalance(contractAddress: string, user: string) {
-    return await kv.get(`user:${user}:land:${contractAddress}`) || 0;
+    const landId = await getLandId(contractAddress);
+    return await kv.get(`user:${user}:land:${landId}`) || 0;
 }
 
 export async function setLandsBalance(landId: number, user: string) {
