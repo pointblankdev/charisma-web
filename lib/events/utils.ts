@@ -1,4 +1,4 @@
-import { getMob, incrementRewardLeaderboard, setLandsBalance, setMob } from "@lib/db-providers/kv";
+import { getMob, hadLandBefore, incrementRewardLeaderboard, setLandsBalance, setMob } from "@lib/db-providers/kv";
 import { Webhook, MessageBuilder } from 'discord-webhook-node'
 
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
@@ -133,6 +133,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     const landId = Number(event.data.value['token-id'])
                     const recipient = event.data.value['recipient']
                     await setLandsBalance(landId, recipient)
+                    await hadLandBefore(landId, recipient)
                     embed.addField(`${symbol} ${event?.data?.value?.type}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
                 }
 
