@@ -94,8 +94,6 @@ export default function WantedHogger({ lands, mob }: Props) {
 
   const healthPercentage = mob.health * 100 / mob.maxHealth
 
-  console.log(mob)
-
   const router = useRouter();
   const { get } = useSearchParams()
 
