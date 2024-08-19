@@ -283,7 +283,7 @@ export function updateVoteData(proposals: any[], transactions: any[]) {
         }
       }
     } catch (error) {
-      console.log('Error updating vote data', error);
+      console.log('Error updating vote data: ', error);
     }
   });
 
@@ -295,14 +295,28 @@ export async function getProposals() {
   const block = await getGlobalState(`blocks:latest`)
   const latestBlock = block.height
 
-  const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
-    principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
-    limit: 50
-  });
+  const limit = 50;
+  let offset = 0;
+  const accountsResp: any[] = [];
+
+  while (true) {
+    const resp: any = await accountsApi.getAccountTransactionsWithTransfers({
+      principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
+      limit: limit,
+      offset: offset
+    });
+
+    if (!resp.results || resp.results.length === 0) {
+      break; // exit the loop if there are no more results
+    }
+
+    accountsResp.push(...resp.results);
+    offset += limit; // increment the offset for the next page
+  }
 
   const proposals: any[] = [];
 
-  for (const r of accountsResp.results) {
+  for (const r of accountsResp) {
     // only process successful proposal submissions
     if (r.tx?.contract_call?.function_name !== 'propose') continue;
     if (r.tx.tx_status !== 'success') continue;
@@ -633,7 +647,7 @@ export async function getTokenURI(contract: string) {
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
   const tokenUri = cv.value.value.value
-  console.log(tokenUri)
+  // console.log(tokenUri)
   const corsProxy = 'https://corsproxy.io/?';
   const res = await fetch(`${corsProxy}${tokenUri}`);
   const metadata = await res.json();
@@ -955,7 +969,7 @@ export async function checkIfEpochIsEnding(contractAddress: string) {
   mob.canStartNewEpoch = epochInfo['can-start-new-epoch'].value
   if (mob.canStartNewEpoch) mob.health = Number(mob.maxHealth)
   console.log('Mob: ', mob);
-  await setMob('Hogger', mob);
+  await setMob('hogger', mob);
   return epochInfo
 }
 

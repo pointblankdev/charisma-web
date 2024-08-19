@@ -16,17 +16,6 @@ import chatoken from '@public/cha-token.png'
 import voting from '@public/voting.png'
 import extproposal from '@public/ext-proposal.png'
 import tokenfaucet3 from '@public/token-faucet-3.png'
-import treasurechest from '@public/governance/treasure-chest.png'
-import questmap from '@public/governance/quest-map.png'
-import locked from '@public/governance/locked.png'
-import questhelper from '@public/governance/quest-helper.png'
-import oracle from '@public/governance/oracle.png'
-import hourglass from '@public/governance/hourglass.png'
-import startingFlag from '@public/governance/starting-flag.png'
-import stxRewards from '@public/governance/stx-rewards-2.png'
-import wantedPosters from '@public/governance/wanted-posters.png'
-import courthouse from '@public/governance/courthouse.png'
-import innkeeper from '@public/governance/innkeeper.png'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs"
 import greenRoom from '@public/green-room-card.png'
 
@@ -226,8 +215,6 @@ export const getServerSideProps: GetServerSideProps<Props> = async () => {
       getProposals(),
       fetchAllContractTransactions('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting')
     ]);
-
-    console.log(proposals)
 
     const updatedProposals = updateVoteData(proposals, transactions);
 
