@@ -22,6 +22,7 @@ import { getDehydratedStateFromSession } from '@components/stacks-session/sessio
 function parseAddress(str: string) {
 
   console.log(str)
+
   // Parse the string into a JavaScript object
   const parsedData = JSON.parse(str);
 
@@ -44,12 +45,13 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   //   }
   // }
 
-  const state = await getDehydratedStateFromSession(ctx) as string
+  // const state = await getDehydratedStateFromSession(ctx) as string
 
-  const user = parseAddress(state)
+  // const user = parseAddress(state)
 
   // check if they have the land nft already for post conditions
-  const landBalance = await getLandsBalance(contractAddress, user)
+  // const landBalance = await getLandsBalance(contractAddress, user)
+  const landBalance = 0
 
   return {
     props: {
