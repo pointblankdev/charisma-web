@@ -81,7 +81,7 @@ export default async function getMetadata(
                     // send message to discord
                     embed.setAuthor(`Governance`, 'https://beta.charisma.rocks/charisma.png', 'https://beta.charisma.rocks/governance')
                     embed.setTitle('Vote Cast for Governance Proposal')
-                    embed.setThumbnail('https://beta.charisma.rocks/charisma.png')
+                    embed.setThumbnail('https://beta.charisma.rocks/voting.png')
 
                     for (const event of tx.metadata.receipt.events) {
                         await handleContractEvent(event, embed)
