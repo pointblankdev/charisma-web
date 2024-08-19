@@ -87,6 +87,7 @@ export default async function velarWatcher(
                         await handleContractEvent(event, embed)
                     }
 
+
                     await hook.send(embed);
                     response = {}
 
