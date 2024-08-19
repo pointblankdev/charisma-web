@@ -147,7 +147,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 symbol = '💱'
 
                 console.error('Unknown velar swap event:', event.data)
-                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 600) || "?");
 
             }
 
