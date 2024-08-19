@@ -37,18 +37,12 @@ export default async function getMetadata(
                         const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
                         const experienceSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
 
-                        const data = { address: payload.sender } as any
-                        const bns = await getNameFromAddress(payload.sender)
-                        if (bns.names?.[0]) data.bns = bns.names?.[0]
-                        const jsonData = JSON.stringify(data);
-
-
                         // update leaderboard
-                        await updateExperienceLeaderboard(experienceAmount, jsonData)
+                        await updateExperienceLeaderboard(experienceAmount, payload.sender)
                         // send message to discord
                         const embed = new MessageBuilder()
                             .setTitle('Experience Gained')
-                            .setDescription(`${bns.names?.[0] || 'A player'} has gained experience`)
+                            .setDescription(`A player has gained experience`)
                             .setThumbnail('https://charisma.rocks/experience.png')
                             .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP', true)
                             .addField('% of Total Supply', numeral(experienceAmount / experienceSupply).format('0.0%'), true)

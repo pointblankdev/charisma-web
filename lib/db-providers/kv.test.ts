@@ -332,5 +332,11 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    // should get lands balance
+    it('should get welsh lands balance', async () => {
+        const response = await getLandsBalance('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(response)
+    })
+
 
 });

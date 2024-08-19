@@ -172,9 +172,9 @@ export async function setMob(ca: string, data: any): Promise<any> {
 
 // experience
 
-export async function updateExperienceLeaderboard(experience: number, jsonData: any) {
+export async function updateExperienceLeaderboard(experience: number, address: any) {
     try {
-        await kv.zadd('leaderboard:exp', { score: experience, member: jsonData });
+        await kv.zadd('leaderboard:exp', { score: experience, member: address });
     } catch (error) {
         console.error('Error updating player score:', error);
     }
@@ -186,14 +186,13 @@ export async function getExperienceLeaderboard(startRank: number, endRank: numbe
         const resultArray = [];
 
         for (let i = 0; i < leaderboard.length; i += 2) {
-            const memberJson: any = leaderboard[i]; // The stored JSON string
+            const address: any = leaderboard[i]; // The stored JSON string
             const experience: any = leaderboard[i + 1]; // The corresponding score
             const data: any = {
                 rank: i / 2 + 1,
-                address: memberJson.address,
+                address: address,
                 experience: Number(experience),
             }
-            if (memberJson.bns) data.bns = memberJson.bns
             resultArray.push(data);
         }
         return resultArray;
