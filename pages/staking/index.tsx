@@ -104,7 +104,7 @@ export default function StakingIndex({ lands }: Props) {
                         <div className='flex gap-2'>
                           <div className='min-w-max'>
                             {land.image ?
-                              <Image src={land.wraps.image} width={40} height={40} alt='guild-logo' className='w-10 h-10 border rounded-full grow' />
+                              <Image src={land.wraps.image} width={40} height={40} alt='guild-logo' className='w-10 h-10 rounded-full grow' />
                               : <div className='w-10 h-10 bg-white border rounded-full' />
                             }
                           </div>
