@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { cn } from '@lib/utils';
 import { motion } from 'framer-motion';
 import useWallet from '@lib/hooks/use-wallet-balances';
-import { getLand, getLands, setLandWhitelisted } from '@lib/db-providers/kv';
+import { getLand, getLands, getLandsBalance, setLandWhitelisted } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import schaImg from '@public/liquid-staked-charisma.png'
@@ -17,6 +17,18 @@ import { useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 import { getIsWhitelisted, getLandBalance, getLandId } from '@lib/stacks-api';
+import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
+
+function parseAddress(str: string) {
+  // Parse the string into a JavaScript object
+  const parsedData = JSON.parse(str);
+
+  // Navigate through the nested structure to find the address
+  const addressObj = parsedData[1][1][0];
+
+  // Return the address
+  return addressObj.address;
+}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const contractAddress = ctx.params!.ca as string
@@ -30,9 +42,13 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   //   }
   // }
 
+  const state = await getDehydratedStateFromSession(ctx) as string
+
+  const user = parseAddress(state)
+
   // check if they have the land nft already for post conditions
-  const landId = await getLandId(contractAddress)
-  const landBalance = await getLandBalance(landId, contractAddress)
+  const landBalance = await getLandsBalance(contractAddress, user)
+
   return {
     props: {
       metadata,
@@ -56,6 +72,8 @@ export default function StakingDetailPage({ metadata, landBalance }: Props) {
   const [tokensSelected, setTokensSelected] = useState(0);
 
   const { getBalanceByKey } = useWallet()
+
+  console.log(landBalance)
 
   const landTokenBalance = landBalance
   const baseTokenBalance = getBalanceByKey(`${metadata.wraps.ca}::${metadata.wraps.asset}`)?.balance || 0

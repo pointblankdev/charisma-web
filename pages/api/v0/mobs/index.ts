@@ -63,7 +63,7 @@ type ErrorResponse = {
     };
 };
 
-export default async function getMetadata(
+export default async function mobIndexApi(
     req: NextApiRequest,
     res: NextApiResponse<ChainhookResponse | ErrorResponse>
 ) {

@@ -1,4 +1,4 @@
-import { getNameFromAddress, hasPercentageBalance } from "../../lib/stacks-api";
+import { getLandBalance, getLandId, getNameFromAddress, hasPercentageBalance } from "../../lib/stacks-api";
 import { ConfUser } from "@lib/types";
 import { kv } from "@vercel/kv";
 
@@ -254,10 +254,11 @@ export async function clearRewardsLeaderboard(token: string) {
 
 // tokens
 
-export function getTokens() {
-    return []
+export async function getLandsBalance(contractAddress: string, user: string) {
+    return await kv.get(`user:${user}:land:${contractAddress}`) || 0;
 }
 
-export function getToken(contractAddress: string) {
-    return {}
+export async function setLandsBalance(landId: number, user: string) {
+    const landBalance = await getLandBalance(landId, user)
+    return await kv.set(`user:${user}:land:${landId}`, landBalance);
 }
