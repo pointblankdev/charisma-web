@@ -173,7 +173,18 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     try {
                         // hogger respawn alert for general chat
                         // Create a new builder
-                        const hoggerRespawnedAlert = new EmbedBuilder()
+                        // const hoggerRespawnedAlert = new EmbedBuilder()
+                        //     .setTitle('Hogger has respawned!')
+                        //     .addField({ name: 'Level', value: String(newLevel), inline: true })
+                        //     .addField({ name: 'Max Health', value: String(newMaxHp), inline: true })
+                        //     .addField({ name: 'Regen Rate', value: String(newRegen), inline: true })
+                        //     .setDescription(`If defeated, everyone who contributes to the battle receives a share of the rewards. Experience is divided up evenly, and CHA tokens are split based on damage dealt to Hogger.`)
+                        //     .setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
+                        //     .setUrl('http://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=mob')
+
+                        // generalChatHook.addEmbed(hoggerRespawnedAlert.getEmbed());
+                        // await generalChatHook.send()
+                        builder
                             .setTitle('Hogger has respawned!')
                             .addField({ name: 'Level', value: String(newLevel), inline: true })
                             .addField({ name: 'Max Health', value: String(newMaxHp), inline: true })
@@ -181,9 +192,6 @@ export const handleContractEvent = async (event: any, builder: any) => {
                             .setDescription(`If defeated, everyone who contributes to the battle receives a share of the rewards. Experience is divided up evenly, and CHA tokens are split based on damage dealt to Hogger.`)
                             .setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
                             .setUrl('http://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=mob')
-
-                        generalChatHook.addEmbed(hoggerRespawnedAlert.getEmbed());
-                        await generalChatHook.send()
                     } catch (error) {
                         console.error('generalChatHook error:', error)
                     }
