@@ -224,6 +224,14 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     });
                 }
 
+                else if (event.data.value.type === 'store-energy') {
+
+                    builder.addField({
+                        name: `${symbol} ${event.data.value.type}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
+                }
+
                 else if (event.data.value.type === 'sft_mint') {
                     const landId = Number(event.data.value['token-id'])
                     const recipient = event.data.value['recipient']
