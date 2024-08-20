@@ -30,6 +30,7 @@ interface TransactionMetadata {
     position: { index: number };
     raw_tx: string;
     receipt: ReceiptData
+    success: boolean
 }
 
 interface ReceiptData {
@@ -85,8 +86,10 @@ export default async function getMetadata(
                 hook.addEmbed(builder.getEmbed());
                 await hook.send();
 
-                for (const event of tx.metadata.receipt.events) {
-                    await handleContractEvent(event)
+                if (tx.metadata.success) {
+                    for (const event of tx.metadata.receipt.events) {
+                        await handleContractEvent(event)
+                    }
                 }
                 response = {}
             }

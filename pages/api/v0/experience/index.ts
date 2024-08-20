@@ -25,19 +25,12 @@ export default async function getMetadata(
             for (const a of req.body.apply) {
                 for (const tx of a.transactions) {
 
-                    const payload = {
-                        ...tx.metadata.kind.data,
-                        sender: tx.metadata.sender,
-                        success: tx.metadata.success,
-                    };
-
-                    if (payload.success) {
-
-                        const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', payload.sender)
+                    if (tx.metadata.success) {
+                        const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', tx.metadata.sender)
                         const experienceSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
 
                         // update leaderboard
-                        await updateExperienceLeaderboard(experienceAmount, payload.sender)
+                        await updateExperienceLeaderboard(experienceAmount, tx.metadata.sender)
                         // send message to discord
                         const builder = new EmbedBuilder()
                             .setTitle('Experience Gained')
@@ -45,17 +38,17 @@ export default async function getMetadata(
                             .setThumbnail({ url: 'https://charisma.rocks/experience.png' })
                             .addField({ name: 'Total Experience', value: Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP', inline: true })
                             .addField({ name: '% of Total Supply', value: numeral(experienceAmount / experienceSupply).format('0.0%'), inline: true })
-                            .addField({ name: 'Wallet Address', value: payload.sender })
+                            .addField({ name: 'Wallet Address', value: tx.metadata.sender })
 
 
                         hook.addEmbed(builder.getEmbed());
                         await hook.send();
 
                         for (const event of tx.metadata.receipt.events) {
-                            handleContractEvent(event);
+                            await handleContractEvent(event)
                         }
+                        response = {}
                     }
-                    response = {}
                 }
             }
         } else if (req.method === 'GET') {

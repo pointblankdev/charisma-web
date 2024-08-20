@@ -30,6 +30,7 @@ interface TransactionMetadata {
     position: { index: number };
     raw_tx: string;
     receipt: ReceiptData
+    success: boolean
 }
 
 interface ReceiptData {
@@ -76,34 +77,22 @@ export default async function proposalSubmittedApi(
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
                 const builder = new EmbedBuilder()
-                try {
 
-                    // send message to discord
-                    builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/charisma.png', icon_url: 'https://beta.charisma.rocks/governance' })
-                    builder.setTitle('New Proposal Submitted')
-                    builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
+                // send message to discord
+                builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/charisma.png', icon_url: 'https://beta.charisma.rocks/governance' })
+                builder.setTitle('New Proposal Submitted')
+                builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
 
 
-                    hook.addEmbed(builder.getEmbed());
-                    await hook.send();
+                hook.addEmbed(builder.getEmbed());
+                await hook.send();
 
+                if (tx.metadata.success) {
                     for (const event of tx.metadata.receipt.events) {
                         await handleContractEvent(event)
                     }
-                    response = {}
-
-                } catch (error: any) {
-                    console.error(error)
-                    const errorEmbed = new EmbedBuilder()
-                    errorEmbed.setTitle('Error Parsing Transaction')
-
-                    for (const event of tx.metadata.receipt.events) {
-                        errorEmbed.addField({ name: "⚠️", value: JSON.stringify(event).slice(0, 300) })
-                    }
-                    hook.addEmbed(errorEmbed.getEmbed());
-                    await hook.send();
-                    response = {}
                 }
+                response = {}
             }
         }
     } else if (req.method === 'GET') {
