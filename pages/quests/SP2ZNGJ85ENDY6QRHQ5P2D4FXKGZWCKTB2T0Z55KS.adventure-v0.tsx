@@ -182,7 +182,7 @@ export default function Adventure({ lands }: Props) {
 
             <CardFooter className="z-20 flex justify-between p-4 items-end">
 
-              <Link href="/crafting">
+              <Link href="/quests">
                 <Button variant="ghost" className="z-30">
                   Back
                 </Button>
