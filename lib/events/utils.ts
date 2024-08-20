@@ -111,6 +111,10 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 }
 
                 else if (event.data.value.event === 'attack-result') {
+                    const newHealth = Number(event.data.value['new-hogger-health'])
+                    const hogger = await getMob('hogger')
+                    hogger.health = newHealth
+                    await setMob('hogger', hogger)
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) + '.'
@@ -130,6 +134,10 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 symbol = '🐗'
 
                 if (event.data.value.event === 'take-damage') {
+                    const newHealth = Number(event.data.value['current-health'])
+                    const hogger = await getMob('hogger')
+                    hogger.health = newHealth
+                    await setMob('hogger', hogger)
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
