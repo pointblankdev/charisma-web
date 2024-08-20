@@ -29,67 +29,67 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
         else if (event.type === 'SmartContractEvent') {
 
-            if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
+            if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
                 symbol = '📜'
 
-                if (event?.data?.value?.event === 'rewards-distributed') {
+                if (event.data.value.event === 'rewards-distributed') {
                     await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'attack-hogger') {
+                else if (event.data.value.event === 'attack-hogger') {
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'result-epoch') {
+                else if (event.data.value.event === 'result-epoch') {
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
             }
 
-            else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2") {
+            else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2") {
                 symbol = '📜'
 
-                if (event?.data?.value?.event === 'distributing-rewards') {
+                if (event.data.value.event === 'distributing-rewards') {
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'rewards-distributed') {
+                else if (event.data.value.event === 'rewards-distributed') {
                     await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'attack-hogger') {
+                else if (event.data.value.event === 'attack-hogger') {
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'new-epoch-started') {
+                else if (event.data.value.event === 'new-epoch-started') {
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'attack-result') {
+                else if (event.data.value.event === 'attack-result') {
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
@@ -103,46 +103,46 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 }
             }
 
-            else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0") {
+            else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hogger-v0") {
                 symbol = '🐗'
 
-                if (event?.data?.value?.event === 'take-damage') {
+                if (event.data.value.event === 'take-damage') {
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'damage-result') {
+                else if (event.data.value.event === 'damage-result') {
                     const newHealth = Number(event.data.value['new-health'])
                     const hogger = await getMob('hogger')
                     hogger.health = newHealth
                     await setMob('hogger', hogger)
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'attack-result') {
+                else if (event.data.value.event === 'attack-result') {
                     const newHealth = Number(event.data.value['new-hogger-health'])
                     const hogger = await getMob('hogger')
                     hogger.health = newHealth
                     await setMob('hogger', hogger)
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'reset-for-new-epoch') {
+                else if (event.data.value.event === 'reset-for-new-epoch') {
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.event === 'reset-complete') {
+                else if (event.data.value.event === 'reset-complete') {
                     const newLevel = Number(event.data.value['new-epoch'])
                     const newMaxHp = Number(event.data.value['new-max-health'])
                     const newRegen = Number(event.data.value['new-regen-rate'])
@@ -153,7 +153,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     hogger.regenRate = newRegen
                     await setMob('hogger', hogger)
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.event}`,
+                        name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
 
@@ -177,24 +177,24 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 }
             }
 
-            else if (event?.data?.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands") {
+            else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands") {
                 symbol = '⛰'
 
-                if (event?.data?.value?.type === 'tap-energy') {
+                if (event.data.value.type === 'tap-energy') {
 
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.type}`,
+                        name: `${symbol} ${event.data.value.type}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
 
-                else if (event?.data?.value?.type === 'sft_mint') {
+                else if (event.data.value.type === 'sft_mint') {
                     const landId = Number(event.data.value['token-id'])
                     const recipient = event.data.value['recipient']
                     await setLandsBalance(landId, recipient)
                     await setHadLandBefore(landId, recipient)
                     builder.addField({
-                        name: `${symbol} ${event?.data?.value?.type}`,
+                        name: `${symbol} ${event.data.value.type}`,
                         value: JSON.stringify(event.data.value).slice(0, 300) || "?"
                     });
                 }
@@ -209,7 +209,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 }
             }
 
-            else if (event?.data?.contract_identifier === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core") {
+            else if (event.data.contract_identifier === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core") {
                 symbol = '💱'
 
                 console.error('Unknown velar swap event:', event.data)
@@ -221,7 +221,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             }
 
 
-            else if (event?.data?.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission") {
+            else if (event.data.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission") {
                 symbol = '⚖️'
 
                 console.error('Unknown governance proposal event:', event.data)
@@ -231,7 +231,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 });
             }
 
-            else if (event?.data?.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting") {
+            else if (event.data.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting") {
                 symbol = '⚖️'
 
                 console.error('Unknown governance proposal event:', event.data)
