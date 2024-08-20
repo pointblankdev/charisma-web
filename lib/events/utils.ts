@@ -255,7 +255,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             console.error('Unknown event type:', event.data)
             builder.addField({
                 name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300) || "?"
+                value: JSON.stringify(event.data).slice(0, 300) + "."
             });
         }
 
