@@ -101,6 +101,7 @@ export default async function proposalSubmittedApi(
                     }
                     hook.addEmbed(errorEmbed.getEmbed());
                     await hook.send();
+                    response = {}
                 }
             }
         }

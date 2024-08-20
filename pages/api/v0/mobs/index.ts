@@ -93,7 +93,7 @@ export default async function mobIndexApi(
 
                 } catch (error: any) {
                     // console.error({ error })
-                    console.error({ fields: builder.getEmbed().fields?.map(f => f.name) })
+                    console.error({ fields: builder.getEmbed().fields?.map(f => f.value) })
                     const errorEmbed = new EmbedBuilder()
 
                     errorEmbed.setTitle('Error Parsing Transaction')
@@ -103,6 +103,7 @@ export default async function mobIndexApi(
                     }
                     hook.addEmbed(errorEmbed.getEmbed());
                     await hook.send();
+                    response = {}
                 }
             }
         }

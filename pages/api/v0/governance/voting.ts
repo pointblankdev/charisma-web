@@ -101,6 +101,7 @@ export default async function getMetadata(
                     }
                     hook.addEmbed(errorEmbed.getEmbed());
                     await hook.send();
+                    response = {}
                 }
             }
         }

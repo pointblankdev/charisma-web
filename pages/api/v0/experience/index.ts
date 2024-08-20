@@ -1,7 +1,6 @@
 import { getExperienceLeaderboard, updateExperienceLeaderboard } from '@lib/db-providers/kv';
 import { handleContractEvent } from '@lib/events/utils';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
-import { AnyRecord } from 'dns';
 import { NextApiRequest, NextApiResponse } from 'next';
 import numeral from 'numeral';
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
@@ -55,6 +54,7 @@ export default async function getMetadata(
 
                         hook.addEmbed(builder.getEmbed());
                         await hook.send();
+                        response = {}
                     }
                     response = {}
                 }
