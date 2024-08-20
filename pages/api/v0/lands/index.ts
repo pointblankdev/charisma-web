@@ -76,19 +76,19 @@ export default async function landsIndexApi(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
-                const builder = new EmbedBuilder()
 
                 if (tx.metadata.success) {
+                    let builder = new EmbedBuilder()
                     // send message to discord
-                    builder.setAuthor({ name: `Stake-to-Earn Pools`, url: 'https://beta.charisma.rocks/charisma.png', icon_url: 'https://beta.charisma.rocks/staking' })
+                    builder.setAuthor({ name: `Stake-to-Earn Pools`, icon_url: 'https://beta.charisma.rocks/charisma.png', url: 'https://beta.charisma.rocks/staking' })
                     builder.setTitle('New Event')
                     builder.setThumbnail({ url: 'https://beta.charisma.rocks/charisma.png' })
 
-                    hook.addEmbed(builder.getEmbed());
-
                     for (const event of tx.metadata.receipt.events) {
-                        await handleContractEvent(event, hook)
+                        builder = await handleContractEvent(event, builder)
                     }
+
+                    hook.addEmbed(builder.getEmbed());
                     await hook.send();
                 }
                 response = {}
