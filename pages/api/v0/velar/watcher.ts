@@ -77,19 +77,25 @@ export default async function velarWatcher(
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
 
-                if (tx.metadata.success) {
-                    let builder = new EmbedBuilder()
-                    // send message to discord
-                    builder.setAuthor({ name: `Velar Watcher`, icon_url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png', url: 'https://beta.charisma.rocks/staking' })
-                    builder.setTitle('New Event')
-                    builder.setThumbnail({ url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png' })
+                try {
 
-                    for (const event of tx.metadata.receipt.events) {
-                        builder = await handleContractEvent(event, builder)
+                    if (tx.metadata.success) {
+                        let builder = new EmbedBuilder()
+                        // send message to discord
+                        builder.setAuthor({ name: `Velar Watcher`, icon_url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png', url: 'https://beta.charisma.rocks/staking' })
+                        builder.setTitle('New Event')
+                        builder.setThumbnail({ url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png' })
+
+                        for (const event of tx.metadata.receipt.events) {
+                            builder = await handleContractEvent(event, builder)
+                        }
+
+                        hook.addEmbed(builder.getEmbed());
+                        await hook.send();
                     }
 
-                    hook.addEmbed(builder.getEmbed());
-                    await hook.send();
+                } catch (error) {
+                    console.error(error)
                 }
                 response = {}
             }
