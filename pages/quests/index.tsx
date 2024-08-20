@@ -15,6 +15,8 @@ import wantedHogger from '@public/quests/wanted-hogger/hogger.png'
 import hugeKnollClaw from '@public/quests/wanted-hogger/hogger-icon.png'
 import hoggerDefeated from '@public/quests/wanted-hogger/hogger-camp.png'
 import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
+import kingOfTheHillIcon from '@public/quests/king-of-the-hill/king-of-the-hill-icon.png'
+import kingOfTheHillCard from '@public/quests/king-of-the-hill/king-of-the-hill-card.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
@@ -34,6 +36,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=quest",
       image: hugeKnollClaw,
       cardImage: wantedPoster,
+    },
+    {
+      name: `King of the Hill`,
+      description: "Team up with your community to claim the hill.",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.king-of-the-hill-v0?view=quest",
+      image: kingOfTheHillIcon,
+      cardImage: kingOfTheHillCard,
     }
   ]
   for (const ca of questContractAddresses) {
