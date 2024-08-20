@@ -99,9 +99,9 @@ export default async function mobIndexApi(
                     errorEmbed.setTitle('Error Parsing Transaction')
 
                     for (const event of tx.metadata.receipt.events) {
-                        errorEmbed.addField({ name: "⚠️", value: JSON.stringify(event).slice(0, 300) })
+                        errorEmbed.addField({ name: "⚠️", value: JSON.stringify(event).slice(0, 300) + '.' })
+                        hook.addEmbed(errorEmbed.getEmbed());
                     }
-                    hook.addEmbed(errorEmbed.getEmbed());
                     await hook.send();
                 }
             }
