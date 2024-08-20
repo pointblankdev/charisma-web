@@ -1,9 +1,9 @@
 import { getMob, hadLandBefore, incrementRewardLeaderboard, setHadLandBefore, setLandsBalance, setMob } from "@lib/db-providers/kv";
-import { Webhook, MessageBuilder } from 'discord-webhook-node'
+import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
-export const handleContractEvent = async (event: any, embed: any) => {
+export const handleContractEvent = async (event: any, builder: any) => {
 
     let symbol = '❓';
 
@@ -12,13 +12,19 @@ export const handleContractEvent = async (event: any, embed: any) => {
         if (event.type === 'FTBurnEvent') {
             symbol = '🔥'
 
-            embed.addField(`${symbol} ${event.type}`, `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`
+            });
         }
 
         else if (event.type === 'FTMintEvent') {
             symbol = '💰'
 
-            embed.addField(`${symbol} ${event.type}`, `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`);
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`
+            });
         }
 
         else if (event.type === 'SmartContractEvent') {
@@ -28,15 +34,24 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
                 if (event?.data?.value?.event === 'rewards-distributed') {
                     await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'attack-hogger') {
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'result-epoch') {
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
             }
 
@@ -44,24 +59,47 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 symbol = '📜'
 
                 if (event?.data?.value?.event === 'distributing-rewards') {
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'rewards-distributed') {
                     await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'attack-hogger') {
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'new-epoch-started') {
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'attack-result') {
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
+                }
+
+                else {
+                    console.error('Unknown wanted-hogger-v2 event:', event.data)
+                    builder.addField({
+                        name: `${symbol} ${event.type}`,
+                        value: JSON.stringify(event.data).slice(0, 300) || "?"
+                    });
                 }
             }
 
@@ -69,7 +107,10 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 symbol = '🐗'
 
                 if (event?.data?.value?.event === 'take-damage') {
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'damage-result') {
@@ -77,7 +118,10 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     const hogger = await getMob('hogger')
                     hogger.health = newHealth
                     await setMob('hogger', hogger)
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'attack-result') {
@@ -85,11 +129,17 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     const hogger = await getMob('hogger')
                     hogger.health = newHealth
                     await setMob('hogger', hogger)
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'reset-for-new-epoch') {
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.event === 'reset-complete') {
@@ -102,20 +152,25 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     hogger.maxHealth = newMaxHp
                     hogger.regenRate = newRegen
                     await setMob('hogger', hogger)
-                    embed.addField(`${symbol} ${event?.data?.value?.event}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.event}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
 
                     try {
                         // hogger respawn alert for general chat
-                        const hoggerRespawnedAlert = new MessageBuilder()
+                        // Create a new builder
+                        const hoggerRespawnedAlert = new EmbedBuilder()
                             .setTitle('Hogger has respawned!')
-                            .addField('Level', String(newLevel), true)
-                            .addField('Max Health', String(newMaxHp), true)
-                            .addField('Regen Rate', String(newRegen), true)
+                            .addField({ name: 'Level', value: String(newLevel), inline: true })
+                            .addField({ name: 'Max Health', value: String(newMaxHp), inline: true })
+                            .addField({ name: 'Regen Rate', value: String(newRegen), inline: true })
                             .setDescription(`If defeated, everyone who contributes to the battle receives a share of the rewards. Experience is divided up evenly, and CHA tokens are split based on damage dealt to Hogger.`)
-                            .setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
+                            .setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
                             .setUrl('http://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=mob')
 
-                        await generalChatHook.send(hoggerRespawnedAlert);
+                        generalChatHook.addEmbed(hoggerRespawnedAlert.getEmbed());
+                        await generalChatHook.send()
                     } catch (error) {
                         console.error('generalChatHook error:', error)
                     }
@@ -127,7 +182,10 @@ export const handleContractEvent = async (event: any, embed: any) => {
 
                 if (event?.data?.value?.type === 'tap-energy') {
 
-                    embed.addField(`${symbol} ${event?.data?.value?.type}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.type}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else if (event?.data?.value?.type === 'sft_mint') {
@@ -135,13 +193,19 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     const recipient = event.data.value['recipient']
                     await setLandsBalance(landId, recipient)
                     await setHadLandBefore(landId, recipient)
-                    embed.addField(`${symbol} ${event?.data?.value?.type}`, JSON.stringify(event.data.value).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event?.data?.value?.type}`,
+                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                    });
                 }
 
                 else {
 
                     console.error('Unknown lands event:', event.data)
-                    embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+                    builder.addField({
+                        name: `${symbol} ${event.type}`,
+                        value: JSON.stringify(event.data).slice(0, 300) || "?"
+                    });
                 }
             }
 
@@ -149,7 +213,10 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 symbol = '💱'
 
                 console.error('Unknown velar swap event:', event.data)
-                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 1200) || "?");
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 1200) || "?"
+                });
 
             }
 
@@ -158,26 +225,38 @@ export const handleContractEvent = async (event: any, embed: any) => {
                 symbol = '⚖️'
 
                 console.error('Unknown governance proposal event:', event.data)
-                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300) || "?"
+                });
             }
 
             else if (event?.data?.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting") {
                 symbol = '⚖️'
 
                 console.error('Unknown governance proposal event:', event.data)
-                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300) || "?"
+                });
             }
 
             else {
 
                 console.error('Unknown contract identifier:', event.data)
-                embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300) || "?"
+                });
             }
 
         } else {
 
             console.error('Unknown event type:', event.data)
-            embed.addField(`${symbol} ${event.type}`, JSON.stringify(event.data).slice(0, 300) || "?");
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300) || "?"
+            });
         }
 
     } catch (error) {

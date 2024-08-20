@@ -1,10 +1,10 @@
 import { getExperienceLeaderboard, updateExperienceLeaderboard } from '@lib/db-providers/kv';
 import { handleContractEvent } from '@lib/events/utils';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
-import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { AnyRecord } from 'dns';
 import { NextApiRequest, NextApiResponse } from 'next';
 import numeral from 'numeral';
+import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
@@ -40,20 +40,21 @@ export default async function getMetadata(
                         // update leaderboard
                         await updateExperienceLeaderboard(experienceAmount, payload.sender)
                         // send message to discord
-                        const embed = new MessageBuilder()
+                        const builder = new EmbedBuilder()
                             .setTitle('Experience Gained')
                             .setDescription(`A player has gained experience`)
-                            .setThumbnail('https://charisma.rocks/experience.png')
-                            .addField('Total Experience', Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP', true)
-                            .addField('% of Total Supply', numeral(experienceAmount / experienceSupply).format('0.0%'), true)
-                            .addField('Wallet Address', payload.sender)
+                            .setThumbnail({ url: 'https://charisma.rocks/experience.png' })
+                            .addField({ name: 'Total Experience', value: Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP', inline: true })
+                            .addField({ name: '% of Total Supply', value: numeral(experienceAmount / experienceSupply).format('0.0%'), inline: true })
+                            .addField({ name: 'Wallet Address', value: payload.sender })
 
 
                         for (const event of tx.metadata.receipt.events) {
-                            handleContractEvent(event, embed);
+                            handleContractEvent(event, builder);
                         }
 
-                        await hook.send(embed);
+                        hook.addEmbed(builder.getEmbed());
+                        await hook.send();
                     }
                     response = {}
                 }

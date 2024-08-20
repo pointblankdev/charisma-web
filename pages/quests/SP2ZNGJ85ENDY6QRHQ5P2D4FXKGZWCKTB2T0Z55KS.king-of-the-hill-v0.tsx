@@ -143,13 +143,13 @@ export default function KingOfTheHill({ lands, mob }: Props) {
                     </CardDescription>
                   </CardHeader>
                   <CardContent className="z-20 flex-grow p-4 space-y-4">
-                    <section className='grid grid-cols-2'>
+                    <section className='grid grid-cols-1 sm:grid-cols-2'>
                       <div className="z-20">
                         <div className="z-30 text-xl font-semibold">Rewards</div>
                         <div className="z-30 mb-4 text-sm font-fine text-foreground">
                           1st, 2nd, and 3rd place rewards:
                         </div>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-5 sm:grid-cols-4 gap-4">
                           <div className="relative">
                             <Image
                               alt="Charisma"
@@ -185,13 +185,13 @@ export default function KingOfTheHill({ lands, mob }: Props) {
                           </div>
                         </div>
                       </div>
-                      <div className="z-20 row-span-2">
+                      <div className="z-20 row-span-2 mt-8 sm:mt-0">
                         <div className="z-30 text-xl font-semibold">Quest Details</div>
                         <div className="z-30 mb-4 text-sm font-fine text-foreground">
                           King of the Hill is an on-chain competition where teams battle for supremacy atop the Meme Mountain. Teams accumulate points by tapping their staked token's energy and converting it into damage against rival teams. The more energy spent and the higher a player's experience, the more points their team earns.
                         </div>
                         <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                          The competition runs in rounds, each lasting approximately 3000 blocks (about 20 days). There's a warmup period at the start of each round where no points can be scored. Once active, teams can attack at will until the round ends.
+                          The competition runs in rounds, each lasting 3000 blocks (about 20 days). There's a warmup period at the start of each round where no points can be scored. Once active, teams can attack at will until the round ends.
                         </div>
                         <div className="z-30 mb-4 text-sm font-fine text-foreground">
                           A leaderboard tracks the top three teams throughout the round. When the round concludes, the team captains of the top three teams receive CHA token rewards. The first-place team receives the largest reward, with second and third place receiving progressively smaller amounts.
@@ -205,7 +205,7 @@ export default function KingOfTheHill({ lands, mob }: Props) {
                         <div className="z-30 mb-4 text-sm font-fine text-foreground">
                           Burns sCHA per attack
                         </div>
-                        <div className="grid grid-cols-3 sm:grid-cols-4 gap-4">
+                        <div className="grid grid-cols-5 sm:grid-cols-4 gap-4">
                           <div className="relative">
                             <Image
                               alt="protocol-fee-token-image"
@@ -241,7 +241,7 @@ export default function KingOfTheHill({ lands, mob }: Props) {
                     className={cn(
                       'object-cover',
                       'opacity-10',
-                      'aspect-[1/2]',
+                      'aspect-[1/3]',
                       'sm:aspect-[2/3]',
                       'flex',
                       'z-10',

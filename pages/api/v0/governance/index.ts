@@ -1,7 +1,7 @@
 import { getExperienceLeaderboard, getMob, setMob, updateExperienceLeaderboard } from '@lib/db-providers/kv';
 import { handleContractEvent } from '@lib/events/utils';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
-import { Webhook, MessageBuilder } from 'discord-webhook-node'
+import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { NextApiRequest, NextApiResponse } from 'next';
 import numeral from 'numeral';
 
@@ -75,31 +75,32 @@ export default async function proposalSubmittedApi(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
-                const embed = new MessageBuilder()
+                const builder = new EmbedBuilder()
                 try {
 
                     // send message to discord
-                    embed.setAuthor(`Governance`, 'https://beta.charisma.rocks/charisma.png', 'https://beta.charisma.rocks/governance')
-                    embed.setTitle('New Proposal Submitted')
-                    embed.setThumbnail('https://beta.charisma.rocks/ext-proposal.png')
+                    builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/charisma.png', icon_url: 'https://beta.charisma.rocks/governance' })
+                    builder.setTitle('New Proposal Submitted')
+                    builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
 
                     for (const event of tx.metadata.receipt.events) {
-                        await handleContractEvent(event, embed)
+                        await handleContractEvent(event, builder)
                     }
 
-                    await hook.send(embed);
+                    hook.addEmbed(builder.getEmbed());
+                    await hook.send();
                     response = {}
 
                 } catch (error: any) {
                     console.error(error)
-                    console.error(embed.getJSON())
-                    const errorEmbed = new MessageBuilder()
-                        .setTitle('Error Parsing Transaction')
+                    const errorEmbed = new EmbedBuilder()
+                    errorEmbed.setTitle('Error Parsing Transaction')
 
                     for (const event of tx.metadata.receipt.events) {
-                        errorEmbed.addField("⚠️", JSON.stringify(event).slice(0, 300))
+                        errorEmbed.addField({ name: "⚠️", value: JSON.stringify(event).slice(0, 300) })
                     }
-                    await hook.send(errorEmbed);
+                    hook.addEmbed(errorEmbed.getEmbed());
+                    await hook.send();
                 }
             }
         }

@@ -272,3 +272,13 @@ export async function hadLandBefore(contractAddress: string, user: string) {
 export async function setHadLandBefore(landId: number, user: string) {
     return await kv.set(`user:${user}:had-land:${landId}`, true);
 }
+
+// nft metadata
+
+export async function getNftMetadata(ca: string, id: string): Promise<any> {
+    return await kv.get(`nft:${ca}:${id}`);
+}
+
+export async function setNftMetadata(ca: string, id: string, data: any): Promise<void> {
+    await kv.set(`nft:${ca}:${id}`, data);
+}

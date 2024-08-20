@@ -1,9 +1,9 @@
 import { getExperienceLeaderboard, getMob, setMob, updateExperienceLeaderboard } from '@lib/db-providers/kv';
 import { handleContractEvent } from '@lib/events/utils';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
-import { Webhook, MessageBuilder } from 'discord-webhook-node'
 import { NextApiRequest, NextApiResponse } from 'next';
 import numeral from 'numeral';
+import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
@@ -75,31 +75,33 @@ export default async function mobIndexApi(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
-                const embed = new MessageBuilder()
+                const builder = new EmbedBuilder()
                 try {
 
                     // send message to discord
-                    embed.setAuthor(`WANTED: "Hogger"`, 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2')
-                    embed.setTitle('Hogger Event!')
-                    embed.setThumbnail('https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png')
+                    builder.setAuthor({ name: `WANTED: "Hogger"`, url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', icon_url: 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2' })
+                    builder.setTitle('Hogger Event!')
+                    builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
 
                     for (const event of tx.metadata.receipt.events) {
-                        await handleContractEvent(event, embed)
+                        await handleContractEvent(event, builder)
                     }
 
-                    await hook.send(embed);
+                    hook.addEmbed(builder.getEmbed());
+                    await hook.send();
                     response = {}
 
                 } catch (error: any) {
                     console.error(error)
-                    console.error(embed.getJSON())
-                    const errorEmbed = new MessageBuilder()
-                        .setTitle('Error Parsing Transaction')
+                    const errorEmbed = new EmbedBuilder()
+
+                    errorEmbed.setTitle('Error Parsing Transaction')
 
                     for (const event of tx.metadata.receipt.events) {
-                        errorEmbed.addField("⚠️", JSON.stringify(event).slice(0, 300))
+                        errorEmbed.addField({ name: "⚠️", value: JSON.stringify(event).slice(0, 300) })
                     }
-                    await hook.send(errorEmbed);
+                    hook.addEmbed(errorEmbed.getEmbed());
+                    await hook.send();
                 }
             }
         }
