@@ -81,7 +81,7 @@ export default function ContractDeployer({ data }: any) {
     const sender = stxAddress!
 
     const defaultValues: Partial<ContractFormValues> = {
-        template: 'prize-fight'
+        template: ''
     }
 
     const form = useForm<ContractFormValues>({
@@ -152,86 +152,7 @@ export default function ContractDeployer({ data }: any) {
                                                             <SelectValue placeholder="Select a model" />
                                                         </SelectTrigger>
                                                         <SelectContent>
-                                                            <SelectItem value="genesis">
-                                                                <div className="flex items-start gap-3 text-foreground">
-                                                                    <Scale className="size-5" />
-                                                                    <div className="grid gap-0.5">
-                                                                        <p>
-                                                                            Governance{" "}
-                                                                            <span className="font-medium text-foreground">
-                                                                                Proposal
-                                                                            </span>
-                                                                        </p>
-                                                                        <p className="text-xs" data-description>
-                                                                            Deploy a new governance proposal.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </SelectItem>
-                                                            <SelectItem value="explorer">
-                                                                <div className="flex items-start gap-3 text-foreground">
-                                                                    <Send className="size-5" />
-                                                                    <div className="grid gap-0.5">
-                                                                        <p>
-                                                                            Token{" "}
-                                                                            <span className="font-medium text-foreground">
-                                                                                Airdropper
-                                                                            </span>
-                                                                        </p>
-                                                                        <p className="text-xs" data-description>
-                                                                            Distribute tokens to multiple addresses.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </SelectItem>
-                                                            <SelectItem value="pool">
-                                                                <div className="flex items-start gap-3 text-foreground">
-                                                                    <BsWater className="size-5" />
-                                                                    <div className="grid gap-0.5">
-                                                                        <p>
-                                                                            Liquid Staking{" "}
-                                                                            <span className="font-medium text-foreground">
-                                                                                Pool
-                                                                            </span>
-                                                                        </p>
-                                                                        <p className="text-xs" data-description>
-                                                                            Create a new Charisma liquid staking pool.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </SelectItem>
-                                                            <SelectItem value="index">
-                                                                <div className="flex items-start gap-3 text-foreground">
-                                                                    <Coins className="size-5" />
-                                                                    <div className="grid gap-0.5">
-                                                                        <p>
-                                                                            Index{" "}
-                                                                            <span className="font-medium text-foreground">
-                                                                                Token
-                                                                            </span>
-                                                                        </p>
-                                                                        <p className="text-xs" data-description>
-                                                                            Create a new Charisma index token.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </SelectItem>
-                                                            <SelectItem value="arbitrage">
-                                                                <div className="flex items-start gap-3 text-foreground">
-                                                                    <Coins className="size-5" />
-                                                                    <div className="grid gap-0.5">
-                                                                        <p>
-                                                                            Arbitrage{" "}
-                                                                            <span className="font-medium text-foreground">
-                                                                                Strategy
-                                                                            </span>
-                                                                        </p>
-                                                                        <p className="text-xs" data-description>
-                                                                            Create a new Charisma index token.
-                                                                        </p>
-                                                                    </div>
-                                                                </div>
-                                                            </SelectItem>
+
                                                         </SelectContent>
                                                     </Select>
                                                 </div>
@@ -272,7 +193,7 @@ export default function ContractDeployer({ data }: any) {
                                                                     >
                                                                         <SelectValue placeholder="Select a model" />
                                                                     </SelectTrigger>
-                                                                    <SelectContent>
+                                                                    {/* <SelectContent>
                                                                         <SelectItem value="farm">
                                                                             <div className="flex items-start gap-3 text-foreground">
                                                                                 <PiPlant className="size-5" />
@@ -321,7 +242,7 @@ export default function ContractDeployer({ data }: any) {
                                                                                 </div>
                                                                             </div>
                                                                         </SelectItem>
-                                                                    </SelectContent>
+                                                                    </SelectContent> */}
                                                                 </Select>
                                                             </FormControl>
                                                             <FormMessage />
