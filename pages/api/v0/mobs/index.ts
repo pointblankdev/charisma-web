@@ -92,7 +92,8 @@ export default async function mobIndexApi(
                     response = {}
 
                 } catch (error: any) {
-                    console.error(error)
+                    console.error({ error })
+                    console.error({ builder: builder.getEmbed() })
                     const errorEmbed = new EmbedBuilder()
 
                     errorEmbed.setTitle('Error Parsing Transaction')
