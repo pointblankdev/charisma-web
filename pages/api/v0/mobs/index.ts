@@ -83,11 +83,12 @@ export default async function mobIndexApi(
                 builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
 
                 hook.addEmbed(builder.getEmbed());
-                await hook.send();
 
                 for (const event of tx.metadata.receipt.events) {
                     await handleContractEvent(event)
                 }
+
+                await hook.send();
                 response = {}
             }
         }
