@@ -263,6 +263,7 @@ export const handleContractEvent = async (event: any, hook: any) => {
         }
 
         hook.addEmbed(builder.getEmbed());
+        await hook.send();
 
     } catch (error) {
         console.error('handlePrintEvent error:', error)

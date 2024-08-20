@@ -89,7 +89,6 @@ export default async function mobIndexApi(
                     for (const event of tx.metadata.receipt.events) {
                         await handleContractEvent(event, hook)
                     }
-                    await hook.send();
                 }
 
                 response = {}
