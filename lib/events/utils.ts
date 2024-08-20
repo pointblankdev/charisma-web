@@ -23,7 +23,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
     try {
 
         if (event.type === 'FTBurnEvent') {
-            symbol = '🔥'
+            symbol = '🔻'
 
             builder.addField({
                 name: `${symbol} ${event.type}`,
@@ -31,12 +31,30 @@ export const handleContractEvent = async (event: any, builder: any) => {
             });
         }
 
+        else if (event.type === 'NFTBurnEvent') {
+            symbol = '🔻'
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300) + "."
+            });
+        }
+
         else if (event.type === 'FTMintEvent') {
-            symbol = '💰'
+            symbol = '🔺'
 
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`
+            });
+        }
+
+        else if (event.type === 'NFTMintEvent') {
+            symbol = '🔺'
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300) + "."
             });
         }
 
@@ -58,33 +76,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
         else if (event.type === 'SmartContractEvent') {
 
-            if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
-                symbol = '📜'
-
-                if (event.data.value.event === 'rewards-distributed') {
-                    await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
-                    builder.addField({
-                        name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
-                    });
-                }
-
-                else if (event.data.value.event === 'attack-hogger') {
-                    builder.addField({
-                        name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
-                    });
-                }
-
-                else if (event.data.value.event === 'result-epoch') {
-                    builder.addField({
-                        name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
-                    });
-                }
-            }
-
-            else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2") {
+            if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2") {
                 symbol = '📜'
 
                 if (event.data.value.event === 'distributing-rewards') {
