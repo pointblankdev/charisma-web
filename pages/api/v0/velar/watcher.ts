@@ -89,7 +89,7 @@ export default async function velarWatcher(
 
 
                     for (const event of tx.metadata.receipt.events) {
-                        await handleContractEvent(event)
+                        await handleContractEvent(event, hook)
                     }
                 }
                 response = {}

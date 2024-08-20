@@ -1,11 +1,10 @@
 import { getMob, hadLandBefore, incrementRewardLeaderboard, setHadLandBefore, setLandsBalance, setMob } from "@lib/db-providers/kv";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 
-const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
 
-export const handleContractEvent = async (event: any) => {
+export const handleContractEvent = async (event: any, hook: any) => {
 
     const builder = new EmbedBuilder()
 
