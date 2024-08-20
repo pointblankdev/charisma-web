@@ -61,7 +61,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 if (event.data.value.event === 'distributing-rewards') {
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300) + '.'
                     });
                 }
 
@@ -69,28 +69,28 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300) + '.'
                     });
                 }
 
                 else if (event.data.value.event === 'attack-hogger') {
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300) + '.'
                     });
                 }
 
                 else if (event.data.value.event === 'new-epoch-started') {
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300) + '.'
                     });
                 }
 
                 else if (event.data.value.event === 'attack-result') {
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300) + '.'
                     });
                 }
 
@@ -98,7 +98,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     console.error('Unknown wanted-hogger-v2 event:', event.data)
                     builder.addField({
                         name: `${symbol} ${event.type}`,
-                        value: JSON.stringify(event.data).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data).slice(0, 300) + '.'
                     });
                 }
             }
