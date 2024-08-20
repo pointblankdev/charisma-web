@@ -92,16 +92,16 @@ export default async function mobIndexApi(
                     response = {}
 
                 } catch (error: any) {
-                    console.error({ error })
+                    // console.error({ error })
                     console.error({ fields: builder.getEmbed().fields })
                     const errorEmbed = new EmbedBuilder()
 
                     errorEmbed.setTitle('Error Parsing Transaction')
 
                     for (const event of tx.metadata.receipt.events) {
-                        errorEmbed.addField({ name: "⚠️", value: JSON.stringify(event).slice(0, 300) + '.' })
-                        hook.addEmbed(errorEmbed.getEmbed());
+                        errorEmbed.addField({ name: "⚠️", value: '-' })
                     }
+                    hook.addEmbed(errorEmbed.getEmbed());
                     await hook.send();
                 }
             }
