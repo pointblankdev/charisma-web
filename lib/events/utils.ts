@@ -4,9 +4,7 @@ import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
 
-export const handleContractEvent = async (event: any, hook: any) => {
-
-    const builder = new EmbedBuilder()
+export const handleContractEvent = async (event: any, builder: any) => {
 
     let symbol = '❓';
 
@@ -262,8 +260,7 @@ export const handleContractEvent = async (event: any, hook: any) => {
             });
         }
 
-        hook.addEmbed(builder.getEmbed());
-        await hook.send();
+        return builder
 
     } catch (error) {
         console.error('handlePrintEvent error:', error)

@@ -76,7 +76,7 @@ export default async function mobIndexApi(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
-                const builder = new EmbedBuilder()
+                let builder = new EmbedBuilder()
 
                 if (tx.metadata.success) {
                     // send message to discord
@@ -84,11 +84,12 @@ export default async function mobIndexApi(
                     builder.setTitle('Hogger Event!')
                     builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
 
-                    hook.addEmbed(builder.getEmbed());
-
                     for (const event of tx.metadata.receipt.events) {
-                        await handleContractEvent(event, hook)
+                        builder = await handleContractEvent(event, builder)
                     }
+
+                    hook.addEmbed(builder.getEmbed());
+                    await hook.send();
                 }
 
                 response = {}
