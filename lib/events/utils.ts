@@ -1,9 +1,20 @@
 import { getMob, hadLandBefore, incrementRewardLeaderboard, setHadLandBefore, setLandsBalance, setMob } from "@lib/db-providers/kv";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 
+const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
-export const handleContractEvent = async (event: any, builder: any) => {
+
+
+// // send message to discord
+// builder.setAuthor({ name: `WANTED: "Hogger"`, icon_url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', url: 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2' })
+// builder.setTitle('Hogger Event!')
+// builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
+
+
+export const handleContractEvent = async (event: any) => {
+
+    const builder = new EmbedBuilder()
 
     let symbol = '❓';
 
@@ -258,6 +269,9 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 value: JSON.stringify(event.data).slice(0, 300) + "."
             });
         }
+
+        hook.addEmbed(builder.getEmbed());
+        await hook.send();
 
     } catch (error) {
         console.error('handlePrintEvent error:', error)

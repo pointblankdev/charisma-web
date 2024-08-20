@@ -83,12 +83,13 @@ export default async function proposalSubmittedApi(
                     builder.setTitle('New Proposal Submitted')
                     builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
 
-                    for (const event of tx.metadata.receipt.events) {
-                        await handleContractEvent(event, builder)
-                    }
 
                     hook.addEmbed(builder.getEmbed());
                     await hook.send();
+
+                    for (const event of tx.metadata.receipt.events) {
+                        await handleContractEvent(event)
+                    }
                     response = {}
 
                 } catch (error: any) {

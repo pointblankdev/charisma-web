@@ -76,35 +76,19 @@ export default async function mobIndexApi(
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
                 const builder = new EmbedBuilder()
-                try {
 
-                    // send message to discord
-                    builder.setAuthor({ name: `WANTED: "Hogger"`, icon_url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', url: 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2' })
-                    builder.setTitle('Hogger Event!')
-                    builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
+                // send message to discord
+                builder.setAuthor({ name: `WANTED: "Hogger"`, icon_url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', url: 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2' })
+                builder.setTitle('Hogger Event!')
+                builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
 
-                    for (const event of tx.metadata.receipt.events) {
-                        await handleContractEvent(event, builder)
-                    }
+                hook.addEmbed(builder.getEmbed());
+                await hook.send();
 
-                    hook.addEmbed(builder.getEmbed());
-                    await hook.send();
-                    response = {}
-
-                } catch (error: any) {
-                    // console.error({ error })
-                    console.error({ fields: builder.getEmbed().fields?.map(f => f.value) })
-                    const errorEmbed = new EmbedBuilder()
-
-                    errorEmbed.setTitle('Error Parsing Transaction')
-
-                    for (const event of tx.metadata.receipt.events) {
-                        errorEmbed.addField({ name: "⚠️", value: '-' })
-                    }
-                    hook.addEmbed(errorEmbed.getEmbed());
-                    await hook.send();
-                    response = {}
+                for (const event of tx.metadata.receipt.events) {
+                    await handleContractEvent(event)
                 }
+                response = {}
             }
         }
     } else if (req.method === 'GET') {

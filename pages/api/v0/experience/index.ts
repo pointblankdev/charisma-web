@@ -48,13 +48,12 @@ export default async function getMetadata(
                             .addField({ name: 'Wallet Address', value: payload.sender })
 
 
-                        for (const event of tx.metadata.receipt.events) {
-                            handleContractEvent(event, builder);
-                        }
-
                         hook.addEmbed(builder.getEmbed());
                         await hook.send();
-                        response = {}
+
+                        for (const event of tx.metadata.receipt.events) {
+                            handleContractEvent(event);
+                        }
                     }
                     response = {}
                 }

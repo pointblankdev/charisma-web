@@ -76,32 +76,19 @@ export default async function velarWatcher(
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
                 const builder = new EmbedBuilder()
-                try {
 
-                    // send message to discord
-                    builder.setAuthor({ name: `Velar Watcher`, url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png', icon_url: 'https://beta.charisma.rocks/staking' })
-                    builder.setTitle('New Event')
-                    builder.setThumbnail({ url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png' })
+                // send message to discord
+                builder.setAuthor({ name: `Velar Watcher`, url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png', icon_url: 'https://beta.charisma.rocks/staking' })
+                builder.setTitle('New Event')
+                builder.setThumbnail({ url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png' })
 
-                    for (const event of tx.metadata.receipt.events) {
-                        await handleContractEvent(event, builder)
-                    }
+                hook.addEmbed(builder.getEmbed());
+                await hook.send();
 
-                    hook.addEmbed(builder.getEmbed());
-                    await hook.send();
-                    response = {}
-
-                } catch (error: any) {
-                    console.error(error)
-                    const errorEmbed = new EmbedBuilder()
-                    errorEmbed.setTitle('Error Parsing Transaction')
-
-                    for (const event of tx.metadata.receipt.events) {
-                        errorEmbed.addField({ name: "⚠️", value: JSON.stringify(event).slice(0, 300) })
-                    }
-                    hook.addEmbed(errorEmbed.getEmbed());
-                    await hook.send();
+                for (const event of tx.metadata.receipt.events) {
+                    await handleContractEvent(event)
                 }
+                response = {}
             }
         }
     } else if (req.method === 'GET') {
