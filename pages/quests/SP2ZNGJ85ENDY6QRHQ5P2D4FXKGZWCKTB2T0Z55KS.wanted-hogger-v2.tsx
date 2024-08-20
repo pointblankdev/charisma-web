@@ -38,6 +38,7 @@ import { getDehydratedStateFromSession } from '@components/stacks-session/sessio
 import { getTokenBalance } from '@lib/stacks-api';
 import useWallet from '@lib/hooks/use-wallet-balances';
 import { useGlobalState } from '@lib/hooks/global-state-context';
+import { he } from 'date-fns/locale';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object

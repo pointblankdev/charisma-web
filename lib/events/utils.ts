@@ -59,6 +59,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         }
 
         else if (event.type === 'FTTransferEvent') {
+            symbol = '➡️'
 
             builder.addField({
                 name: `${symbol} ${event.type}`,
@@ -67,6 +68,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         }
 
         else if (event.type === 'NFTTransferEvent') {
+            symbol = '➡️'
 
             builder.addField({
                 name: `${symbol} ${event.type}`,

@@ -331,7 +331,8 @@ describe('metadata api', () => {
 
     it('should update hogger health', async () => {
         const hogger = await getMob('hogger')
-        hogger.health = hogger.maxHealth
+        // hogger.health = 5575328
+        hogger.maxHealth = 5900000
         const response = await setMob('hogger', hogger)
         console.log(response)
     })
