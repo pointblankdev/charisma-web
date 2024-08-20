@@ -78,19 +78,19 @@ export default async function proposalSubmittedApi(
             for (const tx of a.transactions) {
                 const builder = new EmbedBuilder()
 
-                // send message to discord
-                builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/charisma.png', icon_url: 'https://beta.charisma.rocks/governance' })
-                builder.setTitle('New Proposal Submitted')
-                builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
-
-
-                hook.addEmbed(builder.getEmbed());
-                await hook.send();
-
                 if (tx.metadata.success) {
+                    // send message to discord
+                    builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/charisma.png', icon_url: 'https://beta.charisma.rocks/governance' })
+                    builder.setTitle('New Proposal Submitted')
+                    builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
+
+
+                    hook.addEmbed(builder.getEmbed());
+
                     for (const event of tx.metadata.receipt.events) {
                         await handleContractEvent(event)
                     }
+                    await hook.send();
                 }
                 response = {}
             }

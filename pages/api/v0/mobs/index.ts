@@ -78,20 +78,20 @@ export default async function mobIndexApi(
             for (const tx of a.transactions) {
                 const builder = new EmbedBuilder()
 
-                // send message to discord
-                builder.setAuthor({ name: `WANTED: "Hogger"`, icon_url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', url: 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2' })
-                builder.setTitle('Hogger Event!')
-                builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
-
-                hook.addEmbed(builder.getEmbed());
-
                 if (tx.metadata.success) {
+                    // send message to discord
+                    builder.setAuthor({ name: `WANTED: "Hogger"`, icon_url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png', url: 'https://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2' })
+                    builder.setTitle('Hogger Event!')
+                    builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
+
+                    hook.addEmbed(builder.getEmbed());
+
                     for (const event of tx.metadata.receipt.events) {
                         await handleContractEvent(event)
                     }
+                    await hook.send();
                 }
 
-                await hook.send();
                 response = {}
             }
         }

@@ -42,13 +42,13 @@ export default async function getMetadata(
 
 
                         hook.addEmbed(builder.getEmbed());
-                        await hook.send();
 
                         for (const event of tx.metadata.receipt.events) {
                             await handleContractEvent(event)
                         }
-                        response = {}
+                        await hook.send();
                     }
+                    response = {}
                 }
             }
         } else if (req.method === 'GET') {
