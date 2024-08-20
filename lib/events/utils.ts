@@ -40,6 +40,22 @@ export const handleContractEvent = async (event: any, builder: any) => {
             });
         }
 
+        else if (event.type === 'FTTransferEvent') {
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300) + "."
+            });
+        }
+
+        else if (event.type === 'NFTTransferEvent') {
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300) + "."
+            });
+        }
+
         else if (event.type === 'SmartContractEvent') {
 
             if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v1") {
@@ -271,7 +287,9 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 });
             }
 
-        } else {
+        }
+
+        else {
 
             console.error('Unknown event type:', event.data)
             builder.addField({
