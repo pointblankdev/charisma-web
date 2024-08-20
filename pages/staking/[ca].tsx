@@ -36,12 +36,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   // get land metadata from db
   const metadata = await getLand(contractAddress)
-  // if (!metadata.whitelisted) {
-  //   const isWhitelisted = await getIsWhitelisted(params.ca)
-  //   if (isWhitelisted) {
-  //     await setLandWhitelisted(params.ca, true)
-  //   }
-  // }
 
   let hadLand = false
   let landBalance = 0

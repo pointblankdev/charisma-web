@@ -98,6 +98,7 @@ export const handleContractEvent = async (event: any, embed: any) => {
                     const newRegen = Number(event.data.value['new-regen-rate'])
                     const hogger = await getMob('hogger')
                     hogger.level = newLevel
+                    hogger.health = newMaxHp
                     hogger.maxHealth = newMaxHp
                     hogger.regenRate = newRegen
                     await setMob('hogger', hogger)
