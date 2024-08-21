@@ -1,14 +1,11 @@
-import { getMob, hadLandBefore, incrementRewardLeaderboard, setHadLandBefore, setLandsBalance, setMob } from "@lib/db-providers/kv";
+import { getMob, incrementRewardLeaderboard, setHadLandBefore, setLandsBalance, setMob, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
 
-// const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', tx.metadata.sender)
-// const experienceSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
-
 // // update leaderboard
-// await updateExperienceLeaderboard(experienceAmount, tx.metadata.sender)
 // .setTitle('Experience Gained')
 // .setDescription(`A player has gained experience`)
 // .setThumbnail({ url: 'https://charisma.rocks/experience.png' })
@@ -43,10 +40,24 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.type === 'FTMintEvent') {
             symbol = '🔺'
 
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`
-            });
+            if (event.data.asset_identifier.split('.')[0] === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience") {
+                symbol = '✨'
+
+                const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', event.data.recipient)
+                await updateExperienceLeaderboard(experienceAmount, event.data.recipient)
+
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+                });
+
+            } else {
+
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`
+                });
+            }
         }
 
         else if (event.type === 'NFTMintEvent') {
@@ -77,9 +88,10 @@ export const handleContractEvent = async (event: any, builder: any) => {
         }
 
         else if (event.type === 'SmartContractEvent') {
+            symbol = '📜'
 
             if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2") {
-                symbol = '📜'
+                symbol = '🐗'
 
                 if (event.data.value.event === 'distributing-rewards') {
                     builder.addField({
