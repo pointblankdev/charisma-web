@@ -17,6 +17,8 @@ import spellScrollCard from '@public/quests/spell-scroll/spell-scroll-card.png'
 import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 import kingOfTheHillIcon from '@public/quests/king-of-the-hill/king-of-the-hill-icon.png'
 import kingOfTheHillCard from '@public/quests/king-of-the-hill/king-of-the-hill-card.png'
+import mooningSharkIcon from '@public/quests/mooning-shark/mooningshark-icon.jpeg'
+import mooningSharkCard from '@public/quests/mooning-shark/mooning-shark-card.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
@@ -44,6 +46,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       image: spellScrollIcon,
       cardImage: spellScrollCard,
     },
+    // {
+    //   name: `Mint a Mooning Shark`,
+    //   description: "Claim your OG Mooning Shark NFT with energy.",
+    //   ca: "SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks",
+    //   image: mooningSharkIcon,
+    //   cardImage: mooningSharkCard,
+    // },
     {
       name: `King of the Hill`,
       description: "Team up with your community to claim the hill.",

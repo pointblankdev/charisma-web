@@ -30,8 +30,8 @@ import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardS
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
 import useWallet from '@lib/hooks/use-wallet-balances';
-import spellScrollIcon from '@public/quests/spell-scroll/spell-scroll-icon.png'
-import spellScrollCard from '@public/quests/spell-scroll/spell-scroll-card.png'
+import mooningSharkIcon from '@public/quests/mooning-shark/mooningshark-icon.jpeg'
+import mooningSharkCard from '@public/quests/mooning-shark/mooning-shark-card.png'
 import stxIcon from '@public/stx-logo.png'
 import energyIcon from '@public/lands/img/energy.png'
 
@@ -77,13 +77,13 @@ type Props = {
 
 export default function SpellScrollFireBolt({ lands }: Props) {
   const meta = {
-    title: "Charisma | Mint a Spell Scroll",
+    title: "Charisma | Mint a Mooning Shark",
     description: META_DESCRIPTION,
-    image: '/spell-scroll-fire-bolt.png'
+    image: '/quests/mooning-shark/mooning-shark-card.png'
   };
 
-  const title = "Mint a Spell Scroll";
-  const subtitle = 'Claim your own utility NFT on Stacks.';
+  const title = "Mint a Mooning Shark";
+  const subtitle = 'Claim your OG Mooning Shark NFT with energy.';
 
   const fadeIn = {
     hidden: { opacity: 0 },
@@ -98,9 +98,9 @@ export default function SpellScrollFireBolt({ lands }: Props) {
           initial="hidden"
           animate="visible"
           variants={fadeIn}
-          className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-4xl"
+          className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl"
         >
-          <Card className="min-h-[600px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-4xl opacity-[0.99] shadow-black shadow-2xl">
+          <Card className="min-h-[600px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4 space-y-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="z-30 text-xl font-semibold">{title}</CardTitle>
@@ -119,12 +119,12 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                   <div className="grid grid-cols-5 gap-4">
                     <div className="relative">
                       <Image
-                        alt="Fire Bolt Spell Scroll"
-                        src={spellScrollIcon}
+                        alt="NFT Icon"
+                        src={mooningSharkIcon}
                         quality={10}
                         className="z-30 w-full rounded-md border shadow-lg"
                       />
-                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                      <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-sm md:text-xs bg-accent text-accent-foreground">
                         NFT
                       </div>
                     </div>
@@ -133,7 +133,10 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                 <div className="z-20 row-span-2 mt-8 sm:mt-0">
                   <div className="z-30 text-xl font-semibold">Quest Details</div>
                   <div className="z-30 mb-4 text-md font-fine text-foreground">
-                    Want to claim your own spell scroll? It's a unique digital item you can own, trade, or use in Charisma. You'll need some energy from your staked tokens and a few tokens to mint one. Each scroll is a one-time-use consumable, and there's only a limited number of them. In the future, these scrolls will come in handy for special events or challenges.
+                    Want to mint your OG Mooning Shark NFT?
+                    This is the first NFT collection created by the amazing Charisma community moderator, MooningShark.
+                    Grab your Shark and ride the Nakamoto wave to the Moon!
+                    Proof of OG + undeniable support toward you favorite mod, MooningShark. (obviously)
                   </div>
                 </div>
               </section>
@@ -142,10 +145,10 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Requirements</div>
                   <ul className="list-disc list-inside text-sm leading-snug mb-4">
-                    <li>1 STX mint cost per scroll</li>
-                    <li>100,000 energy cost per scroll</li>
+                    <li>1 STX mint cost per NFT</li>
+                    <li>100,000 energy cost per NFT</li>
                     <li>sCHA protocol burn per mint</li>
-                    <li>Max of 4 scrolls per mint</li>
+                    <li>Max of 4 NFTs per mint</li>
                   </ul>
                   <div className="grid grid-cols-6 gap-4 mt-4">
                     <div className="relative">
@@ -155,7 +158,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                         quality={10}
                         className="z-30 w-full rounded-full border shadow-lg"
                       />
-                      <div className="absolute text-center px-1 min-w-6 font-bold rounded-full -top-1 -right-2 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                      <div className="absolute text-center px-1 min-w-6 font-bold rounded-full -top-1 -right-2 text-sm md:text-xs bg-accent text-accent-foreground">
                         1
                       </div>
                     </div>
@@ -167,7 +170,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                         className="z-30 w-full rounded-full border shadow-lg"
                       />
                       <div className="absolute text-center px-1 min-w-6 font-bold rounded-full -top-1 -right-2 text-sm md:text-xs bg-accent text-accent-foreground">
-                        100k
+                        200k
                       </div>
                     </div>
                     <div className="relative">
@@ -184,10 +187,10 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                   <div className="z-30 text-xl font-semibold">Key Information</div>
                   <div className='z-30 mb-4 text-sm font-fine text-foreground'>
                     <ul className="list-disc list-inside text-sm leading-snug">
-                      <li>Fixed Supply: Only 1000 spell scrolls will be minted</li>
-                      <li>Utility: Direct damage in combat quests (upcoming)</li>
-                      <li>Mint Limit: Only 4 scrolls can be minted per transaction</li>
-                      <li>Tap Limit: Only 1 mint transaction per block / per token type</li>
+                      <li>Fixed Supply: Only 20 NFTs will be minted</li>
+                      <li>Utility: OG NFT, potential VIP advantages to be defined by MooningShark himself in the future.</li>
+                      <li>Mint Limit: Only 4 NFTs can be minted per tx</li>
+                      <li>Tap Limit: Only 1 mint tx per block / per token type</li>
                     </ul>
                   </div>
                 </div>
@@ -204,7 +207,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
               <SelectCreatureDialog lands={lands} />
             </CardFooter>
             <Image
-              src={spellScrollCard}
+              src={mooningSharkCard}
               width={800}
               height={1600}
               alt={'quest-background-image'}
@@ -244,8 +247,8 @@ export function SelectCreatureDialog({ lands }: any) {
     ];
 
     openContractCall({
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'spell-scrolls-fire-bolt',
+      contractAddress: "SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS",
+      contractName: 'mooningsharks',
       functionName: "tap",
       functionArgs: [uintCV(creatureId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v2')],
       postConditions: postConditions as any[]
@@ -256,7 +259,7 @@ export function SelectCreatureDialog({ lands }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size={'sm'} className={`z-30`}>Mint Spell Scrolls</Button>
+        <Button size={'sm'} className={`z-30`}>Mint Mooning Sharks</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <AlertDialogHeader>

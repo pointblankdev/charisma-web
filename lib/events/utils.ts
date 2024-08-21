@@ -5,14 +5,6 @@ import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
 
-// // update leaderboard
-// .setTitle('Experience Gained')
-// .setDescription(`A player has gained experience`)
-// .setThumbnail({ url: 'https://charisma.rocks/experience.png' })
-// .addField({ name: 'Total Experience', value: Math.round(experienceAmount / Math.pow(10, 6)).toString() + ' EXP', inline: true })
-// .addField({ name: '% of Total Supply', value: numeral(experienceAmount / experienceSupply).format('0.0%'), inline: true })
-// .addField({ name: 'Wallet Address', value: tx.metadata.sender })
-
 export const handleContractEvent = async (event: any, builder: any) => {
 
     let symbol = '❓';
