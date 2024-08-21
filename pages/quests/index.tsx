@@ -101,16 +101,30 @@ export default function QuestsIndex({ quests }: Props) {
               )}
             >
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
-                <div className="space-y-6 text-sm">
+                <div className="space-y-4 text-sm">
                   <h3 className="font-bold text-lg">How to Claim Rewards</h3>
                   <p>
-                    You can claim rewards by completing quests in the Charisma ecosystem.
+                    Complete quests in the Charisma ecosystem to earn rewards. Here's a quick guide:
                   </p>
+                  <ol className="list-decimal list-inside space-y-2">
+                    <li>
+                      <strong>Browse Quests:</strong> Explore available quests and their rewards.
+                    </li>
+                    <li>
+                      <strong>View Details:</strong> Click on a quest card to see requirements and rewards.
+                    </li>
+                    <li>
+                      <strong>Check Energy:</strong> Ensure you have enough staking-generated energy to complete the quest.
+                    </li>
+                    <li>
+                      <strong>Start & Complete:</strong> Initiate the quest and follow the instructions to finish it.
+                    </li>
+                    <li>
+                      <strong>Receive Rewards:</strong> Rewards are automatically sent to your wallet or inventory upon completion.
+                    </li>
+                  </ol>
                   <p>
-                    To start a quest, click on the card to view more information about it's requirements, and rewards.
-                  </p>
-                  <p>
-                    Quests require spending energy generated through staking to complete.
+                    Note: Some quests may have cooldown periods. Participate often to maximize your rewards and progress in the Charisma ecosystem.
                   </p>
                 </div>
               </div>
