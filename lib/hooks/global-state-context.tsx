@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { usePersistedState } from './use-persisted-state';
-import { getClaimableAmount, getCreatureAmount } from '@lib/stacks-api';
+import { getClaimableAmount, getLandAmount } from '@lib/stacks-api';
 import { getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useAccount } from '@micro-stacks/react';
@@ -10,8 +10,8 @@ const socketUrl = "https://api.mainnet.hiro.so";
 const sc = new StacksApiSocketClient({ url: socketUrl });
 
 interface GlobalState {
-    creatures: any;
-    setCreatures: (creatures: any) => void;
+    lands: any;
+    setLands: (lands: any) => void;
     block: any;
     setBlock: (block: any) => void;
 }
@@ -20,43 +20,40 @@ const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const { stxAddress } = useAccount()
-    const [creatures, setCreatures] = usePersistedState('creatures', {});
+    const [lands, setLands] = usePersistedState('lands', {});
     const [block, setBlock] = usePersistedState('block', {});
 
 
-    interface CreatureData {
+    interface LandData {
         amount: number;
         energy: number;
     }
 
-    interface CreatureState {
-        [key: string]: CreatureData;
+    interface LandState {
+        [key: string]: LandData;
     }
+
+    const stakedTokens = [1, 2, 3, 4, 5, 6, 7, 8, 9]
 
 
     useEffect(() => {
-        const CREATURES = ['farmers', 'blacksmiths', 'corgiSoldiers', 'alchemists'];
-
-        const getCreatureData = async () => {
+        const getLandData = async () => {
             if (stxAddress) {
 
-                const newCreatureState: CreatureState = {};
+                const newLandState: LandState = {};
 
-                let i = 0;
-                for (const creature of CREATURES) {
-                    const creatureName = creature;
-                    const creatureId = ++i;
-                    const amount = await getCreatureAmount(creatureId, stxAddress);
-                    const energy = await getClaimableAmount(creatureId, stxAddress);
+                for (const landId of stakedTokens) {
+                    const amount = await getLandAmount(landId, stxAddress);
+                    const energy = await getClaimableAmount(landId, stxAddress);
 
-                    newCreatureState[creatureName] = { amount, energy };
+                    newLandState[landId] = { amount, energy };
                 }
 
-                setCreatures(newCreatureState)
+                setLands(newLandState)
             }
         }
-        getCreatureData()
-    }, [stxAddress, setCreatures])
+        getLandData()
+    }, [stxAddress, setLands])
 
     useEffect(() => {
 
@@ -77,7 +74,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 
     return (
-        <GlobalStateContext.Provider value={{ creatures, setCreatures, block, setBlock }}>
+        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock }}>
             {children}
         </GlobalStateContext.Provider>
     );

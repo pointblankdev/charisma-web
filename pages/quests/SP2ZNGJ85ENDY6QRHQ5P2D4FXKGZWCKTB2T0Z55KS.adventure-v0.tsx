@@ -30,6 +30,8 @@ import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stack
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
 import useWallet from '@lib/hooks/use-wallet-balances';
+import numeral from 'numeral';
+import { useGlobalState } from '@lib/hooks/global-state-context';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -220,11 +222,11 @@ export function SelectCreatureDialog({ lands }: any) {
   const { openContractCall } = useOpenContractCall();
 
   const { stxAddress } = useAccount()
-  const { getBalanceByKey } = useWallet()
+  const { lands: landEnergy } = useGlobalState()
 
-  const experience =
-    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
-    Math.pow(10, 6);
+  for (const land of lands) {
+    land.balances = landEnergy[land.id]
+  }
 
   function journey(creatureId: number) {
 
@@ -256,15 +258,18 @@ export function SelectCreatureDialog({ lands }: any) {
 
         <DialogDescription className='grid gap-2 grid-cols-2 sm:grid-cols-4 space-x-4 py-4'>
           {lands.map((land: any) => (
-            <div className={`flex flex-col items-center space-y-2 ${!land.whitelisted && 'opacity-20 grayscale'}`}>
+            <div className={`relative flex flex-col items-center space-y-2 ${!land.whitelisted && 'opacity-20 grayscale'} group/token cursor-pointer`}>
               <Image
                 alt={'token-logo'}
                 src={land.image}
                 width={100}
                 height={100}
                 onClick={() => journey(land.id)}
-                className={`z-30 border rounded-full h-32 w-32 ${land.whitelisted && 'hover:scale-110 transition-all cursor-pointer'}`}
+                className={`z-20 border rounded-full h-32 w-32 ${land.whitelisted && 'group-hover/token:z-40 group-hover/token:shadow-xl group-hover/token:scale-110 transition-all'}`}
               />
+              <div className={`z-30 opacity-0 absolute text-center px-3 py-1 border min-w-6 font-bold rounded-full top-0 text-md bg-card text-accent-foreground flex ${land.whitelisted && 'group-hover/token:-top-6 group-hover/token:opacity-100 group-hover/token:z-50 group-hover/token:shadow-xl group-hover/token:scale-150 transition-all'}`}>
+                <div className='z-30 text-white'>{numeral(land.balances?.energy).format('0a')} ⚡</div>
+              </div>
             </div>
           ))}
         </DialogDescription>

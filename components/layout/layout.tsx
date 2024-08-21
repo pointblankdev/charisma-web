@@ -37,14 +37,14 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
     Math.pow(10, 6);
 
-  const { creatures } = useGlobalState()
+  const { lands } = useGlobalState()
   useEffect(() => {
     let totalEnergy = 0
-    forEach(creatures, (creature: any) => {
-      totalEnergy += Number(creature.energy)
+    forEach(lands, (land: any) => {
+      totalEnergy += Number(land.energy)
       setEnergy(totalEnergy)
     })
-  }, [creatures])
+  }, [lands])
 
   return (
     <>

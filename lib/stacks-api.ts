@@ -1159,7 +1159,7 @@ export async function getCreatureCost(
   return Number(cvToJSON(response).value);
 }
 
-export async function getCreatureAmount(creatureId: number, sender: string) {
+export async function getLandAmount(creatureId: number, sender: string) {
   const response = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'lands',
@@ -1205,7 +1205,7 @@ export async function getCreaturePower(
   return Number(cvToJSON(result).value);
 }
 
-export async function getClaimableAmount(creatureId: number, sender: string) {
+export async function getClaimableAmount(landId: number, sender: string) {
   const response = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'lands',
@@ -1213,7 +1213,7 @@ export async function getClaimableAmount(creatureId: number, sender: string) {
     readOnlyFunctionArgs: {
       sender: sender,
       arguments: [
-        cvToHex(parseToCV(String(creatureId), 'uint128')),
+        cvToHex(parseToCV(String(landId), 'uint128')),
         cvToHex(parseToCV(sender, 'principal'))
       ]
     }
