@@ -85,16 +85,6 @@ export default function SpellScrollFireBolt({ lands }: Props) {
   const title = "Mint a Spell Scroll";
   const subtitle = 'Create your own magical NFT on Stacks.';
 
-  const [descriptionVisible, setDescriptionVisible] = useState(false);
-
-  useEffect(() => {
-    try {
-      setDescriptionVisible(true);
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
   const fadeIn = {
     hidden: { opacity: 0 },
     visible: { opacity: 1 }
@@ -152,9 +142,9 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Requirements</div>
                   <ul className="list-disc list-inside text-sm leading-snug mb-4">
-                    <li>1 STX mint cost for DAO</li>
-                    <li>sCHA protocol burn per mint</li>
+                    <li>1 STX mint cost per scroll</li>
                     <li>100,000 energy cost per scroll</li>
+                    <li>sCHA protocol burn per mint</li>
                     <li>Max of 4 scrolls per mint</li>
                   </ul>
                   <div className="grid grid-cols-6 gap-4 mt-4">
@@ -243,19 +233,14 @@ export function SelectCreatureDialog({ lands }: any) {
   const { openContractCall } = useOpenContractCall();
 
   const { stxAddress } = useAccount()
-  const { getBalanceByKey } = useWallet()
-
-  const experience =
-    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
-    Math.pow(10, 6);
 
   function mint(creatureId: number) {
 
     const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
 
     const postConditions = [
-      makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, '1', burnTokenContract),
-      makeStandardSTXPostCondition(stxAddress!, FungibleConditionCode.Equal, 1000000),
+      makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, 1, burnTokenContract),
+      makeStandardSTXPostCondition(stxAddress!, FungibleConditionCode.LessEqual, 4000000),
     ];
 
     openContractCall({
