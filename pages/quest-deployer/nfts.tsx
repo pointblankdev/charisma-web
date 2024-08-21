@@ -272,6 +272,7 @@ export default function FarmTemplate({ onFormChange }: { onFormChange: (template
                 type: "string",
                 description: description
             },
+            attributes: [],
             properties: {
                 collection: collectionName,
                 collection_image: collectionImage,
@@ -301,6 +302,8 @@ export default function FarmTemplate({ onFormChange }: { onFormChange: (template
             const metadata = await getNftCollectionMetadata(contractAddress)
             if (metadata) {
                 form.setValue('collectionName', metadata.name)
+                form.setValue('description', metadata.description.description)
+                form.setValue('collectionImage', metadata.properties.collection_image)
                 form.setValue('nftItems', metadata.properties.items.map((item: any) => ({
                     itemName: item.name,
                     amount: Number(item.amount),
