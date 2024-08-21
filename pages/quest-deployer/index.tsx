@@ -267,24 +267,6 @@ export default function ContractDeployer({ data }: any) {
                                                 />
                                             </div>
                                         </fieldset>
-                                        <fieldset className="grid grid-cols-1 gap-4 rounded-lg border p-4">
-                                            <legend className="-ml-1 px-1 text-sm font-medium">
-                                                Contract
-                                            </legend>
-                                            <FormField
-                                                control={form.control}
-                                                name="name"
-                                                render={({ field }) => (
-                                                    <FormItem className="w-full">
-                                                        <FormLabel>Name</FormLabel>
-                                                        <FormControl>
-                                                            <Input placeholder={'A concise contract title'} {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </fieldset>
                                         {!loading && <motion.div initial="hidden" animate="visible" variants={fadeIn}>
                                             {template === 'farm' ?
                                                 <FarmTemplate onFormChange={handleContractChange} />
@@ -293,7 +275,7 @@ export default function ContractDeployer({ data }: any) {
                                                     : template === 'prize-fight' ?
                                                         <PrizeFightTemplate onFormChange={handleContractChange} />
                                                         : template === 'nfts' ?
-                                                            <NftCollectionTemplate onFormChange={handleContractChange} />
+                                                            <NftCollectionTemplate form={form} onFormChange={handleContractChange} />
                                                             : <div>...</div>
 
                                             }

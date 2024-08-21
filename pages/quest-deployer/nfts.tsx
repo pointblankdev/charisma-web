@@ -230,7 +230,7 @@ const ImagePreview = ({ src }: { src: string }) => {
     );
 };
 
-export default function FarmTemplate({ onFormChange }: { onFormChange: (template: string) => void }) {
+export default function NftTemplate({ form: parentForm, onFormChange }: any) {
     const { stxAddress } = useAccount()
 
     const form = useForm<ProposalFormValues>({
@@ -251,6 +251,7 @@ export default function FarmTemplate({ onFormChange }: { onFormChange: (template
         const collectionName = form.getValues().collectionName
         const safeName = collectionName.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")
         const contractAddress = `${stxAddress}.${safeName}`
+        parentForm.setValue('name', collectionName)
 
         const totalSupply = form.getValues().nftItems.reduce((sum, item) => sum + Number(item.amount), 0)
 
