@@ -146,7 +146,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                   <div className="z-30 text-xl font-semibold">Requirements</div>
                   <ul className="list-disc list-inside text-sm leading-snug mb-4">
                     <li>1 STX mint cost per NFT</li>
-                    <li>100,000 energy cost per NFT</li>
+                    <li>200,000 energy cost per NFT</li>
                     <li>sCHA protocol burn per mint</li>
                     <li>Max of 4 NFTs per mint</li>
                   </ul>

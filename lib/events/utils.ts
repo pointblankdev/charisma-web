@@ -16,7 +16,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
             builder.addField({
                 name: `${symbol} ${event.type}`,
-                value: `Burned ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`
+                value: JSON.stringify(event.data).slice(0, 300)
             });
         }
 
