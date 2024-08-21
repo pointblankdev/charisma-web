@@ -275,6 +275,19 @@ export async function setHadLandBefore(landId: number, user: string) {
 
 // nft collection metadata
 
+
+export async function getNftCollections(): Promise<any> {
+    return await kv.smembers('nfts')
+}
+
+export async function addNftCollection(ca: string): Promise<any> {
+    return await kv.sadd('nfts', ca)
+}
+
+export async function removeNftCollection(ca: string): Promise<any> {
+    return await kv.srem('nfts', ca)
+}
+
 export async function getNftCollectionMetadata(ca: string): Promise<any> {
     return await kv.get(`nft:${ca}`);
 }

@@ -1,4 +1,4 @@
-import { getNftCollectionMetadata, setNftCollectionMetadata, setNftMetadata } from '@lib/db-providers/kv';
+import { addNftCollection, getNftCollectionMetadata, setNftCollectionMetadata, setNftMetadata } from '@lib/db-providers/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -31,6 +31,7 @@ export default async function nftCollectionMetadataApi(
         const ca = req.query.ca as string;
         if (req.method === 'POST') {
             await setNftCollectionMetadata(ca, req.body);
+            await addNftCollection(ca);
             response = await getNftCollectionMetadata(ca);
 
             const items: NFTItem[] = req.body.properties.items;
