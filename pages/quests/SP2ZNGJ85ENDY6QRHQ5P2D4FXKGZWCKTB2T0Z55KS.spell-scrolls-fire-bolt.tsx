@@ -83,7 +83,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
   };
 
   const title = "Mint a Spell Scroll";
-  const subtitle = 'Claim your own magical NFT on Stacks.';
+  const subtitle = 'Claim your own utility NFT on Stacks.';
 
   const fadeIn = {
     hidden: { opacity: 0 },
