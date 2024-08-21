@@ -336,7 +336,7 @@ export default function FarmTemplate({ onFormChange }: { onFormChange: (template
                             <FormItem>
                                 <FormLabel>Name</FormLabel>
                                 <FormControl>
-                                    <Input placeholder={'Stacks Explorers'} {...field} />
+                                    <Input placeholder={'Spell Scrolls'} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
