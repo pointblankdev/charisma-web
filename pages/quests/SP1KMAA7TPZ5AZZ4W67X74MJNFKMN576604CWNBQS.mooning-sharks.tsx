@@ -188,7 +188,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                   <div className='z-30 mb-4 text-sm font-fine text-foreground'>
                     <ul className="list-disc list-inside text-sm leading-snug">
                       <li>Fixed Supply: Only 20 NFTs will be minted</li>
-                      <li>Utility: OG NFT, potential VIP advantages to be defined by MooningShark himself in the future.</li>
+                      <li>Utility: OG NFT, potential VIP advantages to be defined by MooningShark himself in the future</li>
                       <li>Mint Limit: Only 4 NFTs can be minted per tx</li>
                       <li>Tap Limit: Only 1 mint tx per block / per token type</li>
                     </ul>
