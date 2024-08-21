@@ -46,13 +46,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       image: spellScrollIcon,
       cardImage: spellScrollCard,
     },
-    // {
-    //   name: `Mint a Mooning Shark`,
-    //   description: "Claim your OG Mooning Shark NFT with energy.",
-    //   ca: "SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks",
-    //   image: mooningSharkIcon,
-    //   cardImage: mooningSharkCard,
-    // },
+    {
+      name: `Mint a Mooning Shark`,
+      description: "Claim your OG Mooning Shark NFT with energy.",
+      ca: "SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks",
+      image: mooningSharkIcon,
+      cardImage: mooningSharkCard,
+    },
     {
       name: `King of the Hill`,
       description: "Team up with your community to claim the hill.",
