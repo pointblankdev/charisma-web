@@ -380,7 +380,7 @@ export function SelectCreatureDialog({ lands }: any) {
 
         <DialogDescription className='grid gap-2 grid-cols-2 sm:grid-cols-4 space-x-4 py-4'>
           {lands.map((land: any) => (
-            <div className={`relative flex flex-col items-center space-y-2 ${!land.whitelisted && 'opacity-20 grayscale cursor-pointer'} group/token `}>
+            <div className={`relative flex flex-col items-center space-y-2 ${!land.whitelisted ? 'opacity-20 grayscale' : 'cursor-pointer'} group/token `}>
               <Image
                 alt={'token-logo'}
                 src={land.image}
