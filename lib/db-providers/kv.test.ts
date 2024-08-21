@@ -110,6 +110,14 @@ describe('metadata api', () => {
         console.log(land)
     })
 
+    it('should update leo land', async () => {
+        const land = await getLand('SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token')
+        land.whitelisted = true
+        land.id = 6
+        await setLand('SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token', land)
+        console.log(land)
+    })
+
     it('should update fam land', async () => {
         const land = await getLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam')
         land.id = 5

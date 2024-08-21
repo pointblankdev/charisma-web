@@ -49,7 +49,7 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
 (define-constant STX_PER_MINT u1000000) ;; 1 STX per MINT for DAO
 (define-constant MAX_NFTS_PER_TX u4) ;; Maximum 4 NFTs per transaction
 (define-constant OWNER '${stxAddress}) ;; Collection creator
-(define-constant CHA_AMOUNT (pow u10 u7)) ;; 10 CHA per mint to creator
+(define-constant CHA_AMOUNT u5000000) ;; 5 CHA per mint to creator
 
 (define-constant ERR_UNAUTHORIZED (err u100))
 (define-constant ERR_NOT_TOKEN_OWNER (err u101))
