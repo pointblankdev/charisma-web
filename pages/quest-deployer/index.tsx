@@ -68,7 +68,7 @@ export default function ContractDeployer({ data }: any) {
 
     const [loading, setLoading] = useState(true);
 
-    const [template, setTemplate] = useState<string>('proposal')
+    const [template, setTemplate] = useState<string>('nfts')
     const [body, setBody] = useState<string>('')
     const [header, setHeader] = useState<string>('')
 
@@ -79,7 +79,7 @@ export default function ContractDeployer({ data }: any) {
     const sender = stxAddress!
 
     const defaultValues: Partial<ContractFormValues> = {
-        template: ''
+        template: 'nfts'
     }
 
     const form = useForm<ContractFormValues>({
