@@ -25,7 +25,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
             builder.addField({
                 name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300) + "."
+                value: JSON.stringify(event.data).slice(0, 300)
             });
         }
 
@@ -47,7 +47,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: `Gained ${event.data.amount / Math.pow(10, 6)} ${event.data.asset_identifier.split('.')[1].split('::')[0]} tokens.`
+                    value: JSON.stringify(event.data).slice(0, 300)
                 });
             }
         }
@@ -57,7 +57,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
             builder.addField({
                 name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300) + "."
+                value: JSON.stringify(event.data).slice(0, 300)
             });
         }
 
@@ -66,7 +66,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
             builder.addField({
                 name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300) + "."
+                value: JSON.stringify(event.data).slice(0, 300)
             });
         }
 
@@ -75,7 +75,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
             builder.addField({
                 name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300) + "."
+                value: JSON.stringify(event.data).slice(0, 300)
             });
         }
 
@@ -316,7 +316,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             console.error('Unknown event type:', event.data)
             builder.addField({
                 name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300) + "."
+                value: JSON.stringify(event.data).slice(0, 300)
             });
         }
 
