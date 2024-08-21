@@ -136,7 +136,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                     Want to mint an OG Mooning Shark NFT?
                     This is the first NFT collection created by the amazing Charisma community moderator, MooningShark.
                     Grab your Shark and ride the Nakamoto wave to the Moon!
-                    Proof of OG + undeniable support toward you favorite mod, MooningShark. (obviously)
+                    Proof of OG + undeniable support toward you favorite mod. (obviously)
                   </div>
                 </div>
               </section>
