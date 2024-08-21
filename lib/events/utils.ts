@@ -115,10 +115,6 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 }
 
                 else if (event.data.value.event === 'attack-result') {
-                    const newHealth = Number(event.data.value['new-hogger-health'])
-                    const hogger = await getMob('hogger')
-                    hogger.health = newHealth
-                    await setMob('hogger', hogger)
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300)
@@ -138,13 +134,9 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 symbol = '🐗'
 
                 if (event.data.value.event === 'take-damage') {
-                    const newHealth = Number(event.data.value['current-health'])
-                    const hogger = await getMob('hogger')
-                    hogger.health = newHealth
-                    await setMob('hogger', hogger)
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300)
                     });
                 }
 
@@ -155,25 +147,21 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     await setMob('hogger', hogger)
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300)
                     });
                 }
 
                 else if (event.data.value.event === 'attack-result') {
-                    const newHealth = Number(event.data.value['new-hogger-health'])
-                    const hogger = await getMob('hogger')
-                    hogger.health = newHealth
-                    await setMob('hogger', hogger)
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300)
                     });
                 }
 
                 else if (event.data.value.event === 'reset-for-new-epoch') {
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300)
                     });
                 }
 
@@ -189,7 +177,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     await setMob('hogger', hogger)
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300)
                     });
 
                     try {
@@ -226,7 +214,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
                     builder.addField({
                         name: `${symbol} ${event.data.value.type}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300)
                     });
                 }
 
@@ -234,7 +222,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
                     builder.addField({
                         name: `${symbol} ${event.data.value.type}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300)
                     });
                 }
 
@@ -245,7 +233,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     await setHadLandBefore(landId, recipient)
                     builder.addField({
                         name: `${symbol} ${event.data.value.type}`,
-                        value: JSON.stringify(event.data.value).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data.value).slice(0, 300)
                     });
                 }
 
@@ -254,7 +242,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     console.error('Unknown lands event:', event.data)
                     builder.addField({
                         name: `${symbol} ${event.type}`,
-                        value: JSON.stringify(event.data).slice(0, 300) || "?"
+                        value: JSON.stringify(event.data).slice(0, 300)
                     });
                 }
             }
@@ -265,7 +253,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 console.error('Unknown velar swap event:', event.data)
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: JSON.stringify(event.data).slice(0, 1200) || "?"
+                    value: JSON.stringify(event.data).slice(0, 1200)
                 });
 
             }
@@ -277,7 +265,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 console.error('Unknown governance proposal event:', event.data)
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: JSON.stringify(event.data).slice(0, 300) || "?"
+                    value: JSON.stringify(event.data).slice(0, 300)
                 });
             }
 
@@ -287,7 +275,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 console.error('Unknown governance proposal event:', event.data)
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: JSON.stringify(event.data).slice(0, 300) || "?"
+                    value: JSON.stringify(event.data).slice(0, 300)
                 });
             }
 
@@ -296,7 +284,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 console.error('Unknown spell scroll event:', event.data)
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: JSON.stringify(event.data).slice(0, 300) || "?"
+                    value: JSON.stringify(event.data).slice(0, 300)
                 });
             }
 
@@ -305,7 +293,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 console.error('Unknown contract identifier:', event.data)
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: JSON.stringify(event.data).slice(0, 300) || "?"
+                    value: JSON.stringify(event.data).slice(0, 300)
                 });
             }
 
