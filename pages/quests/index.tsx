@@ -37,13 +37,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       image: hugeKnollClaw,
       cardImage: wantedPoster,
     },
-    // {
-    //   name: `Mint a Spell Scroll`,
-    //   description: "Scrolls grant their holder a special ability.",
-    //   ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt",
-    //   image: spellScrollIcon,
-    //   cardImage: spellScrollCard,
-    // },
+    {
+      name: `Mint a Spell Scroll`,
+      description: "Scrolls grant their holder a special ability.",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt",
+      image: spellScrollIcon,
+      cardImage: spellScrollCard,
+    },
     {
       name: `King of the Hill`,
       description: "Team up with your community to claim the hill.",
