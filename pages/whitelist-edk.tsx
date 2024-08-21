@@ -48,8 +48,8 @@ const WhitelistEDK = () => {
 
     function setExtension() {
         openContractCall({
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: questContractName,
+            contractAddress: questContractName.split('.')[0],
+            contractName: questContractName.split('.')[1],
             functionName: "set-whitelisted-edk",
             functionArgs: [contractPrincipalCV(edkContractAddress), boolCV(whitelist)],
             postConditionMode: PostConditionMode.Allow,
