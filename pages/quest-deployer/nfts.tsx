@@ -24,11 +24,12 @@ const proposalFormSchema = z.object({
     description: z.string(),
     collectionImage: z.string().url("Must be a valid URL"),
     energyRequired: z.coerce.number().min(1, "Amount must be at least 1"),
+    nftName: z.string(),
 })
 
 type ProposalFormValues = z.infer<typeof proposalFormSchema>
 
-const generateTemplate = ({ contractAddress, totalSupply, stxAddress, description, energyRequired }: ProposalFormValues) => {
+const generateTemplate = ({ contractAddress, totalSupply, stxAddress, description, energyRequired, nftName }: ProposalFormValues) => {
     // Your template generation logic here
     return `;; Description:
 ;; ${description}
@@ -37,7 +38,7 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
 (impl-trait 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nft-trait.nft-trait)
 
 ;; Define the NFT's name
-(define-non-fungible-token nft uint)
+(define-non-fungible-token ${nftName} uint)
 
 ;; Keep track of the last minted token ID
 (define-data-var last-token-id uint u0)
@@ -107,7 +108,7 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
 
 ;; SIP-009 function: Get the owner of a given token
 (define-read-only (get-owner (token-id uint))
-  (ok (nft-get-owner? nft token-id))
+  (ok (nft-get-owner? ${nftName} token-id))
 )
 
 ;; SIP-009 function: Transfer NFT token to another owner.
@@ -115,7 +116,7 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
   (begin
     ;; #[filter(sender)]
     (asserts! (is-eq tx-sender sender) ERR_NOT_TOKEN_OWNER)
-    (nft-transfer? nft token-id sender recipient)
+    (nft-transfer? ${nftName} token-id sender recipient)
   )
 )
 
@@ -126,7 +127,7 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
     ;; Ensure the collection stays within the limit.
     (asserts! (< (var-get last-token-id) COLLECTION_LIMIT) ERR_SOLD_OUT)
     ;; Mint the NFT and send it to the given recipient.
-    (try! (nft-mint? nft token-id recipient))
+    (try! (nft-mint? ${nftName} token-id recipient))
     ;; 1 STX cost send to dungeon-master
     (try! (stx-transfer? STX_PER_MINT tx-sender 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dungeon-master))
     ;; Mint 1 governance token to the OWNER
@@ -253,7 +254,7 @@ export default function FarmTemplate({ onFormChange }: { onFormChange: (template
 
         const totalSupply = form.getValues().nftItems.reduce((sum, item) => sum + Number(item.amount), 0)
 
-        const template = generateTemplate({ ...form.getValues(), contractAddress, totalSupply, stxAddress: stxAddress! })
+        const template = generateTemplate({ ...form.getValues(), contractAddress, totalSupply, stxAddress: stxAddress!, nftName: safeName })
         onFormChange(template)
     }
 
