@@ -385,7 +385,7 @@ export default function FarmTemplate({ onFormChange }: { onFormChange: (template
                                         <FormItem className="flex-grow">
                                             <FormLabel>Item Name</FormLabel>
                                             <FormControl>
-                                                <Input placeholder={'Fireball'} {...field} />
+                                                <Input placeholder={'Fire Bolt'} {...field} />
                                             </FormControl>
                                             <FormMessage />
                                         </FormItem>
