@@ -39,7 +39,7 @@ export default function Hero() {
         {META_DESCRIPTION}
       </h2>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <p>Create your own yield farms, quests, and more.</p>
+        <p>Earn real yield while having fun with your community.</p>
       </div>
     </div>
   );

@@ -287,6 +287,15 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 });
             }
 
+            else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt") {
+
+                console.error('Unknown spell scroll event:', event.data)
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300) || "?"
+                });
+            }
+
             else {
 
                 console.error('Unknown contract identifier:', event.data)
