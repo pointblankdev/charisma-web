@@ -32,7 +32,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.type === 'FTMintEvent') {
             symbol = '🔺'
 
-            if (event.data.asset_identifier.split('.')[0] === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience") {
+            if (event.data.asset_identifier.split('::')[0] === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience") {
                 symbol = '✨'
 
                 const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', event.data.recipient)
