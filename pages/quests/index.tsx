@@ -91,7 +91,7 @@ export default function QuestsIndex({ quests }: Props) {
               </p>
             </div>
             <Link passHref href={'/quest-deployer'}>
-              <Button className=''>Create New Quest</Button>
+              <Button className='h-full'><div className='flex flex-col leading-tight'><div>Create Your Own Quest</div><div className='text-primary-foreground text-xs font-semibold'>and Earn Royalities</div></div></Button>
             </Link>
           </div>
           <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
