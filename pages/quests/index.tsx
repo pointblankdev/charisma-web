@@ -119,7 +119,7 @@ export default function QuestsIndex({ quests }: Props) {
               )}
             >
               <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
-                <div className="space-y-4 text-sm">
+                <div className="space-y-4 text-sm leading-normal">
                   <h3 className="font-bold text-lg">How to Claim Rewards</h3>
                   <p>
                     Complete quests in the Charisma ecosystem to earn rewards. Here's a quick guide:
