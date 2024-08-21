@@ -121,7 +121,7 @@ export default function KingOfTheHill({ lands, mob }: Props) {
           initial="hidden"
           animate="visible"
           variants={fadeVariants}
-          className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl"
+          className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl"
         >
           <AnimatePresence mode="wait">
             {get('view') === 'quest' ? (
@@ -133,7 +133,7 @@ export default function KingOfTheHill({ lands, mob }: Props) {
                 variants={fadeVariants}
                 transition={{ duration: 0.5 }}
               >
-                <Card className="min-h-[600px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
+                <Card className="min-h-[600px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
                   <CardHeader className="z-20 p-4 space-y-0">
                     <div className="flex items-center justify-between">
                       <CardTitle className="z-30 text-xl font-semibold">{title}</CardTitle>
