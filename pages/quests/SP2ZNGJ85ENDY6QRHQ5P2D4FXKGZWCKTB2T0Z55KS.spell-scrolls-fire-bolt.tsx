@@ -83,7 +83,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
   };
 
   const title = "Mint a Spell Scroll";
-  const subtitle = 'Create your own magical NFT on Stacks.';
+  const subtitle = 'Claim your own magical NFT on Stacks.';
 
   const fadeIn = {
     hidden: { opacity: 0 },
@@ -184,7 +184,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                   <div className="z-30 text-xl font-semibold">Key Information</div>
                   <div className='z-30 mb-4 text-sm font-fine text-foreground'>
                     <ul className="list-disc list-inside text-sm leading-snug">
-                      <li>Fixed Supply: Only 1,000 Fire Bolt scrolls will be minted</li>
+                      <li>Fixed Supply: Only 1000 Fire Bolt scrolls will be minted</li>
                       <li>Utility: Direct damage in combat quests (upcoming)</li>
                       <li>Mint Limit: Only 4 scrolls can be minted per transaction</li>
                       <li>Tap Limit: Only 1 mint transaction per block / per token type</li>
