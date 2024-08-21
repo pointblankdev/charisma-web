@@ -26,10 +26,14 @@ import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import { getLand, getLands } from '@lib/db-providers/kv';
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
-import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
+import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
 import useWallet from '@lib/hooks/use-wallet-balances';
+import spellScrollIcon from '@public/quests/spell-scroll/spell-scroll-icon.png'
+import spellScrollCard from '@public/quests/spell-scroll/spell-scroll-card.png'
+import stxIcon from '@public/stx-logo.png'
+import energyIcon from '@public/lands/img/energy.png'
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -71,16 +75,15 @@ type Props = {
   // burnAmount: string
 };
 
-export default function Adventure({ lands }: Props) {
+export default function SpellScrollFireBolt({ lands }: Props) {
   const meta = {
-    title: "Charisma | Adventure",
+    title: "Charisma | Mint a Spell Scroll",
     description: META_DESCRIPTION,
-    image: '/journey-of-discovery.png'
+    image: '/spell-scroll-fire-bolt.png'
   };
 
-  const title = "Adventure";
-  const subtitle = 'Spend your energy to gain experience.';
-
+  const title = "Mint a Spell Scroll";
+  const subtitle = 'Create your own magical NFT on Stacks.';
 
   const [descriptionVisible, setDescriptionVisible] = useState(false);
 
@@ -99,16 +102,15 @@ export default function Adventure({ lands }: Props) {
 
   return (
     <Page meta={meta} fullViewport>
-      {/* <Image src={goldEmbers} alt="bolt-background-image" layout="fill" objectFit="cover" priority /> */}
       <SkipNavContent />
       <Layout>
         <motion.div
           initial="hidden"
           animate="visible"
           variants={fadeIn}
-          className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl"
+          className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-4xl"
         >
-          <Card className="min-h-[600px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-2xl opacity-[0.99] shadow-black shadow-2xl">
+          <Card className="min-h-[600px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-4xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4 space-y-0">
               <div className="flex items-center justify-between">
                 <CardTitle className="z-30 text-xl font-semibold">{title}</CardTitle>
@@ -118,70 +120,91 @@ export default function Adventure({ lands }: Props) {
               </CardDescription>
             </CardHeader>
             <CardContent className="z-20 flex-grow p-4 space-y-4">
-              <section className='grid grid-cols-2'>
+              <section className='grid grid-cols-1 sm:grid-cols-2'>
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Rewards</div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    You will recieve:
+                    You will receive:
                   </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <div className="grid grid-cols-5 gap-4">
                     <div className="relative">
                       <Image
-                        alt="Experience"
-                        src={experience}
+                        alt="Fire Bolt Spell Scroll"
+                        src={spellScrollIcon}
                         quality={10}
-                        className="z-30 w-full rounded-full"
+                        className="z-30 w-full rounded-md border shadow-lg"
                       />
                       <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                        EXP
+                        NFT
                       </div>
                     </div>
                   </div>
                 </div>
-                <div className="z-20">
+                <div className="z-20 row-span-2 mt-8 sm:mt-0">
                   <div className="z-30 text-xl font-semibold">Quest Details</div>
-                  <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    On this quest, your energy is spent in exchange for Experience tokens. The conversion rate is log2 squared, so frequent quest completions will yield the most Experience over time.
+                  <div className="z-30 mb-4 text-md font-fine text-foreground">
+                    Want to create your own Fire Bolt scroll? It's a unique digital item you can own, trade, or use in Charisma. You'll need some energy from your staked tokens and a few tokens to mint one. Each scroll is a one-time-use consumable, and there's only a limited number of them. In the future, these scrolls will come in handy for special events or challenges.
                   </div>
                 </div>
               </section>
 
-              <section className='grid grid-cols-2'>
+              <section className='grid grid-cols-1 sm:grid-cols-2'>
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Requirements</div>
-                  <div className="z-30 mb-4 text-sm font-fine text-foreground">
-                    Burn sCHA to complete
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                  <ul className="list-disc list-inside text-sm leading-snug mb-4">
+                    <li>1 STX mint cost for DAO</li>
+                    <li>sCHA protocol burn per mint</li>
+                    <li>100,000 energy cost per scroll</li>
+                    <li>Max of 4 scrolls per mint</li>
+                  </ul>
+                  <div className="grid grid-cols-6 gap-4 mt-4">
                     <div className="relative">
                       <Image
-                        alt="protocol-fee-token-image"
+                        alt="STX token"
+                        src={stxIcon}
+                        quality={10}
+                        className="z-30 w-full rounded-full"
+                      />
+                      <div className="absolute text-center px-1 min-w-6 font-bold rounded-full -top-1 -right-2 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
+                        1
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <Image
+                        alt="energy"
+                        src={energyIcon}
+                        quality={10}
+                        className="z-30 w-full rounded-full"
+                      />
+                      <div className="absolute text-center px-1 min-w-6 font-bold rounded-full -top-1 -right-2 text-sm md:text-xs bg-accent text-accent-foreground">
+                        100k
+                      </div>
+                    </div>
+                    <div className="relative">
+                      <Image
+                        alt="sCHA token"
                         src={schaImg}
                         quality={10}
                         className="z-30 w-full rounded-full"
                       />
-                      {/* <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground min-w-6 text-center">
-                        {Number(burnAmount) >= 0.1 && Number(burnAmount).toFixed(1)}
-                      </div> */}
                     </div>
                   </div>
                 </div>
-                <div className="z-20">
-                  <div className="z-30 text-xl font-semibold">&nbsp;</div>
-                  <div className='z-30 mb-4 font-fine max-w-64 text-muted-foreground'>
-                    {descriptionVisible && <Typewriter
-                      options={{ autoStart: true }}
-                      onInit={typewriter => {
-                        typewriter.pauseFor(2700).start().typeString('"We shall not cease from exploration, and the end of all our exploring will be to arrive where we started and know the place for the first time."')
-                      }}
-                    />}
+                <div className="z-20 mt-8 sm:mt-0">
+                  <div className="z-30 text-xl font-semibold">Key Information</div>
+                  <div className='z-30 mb-4 text-sm font-fine text-foreground'>
+                    <ul className="list-disc list-inside text-sm leading-snug">
+                      <li>Fixed Supply: Only 1,000 Fire Bolt scrolls will be minted</li>
+                      <li>Utility: Direct damage in combat quests (upcoming)</li>
+                      <li>Mint Limit: Only 4 scrolls can be minted per transaction</li>
+                      <li>Tap Limit: Only 1 mint transaction per block / per token type</li>
+                    </ul>
                   </div>
                 </div>
               </section>
             </CardContent>
 
             <CardFooter className="z-20 flex justify-between p-4 items-end">
-
               <Link href="/quests">
                 <Button variant="ghost" className="z-30">
                   Back
@@ -191,14 +214,14 @@ export default function Adventure({ lands }: Props) {
               <SelectCreatureDialog lands={lands} />
             </CardFooter>
             <Image
-              src={journeyOfDiscovery}
+              src={spellScrollCard}
               width={800}
               height={1600}
               alt={'quest-background-image'}
               className={cn(
                 'object-cover',
                 'opacity-10',
-                'aspect-[1/2]',
+                'aspect-[2/5]',
                 'sm:aspect-square',
                 'flex',
                 'z-10',
@@ -226,17 +249,18 @@ export function SelectCreatureDialog({ lands }: any) {
     getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
     Math.pow(10, 6);
 
-  function journey(creatureId: number) {
+  function mint(creatureId: number) {
 
     const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
 
     const postConditions = [
       makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, '1', burnTokenContract),
+      makeStandardSTXPostCondition(stxAddress!, FungibleConditionCode.Equal, 1000000),
     ];
 
     openContractCall({
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'adventure-v0',
+      contractName: 'spell-scrolls-fire-bolt',
       functionName: "tap",
       functionArgs: [uintCV(creatureId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v2')],
       postConditions: postConditions as any[]
@@ -247,7 +271,7 @@ export function SelectCreatureDialog({ lands }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size={'sm'} className={`z-30`}>Complete Quest</Button>
+        <Button size={'sm'} className={`z-30`}>Mint Spell Scroll</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <AlertDialogHeader>
@@ -262,7 +286,7 @@ export function SelectCreatureDialog({ lands }: any) {
                 src={land.image}
                 width={100}
                 height={100}
-                onClick={() => journey(land.id)}
+                onClick={() => mint(land.id)}
                 className={`z-30 border rounded-full h-32 w-32 ${land.whitelisted && 'hover:scale-110 transition-all cursor-pointer'}`}
               />
             </div>

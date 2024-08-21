@@ -11,9 +11,9 @@ import { Button } from '@components/ui/button';
 import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { cn } from '@lib/utils';
 import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
-import wantedHogger from '@public/quests/wanted-hogger/hogger.png'
 import hugeKnollClaw from '@public/quests/wanted-hogger/hogger-icon.png'
-import hoggerDefeated from '@public/quests/wanted-hogger/hogger-camp.png'
+import spellScrollIcon from '@public/quests/spell-scroll/spell-scroll-icon.png'
+import spellScrollCard from '@public/quests/spell-scroll/spell-scroll-card.png'
 import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 import kingOfTheHillIcon from '@public/quests/king-of-the-hill/king-of-the-hill-icon.png'
 import kingOfTheHillCard from '@public/quests/king-of-the-hill/king-of-the-hill-card.png'
@@ -37,6 +37,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       image: hugeKnollClaw,
       cardImage: wantedPoster,
     },
+    // {
+    //   name: `Mint a Spell Scroll`,
+    //   description: "Scrolls grant their holder a special ability.",
+    //   ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt",
+    //   image: spellScrollIcon,
+    //   cardImage: spellScrollCard,
+    // },
     {
       name: `King of the Hill`,
       description: "Team up with your community to claim the hill.",
@@ -84,7 +91,7 @@ export default function QuestsIndex({ quests }: Props) {
               </p>
             </div>
             <Link passHref href={'/quest-deployer'}>
-              <Button className='bg-primary-foreground/5'>Create New Quest</Button>
+              <Button className=''>Create New Quest</Button>
             </Link>
           </div>
           <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">

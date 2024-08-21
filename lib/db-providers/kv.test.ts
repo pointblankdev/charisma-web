@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftMetadata, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -360,4 +360,20 @@ describe('metadata api', () => {
     })
 
 
+
 });
+
+
+describe('nfts api', () => {
+    // should get nft collection metadata
+    it('should get nft collection metadata', async () => {
+        const response = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls')
+        console.log(JSON.stringify(response, null, 2))
+    })
+
+    // should get nft item
+    it('should get nft item metadata', async () => {
+        const response = await getNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', '1')
+        console.log(JSON.stringify(response, null, 2))
+    })
+})

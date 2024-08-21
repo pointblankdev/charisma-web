@@ -1,4 +1,4 @@
-import { getNftMetadata, setNftMetadata } from '@lib/db-providers/kv';
+import { getNftCollectionMetadata, getNftMetadata, setNftMetadata } from '@lib/db-providers/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -18,12 +18,14 @@ export default async function emblemsApi(
         let id = req.query.id as string
         const ca = req.query.ca as string
         if (req.method === 'POST') {
-            console.log(req.body)
-            response = await setNftMetadata(ca, id, req.body)
+            await setNftMetadata(ca, id, req.body)
+            response = await getNftMetadata(ca, id)
         } else if (req.method === 'GET') {
+            const collectionResponse = await getNftCollectionMetadata(ca)
             // if id ends with .json, remove it
             if (id.endsWith('.json')) { id = id.slice(0, -5) }
-            response = await getNftMetadata(ca, id)
+            const nftResponse = await getNftMetadata(ca, id)
+            response = { ...collectionResponse, ...nftResponse }
         } else {
             code = 501
             response = new Object({

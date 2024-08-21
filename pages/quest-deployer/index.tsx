@@ -36,18 +36,17 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { motion } from 'framer-motion';
 import { BsWater } from "react-icons/bs"
 import FarmTemplate from "./farm"
-import { PiPlant } from "react-icons/pi"
+import { PiPackage, PiPlant } from "react-icons/pi"
 import BattleRoyaleTemplate from "./battle-royale"
 import PrizeFightTemplate from "./prize-fight"
 import { useAccount, useOpenContractDeploy } from "@micro-stacks/react"
+import NftCollectionTemplate from "./nfts"
 
-const generateHeader = ({ name, sender, description }: any) => {
+const generateHeader = ({ name, sender }: any) => {
     return `;; Title: ${name}
 ;; Author: ${sender}
 ;; Created With Charisma
 ;; https://charisma.rocks
-;; Description:
-;; ${description}
 
 `}
 
@@ -59,7 +58,6 @@ const fadeIn = {
 const contractFormSchema = z.object({
     template: z.string(),
     name: z.string().max(32, "Names have a max length of 32 characters, since they are used in the contract address"),
-    description: z.string(),
 })
 
 type ContractFormValues = z.infer<typeof contractFormSchema>
@@ -193,6 +191,24 @@ export default function ContractDeployer({ data }: any) {
                                                                     >
                                                                         <SelectValue placeholder="Select a model" />
                                                                     </SelectTrigger>
+                                                                    <SelectContent>
+                                                                        <SelectItem value="nfts">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <PiPackage className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        NFT{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            Collection
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Create an NFT collection to sell on Charisma
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
+                                                                    </SelectContent>
                                                                     {/* <SelectContent>
                                                                         <SelectItem value="farm">
                                                                             <div className="flex items-start gap-3 text-foreground">
@@ -253,29 +269,16 @@ export default function ContractDeployer({ data }: any) {
                                         </fieldset>
                                         <fieldset className="grid grid-cols-1 gap-4 rounded-lg border p-4">
                                             <legend className="-ml-1 px-1 text-sm font-medium">
-                                                Contract Metadata
+                                                Contract
                                             </legend>
                                             <FormField
                                                 control={form.control}
                                                 name="name"
                                                 render={({ field }) => (
                                                     <FormItem className="w-full">
-                                                        <FormLabel>Contract Name</FormLabel>
+                                                        <FormLabel>Name</FormLabel>
                                                         <FormControl>
                                                             <Input placeholder={'A concise contract title'} {...field} />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <FormField
-                                                control={form.control}
-                                                name="description"
-                                                render={({ field }) => (
-                                                    <FormItem className="w-full">
-                                                        <FormLabel>Description</FormLabel>
-                                                        <FormControl>
-                                                            <Input placeholder={'Some details to explain what the contract is doing'} {...field} />
                                                         </FormControl>
                                                         <FormMessage />
                                                     </FormItem>
@@ -289,7 +292,9 @@ export default function ContractDeployer({ data }: any) {
                                                     <BattleRoyaleTemplate onFormChange={handleContractChange} />
                                                     : template === 'prize-fight' ?
                                                         <PrizeFightTemplate onFormChange={handleContractChange} />
-                                                        : <div>...</div>
+                                                        : template === 'nfts' ?
+                                                            <NftCollectionTemplate onFormChange={handleContractChange} />
+                                                            : <div>...</div>
 
                                             }
                                         </motion.div>}

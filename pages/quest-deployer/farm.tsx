@@ -149,7 +149,7 @@ const proposalFormSchema = z.object({
 
 type ProposalFormValues = z.infer<typeof proposalFormSchema>
 
-export default function FarmTemplate({ onFormChange }: any) {
+export default function NftCollectionTemplate({ onFormChange }: any) {
     const defaultValues: Partial<ProposalFormValues> = {
         specializedCreatureId: 0,
         questUri: "https://charisma.rocks/api/metadata/",

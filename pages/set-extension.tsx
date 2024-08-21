@@ -47,7 +47,7 @@ const SetExtension = () => {
             contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
             contractName: 'dungeon-master',
             functionName: "set-extension",
-            functionArgs: [contractPrincipalCV(contractAddress), boolCV(false)],
+            functionArgs: [contractPrincipalCV(contractAddress), boolCV(true)],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
         });
