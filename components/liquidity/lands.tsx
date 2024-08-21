@@ -17,9 +17,9 @@ const LandControls = ({
 }: any) => {
     const hasRequiredTokens = Math.abs(min) !== Math.abs(max)
 
-    // if using the burn token, reduce the max by 1 to prevent not having enough tokens to pay the burn fee
+    // if using the burn token, reduce the max by 10 to prevent not having enough tokens to pay the burn fee
     const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
-    const burnFee = 1000000 // 1 token
+    const burnFee = 10000000 // 10 tokens
     const isUsingBurnToken = metadata.wraps.ca === burnTokenContract
     if (isUsingBurnToken) max -= burnFee
 
