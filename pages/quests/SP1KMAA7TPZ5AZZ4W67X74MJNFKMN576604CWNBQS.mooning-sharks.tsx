@@ -133,7 +133,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
                 <div className="z-20 row-span-2 mt-8 sm:mt-0">
                   <div className="z-30 text-xl font-semibold">Quest Details</div>
                   <div className="z-30 mb-4 text-md font-fine text-foreground">
-                    Want to mint your OG Mooning Shark NFT?
+                    Want to mint an OG Mooning Shark NFT?
                     This is the first NFT collection created by the amazing Charisma community moderator, MooningShark.
                     Grab your Shark and ride the Nakamoto wave to the Moon!
                     Proof of OG + undeniable support toward you favorite mod, MooningShark. (obviously)
