@@ -256,7 +256,7 @@ export function SelectCreatureDialog({ lands }: any) {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button size={'sm'} className={`z-30`}>Mint Spell Scroll</Button>
+        <Button size={'sm'} className={`z-30`}>Mint Spell Scrolls</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-2xl">
         <AlertDialogHeader>
