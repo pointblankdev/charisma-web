@@ -44,7 +44,7 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
 
 ;; Define constants
 (define-constant COLLECTION_LIMIT u${totalSupply}) ;; Limit to series of ${totalSupply}
-(define-constant ENERGY_PER_NFT u${energyRequired}) ;; 100k energy per NFT
+(define-constant ENERGY_PER_NFT u${energyRequired}) ;; ${energyRequired} energy per NFT
 (define-constant STX_PER_MINT u1000000) ;; 1 STX per MINT for DAO
 (define-constant MAX_NFTS_PER_TX u4) ;; Maximum 4 NFTs per transaction
 (define-constant OWNER '${stxAddress}) ;; Collection creator
