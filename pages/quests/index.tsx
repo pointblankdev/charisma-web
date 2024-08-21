@@ -19,6 +19,8 @@ import kingOfTheHillIcon from '@public/quests/king-of-the-hill/king-of-the-hill-
 import kingOfTheHillCard from '@public/quests/king-of-the-hill/king-of-the-hill-card.png'
 import mooningSharkIcon from '@public/quests/mooning-shark/mooningshark-icon.jpeg'
 import mooningSharkCard from '@public/quests/mooning-shark/mooning-shark-card.png'
+import krakenLottoIcon from '@public/quests/raven-raffle/ticket.png'
+import krakenLottoCard from '@public/quests/raven-raffle/kraken-lotto.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
@@ -52,6 +54,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       ca: "SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks",
       image: mooningSharkIcon,
       cardImage: mooningSharkCard,
+    },
+    {
+      name: `Mint a Kraken Lottery Ticket`,
+      description: "Mint lottery tickets for your chance to win.",
+      ca: "SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto",
+      image: krakenLottoIcon,
+      cardImage: krakenLottoCard,
     },
     {
       name: `King of the Hill`,

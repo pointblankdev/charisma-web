@@ -118,6 +118,14 @@ describe('metadata api', () => {
         console.log(land)
     })
 
+    it('should update fair land', async () => {
+        const land = await getLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve')
+        land.whitelisted = true
+        land.id = 7
+        await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', land)
+        console.log(land)
+    })
+
     it('should update fam land', async () => {
         const land = await getLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam')
         land.id = 5
