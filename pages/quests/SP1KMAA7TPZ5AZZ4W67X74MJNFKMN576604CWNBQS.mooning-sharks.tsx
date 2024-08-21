@@ -79,7 +79,7 @@ export default function SpellScrollFireBolt({ lands }: Props) {
   const meta = {
     title: "Charisma | Mint a Mooning Shark",
     description: META_DESCRIPTION,
-    image: '/quests/mooning-shark/mooning-shark-card.png'
+    image: '/quests/mooning-shark/mooning-shark-square.png'
   };
 
   const title = "Mint a Mooning Shark";
