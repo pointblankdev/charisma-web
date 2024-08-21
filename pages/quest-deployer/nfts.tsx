@@ -182,7 +182,7 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
 (define-read-only (get-untapped-amount (land-id uint) (user principal))
     (let
         (
-            (untapped-energy (unwrap-panic (contract-call? .lands get-untapped-amount land-id user)))
+            (untapped-energy (unwrap-panic (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands get-untapped-amount land-id user)))
             (nfts-available (min (/ untapped-energy ENERGY_PER_NFT) MAX_NFTS_PER_TX))
         )
         nfts-available
