@@ -93,7 +93,7 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
   const { stxAddress } = useAccount()
 
   const title = "Mint a Pixel Rozar";
-  const subtitle = 'Claim a completely useless sticker.';
+  const subtitle = 'Claim a completely pointless sticker.';
 
   const fadeIn = {
     hidden: { opacity: 0 },
