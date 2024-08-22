@@ -14,7 +14,16 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
     try {
 
-        if (event.type === 'FTBurnEvent') {
+        if (event.type === 'STXTransferEvent') {
+            symbol = '💸'
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+        }
+
+        else if (event.type === 'FTBurnEvent') {
             symbol = '🔻'
 
             builder.addField({
