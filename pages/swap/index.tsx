@@ -1,243 +1,143 @@
-
 import { SkipNavContent } from '@reach/skip-nav';
-
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
-import Layout from '@components/layout';
-import Image from 'next/image';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from "@components/ui/tooltip"
-import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@components/ui/card';
+import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
-import { useState } from 'react';
+import Image from 'next/image';
+import energyIcon from '@public/creatures/img/energy.png';
+import Link from 'next/link';
+import { Card, CardContent, CardHeader } from '@components/ui/card';
 import { cn } from '@lib/utils';
-import { motion } from "framer-motion"
-import WelshIcon from '@public/welsh-logo.png'
-import stxIcon from '@public/stacks-stx-logo.png'
-import swap from '@public/quests/a2.png'
-import { Input } from '@components/ui/input';
-import millify from 'millify';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@components/swap/select';
-import BasicSwap from '@components/swap/basic';
-import velarApi from '@lib/velar-api';
+import charismaCard from '@public/liquid-charisma-21.png'
 
-export default function Swap({ data }: Props) {
-    const meta = {
-        title: 'Charisma | Swap Tokens',
-        description: META_DESCRIPTION,
-        image: '/liquid-charisma.png'
-    };
+export const getStaticProps: GetStaticProps<Props> = () => {
+  // get all quests from db
+  // const tokenContractAddresses = getTokens()
 
-    const [amount, setAmount] = useState('');
-    const priceData = data.tickers
+  const tokens = [
+    {
+      name: "Liquid Staked Charisma",
+      description: "The rebase token of Charisma",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
+      image: "/liquid-staked-charisma.png",
+      cardImage: charismaCard,
+      ticker: 'sCHA'
+    }
+  ]
 
-    const handleTokenAmountChange = (event: any) => {
-        const { value } = event.target;
-        // Limit input to only allow numbers and to 6 decimal places
-        if (/^\d*\.?\d{0,4}$/.test(value)) {
-            setAmount(value);
-        }
-    };
+  // for (const ca of tokenContractAddresses) {
+  //   const metadata = getToken(ca)
+  //   tokens.push(metadata)
+  // }
 
-
-
-    const fadeIn = {
-        hidden: { opacity: 0 },
-        visible: { opacity: 1 }
-    };
-
-    const [sellToken, setSellToken] = useState('STX');
-    const [buyToken, setBuyToken] = useState('WELSH');
-
-    const stxPrice = priceData.find((ticker: any) => ticker.ticker_id === 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx_SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc').last_price
-    const welshPrice = stxPrice / priceData.find((ticker: any) => ticker.target_currency === 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token').last_price
-
-    const amountOutEstimation = ((stxPrice * Number(amount)) / welshPrice) * 0.975 // 2.5% slippage
-
-    return (
-        <Page meta={meta} fullViewport>
-            <SkipNavContent />
-            <Layout>
-                <motion.div initial="hidden" animate="visible" variants={fadeIn} className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl">
-
-                    <Card className='bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl'>
-                        <CardHeader className='z-20 p-4'>
-                            <div className='flex items-center justify-between'>
-                                <CardTitle className='z-30 text-xl font-semibold'>Swap Tokens</CardTitle>
-                            </div>
-                        </CardHeader>
-                        <CardContent className='z-20 p-4'>
-                            <div className='flex flex-col sm:relative'>
-                                <Select value={sellToken} onValueChange={setSellToken}>
-                                    <SelectTrigger className="h-20 mb-2 text-2xl text-right sm:absolute sm:pl-[20rem]" >
-                                        <SelectValue placeholder='Select a token' />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        <SelectItem value="STX" className='group/token' disabled={buyToken == 'STX'}>
-                                            <div className='flex space-x-2 items-center h-20'>
-                                                <Image src={stxIcon} alt='Stacks Token' className='z-30 w-12 h-12 border border-white rounded-full' />
-                                                <div className='text-left'>
-                                                    <div className='flex items-baseline space-x-1'>
-                                                        <div className='text-xl font-medium leading-tight'>STX</div>
-                                                        <div className='text-lg font-light -mt-1 leading-normal'>Stacks Native Token</div>
-                                                    </div>
-                                                    <div className='-ml-0.5 text-sm mt-0 flex flex-wrap group-hover/token:text-white'>
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Gas Token</div></TooltipTrigger>
-                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                                    <strong>Gas Token:</strong> This token is used to pay for transaction fees on the Stacks blockchain. <br /><br />
-                                                                    It is consumed in the process of executing smart contracts and other operations on the network. <br /><br />
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Stackable</div></TooltipTrigger>
-                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                                    <strong>Stackable:</strong> This token can be used to participate in the Proof-of-Transfer (PoX) consensus mechanism of the Stacks blockchain. <br /><br />
-                                                                    It can be locked up or liquid staked to secure the network and earn rewards. <br /><br />
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Input value={amount} onChange={handleTokenAmountChange} placeholder="Enter an amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
-                            </div>
-
-                            <div className='relative mt-0 sm:mt-28 mb-6 text-5xl items-center flex pb-4 justify-center w-full' >
-                                {/* <div className='cursor-pointer select-none hover:text-accent/80' onClick={() => { setBuyToken(sellToken);; setSellToken(buyToken) }}>↯</div> */}
-                                <div className='cursor-pointer select-none hover:text-accent/80'>↯</div>
-                            </div>
-
-                            <div className='flex flex-col sm:relative'>
-                                <Select value={buyToken} onValueChange={setBuyToken}>
-                                    <SelectTrigger className="h-20 mb-2 text-2xl text-right sm:absolute sm:pl-[20rem]" >
-                                        <SelectValue placeholder='Select a token' />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {/* <SelectItem value="STX" className='group/token' disabled={sellToken == 'STX'}>
-                                            <div className='flex space-x-2 items-center h-20'>
-                                                <Image src={stxIcon} alt='Stacks Token' className='z-30 w-12 h-12 border border-white rounded-full' />
-                                                <div className='text-left'>
-                                                    <div className='flex items-baseline space-x-1'>
-                                                        <div className='text-xl font-medium leading-tight'>STX</div>
-                                                        <div className='text-lg font-light -mt-1 leading-normal'>Stacks Native Token</div>
-                                                    </div>
-                                                    <div className='-ml-0.5 text-sm mt-0 flex flex-wrap group-hover/token:text-white'>
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Gas Token</div></TooltipTrigger>
-                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                                    <strong>Gas Token:</strong> This token is used to pay for transaction fees on the Stacks blockchain. <br /><br />
-                                                                    It is consumed in the process of executing smart contracts and other operations on the network. <br /><br />
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Stackable</div></TooltipTrigger>
-                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                                    <strong>Stackable:</strong> This token can be used to participate in the Proof-of-Transfer (PoX) consensus mechanism of the Stacks blockchain. <br /><br />
-                                                                    It can be locked up or liquid staked to secure the network and earn rewards. <br /><br />
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </SelectItem> */}
-                                        <SelectItem value="WELSH" className='group/token' disabled={sellToken == 'WELSH'}>
-                                            <div className='flex space-x-2 items-center h-20'>
-                                                <Image src={WelshIcon} alt='Welshcorgicoin Token' className='z-30 w-12 h-12 border border-white rounded-full' />
-                                                <div className='text-left'>
-                                                    <div className='flex items-baseline space-x-1'>
-                                                        <div className='text-xl font-medium leading-tight'>WELSH</div>
-                                                        <div className='text-lg font-light -mt-1 leading-normal'>Welshcorgicoin</div>
-                                                    </div>
-                                                    <div className='-ml-0.5 text-xs mt-0 flex flex-wrap group-hover/token:text-white'>
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Community Coin</div></TooltipTrigger>
-                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                                    <strong>Community Coin:</strong> A Community Coin is a subset of memecoins characterized by its large and active user base, highly decentralized holdings, and significant incentives for holders. <br /><br />
-                                                                    These coins often thrive on community engagement and participation, providing advantages such as airdrops and other rewards within their ecosystem. <br /><br />
-                                                                    The decentralized nature ensures wide distribution, while the ongoing incentives encourage long-term holding and active involvement in the project's development and governance. <br /><br />
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                        <TooltipProvider>
-                                                            <Tooltip>
-                                                                <TooltipTrigger><div className='bg-primary rounded-full w-fit leading-tight px-1 pb-0.5 text-center m-1 pointer-events-auto'>Community Takeover</div></TooltipTrigger>
-                                                                <TooltipContent side='bottom' className={`text-md max-h-[80vh] overflow-scroll bg-black text-white border-primary leading-tight shadow-2xl max-w-prose`}>
-                                                                    <strong>Community Takeover:</strong> Occurs when the original developer "rugs" a project by dumping their tokens and abandoning it, but a grassroots community movement intervenes to revive and sustain the project. <br /><br />
-                                                                    This resurgence is driven by dedicated community members who take control, reestablish trust, and actively contribute to the project's development and growth. <br /><br />
-                                                                    Through their collective efforts, the community ensures the project's continued activity and success, often fostering a stronger and more resilient ecosystem. <br /><br />
-                                                                </TooltipContent>
-                                                            </Tooltip>
-                                                        </TooltipProvider>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </SelectItem>
-                                    </SelectContent>
-                                </Select>
-                                <Input value={millify(amountOutEstimation) + "+"} placeholder="Estimated Amount" className="ring-offset-0 ring-transparent ring-inset focus-visible:ring-none sm:border-r-0 border-t border-b sm:rounded-r-none h-20 mb-2 text-2xl text-right sm:absolute sm:w-[20rem]" />
-                            </div>
-
-                        </CardContent>
-
-                        <CardFooter className="z-20 flex justify-between p-4 mt-24">
-                            <div></div>
-                            <BasicSwap data={{ amountIn: amount, amountOutMin: amountOutEstimation }} />
-                        </CardFooter>
-                        <Image
-                            src={swap}
-                            width={800}
-                            height={1600}
-                            alt={'quest-background-image'}
-                            className={cn("object-cover", "sm:aspect-[1/2]", 'aspect-[1/3]', 'opacity-10', 'flex', 'z-10', 'absolute', 'inset-0', 'pointer-events-none')}
-                        />
-                        <div className='absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10' />
-                    </Card>
-                    <div className='text-center font-thin m-2 text-xs sm:text-sm'>*Swaps use Velar liquidity pools and are set to a maximum of 2.5% slippage.</div>
-                </motion.div >
-            </Layout >
-        </Page >
-    );
-}
+  return {
+    props: {
+      tokens
+    },
+    revalidate: 60000
+  };
+};
 
 type Props = {
-    data: any;
+  tokens: any[];
 };
 
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export default function SwapIndex({ tokens }: Props) {
+  const meta = {
+    title: 'Charisma | Rewards',
+    description: META_DESCRIPTION,
+    // image: '/creatures/img/farmers.png'
+  };
 
-    try {
 
-        const tickers = await velarApi.tickers()
+  return (
+    <Page meta={meta} fullViewport>
+      <SkipNavContent />
+      <Layout>
+        <div className="m-2 space-y-6 sm:container sm:mx-auto sm:py-10">
+          <div className='flex justify-between'>
+            <div className="space-y-1">
+              <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">Tokens</h2>
+              <p className="flex items-center text-base text-muted-foreground">
+                Swap, stake, and wrap tokens right here on Charisma.
+              </p>
+            </div>
+            {/* <Link passHref href={'/quest-deployer'}>
+              <Button className='bg-primary-foreground/5'>Create New Quest</Button>
+            </Link> */}
+          </div>
+          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {/* <Card
+              className={cn(
+                'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+              )}
+            >
+              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
+                <div className="space-y-6 text-sm">
+                  <h3 className="font-bold text-lg">How to Claim Rewards</h3>
+                  <p>
+                    You can claim rewards by completing quests in the Charisma ecosystem.
+                  </p>
+                  <p>
+                    To start a quest, click on the card to view more information about it's requirements, and rewards.
+                  </p>
+                  <p>
+                    Quests require spending energy generated through staking to complete.
+                  </p>
+                </div>
+              </div>
+            </Card> */}
+            {tokens.map((token: any, i: number) => {
+              return (
+                <div
+                  key={i}
+                  className={cn(
+                    'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card border bg-accent-foreground'
+                  )}
+                >
+                  <Link href={`/swap/${token.ca}`} className="w-full">
+                    <div className="w-full p-0">
+                      <div className="z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                        <div className="flex justify-between align-top">
+                          <div className="flex gap-2">
+                            <div className="min-w-max">
+                              {token.image ? (
+                                <Image
+                                  src={token.image}
+                                  width={40}
+                                  height={40}
+                                  alt="guild-logo"
+                                  className="w-10 h-10 rounded-md border grow"
+                                />
+                              ) : (
+                                <div className="w-10 h-10 bg-white border rounded-full" />
+                              )}
+                            </div>
+                            <div className="">
+                              <div className="leading-none text-secondary">
+                                {token.name}
+                              </div>
+                              <div className="mt-1 text-xs leading-tight font-fine text-muted-foreground">
+                                {token.description}
+                              </div>
+                            </div>
+                          </div>
+                          <div className="flex flex-col items-end leading-[1.1]">
+                            <div className="text-primary-foreground/80 text-sm">{token.ticker}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </Link>
 
-        return {
-            props: {
-                data: { tickers }
-            },
-            revalidate: 600
-        };
+                </div>
+              );
+            })}
 
-    } catch (error) {
-        return {
-            props: {
-                data: {}
-            },
-        }
-    }
-};
+          </div>
+        </div>
+      </Layout>
+    </Page>
+  );
+}

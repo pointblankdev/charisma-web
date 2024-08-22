@@ -1,16 +1,11 @@
-import React, { useEffect, useState } from "react";
-import { useConnect } from "@stacks/connect-react";
-import { StacksMainnet } from "@stacks/network";
+import React from "react";
 import {
-  AnchorMode,
-  Pc,
-  PostConditionMode,
+  FungibleConditionCode,
+  makeStandardFungiblePostCondition,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
-import millify from "millify";
-import { getDecimals, getStakedTokenExchangeRate } from "@lib/stacks-api";
+import { useAccount, useOpenContractCall } from "@micro-stacks/react";
 
 interface UnstakeButtonProps {
   tokens: number;
@@ -33,39 +28,28 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({
   baseFungibleTokenName,
   exchangeRate,
 }) => {
-  const { doContractCall } = useConnect();
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
+  const { openContractCall } = useOpenContractCall();
+
+  const { stxAddress } = useAccount()
 
   const tokens6Dec = Number(tokens)
 
+  const tokenContract = `${contractAddress}.${contractName}::${fungibleTokenName}`
+
+  const postConditions = [
+    makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, tokens6Dec, tokenContract),
+    // makeStandardFungiblePostCondition(`${contractAddress}.${contractName}`, FungibleConditionCode.GreaterEqual, (tokens6Dec / exchangeRate).toFixed(0), `${baseTokenContractAddress}.${baseTokenContractName}::${baseFungibleTokenName}`),
+  ];
+
   function unstake() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
-    const tokensOutMin = (tokens6Dec / exchangeRate).toFixed(0)
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
+    openContractCall({
       contractAddress: contractAddress,
       contractName: contractName,
       functionName: "unstake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(sender).willSendEq(tokens6Dec).ft(`${contractAddress}.${contractName}`, fungibleTokenName),
-        Pc.principal(`${contractAddress}.${contractName}`).willSendGte(tokensOutMin).ft(`${baseTokenContractAddress}.${baseTokenContractName}`, baseFungibleTokenName),
-      ],
-      onFinish: (data) => {
-        console.log("onFinish:", data);
-      },
-      onCancel: () => {
-        console.log("onCancel:", "Transaction was canceled");
-      },
+      postConditions: postConditions as any[],
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
   }
 
   return (

@@ -1,4 +1,4 @@
-import { getContractMetadata, setContractMetadata } from "./user-api"
+import { getContractMetadata, setContractMetadata, setLandMetadata } from "./user-api"
 
 describe('User API', () => {
     it('should get metadata', async () => {
@@ -32,5 +32,11 @@ describe('User API', () => {
             ]
         })
         console.log(await response.text())
+    })
+
+    it('should set land metadata', async () => {
+        const response = await setLandMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.test', {})
+        const result = await response.json()
+        console.log(result)
     })
 })

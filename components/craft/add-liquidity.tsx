@@ -7,20 +7,23 @@ import {
     PostConditionMode,
     uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
+import { useAccount, useOpenContractCall } from "@micro-stacks/react";
+import ConnectWallet from "@components/stacks-session/connect";
 
 const AddLiquidityToIndex = ({ amount, address, metadata }: { amount: number, address: `${string}.${string}`, metadata: any }) => {
-    const { doContractCall } = useConnect();
 
-    const [mounted, setMounted] = useState(false);
-    useEffect(() => { setMounted(true) }, []);
+    const { openContractCall } = useOpenContractCall();
 
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+    const { stxAddress } = useAccount()
 
     const [contractAddress, contractName] = address.split('.');
 
     const tokens = Math.floor(amount);
+
+    if (!stxAddress) {
+        return <ConnectWallet />;
+    }
 
     function combinePostConditions(postConditions: any[]) {
         const combined: any = {};
@@ -38,26 +41,19 @@ const AddLiquidityToIndex = ({ amount, address, metadata }: { amount: number, ad
     }
 
     function addLiquidity() {
-        const postConditions = metadata.contains.map((item: any) => Pc.principal(sender).willSendLte(Number(tokens) * Number(item.weight)).ft(item.address, item.ft));
+        const postConditions = metadata.contains.map((item: any) => Pc.principal(stxAddress!).willSendLte(Number(tokens) * Number(item.weight)).ft(item.address, item.ft));
         const combinedPostConditions: any[] = combinePostConditions(postConditions);
 
-        doContractCall({
-            network: new StacksMainnet(),
-            anchorMode: AnchorMode.Any,
+        openContractCall({
             contractAddress,
             contractName,
             functionName: "add-liquidity",
             functionArgs: [uintCV(tokens)],
             postConditionMode: PostConditionMode.Deny,
-            postConditions: combinedPostConditions,
-            onFinish: (data) => { console.log("onFinish:", data) },
-            onCancel: () => { console.log("onCancel:", "Transaction was canceled") },
+            postConditions: combinedPostConditions
         });
     }
 
-    if (!mounted || !userSession.isUserSignedIn()) {
-        return <ConnectWallet />;
-    }
 
     return (
         <Button disabled={tokens <= 0} variant="ghost" className='text-primary hover:bg-white hover:text-primary z-30 w-full' onClick={addLiquidity}>Wrap</Button>

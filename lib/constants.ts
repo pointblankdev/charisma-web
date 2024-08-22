@@ -6,9 +6,7 @@ export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
-  'You decide the tokenomics, governance, and future of Charisma. Join the community-run DAO.';
-export const SITE_DESCRIPTION =
-  'You decide the tokenomics, governance, and future of Charisma. Join the community-run DAO.';
+  'Stake your memecoins and earn rewards on Stacks.';
 export const DATE = '31 October 2023';
 export const SHORT_DATE = 'Jan 1 - 9:00am PST';
 export const FULL_DATE = 'Jan 1st 9am Pacific Time (GMT-7)';
@@ -18,35 +16,30 @@ export const COOKIE = 'user-id';
 export const BITCOIN_LEARN_MORE_URL = 'https://bitcoin.org/en/';
 export const STACKS_LEARN_MORE_URL = 'https://stacks.org/';
 
+const VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL;
+export const API_URL = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:3000';
+
 export const NAVIGATION = [
-  // {
-  //   name: 'Quests',
-  //   route: '/quests'
-  // },
-  // {
-  //   name: 'Apps',
-  //   route: '/apps'
-  // },
-  // {
-  //   name: 'Swap',
-  //   route: '/swap'
-  // },
-  // {
-  //   name: 'Arbitrage',
-  //   route: '/apps/arbitrage/cha'
-  // },
   {
-    name: 'Tokens',
-    route: '/tokens'
+    name: 'Swap',
+    route: '/swap'
   },
   {
-    name: 'Creatures',
-    route: '/creatures'
+    name: 'Staking',
+    route: '/staking'
   },
   {
-    name: 'Portfolio',
-    route: '/portfolio'
+    name: 'Rewards',
+    route: '/quests'
   },
+  {
+    name: 'Leaderboard',
+    route: '/leaderboard'
+  },
+  // {
+  //   name: 'Portfolio',
+  //   route: '/portfolio'
+  // },
 ];
 
 export type TicketGenerationState = 'default' | 'loading';

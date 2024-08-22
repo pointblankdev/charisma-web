@@ -7,27 +7,26 @@ import {
   principalCV,
   Pc
 } from "@stacks/transactions";
-import { userSession } from "@components/stacks-session/connect";
 import { Button } from "@components/ui/button";
-
+import { useOpenContractCall } from "@micro-stacks/react";
+import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 type Props = {
   proposalPrincipal: string;
 };
 
 const Conclude = ({ proposalPrincipal }: Props) => {
-  const { doContractCall } = useConnect();
+  const proposal = proposalPrincipal.split('.')
+
+  const { openContractCall } = useOpenContractCall();
 
   const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
 
   function conclude() {
-    doContractCall({
-      network: new StacksMainnet(),
-      anchorMode: AnchorMode.Any,
+    openContractCall({
       contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
       contractName: "dme001-proposal-voting",
       functionName: "conclude",
-      functionArgs: [principalCV(proposalPrincipal)],
+      functionArgs: [contractPrincipalCV(proposal[0], proposal[1])],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [],
       onFinish: (data) => {
@@ -37,10 +36,6 @@ const Conclude = ({ proposalPrincipal }: Props) => {
         console.log("onCancel:", "Transaction was canceled");
       },
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return null;
   }
 
   return (

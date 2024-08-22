@@ -3,7 +3,7 @@ import { SkipNavContent } from '@reach/skip-nav';
 
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
-import Layout from '@components/layout';
+import Layout from '@components/layout/layout';
 import { DataTable } from '@components/vote-table/data-table';
 import { columns } from '@components/vote-table/columns';
 import { cn } from '@lib/utils';
@@ -16,17 +16,6 @@ import chatoken from '@public/cha-token.png'
 import voting from '@public/voting.png'
 import extproposal from '@public/ext-proposal.png'
 import tokenfaucet3 from '@public/token-faucet-3.png'
-import treasurechest from '@public/governance/treasure-chest.png'
-import questmap from '@public/governance/quest-map.png'
-import locked from '@public/governance/locked.png'
-import questhelper from '@public/governance/quest-helper.png'
-import oracle from '@public/governance/oracle.png'
-import hourglass from '@public/governance/hourglass.png'
-import startingFlag from '@public/governance/starting-flag.png'
-import stxRewards from '@public/governance/stx-rewards-2.png'
-import wantedPosters from '@public/governance/wanted-posters.png'
-import courthouse from '@public/governance/courthouse.png'
-import innkeeper from '@public/governance/innkeeper.png'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs"
 import greenRoom from '@public/green-room-card.png'
 
@@ -193,7 +182,7 @@ export default function Governance({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="m-2 sm:container sm:mx-auto sm:py-10">
+        <div className="m-2 sm:w-[1400px] sm:mx-auto sm:py-10">
           <Tabs defaultValue="proposals" className="">
             <TabsList className='mb-2'>
               <TabsTrigger value="proposals">Proposals</TabsTrigger>
@@ -204,7 +193,7 @@ export default function Governance({ data }: Props) {
               <DataTable columns={columns} data={data} />
             </TabsContent>
             <TabsContent value="extentions">
-              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-5'>
+              <div className='grid gap-1 sm:gap-4 grid-cols-2 sm:grid-cols-6'>
                 {cards.map((card, index) => (
                   <Card key={index} {...card} />
                 ))}

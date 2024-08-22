@@ -1,16 +1,20 @@
 {
     "crons": [
         {
-            "path": "/api/update-wallet-data",
-            "schedule": "0 * * * *"
-        },
-        {
             "path": "/api/arbitrage",
-            "schedule": "* * * * *"
+            "schedule": "0 * * * *"
         },
         {
             "path": "/api/v0/blocks/cache",
             "schedule": "* * * * *"
+        },
+        {
+            "path": "/api/v0/crons/try-reset-epochs",
+            "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/v0/crons/players",
+            "schedule": "*/20 * * * *"
         }
     ]
 }

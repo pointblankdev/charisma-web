@@ -26,8 +26,8 @@ import {
 import { Textarea } from "@components/ui/textarea"
 import { toast } from "@components/ui/use-toast"
 import { Button } from "@components/ui/button"
-import { userSession } from "@components/stacks-session/connect"
 import { useEffect, useState } from "react"
+import { useAccount, useAuth } from "@micro-stacks/react"
 
 const profileFormSchema = z.object({
   stxaddress: z
@@ -65,6 +65,7 @@ const defaultValues: Partial<ProfileFormValues> = {
 }
 
 export default function ProfileForm() {
+  const { stxAddress } = useAccount()
   const form = useForm<ProfileFormValues>({
     resolver: zodResolver(profileFormSchema),
     defaultValues,
@@ -90,8 +91,8 @@ export default function ProfileForm() {
   const [address, setAddress] = useState("")
 
   useEffect(() => {
-    if (userSession.isUserSignedIn()) {
-      setAddress(userSession.loadUserData().profile.stxAddress.mainnet)
+    if (stxAddress) {
+      setAddress(stxAddress)
     }
   }, [])
 

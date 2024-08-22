@@ -2,7 +2,7 @@
 import { cn } from '@lib/utils';
 import styleUtils from '@components/utils.module.css';
 import styles from './hero.module.css';
-import { BRAND_NAME, DATE, SITE_DESCRIPTION } from '@lib/constants';
+import { BRAND_NAME, DATE, META_DESCRIPTION } from '@lib/constants';
 import Image from 'next/image';
 import charisma from '@public/charisma.png'
 
@@ -18,7 +18,7 @@ export default function Hero() {
           styleUtils['hide-on-tablet'],
         )}
       >
-        {SITE_DESCRIPTION}
+        {META_DESCRIPTION}
       </h2>
       <div className={cn(styles.heroContainer, 'space-x-1')}>
         <Image src={charisma} alt="Logo" width="75" height="75" className={cn(styleUtils.appear, styleUtils['appear-third'])} />{' '}
@@ -36,10 +36,10 @@ export default function Hero() {
           styleUtils['show-on-tablet'],
         )}
       >
-        {SITE_DESCRIPTION}
+        {META_DESCRIPTION}
       </h2>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <p>The largest community-run DAO on Stacks</p>
+        <p>Earn real yield while having fun with your community.</p>
       </div>
     </div>
   );

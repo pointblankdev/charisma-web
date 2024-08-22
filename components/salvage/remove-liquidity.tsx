@@ -7,16 +7,12 @@ import {
   PostConditionMode,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 
 const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { amount: number, address: `${string}.${string}`, metadata: any, indexWeight: number }) => {
   const { doContractCall } = useConnect();
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
-
-  const sender = userSession.loadUserData().profile.stxAddress.mainnet;
+  const sender = ''
 
   const [contractAddress, contractName] = address.split('.');
 
@@ -56,10 +52,6 @@ const RemoveLiquidityFromIndex = ({ amount, address, metadata, indexWeight }: { 
       onFinish: (data) => { console.log("onFinish:", data) },
       onCancel: () => { console.log("onCancel:", "Transaction was canceled") },
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
   }
 
   return (

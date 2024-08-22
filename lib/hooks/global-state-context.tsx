@@ -1,64 +1,76 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { usePersistedState } from './use-persisted-state';
-import { userSession } from '@components/stacks-session/connect';
-import { getClaimableAmount, getCreatureAmount } from '@lib/stacks-api';
+import { getClaimableAmount, getLandAmount } from '@lib/stacks-api';
 import { getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
+import { useAccount } from '@micro-stacks/react';
+import { useToast } from '@components/ui/use-toast';
 
 
 const socketUrl = "https://api.mainnet.hiro.so";
 const sc = new StacksApiSocketClient({ url: socketUrl });
 
 interface GlobalState {
-    creatures: any;
-    setCreatures: (creatures: any) => void;
+    lands: any;
+    setLands: (lands: any) => void;
     block: any;
     setBlock: (block: any) => void;
+    tapped: any;
+    setTapped: (block: any) => void;
 }
 
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [creatures, setCreatures] = usePersistedState('creatures', {});
+    const { stxAddress } = useAccount()
+    const [lands, setLands] = usePersistedState('lands', {});
     const [block, setBlock] = usePersistedState('block', {});
+    const [tapped, setTapped] = usePersistedState('tapped', {});
+
+    const { toast } = useToast()
 
 
-    interface CreatureData {
+    interface LandData {
         amount: number;
         energy: number;
     }
 
-    interface CreatureState {
-        [key: string]: CreatureData;
+    interface LandState {
+        [key: string]: LandData;
     }
 
+    const stakedTokens = [1, 2, 3, 4, 5, 6, 7, 8, 9]
+
 
     useEffect(() => {
-        const CREATURES = ['farmers', 'blacksmiths', 'corgiSoldiers', 'alchemists'];
+        const getLandData = async () => {
+            if (stxAddress) {
 
-        const getCreatureData = async () => {
-            const sender = userSession.isUserSignedIn() && userSession.loadUserData().profile.stxAddress.mainnet;
+                const newLandState: LandState = {};
 
-            const newCreatureState: CreatureState = {};
+                for (const landId of stakedTokens) {
+                    const amount = await getLandAmount(landId, stxAddress);
+                    const energy = await getClaimableAmount(landId, stxAddress);
 
-            let i = 0;
-            for (const creature of CREATURES) {
-                const creatureName = creature;
-                const creatureId = ++i;
-                const amount = await getCreatureAmount(creatureId, sender);
-                const energy = await getClaimableAmount(creatureId, sender);
+                    newLandState[landId] = { amount, energy };
+                }
 
-                newCreatureState[creatureName] = { amount, energy };
+                setLands(newLandState)
             }
-
-            setCreatures(newCreatureState)
         }
-        getCreatureData()
-    }, [setCreatures])
+        getLandData()
+    }, [stxAddress, setLands])
 
     useEffect(() => {
 
-        sc.subscribeBlocks(block => setBlock(block as any));
+        sc.subscribeBlocks(block => {
+            setBlock(block as any)
+            setTapped({})
+            toast({
+                title: "New Block",
+                description: `Stacks block ${block.height} has been mined.`,
+            })
+        });
 
         const getBlockData = async () => {
             const block = await getLatestBlock()
@@ -75,7 +87,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 
     return (
-        <GlobalStateContext.Provider value={{ creatures, setCreatures, block, setBlock }}>
+        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped }}>
             {children}
         </GlobalStateContext.Provider>
     );

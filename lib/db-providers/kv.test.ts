@@ -1,4 +1,4 @@
-import { cacheGlobalState, getContractMetadata, getGlobalState, setContractMetadata } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftMetadata, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -83,5 +83,366 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    it('should get lands', async () => {
+        const response = await getLands()
+        console.log(response)
+    })
+
+    it('should add land', async () => {
+        const response = await addLand('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha')
+        console.log(response)
+    })
+
+    it('should remove land', async () => {
+        const response = await removeLand('SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz')
+        console.log(response)
+    })
+
+    it('should get land bitty', async () => {
+        const response = await getLand('SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kr5skoysg')
+        console.log(response)
+    })
+
+    it('should update welsh land', async () => {
+        const land = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        // land.id = 4
+        // await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', land)
+        console.log(land)
+    })
+
+    it('should update leo land', async () => {
+        const land = await getLand('SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token')
+        // land.whitelisted = true
+        // land.id = 6
+        // await setLand('SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token', land)
+        console.log(land)
+    })
+
+    it('should update fair land', async () => {
+        const land = await getLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve')
+        // land.whitelisted = true
+        // land.id = 7
+        // land.wraps.symbol = 'FAIR'
+        // await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', land)
+        console.log(land)
+    })
+
+    it('should update fam land', async () => {
+        const land = await getLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam')
+        // land.id = 5
+        land.wraps.symbol = 'FAM'
+        // land.wraps.asset = 'TheFellowshipOfTheMeme'
+        // land.wraps.decimals = 6
+        // land.wraps.totalSupply = 2100000000000
+        // land.attributes[0].value = 2100000000000 / 1000000
+        // land.whitelisted = true
+        await setLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam', land)
+        console.log(land)
+    })
+
+    it('should get fair land', async () => {
+        const response = await getLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve')
+        response.wraps.asset = 'FAIR'
+        await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', response)
+        console.log(response)
+    })
+
+    it('should update land 5', async () => {
+        const contract = 'SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kr5skoysg'
+        const land = await getLand(contract)
+        land.cardImage = 'https://i.ibb.co/wczPttp/2da1e0b934a1166f76cf6ba42ecb4b24.jpg'
+        console.log(land)
+        await setLand(contract, land)
+    })
+
+    it('should update edel land', async () => {
+        const contract = 'SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.edelcoin'
+        const land = await getLand(contract)
+        land.cardImage = 'https://charisma.rocks/lands/img/card/edel.png'
+        console.log(land)
+        await setLand(contract, land)
+    })
+
+    it('should update stx-wcha land', async () => {
+        const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha'
+        const land = await getLand(contract)
+        land.proposal = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.list-stxwcha-velar-lp'
+        console.log(land)
+        await setLand(contract, land)
+    })
+
+    it('should make a copy of stx-scha land', async () => {
+        const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
+        const land = await getLand(contract)
+        land.name = 'STX-wCHA - Velar LP'
+        land.image = 'https://charisma.rocks/lands/img/stx-wcha-lp-icon.png'
+        land.cardImage = 'https://charisma.rocks/lands/img/card/stx-wcha-lp.png'
+        land.proposal = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.list-stx-wcha-velar-lp'
+        land.whitelisted = false
+        land.wraps = {
+            ca: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
+            name: 'STX-wCHA - Velar LP',
+            description: 'Support Charisma by staking LP tokens',
+            image: 'https://charisma.rocks/lands/img/stx-wcha-lp-icon.png',
+            asset: 'lp-token',
+            decimals: 6
+        }
+        console.log(land)
+        await setLand('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha', land)
+    })
+
+    it('should set welsh land whitelisted', async () => {
+        const response = await setLandWhitelisted('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', false)
+        console.log(response)
+    })
+
+    it('should set land 1 data into db', async () => {
+        const id = 1
+        const name = "Liquid Staked Charisma"
+        const image = "https://charisma.rocks/liquid-staked-charisma.png"
+        const cardImage = "https://charisma.rocks/liquid-charisma-21.png"
+        const description = "Charisma ecosystem rebase token"
+        const contractAddress = "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma"
+        const assetIdentifier = "liquid-staked-token"
+        const symbol = "sCHA"
+        const decimals = 6
+        const totalSupply = 2777401042359
+        const difficulty = 1000000
+        const proposalName = `pool-proposal-${name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")}`
+        const response = await setLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', {
+            sip: 16,
+            id: id,
+            name: name,
+            image: image,
+            cardImage: cardImage,
+            description: {
+                type: "string",
+                description: description
+            },
+            proposal: proposalName,
+            whitelisted: true,
+            wraps: {
+                ca: contractAddress,
+                name: name,
+                description: description,
+                image: image,
+                asset: assetIdentifier,
+                symbol: symbol,
+                decimals: Number(decimals),
+                totalSupply: Number(totalSupply)
+            },
+            attributes: [
+                {
+                    trait_type: "difficulty",
+                    display_type: "number",
+                    value: difficulty
+                }
+            ],
+            properties: {
+                collection: "Charisma Lands",
+                collection_image: "https://charisma.rocks/lands/img/lands.jpg",
+                category: "image",
+                symbol: "LAND",
+                decimals: 6
+            }
+        })
+        console.log(response)
+    })
+
+    it('should set land 8 data into db', async () => {
+        const id = 8
+        const name = "Edmund Fitzgerald Coin"
+        const image = "https://edmund-fitzgerald-coin.notion.site/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F6b0ac1c0-4974-4204-830a-82830a622dc5%2Fa1fd1d53-47fe-4fa3-bf65-0126b4af88a1%2Fedmund.png?table=block&id=5548e486-8a78-4408-9866-a6a306d35613&spaceId=6b0ac1c0-4974-4204-830a-82830a622dc5&width=480&userId=&cache=v2"
+        const cardImage = "https://charisma.rocks/lands/img/card/edmund.png"
+        const description = "The legend lives on from the Chippewa on down"
+        const contractAddress = "SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin"
+        const assetIdentifier = "EDMUND"
+        const symbol = "EDMUND"
+        const decimals = 6
+        const totalSupply = 11101975290000
+        const difficulty = 111019753
+        const proposalName = `SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.list-edmund-fitzgerald-coin`
+        const response = await setLand('SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin', {
+            sip: 16,
+            id: id,
+            name: name,
+            image: image,
+            cardImage: cardImage,
+            description: {
+                type: "string",
+                description: description
+            },
+            proposal: proposalName,
+            whitelisted: false,
+            wraps: {
+                ca: contractAddress,
+                name: name,
+                description: description,
+                image: image,
+                asset: assetIdentifier,
+                symbol: symbol,
+                decimals: Number(decimals),
+                totalSupply: Number(totalSupply)
+            },
+            attributes: [
+                {
+                    trait_type: "difficulty",
+                    display_type: "number",
+                    value: difficulty
+                }
+            ],
+            properties: {
+                collection: "Charisma Lands",
+                collection_image: "https://charisma.rocks/lands/img/lands.jpg",
+                category: "image",
+                symbol: "LAND",
+                decimals: 6
+            }
+        })
+        console.log(response)
+        // await addLand('SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin')
+    })
+
+    it('should update land by id', async () => {
+        const land = await getLand('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        const response = await setLandById(1, land)
+        console.log(response)
+    })
+
+    it('should set welsh land metadata into db', async () => {
+        const response = await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', {
+            sip: 16,
+            name: 'Welshcorgicoin',
+            image: 'https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png',
+            cardImage: 'https://charisma.rocks/liquid-welsh-21.png',
+            description: { type: 'string', description: 'The first memecoin on Stacks' },
+            whitelisted: false,
+            wraps: {
+                ca: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
+                name: 'Welshcorgicoin',
+                description: 'The first memecoin on Stacks',
+                image: 'https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png',
+                asset: 'welshcorgicoin',
+                symbol: 'WELSH',
+                decimals: 6,
+                totalSupply: 10000000000000000
+            },
+            attributes: [
+                {
+                    trait_type: 'difficulty',
+                    display_type: 'number',
+                    value: 10000000000
+                }
+            ],
+            properties: {
+                collection: 'Charisma Lands',
+                collection_image: 'https://charisma.rocks/lands/img/lands.jpg',
+                category: 'image',
+                symbol: 'LAND',
+                decimals: 6
+            }
+        })
+        console.log(response)
+    })
+
+    it('should update welsh land', async () => {
+        const land = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
+        land.proposal = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pool-proposal-welshcorgicoin'
+        const response = await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', land)
+        console.log(response)
+    })
+
+    // delete experience leaderboard
+    it('should delete experience lb', async () => {
+        const response = await clearLeaderboard()
+        console.log(response)
+    })
+
+    // delete rewards leaderboard
+    it('should delete cha rewards lb', async () => {
+        const response = await clearRewardsLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma')
+        console.log(response)
+    })
+
+    // get experience holders
+    it('should get experience holders', async () => {
+        const response = await getExperienceLeaderboard(0, -1)
+        console.log(response)
+    })
+
+    it('should get hogger', async () => {
+        const hogger = await getMob('hogger')
+        console.log(hogger)
+    })
+
+    it('should update hogger health', async () => {
+        const hogger = await getMob('hogger')
+        hogger.health = 0
+        // hogger.maxHealth = 5900000
+        const response = await setMob('hogger', hogger)
+        console.log(response)
+    })
+
+    it('should set hogger', async () => {
+        const response = await setMob('hogger', {
+            level: 5,
+            health: 1005059,
+            maxHealth: 1700000,
+            regenRate: 50
+        })
+        console.log(response)
+    })
+
+    // should get lands balance
+    it('should get lands balance', async () => {
+        const response = await getLandsBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(response)
+    })
+
+    // should get lands balance
+    it('should get welsh lands balance', async () => {
+        const response = await getLandsBalance('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(response)
+    })
+
+
 
 });
+
+
+describe('nfts api', () => {
+    // should get nft collection metadata
+    it('should get nft collection metadata', async () => {
+        const response = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls')
+        console.log(JSON.stringify(response, null, 2))
+    })
+
+    // should get nft item
+    it('should get nft item metadata', async () => {
+        const response = await getNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', '1')
+        console.log(JSON.stringify(response, null, 2))
+    })
+
+    it('should update nft collection metadata (mooning-sharks)', async () => {
+        const data = await getNftCollectionMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks')
+        data.properties.minted = 20
+        await setNftCollectionMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks', data)
+        console.log(JSON.stringify(data, null, 2))
+    })
+
+    it('should update nft collection metadata (spell-scrolls)', async () => {
+        const data = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls')
+        data.properties.minted = 32
+        // data.properties.items[0].image_url = 'https://charisma.rocks/quests/spell-scroll/fire-bolt-icon.png'
+        await setNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', data)
+        console.log(JSON.stringify(data, null, 2))
+    })
+
+    it('should update nft collection metadata (kraqen-lotto)', async () => {
+        const data = await getNftCollectionMetadata('SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto')
+        data.properties.minted = 30
+        // data.properties.items[0].image_url = 'https://charisma.rocks/quests/spell-scroll/fire-bolt-icon.png'
+        await setNftCollectionMetadata('SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto', data)
+        console.log(JSON.stringify(data, null, 2))
+    })
+})

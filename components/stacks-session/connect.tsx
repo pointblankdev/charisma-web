@@ -1,137 +1,61 @@
-import React, { useEffect, useState } from "react";
-import { AppConfig, showConnect, UserSession } from "@stacks/connect-react";
+import React, { useEffect } from "react";
 import styles from './index.module.css';
 import { cn } from '@lib/utils';
 import { Button } from "@components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,
-  NavigationMenuIndicator,
   NavigationMenuItem,
-  NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
-  NavigationMenuViewport,
 } from "@components/ui/navigation-menu"
-import Link from "next/link";
-import { BiSolidUserPin } from "react-icons/bi";
-import Image from "next/image";
-import charisma from "@public/quests/a1.png";
-
-export const appConfig = new AppConfig(["store_write", "publish_data"]);
-
-export const userSession = new UserSession({ appConfig });
-
-export const appDetails = {
-  name: "Charisma",
-  icon: "https://charisma.rocks/charisma.png",
-};
-
-function authenticate() {
-  showConnect({
-    appDetails,
-    redirectTo: "/",
-    onFinish: () => {
-      window.location.reload();
-    },
-    userSession,
-  });
-}
-
-function disconnect() {
-  userSession.signUserOut("/");
-}
+import { useAccount, useAuth } from '@micro-stacks/react';
+import ListItem from "./list-item";
 
 const ConnectWallet = () => {
-  const [mounted, setMounted] = useState(false);
-  const [address, setAddress] = useState('');
-  useEffect(() => {
-    setMounted(true)
-    if (userSession.isUserSignedIn()) {
-      setAddress(`${userSession.loadUserData().profile.stxAddress.mainnet.slice(0, 4)}...${userSession.loadUserData().profile.stxAddress.mainnet.slice(-4)}`)
-    }
-  }, []);
+  const { openAuthRequest, isRequestPending, signOut, isSignedIn } = useAuth();
+  const { stxAddress } = useAccount();
 
-  if (mounted && userSession.isUserSignedIn()) {
-    return (
-      <NavigationMenu className="hidden sm:block">
-        <NavigationMenuList>
-          <NavigationMenuItem>
-            <NavigationMenuTrigger>{address}</NavigationMenuTrigger>
-            <NavigationMenuContent>
-              <ul className="grid gap-3 p-6 md:w-[400px] lg:w-[500px] lg:grid-cols-[.75fr_1fr]">
-                <li className="row-span-3 relative overflow-hidden rounded-md">
-                  <NavigationMenuLink asChild className="z-20 absolute inset-0">
-                    <Link
-                      className="flex h-full w-full select-none flex-col justify-end bg-gradient-to-b from-accent-foreground/25 to-black/90 p-6 no-underline outline-none focus:shadow-md"
-                      href="/portfolio"
-                    >
-                      <BiSolidUserPin className="h-6 w-6" />
-                      <div className="mb-2 mt-4 text-lg font-medium">
-                        {address}
-                      </div>
-                      <p className="text-sm leading-tight text-muted-foreground">
-                        View and manage your Charisma tokens.
-                      </p>
-                    </Link>
-                  </NavigationMenuLink>
-                  <Image
-                    src={charisma}
-                    height={1200}
-                    width={600}
-                    alt='profile background'
-                    className={cn("w-full object-cover transition-all", "aspect-[1/2]", 'flex', 'z - 0', 'absolute', 'inset-0')}
-                  />
-                </li>
-                <ListItem href="/faucet" title="Faucet">
-                  Collect Charisma tokens from the faucet. Supply increases every block.
-                </ListItem>
-                <ListItem href="/governance" title="Governance">
-                  Participate in governance proposals and voting for the Charisma token.
-                </ListItem>
-                <ListItem title="Sign Out" onClick={disconnect} className="cursor-pointer">
-                  Securely disconnect your wallet.
-                </ListItem>
-              </ul>
-            </NavigationMenuContent>
-          </NavigationMenuItem>
-        </NavigationMenuList>
-      </NavigationMenu>
-    );
+  const shortAddress = `${stxAddress?.slice(0, 4)}...${stxAddress?.slice(-4)}`
+
+  const handleConnect = async () => {
+    if (isSignedIn) await signOut();
+    else await openAuthRequest();
   }
+  const label = isRequestPending ? 'Loading...' : isSignedIn ? shortAddress : 'Connect';
+
+  const [isClientSide, setIsClientSide] = React.useState(false);
+
+  useEffect(() => {
+    setIsClientSide(true)
+  }, [])
 
   return (
-    <Button onClick={authenticate} id="cta-btn" className={cn(styles['cta-btn'], 'whitespace-nowrap', 'w-full')}>
-      Connect Wallet
-    </Button>
+    <NavigationMenu className="hidden sm:block">
+      <NavigationMenuList>
+        <NavigationMenuItem>
+          <NavigationMenuTrigger>
+            <div onClick={handleConnect}>
+              {isClientSide && label}
+            </div>
+          </NavigationMenuTrigger>
+          {isSignedIn && <NavigationMenuContent>
+            <ul className="grid gap-3 p-6 md:w-[400px]">
+              <ListItem href="/portfolio" title="Portfolio">
+                View your Charisma supported token balances.
+              </ListItem>
+              <ListItem href="/governance" title="Governance">
+                Vote on DAO proposals using the Charisma token.
+              </ListItem>
+              <ListItem title="Sign Out" onClick={() => signOut()} className="cursor-pointer">
+                Securely disconnect your wallet.
+              </ListItem>
+            </ul>
+          </NavigationMenuContent>}
+        </NavigationMenuItem>
+      </NavigationMenuList>
+    </NavigationMenu>
   );
 };
 
 export default ConnectWallet;
-
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <Link
-          href="#"
-          ref={ref}
-          className={cn(
-            "text-foreground block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </Link>
-      </NavigationMenuLink>
-    </li>
-  )
-})
-ListItem.displayName = "ListItem"

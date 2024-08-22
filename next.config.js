@@ -43,6 +43,11 @@ module.exports = {
         destination: '/apps/title-fight',
         permanent: true,
       },
+      {
+        source: '/lands/json/:path*',
+        destination: '/api/v0/lands/id/:path*',
+        permanent: true,
+      },
     ]
   },
   experimental: {

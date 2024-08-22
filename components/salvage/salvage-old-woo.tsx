@@ -8,18 +8,14 @@ import {
   principalCV,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet, { userSession } from "../stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
 
 const SalvageOldWoo = ({ amount }: { amount: number }) => {
   const { doContractCall } = useConnect();
 
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => { setMounted(true) }, []);
-
   function salvage() {
-    const sender = userSession.loadUserData().profile.stxAddress.mainnet
+    const sender = ''
     doContractCall({
       network: new StacksMainnet(),
       anchorMode: AnchorMode.Any,
@@ -40,10 +36,6 @@ const SalvageOldWoo = ({ amount }: { amount: number }) => {
         console.log("onCancel:", "Transaction was canceled");
       },
     });
-  }
-
-  if (!mounted || !userSession.isUserSignedIn()) {
-    return <ConnectWallet />;
   }
 
   return (

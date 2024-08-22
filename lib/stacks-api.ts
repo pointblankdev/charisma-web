@@ -28,8 +28,9 @@ import { getAllWallets } from './cms-providers/dato';
 import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
 import { bytesToHex, hexToInt, intToHex, utf8ToBytes } from '@stacks/common';
-import { getLatestBlock } from './user-api';
-import { getGlobalState } from './db-providers/kv';
+import { getLatestBlock, HOST } from './user-api';
+import { getGlobalState, getMob, setMob } from './db-providers/kv';
+import { get } from 'lodash';
 
 const network = new StacksMainnet();
 
@@ -282,7 +283,7 @@ export function updateVoteData(proposals: any[], transactions: any[]) {
         }
       }
     } catch (error) {
-      console.log('Error updating vote data', error);
+      console.log('Error updating vote data: ', error);
     }
   });
 
@@ -294,47 +295,69 @@ export async function getProposals() {
   const block = await getGlobalState(`blocks:latest`)
   const latestBlock = block.height
 
-  const accountsResp: any = await accountsApi.getAccountTransactionsWithTransfers({
-    principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
-    limit: 50
-  });
+  const limit = 50;
+  let offset = 0;
+  const accountsResp: any[] = [];
+
+  while (true) {
+    const resp: any = await accountsApi.getAccountTransactionsWithTransfers({
+      principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
+      limit: limit,
+      offset: offset
+    });
+
+    if (!resp.results || resp.results.length === 0) {
+      break; // exit the loop if there are no more results
+    }
+
+    accountsResp.push(...resp.results);
+    offset += limit; // increment the offset for the next page
+  }
 
   const proposals: any[] = [];
 
-  for (const r of accountsResp.results) {
+  for (const r of accountsResp) {
+    // only process successful proposal submissions
+    if (r.tx?.contract_call?.function_name !== 'propose') continue;
     if (r.tx.tx_status !== 'success') continue;
-    const args = r.tx.contract_call?.function_args;
-    if (args) {
-      const startBlockHeight = Number(args[1].repr.slice(1));
-      const endBlockHeight = startBlockHeight + 1000; // update 1000 to use the parameter from the contract
-      let status = '';
-      if (latestBlock < startBlockHeight) {
-        status = 'Pending';
-      } else if (latestBlock < endBlockHeight) {
-        status = 'Voting Active';
-      } else {
-        status = 'Voting Ended';
+
+    try {
+      const args = r.tx.contract_call?.function_args;
+      if (args) {
+        const startBlockHeight = Number(args[1].repr.slice(1));
+        const endBlockHeight = startBlockHeight + 1000; // update 1000 to use the parameter from the contract
+        let status = '';
+        if (latestBlock < startBlockHeight) {
+          status = 'Pending';
+        } else if (latestBlock < endBlockHeight) {
+          status = 'Voting Active';
+        } else {
+          status = 'Voting Ended';
+        }
+
+        const [contractAddress, contractName] = args[0].repr.slice(1).split('.');
+
+        const proposalSourceResp: any = await scApi.getContractSource({
+          contractAddress,
+          contractName
+        });
+
+        const contractPrincipal = `${contractAddress}.${contractName}`;
+        proposals.push({
+          id: args[0].repr.split('.')[1],
+          name: contractPrincipal,
+          source: proposalSourceResp.source,
+          startBlockHeight,
+          endBlockHeight: endBlockHeight,
+          amount: 0,
+          against: 0,
+          status,
+          url: `https://explorer.hiro.so/txid/${contractPrincipal}?chain=mainnet`
+        });
       }
 
-      const [contractAddress, contractName] = args[0].repr.slice(1).split('.');
-
-      const proposalSourceResp: any = await scApi.getContractSource({
-        contractAddress,
-        contractName
-      });
-
-      const contractPrincipal = `${contractAddress}.${contractName}`;
-      proposals.push({
-        id: args[0].repr.split('.')[1],
-        name: contractPrincipal,
-        source: proposalSourceResp.source,
-        startBlockHeight,
-        endBlockHeight: endBlockHeight,
-        amount: 0,
-        against: 0,
-        status,
-        url: `https://explorer.hiro.so/txid/${contractPrincipal}?chain=mainnet`
-      });
+    } catch (error) {
+      console.error(error)
     }
   }
   return proposals;
@@ -581,19 +604,23 @@ export async function getStakedTokenExchangeRate(contract: string) {
   return cvToJSON(response).value;
 }
 
-export async function getFenrirBalance(contract: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: contract,
+export async function getTokenBalance(contract: string, user: string) {
+  const [address, name] = contract.split('.');
+  const response: any = await scApi.callReadOnlyFunction({
+    contractAddress: address,
+    contractName: name,
     functionName: 'get-balance',
-    functionArgs: [
-      principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fenrir-corgi-of-ragnarok')
-    ],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    readOnlyFunctionArgs: {
+      sender: address,
+      arguments: [
+        cvToHex(parseToCV(String(user), 'principal'))
+      ]
+    }
   });
 
-  return cvToJSON(response);
+  const result = hexToCV(response.result);
+  const cv = cvToJSON(result).value.value;
+  return Number(cv);
 }
 
 export async function getDeployedIndexes() {
@@ -604,6 +631,7 @@ export async function getDeployedIndexes() {
 }
 
 export async function getTokenURI(contract: string) {
+
   const [address, name] = contract.split('.');
 
   const response: any = await scApi.callReadOnlyFunction({
@@ -619,8 +647,11 @@ export async function getTokenURI(contract: string) {
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
   const tokenUri = cv.value.value.value
-  const metadata = await (await fetch(tokenUri)).json();
-  return metadata;
+  // console.log(tokenUri)
+  const corsProxy = 'https://corsproxy.io/?';
+  const res = await fetch(`${corsProxy}${tokenUri}`);
+  const metadata = await res.json();
+  return metadata
 }
 
 export async function getNftURI(contract: string, tokenId: number) {
@@ -644,7 +675,6 @@ export async function getNftURI(contract: string, tokenId: number) {
     const cv = cvToJSON(result);
     const url = cv.value.value.value.replace('{id}', tokenId)
     const metadata = await (await fetch(url)).json();
-    console.log(metadata)
     return metadata;
 
   } catch (error) {
@@ -808,6 +838,12 @@ export async function getTotalInPool(contract: string) {
     });
   }
 
+  const valueOut = (value: any) => {
+    const cv = hexToCV(value.result);
+    const json = cvToJSON(cv);
+    return json.value?.value || json.value;
+  };
+
   return Number(valueOut(response));
 }
 
@@ -896,12 +932,48 @@ export async function getCraftingRewards(contract: string) {
   return cvToJSON(response);
 }
 
+export async function getIsWhitelisted(contract: string) {
+  const response: any = await callReadOnlyFunction({
+    network: new StacksMainnet(),
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'lands',
+    functionName: 'is-whitelisted',
+    functionArgs: [principalCV(contract)],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+  });
+
+  return cvToJSON(response).value;
+}
+
 export async function getContractSource({ contractAddress, contractName }: any) {
   const proposalSourceResp = await scApi.getContractSource({ contractAddress, contractName });
   return proposalSourceResp;
 }
 
-export async function getArbitrageTxsFromMempool(contractAddress: string) {
+export async function checkIfEpochIsEnding(contractAddress: string) {
+  const [address, name] = contractAddress.split('.');
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: address,
+    contractName: name,
+    functionName: 'get-epoch-info',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: []
+    }
+  });
+  const result = hexToCV((response as any).result);
+  const epochInfo = cvToJSON(result).value.value;
+  console.log('Epoch Info: ', epochInfo);
+  const mob = await getMob('hogger');
+  mob.hoggerDefeatBlock = Number(epochInfo['hogger-defeat-block'].value)
+  mob.canStartNewEpoch = epochInfo['can-start-new-epoch'].value
+  if (mob.canStartNewEpoch) mob.health = Number(mob.maxHealth)
+  console.log('Mob: ', mob);
+  await setMob('hogger', mob);
+  return epochInfo
+}
+
+export async function getTxsFromMempool(contractAddress: string) {
   let offset = 0;
   const limit = 50;
   const transactions: any[] = [];
@@ -923,6 +995,87 @@ export async function getArbitrageTxsFromMempool(contractAddress: string) {
     offset += limit; // increment the offset for the next page
   }
   return transactions;
+}
+
+export async function tryCallContractPublicFunction({ seedPhrase, password, publicAddress, contractAddress, functionName, fee, nonce, args }: any) {
+  const txsInMempool = await getTxsFromMempool(contractAddress);
+
+  const isInMempool = txsInMempool.some((tx: any) => tx.contract_call.function_name === functionName && tx.sender_address === publicAddress);
+
+  if (!isInMempool) {
+
+    const wallet = await generateWallet({ secretKey: seedPhrase, password });
+
+    const account = wallet.accounts[0];
+
+    const txOptions = {
+      contractAddress: contractAddress.split('.')[0],
+      contractName: contractAddress.split('.')[1],
+      functionName: functionName,
+      functionArgs: args || [],
+      senderKey: account.stxPrivateKey,
+      network,
+      postConditionMode: PostConditionMode.Allow
+    } as any;
+
+    if (nonce) {
+      txOptions.nonce = nonce;
+    }
+
+    // set a tx fee if you don't want the builder to estimate
+    if (fee) {
+      txOptions.fee = fee;
+    }
+
+    // console.log(txOptions)
+
+    const transaction = await makeContractCall(txOptions);
+
+    const broadcastResponse = await broadcastTransaction(transaction, network);
+
+    return broadcastResponse;
+  } else {
+    return 'Transaction already in mempool';
+  }
+
+}
+
+export async function callContractPublicFunction({ address, functionName, fee, nonce, args }: any) {
+  // reset the epoch so that state can be updated
+  const password = String(process.env.STACKS_ORACLE_PASSWORD);
+  const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY);
+
+  const wallet = await generateWallet({ secretKey, password });
+
+  const account = wallet.accounts[0];
+
+  const txOptions = {
+    contractAddress: address.split('.')[0],
+    contractName: address.split('.')[1],
+    functionName: functionName,
+    functionArgs: args || [],
+    senderKey: account.stxPrivateKey,
+    network,
+    postConditionMode: PostConditionMode.Allow
+  } as any;
+
+  if (nonce) {
+    txOptions.nonce = nonce;
+  }
+
+  // set a tx fee if you don't want the builder to estimate
+  if (fee) {
+    txOptions.fee = fee;
+  }
+
+  // console.log(txOptions)
+
+  const transaction = await makeContractCall(txOptions);
+
+  const broadcastResponse = await broadcastTransaction(transaction, network);
+
+  return broadcastResponse;
+
 }
 
 export async function executeArbitrageStrategy({ address, functionName, fee, nonce, args }: any) {
@@ -1006,10 +1159,10 @@ export async function getCreatureCost(
   return Number(cvToJSON(response).value);
 }
 
-export async function getCreatureAmount(creatureId: number, sender: string) {
+export async function getLandAmount(creatureId: number, sender: string) {
   const response = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'creatures-core',
+    contractName: 'lands',
     functionName: 'get-balance',
     readOnlyFunctionArgs: {
       sender: sender,
@@ -1052,15 +1205,15 @@ export async function getCreaturePower(
   return Number(cvToJSON(result).value);
 }
 
-export async function getClaimableAmount(creatureId: number, sender: string) {
+export async function getClaimableAmount(landId: number, sender: string) {
   const response = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'creatures-kit',
+    contractName: 'lands',
     functionName: 'get-untapped-amount',
     readOnlyFunctionArgs: {
       sender: sender,
       arguments: [
-        cvToHex(parseToCV(String(creatureId), 'uint128')),
+        cvToHex(parseToCV(String(landId), 'uint128')),
         cvToHex(parseToCV(sender, 'principal'))
       ]
     }
@@ -1069,8 +1222,53 @@ export async function getClaimableAmount(creatureId: number, sender: string) {
   return Number(cvToJSON(result).value.value);
 }
 
-const valueOut = (value: any) => {
-  const cv = hexToCV(value.result);
-  const json = cvToJSON(cv);
-  return json.value?.value || json.value;
-};
+export async function hasPercentageBalance(contract: string, who: string, factor: number) {
+  const [address, name] = contract.split('.');
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: address,
+    contractName: name,
+    functionName: 'has-percentage-balance',
+    readOnlyFunctionArgs: {
+      sender: who,
+      arguments: [
+        cvToHex(parseToCV(who, 'principal')),
+        cvToHex(parseToCV(String(factor), 'uint128'))
+      ]
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return cvToJSON(result).value.value;
+}
+
+export async function getLandBalance(landId: number, sender: string) {
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'lands',
+    functionName: 'get-balance',
+    readOnlyFunctionArgs: {
+      sender: sender,
+      arguments: [
+        cvToHex(parseToCV(String(landId), 'uint128')),
+        cvToHex(parseToCV(sender, 'principal'))
+      ]
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return Number(cvToJSON(result).value.value);
+}
+
+// get land id from contract address
+export async function getLandId(contractAddress: string) {
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'lands',
+    functionName: 'get-land-id',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: [
+        cvToHex(parseToCV(contractAddress, 'principal'))]
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return Number(cvToJSON(result).value.value);
+}

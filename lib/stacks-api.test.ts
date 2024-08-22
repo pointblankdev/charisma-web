@@ -1,9 +1,10 @@
-import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, uintCV } from "@stacks/transactions";
+import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, TransactionVersion, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
-import { generateWallet } from "@stacks/wallet-sdk";
-import { checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getArbitrageTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, setQuestComplete } from "./stacks-api";
+import { generateSecretKey, generateWallet, getStxAddress } from "@stacks/wallet-sdk";
+import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
+import { tryResetEpochs } from "./try-reset-epochs";
 
 const network = new StacksMainnet();
 
@@ -190,7 +191,7 @@ describe('Stacks API', () => {
     }, 20000)
 
     it('should get arbitrage txs from mempool', async () => {
-        const result = await getArbitrageTxsFromMempool('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router')
+        const result = await getTxsFromMempool('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-router')
         console.log(JSON.stringify(result, null, 4))
         // console.log(result.map(r => JSON.stringify(r.post_conditions)))
         expect(result).toBeDefined()
@@ -228,6 +229,82 @@ describe('Stacks API', () => {
         const result = await getNftURI('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven', 9)
         console.log(result)
         expect(result).toBeDefined()
+    })
+
+    it('should get token balance', async () => {
+        const result = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    it('should get bns name', async () => {
+        const result = await getNameFromAddress('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    it('should get if has 1% percentage balance', async () => {
+        const result = await hasPercentageBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 100000)
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    // checkIfEpochIsEnding
+    it('should check if epoch is ending', async () => {
+        const result = await checkIfEpochIsEnding('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    // getTxsFromMempool
+    it('should get txs from mempool', async () => {
+        const result = await getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    //tryResetEpochs
+    it('should try reset epochs', async () => {
+        const result = await tryResetEpochs([{
+            address: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2",
+            function: "start-new-epoch",
+            args: []
+        }])
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    it('should generate a seed phrase', () => {
+        const secretKey128 = generateSecretKey(128);
+        console.log(secretKey128)
+        expect(secretKey128).toBeDefined()
+    })
+
+    it('should generate a wallet', async () => {
+        const secretKey128 = ''
+        const wallet = await generateWallet({
+            secretKey: secretKey128,
+            password: '',
+        });
+        // get an account from the user's wallet
+        const account = wallet.accounts[0];
+        const mainnetAddress = getStxAddress({ account, transactionVersion: TransactionVersion.Mainnet });
+        console.log(mainnetAddress)
+        expect(mainnetAddress).toBeDefined()
+    })
+
+    // should get land balance
+    it('should get land balance', async () => {
+        const result = await getLandBalance(4, 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    // should get land id
+    it('should get land id', async () => {
+        const result = await getLandId('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
+        console.log(result)
+        expect(result).toEqual(1)
     })
 
 })

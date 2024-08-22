@@ -7,7 +7,6 @@ import {
   CardHeader,
   CardTitle
 } from '@components/ui/card';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import Image from 'next/image';
 import {
   Table,
@@ -36,6 +35,7 @@ import { GetServerSideProps } from 'next';
 import millify from 'millify';
 import { isEmpty } from 'lodash';
 import numeral from 'numeral';
+import useWallet from '@lib/hooks/wallet-balance-provider';
 
 const tokenList = [
   {
@@ -209,7 +209,7 @@ function TokenBalances({ data }: Props) {
     const factor = token.proxy ? token.proxy.factor : 1;
     const balance = getBalanceByKey(`${token.address}::${token.ft}`)
     const tokenData = tokens.find((t: any) => t.contractAddress === address);
-    const amount = balance?.balance / (Math.pow(10, token.decimals) || 1);
+    const amount = balance / (Math.pow(10, token.decimals) || 1);
     const totalValueUSD = amount * Number(tokenData.price || 0) * factor;
 
     return {
