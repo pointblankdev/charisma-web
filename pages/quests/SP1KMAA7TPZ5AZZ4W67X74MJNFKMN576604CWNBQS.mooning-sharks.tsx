@@ -221,12 +221,12 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                 </Button>
               </Link>
 
-              {!isMintedOut &&
+              {!isMintedOut && stxAddress &&
                 <TokenSelectDialog
                   lands={lands}
                   contractId={'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'}
                   buttonText={'Complete Quest'}
-                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress!, FungibleConditionCode.LessEqual, 4000000)]}
+                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000)]}
                 />
               }
             </CardFooter>

@@ -235,11 +235,11 @@ export default function KrakenLotto({ lands, nftCollectionMetadata }: Props) {
                 </Button>
               </Link>
 
-              {!isMintedOut &&
+              {!isMintedOut && stxAddress &&
                 <TokenSelectDialog
                   lands={lands}
                   contractId={'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto'}
-                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress!, FungibleConditionCode.LessEqual, 4000000)]}
+                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000)]}
                 />
               }
             </CardFooter>
