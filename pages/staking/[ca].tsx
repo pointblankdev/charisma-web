@@ -86,8 +86,6 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
   const landTokenBalance = landBalance
   const baseTokenBalance = getBalanceByKey(`${metadata.wraps.ca}::${metadata.wraps.asset}`)
 
-  console.log(landTokenBalance, baseTokenBalance)
-
   // if using the burn token, reduce the max by exp * burn-factor (1000) to prevent not having enough tokens to pay the burn fee
   const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
   const isUsingBurnToken = metadata.wraps.ca === burnTokenContract
