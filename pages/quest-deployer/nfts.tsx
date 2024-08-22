@@ -25,11 +25,12 @@ const proposalFormSchema = z.object({
     collectionImage: z.string().url("Must be a valid URL"),
     energyRequired: z.coerce.number().min(1, "Amount must be at least 1"),
     nftName: z.string(),
+    stxPerMint: z.coerce.number().min(0.000001, "Amount must be at least 0.000001"),
 })
 
 type ProposalFormValues = z.infer<typeof proposalFormSchema>
 
-const generateTemplate = ({ contractAddress, totalSupply, stxAddress, description, energyRequired, nftName }: ProposalFormValues) => {
+const generateTemplate = ({ contractAddress, totalSupply, stxAddress, description, energyRequired, nftName, stxPerMint }: ProposalFormValues) => {
     // Your template generation logic here
     return `;; Description:
 ;; ${description}
@@ -46,10 +47,10 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
 ;; Define constants
 (define-constant COLLECTION_LIMIT u${totalSupply}) ;; Limit to series of ${totalSupply}
 (define-constant ENERGY_PER_NFT u${energyRequired}) ;; ${energyRequired} energy per NFT
-(define-constant STX_PER_MINT u1000000) ;; 1 STX per MINT for DAO
+(define-constant STX_PER_MINT u${stxPerMint * 1000000}) ;; 1 STX per MINT for DAO
 (define-constant MAX_NFTS_PER_TX u4) ;; Maximum 4 NFTs per transaction
 (define-constant OWNER '${stxAddress}) ;; Collection creator
-(define-constant CHA_AMOUNT u5000000) ;; 5 CHA per mint to creator
+(define-constant CHA_AMOUNT (* u5 STX_PER_MINT)) ;; 5 CHA per mint to creator
 
 (define-constant ERR_UNAUTHORIZED (err u100))
 (define-constant ERR_NOT_TOKEN_OWNER (err u101))
@@ -445,27 +446,27 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                                 name={`energyRequired`}
                                 render={({ field }) => (
                                     <FormItem className="flex-grow">
-                                        <FormLabel>Energy Required per NFT Minted</FormLabel>
+                                        <FormLabel>Energy Required to Mint</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={"10000"} type="number" {...field} />
+                                            <Input placeholder={"1000"} type="number" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
                                 )}
                             />
-                            {/* <FormField
-                                    control={form.control}
-                                    name={`nftItems.${index}.amount`}
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Amount</FormLabel>
-                                            <FormControl>
-                                                <Input placeholder={'100'} type="number" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                /> */}
+                            <FormField
+                                control={form.control}
+                                name={`stxPerMint`}
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Cost to Mint (STX)</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder={'0.1 STX'} type="number" {...field} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
                         </div>
                     </div>
                     {/* <Button variant={'secondary'} type="button" onClick={() => append({ itemName: '', amount: 0, itemImage: '' })}>
