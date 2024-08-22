@@ -123,14 +123,16 @@ export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPl
                         </div>
                         {/* button placeholder */}
                     </div>
-                    <Tabs defaultValue="1" className="">
-                        <TabsList>
-                            <TabsTrigger value="1">Experience</TabsTrigger>
-                            <TabsTrigger value="2">Rewards</TabsTrigger>
-                            <TabsTrigger value="3">Stake-to-Earn TVL</TabsTrigger>
-                            <TabsTrigger value="4">Stake-to-Earn Energy Output</TabsTrigger>
-                            <TabsTrigger value="5">Staked % of Total Supply</TabsTrigger>
-                        </TabsList>
+                    <Tabs defaultValue="1" className="w-full">
+                        <div className="overflow-x-auto">
+                            <TabsList className="inline-flex space-x-4">
+                                <TabsTrigger value="1">Experience</TabsTrigger>
+                                <TabsTrigger value="2">Rewards</TabsTrigger>
+                                <TabsTrigger value="3">Stake-to-Earn TVL</TabsTrigger>
+                                <TabsTrigger value="4">Stake-to-Earn Energy Output</TabsTrigger>
+                                <TabsTrigger value="5">Staked % of Total Supply</TabsTrigger>
+                            </TabsList>
+                        </div>
                         <TabsContent value="1">
                             <ExperienceLeaderboardTable holders={holders} expTotalSupply={expTotalSupply} />
                         </TabsContent>
