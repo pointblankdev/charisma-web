@@ -30,17 +30,16 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const activeRoute = router.asPath;
 
   const { wallet } = useWallet();
-
   const [energy, setEnergy] = React.useState<number>(0);
+  const { lands, block } = useGlobalState()
 
-  const { lands } = useGlobalState()
   useEffect(() => {
     let totalEnergy = 0
     forEach(lands, (land: any) => {
       totalEnergy += Number(land.energy)
       setEnergy(totalEnergy)
     })
-  }, [lands])
+  }, [lands, block.height])
 
   return (
     <>
