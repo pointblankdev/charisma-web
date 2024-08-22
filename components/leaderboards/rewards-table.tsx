@@ -44,6 +44,8 @@ export default function RewardsTable({ topRewardedPlayers }: any) {
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
     const pageData = topRewardedPlayers.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    // TODO: look up the exchange rate on-chain
+    const sChaExchangeRate = 0.17
 
     return (
         <Card>
@@ -68,7 +70,7 @@ export default function RewardsTable({ topRewardedPlayers }: any) {
                             <TableRow key={holder.rank}>
                                 <TableCell className="font-normal text-center">{holder.rank}</TableCell>
                                 <TableCell className="font-medium">{holder.bns || holder.address}</TableCell>
-                                <TableCell className="font-medium text-right">{numeral((holder.amount / Math.pow(10, 6)) * 0.15).format('$0.00')}</TableCell>
+                                <TableCell className="font-medium text-right">{numeral((holder.amount / Math.pow(10, 6)) * sChaExchangeRate).format('$0.00')}</TableCell>
                                 <TableCell className="font-medium text-right">{(holder.amount / Math.pow(10, 6))}</TableCell>
                             </TableRow>
                         ))}

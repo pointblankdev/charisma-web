@@ -161,6 +161,26 @@ describe('metadata api', () => {
         await setLand(contract, land)
     })
 
+    it('should get stx-scha land', async () => {
+        const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
+        const land = await getLand(contract)
+        land.name = 'STX-wCHA - Velar LP'
+        land.image = 'https://charisma.rocks/lands/img/stx-wcha-lp-icon.png'
+        land.cardImage = 'https://charisma.rocks/lands/img/card/stx-wcha-lp.png'
+        land.proposal = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.list-stx-wcha-velar-lp'
+        land.whitelisted = false
+        land.wraps = {
+            ca: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha',
+            name: 'STX-wCHA - Velar LP',
+            description: 'Support Charisma by staking LP tokens',
+            image: 'https://charisma.rocks/lands/img/stx-wcha-lp-icon.png',
+            asset: 'lp-token',
+            decimals: 6
+        }
+        console.log(land)
+        await setLand('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha', land)
+    })
+
     it('should set welsh land whitelisted', async () => {
         const response = await setLandWhitelisted('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', false)
         console.log(response)
