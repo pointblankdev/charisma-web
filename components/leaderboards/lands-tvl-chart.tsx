@@ -14,13 +14,14 @@ import {
     ChartTooltip,
     ChartTooltipContent,
 } from "@components/ui/chart"
+import numeral from "numeral"
 
-export function LandsChart({ chartData, chartConfig }: { chartData: any[], chartConfig: ChartConfig }) {
+export function LandsTVLChart({ chartData, chartConfig }: { chartData: any[], chartConfig: ChartConfig }) {
     return (
         <Card>
             <CardHeader>
-                <CardTitle>Total Tokens Staked</CardTitle>
-                <CardDescription>By Percentage of Total Supply</CardDescription>
+                <CardTitle>Stake-to-Earn TVL</CardTitle>
+                <CardDescription>Value in USD of all tokens staked on Charisma</CardDescription>
             </CardHeader>
             <CardContent>
                 <ChartContainer config={chartConfig}>
@@ -72,7 +73,7 @@ export function LandsChart({ chartData, chartConfig }: { chartData: any[], chart
                                 offset={8}
                                 className="fill-foreground"
                                 fontSize={12}
-                                formatter={(value: number) => `${(value * 100).toFixed(2)}%`}
+                                formatter={(value: number) => numeral(value).format('$0,0.00')}
                             />
                         </Bar>
                     </BarChart>

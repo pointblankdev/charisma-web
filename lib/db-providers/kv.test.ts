@@ -105,23 +105,24 @@ describe('metadata api', () => {
 
     it('should update welsh land', async () => {
         const land = await getLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token')
-        land.id = 4
-        await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', land)
+        // land.id = 4
+        // await setLand('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', land)
         console.log(land)
     })
 
     it('should update leo land', async () => {
         const land = await getLand('SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token')
-        land.whitelisted = true
-        land.id = 6
-        await setLand('SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token', land)
+        // land.whitelisted = true
+        // land.id = 6
+        // await setLand('SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token', land)
         console.log(land)
     })
 
     it('should update fair land', async () => {
         const land = await getLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve')
-        land.whitelisted = true
-        land.id = 7
+        // land.whitelisted = true
+        // land.id = 7
+        // land.wraps.symbol = 'FAIR'
         await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', land)
         console.log(land)
     })
@@ -129,10 +130,11 @@ describe('metadata api', () => {
     it('should update fam land', async () => {
         const land = await getLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam')
         // land.id = 5
+        land.wraps.symbol = 'FAM'
         // land.wraps.asset = 'TheFellowshipOfTheMeme'
         // land.wraps.decimals = 6
-        land.wraps.totalSupply = 2100000000000
-        land.attributes[0].value = 2100000000000 / 1000000
+        // land.wraps.totalSupply = 2100000000000
+        // land.attributes[0].value = 2100000000000 / 1000000
         // land.whitelisted = true
         await setLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam', land)
         console.log(land)

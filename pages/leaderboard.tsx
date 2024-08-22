@@ -14,6 +14,8 @@ import { clarigen } from '@lib/clarigen/client';
 import { contracts } from '@lib/clarigen/types';
 import { ChartConfig } from '@components/ui/chart';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs"
+import velarApi from '@lib/velar-api';
+import { LandsTVLChart } from '@components/leaderboards/lands-tvl-chart';
 
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
@@ -24,12 +26,21 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const landsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands';
     const landsContract = contractFactory(contracts.lands as any, landsContractId);
     const uniqueLandTypes: bigint = await clarigen.roOk(landsContract.getLastLandId());
-    // loop through all lands
 
-    const chartData = [
+    const chartData0 = [
     ]
 
-    const chartConfig: ChartConfig = {
+    const chartConfig0: ChartConfig = {
+        tokens: {
+            label: "Stake-to-Earn TVL",
+        },
+    };
+
+
+    const chartData1 = [
+    ]
+
+    const chartConfig1: ChartConfig = {
         tokens: {
             label: "Total Supply Staked",
         },
@@ -50,8 +61,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         if (Number(amount)) {
             const tokenMetadata = await getLand(assetContract)
 
-            chartData.push({ id: tokenMetadata.name, tokens: Number(amount) / tokenMetadata.wraps.totalSupply, fill: `hsl(var(--background))` });
-            chartConfig[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+            const [{ price }] = await velarApi.tokens(tokenMetadata.wraps.symbol)
+
+            chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, 6) * Number(price), fill: `hsl(var(--background))` });
+            chartConfig0[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+
+            chartData1.push({ id: tokenMetadata.name, score: Number(amount) / tokenMetadata.wraps.totalSupply, fill: `hsl(var(--background))` });
+            chartConfig1[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
 
             const landDifficulty: bigint = await clarigen.ro(landsContract.getLandDifficulty(i))
             chartData2.push({ id: tokenMetadata.name, score: Number(amount) / Number(landDifficulty), fill: `hsl(var(--background))` });
@@ -64,8 +80,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
             holders: experienceHolders,
             expTotalSupply: Number(experienceTotalSupply),
             topRewardedPlayers,
-            chartData: chartData.sort((a, b) => b.tokens - a.tokens),
-            chartConfig,
+            chartData0: chartData0.sort((a, b) => b.score - a.score),
+            chartConfig0,
+            chartData1: chartData1.sort((a, b) => b.score - a.score),
+            chartConfig1,
             chartData2: chartData2.sort((a, b) => b.score - a.score),
             chartConfig2,
         },
@@ -77,13 +95,15 @@ type Props = {
     holders: any[];
     expTotalSupply: number;
     topRewardedPlayers: any[];
-    chartData: any[];
-    chartConfig: ChartConfig;
+    chartData0: any[];
+    chartConfig0: ChartConfig;
+    chartData1: any[];
+    chartConfig1: ChartConfig;
     chartData2: any[];
     chartConfig2: ChartConfig;
 };
 
-export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPlayers, chartData, chartConfig, chartData2, chartConfig2 }: Props) {
+export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPlayers, chartData0, chartConfig0, chartData1, chartConfig1, chartData2, chartConfig2 }: Props) {
     const meta = {
         title: 'Charisma | Leaderboard',
         description: META_DESCRIPTION
@@ -107,8 +127,9 @@ export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPl
                         <TabsList>
                             <TabsTrigger value="1">Experience</TabsTrigger>
                             <TabsTrigger value="2">Rewards</TabsTrigger>
-                            <TabsTrigger value="3">Staked Tokens by % of Total Supply</TabsTrigger>
-                            <TabsTrigger value="4">Staked Tokens Energy Output</TabsTrigger>
+                            <TabsTrigger value="3">Stake-to-Earn TVL</TabsTrigger>
+                            <TabsTrigger value="4">Staked Tokens by % of Total Supply</TabsTrigger>
+                            <TabsTrigger value="5">Staked Tokens Energy Output</TabsTrigger>
                         </TabsList>
                         <TabsContent value="1">
                             <ExperienceLeaderboardTable holders={holders} expTotalSupply={expTotalSupply} />
@@ -117,9 +138,12 @@ export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPl
                             <RewardsLeaderboardTable holders={holders} topRewardedPlayers={topRewardedPlayers} />
                         </TabsContent>
                         <TabsContent value="3">
-                            <LandsChart chartData={chartData} chartConfig={chartConfig} />
+                            <LandsTVLChart chartData={chartData0} chartConfig={chartConfig0} />
                         </TabsContent>
                         <TabsContent value="4">
+                            <LandsChart chartData={chartData1} chartConfig={chartConfig1} />
+                        </TabsContent>
+                        <TabsContent value="5">
                             <TokensDifficultyChart chartData={chartData2} chartConfig={chartConfig2} />
                         </TabsContent>
                     </Tabs>
