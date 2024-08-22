@@ -103,7 +103,7 @@ export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPl
                         </div>
                         {/* button placeholder */}
                     </div>
-                    <Tabs defaultValue="account" className="">
+                    <Tabs defaultValue="1" className="">
                         <TabsList>
                             <TabsTrigger value="1">Experience</TabsTrigger>
                             <TabsTrigger value="2">Rewards</TabsTrigger>
