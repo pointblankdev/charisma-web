@@ -62,7 +62,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
             // contract ids
             const kraqenLottoContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto';
-            // const spellScrollsContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.spell-scrolls-fire-bolt';
+            const spellScrollsContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.spell-scrolls-fire-bolt';
 
             if (contractId === kraqenLottoContractId) {
                 symbol = '🐙'
@@ -80,21 +80,23 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
             }
 
-            // else if (contractId === kraqenLottoContractId) {
-            //     symbol = '🐙'
+            else if (contractId === spellScrollsContractId) {
+                symbol = '📜'
 
-            //     const kraqenLottoContract = contractFactory(contracts.kraqenLotto, kraqenLottoContractId);
-            //     const tokensMinted = await clarigen.roOk(kraqenLottoContract.getLastTokenId());
-            //     const nftMetadata = await getNftCollectionMetadata(kraqenLottoContractId)
-            //     nftMetadata.properties.minted = Number(tokensMinted)
-            //     await setNftCollectionMetadata(kraqenLottoContractId, nftMetadata)
+                // workaround for the spell scrolls contract key missmatch
+                const spellScrollsDbKey = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.spell-scrolls'
+                const spellScrollsContract = contractFactory(contracts.kraqenLotto, spellScrollsContractId);
+                const tokensMinted = await clarigen.roOk(spellScrollsContract.getLastTokenId());
+                const nftMetadata = await getNftCollectionMetadata(spellScrollsDbKey)
+                nftMetadata.properties.minted = Number(tokensMinted)
+                await setNftCollectionMetadata(spellScrollsDbKey, nftMetadata)
 
-            //     builder.addField({
-            //         name: `${symbol} ${event.type}`,
-            //         value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
-            //     });
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+                });
 
-            // } 
+            }
 
             else {
 
