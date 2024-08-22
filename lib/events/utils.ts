@@ -72,6 +72,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             // contract ids
             const kraqenLottoContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto';
             const spellScrollsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt';
+            const pixelRozarContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar';
 
             if (contractId === kraqenLottoContractId) {
                 symbol = '🐙'
@@ -99,6 +100,22 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 const nftMetadata = await getNftCollectionMetadata(spellScrollsDbKey)
                 nftMetadata.properties.minted = Number(tokensMinted)
                 await setNftCollectionMetadata(spellScrollsDbKey, nftMetadata)
+
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+                });
+
+            }
+
+            else if (contractId === pixelRozarContractId) {
+                symbol = '💩'
+
+                const pixelRozarContract = contractFactory(contracts.kraqenLotto, pixelRozarContractId);
+                const tokensMinted = await clarigen.roOk(pixelRozarContract.getLastTokenId());
+                const nftMetadata = await getNftCollectionMetadata(pixelRozarContractId)
+                nftMetadata.properties.minted = Number(tokensMinted)
+                await setNftCollectionMetadata(pixelRozarContractId, nftMetadata)
 
                 builder.addField({
                     name: `${symbol} ${event.type}`,

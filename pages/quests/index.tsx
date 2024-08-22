@@ -21,6 +21,7 @@ import mooningSharkIcon from '@public/quests/mooning-shark/mooningshark-icon.jpe
 import mooningSharkCard from '@public/quests/mooning-shark/mooning-shark-card.png'
 import krakenLottoIcon from '@public/quests/raven-raffle/ticket.png'
 import krakenLottoCard from '@public/quests/raven-raffle/kraken-lotto.png'
+import pixelRozar from '@public/quests/pixel-rozar/pixel-rozar.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
@@ -61,6 +62,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       ca: "SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto",
       image: krakenLottoIcon,
       cardImage: krakenLottoCard,
+    },
+    {
+      name: `Mint a Pixel Rozar`,
+      description: "Collect a bunch of completely useless stickers.",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar",
+      image: pixelRozar,
+      cardImage: 'https://media.tenor.com/qwMy5HS9LIYAAAAM/funny-corgi-lol-moment.gif',
     },
     {
       name: `King of the Hill`,
