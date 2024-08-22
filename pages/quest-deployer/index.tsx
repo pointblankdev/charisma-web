@@ -197,13 +197,13 @@ export default function ContractDeployer({ data }: any) {
                                                                                 <PiPackage className="size-5" />
                                                                                 <div className="grid gap-0.5">
                                                                                     <p>
-                                                                                        NFT{" "}
+                                                                                        Utility{" "}
                                                                                         <span className="font-medium text-foreground">
-                                                                                            Collection
+                                                                                            NFT Collection
                                                                                         </span>
                                                                                     </p>
                                                                                     <p className="text-xs" data-description>
-                                                                                        Create an NFT collection to sell on Charisma
+                                                                                        Create non-unique utility NFTs to sell on Charisma
                                                                                     </p>
                                                                                 </div>
                                                                             </div>
