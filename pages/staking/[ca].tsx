@@ -94,9 +94,6 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
 
   const isMaxedOut = tokensSelected === baseTokenBalance
 
-
-  console.log(tokensSelected - baseTokenBalance)
-
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />

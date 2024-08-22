@@ -402,8 +402,8 @@ describe('nfts api', () => {
 
     it('should update nft collection metadata (spell-scrolls)', async () => {
         const data = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls')
-        // data.properties.minted = 20
-        data.properties.items[0].image_url = 'https://charisma.rocks/quests/spell-scroll/fire-bolt-icon.png'
+        data.properties.minted = 32
+        // data.properties.items[0].image_url = 'https://charisma.rocks/quests/spell-scroll/fire-bolt-icon.png'
         await setNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', data)
         console.log(JSON.stringify(data, null, 2))
     })
