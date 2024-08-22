@@ -13,9 +13,10 @@ type TokenSelectDialogProps = {
     lands: any[];
     contractId: `${string}.${string}`
     buttonText?: string
+    extraPostConditions?: any[]
 }
 
-export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Quest' }: TokenSelectDialogProps) => {
+export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Quest', extraPostConditions = [] }: TokenSelectDialogProps) => {
 
     const { openContractCall } = useOpenContractCall();
     const { lands: landEnergy, tapped, setTapped } = useGlobalState()
@@ -30,6 +31,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
         const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
         const postConditions = [
             makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, '1', burnTokenContract),
+            ...extraPostConditions
         ];
 
         openContractCall({
@@ -37,7 +39,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
             contractName: contractId.split('.')[1],
             functionName: "tap",
             functionArgs: [uintCV(landId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v2')],
-            postConditions: postConditions as any[],
+            postConditions,
             onCancel: () => {
                 toast({
                     title: "Transaction Canceled",

@@ -89,6 +89,8 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
     image: '/quests/mooning-shark/mooning-shark-square.png'
   };
 
+  const { stxAddress } = useAccount()
+
   const title = "Mint a Mooning Shark";
   const subtitle = 'Claim your OG Mooning Shark NFT with energy.';
 
@@ -224,6 +226,7 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                   lands={lands}
                   contractId={'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'}
                   buttonText={'Complete Quest'}
+                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress!, FungibleConditionCode.LessEqual, 4000000)]}
                 />
               }
             </CardFooter>

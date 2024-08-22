@@ -128,12 +128,12 @@ describe('metadata api', () => {
 
     it('should update fam land', async () => {
         const land = await getLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam')
-        land.id = 5
-        land.wraps.asset = 'TheFellowshipOfTheMeme'
-        land.wraps.decimals = 6
-        land.wraps.totalSupply = 21000000000000
-        land.attributes[0].value = 21000000000000 / 1000000
-        land.whitelisted = true
+        // land.id = 5
+        // land.wraps.asset = 'TheFellowshipOfTheMeme'
+        // land.wraps.decimals = 6
+        land.wraps.totalSupply = 2100000000000
+        land.attributes[0].value = 2100000000000 / 1000000
+        // land.whitelisted = true
         await setLand('SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam', land)
         console.log(land)
     })

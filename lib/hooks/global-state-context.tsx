@@ -68,7 +68,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             setTapped({})
             toast({
                 title: "New Block",
-                description: `Block ${block.height} has been mined.`,
+                description: `Stacks block ${block.height} has been mined.`,
             })
         });
 

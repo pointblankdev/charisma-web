@@ -89,6 +89,8 @@ export default function KrakenLotto({ lands, nftCollectionMetadata }: Props) {
     image: '/quests/raven-raffle/kraken-lotto.png'
   };
 
+  const { stxAddress } = useAccount()
+
   const title = "Mint a Kraken Lottery Ticket";
   const subtitle = 'Mint lottery tickets for your chance to win.';
 
@@ -233,7 +235,13 @@ export default function KrakenLotto({ lands, nftCollectionMetadata }: Props) {
                 </Button>
               </Link>
 
-              {!isMintedOut && <TokenSelectDialog lands={lands} contractId={'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto'} />}
+              {!isMintedOut &&
+                <TokenSelectDialog
+                  lands={lands}
+                  contractId={'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto'}
+                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress!, FungibleConditionCode.LessEqual, 4000000)]}
+                />
+              }
             </CardFooter>
             <Image
               src={KrakenLottoCard}

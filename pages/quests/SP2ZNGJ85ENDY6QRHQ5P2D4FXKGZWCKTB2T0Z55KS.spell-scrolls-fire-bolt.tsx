@@ -90,6 +90,8 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
     image: '/spell-scroll-fire-bolt.png'
   };
 
+  const { stxAddress } = useAccount()
+
   const title = "Mint a Spell Scroll";
   const subtitle = 'Claim your own utility NFT on Stacks.';
 
@@ -222,6 +224,7 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                   lands={lands}
                   contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt'}
                   buttonText={'Complete Quest'}
+                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress!, FungibleConditionCode.LessEqual, 4000000)]}
                 />
               }
             </CardFooter>
