@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
-import { FungibleConditionCode, FungiblePostCondition, makeStandardFungiblePostCondition, PostCondition } from '@stacks/transactions';
+import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useToast } from '@components/ui/use-toast';
@@ -13,7 +13,7 @@ type TokenSelectDialogProps = {
     lands: any[];
     contractId: `${string}.${string}`
     buttonText?: string
-    extraPostConditions?: FungiblePostCondition[]
+    extraPostConditions?: any[]
 }
 
 export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Quest', extraPostConditions = [] }: TokenSelectDialogProps) => {
