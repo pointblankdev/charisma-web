@@ -63,7 +63,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
             const [{ price }] = await velarApi.tokens(tokenMetadata.wraps.symbol)
 
-            chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, 6) * Number(price), fill: `hsl(var(--background))` });
+            chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, tokenMetadata.wraps.decimals) * Number(price), fill: `hsl(var(--background))` });
             chartConfig0[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
 
             chartData1.push({ id: tokenMetadata.name, score: Number(amount) / tokenMetadata.wraps.totalSupply, fill: `hsl(var(--background))` });
