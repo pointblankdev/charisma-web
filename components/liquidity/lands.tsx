@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Slider } from '@components/ui/slider';
 import Link from 'next/link';
 import { Button } from '@components/ui/button';
@@ -12,8 +13,18 @@ const LandControls = ({
     metadata,
     hadLand
 }: any) => {
-    const hasRequiredTokens = Math.abs(min) !== Math.abs(max)
+    const hasRequiredTokens = Math.abs(min) !== Math.abs(max);
+    const [manualInput, setManualInput] = useState(tokensSelected);
 
+    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        let value = parseFloat(e.target.value);
+        if (isNaN(value)) {
+            value = 0;
+        }
+        value = Math.max(min, Math.min(value, max));
+        setManualInput(value);
+        onSetTokensSelected(value);
+    };
 
     return (
         <div className="flex flex-col space-y-2">
@@ -30,8 +41,25 @@ const LandControls = ({
                         max={max}
                         step={1}
                         className="w-full"
-                        onValueChange={(v: any) => onSetTokensSelected(v[0])}
+                        onValueChange={(v: any) => {
+                            setManualInput(v[0]);
+                            onSetTokensSelected(v[0]);
+                        }}
                     />
+                </div>
+                <div className="flex flex-col space-y-2">
+                    <label htmlFor="manual-input" className="font-medium text-gray-700 mt-4">
+                        Enter Manually
+                    </label>
+                    <input
+                        type="number"
+                        value={manualInput}
+                        min={min}
+                        max={max}
+                        onChange={handleInputChange}
+                        className="p-2 border rounded-md w-full text-red-700"
+                    />
+                    <span>{metadata.wraps.symbol}</span>
                 </div>
             </div>}
             <div className="z-20 flex items-center justify-between w-full space-x-1">
@@ -49,4 +77,4 @@ const LandControls = ({
     )
 }
 
-export default LandControls
+export default LandControls;
