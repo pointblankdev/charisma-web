@@ -23,7 +23,7 @@ import experience from '@public/experience.png'
 import schaImg from '@public/liquid-staked-charisma.png'
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
-import { getLand, getLands } from '@lib/db-providers/kv';
+import { getLand, getLands, getNftCollectionMetadata } from '@lib/db-providers/kv';
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
@@ -57,6 +57,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     lands.push(metadata)
   }
 
+  const nftCollectionMetadata = await getNftCollectionMetadata('SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto')
+
   // const state = await getDehydratedStateFromSession(ctx) as string
 
   // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
@@ -65,6 +67,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   return {
     props: {
       lands,
+      nftCollectionMetadata,
       // burnAmount,
       // dehydratedState: await getDehydratedStateFromSession(ctx),
     }
@@ -73,10 +76,11 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
 type Props = {
   lands: any[];
+  nftCollectionMetadata: any;
   // burnAmount: string
 };
 
-export default function KrakenLotto({ lands }: Props) {
+export default function KrakenLotto({ lands, nftCollectionMetadata }: Props) {
   const meta = {
     title: "Charisma | Mint a Kraken Lottery Ticket",
     description: META_DESCRIPTION,
@@ -91,6 +95,8 @@ export default function KrakenLotto({ lands }: Props) {
     visible: { opacity: 1 }
   };
 
+  const isMintedOut = nftCollectionMetadata.properties.minted === nftCollectionMetadata.properties.total_supply
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -104,11 +110,17 @@ export default function KrakenLotto({ lands }: Props) {
           <Card className="min-h-[600px] flex flex-col bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4 space-y-0">
               <div className="flex items-center justify-between">
-                <CardTitle className="z-30 text-xl font-semibold">{title}</CardTitle>
+                <div>
+                  <CardTitle className="z-30 text-xl font-semibold">{title}</CardTitle>
+                  <CardDescription className="z-30 text-sm sm:text-md font-fine text-muted-foreground">
+                    {subtitle}
+                  </CardDescription>
+                </div>
+                <div className='leading-snug sm:mr-4'>
+                  <div className={`font-medium text-md whitespace-nowrap ${!isMintedOut ? `animate-pulse` : `text-primary`}`}>{isMintedOut ? `Minted Out` : `Minting Now`}</div>
+                  <div className='font-medium text-sm text-center text-primary-foreground/80'>{nftCollectionMetadata.properties.minted} / {nftCollectionMetadata.properties.total_supply}</div>
+                </div>
               </div>
-              <CardDescription className="z-30 text-md font-fine text-muted-foreground">
-                {subtitle}
-              </CardDescription>
             </CardHeader>
             <CardContent className="z-20 flex-grow p-4 space-y-4">
               <section className='grid grid-cols-1 sm:grid-cols-2'>
@@ -219,7 +231,7 @@ export default function KrakenLotto({ lands }: Props) {
                 </Button>
               </Link>
 
-              <SelectCreatureDialog lands={lands} />
+              {!isMintedOut && <SelectCreatureDialog lands={lands} />}
             </CardFooter>
             <Image
               src={KrakenLottoCard}

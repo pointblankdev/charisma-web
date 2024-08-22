@@ -407,4 +407,12 @@ describe('nfts api', () => {
         await setNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', data)
         console.log(JSON.stringify(data, null, 2))
     })
+
+    it('should update nft collection metadata (kraqen-lotto)', async () => {
+        const data = await getNftCollectionMetadata('SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto')
+        data.properties.minted = 30
+        // data.properties.items[0].image_url = 'https://charisma.rocks/quests/spell-scroll/fire-bolt-icon.png'
+        await setNftCollectionMetadata('SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto', data)
+        console.log(JSON.stringify(data, null, 2))
+    })
 })
