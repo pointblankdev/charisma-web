@@ -203,9 +203,8 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                   <div className='z-30 mb-4 text-sm font-fine text-foreground'>
                     <ul className="list-disc list-inside text-sm leading-snug">
                       <li>Fixed Supply: Only 10,000 stickers will be minted</li>
+                      <li>Mint Limit: Up to 20 stickers can be minted per tx</li>
                       <li>Utility: Absolutely none</li>
-                      <li>Mint Limit: Up to 20 stickers can be minted per transaction</li>
-                      <li>Tap Limit: Only 1 mint transaction per block / per token type</li>
                     </ul>
                   </div>
                 </div>
