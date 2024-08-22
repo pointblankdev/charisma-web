@@ -62,7 +62,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   const nftCollectionMetadata = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar')
 
-  console.log(nftCollectionMetadata)
   // const state = await getDehydratedStateFromSession(ctx) as string
 
   // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
@@ -124,7 +123,7 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                 </div>
                 <div className='leading-snug sm:mr-4'>
                   <div className={`font-medium text-md whitespace-nowrap ${!isMintedOut ? `animate-pulse` : `text-primary`}`}>{isMintedOut ? `Minted Out` : `Minting Now`}</div>
-                  <div className='font-medium text-sm text-center text-primary-foreground/80'>{nftCollectionMetadata.properties.minted} / {nftCollectionMetadata.properties.total_supply}</div>
+                  <div className='font-medium text-sm text-center text-primary-foreground/80'>{nftCollectionMetadata.properties.minted || 0} / {nftCollectionMetadata.properties.total_supply}</div>
                 </div>
               </div>
             </CardHeader>
