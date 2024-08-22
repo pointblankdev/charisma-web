@@ -62,7 +62,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
             // contract ids
             const kraqenLottoContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto';
-            const spellScrollsContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.spell-scrolls-fire-bolt';
+            const spellScrollsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt';
 
             if (contractId === kraqenLottoContractId) {
                 symbol = '🐙'
@@ -84,7 +84,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 symbol = '📜'
 
                 // workaround for the spell scrolls contract key missmatch
-                const spellScrollsDbKey = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.spell-scrolls'
+                const spellScrollsDbKey = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls'
                 const spellScrollsContract = contractFactory(contracts.kraqenLotto, spellScrollsContractId);
                 const tokensMinted = await clarigen.roOk(spellScrollsContract.getLastTokenId());
                 const nftMetadata = await getNftCollectionMetadata(spellScrollsDbKey)
