@@ -128,8 +128,8 @@ export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPl
                             <TabsTrigger value="1">Experience</TabsTrigger>
                             <TabsTrigger value="2">Rewards</TabsTrigger>
                             <TabsTrigger value="3">Stake-to-Earn TVL</TabsTrigger>
-                            <TabsTrigger value="4">Staked Tokens by % of Total Supply</TabsTrigger>
-                            <TabsTrigger value="5">Staked Tokens Energy Output</TabsTrigger>
+                            <TabsTrigger value="4">Stake-to-Earn Energy Output</TabsTrigger>
+                            <TabsTrigger value="5">Staked % of Total Supply</TabsTrigger>
                         </TabsList>
                         <TabsContent value="1">
                             <ExperienceLeaderboardTable holders={holders} expTotalSupply={expTotalSupply} />
@@ -141,10 +141,10 @@ export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPl
                             <LandsTVLChart chartData={chartData0} chartConfig={chartConfig0} />
                         </TabsContent>
                         <TabsContent value="4">
-                            <LandsChart chartData={chartData1} chartConfig={chartConfig1} />
+                            <TokensDifficultyChart chartData={chartData2} chartConfig={chartConfig2} />
                         </TabsContent>
                         <TabsContent value="5">
-                            <TokensDifficultyChart chartData={chartData2} chartConfig={chartConfig2} />
+                            <LandsChart chartData={chartData1} chartConfig={chartConfig1} />
                         </TabsContent>
                     </Tabs>
                 </div>
