@@ -29,7 +29,6 @@ import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 

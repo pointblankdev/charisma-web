@@ -31,7 +31,6 @@ import Link from 'next/link';
 import { motion } from 'framer-motion';
 import millify from 'millify';
 import { ArrowUpIcon, Link1Icon } from '@radix-ui/react-icons';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import LiquidityControls from '@components/liquidity/controls';
 import velarApi from '@lib/velar-api';
 import { uniqBy } from 'lodash';
@@ -45,6 +44,7 @@ import { useAccount } from '@micro-stacks/react';
 import Layout from '@components/layout/layout';
 import { symbol } from 'zod';
 import StakingControls from '@components/liquidity/staking';
+import useWallet from '@lib/hooks/wallet-balance-provider';
 
 
 export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: any) => {
@@ -104,11 +104,9 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
     setDescriptionVisible(true);
   }, []);
 
-  const { stxAddress } = useAccount()
-
-  const { balances, getKeyByContractAddress, getBalanceByKey } = useWallet();
-  const rebaseTokenBalance = getBalanceByKey(`${data.contractAddress}.${data.contractName}::liquid-staked-token`)?.balance || 0
-  const baseTokenBalance = getBalanceByKey('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma')?.balance || 0
+  const { getBalanceByKey, wallet } = useWallet();
+  const rebaseTokenBalance = getBalanceByKey(`${data.contractAddress}.${data.contractName}::liquid-staked-token`)
+  const baseTokenBalance = wallet.charisma.amount
 
   return (
     <Page meta={meta} fullViewport>

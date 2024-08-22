@@ -29,7 +29,6 @@ import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import KrakenLottoIcon from '@public/quests/raven-raffle/ticket.png'
 import KrakenLottoCard from '@public/quests/raven-raffle/kraken-lotto.png'
 import stxIcon from '@public/stx-logo.png'

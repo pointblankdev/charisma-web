@@ -36,10 +36,10 @@ import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 import { GetServerSidePropsContext } from 'next';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { he } from 'date-fns/locale';
 import numeral from 'numeral';
+import useWallet from '@lib/hooks/wallet-balance-provider';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -104,13 +104,8 @@ export default function WantedHogger({ lands, mob }: Props) {
     router.push(`?view=${newView}`, undefined, { shallow: true });
   }
 
-  const { getBalanceByKey } = useWallet()
+  const { wallet } = useWallet()
   const { block } = useGlobalState()
-
-  const experience =
-    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
-    Math.pow(10, 6);
-
 
   const fadeVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
 
@@ -228,7 +223,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                       </Button>
                     </Link>
 
-                    <Button disabled={experience === 0} size={'sm'} className="z-30" onClick={() => handleViewToggle()}> Fight Hogger</Button>
+                    <Button disabled={wallet.experience.amount === 0} size={'sm'} className="z-30" onClick={() => handleViewToggle()}> Fight Hogger</Button>
                     {/* <SelectCreatureDialog lands={lands} /> */}
                   </CardFooter>
                   <Image

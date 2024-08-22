@@ -29,7 +29,6 @@ import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import mooningSharkIcon from '@public/quests/mooning-shark/mooningshark-icon.jpeg'
 import mooningSharkCard from '@public/quests/mooning-shark/mooning-shark-card.png'
 import stxIcon from '@public/stx-logo.png'

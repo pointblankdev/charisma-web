@@ -12,11 +12,11 @@ import React, { useEffect } from 'react';
 import Image from 'next/image';
 import energyIcon from '@public/creatures/img/energy.png';
 import experienceIcon from '@public/experience.png';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { forEach } from 'lodash';
 import ConnectWallet from '../stacks-session/connect';
+import useWallet from '@lib/hooks/wallet-balance-provider';
 
 type Props = {
   children: React.ReactNode;
@@ -29,13 +29,9 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const router = useRouter();
   const activeRoute = router.asPath;
 
-  const { getBalanceByKey } = useWallet();
+  const { wallet } = useWallet();
 
   const [energy, setEnergy] = React.useState<number>(0);
-
-  const experience =
-    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
-    Math.pow(10, 6);
 
   const { lands } = useGlobalState()
   useEffect(() => {
@@ -102,7 +98,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={100}
                   className={`z-30 border rounded-full h-5 w-5`}
                 />
-                <div>{numeral(experience).format('0a')}</div>
+                <div>{numeral(wallet.experience.balance).format('0a')}</div>
               </div>
               <ConnectWallet />
             </div>

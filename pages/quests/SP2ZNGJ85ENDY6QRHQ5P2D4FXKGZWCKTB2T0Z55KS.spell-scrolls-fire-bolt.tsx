@@ -29,7 +29,6 @@ import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import spellScrollIcon from '@public/quests/spell-scroll/spell-scroll-icon.png'
 import spellScrollCard from '@public/quests/spell-scroll/spell-scroll-card.png'
 import stxIcon from '@public/stx-logo.png'

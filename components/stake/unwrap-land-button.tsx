@@ -12,7 +12,6 @@ import { Button } from "@components/ui/button";
 import { useAccount, useAuth, useOpenContractCall } from "@micro-stacks/react";
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { makeStandardFungiblePostCondition, FungibleConditionCode } from '@stacks/transactions';
-import useWallet from "@lib/hooks/use-wallet-balances";
 
 interface UnstakeButtonProps {
   tokens: number;

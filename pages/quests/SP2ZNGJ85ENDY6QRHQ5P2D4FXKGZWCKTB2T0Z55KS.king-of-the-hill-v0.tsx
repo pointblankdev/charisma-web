@@ -36,7 +36,6 @@ import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 import { GetServerSidePropsContext } from 'next';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
-import useWallet from '@lib/hooks/use-wallet-balances';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import kingOfTheHillCard from '@public/quests/king-of-the-hill/king-of-the-hill-card.png'
 import numeral from 'numeral';
@@ -104,13 +103,7 @@ export default function KingOfTheHill({ lands, mob }: Props) {
     router.push(`?view=${newView}`, undefined, { shallow: true });
   }
 
-  const { getBalanceByKey } = useWallet()
   const { block } = useGlobalState()
-
-  const experience =
-    getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience').balance /
-    Math.pow(10, 6);
-
 
   const fadeVariants = { hidden: { opacity: 0 }, visible: { opacity: 1 } };
 

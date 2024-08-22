@@ -8,7 +8,7 @@ import { GetServerSidePropsContext, GetStaticProps } from 'next';
 import { useState } from 'react';
 import { cn } from '@lib/utils';
 import { motion } from 'framer-motion';
-import useWallet from '@lib/hooks/use-wallet-balances';
+import useWallet from '@lib/hooks/wallet-balance-provider';
 import { getLand, getLands, getLandsBalance, hadLandBefore, setLandWhitelisted } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
@@ -18,6 +18,8 @@ import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 import { getIsWhitelisted, getLandBalance, getLandId } from '@lib/stacks-api';
 import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
+import { InfoCircledIcon } from '@radix-ui/react-icons';
+import { AlertCircle, HelpCircle } from 'lucide-react';
 
 function parseAddress(str: string) {
 
@@ -79,10 +81,21 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
 
   const [tokensSelected, setTokensSelected] = useState(0);
 
-  const { getBalanceByKey } = useWallet()
+  const { getBalanceByKey, wallet } = useWallet()
 
   const landTokenBalance = landBalance
-  const baseTokenBalance = getBalanceByKey(`${metadata.wraps.ca}::${metadata.wraps.asset}`)?.balance || 0
+  const baseTokenBalance = getBalanceByKey(`${metadata.wraps.ca}::${metadata.wraps.asset}`)
+
+  // if using the burn token, reduce the max by exp * burn-factor (1000) to prevent not having enough tokens to pay the burn fee
+  const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
+  const isUsingBurnToken = metadata.wraps.ca === burnTokenContract
+  const burnFee = Math.floor(wallet.experience.amount / 1000)
+  const tokensSelectedMinusFee = isUsingBurnToken ? tokensSelected - burnFee : tokensSelected
+
+  const isMaxedOut = tokensSelected === baseTokenBalance
+
+
+  console.log(tokensSelected - baseTokenBalance)
 
   return (
     <Page meta={meta} fullViewport>
@@ -94,7 +107,7 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
           variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
           className="m-2 space-y-4 sm:container sm:mx-auto sm:py-10 md:max-w-2xl lg:max-w-3xl"
         >
-          <Card className="grid bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
+          <Card className="z-20 grid bg-black text-primary-foreground border-accent-foreground p-0 relative overflow-hidden rounded-md group/card w-full max-w-3xl opacity-[0.99] shadow-black shadow-2xl">
             <CardHeader className="z-20 p-4">
               <div className="flex items-center justify-start space-x-4">
                 <Image src={metadata.image} width={200} height={200} alt='token-logo' className='h-[4.5rem] w-[4.5rem] rounded-full' />
@@ -156,7 +169,7 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
                   min={-landTokenBalance}
                   max={baseTokenBalance}
                   onSetTokensSelected={setTokensSelected}
-                  tokensSelected={tokensSelected}
+                  tokensSelected={tokensSelectedMinusFee}
                   metadata={metadata}
                   hadLand={hadLand}
                 /> :
@@ -189,6 +202,12 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
             />
             <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
           </Card>
+          <motion.div
+            animate={isUsingBurnToken && isMaxedOut ? "visible" : "hidden"}
+            variants={{ visible: { opacity: 1, x: 0 }, hidden: { opacity: 0, y: "-25%" }, }}
+            className="z-0 relative flex justify-center items-center space-x-2">
+            Be sure to leave a few tokens unstaked to cover protocol burn fees.
+          </motion.div>
         </motion.div>
       </Layout>
     </Page>
