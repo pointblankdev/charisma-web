@@ -69,16 +69,16 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
 
                 <DialogDescription className='grid gap-2 grid-cols-2 sm:grid-cols-4 space-x-4 py-4'>
                     {lands.map((land: any) => (
-                        <div className={`relative flex flex-col items-center space-y-2 ${!land.whitelisted || tapped[land.id] ? 'opacity-20 grayscale' : 'cursor-pointer'} group/token`}>
+                        <div className={`relative flex flex-col items-center space-y-2 ${!land.whitelisted || tapped[land.id] || !land.balances?.energy ? 'opacity-20 grayscale' : 'cursor-pointer'} group/token`}>
                             <Image
                                 alt={'token-logo'}
                                 src={land.image}
                                 width={100}
                                 height={100}
-                                onClick={() => (land.whitelisted && !tapped[land.id] && tap(land.id))}
-                                className={`z-20 border rounded-full h-32 w-32 ${(land.whitelisted && !tapped[land.id]) && 'group-hover/token:z-40 group-hover/token:shadow-xl group-hover/token:scale-110 transition-all'}`}
+                                onClick={() => (land.whitelisted && !tapped[land.id] && land.balances?.energy && tap(land.id))}
+                                className={`z-20 border rounded-full h-32 w-32 ${(land.whitelisted && !tapped[land.id] && land.balances?.energy) && 'group-hover/token:z-40 group-hover/token:shadow-xl group-hover/token:scale-110 transition-all'}`}
                             />
-                            <div className={`z-30 opacity-0 absolute text-center px-3 py-1 border min-w-6 font-bold rounded-full top-0 text-md bg-card text-accent-foreground flex ${(land.whitelisted && !tapped[land.id]) && 'group-hover/token:-top-6 group-hover/token:opacity-100 group-hover/token:z-50 group-hover/token:shadow-xl group-hover/token:scale-150 transition-all'}`}>
+                            <div className={`z-30 opacity-0 absolute text-center px-3 py-1 border min-w-6 font-bold rounded-full top-0 text-md bg-card text-accent-foreground flex ${(land.whitelisted && !tapped[land.id] && land.balances?.energy) && 'group-hover/token:-top-6 group-hover/token:opacity-100 group-hover/token:z-50 group-hover/token:shadow-xl group-hover/token:scale-150 transition-all'}`}>
                                 <div className='z-30 text-white'>{numeral(land.balances?.energy).format('0a')} ⚡</div>
                             </div>
                         </div>
