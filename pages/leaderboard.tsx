@@ -96,7 +96,7 @@ export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPl
                 <div className="m-2 space-y-6 sm:container sm:mx-auto sm:py-10">
                     <div className='flex justify-between'>
                         <div className="space-y-1">
-                            <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">Leaderboard</h2>
+                            <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">Leaderboards</h2>
                             <p className="flex items-center text-base text-muted-foreground">
                                 Top ranked players and teams in the Charisma ecosystem.
                             </p>
