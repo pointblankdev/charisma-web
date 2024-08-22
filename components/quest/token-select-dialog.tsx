@@ -51,7 +51,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
                 setTapped((tapped: any) => ({ ...tapped, [landId]: true }))
                 toast({
                     title: "Transaction Broadcasted",
-                    description: `txId: ${result.txId}`,
+                    description: result.txId,
                 })
             }
         });
