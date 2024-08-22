@@ -10,6 +10,10 @@ cache_dir = "./.cache"
 path = "contracts/dungeon-master.clar"
 depends_on = []
 
+[contracts.kraqen-lotto]
+path = "contracts/kraqen-lotto.clar"
+depends_on = []
+
 # traits
 [contracts.dao-traits-v2]
 path = "contracts/dao-traits-v2.clar"

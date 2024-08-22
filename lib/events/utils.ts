@@ -1,6 +1,9 @@
-import { getMob, incrementRewardLeaderboard, setHadLandBefore, setLandsBalance, setMob, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { clarigen } from "@lib/clarigen/client";
+import { contractFactory } from '@clarigen/core';
+import { getMob, getNftCollectionMetadata, incrementRewardLeaderboard, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
+import { contracts } from "@lib/clarigen/types";
 
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
@@ -55,10 +58,51 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.type === 'NFTMintEvent') {
             symbol = '🔺'
 
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
+            const contractId = event.data.asset_class_identifier.split('::')[0]
+
+            // contract ids
+            const kraqenLottoContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto';
+            // const spellScrollsContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.spell-scrolls-fire-bolt';
+
+            if (contractId === kraqenLottoContractId) {
+                symbol = '🐙'
+
+                const kraqenLottoContract = contractFactory(contracts.kraqenLotto, kraqenLottoContractId);
+                const tokensMinted = await clarigen.roOk(kraqenLottoContract.getLastTokenId());
+                const nftMetadata = await getNftCollectionMetadata(kraqenLottoContractId)
+                nftMetadata.properties.minted = Number(tokensMinted)
+                await setNftCollectionMetadata(kraqenLottoContractId, nftMetadata)
+
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+                });
+
+            }
+
+            // else if (contractId === kraqenLottoContractId) {
+            //     symbol = '🐙'
+
+            //     const kraqenLottoContract = contractFactory(contracts.kraqenLotto, kraqenLottoContractId);
+            //     const tokensMinted = await clarigen.roOk(kraqenLottoContract.getLastTokenId());
+            //     const nftMetadata = await getNftCollectionMetadata(kraqenLottoContractId)
+            //     nftMetadata.properties.minted = Number(tokensMinted)
+            //     await setNftCollectionMetadata(kraqenLottoContractId, nftMetadata)
+
+            //     builder.addField({
+            //         name: `${symbol} ${event.type}`,
+            //         value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+            //     });
+
+            // } 
+
+            else {
+
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300)
+                });
+            }
         }
 
         else if (event.type === 'FTTransferEvent') {
