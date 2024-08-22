@@ -12,9 +12,10 @@ import { useToast } from '@components/ui/use-toast';
 type TokenSelectDialogProps = {
     lands: any[];
     contractId: `${string}.${string}`
+    buttonText?: string
 }
 
-export const TokenSelectDialog = ({ lands, contractId }: TokenSelectDialogProps) => {
+export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Quest' }: TokenSelectDialogProps) => {
 
     const { openContractCall } = useOpenContractCall();
     const { lands: landEnergy, tapped, setTapped } = useGlobalState()
@@ -56,7 +57,7 @@ export const TokenSelectDialog = ({ lands, contractId }: TokenSelectDialogProps)
     return (
         <Dialog>
             <DialogTrigger asChild>
-                <Button size={'sm'} className={`z-30`}>Start Quest</Button>
+                <Button size={'sm'} className={`z-30`}>{buttonText}</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-2xl">
                 <AlertDialogHeader>

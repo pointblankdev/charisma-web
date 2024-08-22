@@ -219,7 +219,13 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                 </Button>
               </Link>
 
-              {!isMintedOut && <TokenSelectDialog lands={lands} contractId={'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'} />}
+              {!isMintedOut &&
+                <TokenSelectDialog
+                  lands={lands}
+                  contractId={'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'}
+                  buttonText={'Complete Quest'}
+                />
+              }
             </CardFooter>
             <Image
               src={mooningSharkCard}

@@ -217,7 +217,13 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                 </Button>
               </Link>
 
-              {!isMintedOut && <TokenSelectDialog lands={lands} contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt'} />}
+              {!isMintedOut &&
+                <TokenSelectDialog
+                  lands={lands}
+                  contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt'}
+                  buttonText={'Complete Quest'}
+                />
+              }
             </CardFooter>
             <Image
               src={spellScrollCard}

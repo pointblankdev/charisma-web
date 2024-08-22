@@ -191,7 +191,11 @@ export default function Adventure({ lands }: Props) {
                 </Button>
               </Link>
 
-              <TokenSelectDialog lands={lands} contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0'} />
+              <TokenSelectDialog
+                lands={lands}
+                contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0'}
+                buttonText={'Complete Quest'}
+              />
             </CardFooter>
             <Image
               src={journeyOfDiscovery}
