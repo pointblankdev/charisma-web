@@ -235,7 +235,8 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
               className={cn(
                 'object-cover',
                 'opacity-10',
-                'aspect-square',
+                'sm:aspect-square',
+                'aspect-[2/5]',
                 'scale-110',
                 'flex',
                 'z-10',
