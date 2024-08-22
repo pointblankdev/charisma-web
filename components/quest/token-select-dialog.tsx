@@ -4,7 +4,7 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle, DialogTrigger } 
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
-import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
+import { FungibleConditionCode, FungiblePostCondition, makeStandardFungiblePostCondition, PostCondition } from '@stacks/transactions';
 import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useToast } from '@components/ui/use-toast';
@@ -13,7 +13,7 @@ type TokenSelectDialogProps = {
     lands: any[];
     contractId: `${string}.${string}`
     buttonText?: string
-    extraPostConditions?: any[]
+    extraPostConditions?: FungiblePostCondition[]
 }
 
 export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Quest', extraPostConditions = [] }: TokenSelectDialogProps) => {
@@ -29,10 +29,11 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
 
     function tap(landId: number) {
         const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
-        const postConditions = [
+        const postConditions: any[] = [
             makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, '1', burnTokenContract),
-            ...extraPostConditions
         ];
+
+        extraPostConditions.length > 0 && postConditions.push(...extraPostConditions)
 
         openContractCall({
             contractAddress: contractId.split('.')[0],
