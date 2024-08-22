@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftMetadata, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftMetadata, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -391,5 +391,20 @@ describe('nfts api', () => {
     it('should get nft item metadata', async () => {
         const response = await getNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', '1')
         console.log(JSON.stringify(response, null, 2))
+    })
+
+    it('should update nft collection metadata (mooning-sharks)', async () => {
+        const data = await getNftCollectionMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks')
+        data.properties.minted = 20
+        await setNftCollectionMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks', data)
+        console.log(JSON.stringify(data, null, 2))
+    })
+
+    it('should update nft collection metadata (spell-scrolls)', async () => {
+        const data = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls')
+        // data.properties.minted = 20
+        data.properties.items[0].image_url = 'https://charisma.rocks/quests/spell-scroll/fire-bolt-icon.png'
+        await setNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', data)
+        console.log(JSON.stringify(data, null, 2))
     })
 })
