@@ -86,7 +86,7 @@ type Props = {
 export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Props) {
   const meta = {
     title: "Charisma | Mint a Pixel Rozar",
-    description: META_DESCRIPTION,
+    description: "Collect a bunch of completely useless stickers.",
     image: '/quests/pixel-rozar/pixel-rozar.png'
   };
 
