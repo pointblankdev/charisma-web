@@ -85,7 +85,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+                    value: JSON.stringify(event.data).slice(0, 300)
                 });
 
             }
@@ -103,7 +103,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+                    value: JSON.stringify(event.data).slice(0, 300)
                 });
 
             }
@@ -119,7 +119,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
                 builder.addField({
                     name: `${symbol} ${event.type}`,
-                    value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+                    value: JSON.stringify(event.data).slice(0, 300)
                 });
 
             }
