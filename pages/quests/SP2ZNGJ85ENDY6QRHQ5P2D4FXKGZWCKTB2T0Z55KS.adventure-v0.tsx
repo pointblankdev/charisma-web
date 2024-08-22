@@ -31,6 +31,7 @@ import { getDehydratedStateFromSession } from '@components/stacks-session/sessio
 import { getTokenBalance } from '@lib/stacks-api';
 import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
+import { useToast } from '@components/ui/use-toast';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -222,6 +223,7 @@ export function SelectCreatureDialog({ lands }: any) {
 
   const { stxAddress } = useAccount()
   const { lands: landEnergy } = useGlobalState()
+  const { toast } = useToast()
 
   for (const land of lands) {
     land.balances = landEnergy[land.id]
@@ -240,7 +242,19 @@ export function SelectCreatureDialog({ lands }: any) {
       contractName: 'adventure-v0',
       functionName: "tap",
       functionArgs: [uintCV(creatureId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v2')],
-      postConditions: postConditions as any[]
+      postConditions: postConditions as any[],
+      onCancel: () => {
+        toast({
+          title: "Transaction Canceled",
+          description: 'You canceled the transaction.',
+        })
+      },
+      onFinish: (result) => {
+        toast({
+          title: "Transaction Broadcasted",
+          description: JSON.stringify(result, null, 2),
+        })
+      }
     });
   }
 

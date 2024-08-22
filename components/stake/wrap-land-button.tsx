@@ -9,6 +9,7 @@ import {
 import { Button } from "@components/ui/button";
 import { useAccount, useOpenContractCall } from "@micro-stacks/react";
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
+import { useToast } from "@components/ui/use-toast";
 
 interface StakeButtonProps {
   tokens: number;
@@ -23,6 +24,7 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
 }) => {
   const { openContractCall } = useOpenContractCall();
   const { stxAddress } = useAccount()
+  const { toast } = useToast()
 
   const tokens6Dec = Number(tokens)
   const landNftKey = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands::land'
@@ -43,6 +45,18 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
       functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: postConditions as any[],
+      onCancel: () => {
+        toast({
+          title: "Transaction Canceled",
+          description: 'You canceled the transaction.',
+        })
+      },
+      onFinish: (result) => {
+        toast({
+          title: "Transaction Broadcasted",
+          description: JSON.stringify(result, null, 2),
+        })
+      }
     });
   }
 

@@ -35,6 +35,7 @@ import stxIcon from '@public/stx-logo.png'
 import energyIcon from '@public/lands/img/energy.png'
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import numeral from 'numeral';
+import { useToast } from '@components/ui/use-toast';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -246,6 +247,7 @@ export function SelectCreatureDialog({ lands }: any) {
 
   const { openContractCall } = useOpenContractCall();
   const { lands: landEnergy } = useGlobalState()
+  const { toast } = useToast()
 
   for (const land of lands) {
     land.balances = landEnergy[land.id]
@@ -267,7 +269,19 @@ export function SelectCreatureDialog({ lands }: any) {
       contractName: 'spell-scrolls-fire-bolt',
       functionName: "tap",
       functionArgs: [uintCV(creatureId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v2')],
-      postConditions: postConditions as any[]
+      postConditions: postConditions as any[],
+      onCancel: () => {
+        toast({
+          title: "Transaction Canceled",
+          description: 'You canceled the transaction.',
+        })
+      },
+      onFinish: (result) => {
+        toast({
+          title: "Transaction Broadcasted",
+          description: JSON.stringify(result, null, 2),
+        })
+      }
     });
   }
 

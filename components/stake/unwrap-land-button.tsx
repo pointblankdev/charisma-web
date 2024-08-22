@@ -12,6 +12,7 @@ import { Button } from "@components/ui/button";
 import { useAccount, useAuth, useOpenContractCall } from "@micro-stacks/react";
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { makeStandardFungiblePostCondition, FungibleConditionCode } from '@stacks/transactions';
+import { useToast } from "@components/ui/use-toast";
 
 interface UnstakeButtonProps {
   tokens: number;
@@ -24,8 +25,8 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
 }) => {
 
   const { openContractCall } = useOpenContractCall();
-
   const { stxAddress } = useAccount();
+  const { toast } = useToast()
 
   const tokens6Dec = Number(tokens)
 
@@ -49,6 +50,18 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
       functionName: "unwrap",
       functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
       postConditions: postConditions as any[],
+      onCancel: () => {
+        toast({
+          title: "Transaction Canceled",
+          description: 'You canceled the transaction.',
+        })
+      },
+      onFinish: (result) => {
+        toast({
+          title: "Transaction Broadcasted",
+          description: JSON.stringify(result, null, 2),
+        })
+      }
     });
   }
 

@@ -30,6 +30,7 @@ import energyIcon from '@public/creatures/img/energy.png';
 import { track } from '@vercel/analytics';
 import { useAccount } from '@micro-stacks/react';
 import { useOpenContractDeploy } from '@micro-stacks/react';
+import { useToast } from '@components/ui/use-toast';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
@@ -178,6 +179,7 @@ type ProposalFormValues = z.infer<typeof proposalFormSchema>
 
 const CreateNewPool = ({ whitelistedContracts }: any) => {
 
+  const { toast } = useToast()
   const { stxAddress } = useAccount()
   const defaultValues: Partial<ProposalFormValues> = {
     contractAddress: "",
@@ -275,15 +277,20 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
       await openContractDeploy({
         contractName: safeName,
         codeBody: template,
-        onCancel: async () => {
-          await setLandMetadata(contractAddress, landMetadata)
+        onCancel: () => {
+          toast({
+            title: "Transaction Canceled",
+            description: 'You canceled the transaction.',
+          })
         },
-        onFinish: async () => {
+        onFinish: async (result) => {
           await setLandMetadata(contractAddress, landMetadata)
+          toast({
+            title: "Transaction Broadcasted",
+            description: JSON.stringify(result, null, 2),
+          })
         },
       });
-    } else {
-      await setLandMetadata(contractAddress, landMetadata)
     }
   }
 
