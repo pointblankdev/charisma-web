@@ -117,6 +117,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 nftMetadata.properties.minted = Number(tokensMinted)
                 await setNftCollectionMetadata(pixelRozarContractId, nftMetadata)
 
+                builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/pixel-rozar/pixel-rozar.png' })
                 builder.addField({
                     name: `${symbol} ${event.type}`,
                     value: JSON.stringify(event.data).slice(0, 300)
