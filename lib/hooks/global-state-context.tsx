@@ -4,6 +4,7 @@ import { getClaimableAmount, getLandAmount } from '@lib/stacks-api';
 import { getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useAccount } from '@micro-stacks/react';
+import { useToast } from '@components/ui/use-toast';
 
 
 const socketUrl = "https://api.mainnet.hiro.so";
@@ -14,6 +15,8 @@ interface GlobalState {
     setLands: (lands: any) => void;
     block: any;
     setBlock: (block: any) => void;
+    tapped: any;
+    setTapped: (block: any) => void;
 }
 
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
@@ -22,6 +25,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const { stxAddress } = useAccount()
     const [lands, setLands] = usePersistedState('lands', {});
     const [block, setBlock] = usePersistedState('block', {});
+    const [tapped, setTapped] = usePersistedState('tapped', {});
+
+    const { toast } = useToast()
 
 
     interface LandData {
@@ -57,7 +63,14 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     useEffect(() => {
 
-        sc.subscribeBlocks(block => setBlock(block as any));
+        sc.subscribeBlocks(block => {
+            setBlock(block as any)
+            setTapped({})
+            toast({
+                title: "New Block",
+                description: `Block ${block.height} has been mined.`,
+            })
+        });
 
         const getBlockData = async () => {
             const block = await getLatestBlock()
@@ -74,7 +87,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 
     return (
-        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock }}>
+        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped }}>
             {children}
         </GlobalStateContext.Provider>
     );

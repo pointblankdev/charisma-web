@@ -32,6 +32,7 @@ import { getTokenBalance } from '@lib/stacks-api';
 import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useToast } from '@components/ui/use-toast';
+import TokenSelectDialog from '@components/quest/token-select-dialog';
 
 function parseAddress(str: string) {
   // Parse the string into a JavaScript object
@@ -190,7 +191,7 @@ export default function Adventure({ lands }: Props) {
                 </Button>
               </Link>
 
-              <SelectCreatureDialog lands={lands} />
+              <TokenSelectDialog lands={lands} contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0'} />
             </CardFooter>
             <Image
               src={journeyOfDiscovery}
@@ -215,78 +216,4 @@ export default function Adventure({ lands }: Props) {
       </Layout>
     </Page>
   );
-}
-
-export function SelectCreatureDialog({ lands }: any) {
-
-  const { openContractCall } = useOpenContractCall();
-
-  const { stxAddress } = useAccount()
-  const { lands: landEnergy } = useGlobalState()
-  const { toast } = useToast()
-
-  for (const land of lands) {
-    land.balances = landEnergy[land.id]
-  }
-
-  function tap(creatureId: number) {
-
-    const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
-
-    const postConditions = [
-      makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.GreaterEqual, '1', burnTokenContract),
-    ];
-
-    openContractCall({
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'adventure-v0',
-      functionName: "tap",
-      functionArgs: [uintCV(creatureId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v2')],
-      postConditions: postConditions as any[],
-      onCancel: () => {
-        toast({
-          title: "Transaction Canceled",
-          description: 'You canceled the transaction.',
-        })
-      },
-      onFinish: (result) => {
-        toast({
-          title: "Transaction Broadcasted",
-          description: JSON.stringify(result, null, 2),
-        })
-      }
-    });
-  }
-
-
-  return (
-    <Dialog>
-      <DialogTrigger asChild>
-        <Button size={'sm'} className={`z-30`}>Complete Quest</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-2xl">
-        <AlertDialogHeader>
-          <DialogTitle>Which staked token should you use?</DialogTitle>
-        </AlertDialogHeader>
-
-        <DialogDescription className='grid gap-2 grid-cols-2 sm:grid-cols-4 space-x-4 py-4'>
-          {lands.map((land: any) => (
-            <div className={`relative flex flex-col items-center space-y-2 ${!land.whitelisted ? 'opacity-20 grayscale' : 'cursor-pointer'} group/token`}>
-              <Image
-                alt={'token-logo'}
-                src={land.image}
-                width={100}
-                height={100}
-                onClick={() => land.whitelisted && tap(land.id)}
-                className={`z-20 border rounded-full h-32 w-32 ${land.whitelisted && 'group-hover/token:z-40 group-hover/token:shadow-xl group-hover/token:scale-110 transition-all'}`}
-              />
-              <div className={`z-30 opacity-0 absolute text-center px-3 py-1 border min-w-6 font-bold rounded-full top-0 text-md bg-card text-accent-foreground flex ${land.whitelisted && 'group-hover/token:-top-6 group-hover/token:opacity-100 group-hover/token:z-50 group-hover/token:shadow-xl group-hover/token:scale-150 transition-all'}`}>
-                <div className='z-30 text-white'>{numeral(land.balances?.energy).format('0a')} ⚡</div>
-              </div>
-            </div>
-          ))}
-        </DialogDescription>
-      </DialogContent>
-    </Dialog >
-  )
 }

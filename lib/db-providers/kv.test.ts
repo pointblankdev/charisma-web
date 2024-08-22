@@ -161,7 +161,15 @@ describe('metadata api', () => {
         await setLand(contract, land)
     })
 
-    it('should get stx-scha land', async () => {
+    it('should update stx-wcha land', async () => {
+        const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha'
+        const land = await getLand(contract)
+        land.proposal = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.list-stxwcha-velar-lp'
+        console.log(land)
+        await setLand(contract, land)
+    })
+
+    it('should make a copy of stx-scha land', async () => {
         const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
         const land = await getLand(contract)
         land.name = 'STX-wCHA - Velar LP'
