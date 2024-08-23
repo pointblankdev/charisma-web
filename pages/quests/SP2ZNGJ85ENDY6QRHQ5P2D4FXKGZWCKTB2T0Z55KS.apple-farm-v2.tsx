@@ -130,8 +130,7 @@ export default function SpellScrollFireBolt({ lands, stxAddress }: Props) {
                     <h3 className="font-semibold mt-4 mb-2">Core Mechanics:</h3>
                     <ul className="list-disc list-inside mb-4 text-sm">
                       <li>Stake memecoins to generate energy</li>
-                      <li>Spend energy to harvest apple tokens</li>
-                      <li>Convert your apple harvest into CHA tokens</li>
+                      <li>Spend energy to harvest CHA tokens</li>
                     </ul>
 
                     <h3 className="font-semibold mt-4 mb-2">Harvest Formula:</h3>
