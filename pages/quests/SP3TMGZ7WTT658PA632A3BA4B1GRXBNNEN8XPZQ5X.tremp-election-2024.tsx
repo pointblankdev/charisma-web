@@ -110,7 +110,7 @@ export default function KrakenLotto({ stxAddress, lands, nftCollectionMetadata }
                 </div>
                 <div className='leading-snug sm:mr-4'>
                   <div className={`font-medium text-md whitespace-nowrap ${!isMintedOut ? `animate-pulse` : `text-primary`}`}>{isMintedOut ? `Minted Out` : `Minting Now`}</div>
-                  <div className='font-medium text-sm text-center text-primary-foreground/80'>{nftCollectionMetadata.properties.minted} / {nftCollectionMetadata.properties.total_supply}</div>
+                  <div className='font-medium text-sm text-center text-primary-foreground/80'>{nftCollectionMetadata.properties.minted || 0} / {nftCollectionMetadata.properties.total_supply}</div>
                 </div>
               </div>
             </CardHeader>
