@@ -19,7 +19,7 @@ import {
 import velarApi from '@lib/velar-api';
 
 // Import images
-import fujiApplesLogo from '@public/stations/fuji-apples.png';
+import fujiApplesLogo from '@public/sip10/fuji-apples.png';
 import charismaLogo from '@public/charisma.png';
 import wrappedCharismaLogo from '@public/indexes/wrapped-charisma-logo.png';
 import liquidStakedCharismaLogo from '@public/liquid-staked-charisma.png';
@@ -32,7 +32,6 @@ import liquidRooLogo from '@public/liquid-staked-roo.png';
 import odinLogo from '@public/odin-logo.png';
 import liquidOdinLogo from '@public/liquid-staked-odin.png';
 import { GetServerSideProps } from 'next';
-import millify from 'millify';
 import { isEmpty } from 'lodash';
 import numeral from 'numeral';
 import useWallet from '@lib/hooks/wallet-balance-provider';
