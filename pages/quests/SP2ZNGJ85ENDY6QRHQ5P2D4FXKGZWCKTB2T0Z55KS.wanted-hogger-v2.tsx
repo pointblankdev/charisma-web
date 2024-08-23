@@ -300,7 +300,7 @@ export default function WantedHogger({ lands, mob }: Props) {
                       Back
                     </Button>
 
-                    {mob.health > 0 && <TokenSelectDialog lands={lands} contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2'} />}
+                    {mob.health > 0 && <TokenSelectDialog lands={lands} contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2'} buttonText='Attack Hogger' />}
                   </CardFooter>
                   <Image
                     src={mob.health > 0 ? wantedHogger : hoggerDefeated}

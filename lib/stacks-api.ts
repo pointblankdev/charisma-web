@@ -964,12 +964,10 @@ export async function checkIfEpochIsEnding(contractAddress: string) {
   const result = hexToCV((response as any).result);
   const epochInfo = cvToJSON(result).value.value;
   console.log('Epoch Info: ', epochInfo);
-  const mob = await getMob('hogger');
-  mob.hoggerDefeatBlock = Number(epochInfo['hogger-defeat-block'].value)
-  mob.canStartNewEpoch = epochInfo['can-start-new-epoch'].value
-  if (mob.canStartNewEpoch) mob.health = Number(mob.maxHealth)
-  console.log('Mob: ', mob);
-  await setMob('hogger', mob);
+  // const mob = await getMob('hogger');
+  // mob.hoggerDefeatBlock = Number(epochInfo['hogger-defeat-block'].value)
+  // mob.canStartNewEpoch = epochInfo['can-start-new-epoch'].value
+  // console.log('Mob: ', mob);
   return epochInfo
 }
 

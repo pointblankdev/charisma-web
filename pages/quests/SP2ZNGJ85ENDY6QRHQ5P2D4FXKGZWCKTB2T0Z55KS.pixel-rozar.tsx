@@ -39,14 +39,18 @@ import { useToast } from '@components/ui/use-toast';
 import TokenSelectDialog from '@components/quest/token-select-dialog';
 
 function parseAddress(str: string) {
-  // Parse the string into a JavaScript object
-  const parsedData = JSON.parse(str);
+  try {
+    // Parse the string into a JavaScript object
+    const parsedData = JSON.parse(str);
 
-  // Navigate through the nested structure to find the address
-  const addressObj = parsedData[1][1][0];
+    // Navigate through the nested structure to find the address
+    const addressObj = parsedData[1][1][0];
 
-  // Return the address
-  return addressObj.address;
+    // Return the address
+    return addressObj.address;
+  } catch (error) {
+    return ''
+  }
 }
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
@@ -62,35 +66,36 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   const nftCollectionMetadata = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar')
 
-  // const state = await getDehydratedStateFromSession(ctx) as string
+  const dehydratedState = await getDehydratedStateFromSession(ctx) as string
+  const stxAddress = parseAddress(dehydratedState)
 
   // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
   // const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
 
   return {
     props: {
+      dehydratedState,
+      stxAddress,
       lands,
       nftCollectionMetadata,
       // burnAmount,
-      // dehydratedState: await getDehydratedStateFromSession(ctx),
     }
   };
 };
 
 type Props = {
+  stxAddress: string;
   lands: any[];
   nftCollectionMetadata: any;
   // burnAmount: string
 };
 
-export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Props) {
+export default function SpellScrollFireBolt({ lands, nftCollectionMetadata, stxAddress }: Props) {
   const meta = {
     title: "Charisma | Mint a Pixel Rozar",
     description: "Collect a bunch of completely useless stickers.",
     image: '/quests/pixel-rozar/pixel-rozar.png'
   };
-
-  const { stxAddress } = useAccount()
 
   const title = "Mint a Pixel Rozar";
   const subtitle = 'Claim a completely pointless sticker.';
@@ -101,6 +106,9 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
   };
 
   const isMintedOut = nftCollectionMetadata.properties.minted === nftCollectionMetadata.properties.total_supply
+
+  const extraPostConditions: any[] = []
+  if (stxAddress) extraPostConditions.push([makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 20)])
 
   return (
     <Page meta={meta} fullViewport>
@@ -223,7 +231,7 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                   lands={lands}
                   contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar'}
                   buttonText={'MOAR STICKERS'}
-                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 20)]}
+                  extraPostConditions={extraPostConditions}
                 />
               }
             </CardFooter>
