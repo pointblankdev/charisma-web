@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftMetadata, removeLand, setContractMetadata, setLand, setLandById, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftMetadata, removeLand, setContractMetadata, setLand, setLandById, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -395,7 +395,7 @@ describe('metadata api', () => {
 
     // should get lands balance
     it('should get lands balance', async () => {
-        const response = await getLandsBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        const response = await getLandsBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma', 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q')
         console.log(response)
     })
 
@@ -405,6 +405,10 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    it('should sync lands balance', async () => {
+        const response = await setLandsBalance(1, 'SP1X7X9SCHHK4JG4K5NXZ4TDNWKBQR759A85XC1PC')
+        console.log(response)
+    })
 
 
 });

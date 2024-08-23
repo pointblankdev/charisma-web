@@ -25,6 +25,7 @@ export function parseAddress(str: string) {
         // Return the address
         return addressObj.address;
     } catch (error) {
+        console.error('Error parsing address:', error);
         return ''
     }
 }
