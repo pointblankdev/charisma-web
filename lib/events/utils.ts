@@ -87,6 +87,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             const kraqenLottoContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto';
             const spellScrollsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt';
             const pixelRozarContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar';
+            const predictTrempContractId = 'SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024';
 
             if (contractId === kraqenLottoContractId) {
                 symbol = '🐙'
@@ -132,6 +133,23 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 await setNftCollectionMetadata(pixelRozarContractId, nftMetadata)
 
                 builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/pixel-rozar/pixel-rozar.png' })
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300)
+                });
+
+            }
+
+            else if (contractId === predictTrempContractId) {
+                symbol = '🇺🇸'
+
+                const predictTrempContract = contractFactory(contracts.kraqenLotto, predictTrempContractId);
+                const tokensMinted = await clarigen.roOk(predictTrempContract.getLastTokenId());
+                const nftMetadata = await getNftCollectionMetadata(predictTrempContractId)
+                nftMetadata.properties.minted = Number(tokensMinted)
+                await setNftCollectionMetadata(predictTrempContractId, nftMetadata)
+
+                builder.setThumbnail({ url: 'https://mlw1rgyfhipx.i.optimole.com/w:auto/h:auto/q:75/ig:avif/https://trempstx.com/wp-content/uploads/2024/07/IMG_20240729_233240_884.jpg' })
                 builder.addField({
                     name: `${symbol} ${event.type}`,
                     value: JSON.stringify(event.data).slice(0, 300)
