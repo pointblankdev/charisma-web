@@ -161,7 +161,7 @@ export default function KrakenLotto({ stxAddress, lands, nftCollectionMetadata }
                   </div>
                 </div>
 
-                <div className="z-20 mt-8 sm:mt-0">
+                <div className="z-20 mt-0 sm:mt-4">
                   <div className="z-30 text-xl font-semibold">Key Information</div>
                   <div className='z-30 mb-4 text-sm font-fine text-foreground'>
                     <ul className="list-disc list-inside text-sm leading-snug">
