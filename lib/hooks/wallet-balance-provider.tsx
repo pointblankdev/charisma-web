@@ -39,6 +39,9 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
   };
 
   const getBalanceByKey = (key: string) => {
+    if (key === 'STX::native') {
+        return Number(balances?.stx?.balance || 0);
+    }
     return Number((balances?.fungible_tokens?.[key] as any)?.balance)
   };
 
