@@ -55,7 +55,21 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
                 });
 
-            } else {
+            }
+
+            else if (event.data.asset_identifier.split('::')[0] === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token") {
+                symbol = '💰'
+
+                await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.amount, event.data.recipient);
+
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
+                });
+
+            }
+
+            else {
 
                 builder.addField({
                     name: `${symbol} ${event.type}`,
@@ -166,7 +180,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 }
 
                 else if (event.data.value.event === 'rewards-distributed') {
-                    await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
+                    // await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.value['cha-amount'], event.data.value.player);
                     builder.addField({
                         name: `${symbol} ${event.data.value.event}`,
                         value: JSON.stringify(event.data.value).slice(0, 300)

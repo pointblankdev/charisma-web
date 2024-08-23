@@ -22,6 +22,8 @@ import mooningSharkCard from '@public/quests/mooning-shark/mooning-shark-card.pn
 import krakenLottoIcon from '@public/quests/raven-raffle/ticket.png'
 import krakenLottoCard from '@public/quests/raven-raffle/kraken-lotto.png'
 import pixelRozar from '@public/quests/pixel-rozar/pixel-rozar.png'
+import abundantOrchard from '@public/quests/abundant-orchard/apple-orchard.png'
+import farmersIcon from '@public/creatures/img/farmers.png'
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
@@ -41,6 +43,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=quest",
       image: hugeKnollClaw,
       cardImage: wantedPoster,
+    },
+    {
+      name: `Harvest the Apple Farm`,
+      description: "Put staked tokens to work harvesting apples.",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-farm-v2",
+      image: farmersIcon,
+      cardImage: abundantOrchard,
     },
     {
       name: `Mint a Spell Scroll`,

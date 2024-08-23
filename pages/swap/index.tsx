@@ -17,12 +17,18 @@ export const getStaticProps: GetStaticProps<Props> = () => {
   const tokens = [
     {
       name: "Liquid Staked Charisma",
-      description: "The rebase token of Charisma",
+      description: "sCHA's value will increase over time",
       ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma",
       image: "/liquid-staked-charisma.png",
-      cardImage: charismaCard,
       ticker: 'sCHA'
-    }
+    },
+    // {
+    //   name: "Wrapped Charisma",
+    //   description: "wCHA maintains a 1:1 peg with Charisma",
+    //   ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wrapped-charisma",
+    //   image: "/indexes/wrapped-charisma-logo.png",
+    //   ticker: 'wCHA'
+    // }
   ]
 
   // for (const ca of tokenContractAddresses) {
