@@ -59,7 +59,7 @@ const UnwrapLandButton: React.FC<UnstakeButtonProps> = ({
       onFinish: (result) => {
         toast({
           title: "Transaction Broadcasted",
-          description: JSON.stringify(result, null, 2),
+          description: result.txId,
         })
       }
     });

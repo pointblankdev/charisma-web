@@ -54,7 +54,7 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
       onFinish: (result) => {
         toast({
           title: "Transaction Broadcasted",
-          description: JSON.stringify(result, null, 2),
+          description: result.txId,
         })
       }
     });
