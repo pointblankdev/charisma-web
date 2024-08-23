@@ -34,7 +34,7 @@ const ConnectWallet = () => {
     <NavigationMenu className="hidden sm:block">
       <NavigationMenuList>
         <NavigationMenuItem>
-          <NavigationMenuTrigger>
+          <NavigationMenuTrigger className="bg-primary">
             <div onClick={handleConnect}>
               {isClientSide && label}
             </div>

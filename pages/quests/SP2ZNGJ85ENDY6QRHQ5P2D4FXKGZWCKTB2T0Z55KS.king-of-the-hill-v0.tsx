@@ -34,24 +34,13 @@ import { useSearchParams } from 'next/navigation';
 import { useRouter } from 'next/router';
 import wantedPoster from '@public/quests/wanted-hogger/wanted-poster-2.png'
 import { GetServerSidePropsContext } from 'next';
-import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
+import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import kingOfTheHillCard from '@public/quests/king-of-the-hill/king-of-the-hill-card.png'
 import numeral from 'numeral';
 import { useToast } from '@components/ui/use-toast';
 import TokenSelectDialog from '@components/quest/token-select-dialog';
-
-function parseAddress(str: string) {
-  // Parse the string into a JavaScript object
-  const parsedData = JSON.parse(str);
-
-  // Navigate through the nested structure to find the address
-  const addressObj = parsedData[1][1][0];
-
-  // Return the address
-  return addressObj.address;
-}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
@@ -64,28 +53,26 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     lands.push(metadata)
   }
 
-  // const state = await getDehydratedStateFromSession(ctx) as string
-
-  // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
-  // const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
+  const dehydratedState = await getDehydratedStateFromSession(ctx) as string
+  const stxAddress = parseAddress(dehydratedState)
 
   return {
     props: {
+      dehydratedState,
+      stxAddress,
       lands,
       mob,
-      // burnAmount,
-      // dehydratedState: await getDehydratedStateFromSession(ctx),
     },
   };
 }
 
 type Props = {
+  stxAddress: string;
   lands: any[];
   mob: any
-  // burnAmount: string
 };
 
-export default function KingOfTheHill({ lands, mob }: Props) {
+export default function KingOfTheHill({ stxAddress, lands, mob }: Props) {
   const meta = {
     title: `Charisma | King of the Hill`,
     description: META_DESCRIPTION,

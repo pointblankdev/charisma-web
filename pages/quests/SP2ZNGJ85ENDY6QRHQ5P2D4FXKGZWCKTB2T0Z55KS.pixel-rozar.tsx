@@ -27,31 +27,11 @@ import { getLand, getLands, getNftCollectionMetadata } from '@lib/db-providers/k
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
-import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
-import { getTokenBalance } from '@lib/stacks-api';
+import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
 import pixelRozar from '@public/quests/pixel-rozar/pixel-rozar.png'
-import spellScrollCard from '@public/quests/spell-scroll/spell-scroll-card.png'
 import stxIcon from '@public/stx-logo.png'
 import energyIcon from '@public/lands/img/energy.png'
-import { useGlobalState } from '@lib/hooks/global-state-context';
-import numeral from 'numeral';
-import { useToast } from '@components/ui/use-toast';
 import TokenSelectDialog from '@components/quest/token-select-dialog';
-
-function parseAddress(str: string) {
-  try {
-    // Parse the string into a JavaScript object
-    const parsedData = JSON.parse(str);
-
-    // Navigate through the nested structure to find the address
-    const addressObj = parsedData[1][1][0];
-
-    // Return the address
-    return addressObj.address;
-  } catch (error) {
-    return ''
-  }
-}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
@@ -69,16 +49,12 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const dehydratedState = await getDehydratedStateFromSession(ctx) as string
   const stxAddress = parseAddress(dehydratedState)
 
-  // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
-  // const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
-
   return {
     props: {
       dehydratedState,
       stxAddress,
       lands,
       nftCollectionMetadata,
-      // burnAmount,
     }
   };
 };
@@ -87,7 +63,6 @@ type Props = {
   stxAddress: string;
   lands: any[];
   nftCollectionMetadata: any;
-  // burnAmount: string
 };
 
 export default function SpellScrollFireBolt({ lands, nftCollectionMetadata, stxAddress }: Props) {
@@ -108,7 +83,7 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata, stxA
   const isMintedOut = nftCollectionMetadata.properties.minted === nftCollectionMetadata.properties.total_supply
 
   const extraPostConditions: any[] = []
-  if (stxAddress) extraPostConditions.push([makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 20)])
+  if (stxAddress) extraPostConditions.push(makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 20))
 
   return (
     <Page meta={meta} fullViewport>

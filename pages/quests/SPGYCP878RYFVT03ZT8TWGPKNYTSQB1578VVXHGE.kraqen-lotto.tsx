@@ -27,7 +27,7 @@ import { getLand, getLands, getNftCollectionMetadata } from '@lib/db-providers/k
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
-import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
+import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
 import KrakenLottoIcon from '@public/quests/raven-raffle/ticket.png'
 import KrakenLottoCard from '@public/quests/raven-raffle/kraken-lotto.png'
@@ -37,17 +37,6 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import numeral from 'numeral';
 import { useToast } from "@components/ui/use-toast"
 import TokenSelectDialog from '@components/quest/token-select-dialog';
-
-function parseAddress(str: string) {
-  // Parse the string into a JavaScript object
-  const parsedData = JSON.parse(str);
-
-  // Navigate through the nested structure to find the address
-  const addressObj = parsedData[1][1][0];
-
-  // Return the address
-  return addressObj.address;
-}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
@@ -61,35 +50,31 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   const nftCollectionMetadata = await getNftCollectionMetadata('SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto')
 
-  // const state = await getDehydratedStateFromSession(ctx) as string
-
-  // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
-  // const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
+  const dehydratedState = await getDehydratedStateFromSession(ctx) as string
+  const stxAddress = parseAddress(dehydratedState)
 
   return {
     props: {
+      dehydratedState,
+      stxAddress,
       lands,
       nftCollectionMetadata,
-      // burnAmount,
-      // dehydratedState: await getDehydratedStateFromSession(ctx),
     }
   };
 };
 
 type Props = {
+  stxAddress: string;
   lands: any[];
   nftCollectionMetadata: any;
-  // burnAmount: string
 };
 
-export default function KrakenLotto({ lands, nftCollectionMetadata }: Props) {
+export default function KrakenLotto({ stxAddress, lands, nftCollectionMetadata }: Props) {
   const meta = {
     title: "Charisma | Mint a Kraken Lottery Ticket",
     description: META_DESCRIPTION,
     image: '/quests/raven-raffle/kraken-lotto.png'
   };
-
-  const { stxAddress } = useAccount()
 
   const title = "Mint a Kraken Lottery Ticket";
   const subtitle = 'Mint lottery tickets for your chance to win.';
@@ -100,6 +85,9 @@ export default function KrakenLotto({ lands, nftCollectionMetadata }: Props) {
   };
 
   const isMintedOut = nftCollectionMetadata.properties.minted === nftCollectionMetadata.properties.total_supply
+
+  const extraPostConditions: any[] = []
+  if (stxAddress) extraPostConditions.push(makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000))
 
   return (
     <Page meta={meta} fullViewport>
@@ -239,7 +227,7 @@ export default function KrakenLotto({ lands, nftCollectionMetadata }: Props) {
                 <TokenSelectDialog
                   lands={lands}
                   contractId={'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto'}
-                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000)]}
+                  extraPostConditions={extraPostConditions}
                 />
               }
             </CardFooter>

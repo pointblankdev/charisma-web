@@ -21,29 +21,10 @@ import { motion } from 'framer-motion';
 import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
 import experience from '@public/experience.png'
 import schaImg from '@public/liquid-staked-charisma.png'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
-import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import { getLand, getLands } from '@lib/db-providers/kv';
-import { useAccount, useOpenContractCall } from '@micro-stacks/react';
-import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
-import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
-import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
-import { getTokenBalance } from '@lib/stacks-api';
-import numeral from 'numeral';
-import { useGlobalState } from '@lib/hooks/global-state-context';
-import { useToast } from '@components/ui/use-toast';
+import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
 import TokenSelectDialog from '@components/quest/token-select-dialog';
 
-function parseAddress(str: string) {
-  // Parse the string into a JavaScript object
-  const parsedData = JSON.parse(str);
-
-  // Navigate through the nested structure to find the address
-  const addressObj = parsedData[1][1][0];
-
-  // Return the address
-  return addressObj.address;
-}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
@@ -55,26 +36,24 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     lands.push(metadata)
   }
 
-  // const state = await getDehydratedStateFromSession(ctx) as string
-
-  // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
-  // const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
+  const dehydratedState = await getDehydratedStateFromSession(ctx) as string
+  const stxAddress = parseAddress(dehydratedState)
 
   return {
     props: {
+      dehydratedState,
+      stxAddress,
       lands,
-      // burnAmount,
-      // dehydratedState: await getDehydratedStateFromSession(ctx),
     }
   };
 };
 
 type Props = {
+  stxAddress: string;
   lands: any[];
-  // burnAmount: string
 };
 
-export default function Adventure({ lands }: Props) {
+export default function Adventure({ stxAddress, lands }: Props) {
   const meta = {
     title: "Charisma | Adventure",
     description: META_DESCRIPTION,
@@ -102,7 +81,6 @@ export default function Adventure({ lands }: Props) {
 
   return (
     <Page meta={meta} fullViewport>
-      {/* <Image src={goldEmbers} alt="bolt-background-image" layout="fill" objectFit="cover" priority /> */}
       <SkipNavContent />
       <Layout>
         <motion.div
@@ -191,11 +169,11 @@ export default function Adventure({ lands }: Props) {
                 </Button>
               </Link>
 
-              <TokenSelectDialog
+              {stxAddress && <TokenSelectDialog
                 lands={lands}
                 contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.adventure-v0'}
                 buttonText={'Complete Quest'}
-              />
+              />}
             </CardFooter>
             <Image
               src={journeyOfDiscovery}

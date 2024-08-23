@@ -123,7 +123,7 @@ describe('metadata api', () => {
         // land.whitelisted = true
         // land.id = 7
         // land.wraps.symbol = 'FAIR'
-        // await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', land)
+        await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', land)
         console.log(land)
     })
 

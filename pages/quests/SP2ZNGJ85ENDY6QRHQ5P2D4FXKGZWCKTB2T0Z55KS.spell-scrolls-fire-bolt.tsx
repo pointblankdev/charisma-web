@@ -27,7 +27,7 @@ import { getLand, getLands, getNftCollectionMetadata } from '@lib/db-providers/k
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
-import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
+import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
 import spellScrollIcon from '@public/quests/spell-scroll/spell-scroll-icon.png'
 import spellScrollCard from '@public/quests/spell-scroll/spell-scroll-card.png'
@@ -38,16 +38,6 @@ import numeral from 'numeral';
 import { useToast } from '@components/ui/use-toast';
 import TokenSelectDialog from '@components/quest/token-select-dialog';
 
-function parseAddress(str: string) {
-  // Parse the string into a JavaScript object
-  const parsedData = JSON.parse(str);
-
-  // Navigate through the nested structure to find the address
-  const addressObj = parsedData[1][1][0];
-
-  // Return the address
-  return addressObj.address;
-}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
@@ -59,38 +49,33 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     lands.push(metadata)
   }
 
-
   const nftCollectionMetadata = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls')
 
-  // const state = await getDehydratedStateFromSession(ctx) as string
-
-  // const exp = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', parseAddress(state))
-  // const burnAmount = (exp / Math.pow(10, 9)).toFixed(6)
+  const dehydratedState = await getDehydratedStateFromSession(ctx) as string
+  const stxAddress = parseAddress(dehydratedState)
 
   return {
     props: {
+      dehydratedState,
+      stxAddress,
       lands,
       nftCollectionMetadata,
-      // burnAmount,
-      // dehydratedState: await getDehydratedStateFromSession(ctx),
     }
   };
 };
 
 type Props = {
+  stxAddress: string;
   lands: any[];
   nftCollectionMetadata: any;
-  // burnAmount: string
 };
 
-export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Props) {
+export default function SpellScrollFireBolt({ stxAddress, lands, nftCollectionMetadata }: Props) {
   const meta = {
     title: "Charisma | Mint a Spell Scroll",
     description: META_DESCRIPTION,
     image: '/spell-scroll-fire-bolt.png'
   };
-
-  const { stxAddress } = useAccount()
 
   const title = "Mint a Spell Scroll";
   const subtitle = 'Claim your own utility NFT on Stacks.';
@@ -101,6 +86,9 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
   };
 
   const isMintedOut = nftCollectionMetadata.properties.minted === nftCollectionMetadata.properties.total_supply
+
+  const extraPostConditions: any[] = []
+  if (stxAddress) extraPostConditions.push(makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000))
 
   return (
     <Page meta={meta} fullViewport>
@@ -224,7 +212,7 @@ export default function SpellScrollFireBolt({ lands, nftCollectionMetadata }: Pr
                   lands={lands}
                   contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt'}
                   buttonText={'Complete Quest'}
-                  extraPostConditions={[makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000)]}
+                  extraPostConditions={extraPostConditions}
                 />
               }
             </CardFooter>

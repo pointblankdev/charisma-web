@@ -13,3 +13,18 @@ export const getDehydratedStateFromSession = async (ctx: GetServerSidePropsConte
     const { dehydratedState } = await getIronSession(ctx.req, ctx.res);
     return dehydratedState ? cleanDehydratedState(dehydratedState) : null;
 };
+
+export function parseAddress(str: string) {
+    try {
+        // Parse the string into a JavaScript object
+        const parsedData = JSON.parse(str);
+
+        // Navigate through the nested structure to find the address
+        const addressObj = parsedData[1][1][0];
+
+        // Return the address
+        return addressObj.address;
+    } catch (error) {
+        return ''
+    }
+}
