@@ -37,6 +37,26 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
     <div className={styles['nav-overlay']}>
       <FocusScope contain restoreFocus autoFocus>
         <nav className={styles.nav} {...overlayProps} {...dialogProps} {...modalProps} ref={ref}>
+          <button
+            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-600"
+            aria-label="Close Menu"
+            onClick={props.onClose}
+          >
+            <svg
+              viewBox="0 0 24 24"
+              width="24"
+              height="24"
+              stroke="currentColor"
+              strokeWidth="1.5"
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              fill="none"
+            >
+              <path d="M18 6L6 18" />
+              <path d="M6 6l12 12" />
+            </svg>
+          </button>
+          
           {mobileNav.map(({ name, route }) => (
             <Link key={name} href={route}
               className={cn(styles['nav-item'], {
