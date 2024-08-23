@@ -171,6 +171,14 @@ describe('metadata api', () => {
         await setLand(contract, land)
     })
 
+    it('should update not land', async () => {
+        const contract = 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope'
+        const land = await getLand(contract)
+        land.cardImage = 'https://beta.charisma.rocks/liquid-nothing-21.png'
+        console.log(land)
+        await setLand(contract, land)
+    })
+
     it('should make a copy of stx-scha land', async () => {
         const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
         const land = await getLand(contract)
@@ -406,7 +414,7 @@ describe('metadata api', () => {
     })
 
     it('should sync lands balance', async () => {
-        const response = await setLandsBalance(1, 'SP1X7X9SCHHK4JG4K5NXZ4TDNWKBQR759A85XC1PC')
+        const response = await setLandsBalance(7, 'SP1FHC2XXJW3CQFNFZX60633E5WPWST4DBW8JFP66')
         console.log(response)
     })
 
@@ -417,7 +425,7 @@ describe('metadata api', () => {
 describe('nfts api', () => {
     // should get nft collection metadata
     it('should get nft collection metadata', async () => {
-        const response = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls')
+        const response = await getNftCollectionMetadata('SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024')
         console.log(JSON.stringify(response, null, 2))
     })
 

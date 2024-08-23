@@ -87,7 +87,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
 
                 <DialogDescription className='grid gap-2 grid-cols-4 space-x-4 py-4'>
                     {lands.map((land: any) => (
-                        <div className={`relative flex flex-col items-center space-y-2 group/token`}>
+                        <div className={`relative flex flex-col items-center space-y-2 group/token ${!land.whitelisted || tapped[land.id] ? 'opacity-20 grayscale' : 'cursor-pointer'}`}>
                             <Image
                                 alt={'token-logo'}
                                 src={land.image}
