@@ -178,7 +178,6 @@ export default function KrakenLotto({ stxAddress, lands, nftCollectionMetadata }
                     <li>3 STX mint cost per NFT</li>
                     <li>50 energy cost per NFT</li>
                     <li>sCHA protocol burn per mint</li>
-                    <li>Max of 4 NFTs per mint</li>
                   </ul>
                   <div className="grid grid-cols-6 gap-4 mt-4">
                     <div className="relative">
