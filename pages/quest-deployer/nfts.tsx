@@ -206,10 +206,6 @@ const generateMintCalls = (count: number) => {
     return calls;
 };
 
-function multdec(val1: number, val2: number) {
-    return Number(BigInt(val1 * 1000000) * BigInt(val2 * 1000000)) / 1000000
-}
-
 const ImagePreview = ({ src }: { src: string }) => {
     const [isLoading, setIsLoading] = React.useState(true);
     const [error, setError] = React.useState(false);
@@ -250,6 +246,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
         defaultValues: {
             collectionName: '',
             nftItems: [{ itemName: '', amount: 0, itemImage: '' }],
+            maxMintsPerTx: 1,
         },
         mode: "onChange",
     })
