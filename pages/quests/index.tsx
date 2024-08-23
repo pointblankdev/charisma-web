@@ -52,6 +52,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       cardImage: abundantOrchard,
     },
     {
+      name: `President Tremp: 2024`,
+      description: "Predict if Trump will win the election.",
+      ca: "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024",
+      image: 'https://mlw1rgyfhipx.i.optimole.com/w:auto/h:auto/q:75/ig:avif/https://trempstx.com/wp-content/uploads/2024/07/IMG_20240729_233240_884.jpg',
+      cardImage: 'https://i.postimg.cc/pdr6wHmf/D92-DA6-B6-F80-E-49-EC-8851-515079-C9-B10-C.avif',
+    },
+    {
       name: `Mint a Spell Scroll`,
       description: "Scrolls grant their holder a special ability.",
       ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt",
