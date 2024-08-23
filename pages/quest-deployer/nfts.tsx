@@ -246,7 +246,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
         defaultValues: {
             collectionName: '',
             nftItems: [{ itemName: '', amount: 0, itemImage: '' }],
-            maxMintsPerTx: 1,
+            maxMintsPerTx: 4,
         },
         mode: "onChange",
     })
