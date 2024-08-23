@@ -143,19 +143,19 @@ export default function KrakenLotto({ stxAddress, lands, nftCollectionMetadata }
                     <p className='text-lg'>
                       Dive into the future with our Trump Election Prediction NFTs!
                     </p>
-                    <p className="mt-8">
+                    <p className="mt-4">
                       <strong>Concept:</strong>
                       <br />Each NFT is your ticket. If Trump wins, redeem for 100k TREMP & 100 CHA tokens!
                     </p>
-                    <p className="mt-8">
+                    <p className="mt-4">
                       <strong>Cultural Impact:</strong>
                       <br />Join the blend of politics and crypto speculation. Make a statement with your investment!
                     </p>
-                    <p className="mt-8">
+                    <p className="mt-4">
                       <strong>Investment Opportunity:</strong>
                       <br />Bet on Trump's victory for potentially high returns. This isn't just politics; it's profit!
                     </p>
-                    <p className="mt-8 text-sm">
+                    <p className="mt-4 text-sm">
                       Engage in the political discourse like never before. Your NFT could be your ticket to financial and cultural significance!
                     </p>
                   </div>
