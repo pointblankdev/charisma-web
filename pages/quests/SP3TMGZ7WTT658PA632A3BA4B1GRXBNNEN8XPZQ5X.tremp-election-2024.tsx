@@ -73,7 +73,7 @@ export default function KrakenLotto({ stxAddress, lands, nftCollectionMetadata }
   const meta = {
     title: "Charisma | President Tremp: 2024",
     description: META_DESCRIPTION,
-    image: '/quests/raven-raffle/kraken-lotto.png'
+    image: 'https://mlw1rgyfhipx.i.optimole.com/w:auto/h:auto/q:75/ig:avif/https://trempstx.com/wp-content/uploads/2024/07/IMG_20240729_233240_884.jpg'
   };
 
   const title = "President Tremp: 2024";
