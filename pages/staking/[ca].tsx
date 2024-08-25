@@ -89,7 +89,9 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
   // if using the burn token, reduce the max by exp * burn-factor (1000) to prevent not having enough tokens to pay the burn fee
   const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
   const isUsingBurnToken = metadata.wraps.ca === burnTokenContract
-  const burnFee = Math.floor(wallet.experience.amount / 1000)
+  // wallet.experience.amount defaults to NaN hence the scHa staking issue. I made the default (1) to make it work properly
+  const experienceAmount = isNaN(wallet.experience.amount) ? 1 : wallet.experience.amount;
+  const burnFee = Math.floor(experienceAmount / 1000)
   const tokensSelectedMinusFee = isUsingBurnToken ? tokensSelected - burnFee : tokensSelected
 
   const isMaxedOut = tokensSelected === baseTokenBalance
@@ -164,7 +166,7 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
               {metadata.whitelisted ?
                 <LandControls
                   min={-landTokenBalance}
-                  max={baseTokenBalance}
+                  max={baseTokenBalance && baseTokenBalance}
                   onSetTokensSelected={setTokensSelected}
                   tokensSelected={tokensSelectedMinusFee}
                   metadata={metadata}
