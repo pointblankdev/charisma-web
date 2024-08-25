@@ -31,12 +31,22 @@ import rooLogo from '@public/roo-logo.png';
 import liquidRooLogo from '@public/liquid-staked-roo.png';
 import odinLogo from '@public/odin-logo.png';
 import liquidOdinLogo from '@public/liquid-staked-odin.png';
+import stxLogo from '@public/stx-logo.png'
 import { GetServerSideProps } from 'next';
 import { isEmpty } from 'lodash';
 import numeral from 'numeral';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 
 const tokenList = [
+  {
+    address: 'STX',
+    ft: 'native',
+    name: 'Stacks',
+    symbol: 'STX',
+    decimals: 6,
+    image: stxLogo,
+    isNative: true,
+  },
   {
     address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fuji-apples',
     ft: 'index-token',
@@ -206,10 +216,20 @@ function TokenBalances({ data }: Props) {
   const tokenBalances = tokenList.map(token => {
     const address = token.proxy ? token.proxy.address : token.address;
     const factor = token.proxy ? token.proxy.factor : 1;
-    const balance = getBalanceByKey(`${token.address}::${token.ft}`)
-    const tokenData = tokens.find((t: any) => t.contractAddress === address);
+    // const balance = getBalanceByKey(`${token.address}::${token.ft}`)
+    // const tokenData = tokens.find((t: any) => t.contractAddress === address);
+    let balance;
+    let tokenData
+
+    if (token.isNative) {
+        balance = getBalanceByKey('STX::native');
+        tokenData = tokens.find((t: any) => t.symbol === 'STX'); // Use symbol to find STX specifically
+      } else {
+        balance = getBalanceByKey(`${token.address}::${token.ft}`);
+        tokenData = tokens.find((t: any) => t.contractAddress === address);
+      }
     const amount = balance / (Math.pow(10, token.decimals) || 1);
-    const totalValueUSD = amount * Number(tokenData.price || 0) * factor;
+    const totalValueUSD = amount * Number(tokenData?.price || 0) * factor;
 
     return {
       ...token,
