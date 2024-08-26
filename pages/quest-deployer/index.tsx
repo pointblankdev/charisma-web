@@ -1,11 +1,13 @@
 import {
     Coins,
+    Gavel,
     Scale,
     Send,
     Settings,
     Share,
     Swords,
     Trophy,
+    Vote,
 } from "lucide-react"
 import { Badge } from "@components/ui/badge"
 import { Button } from "@components/ui/button"
@@ -41,6 +43,18 @@ import BattleRoyaleTemplate from "./battle-royale"
 import PrizeFightTemplate from "./prize-fight"
 import { useAccount, useOpenContractDeploy } from "@micro-stacks/react"
 import NftCollectionTemplate from "./nfts"
+
+const extentionRequestProposal = ({ contractAddress }: any) => {
+    return `(define-public (execute (sender principal))
+    (begin
+      ;; set the new contract as an extension
+      (try! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.dungeon-master set-extension '${contractAddress} true))
+      ;; enable the latest energy contract for use
+      (try! (contract-call? '${contractAddress} set-whitelisted-edk 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v2 true))
+      (ok true)
+    )
+  )
+  `}
 
 const generateHeader = ({ name, sender }: any) => {
     return `;; Title: ${name}
@@ -113,6 +127,16 @@ export default function ContractDeployer({ data }: any) {
         });
     }
 
+    const deployProposal = (e: any) => {
+        e.preventDefault()
+        const name = form.getValues().name
+        const safeName = name.toLowerCase().replace(/[^a-zA-Z0-9 ]/g, "").replace(/\s+/g, "-")
+        openContractDeploy({
+            contractName: `propose-${safeName}`,
+            codeBody: extentionRequestProposal({ contractAddress: `${sender}.${safeName}` }),
+        });
+    }
+
     return (
         <Layout>
             <div className="grid w-full">
@@ -120,7 +144,7 @@ export default function ContractDeployer({ data }: any) {
                     <form onChange={handleHeaderChange}>
                         <div className="flex flex-col">
                             <header className="sticky top-0 z-10 flex h-[57px] items-center gap-1 border-b bg-background px-4">
-                                <h1 className="text-xl font-semibold">Quest Deployer</h1>
+                                <h1 className="text-xl font-semibold grow">Quest Deployer</h1>
                                 <Drawer>
                                     <DrawerTrigger asChild>
                                         <Button variant="ghost" size="icon" className="md:hidden">
@@ -158,14 +182,27 @@ export default function ContractDeployer({ data }: any) {
                                         </div>
                                     </DrawerContent>
                                 </Drawer>
-                                <Button
-                                    size="sm"
-                                    className="ml-auto gap-1.5 text-sm"
-                                    onClick={deployContract}
-                                >
-                                    <Share className="size-3.5" />
-                                    Deploy
-                                </Button>
+                                <div className="space-x-2 flex items-center text-muted-foreground text-xs">
+                                    <div>To enable your contract on Charisma, you must deploy the contract and then request community approval.</div>
+                                    <Button
+                                        disabled={!form.formState.isValid}
+                                        size="sm"
+                                        className="ml-auto gap-1.5 text-sm"
+                                        onClick={deployContract}
+                                    >
+                                        <Share className="size-3.5" />
+                                        Deploy Contract
+                                    </Button>
+                                    <Button
+                                        disabled={!form.formState.isValid}
+                                        size="sm"
+                                        className="ml-auto gap-1.5 text-sm"
+                                        onClick={deployProposal}
+                                    >
+                                        <Scale className="size-3.5" />
+                                        Request Community Approval
+                                    </Button>
+                                </div>
                             </header>
                             <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
                                 <div

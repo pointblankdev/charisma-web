@@ -3,7 +3,7 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
-import { getQuest, getQuests } from '@lib/db-providers/kv';
+import { getNftCollectionMetadata, getNftCollections, getNftMetadata, getQuest, getQuests } from '@lib/db-providers/kv';
 import Image from 'next/image';
 import energyIcon from '@public/creatures/img/energy.png';
 import Link from 'next/link';
@@ -28,6 +28,7 @@ import farmersIcon from '@public/creatures/img/farmers.png'
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all quests from db
   const questContractAddresses = await getQuests()
+  const utilityNftQuestContractAddresses = await getNftCollections()
 
   const quests = [
     {
@@ -94,9 +95,22 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       cardImage: kingOfTheHillCard,
     }
   ]
+
   for (const ca of questContractAddresses) {
     const metadata = await getQuest(ca)
     quests.push(metadata)
+  }
+
+  for (const ca of utilityNftQuestContractAddresses) {
+    const metadata = await getNftCollectionMetadata(ca)
+    const item = await getNftMetadata(ca, "1")
+    quests.push({
+      name: metadata.name,
+      description: metadata.description.description,
+      ca: ca,
+      image: item.image,
+      cardImage: metadata.properties.collection_image,
+    })
   }
 
   return {

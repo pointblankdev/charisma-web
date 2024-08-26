@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftMetadata, removeLand, setContractMetadata, setLand, setLandById, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, removeLand, removeNftCollection, setContractMetadata, setLand, setLandById, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -455,6 +455,16 @@ describe('metadata api', () => {
 
 
 describe('nfts api', () => {
+    it('should get nft collections', async () => {
+        const response = await getNftCollections()
+        console.log(JSON.stringify(response, null, 2))
+    })
+
+    it('should remove nft collections', async () => {
+        const response = await removeNftCollection("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar")
+        console.log(JSON.stringify(response, null, 2))
+    })
+
     // should get nft collection metadata
     it('should get nft collection metadata', async () => {
         const response = await getNftCollectionMetadata('SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024')

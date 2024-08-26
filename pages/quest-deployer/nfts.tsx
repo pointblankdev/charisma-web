@@ -8,6 +8,10 @@ import * as z from "zod"
 import { useAccount } from "@micro-stacks/react"
 import { setNftCollectionMetadata, getNftCollectionMetadata } from "@lib/user-api"
 import Image from 'next/image'
+import { max, over } from 'lodash';
+import { Textarea } from '@components/ui/textarea';
+import { Dialog, DialogContent, DialogTrigger } from '@components/ui/dialog';
+import QuestCard from '@components/quest/quest-card';
 
 const nftItemSchema = z.object({
     itemName: z.string().min(1, "Item name is required"),
@@ -18,6 +22,8 @@ const nftItemSchema = z.object({
 const proposalFormSchema = z.object({
     collectionName: z.string().min(1, "Collection name is required"),
     nftItems: z.array(nftItemSchema).min(1, "At least one NFT item is required"),
+    overview: z.string(),
+    utility: z.string(),
     contractAddress: z.string(),
     totalSupply: z.number(),
     stxAddress: z.string(),
@@ -270,7 +276,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
 
     const handleSubmitCollection = async (e: React.MouseEvent) => {
         e.preventDefault()
-        const { collectionName, collectionImage, description, nftItems } = form.getValues();
+        const { collectionName, collectionImage, description, nftItems, stxPerMint, energyRequired, maxMintsPerTx, overview, utility } = form.getValues();
         const safeName = collectionName.toLowerCase().replace(/[^a-zA-Z0-9\- ]/g, "").replace(/\s+/g, "-")
         const contractAddress = `${stxAddress}.${safeName}`
 
@@ -294,7 +300,13 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                     name: item.itemName,
                     amount: Number(item.amount),
                     image_url: item.itemImage
-                }))
+                })),
+                stx_mint_cost: stxPerMint,
+                energy_required: energyRequired,
+                max_mints_per_tx: maxMintsPerTx,
+                overview: overview,
+                utility: utility,
+                whitelisted: false
             }
         }
 
@@ -364,7 +376,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                             <FormItem className="w-full">
                                 <FormLabel>Description</FormLabel>
                                 <FormControl>
-                                    <Input placeholder={'A little flavor text for your collection'} {...field} />
+                                    <Input placeholder={'One sentence description of your utility NFT collection.'} {...field} />
                                 </FormControl>
                                 <FormMessage />
                             </FormItem>
@@ -381,6 +393,32 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                                 </FormControl>
                                 <FormMessage />
                                 {field.value && <ImagePreview src={field.value} />}
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="overview"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Overview</FormLabel>
+                                <FormControl>
+                                    <Textarea placeholder={'A paragraph explaining the story behind your utility NFT, and why someone might want to collect it.'} {...field} />
+                                </FormControl>
+                                <FormMessage />
+                            </FormItem>
+                        )}
+                    />
+                    <FormField
+                        control={form.control}
+                        name="utility"
+                        render={({ field }) => (
+                            <FormItem className="w-full">
+                                <FormLabel>Utility</FormLabel>
+                                <FormControl>
+                                    <Input placeholder={'One sentence explanation for proposed NFT utility in Charisma.'} {...field} />
+                                </FormControl>
+                                <FormMessage />
                             </FormItem>
                         )}
                     />
@@ -494,10 +532,55 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                         Add NFT Definition
                     </Button> */}
                 </fieldset>
+                {form.getValues && <PreviewQuestCard
+                    metadata={{
+                        name: form.getValues().collectionName,
+                        description: {
+                            type: "string",
+                            description: form.getValues().description
+                        },
+                        attributes: [],
+                        properties: {
+                            collection: form.getValues().collectionName,
+                            collection_image: form.getValues().collectionImage,
+                            category: "image",
+                            total_supply: form.getValues().nftItems[0].amount,
+                            stx_mint_cost: form.getValues().stxPerMint,
+                            energy_required: form.getValues().energyRequired,
+                            max_mints_per_tx: form.getValues().maxMintsPerTx,
+                            overview: form.getValues().overview,
+                            utility: form.getValues().utility,
+                            whitelisted: true
+                        },
+                        image: form.getValues().nftItems[0].itemImage
+                    }}
+                    contractAddress={`${stxAddress}.${form.getValues().collectionName}`}
+                    stxAddress={stxAddress}
+                />}
+                <Button disabled={!form.formState.isValid} onClick={handleSubmitCollection} className="mt-4 w-full">Save Collection Metadata</Button>
+                <div className='text-xs text-muted-foreground text-center'>You can reload this collection after saving it by typing in the same Collection Name during a later session.</div>
 
-                <Button onClick={handleSubmitCollection} className="mt-4 w-full">Save Collection Metadata</Button>
-                <div className='text-xs text-muted-foreground'>You can reload this collection after saving it by typing in the same Collection Name during a later session.</div>
             </form>
         </Form>
+    )
+}
+
+const PreviewQuestCard = ({ metadata, contractAddress, stxAddress }: any) => {
+
+
+    return (
+        <Dialog>
+            <DialogTrigger asChild>
+                <Button variant={'secondary'} onClick={() => { }} className="mt-4 w-full">Show Preview</Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-3xl justify-center flex bg-transparent border-none">
+                <QuestCard
+                    nftCollectionMetadata={metadata}
+                    contractAddress={contractAddress}
+                    lands={[]}
+                    stxAddress={stxAddress}
+                />
+            </DialogContent>
+        </Dialog>
     )
 }
