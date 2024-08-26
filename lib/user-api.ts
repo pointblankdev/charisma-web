@@ -110,3 +110,14 @@ export const getNftCollectionMetadata = async (contractAddress: string) => {
   })
   return response.json();
 }
+
+export const syncLandBalances = async ({ id, address }: any) => {
+  const response = await fetch(`${HOST}/api/v0/lands/sync`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ id, address }),
+  })
+  return response.json();
+}

@@ -4,6 +4,7 @@ import { sessionOptions } from './session';
 
 import type { NextPageContext } from 'next';
 import type { GetServerSidePropsContext } from 'next/types';
+import Logger from '@lib/logger';
 
 export const getIronSession = (req: NextPageContext['req'], res: NextPageContext['res']) => {
     return Iron.getIronSession(req as any, res as any, sessionOptions);
@@ -25,7 +26,7 @@ export function parseAddress(str: string) {
         // Return the address
         return addressObj.address;
     } catch (error) {
-        console.error('Error parsing address:', error);
+        Logger.error(error);
         return ''
     }
 }

@@ -9,7 +9,7 @@ import { useState } from 'react';
 import { cn } from '@lib/utils';
 import { motion } from 'framer-motion';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import { getLand, getLands, getLandsBalance, hadLandBefore, setLandWhitelisted } from '@lib/db-providers/kv';
+import { getLand, getLands, getLandsBalance, hadLandBefore, setLandsBalance, setLandWhitelisted } from '@lib/db-providers/kv';
 import LandControls from '@components/liquidity/lands';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import schaImg from '@public/liquid-staked-charisma.png'
@@ -17,21 +17,12 @@ import { useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 import { FungibleConditionCode, makeStandardFungiblePostCondition } from '@stacks/transactions';
 import { getIsWhitelisted, getLandBalance, getLandId } from '@lib/stacks-api';
-import { getDehydratedStateFromSession } from '@components/stacks-session/session-helpers';
+import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
 import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { AlertCircle, HelpCircle } from 'lucide-react';
+import { useRouter } from 'next/router';
+import { syncLandBalances } from '@lib/user-api';
 
-function parseAddress(str: string) {
-
-  // Parse the string into a JavaScript object
-  const parsedData = JSON.parse(str);
-
-  // Navigate through the nested structure to find the address
-  const addressObj = parsedData[1][1][0];
-
-  // Return the address
-  return addressObj.address;
-}
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const contractAddress = ctx.params!.ca as string
@@ -41,27 +32,22 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   let hadLand = false
   let landBalance = 0
-  try {
 
-    const state = await getDehydratedStateFromSession(ctx) as string
+  const state = await getDehydratedStateFromSession(ctx) as string
 
-    const user = parseAddress(state)
+  const stxAddress = parseAddress(state)
 
-    // check if they have the land nft already for post conditions
-    landBalance = await getLandsBalance(contractAddress, user) as number
-    hadLand = await hadLandBefore(contractAddress, user) as boolean
-
-  } catch (error) {
-    console.error('Error fetching land balance:', error);
-  }
-
+  // check if they have the land nft already for post conditions
+  landBalance = await getLandsBalance(contractAddress, stxAddress) as number
+  hadLand = await hadLandBefore(contractAddress, stxAddress) as boolean
 
   return {
     props: {
       dehydratedState: await getDehydratedStateFromSession(ctx),
       metadata,
       landBalance,
-      hadLand
+      hadLand,
+      stxAddress
     }
   };
 };
@@ -70,9 +56,10 @@ type Props = {
   metadata: any;
   landBalance: number
   hadLand: boolean
+  stxAddress: string
 };
 
-export default function StakingDetailPage({ metadata, landBalance, hadLand }: Props) {
+export default function StakingDetailPage({ metadata, landBalance, hadLand, stxAddress }: Props) {
   const meta = {
     title: `Charisma | ${metadata.name}`,
     description: metadata.description.description,
@@ -85,6 +72,7 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
 
   const landTokenBalance = landBalance
   const baseTokenBalance = getBalanceByKey(`${metadata.wraps.ca}::${metadata.wraps.asset}`)
+  const { reload } = useRouter()
 
   // if using the burn token, reduce the max by exp * burn-factor (1000) to prevent not having enough tokens to pay the burn fee
   const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma'
@@ -95,6 +83,11 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
   const tokensSelectedMinusFee = isUsingBurnToken ? tokensSelected - burnFee : tokensSelected
 
   const isMaxedOut = tokensSelected === baseTokenBalance
+
+  const handleSyncBalances = async () => {
+    await syncLandBalances({ id: metadata.id, address: stxAddress })
+    reload()
+  }
 
   return (
     <Page meta={meta} fullViewport>
@@ -201,6 +194,7 @@ export default function StakingDetailPage({ metadata, landBalance, hadLand }: Pr
             />
             <div className="absolute inset-0 z-0 pointer-events-none bg-gradient-to-b from-white to-black opacity-10" />
           </Card>
+          <Button onClick={handleSyncBalances} className='w-full justify-center text-muted-foreground' variant={'link'}>If you are seeing incorrect balances, click here to re-sync with on-chain data.</Button>
           <motion.div
             animate={isUsingBurnToken && isMaxedOut ? "visible" : "hidden"}
             variants={{ visible: { opacity: 1, x: 0 }, hidden: { opacity: 0, y: "-25%" }, }}
