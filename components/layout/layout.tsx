@@ -5,7 +5,6 @@ import { SkipNavContent } from '@reach/skip-nav';
 import { NAVIGATION } from '@lib/constants';
 import styles from './layout.module.css';
 import styleUtils from '../utils.module.css';
-import Logo from '../icons/icon-logo';
 import MobileMenu from '../mobile-menu';
 import Footer from './footer';
 import React, { useEffect } from 'react';
@@ -17,6 +16,7 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import { forEach } from 'lodash';
 import ConnectWallet from '../stacks-session/connect';
 import useWallet from '@lib/hooks/wallet-balance-provider';
+import charismaLogo from '@public/charisma.png'
 
 type Props = {
   children: React.ReactNode;
@@ -50,7 +50,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               <MobileMenu key={router.asPath} />
               <div className={cn(styleUtils['hide-on-mobile'])}>
                 <Link href="/" className={cn(styles.logo)}>
-                  <Logo />
+                  <Image src={charismaLogo} alt="Logo" width="64" height="64" />
                 </Link>
               </div>
             </div>

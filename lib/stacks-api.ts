@@ -12,8 +12,6 @@ import {
   boolCV,
   broadcastTransaction,
   callReadOnlyFunction,
-  ClarityAbiTypeId,
-  ClarityType,
   cvToHex,
   hexToCV,
   makeContractCall,
@@ -24,13 +22,9 @@ import {
 } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
 import { generateWallet } from '@stacks/wallet-sdk';
-import { getAllWallets } from './cms-providers/dato';
 import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
-import { bytesToHex, hexToInt, intToHex, utf8ToBytes } from '@stacks/common';
-import { getLatestBlock, HOST } from './user-api';
-import { getGlobalState, getMob, setMob } from './db-providers/kv';
-import { get } from 'lodash';
+import { getGlobalState } from './db-providers/kv';
 
 const network = new StacksMainnet();
 
@@ -59,139 +53,6 @@ export async function getNameFromAddress(address: string) {
     address: address
   });
   return nameInfo;
-}
-
-export async function fetchAllClaimsParallel() {
-  const limit = 50;
-  const uniqueWallets: Set<string> = new Set();
-  const oneWeekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-
-  let transactionsFetched = true;
-  let offset = 0;
-  let uniqueWalletsLast7Days = 0;
-
-  while (transactionsFetched) {
-    const fetchPromises = [];
-    for (let i = 0; i < 10; i++) {
-      // Adjust parallelism degree as needed
-      fetchPromises.push(
-        accountsApi.getAccountTransactionsWithTransfers({
-          principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0',
-          limit,
-          offset: offset + i * limit
-        })
-      );
-    }
-
-    const results = await Promise.allSettled(fetchPromises);
-    transactionsFetched = false; // Assume no more transactions until found
-
-    results.forEach(result => {
-      if (result.status === 'fulfilled' && result.value.results?.length > 0) {
-        transactionsFetched = true; // Transactions found, continue loop
-        result.value.results.forEach((r: any) => {
-          uniqueWalletsLast7Days += processTransaction(
-            r,
-            uniqueWallets,
-            uniqueWalletsLast7Days,
-            oneWeekAgo
-          );
-        });
-      }
-    });
-
-    offset += limit * 10; // Increment offset by the total number processed in this batch
-  }
-
-  const totalUniqueWallets = uniqueWallets.size;
-  const percentChange = (uniqueWalletsLast7Days / totalUniqueWallets) * 100;
-
-  const wallets = await getAllWallets();
-  const walletBalances = wallets.map(wallet => ({
-    primary: wallet.stxaddress,
-    secondary: wallet.charisma
-  }));
-
-  return {
-    walletBalances: walletBalances.sort((a, b) => b.secondary - a.secondary).slice(0, 20),
-    totalUniqueWallets,
-    percentChange
-  };
-}
-
-function processTransaction(
-  transaction: any,
-  uniqueWallets: Set<string>,
-  uniqueWalletsLast7Days: number,
-  oneWeekAgo: Date
-) {
-  const txDate = new Date(transaction.tx.burn_block_time_iso);
-  if (
-    transaction.tx.contract_call?.function_name === 'claim' &&
-    transaction.tx.tx_result.repr === '(ok true)'
-  ) {
-    const sizeBefore = uniqueWallets.size;
-    uniqueWallets.add(transaction.tx.sender_address);
-    if (sizeBefore !== uniqueWallets.size && txDate > oneWeekAgo) {
-      uniqueWalletsLast7Days++;
-    }
-  }
-  return uniqueWalletsLast7Days;
-}
-
-export async function fetchAllClaims() {
-  let offset = 0;
-  const limit = 50;
-  const uniqueWallets: Set<string> = new Set();
-  const oneWeekAgo = new Date();
-  oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-
-  let uniqueWalletsLast7Days = 0;
-
-  while (true) {
-    const f: any = await accountsApi.getAccountTransactionsWithTransfers({
-      principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0',
-      limit: limit,
-      offset: offset
-    });
-
-    console.log(f.length);
-
-    if (!f.results.length) {
-      break; // exit the loop if there are no more results
-    }
-
-    f.results.forEach((r: any) => {
-      const txDate = new Date(r.tx.burn_block_time_iso);
-      if (r.tx.contract_call?.function_name === 'claim' && r.tx.tx_result.repr === '(ok true)') {
-        const size = uniqueWallets.size;
-        uniqueWallets.add(r.tx.sender_address);
-        // if the size of the set has changed, then a new wallet has been added
-        if (size !== uniqueWallets.size) {
-          if (txDate > oneWeekAgo) {
-            uniqueWalletsLast7Days++;
-          }
-        }
-      }
-    });
-
-    offset += limit; // increment the offset for the next page
-  }
-
-  const totalUniqueWallets = uniqueWallets.size;
-  const percentChange = (uniqueWalletsLast7Days / totalUniqueWallets) * 100;
-
-  const wallets = await getAllWallets();
-  const walletBalances = wallets.map(wallet => ({
-    primary: wallet.stxaddress,
-    secondary: wallet.charisma
-  }));
-
-  return {
-    walletBalances: walletBalances.sort((a, b) => b.secondary - a.secondary).slice(0, 20),
-    totalUniqueWallets: totalUniqueWallets,
-    percentChange: percentChange
-  };
 }
 
 export async function getTokenStats() {

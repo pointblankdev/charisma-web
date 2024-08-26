@@ -1,5 +1,5 @@
 import { getExperienceLeaderboard, getMob, setMob, updateExperienceLeaderboard } from '@lib/db-providers/kv';
-import { handleContractEvent } from '@lib/events/utils';
+import { handleContractEvent } from '@lib/events/dispatcher';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { NextApiRequest, NextApiResponse } from 'next';
 import numeral from 'numeral';
