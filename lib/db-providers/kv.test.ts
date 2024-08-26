@@ -499,4 +499,12 @@ describe('nfts api', () => {
         await setNftCollectionMetadata('SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto', data)
         console.log(JSON.stringify(data, null, 2))
     })
+
+    it('should update nft collection metadata (bitcoin-pepe)', async () => {
+        const contractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bitcoin-pepe-whitelist-ticket'
+        const data = await getNftCollectionMetadata(contractId)
+        data.properties.whitelisted = true
+        await setNftCollectionMetadata(contractId, data)
+        console.log(JSON.stringify(data, null, 2))
+    })
 })

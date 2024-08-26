@@ -137,7 +137,7 @@ const QuestCard = ({ nftCollectionMetadata, contractAddress, lands, stxAddress }
                         <TokenSelectDialog
                             lands={lands}
                             contractId={contractAddress}
-                            buttonText={'Complete Quest'}
+                            buttonText={`Mint ${nftCollectionMetadata.properties.collection}`}
                             extraPostConditions={extraPostConditions}
                         />
                     }
