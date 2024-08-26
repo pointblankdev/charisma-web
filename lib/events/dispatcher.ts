@@ -4,7 +4,7 @@ import { getMob, getNftCollectionMetadata, incrementRewardLeaderboard, setHadLan
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { contracts } from "@lib/clarigen/types";
-import Logger from "@lib/log";
+import Logger from "@lib/logger";
 
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 

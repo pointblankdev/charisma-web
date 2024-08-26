@@ -1,4 +1,5 @@
 import { getMob } from '@lib/db-providers/kv';
+import Logger from '@lib/logger';
 import { tryCallContractPublicFunction } from '@lib/stacks-api';
 import { principalCV, uintCV } from '@stacks/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -60,6 +61,7 @@ export default async function playersApi(
 ) {
 
 
+    Logger.oracle("Players Oracle is running")
     const mob = await getMob('hogger');
 
     const response: any = {}

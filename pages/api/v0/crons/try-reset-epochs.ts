@@ -1,6 +1,7 @@
 import { tryResetEpochs } from '@lib/try-reset-epochs';
 import { checkIfEpochIsEnding } from '@lib/stacks-api';
 import { NextApiRequest, NextApiResponse } from 'next';
+import Logger from '@lib/logger';
 
 type ErrorResponse = {
     error: {
@@ -14,6 +15,7 @@ export default async function tryResetEpochsApi(
     res: NextApiResponse<any | ErrorResponse>
 ) {
 
+    Logger.oracle("Hogger Reset is running")
     const response: any = {}
     try {
         const contractJobs = []

@@ -1,4 +1,5 @@
 import { runAll } from '@lib/arbitrage';
+import Logger from '@lib/logger';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -15,6 +16,7 @@ export default async function arbitrage(
 
     const response: any = {}
     try {
+        Logger.oracle("Arbitrage Oracle is running")
         const transactions = await runAll()
         console.log(transactions)
         response.transactions = transactions

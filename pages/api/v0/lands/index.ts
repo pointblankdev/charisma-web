@@ -4,7 +4,7 @@ import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalan
 import { NextApiRequest, NextApiResponse } from 'next';
 import numeral from 'numeral';
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
-import Logger from '@lib/log';
+import Logger from '@lib/logger';
 
 const hook = new Webhook('https://discord.com/api/webhooks/1144890336594907146/BtXYwXDuHsWt6IFMOylwowcmCUWjOoIM6MiqdIBqIdrbT5w_ui3xdxSP2OSc2DhlkDhn');
 
@@ -77,9 +77,7 @@ export default async function landsIndexApi(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
-
                 try {
-
                     if (tx.metadata.success) {
                         let builder = new EmbedBuilder()
                         // send message to discord
