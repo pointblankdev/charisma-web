@@ -26,7 +26,7 @@ export function parseAddress(str: string) {
         // Return the address
         return addressObj.address;
     } catch (error) {
-        Logger.error(error);
+        Logger.error({ 'Parse Address Error': error });
         return ''
     }
 }

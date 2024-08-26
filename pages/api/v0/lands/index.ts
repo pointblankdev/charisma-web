@@ -93,7 +93,7 @@ export default async function landsIndexApi(
                     }
 
                 } catch (error) {
-                    Logger.error(error)
+                    Logger.error({ 'Land API Error': error })
                 }
                 response = {}
             }

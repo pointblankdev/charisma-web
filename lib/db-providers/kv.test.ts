@@ -182,7 +182,7 @@ describe('metadata api', () => {
     it('should update edmund land', async () => {
         const contract = 'SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin'
         const land = await getLand(contract)
-        land.whitelisted = true
+        land.id = 8
         console.log(land)
         await setLand(contract, land)
     })
@@ -190,7 +190,7 @@ describe('metadata api', () => {
     it('should update rock land', async () => {
         const contract = 'SP4M2C88EE8RQZPYTC4PZ88CE16YGP825EYF6KBQ.stacks-rock'
         const land = await getLand(contract)
-        land.whitelisted = true
+        land.id = 9
         console.log(land)
         await setLand(contract, land)
     })
@@ -198,7 +198,7 @@ describe('metadata api', () => {
     it('should update gyatt land', async () => {
         const contract = 'SP739VRRCMXY223XPR28BWEBTJMA0B27DY8GTKCH.gyatt-bonding-curve'
         const land = await getLand(contract)
-        land.whitelisted = true
+        land.id = 10
         console.log(land)
         await setLand(contract, land)
     })
@@ -206,7 +206,7 @@ describe('metadata api', () => {
     it('should update edelcoin land', async () => {
         const contract = 'SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.edelcoin'
         const land = await getLand(contract)
-        land.whitelisted = true
+        land.id = 11
         console.log(land)
         await setLand(contract, land)
     })
