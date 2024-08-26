@@ -39,7 +39,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         [key: string]: LandData;
     }
 
-    const stakedTokens = [1, 4, 5, 6, 7]
+    const stakedTokens = [1, 4, 5, 6, 7, 8, 9, 10, 11]
 
 
     useEffect(() => {
