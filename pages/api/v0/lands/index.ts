@@ -90,7 +90,7 @@ export default async function landsIndexApi(
 
                         hook.addEmbed(builder.getEmbed());
                         await hook.send();
-                        await new Promise(resolve => setTimeout(resolve, 3000)); // Wait for 3 seconds to avoid rate limiting
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second to avoid rate limiting
                     }
 
                 } catch (error) {
