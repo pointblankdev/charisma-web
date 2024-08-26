@@ -60,20 +60,30 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         const assetContract: string = await clarigen.ro(landsContract.getLandAssetContract(i))
         if (Number(amount)) {
             const tokenMetadata = await getLand(assetContract)
+    
+            // Fetch token data from velarApi
+            const tokensResponse = await velarApi.tokens(tokenMetadata.wraps.symbol)
+    
+            // Check if the response is valid and contains the expected structure
+            if (tokensResponse && tokensResponse.length > 0) {
+                const [{ price }] = tokensResponse;
 
-            const [{ price }] = await velarApi.tokens(tokenMetadata.wraps.symbol)
 
-            chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, tokenMetadata.wraps.decimals) * Number(price), fill: `hsl(var(--background))` });
-            chartConfig0[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
-
-            chartData1.push({ id: tokenMetadata.name, score: Number(amount) / tokenMetadata.wraps.totalSupply, fill: `hsl(var(--background))` });
-            chartConfig1[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
-
-            const landDifficulty: bigint = await clarigen.ro(landsContract.getLandDifficulty(i))
-            chartData2.push({ id: tokenMetadata.name, score: Number(amount) / Number(landDifficulty), fill: `hsl(var(--background))` });
-            chartConfig2[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+                chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, tokenMetadata.wraps.decimals) * Number(price), fill: `hsl(var(--background))` })
+                chartConfig0[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+    
+                chartData1.push({ id: tokenMetadata.name, score: Number(amount) / tokenMetadata.wraps.totalSupply, fill: `hsl(var(--background))` })
+                chartConfig1[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` };
+    
+                const landDifficulty: bigint = await clarigen.ro(landsContract.getLandDifficulty(i))
+                chartData2.push({ id: tokenMetadata.name, score: Number(amount) / Number(landDifficulty), fill: `hsl(var(--background))` })
+                chartConfig2[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+            } else {
+                console.error(`Failed to retrieve price for token: ${tokenMetadata.wraps.symbol}`)
+            }
         }
     }
+    
 
     return {
         props: {
