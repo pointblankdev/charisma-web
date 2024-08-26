@@ -6,17 +6,25 @@ const oracleLogsWebhook = new Webhook('https://discord.com/api/webhooks/12776019
 const Logger = {
     error: async (message: any) => {
         console.error(message);
-        const embed = new EmbedBuilder()
-        embed.setDescription(JSON.stringify(message))
-        errorLogsWebhook.addEmbed(embed.getEmbed());
-        await errorLogsWebhook.send()
+        try {
+            const embed = new EmbedBuilder()
+            embed.setDescription(JSON.stringify(message))
+            errorLogsWebhook.addEmbed(embed.getEmbed());
+            await errorLogsWebhook.send()
+        } catch (error) {
+            console.error('Error log failure to Discord');
+        }
     },
     oracle: async (message: any) => {
         console.log(message);
-        const embed = new EmbedBuilder()
-        embed.setDescription(JSON.stringify(message))
-        oracleLogsWebhook.addEmbed(embed.getEmbed());
-        await oracleLogsWebhook.send()
+        try {
+            const embed = new EmbedBuilder()
+            embed.setDescription(JSON.stringify(message))
+            oracleLogsWebhook.addEmbed(embed.getEmbed());
+            await oracleLogsWebhook.send()
+        } catch (error) {
+            console.error('Oracle log failure to Discord');
+        }
     }
 };
 
