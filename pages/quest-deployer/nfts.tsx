@@ -8,7 +8,7 @@ import * as z from "zod"
 import { useAccount } from "@micro-stacks/react"
 import { setNftCollectionMetadata, getNftCollectionMetadata } from "@lib/user-api"
 import Image from 'next/image'
-import { max, over } from 'lodash';
+import { isEmpty, max, over } from 'lodash';
 import { Textarea } from '@components/ui/textarea';
 import { Dialog, DialogContent, DialogTrigger } from '@components/ui/dialog';
 import QuestCard from '@components/quest/quest-card';
@@ -584,7 +584,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                     contractAddress={`${stxAddress}.${form.getValues().collectionName}`}
                     stxAddress={stxAddress}
                 />}
-                <Button disabled={!!form.formState.isValid} onClick={handleSubmitCollection} className="mt-4 w-full">Save Collection Metadata</Button>
+                <Button disabled={!isEmpty(form.formState.errors)} onClick={handleSubmitCollection} className="mt-4 w-full">Save Collection Metadata</Button>
                 <div className='text-xs text-muted-foreground text-center'>You can reload this collection after saving it by typing in the same Collection Name during a later session.</div>
 
             </form>

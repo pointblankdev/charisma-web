@@ -43,6 +43,7 @@ import BattleRoyaleTemplate from "./battle-royale"
 import PrizeFightTemplate from "./prize-fight"
 import { useAccount, useOpenContractDeploy } from "@micro-stacks/react"
 import NftCollectionTemplate from "./nfts"
+import { isEmpty } from "lodash"
 
 const extentionRequestProposal = ({ contractAddress }: any) => {
     return `(define-public (execute (sender principal))
@@ -185,7 +186,7 @@ export default function ContractDeployer({ data }: any) {
                                 <div className="space-x-2 flex items-center text-muted-foreground text-xs">
                                     <div>To enable your contract on Charisma, you must deploy the contract and then request community approval.</div>
                                     <Button
-                                        disabled={!!form.formState.isValid}
+                                        // disabled={!isEmpty(form.formState.errors)}
                                         size="sm"
                                         className="ml-auto gap-1.5 text-sm"
                                         onClick={deployContract}
@@ -194,7 +195,7 @@ export default function ContractDeployer({ data }: any) {
                                         Deploy Contract
                                     </Button>
                                     <Button
-                                        disabled={!form.formState.isValid}
+                                        // disabled={!isEmpty(form.formState.errors)}
                                         size="sm"
                                         className="ml-auto gap-1.5 text-sm"
                                         onClick={deployProposal}
