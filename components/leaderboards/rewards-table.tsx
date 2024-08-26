@@ -47,13 +47,24 @@ export default function RewardsTable({ wchaPriceData, topRewardedPlayers }: any)
 
     const wChaExchangeRate = Number(wchaPriceData.price)
 
+    const totalRewards = topRewardedPlayers.reduce((acc: number, holder: any) => acc + (holder.amount / Math.pow(10, 6)), 0) * wChaExchangeRate
+
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center text-4xl font-semibold tracking-tight">Total Rewards</CardTitle>
-                <CardDescription>
-                    Total rewards distributed to top Charisma participants.
-                </CardDescription>
+                <div className="flex justify-between">
+                    <div>
+
+                        <CardTitle className="flex items-center text-4xl font-semibold tracking-tight">Total Rewards</CardTitle>
+                        <CardDescription>
+                            Total rewards distributed to top Charisma participants.
+                        </CardDescription>
+                    </div>
+                    <div>
+                        <div className="text-center leading-tight font-light text-muted-foreground">All Players</div>
+                        <CardTitle className="flex items-center text-3xl font-light tracking-tight text-primary-foreground/90">{numeral(totalRewards).format('$0,0.00')}</CardTitle>
+                    </div>
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>
