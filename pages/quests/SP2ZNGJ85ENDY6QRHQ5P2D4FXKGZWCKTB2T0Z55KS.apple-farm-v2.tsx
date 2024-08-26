@@ -141,7 +141,7 @@ export default function SpellScrollFireBolt({ lands, stxAddress }: Props) {
 
                     <h3 className="font-semibold mt-4 mb-2">Strategy Tips:</h3>
                     <ul className="list-disc list-inside mb-4 text-sm">
-                      <li>Use Charisma tokens for bigger yields</li>
+                      <li>Use Charisma tokens for 10x larger yields</li>
                       <li>Accumulate experience to boost efficiency over time</li>
                       <li>Harvest frequently and restake into sCHA</li>
                     </ul>
