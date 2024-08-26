@@ -37,9 +37,13 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   const stxAddress = parseAddress(state)
 
-  // check if they have the land nft already for post conditions
-  landBalance = await getLandsBalance(contractAddress, stxAddress) as number
-  hadLand = await hadLandBefore(contractAddress, stxAddress) as boolean
+  try {
+    // check if they have the land nft already for post conditions
+    landBalance = await getLandsBalance(contractAddress, stxAddress) as number
+    hadLand = await hadLandBefore(contractAddress, stxAddress) as boolean
+  } catch (error) {
+    console.error('Error fetching land balance:', error);
+  }
 
   return {
     props: {
