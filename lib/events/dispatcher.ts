@@ -185,7 +185,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
     }
 
     else if (event.type === 'SmartContractEvent') {
-        symbol = '📜'
+        symbol = '🧾'
 
         if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2") {
             symbol = '🐗'
@@ -377,8 +377,19 @@ export const handleContractEvent = async (event: any, builder: any) => {
         }
 
         else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt") {
+            symbol = '📜'
 
-            console.error('Unknown spell scroll event:', event.data)
+            Logger.error({ 'Unknown spell scroll event': event.data })
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+        }
+
+        else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-farm-v2") {
+            symbol = '🍎'
+
+            Logger.error({ 'Unknown apple farm event': event.data })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)
