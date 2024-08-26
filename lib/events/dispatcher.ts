@@ -389,11 +389,21 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-farm-v2") {
             symbol = '🍎'
 
-            Logger.error({ 'Unknown apple farm event': event.data })
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
+
+            if (event.data.value.event === 'harvest-apple-farm') {
+                builder.addField({
+                    name: `${symbol} ${event.data.value.event}`,
+                    value: JSON.stringify(event.data.value).slice(0, 300)
+                });
+            }
+
+            else {
+                Logger.error({ 'Unknown apple farm event': event.data })
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300)
+                });
+            }
         }
 
         else {
