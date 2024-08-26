@@ -77,8 +77,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         }
     }
 
+
+
+    const [wchaPriceData] = await velarApi.tokens('wCHA')
+
     return {
         props: {
+            wchaPriceData,
             holders: experienceHolders,
             expTotalSupply: Number(experienceTotalSupply),
             topRewardedPlayers,
@@ -94,6 +99,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 };
 
 type Props = {
+    wchaPriceData: any;
     holders: any[];
     expTotalSupply: number;
     topRewardedPlayers: any[];
@@ -105,7 +111,7 @@ type Props = {
     chartConfig2: ChartConfig;
 };
 
-export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPlayers, chartData0, chartConfig0, chartData1, chartConfig1, chartData2, chartConfig2 }: Props) {
+export default function LeaderboardPage({ wchaPriceData, holders, expTotalSupply, topRewardedPlayers, chartData0, chartConfig0, chartData1, chartConfig1, chartData2, chartConfig2 }: Props) {
     const meta = {
         title: 'Charisma | Leaderboard',
         description: META_DESCRIPTION
@@ -139,7 +145,7 @@ export default function LeaderboardPage({ holders, expTotalSupply, topRewardedPl
                             <ExperienceLeaderboardTable holders={holders} expTotalSupply={expTotalSupply} />
                         </TabsContent>
                         <TabsContent value="2">
-                            <RewardsLeaderboardTable holders={holders} topRewardedPlayers={topRewardedPlayers} />
+                            <RewardsLeaderboardTable wchaPriceData={wchaPriceData} holders={holders} topRewardedPlayers={topRewardedPlayers} />
                         </TabsContent>
                         <TabsContent value="3">
                             <LandsTVLChart chartData={chartData0} chartConfig={chartConfig0} />
