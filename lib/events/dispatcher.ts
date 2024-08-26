@@ -88,6 +88,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         const spellScrollsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt';
         const pixelRozarContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar';
         const predictTrempContractId = 'SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024';
+        const bitcoinPepeWlContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bitcoin-pepe-whitelist-ticket';
 
         if (contractId === kraqenLottoContractId) {
             symbol = '🐙'
@@ -150,6 +151,23 @@ export const handleContractEvent = async (event: any, builder: any) => {
             await setNftCollectionMetadata(predictTrempContractId, nftMetadata)
 
             builder.setThumbnail({ url: 'https://mlw1rgyfhipx.i.optimole.com/w:auto/h:auto/q:75/ig:avif/https://trempstx.com/wp-content/uploads/2024/07/IMG_20240729_233240_884.jpg' })
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+
+        }
+
+        else if (contractId === bitcoinPepeWlContractId) {
+            symbol = '🐸'
+
+            const bitcoinPepeWlContract = contractFactory(contracts.kraqenLotto, bitcoinPepeWlContractId);
+            const tokensMinted = await clarigen.roOk(bitcoinPepeWlContract.getLastTokenId());
+            const nftMetadata = await getNftCollectionMetadata(bitcoinPepeWlContractId)
+            nftMetadata.properties.minted = Number(tokensMinted)
+            await setNftCollectionMetadata(bitcoinPepeWlContractId, nftMetadata)
+
+            builder.setThumbnail({ url: 'https://pbs.twimg.com/media/GMzd_1vXkAEIHdp?format=jpg&name=medium' })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)
