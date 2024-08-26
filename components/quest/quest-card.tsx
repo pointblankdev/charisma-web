@@ -19,7 +19,7 @@ import TokenSelectDialog from '@components/quest/token-select-dialog';
 const QuestCard = ({ nftCollectionMetadata, contractAddress, lands, stxAddress }: any) => {
 
     const isMintedOut = nftCollectionMetadata.properties.minted === nftCollectionMetadata.properties.total_supply
-    const maxStxSpend = nftCollectionMetadata.properties.stx_mint_cost || 0 * nftCollectionMetadata.properties.max_mints_per_tx || 0
+    const maxStxSpend = (nftCollectionMetadata.properties.stx_mint_cost * Math.pow(10, 6)) * nftCollectionMetadata.properties.max_mints_per_tx
 
     const extraPostConditions = []
     if (stxAddress) extraPostConditions.push(makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, maxStxSpend))
@@ -29,7 +29,7 @@ const QuestCard = ({ nftCollectionMetadata, contractAddress, lands, stxAddress }
             <CardHeader className="z-20 p-4 space-y-0">
                 <div className="flex items-center justify-between">
                     <div>
-                        <CardTitle className="z-30 text-xl font-semibold">{nftCollectionMetadata.name}</CardTitle>
+                        <CardTitle className="z-30 text-xl font-semibold">{nftCollectionMetadata.properties.collection}</CardTitle>
                         <CardDescription className="z-30 text-sm sm:text-md font-fine text-muted-foreground">
                             {nftCollectionMetadata.description.description || '...'}
                         </CardDescription>
@@ -117,6 +117,7 @@ const QuestCard = ({ nftCollectionMetadata, contractAddress, lands, stxAddress }
                             <ul className="list-disc list-inside text-sm leading-snug">
                                 <li>Fixed Supply: Only {nftCollectionMetadata.properties.total_supply} NFTs will be minted</li>
                                 <li>Mint Limit: Only {nftCollectionMetadata.properties.max_mints_per_tx || 4} NFTs can be minted per tx</li>
+                                <li>Claim Amounts: {nftCollectionMetadata.properties.allow_multiple_claims ? 'Unlimited mints per wallet address' : 'One mint per wallet address'} </li>
                                 <li>Utility: {nftCollectionMetadata.properties.utility || '...'}</li>
                             </ul>
                         </div>

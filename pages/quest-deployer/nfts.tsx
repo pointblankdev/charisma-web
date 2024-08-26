@@ -12,6 +12,7 @@ import { max, over } from 'lodash';
 import { Textarea } from '@components/ui/textarea';
 import { Dialog, DialogContent, DialogTrigger } from '@components/ui/dialog';
 import QuestCard from '@components/quest/quest-card';
+import { Checkbox } from '@components/ui/checkbox';
 
 const nftItemSchema = z.object({
     itemName: z.string().min(1, "Item name is required"),
@@ -33,11 +34,12 @@ const proposalFormSchema = z.object({
     nftName: z.string(),
     stxPerMint: z.coerce.number().min(0.000001, "Amount must be at least 0.000001"),
     maxMintsPerTx: z.coerce.number().min(1, "Amount must be at least 1").max(20, "Amount must be at most 20"),
+    allowMultipleClaims: z.boolean(),
 })
 
 type ProposalFormValues = z.infer<typeof proposalFormSchema>
 
-const generateTemplate = ({ contractAddress, totalSupply, stxAddress, description, energyRequired, nftName, stxPerMint, maxMintsPerTx }: ProposalFormValues) => {
+const generateTemplate = ({ contractAddress, totalSupply, stxAddress, description, energyRequired, nftName, stxPerMint, maxMintsPerTx, allowMultipleClaims }: ProposalFormValues) => {
     // Your template generation logic here
     return `;; Description:
 ;; ${description}
@@ -63,8 +65,12 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
 (define-constant ERR_NOT_TOKEN_OWNER (err u101))
 (define-constant ERR_SOLD_OUT (err u300))
 (define-constant ERR_INVALID_EDK (err u400))
+${allowMultipleClaims ? '' : `(define-constant ERR_ALREADY_CLAIMED (err u500))`}
 
 (define-data-var base-uri (string-ascii 200) "https://charisma.rocks/api/v0/nfts/${contractAddress}/{id}.json")
+
+${allowMultipleClaims ? '' : `;; Map to track which addresses have already claimed
+(define-map claimed principal bool)`}
 
 ;; Whitelisted contract addresses
 (define-map whitelisted-edks principal bool)
@@ -134,6 +140,12 @@ const generateTemplate = ({ contractAddress, totalSupply, stxAddress, descriptio
   (let ((token-id (+ (var-get last-token-id) u1)))
     ;; Ensure the collection stays within the limit.
     (asserts! (< (var-get last-token-id) COLLECTION_LIMIT) ERR_SOLD_OUT)
+    ${allowMultipleClaims ? '' : `
+    ;; Check if the recipient has already claimed
+    (asserts! (is-none (map-get? claimed recipient)) ERR_ALREADY_CLAIMED)
+    ;; Mark the recipient as having claimed
+    (map-set claimed recipient true)
+    `}
     ;; Mint the NFT and send it to the given recipient.
     (try! (nft-mint? ${nftName} token-id recipient))
     ;; 1 STX cost send to dungeon-master
@@ -253,6 +265,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
             collectionName: '',
             nftItems: [{ itemName: '', amount: 0, itemImage: '' }],
             maxMintsPerTx: 4,
+            allowMultipleClaims: true,
         },
         mode: "onChange",
     })
@@ -269,14 +282,13 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
         parentForm.setValue('name', collectionName)
 
         const totalSupply = form.getValues().nftItems.reduce((sum, item) => sum + Number(item.amount), 0)
-
         const template = generateTemplate({ ...form.getValues(), contractAddress, totalSupply, stxAddress: stxAddress!, nftName: safeName })
         onFormChange(template)
     }
 
     const handleSubmitCollection = async (e: React.MouseEvent) => {
         e.preventDefault()
-        const { collectionName, collectionImage, description, nftItems, stxPerMint, energyRequired, maxMintsPerTx, overview, utility } = form.getValues();
+        const { collectionName, collectionImage, description, nftItems, stxPerMint, energyRequired, maxMintsPerTx, overview, utility, allowMultipleClaims } = form.getValues();
         const safeName = collectionName.toLowerCase().replace(/[^a-zA-Z0-9\- ]/g, "").replace(/\s+/g, "-")
         const contractAddress = `${stxAddress}.${safeName}`
 
@@ -306,6 +318,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                 max_mints_per_tx: maxMintsPerTx,
                 overview: overview,
                 utility: utility,
+                allow_multiple_claims: allowMultipleClaims,
                 whitelisted: false
             }
         }
@@ -515,12 +528,25 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                             />
                             <FormField
                                 control={form.control}
+                                name={`allowMultipleClaims`}
+                                render={({ field }) => (
+                                    <FormItem className='flex flex-col w-32 justify-around items-center'>
+                                        <FormLabel>Allow Multiple Claims per Wallet</FormLabel>
+                                        <FormControl>
+                                            <Checkbox className='w-8 h-8' checked={field.value} onCheckedChange={(checked: boolean) => { form.setValue('allowMultipleClaims', checked); !checked && form.setValue('maxMintsPerTx', 1) }} />
+                                        </FormControl>
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
                                 name={`maxMintsPerTx`}
                                 render={({ field }) => (
                                     <FormItem>
                                         <FormLabel>Maximum Mints per Tx</FormLabel>
                                         <FormControl>
-                                            <Input placeholder={'4'} type="number" {...field} />
+                                            <Input disabled={!form.getValues().allowMultipleClaims} placeholder={'4'} type="number" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -550,6 +576,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                             max_mints_per_tx: form.getValues().maxMintsPerTx,
                             overview: form.getValues().overview,
                             utility: form.getValues().utility,
+                            allow_multiple_claims: form.getValues().allowMultipleClaims,
                             whitelisted: true
                         },
                         image: form.getValues().nftItems[0].itemImage
@@ -557,7 +584,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                     contractAddress={`${stxAddress}.${form.getValues().collectionName}`}
                     stxAddress={stxAddress}
                 />}
-                <Button disabled={!form.formState.isValid} onClick={handleSubmitCollection} className="mt-4 w-full">Save Collection Metadata</Button>
+                <Button disabled={!!form.formState.isValid} onClick={handleSubmitCollection} className="mt-4 w-full">Save Collection Metadata</Button>
                 <div className='text-xs text-muted-foreground text-center'>You can reload this collection after saving it by typing in the same Collection Name during a later session.</div>
 
             </form>

@@ -185,7 +185,7 @@ export default function ContractDeployer({ data }: any) {
                                 <div className="space-x-2 flex items-center text-muted-foreground text-xs">
                                     <div>To enable your contract on Charisma, you must deploy the contract and then request community approval.</div>
                                     <Button
-                                        disabled={!form.formState.isValid}
+                                        disabled={!!form.formState.isValid}
                                         size="sm"
                                         className="ml-auto gap-1.5 text-sm"
                                         onClick={deployContract}
