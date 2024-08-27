@@ -94,7 +94,7 @@ describe('metadata api', () => {
     })
 
     it('should remove land', async () => {
-        const response = await removeLand('SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kr5skoysg')
+        const response = await removeLand('SP1Z92MPDQEWZXW36VX71Q25HK/F5K2EPCJ304F275.tokensoft-token-v4kr5skoysg')
         console.log(response)
     })
 
@@ -158,15 +158,18 @@ describe('metadata api', () => {
     it('should update edel land', async () => {
         const contract = 'SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.edelcoin'
         const land = await getLand(contract)
-        land.cardImage = 'https://charisma.rocks/lands/img/card/edel.png'
+        land.wraps.symbol = 'EDLC'
+        land.wraps.decimals = 6
         console.log(land)
         await setLand(contract, land)
     })
 
     it('should update stx-wcha land', async () => {
-        const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha'
+        const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
         const land = await getLand(contract)
-        land.proposal = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.list-stxwcha-velar-lp'
+        land.wraps.symbol = 'STX-sCHA'
+        land.wraps.decimals = 0
+        land.wraps.totalSupply = 253246838943
         console.log(land)
         await setLand(contract, land)
     })
@@ -231,9 +234,10 @@ describe('metadata api', () => {
         await setLand('SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha', land)
     })
 
-    it('should set welsh land whitelisted', async () => {
-        const response = await setLandWhitelisted('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', false)
-        console.log(response)
+    it('should set land whitelisted', async () => {
+        const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha'
+        const land = await setLandWhitelisted(contract, true)
+        console.log(land)
     })
 
     it('should set land 1 data into db', async () => {

@@ -4,27 +4,13 @@ const velarApi = {
         const data = await response.json();
 
         if (symbol === 'all') {
-            data.push({
-                symbol: 'sROCK',
-                name: 'Liquid Staked Rock',
-                contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-rock',
-                price: data.find((token: any) => token.symbol === 'ROCK')?.price,
-                decimal: 'u6',
-            })
-            data.push({
-                symbol: 'sPEPE',
-                name: 'Liquid Staked Pepe',
-                contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-pepe',
-                price: data.find((token: any) => token.symbol === 'PEPE')?.price,
-                decimal: 'u3',
-            })
-            data.push({
-                symbol: 'sLEO',
-                name: 'Liquid Staked Leo',
-                contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-leo',
-                price: data.find((token: any) => token.symbol === 'LEO')?.price,
-                decimal: 'u6',
-            })
+            // proxy tokens
+        }
+        if (symbol === 'STX-wCHA') {
+            data.push({ name: 'STX-wCHA', symbol: 'STX-wCHA', price: "0.00001535691" })
+        }
+        if (symbol === 'STX-sCHA') {
+            data.push({ name: 'STX-sCHA', symbol: 'STX-sCHA', price: "0.00000402777" })
         }
         return data
     },

@@ -641,16 +641,19 @@ export async function getBlocksUntilUnlocked(contract: string) {
 export async function getTotalSupply(contract: string) {
   const [address, name] = contract.split('.');
 
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+  const response: any = await scApi.callReadOnlyFunction({
     contractAddress: address,
     contractName: name,
     functionName: 'get-total-supply',
-    functionArgs: [],
-    senderAddress: address
+    readOnlyFunctionArgs: {
+      sender: address,
+      arguments: []
+    }
   });
 
-  return cvToJSON(response).value.value;
+  const cv = hexToCV(response.result);
+  const json = cvToJSON(cv);
+  return Number(json.value.value);
 }
 
 export async function getTotalInPool(contract: string) {
