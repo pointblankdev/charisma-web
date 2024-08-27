@@ -42,7 +42,7 @@ const extentionRequestProposal = ({ contractAddress }: any) => {
       ;; set the new contract as an extension
       (try! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.dungeon-master set-extension '${contractAddress} true))
       ;; enable the latest energy contract for use
-      (try! (contract-call? '${contractAddress} set-whitelisted-edk 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v2 true))
+      (try! (contract-call? '${contractAddress} set-whitelisted-edk 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v3 true))
       (ok true)
     )
   )

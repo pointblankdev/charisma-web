@@ -40,7 +40,7 @@ const WrapLandButton: React.FC<StakeButtonProps> = ({
     if (!isUsingBurnToken) postConditions.push(Pc.principal(stxAddress!).willSendGte(1).ft(burnTokenContract, burnTokenAsset))
     openContractCall({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'land-helper-v2',
+      contractName: 'land-helper-v3',
       functionName: "wrap",
       functionArgs: [uintCV(tokens6Dec), contractPrincipalCV(metadata.wraps.ca)],
       postConditionMode: PostConditionMode.Deny,

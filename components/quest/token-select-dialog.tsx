@@ -39,7 +39,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
             contractAddress: contractId.split('.')[0],
             contractName: contractId.split('.')[1],
             functionName: "tap",
-            functionArgs: [uintCV(landId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v2')],
+            functionArgs: [uintCV(landId), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v3')],
             postConditions,
             onCancel: () => {
                 toast({
