@@ -42,8 +42,8 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     // check if they have the land nft already for post conditions
     landBalance = await getLandsBalance(contractAddress, stxAddress) as number
     hadLand = await hadLandBefore(contractAddress, stxAddress) as boolean
-  } catch (error) {
-    Logger.error({ 'Error fetching land balance': error });
+  } catch (error: any) {
+    Logger.error({ 'Error fetching land balance': { message: error?.message, stxAddress, contractAddress } });
   }
 
   return {
