@@ -25,6 +25,7 @@ import { generateWallet } from '@stacks/wallet-sdk';
 import { cvToJSON } from '@stacks/transactions';
 import contractAbi from '../public/indexes/contract-abi.json';
 import { getGlobalState } from './db-providers/kv';
+import Logger from './logger';
 
 const network = new StacksMainnet();
 
@@ -865,6 +866,8 @@ export async function tryCallContractPublicFunction({ seedPhrase, password, publ
   const isInMempool = txsInMempool.some((tx: any) => tx.contract_call.function_name === functionName && tx.sender_address === publicAddress);
 
   if (!isInMempool) {
+
+    Logger.oracle({ "players-job": { contractAddress, functionName, args } })
 
     const wallet = await generateWallet({ secretKey: seedPhrase, password });
 

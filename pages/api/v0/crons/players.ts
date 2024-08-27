@@ -80,7 +80,6 @@ export default async function playersApi(
                     targetContractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-farm-v2'
                 }
 
-                Logger.oracle({ "players-job": targetContractAddress })
                 const transaction = await tryCallContractPublicFunction({
                     seedPhrase: player.seedPhrase,
                     publicAddress: player.publicAddress,
