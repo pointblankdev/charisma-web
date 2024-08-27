@@ -80,7 +80,7 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
   const [descriptionVisible, setDescriptionVisible] = useState(false);
   const [tokensSelected, setTokensSelected] = useState(0);
 
-  const tokensRequired = Number((tokensSelected * data.exchangeRate).toFixed(0));
+  const tokensRequested = Number((tokensSelected / data.exchangeRate).toFixed(0));
 
   useEffect(() => {
     setDescriptionVisible(true);
@@ -139,10 +139,10 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                       height={100}
                       className="z-30 w-full border rounded-full"
                     />
-                    {Math.abs(tokensSelected) > 0 &&
+                    {Math.abs(tokensRequested) > 0 &&
                       <div className="absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                        {numeral(Math.abs(tokensSelected / Math.pow(10, 6))).format('0a')}
-                        {tokensSelected > 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
+                        {numeral(Math.abs(tokensRequested / Math.pow(10, 6))).format('0a')}
+                        {tokensRequested > 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
                       </div>
                     }
                   </div>
@@ -166,8 +166,8 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                         className="z-20 w-full border rounded-full absolute"
                       />
                       {Math.abs(tokensSelected) > 0 && <div className="z-40 absolute px-1 font-bold rounded-full -top-1 -right-3 text-md md:text-base lg:text-sm bg-accent text-accent-foreground">
-                        {numeral(Math.abs(tokensRequired / Math.pow(10, 6))).format('0a')}
-                        {tokensRequired / Math.pow(10, 6) < 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
+                        {numeral(Math.abs(tokensSelected / Math.pow(10, 6))).format('0a')}
+                        {tokensSelected / Math.pow(10, 6) < 0 ? <PiArrowFatLineUpFill className="absolute top-0 -right-7 text-xl text-green-500 animate-bounce" /> : <PiArrowFatLineDownFill className="absolute top-0 -right-7 text-xl text-red-500 animate-pulse" />}
                       </div>}
                     </div>
                   </div>
@@ -185,7 +185,7 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                   contractName={'liquid-staked-charisma'}
                   fungibleTokenName={'liquid-staked-token'}
                   decimals={6}
-                  symbol={data.symbol}
+                  symbol={'CHA'}
                   baseTokenContractAddress={'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'}
                   baseTokenContractName={'dme000-governance-token'}
                   baseFungibleTokenName={'charisma'}
