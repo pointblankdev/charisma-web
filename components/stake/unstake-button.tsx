@@ -33,21 +33,20 @@ const UnstakeButton: React.FC<UnstakeButtonProps> = ({
 
   const { stxAddress } = useAccount()
 
-  const tokens6Dec = Math.floor(Math.abs(Number(tokens)));
+  const validTokens = Number(tokens);
 
-  console.log(tokens6Dec)
+  if (isNaN(validTokens) || validTokens <= 0) { // slider was crashing due to NaaN/undefined token value
+    return null;
+  }
+
+  const tokens6Dec = Math.floor(Math.abs(validTokens)); // the token value somehow return negative value hence the math.abs
 
   const tokenContract = `${contractAddress}.${contractName}::${fungibleTokenName}`
 
-  if (!stxAddress) {
-    return <Button disabled variant="ghost" className='text-primary text-md hover:bg-white hover:text-primary z-30'>Sign in to Unstake</Button>;
-  }
-
-  const postConditions = stxAddress ? [
-    makeStandardFungiblePostCondition(stxAddress, FungibleConditionCode.Equal, tokens6Dec, tokenContract),
+  const postConditions = [
+    makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, tokens6Dec, tokenContract),
     // makeStandardFungiblePostCondition(`${contractAddress}.${contractName}`, FungibleConditionCode.GreaterEqual, (tokens6Dec / exchangeRate).toFixed(0), `${baseTokenContractAddress}.${baseTokenContractName}::${baseFungibleTokenName}`),
-  ] : []
-  
+  ];
 
   function unstake() {
     openContractCall({

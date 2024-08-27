@@ -34,18 +34,19 @@ const StakeButton: React.FC<StakeButtonProps> = ({
 
   const { stxAddress } = useAccount()
 
-  const tokens6Dec = Number(tokens)
+  const validTokens = Number(tokens);
+
+  if (isNaN(validTokens) || validTokens <= 0) { // App crashes due to NaaN/undefined token value when using slider
+    return null;
+  }
+
+  const tokens6Dec = Math.floor(Math.abs(validTokens)); // the token value somehow returns negative value hence the math.abs
 
   const baseTokenContract = `${baseTokenContractAddress}.${baseTokenContractName}::${baseFungibleTokenName}`
 
-  if (!stxAddress) {
-    return <Button disabled variant="ghost" className='text-primary text-md hover:bg-white hover:text-primary z-30'>Sign in to Unstake</Button>;
-  }
-
-  const postConditions = stxAddress ? [
-    makeStandardFungiblePostCondition(stxAddress, FungibleConditionCode.Equal, tokens6Dec, baseTokenContract),
-    // makeStandardFungiblePostCondition(`${contractAddress}.${contractName}`, FungibleConditionCode.GreaterEqual, (tokens6Dec / exchangeRate).toFixed(0), `${baseTokenContractAddress}.${baseTokenContractName}::${baseFungibleTokenName}`),
-  ] : []
+  const postConditions = [
+    makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, tokens6Dec, baseTokenContract),
+  ];
 
   function stake() {
     openContractCall({
