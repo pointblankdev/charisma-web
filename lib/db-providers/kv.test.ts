@@ -158,20 +158,34 @@ describe('metadata api', () => {
     it('should update edel land', async () => {
         const contract = 'SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.edelcoin'
         const land = await getLand(contract)
-        land.wraps.symbol = 'EDLC'
-        land.wraps.decimals = 6
+        // land.wraps.symbol = 'EDLC'
+        land.wraps.totalSupply = 1000000000000000
         console.log(land)
         await setLand(contract, land)
     })
 
-    it('should update stx-wcha land', async () => {
+    it('should update STX-sCHA land', async () => {
         const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-scha'
         const land = await getLand(contract)
-        land.wraps.symbol = 'STX-sCHA'
-        land.wraps.decimals = 0
-        land.wraps.totalSupply = 253246838943
+        // land.whitelisted = true
+        // land.id = 13
+        // land.wraps.symbol = 'STX-sCHA'
+        // land.wraps.decimals = 0
+        // land.wraps.totalSupply = 253246838943
         console.log(land)
-        await setLand(contract, land)
+        // await setLand(contract, land)
+    })
+
+    it('should update STX-wCHA land', async () => {
+        const contract = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-wcha'
+        const land = await getLand(contract)
+        // land.whitelisted = true
+        // land.id = 12
+        // land.wraps.symbol = 'STX-sCHA'
+        // land.wraps.decimals = 0
+        // land.wraps.totalSupply = 253246838943
+        console.log(land)
+        // await setLand(contract, land)
     })
 
     it('should update not land', async () => {
