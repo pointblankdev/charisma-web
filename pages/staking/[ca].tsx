@@ -43,12 +43,14 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     await Logger.error({ 'Error parsing stx address': { message: error?.message, state } });
   }
 
-  try {
-    // check if they have the land nft already for post conditions
-    landBalance = await getLandsBalance(contractAddress, stxAddress) as number
-    hadLand = await hadLandBefore(contractAddress, stxAddress) as boolean
-  } catch (error: any) {
-    await Logger.error({ 'Error fetching land balance': { message: error?.message, stxAddress, contractAddress } });
+  if (metadata.whitelisted) {
+    try {
+      // check if they have the land nft already for post conditions
+      landBalance = await getLandsBalance(contractAddress, stxAddress) as number
+      hadLand = await hadLandBefore(contractAddress, stxAddress) as boolean
+    } catch (error: any) {
+      await Logger.error({ 'Error fetching land balance': { message: error?.message, stxAddress, contractAddress } });
+    }
   }
 
   return {
