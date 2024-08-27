@@ -125,6 +125,13 @@ ${allowMultipleClaims ? '' : `;; Map to track which addresses have already claim
   (ok (nft-get-owner? ${nftName} token-id))
 )
 
+(define-public (burn (id uint))
+  	(begin 
+    	(asserts! (is-owner id tx-sender) ERR_NOT_TOKEN_OWNER)
+    	(nft-burn? ${nftName} id tx-sender)
+	)
+)
+
 ;; SIP-009 function: Transfer NFT token to another owner.
 (define-public (transfer (token-id uint) (sender principal) (recipient principal))
   (begin
