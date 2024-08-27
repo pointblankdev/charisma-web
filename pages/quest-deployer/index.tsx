@@ -39,14 +39,13 @@ import NftCollectionTemplate from "./nfts"
 const extentionRequestProposal = ({ contractAddress }: any) => {
     return `(define-public (execute (sender principal))
     (begin
-      ;; set the new contract as an extension
-      (try! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.dungeon-master set-extension '${contractAddress} true))
-      ;; enable the latest energy contract for use
-      (try! (contract-call? '${contractAddress} set-whitelisted-edk 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v3 true))
-      (ok true)
+        ;; set the new contract as an extension
+        (try! (contract-call? 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.dungeon-master set-extension '${contractAddress} true))
+        ;; enable the latest energy contract for use
+        (try! (contract-call? '${contractAddress} set-whitelisted-edk 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v3 true))
+        (ok true)
     )
-  )
-  `}
+)`}
 
 const generateHeader = ({ name, sender }: any) => {
     return `;; Title: ${name}

@@ -12,12 +12,16 @@ const meta = {
 
 const sidebarNavItems = [
   {
-    title: "Fungible Tokens",
-    href: "/portfolio/fungible-tokens",
+    title: "SIP10 Tokens",
+    href: "/portfolio",
   },
   {
-    title: "Profile",
-    href: "/portfolio/profile",
+    title: "SIP13 Tokens",
+    href: "/portfolio/sip13",
+  },
+  {
+    title: "SIP9 Tokens",
+    href: "/portfolio/sip9",
   },
 ]
 
@@ -39,9 +43,9 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
           </div>
           {/* <Separator className="my-6" /> */}
           <div className="flex flex-col space-y-8 lg:flex-row lg:space-x-12 lg:space-y-0">
-            {/* <aside className="lg:w-1/5">
+            <aside className="lg:w-1/5">
               <SidebarNav items={sidebarNavItems} />
-            </aside> */}
+            </aside>
             <div className="flex-1">
               {children}
             </div>
