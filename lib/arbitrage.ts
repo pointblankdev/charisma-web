@@ -1,5 +1,6 @@
 import { TxBroadcastResult, uintCV } from "@stacks/transactions";
 import { executeArbitrageStrategy, getTxsFromMempool } from "./stacks-api";
+import Logger from "./logger";
 
 export function getConfig() {
     return {
@@ -44,7 +45,7 @@ export async function runAll() {
     const jobPromises = newJobs.map((job: { function: string | PromiseLike<string>; address: any; args: any; }, index: number) =>
         new Promise((resolve) => {
             setTimeout(() => {
-                // console.log(`Running job: ${job.function}`);
+                Logger.oracle({ "arbitrage-job": job })
                 const strategy: any = {
                     address: job.address,
                     functionName: job.function,
