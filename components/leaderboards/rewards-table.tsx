@@ -1,7 +1,4 @@
-"use client"
-
 import { useState } from "react"
-import { MoreHorizontal } from "lucide-react"
 import { Button } from "@components/ui/button"
 import {
     Card,
@@ -12,13 +9,6 @@ import {
     CardTitle,
 } from "@components/ui/card"
 import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@components/ui/dropdown-menu"
-import {
     Table,
     TableBody,
     TableCell,
@@ -27,8 +17,6 @@ import {
     TableRow,
 } from "@components/ui/table"
 import numeral from "numeral"
-import Image from "next/image"
-import expIcon from '@public/experience.png';
 
 const ITEMS_PER_PAGE = 10;
 

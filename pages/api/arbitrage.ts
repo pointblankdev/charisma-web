@@ -16,13 +16,11 @@ export default async function arbitrage(
 
     const response: any = {}
     try {
-        Logger.oracle("Arbitrage Oracle is running")
         const transactions = await runAll()
-        console.log(transactions)
         response.transactions = transactions
 
     } catch (error: any) {
-        console.error(error.message);
+        Logger.error({ 'arbitage-error': error?.message });
     }
 
     return res.status(200).json(response);

@@ -1,7 +1,4 @@
 import React, { useEffect } from "react";
-import styles from './index.module.css';
-import { cn } from '@lib/utils';
-import { Button } from "@components/ui/button";
 import {
   NavigationMenu,
   NavigationMenuContent,

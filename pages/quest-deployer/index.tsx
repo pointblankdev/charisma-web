@@ -1,13 +1,7 @@
 import {
-    Coins,
-    Gavel,
     Scale,
-    Send,
     Settings,
     Share,
-    Swords,
-    Trophy,
-    Vote,
 } from "lucide-react"
 import { Badge } from "@components/ui/badge"
 import { Button } from "@components/ui/button"
@@ -19,7 +13,6 @@ import {
     DrawerTitle,
     DrawerTrigger,
 } from "@components/ui/drawer"
-import { Input } from "@components/ui/input"
 import { Label } from "@components/ui/label"
 import {
     Select,
@@ -36,14 +29,12 @@ import SyntaxHighlighter from 'react-syntax-highlighter';
 import { useEffect, useState } from "react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form"
 import { motion } from 'framer-motion';
-import { BsWater } from "react-icons/bs"
 import FarmTemplate from "./farm"
-import { PiPackage, PiPlant } from "react-icons/pi"
+import { PiPackage } from "react-icons/pi"
 import BattleRoyaleTemplate from "./battle-royale"
 import PrizeFightTemplate from "./prize-fight"
 import { useAccount, useOpenContractDeploy } from "@micro-stacks/react"
 import NftCollectionTemplate from "./nfts"
-import { isEmpty } from "lodash"
 
 const extentionRequestProposal = ({ contractAddress }: any) => {
     return `(define-public (execute (sender principal))
@@ -77,7 +68,7 @@ const contractFormSchema = z.object({
 
 type ContractFormValues = z.infer<typeof contractFormSchema>
 
-export default function ContractDeployer({ data }: any) {
+export default function ContractDeployer({ }: any) {
 
     const { stxAddress } = useAccount()
 

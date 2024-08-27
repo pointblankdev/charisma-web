@@ -8,7 +8,7 @@ import * as z from "zod"
 import { useAccount } from "@micro-stacks/react"
 import { setNftCollectionMetadata, getNftCollectionMetadata } from "@lib/user-api"
 import Image from 'next/image'
-import { isEmpty, max, over } from 'lodash';
+import { isEmpty } from 'lodash';
 import { Textarea } from '@components/ui/textarea';
 import { Dialog, DialogContent, DialogTrigger } from '@components/ui/dialog';
 import QuestCard from '@components/quest/quest-card';
@@ -270,7 +270,7 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
         mode: "onChange",
     })
 
-    const { fields, append, remove } = useFieldArray({
+    const { fields } = useFieldArray({
         control: form.control,
         name: "nftItems",
     })
