@@ -82,7 +82,7 @@ export default async function landsIndexApi(
                         builder.setThumbnail({ url: 'https://beta.charisma.rocks/charisma.png' })
 
                         for (const event of tx.metadata.receipt.events) {
-                            // await Logger.error({ 'Inspect': { type: event.type, keys: Object.keys(event.data) } })
+                            await Logger.error({ 'Inspect': { type: event.type, keys: Object.keys(event.data) } })
                             builder = await handleContractEvent(event, builder)
                         }
 
