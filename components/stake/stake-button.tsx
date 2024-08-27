@@ -38,9 +38,9 @@ const StakeButton: React.FC<StakeButtonProps> = ({
 
   const baseTokenContract = `${baseTokenContractAddress}.${baseTokenContractName}::${baseFungibleTokenName}`
 
-  const postConditions = [
-    makeStandardFungiblePostCondition(stxAddress!, FungibleConditionCode.Equal, tokens6Dec, baseTokenContract),
-  ];
+  const postConditions: any[] = [];
+
+  if (stxAddress) postConditions.push(makeStandardFungiblePostCondition(stxAddress, FungibleConditionCode.Equal, tokens6Dec, baseTokenContract))
 
   function stake() {
     openContractCall({
@@ -48,7 +48,7 @@ const StakeButton: React.FC<StakeButtonProps> = ({
       contractName: contractName,
       functionName: "stake",
       functionArgs: [uintCV(tokens6Dec)],
-      postConditions: postConditions as any[]
+      postConditions: postConditions
     });
   }
 
