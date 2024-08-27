@@ -82,7 +82,7 @@ export default async function landsIndexApi(
                         builder.setThumbnail({ url: 'https://beta.charisma.rocks/charisma.png' })
 
                         for (const event of tx.metadata.receipt.events) {
-                            Logger.error({ 'Inspect': { event } })
+                            await Logger.error({ 'Inspect': { event } })
                             builder = await handleContractEvent(event, builder)
                         }
 
@@ -93,7 +93,7 @@ export default async function landsIndexApi(
 
                 } catch (error: any) {
                     // Logger.error({ 'Land API Error': { keys: Object.keys(error), error: error?.message, receipt: tx.metadata.receipt } })
-                    Logger.error({ 'Land API Error': { error: error?.message, events: tx.metadata.receipt?.events?.map(e => Object.keys(e.data)) } })
+                    await Logger.error({ 'Land API Error': { error: error?.message, events: tx.metadata.receipt?.events?.map(e => Object.keys(e.data)) } })
                 }
                 response = {}
             }

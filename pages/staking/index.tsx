@@ -154,7 +154,7 @@ const generateTemplate = ({ contractAddress }: any) => {
         ;; lookup the total supply of the staked token
         (total-supply (unwrap-panic (contract-call? '${contractAddress} get-total-supply)))
         ;; calculate the initial difficulty based on the total supply
-        (land-difficulty (/ total-supply (pow u10 u5)))
+        (land-difficulty (/ total-supply (pow u10 u4)))
       )
       (print {event: "enable-listing", contract: "${contractAddress}", land-id: land-id, total-supply: total-supply, land-difficulty: land-difficulty})
       ;; set initial difficulty based on total supply to normalize energy output
