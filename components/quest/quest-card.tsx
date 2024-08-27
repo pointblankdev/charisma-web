@@ -15,6 +15,9 @@ import { FungibleConditionCode, makeStandardSTXPostCondition } from '@stacks/tra
 import stxIcon from '@public/stx-logo.png'
 import energyIcon from '@public/lands/img/energy.png'
 import TokenSelectDialog from '@components/quest/token-select-dialog';
+import { useOpenContractCall } from '@micro-stacks/react';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
 
 const QuestCard = ({ nftCollectionMetadata, contractAddress, lands, stxAddress }: any) => {
 
@@ -142,10 +145,10 @@ const QuestCard = ({ nftCollectionMetadata, contractAddress, lands, stxAddress }
                         />
                     }
                 </> :
-
-                    <div className="text-sm m-2.5 text-muted-foreground">
-                        This quest is pending on community approval.
-                    </div>
+                    <GovernanceProposalButton metadata={nftCollectionMetadata} />
+                    // <Button className="text-sm m-2.5 text-muted-foreground">
+                    //     This quest is pending on community approval.
+                    // </Button>
                 }
             </CardFooter>
             <Image
@@ -171,3 +174,25 @@ const QuestCard = ({ nftCollectionMetadata, contractAddress, lands, stxAddress }
 }
 
 export default QuestCard
+
+
+
+const GovernanceProposalButton = ({ metadata }: any) => {
+    const [address, name] = metadata.properties.proposal_name.split('.')
+
+    const { openContractCall } = useOpenContractCall();
+
+    const { block } = useGlobalState()
+
+    function submitProposal() {
+        openContractCall({
+            contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
+            contractName: 'dme002-proposal-submission',
+            functionName: "propose",
+            functionArgs: [contractPrincipalCV(address, name), uintCV(Number(block.height) + 15)],
+        });
+    }
+    return (
+        <Button onClick={submitProposal}>Request Approval</Button>
+    )
+}

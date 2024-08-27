@@ -319,7 +319,9 @@ export default function NftTemplate({ form: parentForm, onFormChange }: any) {
                 overview: overview,
                 utility: utility,
                 allow_multiple_claims: allowMultipleClaims,
-                whitelisted: false
+                whitelisted: false,
+                contract_name: contractAddress,
+                proposal_name: `${stxAddress}.propose-${safeName}`
             }
         }
 
