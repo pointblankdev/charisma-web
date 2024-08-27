@@ -31,12 +31,13 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const stxAddress = await parseAddress(dehydratedState)
 
     const lands = []
-    for (const ca of landContractAddresses) {
-        const metadata = await getLand(ca)
-        metadata.balance = await getLandBalance(metadata.id || 0, stxAddress)
-        lands.push(metadata)
+    if (stxAddress) { // the app crashes if user wallet is not connected
+        for (const ca of landContractAddresses) {
+            const metadata = await getLand(ca)
+            metadata.balance = await getLandBalance(metadata.id || 0, stxAddress)
+            lands.push(metadata)
+        }
     }
-
     const tokens = await velarApi.tokens();
 
     return {
