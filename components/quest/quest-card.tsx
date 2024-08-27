@@ -146,9 +146,9 @@ const QuestCard = ({ nftCollectionMetadata, contractAddress, lands, stxAddress }
                     }
                 </> :
                     // <GovernanceProposalButton metadata={nftCollectionMetadata} />
-                    <Button className="text-sm m-2.5 text-muted-foreground">
+                    <div className="text-sm m-2.5 text-muted-foreground">
                         This quest is pending on community approval.
-                    </Button>
+                    </div>
                 }
             </CardFooter>
             <Image
