@@ -93,8 +93,8 @@ export default async function landsIndexApi(
                         await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second to avoid rate limiting
                     }
 
-                } catch (error) {
-                    Logger.error({ 'Land API Error': error })
+                } catch (error: any) {
+                    Logger.error({ 'Land API Error': error?.message })
                 }
                 response = {}
             }
