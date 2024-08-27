@@ -10,12 +10,32 @@ cache_dir = "./.cache"
 path = "contracts/dungeon-master.clar"
 depends_on = []
 
+[contracts.dme000-governance-token]
+path = "contracts/dme000-governance-token.clar"
+depends_on = []
+
+[contracts.liquid-staked-charisma]
+path = "contracts/liquid-staked-charisma.clar"
+depends_on = []
+
+[contracts.experience]
+path = "contracts/experience.clar"
+depends_on = []
+
 [contracts.lands]
 path = "contracts/lands.clar"
 depends_on = []
 
+[contracts.land-helper-v3]
+path = "contracts/land-helper-v3.clar"
+depends_on = []
+
 [contracts.kraqen-lotto]
 path = "contracts/kraqen-lotto.clar"
+depends_on = []
+
+[contracts.odins-raven]
+path = "contracts/odins-raven.clar"
 depends_on = []
 
 # traits

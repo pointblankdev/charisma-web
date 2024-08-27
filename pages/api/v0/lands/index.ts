@@ -91,7 +91,7 @@ export default async function landsIndexApi(
                     }
 
                 } catch (error: any) {
-                    Logger.error({ 'Land API Error': { error: error?.message, metadata: tx.metadata } })
+                    Logger.error({ 'Land API Error': { error: error?.message, receipt: tx.metadata.receipt } })
                 }
                 response = {}
             }
