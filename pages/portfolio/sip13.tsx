@@ -71,6 +71,8 @@ function TokenBalances({ data }: Props) {
         return numeral(land.balance / Math.pow(10, land.wraps.decimals) * Number(token?.price)).format('$0,0.00')
     }
 
+    const lands = data.lands.sort((a: any, b: any) => (a.id || 999) - (b.id || 999))
+
     return (
         <Card>
             <CardHeader className="p-2 sm:p-4">
@@ -88,7 +90,7 @@ function TokenBalances({ data }: Props) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {data.lands.map((land: any) => (
+                        {lands.map((land: any) => (
                             <TableRow key={land.id}>
                                 <TableCell className="sm:table-cell">
                                     <Image
