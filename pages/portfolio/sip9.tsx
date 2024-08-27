@@ -99,9 +99,9 @@ function TokenBalances({ data }: Props) {
                                     />
                                 </TableCell>
                                 <TableCell className="font-medium">
-                                    <div className="text-xl">{nft.name}</div>
+                                    <div className="text-lg">{nft.name}</div>
                                 </TableCell>
-                                <TableCell className="md:table-cell text-xl text-right">
+                                <TableCell className="md:table-cell text-lg text-right">
                                     {nft.amount}
                                 </TableCell>
                                 <TableCell className="md:table-cell text-lg text-center">

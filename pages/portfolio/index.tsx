@@ -106,10 +106,10 @@ function TokenBalances({ data }: Props) {
                 <TableCell className="font-medium">
                   <div className="text-lg">{land.name}</div>
                 </TableCell>
-                <TableCell className="md:table-cell text-xl text-right">
+                <TableCell className="md:table-cell text-lg text-right">
                   {getTokenAmountWithDecimals(land)}
                 </TableCell>
-                <TableCell className="md:table-cell text-xl text-right">
+                <TableCell className="md:table-cell text-lg text-right">
                   {getTokenUSDValue(land)}
                 </TableCell>
               </TableRow>
