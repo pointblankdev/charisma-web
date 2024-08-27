@@ -33,7 +33,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     const lands = []
     for (const ca of landContractAddresses) {
         const metadata = await getLand(ca)
-        metadata.balance = await getLandBalance(metadata.id || 1, stxAddress)
+        metadata.balance = await getLandBalance(metadata.id || 0, stxAddress)
         lands.push(metadata)
     }
 
