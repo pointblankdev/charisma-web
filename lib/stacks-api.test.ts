@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, TransactionVersion, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateSecretKey, generateWallet, getStxAddress } from "@stacks/wallet-sdk";
-import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId } from "./stacks-api";
+import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId, getNftOwner } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 import { tryResetEpochs } from "./try-reset-epochs";
@@ -305,6 +305,16 @@ describe('Stacks API', () => {
         const result = await getLandId('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma')
         console.log(result)
         expect(result).toEqual(1)
+    })
+
+})
+
+describe('SIP9 traits', () => {
+
+    it('should get owner', async () => {
+        const owner = await getNftOwner('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bitcoin-pepe-whitelist-ticket', 10)
+        console.log(owner)
+        expect(owner).toBeDefined()
     })
 
 })
