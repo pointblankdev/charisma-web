@@ -33,10 +33,15 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
   let hadLand = false
   let landBalance = 0
+  let stxAddress = ''
 
   const state = await getDehydratedStateFromSession(ctx) as string
 
-  const stxAddress = parseAddress(state)
+  try {
+    stxAddress = parseAddress(state)
+  } catch (error: any) {
+    Logger.error({ 'Error parsing stx address': { message: error?.message, state } });
+  }
 
   try {
     // check if they have the land nft already for post conditions
