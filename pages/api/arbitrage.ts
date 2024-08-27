@@ -20,7 +20,7 @@ export default async function arbitrage(
         response.transactions = transactions
 
     } catch (error: any) {
-        Logger.error({ 'arbitage-error': error?.message });
+        await Logger.error({ 'arbitage-error': error?.message });
     }
 
     return res.status(200).json(response);

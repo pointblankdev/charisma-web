@@ -45,7 +45,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   }
 
   const dehydratedState = await getDehydratedStateFromSession(ctx) as string
-  const stxAddress = parseAddress(dehydratedState)
+  const stxAddress = await parseAddress(dehydratedState)
 
   return {
     props: {

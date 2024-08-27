@@ -51,7 +51,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const nftCollectionMetadata = await getNftCollectionMetadata('SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024')
 
   const dehydratedState = await getDehydratedStateFromSession(ctx) as string
-  const stxAddress = parseAddress(dehydratedState)
+  const stxAddress = await parseAddress(dehydratedState)
 
   return {
     props: {

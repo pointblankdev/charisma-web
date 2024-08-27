@@ -38,9 +38,9 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   const state = await getDehydratedStateFromSession(ctx) as string
 
   try {
-    stxAddress = parseAddress(state)
+    stxAddress = await parseAddress(state)
   } catch (error: any) {
-    Logger.error({ 'Error parsing stx address': { message: error?.message, state } });
+    await Logger.error({ 'Error parsing stx address': { message: error?.message, state } });
   }
 
   try {
@@ -48,7 +48,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     landBalance = await getLandsBalance(contractAddress, stxAddress) as number
     hadLand = await hadLandBefore(contractAddress, stxAddress) as boolean
   } catch (error: any) {
-    Logger.error({ 'Error fetching land balance': { message: error?.message, stxAddress, contractAddress } });
+    await Logger.error({ 'Error fetching land balance': { message: error?.message, stxAddress, contractAddress } });
   }
 
   return {

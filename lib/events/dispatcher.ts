@@ -397,7 +397,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt") {
             symbol = '📜'
 
-            Logger.error({ 'Unknown spell scroll event': event.data })
+            await Logger.error({ 'Unknown spell scroll event': event.data })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)
@@ -416,7 +416,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             }
 
             else {
-                Logger.error({ 'Unknown apple farm event': event.data })
+                await Logger.error({ 'Unknown apple farm event': event.data })
                 builder.addField({
                     name: `${symbol} ${event.type}`,
                     value: JSON.stringify(event.data).slice(0, 300)
@@ -426,7 +426,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
         else {
 
-            Logger.error({ 'Unknown Contract Identifier Error': event.data })
+            await Logger.error({ 'Unknown Contract Identifier Error': event.data })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)
@@ -437,7 +437,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
     else {
 
-        Logger.error({ 'Unknown Event Type Error': event.data })
+        await Logger.error({ 'Unknown Event Type Error': event.data })
         builder.addField({
             name: `${symbol} ${event.type}`,
             value: JSON.stringify(event.data).slice(0, 300)

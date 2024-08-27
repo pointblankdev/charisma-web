@@ -15,7 +15,7 @@ export const getDehydratedStateFromSession = async (ctx: GetServerSidePropsConte
     return dehydratedState ? cleanDehydratedState(dehydratedState) : null;
 };
 
-export function parseAddress(str: string) {
+export async function parseAddress(str: string) {
     try {
         // Parse the string into a JavaScript object
         const parsedData = JSON.parse(str);
@@ -26,7 +26,7 @@ export function parseAddress(str: string) {
         // Return the address
         return addressObj.address;
     } catch (error: any) {
-        Logger.error({ 'Parse Address Error': { error: error?.message, string: str } });
+        await Logger.error({ 'Parse Address Error': { error: error?.message, string: str } });
         return ''
     }
 }
