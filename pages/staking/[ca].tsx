@@ -22,6 +22,7 @@ import { InfoCircledIcon } from '@radix-ui/react-icons';
 import { AlertCircle, HelpCircle } from 'lucide-react';
 import { useRouter } from 'next/router';
 import { syncLandBalances } from '@lib/user-api';
+import Logger from '@lib/logger';
 
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
@@ -42,7 +43,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     landBalance = await getLandsBalance(contractAddress, stxAddress) as number
     hadLand = await hadLandBefore(contractAddress, stxAddress) as boolean
   } catch (error) {
-    console.error('Error fetching land balance:', error);
+    Logger.error({ 'Error fetching land balance': error });
   }
 
   return {

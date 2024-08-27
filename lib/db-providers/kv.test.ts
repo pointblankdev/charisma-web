@@ -1,4 +1,4 @@
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, removeLand, removeNftCollection, setContractMetadata, setLand, setLandById, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, removeLand, removeNftCollection, setContractMetadata, setHadLandBefore, setLand, setLandById, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -468,6 +468,10 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    it('should set had land before', async () => {
+        const response = await setHadLandBefore(1, 'SPBNZD0NMBJVRYJZ3SJ4MTRSZ3FEMGGTV2YM5MFV')
+        console.log(response)
+    })
 
 });
 
