@@ -11,38 +11,20 @@ import {
   CardHeader,
   CardTitle
 } from '@components/ui/card';
-import { Button } from '@components/ui/button';
 import {
-  blocksApi,
-  getBlockCounter,
-  getBlocksUntilUnlocked,
-  getDecimals,
-  getIsUnlocked,
   getStakedTokenExchangeRate,
-  getSymbol,
-  getTokenURI,
-  getTotalInPool,
-  getTotalSupply
+  getTotalInPool
 } from '@lib/stacks-api';
 import { GetServerSideProps } from 'next';
 import { useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
 import { motion } from 'framer-motion';
-import millify from 'millify';
-import { ArrowUpIcon, Link1Icon } from '@radix-ui/react-icons';
-import LiquidityControls from '@components/liquidity/controls';
+import { Link1Icon } from '@radix-ui/react-icons';
 import velarApi from '@lib/velar-api';
-import { uniqBy } from 'lodash';
-import { useConnect } from '@stacks/connect-react';
-import { AnchorMode, callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from '@stacks/transactions';
-import { StacksMainnet } from "@stacks/network";
 import numeral from 'numeral';
 import { PiArrowFatLineDownFill, PiArrowFatLineUpFill } from "react-icons/pi";
-import { getGlobalState } from '@lib/db-providers/kv';
-import { useAccount } from '@micro-stacks/react';
 import Layout from '@components/layout/layout';
-import { symbol } from 'zod';
 import StakingControls from '@components/liquidity/staking';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 
@@ -198,7 +180,7 @@ export default function LiquidStakedCharismaPage({ data }: Props) {
                   min={-rebaseTokenBalance}
                   max={baseTokenBalance}
                   onSetTokensSelected={setTokensSelected}
-                  tokensSelected={tokensRequired}
+                  tokensSelected={tokensSelected}
                   contractAddress={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'}
                   contractName={'liquid-staked-charisma'}
                   fungibleTokenName={'liquid-staked-token'}
