@@ -49,6 +49,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     })
   }, [lands, block.height])
 
+  const playerLands = Object.values(lands).filter((land: any) => land.energy)
+
   return (
     <>
       <div className={styles.background}>
@@ -126,7 +128,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           <DropdownMenuContent className='mx-2 mt-0.5'>
             <DropdownMenuLabel>Select a token</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {Object.values(lands).map((land: any) => <DropdownMenuItem onClick={() => setToken(land)} className='cursor-pointer flex space-x-2' key={land.metadata.id}>
+            {playerLands.map((land: any) => <DropdownMenuItem onClick={() => setToken(land)} className='cursor-pointer flex space-x-2' key={land.metadata.id}>
               <Image
                 alt={'Token Icon'}
                 src={land.metadata.image}
