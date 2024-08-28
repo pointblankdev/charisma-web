@@ -170,7 +170,11 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
                                     NFT
                                 </div>
                             </div>
-                            <Label className='my-4 w-60'>Mint how many?
+                            <Label className='my-4 w-60'>
+                                <div className='flex justify-between'>
+                                    <div>Mint how many?</div>
+                                    <div className='text-sm text-right'>{5 * mintAmountSelected} STX</div>
+                                </div>
                                 <Slider title='Mint how many?' onValueChange={(e: any) => setMintAmountSelected(e[0])} className='my-2' defaultValue={[1]} min={1} max={4} step={1} />
                                 <div className='flex justify-between px-2 text-muted-foreground'>
                                     <div>1</div>
@@ -188,6 +192,8 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
                                     Back
                                 </Button>
                             </Link>
+
+
 
                             {!isMintedOut && stxAddress &&
                                 <div className='flex flex-col space-y-1'>
