@@ -11,10 +11,10 @@
 ;; The ravens' daily flights underscore their crucial role in keeping Odin well-informed and several steps ahead of his adversaries, 
 ;; reinforcing his stature as the god of wisdom and knowledge.
 
-(impl-trait .dao-traits-v2.extension-trait)
-(impl-trait .dao-traits-v2.nft-trait)
+(impl-trait .dao-traits-v4.extension-trait)
+(impl-trait .dao-traits-v4.nft-trait)
 
-(use-trait sip010-ft-trait .dao-traits-v2.sip010-ft-trait)
+(use-trait sip010-ft-trait .dao-traits-v4.sip010-ft-trait)
 
 (define-constant err-unauthorized (err u3000))
 (define-constant err-not-token-owner (err u4))

@@ -1,4 +1,4 @@
-(use-trait sip010 .dao-traits-v2.sip010-ft-trait)
+(use-trait sip010 .dao-traits-v4.sip010-ft-trait)
 
 (define-fungible-token lands)
 (define-non-fungible-token land {land-id: uint, owner: principal})

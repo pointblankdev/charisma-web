@@ -26,6 +26,14 @@ depends_on = []
 path = "contracts/lands.clar"
 depends_on = []
 
+[contracts.energy-storage]
+path = "contracts/energy-storage.clar"
+depends_on = []
+
+[contracts.energy-helper-v0]
+path = "contracts/energy-helper-v0.clar"
+depends_on = []
+
 [contracts.land-helper-v3]
 path = "contracts/land-helper-v3.clar"
 depends_on = []
@@ -38,9 +46,21 @@ depends_on = []
 path = "contracts/odins-raven.clar"
 depends_on = []
 
+[contracts.memobots-guardians-of-the-gigaverse]
+path = "contracts/memobots-guardians-of-the-gigaverse.clar"
+depends_on = []
+
+[contracts.memobots-helper]
+path = "contracts/memobots-helper.clar"
+depends_on = []
+
+[contracts.giga-pepe-v2]
+path = "contracts/giga-pepe-v2.clar"
+depends_on = []
+
 # traits
-[contracts.dao-traits-v2]
-path = "contracts/dao-traits-v2.clar"
+[contracts.dao-traits-v4]
+path = "contracts/dao-traits-v4.clar"
 depends_on = []
 
 [repl.analysis]

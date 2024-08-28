@@ -90,6 +90,17 @@ export const destroySession = async () => {
   }
 };
 
+export const setNftItemMetadata = async (contractAddress: string, id: number | string, metadata: any) => {
+  const response = await fetch(`${HOST}/api/v0/nfts/${contractAddress}/${id}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(metadata),
+  })
+  return response.json();
+}
+
 export const setNftCollectionMetadata = async (contractAddress: string, metadata: any) => {
   const response = await fetch(`${HOST}/api/v0/nfts/${contractAddress}`, {
     method: 'POST',

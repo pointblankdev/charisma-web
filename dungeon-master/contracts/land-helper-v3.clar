@@ -1,4 +1,4 @@
-(use-trait sip010 .dao-traits-v2.sip010-ft-trait)
+(use-trait sip010 .dao-traits-v4.sip010-ft-trait)
 
 ;; Constants for fee calculation
 (define-constant EXPERIENCE-SCALE u1000000000) ;; 1,000 EXP (with 6 decimal places)

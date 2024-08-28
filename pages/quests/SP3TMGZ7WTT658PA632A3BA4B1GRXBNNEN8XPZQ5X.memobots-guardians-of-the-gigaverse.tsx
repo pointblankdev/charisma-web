@@ -13,7 +13,7 @@ import {
 } from '@components/ui/card';
 import { Button } from '@components/ui/button';
 import { GetServerSidePropsContext, GetStaticProps } from 'next';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import { cn } from '@lib/utils';
 import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
@@ -26,7 +26,7 @@ import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import { getLand, getLands, getNftCollectionMetadata } from '@lib/db-providers/kv';
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
-import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
+import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition, noneCV, optionalCVOf } from '@stacks/transactions';
 import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
 import { getTokenBalance } from '@lib/stacks-api';
 import mooningSharkIcon from '@public/quests/mooning-shark/mooningshark-icon.jpeg'
@@ -39,6 +39,10 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import { Input } from '@components/ui/input';
 import { Slider } from '@components/ui/slider';
 import { Label } from '@components/ui/label';
+import memobotsCard from '@public/quests/memobots/card-bg.gif'
+import memobotsCard2 from '@public/quests/memobots/card-bg2.gif'
+import memobotsCard3 from '@public/quests/memobots/card-bg3.gif'
+import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png'
 
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
@@ -71,11 +75,11 @@ type Props = {
     nftCollectionMetadata: any;
 };
 
-export default function SpellScrollFireBolt({ stxAddress, lands, nftCollectionMetadata }: Props) {
+export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: Props) {
     const meta = {
         title: "Charisma | MemoBots",
         description: 'Guardians of the Gigaverse',
-        image: '/quests/mooning-shark/mooning-shark-square.png'
+        image: '/quests/memobots/hidden-memobot.png'
     };
     const title = "MemoBots";
     const subtitle = 'Guardians of the Gigaverse';
@@ -90,14 +94,47 @@ export default function SpellScrollFireBolt({ stxAddress, lands, nftCollectionMe
 
     const isMintedOut = nftCollectionMetadata?.properties.minted === nftCollectionMetadata?.properties.total_supply
 
-    const extraPostConditions = []
-    if (stxAddress) extraPostConditions.push(makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000))
-
-    console.log(token?.energy)
+    // const extraPostConditions = []
+    // if (stxAddress) extraPostConditions.push(makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000))
 
     const [mintAmountSelected, setMintAmountSelected] = useState<number>(1)
+
+    const { openContractCall } = useOpenContractCall();
+
+    const handleMintClick = () => {
+        const postConditions: any[] = [
+            makeStandardFungiblePostCondition(stxAddress, FungibleConditionCode.GreaterEqual, 1, 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'),
+            makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 5000000 * mintAmountSelected),
+        ];
+
+        // uintCV(mintAmountSelected),
+        openContractCall({
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+            contractName: 'memobots-helper-v1',
+            functionName: "tap",
+            functionArgs: [uintCV(token.metadata.id), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v3'), optionalCVOf(uintCV(Math.min(mintAmountSelected * 10000000, token.energy))), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'energy-helper-v1'), uintCV(mintAmountSelected)],
+            postConditions,
+        });
+    }
+
+    const handleWhitelistMintClick = () => {
+        const postConditions: any[] = [
+            makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.Equal, 1 * mintAmountSelected),
+        ];
+
+        // uintCV(mintAmountSelected),
+        openContractCall({
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+            contractName: 'memobots-helper-v1',
+            functionName: "whitelist-mint",
+            functionArgs: [],
+            postConditions,
+        });
+    }
+
     return (
         <Page meta={meta} fullViewport>
+            <Image src={memobotsCard} alt="background-image" layout="fill" objectFit="cover" priority />
             <SkipNavContent />
             <Layout>
                 <motion.div
@@ -122,10 +159,10 @@ export default function SpellScrollFireBolt({ stxAddress, lands, nftCollectionMe
                             </div>
                         </CardHeader>
                         <CardContent className="z-20 flex flex-col flex-grow p-4 items-center space-y-8">
-                            <div className="relative w-60 hover:scale-125 transition-all">
+                            <div className="relative w-60 hover:scale-125 hover:shadow-2xl transition-all">
                                 <Image
                                     alt="NFT Icon"
-                                    src={mooningSharkIcon}
+                                    src={hiddenMemobot}
                                     quality={10}
                                     className="z-30 w-full rounded-md border shadow-lg"
                                 />
@@ -153,11 +190,15 @@ export default function SpellScrollFireBolt({ stxAddress, lands, nftCollectionMe
                             </Link>
 
                             {!isMintedOut && stxAddress &&
-                                <Button size={'sm'} className={`z-30`}>Mint Memos</Button>
+                                <div className='flex flex-col space-y-1'>
+                                    <div className='text-xs text-center'>Have a GigaPepe v2?</div>
+                                    <Button onClick={handleWhitelistMintClick} size={'sm'} className={`z-30`} variant={'secondary'}>Whitelist Mint (Max 1)</Button>
+                                    <Button onClick={handleMintClick} size={'sm'} className={`z-30`}>Mint MemoBots</Button>
+                                </div>
                             }
                         </CardFooter>
                         <Image
-                            src={mooningSharkCard}
+                            src={memobotsCard2}
                             width={800}
                             height={1600}
                             alt={'quest-background-image'}

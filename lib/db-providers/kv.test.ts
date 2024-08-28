@@ -477,7 +477,7 @@ describe('nfts api', () => {
     })
 
     it('should remove nft collections', async () => {
-        const response = await removeNftCollection("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar")
+        const response = await removeNftCollection("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse")
         console.log(JSON.stringify(response, null, 2))
     })
 

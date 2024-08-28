@@ -7,7 +7,7 @@
 ;; A casino in Charisma. Don't miss the draws that take place every week! Stay charismatic. Rewards will be distributed to 3 people: 40%, 30% and 20% of the collected amount.
 
 ;; This contract implements the SIP-009 community-standard Non-Fungible Token trait
-(impl-trait .dao-traits-v2.nft-trait)
+(impl-trait .dao-traits-v4.nft-trait)
 
 ;; Define the NFT's name
 (define-non-fungible-token kraqen-lotto uint)

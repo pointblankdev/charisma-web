@@ -89,6 +89,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         const pixelRozarContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar';
         const predictTrempContractId = 'SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024';
         const bitcoinPepeWlContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bitcoin-pepe-whitelist-ticket';
+        const memobotsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse';
 
         if (contractId === kraqenLottoContractId) {
             symbol = '🐙'
@@ -168,6 +169,23 @@ export const handleContractEvent = async (event: any, builder: any) => {
             await setNftCollectionMetadata(bitcoinPepeWlContractId, nftMetadata)
 
             builder.setThumbnail({ url: 'https://pbs.twimg.com/media/GMzd_1vXkAEIHdp?format=jpg&name=medium' })
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+
+        }
+
+        else if (contractId === memobotsContractId) {
+            symbol = '🤖'
+
+            const memobotsContract = contractFactory(contracts.kraqenLotto, memobotsContractId);
+            const tokensMinted = await clarigen.roOk(memobotsContract.getLastTokenId());
+            const nftMetadata = await getNftCollectionMetadata(memobotsContractId)
+            nftMetadata.properties.minted = Number(tokensMinted)
+            await setNftCollectionMetadata(memobotsContractId, nftMetadata)
+
+            builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/memobots/hidden-memobot.png' })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)

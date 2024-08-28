@@ -8,7 +8,7 @@ type ErrorResponse = {
     };
 };
 
-export default async function emblemsApi(
+export default async function NftItemApi(
     req: NextApiRequest,
     res: NextApiResponse<any | ErrorResponse>
 ) {

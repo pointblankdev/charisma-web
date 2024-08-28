@@ -31,30 +31,36 @@ export default async function nftCollectionMetadataApi(
         const ca = req.query.ca as string;
         if (req.method === 'POST') {
             await setNftCollectionMetadata(ca, req.body);
-            await addNftCollection(ca);
             response = await getNftCollectionMetadata(ca);
 
-            const items: NFTItem[] = req.body.properties.items;
-            let allNFTs: { name: string; image: string }[] = [];
+            if (req.body.properties.items) {
+                await addNftCollection(ca);
 
-            // Create an array of all NFTs
-            items.forEach(item => {
-                for (let i = 0; i < parseInt(item.amount); i++) {
-                    allNFTs.push({ name: item.name, image: item.image_url });
-                }
-            });
+                const items: NFTItem[] = req.body.properties.items;
+                let allNFTs: { name: string; image: string }[] = [];
 
-            // Shuffle the array of all NFTs
-            allNFTs = shuffleArray(allNFTs);
 
-            // Assign IDs and set metadata for each NFT
-            for (let i = 0; i < allNFTs.length; i++) {
-                const nftId = (i + 1).toString();
-                const { name, image } = allNFTs[i];
-                setNftMetadata(ca, nftId, {
-                    name: `${name} #${nftId}`,
-                    image: image
+                // Create an array of all NFTs
+                items.forEach(item => {
+                    for (let i = 0; i < parseInt(item.amount); i++) {
+                        allNFTs.push({ name: item.name, image: item.image_url });
+                    }
                 });
+
+                // Shuffle the array of all NFTs
+                allNFTs = shuffleArray(allNFTs);
+
+                // Assign IDs and set metadata for each NFT
+                for (let i = 0; i < allNFTs.length; i++) {
+                    const nftId = (i + 1).toString();
+                    const { name, image } = allNFTs[i];
+                    setNftMetadata(ca, nftId, {
+                        name: `${name} #${nftId}`,
+                        image: image
+                    });
+                }
+            } else {
+                console.log('Unique NFT collection detected')
             }
 
         } else if (req.method === 'GET') {

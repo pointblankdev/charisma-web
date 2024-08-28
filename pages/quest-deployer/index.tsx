@@ -30,11 +30,12 @@ import { useEffect, useState } from "react"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@components/ui/form"
 import { motion } from 'framer-motion';
 import FarmTemplate from "./farm"
-import { PiPackage } from "react-icons/pi"
+import { PiPackage, PiPaintBrush } from "react-icons/pi"
 import BattleRoyaleTemplate from "./battle-royale"
 import PrizeFightTemplate from "./prize-fight"
 import { useAccount, useOpenContractDeploy } from "@micro-stacks/react"
-import NftCollectionTemplate from "./nfts"
+import UtilityNftTemplate from "./utility-nfts"
+import UniqueNftTemplate from "./unique-nfts"
 
 const extentionRequestProposal = ({ contractAddress }: any) => {
     return `(define-public (execute (sender principal))
@@ -73,7 +74,7 @@ export default function ContractDeployer({ }: any) {
 
     const [loading, setLoading] = useState(true);
 
-    const [template, setTemplate] = useState<string>('nfts')
+    const [template, setTemplate] = useState<string>('utility-nfts')
     const [body, setBody] = useState<string>('')
     const [header, setHeader] = useState<string>('')
 
@@ -84,7 +85,7 @@ export default function ContractDeployer({ }: any) {
     const sender = stxAddress!
 
     const defaultValues: Partial<ContractFormValues> = {
-        template: 'nfts'
+        template: 'utility-nfts'
     }
 
     const form = useForm<ContractFormValues>({
@@ -220,18 +221,34 @@ export default function ContractDeployer({ }: any) {
                                                                         <SelectValue placeholder="Select a model" />
                                                                     </SelectTrigger>
                                                                     <SelectContent>
-                                                                        <SelectItem value="nfts">
+                                                                        <SelectItem value="utility-nfts">
                                                                             <div className="flex items-start gap-3 text-foreground">
                                                                                 <PiPackage className="size-5" />
                                                                                 <div className="grid gap-0.5">
                                                                                     <p>
-                                                                                        Utility{" "}
+                                                                                        Basic{" "}
                                                                                         <span className="font-medium text-foreground">
                                                                                             NFT Collection
                                                                                         </span>
                                                                                     </p>
                                                                                     <p className="text-xs" data-description>
-                                                                                        Create non-unique utility NFTs to sell on Charisma
+                                                                                        Create non-unique NFTs to sell on Charisma
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
+                                                                        <SelectItem value="unique-nfts">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <PiPaintBrush className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        Unique{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            NFT Collection
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Create unique NFTs with traits to sell on Charisma
                                                                                     </p>
                                                                                 </div>
                                                                             </div>
@@ -302,9 +319,11 @@ export default function ContractDeployer({ }: any) {
                                                     <BattleRoyaleTemplate onFormChange={handleContractChange} />
                                                     : template === 'prize-fight' ?
                                                         <PrizeFightTemplate onFormChange={handleContractChange} />
-                                                        : template === 'nfts' ?
-                                                            <NftCollectionTemplate form={form} onFormChange={handleContractChange} />
-                                                            : <div>...</div>
+                                                        : template === 'utility-nfts' ?
+                                                            <UtilityNftTemplate form={form} onFormChange={handleContractChange} />
+                                                            : template === 'unique-nfts' ?
+                                                                <UniqueNftTemplate form={form} onFormChange={handleContractChange} />
+                                                                : <div>...</div>
 
                                             }
                                         </motion.div>}
