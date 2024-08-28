@@ -119,7 +119,7 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
 
     const handleWhitelistMintClick = () => {
         const postConditions: any[] = [
-            makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.Equal, 1 * mintAmountSelected),
+            makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.Equal, 1),
         ];
 
         // uintCV(mintAmountSelected),
