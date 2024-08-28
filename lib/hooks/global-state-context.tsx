@@ -1,10 +1,11 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { usePersistedState } from './use-persisted-state';
 import { getClaimableAmount, getLandAmount } from '@lib/stacks-api';
-import { getLatestBlock } from '@lib/user-api';
+import { getLandDataById, getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useAccount } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
+import { getLand } from '@lib/db-providers/kv';
 
 
 const socketUrl = "https://api.mainnet.hiro.so";
@@ -17,6 +18,8 @@ interface GlobalState {
     setBlock: (block: any) => void;
     tapped: any;
     setTapped: (block: any) => void;
+    token: any;
+    setToken: (token: any) => void;
 }
 
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
@@ -26,20 +29,21 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [lands, setLands] = usePersistedState('lands', {});
     const [block, setBlock] = usePersistedState('block', {});
     const [tapped, setTapped] = usePersistedState('tapped', {});
+    const [token, setToken] = usePersistedState('token', {})
 
     const { toast } = useToast()
-
 
     interface LandData {
         amount: number;
         energy: number;
+        metadata: any;
     }
 
     interface LandState {
         [key: string]: LandData;
     }
 
-    const stakedTokens = [1, 4, 5, 6, 7, 8, 9, 10, 11]
+    const stakedTokens = [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
 
 
     useEffect(() => {
@@ -49,10 +53,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 const newLandState: LandState = {};
 
                 for (const landId of stakedTokens) {
+                    const metadata = await getLandDataById(landId)
                     const amount = await getLandAmount(landId, stxAddress);
                     const energy = await getClaimableAmount(landId, stxAddress);
 
-                    newLandState[landId] = { amount, energy };
+                    newLandState[landId] = { amount, energy, metadata };
                 }
 
                 setLands(newLandState)
@@ -87,7 +92,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 
     return (
-        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped }}>
+        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped, token, setToken }}>
             {children}
         </GlobalStateContext.Provider>
     );

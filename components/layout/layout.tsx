@@ -17,6 +17,14 @@ import { forEach } from 'lodash';
 import ConnectWallet from '../stacks-session/connect';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import charismaLogo from '@public/charisma.png'
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@components/ui/dropdown-menu"
 
 type Props = {
   children: React.ReactNode;
@@ -31,7 +39,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   const { wallet } = useWallet();
   const [energy, setEnergy] = React.useState<number>(0);
-  const { lands, block } = useGlobalState()
+  const { lands, block, token, setToken } = useGlobalState()
 
   useEffect(() => {
     let totalEnergy = 0
@@ -79,17 +87,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'sm:relative'
               )}
             >
-              <div className="flex items-center gap-2 text-md text-muted font-medium sm:absolute sm:right-64 mr-2">
-                <Image
-                  alt={'Energy Icon'}
-                  src={energyIcon}
-                  width={100}
-                  height={100}
-                  className={`z-30 border rounded-full h-6 w-6`}
-                />
-                <div>{numeral(energy).format('0.0a')}</div>
-              </div>
-              <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-48">
+              <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-44">
                 <Image
                   alt={'Experience Icon'}
                   src={experienceIcon}
@@ -103,14 +101,51 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
             </div>
           </header>
         )}
-        <div className={styles.page}>
+        <DropdownMenu>
+          <DropdownMenuTrigger className="z-30 sm:sticky fixed bottom-0 sm:top-10 self-end m-4 mt-10 h-16 w-16 focus-visible:invisible">
+            <div>
+              <Image
+                alt={'Energy Icon'}
+                src={token?.metadata?.image || energyIcon}
+                width={100}
+                height={100}
+                className={`border rounded-full hover:scale-105 transition-all cursor-pointer`}
+              />
+              <div className='absolute -top-[30px] -right-0.5 border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
+                <div>{numeral(token?.energy || energy).format('0.0a')}</div>
+                <Image
+                  alt={'Token Icon'}
+                  src={energyIcon}
+                  width={100}
+                  height={100}
+                  className={`z-30 rounded-full h-4 w-4`}
+                />
+              </div>
+            </div>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent className='mx-2 mt-0.5'>
+            <DropdownMenuLabel>Select a token</DropdownMenuLabel>
+            <DropdownMenuSeparator />
+            {Object.values(lands).map((land: any) => <DropdownMenuItem onClick={() => setToken(land)} className='cursor-pointer flex space-x-2' key={land.metadata.id}>
+              <Image
+                alt={'Token Icon'}
+                src={land.metadata.image}
+                width={100}
+                height={100}
+                className={`z-30 rounded-full h-5 w-5`}
+              />
+              <div>{land.metadata.name}</div>
+            </DropdownMenuItem>)}
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <div className={cn(styles.page, 'sm:-mt-24')}>
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />
             <div className={cn(styles.full, className)}>{children}</div>
           </main>
           <Footer />
         </div>
-      </div>
+      </div >
     </>
   );
 }

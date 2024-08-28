@@ -3,7 +3,7 @@ import { UploadCloud } from 'lucide-react';
 import { useEffect, useState, useRef } from 'react';
 
 const MAX_LIST_LENGTH = 200;
-const DEFAULT_TOKEN_AMOUNT = 25000000;
+const DEFAULT_TOKEN_AMOUNT = 5000000;
 
 const generateTemplate = (parsedAddresses: any[]) => {
   const chunkedAddresses = chunkArray(parsedAddresses, MAX_LIST_LENGTH);
@@ -13,7 +13,25 @@ const generateTemplate = (parsedAddresses: any[]) => {
         .map(item => `   {to: '${item.address}, amount: u${item.amount}, memo: none}`)
         .join('\n');
 
-      return `(contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.quiet-confidence send-many (list
+      return `(contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma send-many (list
+${addressList}
+))
+`;
+    })
+    .join('\n');
+
+  return `${wrappedChunks}`;
+};
+
+const generateTemplateSip13 = (parsedAddresses: any[]) => {
+  const chunkedAddresses = chunkArray(parsedAddresses, MAX_LIST_LENGTH);
+  const wrappedChunks = chunkedAddresses
+    .map(chunk => {
+      const addressList = chunk
+        .map(item => `   {token-id: u1, amount: u${item.amount}, sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS, recipient: '${item.address}}`)
+        .join('\n');
+
+      return `(contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands transfer-many (list
 ${addressList}
 ))
 `;
@@ -39,9 +57,10 @@ export default function AirdropTemplate({
   const [parsedData, setParsedData] = useState<any>([]);
   const [isDragging, setIsDragging] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const [sip, setSip] = useState(10);
 
   useEffect(() => {
-    onFormChange(generateTemplate(parsedData));
+    onFormChange(sip === 10 ? generateTemplate(parsedData) : generateTemplateSip13(parsedData));
   }, [parsedData, onFormChange]);
 
   const handleFileUpload = (file: File) => {

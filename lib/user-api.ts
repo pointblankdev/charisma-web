@@ -29,8 +29,8 @@ export async function setLandMetadata(ca: string, metadata: any) {
   });
 }
 
-export async function getCreatureData(id: string | number) {
-  const response = await fetch(`${HOST}/api/v0/creatures/${id}`, {
+export async function getLandDataById(id: string | number) {
+  const response = await fetch(`${HOST}/api/v0/lands/id/${id}`, {
     method: 'GET',
     headers: {
       'Content-Type': 'application/json'

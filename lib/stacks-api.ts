@@ -1137,6 +1137,20 @@ export async function getLandId(contractAddress: string) {
   const result = hexToCV((response as any).result);
   return Number(cvToJSON(result).value.value);
 }
+export async function getLandContractById(id: number | string) {
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'lands',
+    functionName: 'get-land-asset-contract',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: [
+        cvToHex(parseToCV(String(id), 'uint128'))]
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return String(cvToJSON(result).value.value);
+}
 
 export async function getNftOwner(contractAddress: string, id: number) {
   const [address, name] = contractAddress.split('.');

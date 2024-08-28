@@ -22,6 +22,8 @@ import numeral from 'numeral';
 import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
 import { getLand, getLands } from '@lib/db-providers/kv';
 import { getLandBalance } from '@lib/stacks-api';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import energyIcon from '@public/creatures/img/energy.png';
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
@@ -65,10 +67,15 @@ export default function PortfolioPage({ data }: Props) {
 }
 
 function TokenBalances({ data }: Props) {
+    const { lands: tokens } = useGlobalState()
 
     const getTokenUSDValue = (land: any) => {
         const token = data.tokens.find((token: any) => token.contractAddress === land.wraps.ca);
         return numeral(land.balance / Math.pow(10, land.wraps.decimals) * Number(token?.price)).format('$0,0.00')
+    }
+
+    const getUntappedEnergy = (land: any) => {
+        return numeral(tokens[land.id]?.energy).format('0a')
     }
 
     const lands = data.lands.sort((a: any, b: any) => (a.id || 999) - (b.id || 999))
@@ -85,6 +92,15 @@ function TokenBalances({ data }: Props) {
                         <TableRow>
                             <TableHead className="w-[100px] sm:table-cell"><span className="sr-only">Image</span></TableHead>
                             <TableHead><span className="sr-only">Name</span></TableHead>
+                            <TableHead className="md:table-cell float-end">
+                                <Image
+                                    alt={'Energy Icon'}
+                                    src={energyIcon}
+                                    width={100}
+                                    height={100}
+                                    className={`z-30 border rounded-full h-6 w-6 mt-3`}
+                                />
+                            </TableHead>
                             <TableHead className="md:table-cell text-right">Token Amount</TableHead>
                             <TableHead className="md:table-cell text-right">Total Value (USD)</TableHead>
                         </TableRow>
@@ -103,6 +119,9 @@ function TokenBalances({ data }: Props) {
                                 </TableCell>
                                 <TableCell className="font-medium">
                                     <div className="text-lg">{land.name}</div>
+                                </TableCell>
+                                <TableCell className="md:table-cell text-lg text-right">
+                                    {getUntappedEnergy(land)}
                                 </TableCell>
                                 <TableCell className="md:table-cell text-lg text-right">
                                     {land?.balance / Math.pow(10, 6)}

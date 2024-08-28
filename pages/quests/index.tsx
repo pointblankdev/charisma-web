@@ -52,6 +52,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       image: farmersIcon,
       cardImage: abundantOrchard,
     },
+    // {
+    //   name: `MemoBots`,
+    //   description: "Guardians of the Gigaverse",
+    //   ca: "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.memobots-guardians-of-the-gigaverse",
+    //   image: wantedPoster,
+    //   cardImage: wantedPoster,
+    // },
     {
       name: `President Tremp: 2024`,
       description: "Predict if Trump will win the election.",
