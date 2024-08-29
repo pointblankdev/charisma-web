@@ -182,7 +182,7 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
                                     <div>3</div>
                                     <div>4</div>
                                 </div>
-                                <div className='p-2 text-xs text-muted-foreground leading-none text-center'>STX mint cost reduced by energy spent</div>
+                                {/* <div className='p-2 text-xs text-muted-foreground leading-none text-center'>STX mint cost reduced by energy spent</div> */}
                             </Label>
 
                         </CardContent>
