@@ -112,7 +112,7 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
             contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
             contractName: 'memobots-helper-v1',
             functionName: "tap",
-            functionArgs: [uintCV(token.metadata.id), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v3'), optionalCVOf(uintCV(Math.min(mintAmountSelected * 10000000, token.energy))), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'energy-helper-v1'), uintCV(mintAmountSelected)],
+            functionArgs: [uintCV(token.metadata.id), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v3'), optionalCVOf(uintCV(Math.min(mintAmountSelected * 1000, token.energy))), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'energy-helper-v1'), uintCV(mintAmountSelected)],
             postConditions,
         });
     }
