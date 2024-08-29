@@ -223,13 +223,13 @@ export default function KrakenLotto({ stxAddress, lands, nftCollectionMetadata }
                 </Button>
               </Link>
 
-              {!isMintedOut && stxAddress &&
+              {/* {!isMintedOut && stxAddress &&
                 <TokenSelectDialog
                   lands={lands}
                   contractId={'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto'}
                   extraPostConditions={extraPostConditions}
                 />
-              }
+              } */}
             </CardFooter>
             <Image
               src={KrakenLottoCard}
