@@ -2,7 +2,8 @@
   "parser": "@typescript-eslint/parser",
   "plugins": ["@typescript-eslint", "react-hooks"],
   "parserOptions": {
-    "project": "./tsconfig.json"
+    "project": "./tsconfig.json",
+    "project2": "/next.config.js"
   },
   "extends": [
     "plugin:@typescript-eslint/eslint-recommended",
@@ -13,7 +14,10 @@
     "prettier/react"
   ],
   "rules": {
-    "@typescript-eslint/no-unused-vars": ["warn", { "args": "after-used", "ignoreRestSiblings": false, "argsIgnorePattern": "^_.*?$" }],
+    "@typescript-eslint/no-unused-vars": [
+      "warn",
+      { "args": "after-used", "ignoreRestSiblings": false, "argsIgnorePattern": "^_.*?$" }
+    ],
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "react-hooks/rules-of-hooks": "error",
     "react-hooks/exhaustive-deps": "warn",
