@@ -24,6 +24,8 @@ import { getLand, getLands } from '@lib/db-providers/kv';
 import { getLandBalance } from '@lib/stacks-api';
 import { util } from 'zod';
 import useWallet from '@lib/hooks/wallet-balance-provider';
+import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png'
+
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
@@ -38,8 +40,16 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                         ca: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven::raven',
                         name: `Odin's Raven`,
                         image: '/odins-raven/img/4.gif',
-                        amount: 1,
+                        amount: 0,
                         utilty: 'Protocol burn fees are reduced by up to 50% when holding this NFT.'
+                    },
+                    {
+                        id: 2,
+                        ca: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse::memobots-guardians-of-the-gigaverse',
+                        name: `MemoBot`,
+                        image: hiddenMemobot,
+                        amount: 0,
+                        utilty: 'Overspent energy from tapping is preserved when holding this NFT.'
                     },
                 ]
             }
