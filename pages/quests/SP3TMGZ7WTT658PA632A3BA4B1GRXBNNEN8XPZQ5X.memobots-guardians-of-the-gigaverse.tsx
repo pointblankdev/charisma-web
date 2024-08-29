@@ -182,6 +182,7 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
                                     <div>3</div>
                                     <div>4</div>
                                 </div>
+                                <div className='p-2 text-xs text-muted-foreground leading-none text-center'>STX mint cost reduced by energy spent</div>
                             </Label>
 
                         </CardContent>
@@ -194,11 +195,10 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
                             </Link>
 
 
-
                             {!isMintedOut && stxAddress &&
                                 <div className='flex flex-col space-y-1'>
                                     <div className='text-xs text-center'>Have a GigaPepe v2?</div>
-                                    <Button onClick={handleWhitelistMintClick} size={'sm'} className={`z-30`} variant={'secondary'}>Whitelist Mint (Max 1)</Button>
+                                    <Button onClick={handleWhitelistMintClick} size={'sm'} className={`z-30 leading-none`} variant={'secondary'}>Whitelist Mint (Max 1)</Button>
                                     <Button onClick={handleMintClick} size={'sm'} className={`z-30`}>Mint MemoBots</Button>
                                 </div>
                             }
