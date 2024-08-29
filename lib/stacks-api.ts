@@ -153,9 +153,8 @@ export function updateVoteData(proposals: any[], transactions: any[]) {
 }
 
 export async function getProposals() {
-
-  const block = await getGlobalState(`blocks:latest`)
-  const latestBlock = block.height
+  const block = await getGlobalState(`blocks:latest`);
+  const latestBlock = block.height;
 
   const limit = 50;
   let offset = 0;
@@ -217,9 +216,8 @@ export async function getProposals() {
           url: `https://explorer.hiro.so/txid/${contractPrincipal}?chain=mainnet`
         });
       }
-
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }
   return proposals;
@@ -474,9 +472,7 @@ export async function getTokenBalance(contract: string, user: string) {
     functionName: 'get-balance',
     readOnlyFunctionArgs: {
       sender: address,
-      arguments: [
-        cvToHex(parseToCV(String(user), 'principal'))
-      ]
+      arguments: [cvToHex(parseToCV(String(user), 'principal'))]
     }
   });
 
@@ -493,7 +489,6 @@ export async function getDeployedIndexes() {
 }
 
 export async function getTokenURI(contract: string) {
-
   const [address, name] = contract.split('.');
 
   const response: any = await scApi.callReadOnlyFunction({
@@ -508,16 +503,15 @@ export async function getTokenURI(contract: string) {
 
   const result = hexToCV(response.result);
   const cv = cvToJSON(result);
-  const tokenUri = cv.value.value.value
+  const tokenUri = cv.value.value.value;
   // console.log(tokenUri)
   const corsProxy = 'https://corsproxy.io/?';
   const res = await fetch(`${corsProxy}${tokenUri}`);
   const metadata = await res.json();
-  return metadata
+  return metadata;
 }
 
 export async function getNftURI(contract: string, tokenId: number) {
-
   try {
     const [address, name] = contract.split('.');
 
@@ -527,20 +521,17 @@ export async function getNftURI(contract: string, tokenId: number) {
       functionName: 'get-token-uri',
       readOnlyFunctionArgs: {
         sender: address,
-        arguments: [
-          cvToHex(parseToCV(String(tokenId), 'uint128'))
-        ]
+        arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))]
       }
     });
 
     const result = hexToCV(response.result);
     const cv = cvToJSON(result);
-    const url = cv.value.value.value.replace('{id}', tokenId)
+    const url = cv.value.value.value.replace('{id}', tokenId);
     const metadata = await (await fetch(url)).json();
     return metadata;
-
   } catch (error) {
-    return null
+    return null;
   }
 }
 
@@ -691,25 +682,41 @@ export async function getTotalInPool(contract: string) {
         arguments: []
       }
     });
-  } else {
-    response = await scApi.callReadOnlyFunction({
-      contractAddress: address,
-      contractName: name,
-      functionName: 'get-total-in-pool',
-      readOnlyFunctionArgs: {
-        sender: address,
-        arguments: []
+  } else
+    try {
+      const response = await scApi?.callReadOnlyFunction({
+        contractAddress: address,
+        contractName: name,
+        functionName: 'get-total-in-pool',
+        readOnlyFunctionArgs: {
+          sender: address,
+          arguments: []
+        }
+      });
+
+      // Check if the response and response.result are valid
+      if (!response || !response.result) {
+        return 0; // Exit early since further processing will fail
       }
-    });
-  }
 
-  const valueOut = (value: any) => {
-    const cv = hexToCV(value.result);
-    const json = cvToJSON(cv);
-    return json.value?.value || json.value;
-  };
+      // Now process the response.result with the valueOut function
+      const valueOut = (value: any) => {
+        try {
+          const cv = hexToCV(value.result);
+          const json = cvToJSON(cv);
+          const valueOutResult = json.value?.value || json.value;
 
-  return Number(valueOut(response));
+          return valueOutResult;
+        } catch (error) {
+          return 0; // Handle error in valueOut
+        }
+      };
+
+      return Number(valueOut(response));
+    } catch (error) {
+      console.error('Error in callReadOnlyFunction:', error);
+      return 0; // Handle error in callReadOnlyFunction
+    }
 }
 
 export async function getFenrirTotalSupply() {
@@ -833,7 +840,7 @@ export async function checkIfEpochIsEnding(contractAddress: string) {
   // mob.hoggerDefeatBlock = Number(epochInfo['hogger-defeat-block'].value)
   // mob.canStartNewEpoch = epochInfo['can-start-new-epoch'].value
   // console.log('Mob: ', mob);
-  return epochInfo
+  return epochInfo;
 }
 
 export async function getTxsFromMempool(contractAddress: string) {
@@ -860,14 +867,25 @@ export async function getTxsFromMempool(contractAddress: string) {
   return transactions;
 }
 
-export async function tryCallContractPublicFunction({ seedPhrase, password, publicAddress, contractAddress, functionName, fee, nonce, args }: any) {
+export async function tryCallContractPublicFunction({
+  seedPhrase,
+  password,
+  publicAddress,
+  contractAddress,
+  functionName,
+  fee,
+  nonce,
+  args
+}: any) {
   const txsInMempool = await getTxsFromMempool(contractAddress);
 
-  const isInMempool = txsInMempool.some((tx: any) => tx.contract_call.function_name === functionName && tx.sender_address === publicAddress);
+  const isInMempool = txsInMempool.some(
+    (tx: any) =>
+      tx.contract_call.function_name === functionName && tx.sender_address === publicAddress
+  );
 
   if (!isInMempool) {
-
-    Logger.oracle({ "players-job": { contractAddress, functionName, args } })
+    Logger.oracle({ 'players-job': { contractAddress, functionName, args } });
 
     const wallet = await generateWallet({ secretKey: seedPhrase, password });
 
@@ -902,7 +920,6 @@ export async function tryCallContractPublicFunction({ seedPhrase, password, publ
   } else {
     return 'Transaction already in mempool';
   }
-
 }
 
 export async function callContractPublicFunction({ address, functionName, fee, nonce, args }: any) {
@@ -940,7 +957,6 @@ export async function callContractPublicFunction({ address, functionName, fee, n
   const broadcastResponse = await broadcastTransaction(transaction, network);
 
   return broadcastResponse;
-
 }
 
 export async function executeArbitrageStrategy({ address, functionName, fee, nonce, args }: any) {
@@ -1130,8 +1146,7 @@ export async function getLandId(contractAddress: string) {
     functionName: 'get-land-id',
     readOnlyFunctionArgs: {
       sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: [
-        cvToHex(parseToCV(contractAddress, 'principal'))]
+      arguments: [cvToHex(parseToCV(contractAddress, 'principal'))]
     }
   });
   const result = hexToCV((response as any).result);
@@ -1144,8 +1159,7 @@ export async function getLandContractById(id: number | string) {
     functionName: 'get-land-asset-contract',
     readOnlyFunctionArgs: {
       sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: [
-        cvToHex(parseToCV(String(id), 'uint128'))]
+      arguments: [cvToHex(parseToCV(String(id), 'uint128'))]
     }
   });
   const result = hexToCV((response as any).result);
@@ -1160,8 +1174,7 @@ export async function getNftOwner(contractAddress: string, id: number) {
     functionName: 'get-owner',
     readOnlyFunctionArgs: {
       sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: [
-        cvToHex(parseToCV(String(id), 'uint128'))]
+      arguments: [cvToHex(parseToCV(String(id), 'uint128'))]
     }
   });
   const result = hexToCV((response as any).result);
