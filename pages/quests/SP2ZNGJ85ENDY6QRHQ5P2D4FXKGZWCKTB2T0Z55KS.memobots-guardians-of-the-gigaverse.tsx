@@ -88,6 +88,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
     // if (stxAddress) extraPostConditions.push(makeStandardSTXPostCondition(stxAddress, FungibleConditionCode.LessEqual, 4000000))
 
     const [mintAmountSelected, setMintAmountSelected] = useState<number>(1)
+    const [energySpend, setEnergySpend] = useState<number>(0)
 
     const { openContractCall } = useOpenContractCall();
 
@@ -100,9 +101,9 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
         // uintCV(mintAmountSelected),
         openContractCall({
             contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-            contractName: 'mb-mint-helper',
+            contractName: 'memobot-minter',
             functionName: "mint",
-            functionArgs: [uintCV(token.metadata.id), uintCV(mintAmountSelected), optionalCVOf(uintCV(Number(token.energy)))],
+            functionArgs: [uintCV(token.metadata.id), uintCV(mintAmountSelected), optionalCVOf(uintCV(Number(energySpend)))],
             postConditions,
         });
     }
@@ -122,8 +123,8 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
         });
     }
 
-    const availableEnergy = Number(token?.energy) //+ storedEnergy
-    const energyDiscount = availableEnergy * 10 / 1000000
+    const availableEnergy = Number(token?.energy) + storedEnergy
+    const energyDiscount = energySpend * 10 / 1000000
     const stxCost = (5 * mintAmountSelected) - energyDiscount
     const mintCost = stxCost > 0 ? `${(stxCost).toFixed(2)} STX` : `Free Mint`
 
@@ -177,7 +178,11 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
                                     <div className={`${mintAmountSelected === 3 ? 'text-primary-foreground' : ''}`}>3</div>
                                     <div className={`${mintAmountSelected === 4 ? 'text-primary-foreground' : ''}`}>4</div>
                                 </div>
-                                <div className={`py-4 text-sm ${energyDiscount > 0 ? '' : 'text-muted-foreground'} leading-none text-center transition-all ${stxCost > 0 ? '' : 'text-yellow-500'}`}>Mint fees paid with energy</div>
+                                <div className='mt-4 flex justify-between'>
+                                    <div>Pay mint fees with energy?</div>
+                                    <div className={`text-sm text-right`}>{energySpend}</div>
+                                </div>
+                                <Slider title='Spend how much energy?' onValueChange={(e: any) => setEnergySpend(e[0])} className='my-2' defaultValue={[0]} min={0} max={availableEnergy} step={1} />
                             </Label>
 
                         </CardContent>
