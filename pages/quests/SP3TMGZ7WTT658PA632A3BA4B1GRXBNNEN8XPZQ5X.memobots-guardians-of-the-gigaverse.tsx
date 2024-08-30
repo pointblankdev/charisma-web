@@ -100,7 +100,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
         // uintCV(mintAmountSelected),
         openContractCall({
             contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-            contractName: 'memo-mint-helper',
+            contractName: 'memobot-mint-helper',
             functionName: "mint",
             functionArgs: [uintCV(token.metadata.id), uintCV(mintAmountSelected)],
             postConditions,
@@ -168,16 +168,16 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
                             <Label className='my-4 w-60'>
                                 <div className='flex justify-between'>
                                     <div>Mint how many?</div>
-                                    <div className='text-sm text-right'>{mintCost}</div>
+                                    <div className={`text-sm text-right ${stxCost > 0 ? '' : 'text-yellow-500 animate-bounce'}`}>{mintCost}</div>
                                 </div>
                                 <Slider title='Mint how many?' onValueChange={(e: any) => setMintAmountSelected(e[0])} className='my-2' defaultValue={[1]} min={1} max={4} step={1} />
                                 <div className='flex justify-between px-2 text-muted-foreground'>
-                                    <div>1</div>
-                                    <div>2</div>
-                                    <div>3</div>
-                                    <div>4</div>
+                                    <div className={`${mintAmountSelected === 1 ? 'text-primary-foreground' : ''}`}>1</div>
+                                    <div className={`${mintAmountSelected === 2 ? 'text-primary-foreground' : ''}`}>2</div>
+                                    <div className={`${mintAmountSelected === 3 ? 'text-primary-foreground' : ''}`}>3</div>
+                                    <div className={`${mintAmountSelected === 4 ? 'text-primary-foreground' : ''}`}>4</div>
                                 </div>
-                                {/* <div className='p-2 text-xs text-muted-foreground leading-none text-center'>STX mint cost reduced by energy spent</div> */}
+                                <div className={`py-4 text-sm ${energyDiscount > 0 ? '' : 'text-muted-foreground'} leading-none text-center transition-all ${stxCost > 0 ? '' : 'text-yellow-500'}`}>Mint fees paid with energy</div>
                             </Label>
 
                         </CardContent>
@@ -194,7 +194,8 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
                                 <div className='flex flex-col space-y-1'>
                                     <div className='text-xs text-center'>Have a GigaPepe v2?</div>
                                     <Button onClick={handleWhitelistMintClick} size={'sm'} className={`z-30 leading-none`} variant={'secondary'}>Whitelist Mint (Max 1)</Button>
-                                    <Button disabled onClick={handleMintClick} size={'sm'} className={`z-30`}>Mint MemoBots</Button>
+                                    {/* <Button onClick={handleMintClick} size={'sm'} className={`z-30`}>Mint MemoBots</Button> */}
+                                    <Button disabled onClick={handleMintClick} size={'sm'} className={`z-30`}>LIVE NEXT BLOCK</Button>
                                 </div>
                             }
                         </CardFooter>
