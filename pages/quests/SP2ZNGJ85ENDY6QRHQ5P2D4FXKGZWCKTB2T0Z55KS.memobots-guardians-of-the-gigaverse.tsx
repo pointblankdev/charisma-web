@@ -124,7 +124,8 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
         });
     }
 
-    const availableEnergy = Number(token?.energy) //+ storedEnergy
+    const availableEnergy = Number(token?.energy) + storedEnergy
+    const maxSpendableEnergy = Math.min((500000 * mintAmountSelected), availableEnergy)
     const energyDiscount = energySpend * 10 / 1000000
     const stxCost = (5 * mintAmountSelected) - energyDiscount
     const mintCost = stxCost > 0 ? `${(stxCost).toFixed(2)} STX` : `Free Mint`
@@ -183,7 +184,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
                                     <div>Pay mint fees with energy?</div>
                                     <div className={`text-sm text-right`}>{numeral(energySpend).format('0.0a')} ⚡</div>
                                 </div>
-                                <Slider title='Spend how much energy?' onValueChange={(e: any) => setEnergySpend(e[0])} className='my-2' defaultValue={[0]} min={0} max={availableEnergy} step={1} />
+                                <Slider title='Spend how much energy?' onValueChange={(e: any) => setEnergySpend(e[0])} className='my-2' defaultValue={[0]} min={0} max={maxSpendableEnergy} step={1} />
                             </Label>
 
                         </CardContent>
