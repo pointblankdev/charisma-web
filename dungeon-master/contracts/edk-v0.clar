@@ -51,8 +51,8 @@
     {
         event: "energy-usage",
         energy-to-use: energy-to-use,
-        energy-from-storage: (min stored-energy energy-to-use),
-        excess-energy: (- tapped-energy energy-to-use)
+        energy-from-storage: stored-energy,
+        excess-energy: (- total-available-energy energy-to-use)
     }
   )
 )
