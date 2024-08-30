@@ -41,18 +41,10 @@ import { Slider } from '@components/ui/slider';
 import { Label } from '@components/ui/label';
 import memobotsCard from '@public/quests/memobots/card-bg.gif'
 import memobotsCard2 from '@public/quests/memobots/card-bg2.gif'
-import memobotsCard3 from '@public/quests/memobots/card-bg3.gif'
 import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png'
 
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
-    const landContractAddresses = await getLands()
-
-    const lands = []
-    for (const ca of landContractAddresses) {
-        const metadata = await getLand(ca)
-        lands.push(metadata)
-    }
 
     const nftCollectionMetadata = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse')
 
@@ -63,7 +55,6 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
         props: {
             dehydratedState,
             stxAddress,
-            lands,
             nftCollectionMetadata,
         }
     };
@@ -71,11 +62,10 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
 
 type Props = {
     stxAddress: string;
-    lands: any[];
     nftCollectionMetadata: any;
 };
 
-export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: Props) {
+export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
     const meta = {
         title: "Charisma | MemoBots",
         description: 'Guardians of the Gigaverse',
@@ -89,8 +79,8 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
         visible: { opacity: 1 }
     };
 
-    const { wallet } = useWallet()
-    const { token } = useGlobalState()
+    // const { wallet } = useWallet()
+    const { token, block, storedEnergy } = useGlobalState()
 
     const isMintedOut = nftCollectionMetadata?.properties.minted === nftCollectionMetadata?.properties.total_supply
 
@@ -110,9 +100,9 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
         // uintCV(mintAmountSelected),
         openContractCall({
             contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-            contractName: 'memobots-helper-v2',
-            functionName: "tap",
-            functionArgs: [uintCV(token.metadata.id), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'land-helper-v3'), optionalCVOf(uintCV(Math.min(mintAmountSelected * 1000, token.energy))), contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'energy-helper-v1'), uintCV(mintAmountSelected)],
+            contractName: 'memo-mint-helper',
+            functionName: "mint",
+            functionArgs: [uintCV(token.metadata.id), uintCV(mintAmountSelected)],
             postConditions,
         });
     }
@@ -131,6 +121,11 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
             postConditions,
         });
     }
+
+    const availableEnergy = Number(token?.energy) + storedEnergy
+    const energyDiscount = availableEnergy * 10 / 1000000
+    const stxCost = (5 * mintAmountSelected) - energyDiscount
+    const mintCost = stxCost > 0 ? `${(stxCost).toFixed(2)} STX` : `Free Mint`
 
     return (
         <Page meta={meta} fullViewport>
@@ -173,7 +168,7 @@ export default function Memobots({ stxAddress, lands, nftCollectionMetadata }: P
                             <Label className='my-4 w-60'>
                                 <div className='flex justify-between'>
                                     <div>Mint how many?</div>
-                                    <div className='text-sm text-right'>{5 * mintAmountSelected} STX</div>
+                                    <div className='text-sm text-right'>{mintCost}</div>
                                 </div>
                                 <Slider title='Mint how many?' onValueChange={(e: any) => setMintAmountSelected(e[0])} className='my-2' defaultValue={[1]} min={1} max={4} step={1} />
                                 <div className='flex justify-between px-2 text-muted-foreground'>

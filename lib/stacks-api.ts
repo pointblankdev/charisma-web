@@ -1103,6 +1103,22 @@ export async function getClaimableAmount(landId: number, sender: string) {
   return Number(cvToJSON(result).value.value);
 }
 
+export async function getStoredEnergy(sender: string) {
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'energy-storage',
+    functionName: 'get-stored-energy',
+    readOnlyFunctionArgs: {
+      sender: sender,
+      arguments: [
+        cvToHex(parseToCV(sender, 'principal'))
+      ]
+    }
+  });
+  const result = hexToCV((response as any).result);
+  return Number(cvToJSON(result).value);
+}
+
 export async function hasPercentageBalance(contract: string, who: string, factor: number) {
   const [address, name] = contract.split('.');
   const response = await scApi.callReadOnlyFunction({
