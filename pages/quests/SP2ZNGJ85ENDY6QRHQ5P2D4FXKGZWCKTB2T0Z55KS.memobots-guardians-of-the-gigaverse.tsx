@@ -178,7 +178,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
                                     <div className={`${mintAmountSelected === 3 ? 'text-primary-foreground' : ''}`}>3</div>
                                     <div className={`${mintAmountSelected === 4 ? 'text-primary-foreground' : ''}`}>4</div>
                                 </div>
-                                <div className='mt-4 flex justify-between'>
+                                <div className='mt-8 flex justify-between'>
                                     <div>Pay mint fees with energy?</div>
                                     <div className={`text-sm text-right`}>{energySpend}</div>
                                 </div>
