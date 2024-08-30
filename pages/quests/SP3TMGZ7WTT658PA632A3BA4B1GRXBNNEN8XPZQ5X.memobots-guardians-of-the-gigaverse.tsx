@@ -194,7 +194,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
                                 <div className='flex flex-col space-y-1'>
                                     <div className='text-xs text-center'>Have a GigaPepe v2?</div>
                                     <Button onClick={handleWhitelistMintClick} size={'sm'} className={`z-30 leading-none`} variant={'secondary'}>Whitelist Mint (Max 1)</Button>
-                                    <Button onClick={handleMintClick} size={'sm'} className={`z-30`}>Mint MemoBots</Button>
+                                    <Button disabled onClick={handleMintClick} size={'sm'} className={`z-30`}>Mint MemoBots</Button>
                                 </div>
                             }
                         </CardFooter>
