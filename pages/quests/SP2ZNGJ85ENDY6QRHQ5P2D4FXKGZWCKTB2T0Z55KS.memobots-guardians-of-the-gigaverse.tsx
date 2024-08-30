@@ -104,7 +104,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
             contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
             contractName: 'memobot-minter',
             functionName: "mint",
-            functionArgs: [uintCV(token.metadata.id), uintCV(mintAmountSelected), optionalCVOf(uintCV(Number(energySpend)))],
+            functionArgs: [uintCV(token.metadata.id), uintCV(mintAmountSelected), optionalCVOf(uintCV(Number(Math.min(maxSpendableEnergy, energySpend))))],
             postConditions,
         });
     }
