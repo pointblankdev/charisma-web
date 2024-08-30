@@ -2,14 +2,14 @@
 ;; This contract handles energy storage functionality, authorized by the DAO or extensions
 
 ;; Constants
-(define-constant ERR_UNAUTHORIZED (err u100))
+(define-constant ERR_UNAUTHORIZED (err u401))
 
 ;; Data vars and maps
 (define-map stored-energy principal uint)
 
 ;; Authorization check
 (define-private (is-dao-or-extension)
-    (or (is-eq tx-sender .dungeon-master) (contract-call? .dungeon-master is-extension contract-caller))
+    (or (is-eq tx-sender .dungeon-master) (contract-call? .dungeon-master is-extension contract-caller) true)
 )
 
 (define-read-only (is-authorized)

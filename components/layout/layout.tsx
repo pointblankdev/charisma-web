@@ -25,6 +25,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@components/ui/dropdown-menu"
+import spiral from '@public/quests/memobots/spiral.gif'
+import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png'
 
 type Props = {
   children: React.ReactNode;
@@ -38,16 +40,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const activeRoute = router.asPath;
 
   const { wallet } = useWallet();
-  const [energy, setEnergy] = React.useState<number>(0);
-  const { lands, block, token, setToken } = useGlobalState()
-
-  useEffect(() => {
-    let totalEnergy = 0
-    forEach(lands, (land: any) => {
-      totalEnergy += Number(land.energy)
-      setEnergy(totalEnergy)
-    })
-  }, [lands, block.height])
+  const { lands, block, token, setToken, storedEnergy } = useGlobalState()
 
   const playerLands = Object.values(lands).filter((land: any) => land.energy)
 
@@ -104,8 +97,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           </header>
         )}
         <DropdownMenu>
-          <DropdownMenuTrigger className="z-30 sm:sticky fixed bottom-0 sm:top-10 self-end m-4 mt-10 h-16 w-16 focus-visible:invisible">
-            <div>
+          <DropdownMenuTrigger className="z-30 sm:sticky fixed bottom-16 sm:top-10 self-end m-4 mt-10 h-20 w-20 focus-visible:invisible">
+            <div className="flex flex-col items-center justify-center relative">
               <Image
                 alt={'Energy Icon'}
                 src={token?.metadata?.image || energyIcon}
@@ -113,8 +106,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 height={100}
                 className={`border rounded-full hover:scale-105 transition-all cursor-pointer`}
               />
-              <div className='absolute -top-[30px] -right-0.5 border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
-                <div>{numeral(token?.energy || energy).format('0.0a')}</div>
+              <div className='absolute -top-[30px] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
+                <div>{numeral(token?.energy).format('0.0a')}</div>
                 <Image
                   alt={'Token Icon'}
                   src={energyIcon}
@@ -123,6 +116,18 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   className={`z-30 rounded-full h-4 w-4`}
                 />
               </div>
+              {storedEnergy > 0 && (
+                <div className='absolute top-[5.5rem] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
+                  <div>{numeral(storedEnergy).format('0.0a')}</div>
+                  <Image
+                    alt={'Token Icon'}
+                    src={spiral}
+                    width={100}
+                    height={100}
+                    className={`z-30 rounded-full h-4 w-4`}
+                  />
+                </div>
+              )}
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent className='mx-2 mt-0.5'>
@@ -132,8 +137,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               <Image
                 alt={'Token Icon'}
                 src={land.metadata.image}
-                width={100}
-                height={100}
+                width={10}
+                height={10}
                 className={`z-30 rounded-full h-5 w-5`}
               />
               <div>{land.metadata.name}</div>

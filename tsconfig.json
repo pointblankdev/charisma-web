@@ -40,7 +40,8 @@
     ]
   },
   "exclude": [
-    "node_modules"
+    "node_modules",
+    "dungeon-master"
   ],
   "include": [
     "next-env.d.ts",
