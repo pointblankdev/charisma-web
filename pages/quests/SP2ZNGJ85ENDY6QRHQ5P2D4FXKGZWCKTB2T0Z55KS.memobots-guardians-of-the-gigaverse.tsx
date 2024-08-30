@@ -100,9 +100,9 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
         // uintCV(mintAmountSelected),
         openContractCall({
             contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-            contractName: 'memobot-mint-helper',
+            contractName: 'mb-mint-helper',
             functionName: "mint",
-            functionArgs: [uintCV(token.metadata.id), uintCV(mintAmountSelected)],
+            functionArgs: [uintCV(token.metadata.id), uintCV(mintAmountSelected), optionalCVOf(uintCV(Number(token.energy)))],
             postConditions,
         });
     }
@@ -122,7 +122,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
         });
     }
 
-    const availableEnergy = Number(token?.energy) + storedEnergy
+    const availableEnergy = Number(token?.energy) //+ storedEnergy
     const energyDiscount = availableEnergy * 10 / 1000000
     const stxCost = (5 * mintAmountSelected) - energyDiscount
     const mintCost = stxCost > 0 ? `${(stxCost).toFixed(2)} STX` : `Free Mint`
@@ -194,7 +194,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
                                 <div className='flex flex-col space-y-1'>
                                     <div className='text-xs text-center'>Have a GigaPepe v2?</div>
                                     <Button onClick={handleWhitelistMintClick} size={'sm'} className={`z-30 leading-none`} variant={'secondary'}>Whitelist Mint (Max 1)</Button>
-                                    <Button disabled onClick={handleMintClick} size={'sm'} className={`z-30`}>Mint MemoBots</Button>
+                                    <Button onClick={handleMintClick} size={'sm'} className={`z-30`}>Mint MemoBots</Button>
                                 </div>
                             }
                         </CardFooter>

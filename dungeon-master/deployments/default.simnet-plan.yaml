@@ -74,9 +74,9 @@ plan:
             path: contracts/memobots-guardians-of-the-gigaverse.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: energy-helper-v0
+            contract-name: edk-v0
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/energy-helper-v0.clar
+            path: contracts/edk-v0.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: experience
