@@ -42,6 +42,7 @@ import { Label } from '@components/ui/label';
 import memobotsCard from '@public/quests/memobots/card-bg.gif'
 import memobotsCard2 from '@public/quests/memobots/card-bg2.gif'
 import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png'
+import numeral from 'numeral';
 
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
@@ -180,7 +181,7 @@ export default function Memobots({ stxAddress, nftCollectionMetadata }: Props) {
                                 </div>
                                 <div className='mt-8 flex justify-between'>
                                     <div>Pay mint fees with energy?</div>
-                                    <div className={`text-sm text-right`}>{energySpend}</div>
+                                    <div className={`text-sm text-right`}>{numeral(energySpend).format('0.0a')} ⚡</div>
                                 </div>
                                 <Slider title='Spend how much energy?' onValueChange={(e: any) => setEnergySpend(e[0])} className='my-2' defaultValue={[0]} min={0} max={availableEnergy} step={1} />
                             </Label>

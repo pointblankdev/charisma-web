@@ -82,15 +82,15 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'sm:relative'
               )}
             >
-              <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-44">
-                <Image
+              <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-40">
+                {/* <Image
                   alt={'Experience Icon'}
                   src={experienceIcon}
                   width={100}
                   height={100}
                   className={`z-30 border rounded-full h-5 w-5`}
-                />
-                <div>{numeral(wallet.experience.balance).format('0a')}</div>
+                /> */}
+                <div>✨ {numeral(wallet.experience.balance).format('0a')}</div>
               </div>
               <ConnectWallet />
             </div>
@@ -107,14 +107,14 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 className={`border rounded-full hover:scale-105 transition-all cursor-pointer`}
               />
               <div className='absolute -top-[30px] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
-                <div>{numeral(token?.energy).format('0.0a')}</div>
-                <Image
+                <div>{numeral(token?.energy).format('0.0a')} ⚡</div>
+                {/* <Image
                   alt={'Token Icon'}
                   src={energyIcon}
                   width={100}
                   height={100}
                   className={`z-30 rounded-full h-4 w-4`}
-                />
+                /> */}
               </div>
               {storedEnergy > 0 && (
                 <div className='absolute top-[5.5rem] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
