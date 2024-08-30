@@ -39,7 +39,7 @@ export const getServerSideProps: GetServerSideProps<Props> = async ({ params }: 
   // if not, check base token price on velar, and calculate TVL with that
   // otherwise, set TVL to 0
   const [rebaseToken] = await velarApi.tokens('sCHA')
-  const tvl = tokensInPool * Number(rebaseToken.price) / Math.pow(10, 6)
+  const tvl = Number(tokensInPool) * Number(rebaseToken.price) / Math.pow(10, 6)
 
 
   const data = {
