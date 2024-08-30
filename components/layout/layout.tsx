@@ -116,7 +116,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   className={`z-30 rounded-full h-4 w-4`}
                 />
               </div>
-              {storedEnergy > 0 && false && (
+              {storedEnergy > 0 && (
                 <div className='absolute top-[5.5rem] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
                   <div>{numeral(storedEnergy).format('0.0a')}</div>
                   <Image
