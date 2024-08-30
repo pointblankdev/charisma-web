@@ -61,7 +61,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     {
       name: `MemoBots`,
       description: "Guardians of the Gigaverse",
-      ca: "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.memobots-guardians-of-the-gigaverse",
+      ca: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse",
       image: hiddenMemobot,
       cardImage: memobotsCard,
       featured: true,
