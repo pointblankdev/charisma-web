@@ -4,6 +4,8 @@ import styleUtils from '@components/utils.module.css';
 import Features from './Features';
 import Community from './Community';
 import CallToAction from './CallToAction';
+import About from './About';
+import FAQ from './FAQ';
 
 export default function LandingPage() {
   return (
@@ -12,8 +14,10 @@ export default function LandingPage() {
         <>
           <Hero />
           <Features />
+          <About />
           <Community />
           <CallToAction />
+          <FAQ />
         </>
       </div>
     </Layout>

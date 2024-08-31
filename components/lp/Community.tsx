@@ -7,9 +7,12 @@ export default function CommunityShowcase() {
           Join a network of innovators, creators, and changemakers from across the globe.
         </p>
         <div className="mt-12 flex justify-center space-x-6">
-          <div className="w-28 h-28 bg-gradient-to-b from-charcoalGrey to-steelGrey border border-steelGrey rounded-full transform hover:scale-110 transition-transform"></div>
-          <div className="w-28 h-28 bg-gradient-to-b from-charcoalGrey to-steelGrey border border-steelGrey rounded-full transform hover:scale-110 transition-transform"></div>
-          <div className="w-28 h-28 bg-gradient-to-b from-charcoalGrey to-steelGrey border border-steelGrey rounded-full transform hover:scale-110 transition-transform"></div>
+          {[...Array(3)].map((_, index) => (
+            <div
+              key={index}
+              className="w-28 h-28 bg-gradient-to-b from-charcoalGrey to-steelGrey border border-steelGrey rounded-full transform hover:scale-110 transition-transform"
+            />
+          ))}
         </div>
       </div>
     </section>
