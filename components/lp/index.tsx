@@ -6,6 +6,7 @@ import Community from './Community';
 import CallToAction from './CallToAction';
 import About from './About';
 import FAQ from './FAQ';
+import Roadmap from './Roadmap';
 
 export default function LandingPage() {
   return (
@@ -16,8 +17,9 @@ export default function LandingPage() {
           <Features />
           <About />
           <Community />
+          <Roadmap />
           <CallToAction />
-          <FAQ />
+          <FAQ />ARC
         </>
       </div>
     </Layout>

@@ -1,16 +1,18 @@
 export default function About() {
   return (
-    <section className="py-24 bg-steelGrey text-center">
-      <div className="max-w-4xl mx-auto">
-        <h2 className="text-4xl font-bold text-white">About Charisma</h2>
-        <p className="mt-8 text-lightGrey text-lg">
-          Charisma is dedicated to revolutionizing the way digital assets are managed, offering a
-          platform that is both user-centric and community-driven.
+    <section className="py-24 bg-[#111016] text-center">
+      <div className="max-w-5xl mx-auto px-6 lg:px-8">
+        <h2 className="text-4xl md:text-5xl font-bold text-white">About Charisma</h2>
+        <p className="mt-6 text-lg md:text-xl text-lightGrey">
+          Charisma is dedicated to revolutionizing the management of digital assets, offering a
+          user-centric and community-driven platform that empowers individuals to take control of
+          their digital future. Our mission is to foster a decentralized ecosystem where every
+          member has a voice and the tools to thrive.
         </p>
-        <div className="mt-12 flex justify-center space-x-6">
+        <div className="mt-12">
           <a
             href="#learn-more"
-            className="px-8 py-4 bg-primary rounded-full text-white font-semibold hover:bg-primary-dark transition"
+            className="inline-block px-8 py-4 bg-primary rounded-full text-white font-semibold hover:bg-primaryDark transition"
           >
             Learn More
           </a>
