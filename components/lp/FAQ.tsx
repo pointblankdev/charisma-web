@@ -3,7 +3,7 @@ import { FaChevronDown, FaChevronUp } from 'react-icons/fa';
 
 export default function FAQ() {
   return (
-    <section className="py-24 bg-[#050111] text-center">
+    <section className="py-24 bg-[#111016] text-center -mx-4">
       <div className="max-w-5xl mx-auto px-6 lg:px-8">
         <h2 className="text-4xl md:text-5xl font-bold text-white">Frequently Asked Questions</h2>
         <div className="mt-12 space-y-8">
@@ -43,7 +43,7 @@ export function FAQItem({ question, answer }: FAQItemProps) {
         )}
       </button>
       <div
-        className={`px-4 pb-4 text-lightGrey transition-max-height duration-500 ease-in-out ${
+        className={`bg-black px-4 text-lightGrey transition-max-height duration-500 ease-in-out ${
           isOpen ? 'max-h-40' : 'max-h-0'
         } overflow-hidden`}
       >

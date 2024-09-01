@@ -1,6 +1,6 @@
 export default function Roadmap() {
   return (
-    <section className="py-24 bg-[#121117]">
+    <section className="py-24 bg-[#121117] -mx-4">
       <div className="max-w-7xl mx-auto px-6 lg:px-8 text-center">
         <h2 className="text-4xl md:text-5xl font-bold text-white">Roadmap</h2>
         <p className="text-lightGrey mt-6 text-lg md:text-xl max-w-2xl mx-auto">

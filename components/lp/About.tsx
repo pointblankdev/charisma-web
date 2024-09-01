@@ -1,6 +1,6 @@
 export default function About() {
   return (
-    <section className="py-24 bg-[#111016] text-center">
+    <section className="py-24 bg-[#111016] text-center -mx-4">
       <div className="max-w-5xl mx-auto px-6 lg:px-8">
         <h2 className="text-4xl md:text-5xl font-bold text-white">About Charisma</h2>
         <p className="mt-6 text-lg md:text-xl text-lightGrey">
