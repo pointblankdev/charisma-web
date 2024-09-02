@@ -16,17 +16,19 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import { forEach } from 'lodash';
 import ConnectWallet from '../stacks-session/connect';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import charismaLogo from '@public/charisma.png'
+import charismaLogo from '@public/charisma.png';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@components/ui/dropdown-menu"
-import spiral from '@public/quests/memobots/spiral.gif'
-import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png'
+  DropdownMenuTrigger
+} from '@components/ui/dropdown-menu';
+import spiral from '@public/quests/memobots/spiral.gif';
+import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png';
+import { Button } from '@components/ui/button';
+import { FaSync } from 'react-icons/fa';
 
 type Props = {
   children: React.ReactNode;
@@ -40,9 +42,26 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const activeRoute = router.asPath;
 
   const { wallet } = useWallet();
-  const { lands, block, token, setToken, storedEnergy } = useGlobalState()
+  const { lands, block, token, setToken, storedEnergy } = useGlobalState();
 
-  const playerLands = Object.values(lands).filter((land: any) => land.energy)
+  const playerLands = Object.values(lands).filter((land: any) => land.energy);
+
+  // Function to clear cache and reload the page 
+  // to solve the wrong energy display issue
+  const clearCacheAndReload = () => {
+    if (typeof window !== 'undefined') {
+      window.caches
+        .keys()
+        .then(names => {
+          for (const name of names) {
+            window.caches.delete(name);
+          }
+        })
+        .then(() => {
+          router.reload();
+        });
+    }
+  };
 
   return (
     <>
@@ -82,6 +101,9 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'sm:relative'
               )}
             >
+              <button onClick={clearCacheAndReload} className="text-sm mr-16 p-0 max-w-max" title='clear cache'>
+                <FaSync />
+              </button>
               <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-40">
                 {/* <Image
                   alt={'Experience Icon'}
@@ -106,7 +128,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 height={100}
                 className={`border rounded-full hover:scale-105 transition-all cursor-pointer`}
               />
-              <div className='absolute -top-[30px] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
+              <div className="absolute -top-[30px] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center">
                 <div>{numeral(token?.energy).format('0.0a')} ⚡</div>
                 {/* <Image
                   alt={'Token Icon'}
@@ -117,7 +139,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 /> */}
               </div>
               {storedEnergy > 0 && (
-                <div className='absolute top-[5.5rem] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center'>
+                <div className="absolute top-[5.5rem] border bg-opacity-90 bg-black rounded-3xl px-2 text-sm flex space-x-1 items-center">
                   <div>{numeral(storedEnergy).format('0.0a')}</div>
                   <Image
                     alt={'Token Icon'}
@@ -130,19 +152,25 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               )}
             </div>
           </DropdownMenuTrigger>
-          <DropdownMenuContent className='mx-2 mt-0.5'>
+          <DropdownMenuContent className="mx-2 mt-0.5">
             <DropdownMenuLabel>Select a token</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {playerLands.map((land: any) => <DropdownMenuItem onClick={() => setToken(land)} className='cursor-pointer flex space-x-2' key={land.metadata.id}>
-              <Image
-                alt={'Token Icon'}
-                src={land.metadata.image}
-                width={10}
-                height={10}
-                className={`z-30 rounded-full h-5 w-5`}
-              />
-              <div>{land.metadata.name}</div>
-            </DropdownMenuItem>)}
+            {playerLands.map((land: any) => (
+              <DropdownMenuItem
+                onClick={() => setToken(land)}
+                className="cursor-pointer flex space-x-2"
+                key={land.metadata.id}
+              >
+                <Image
+                  alt={'Token Icon'}
+                  src={land.metadata.image}
+                  width={10}
+                  height={10}
+                  className={`z-30 rounded-full h-5 w-5`}
+                />
+                <div>{land.metadata.name}</div>
+              </DropdownMenuItem>
+            ))}
           </DropdownMenuContent>
         </DropdownMenu>
         <div className={cn(styles.page, 'sm:-mt-24')}>
@@ -152,7 +180,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           </main>
           <Footer />
         </div>
-      </div >
+      </div>
     </>
   );
 }
