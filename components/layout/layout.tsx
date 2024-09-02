@@ -27,7 +27,6 @@ import {
 } from '@components/ui/dropdown-menu';
 import spiral from '@public/quests/memobots/spiral.gif';
 import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png';
-import { Button } from '@components/ui/button';
 import { FaSync } from 'react-icons/fa';
 
 type Props = {
