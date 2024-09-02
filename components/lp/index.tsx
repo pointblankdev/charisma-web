@@ -12,15 +12,15 @@ export default function LandingPage() {
   return (
     <Layout>
       <div className={styleUtils.container}>
-        <>
+        <div className='relative z-index-50'>
           <Hero />
           <Features />
           <About />
           <Community />
           <Roadmap />
           <CallToAction />
-          <FAQ />ARC
-        </>
+          <FAQ />
+        </div>
       </div>
     </Layout>
   );
