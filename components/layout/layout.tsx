@@ -100,7 +100,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'sm:relative'
               )}
             >
-              <button onClick={clearCacheAndReload} className="text-sm mr-16 p-0 max-w-max" title='clear cache'>
+              <button onClick={clearCacheAndReload} className="text-sm mr-20 p-0 max-w-max" title='clear cache'>
                 <FaSync />
               </button>
               <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-40">
