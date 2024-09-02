@@ -39,6 +39,7 @@ genesis:
     - pox
     - pox-2
     - pox-3
+    - pox-4
     - lockup
     - costs-2
     - costs-3
@@ -47,6 +48,9 @@ genesis:
 plan:
   batches:
     - id: 0
+      transactions: []
+      epoch: "2.05"
+    - id: 1
       transactions:
         - emulated-contract-publish:
             contract-name: dao-traits-v4
@@ -123,4 +127,4 @@ plan:
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/token-gate-v0.clar
             clarity-version: 1
-      epoch: "2.05"
+      epoch: "2.1"
