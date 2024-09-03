@@ -18,11 +18,16 @@ describe('staking pool data integrity', () => {
     console.log(lands)
   });
 
-  test('should get land metadata', async () => {
+  test('should get/update land metadata', async () => {
     const contractId = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-edlc'
     const land = await getLand(contractId)
-    // land.cardImage = 'https://pbs.twimg.com/media/GWQ8v4-XkAAkF_e?format=jpg&name=large'
-    // await setLand(contractId, land)
+    land.name = 'STX-EDLC - Velar LP'
+    land.image = 'https://charisma.rocks/lands/img/stx-edlc-lp-icon.png'
+    land.description.description = 'EDLC Velar liquidity pool token'
+    land.wraps.decimals = 0
+    land.wraps.image = 'https://charisma.rocks/lands/img/stx-edlc-lp-icon.png'
+    land.cardImage = 'https://charisma.rocks/lands/img/card/stx-edlc-lp.png'
+    await setLand(contractId, land)
     console.log(land)
   })
 

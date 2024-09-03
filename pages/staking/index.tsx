@@ -73,25 +73,32 @@ export default function StakingIndex({ lands }: Props) {
                 The more you stake, the more energy you earn on every block– used to unlock community rewards.
               </div>
             </div>
-            <CreateNewPool whitelistedContracts={lands} />
+
           </div>
-          <div className='grid gap-2 grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
+          <div className='grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
             <Card
               className={cn(
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
               )}
             >
-              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
+              <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
                 <div className="space-y-6 text-sm">
-                  <h3 className="font-bold text-lg">Stake Memecoins to Earn</h3>
-                  <div className="font-light text-sm">
+                  <h3 className="text-lg font-bold">Stake Memecoins to Earn</h3>
+                  <div className="text-sm font-light">
                     Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
                   </div>
-                  <div className="font-light text-sm">
+                  <div className="text-sm font-light">
                     Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
                   </div>
-                  <div className="font-light text-sm">
+                  <div className="text-sm font-light">
                     In addition, anyone can claim Charisma rewards through Quests, making your staked memecoins a gateway to both unique community offerings and broader ecosystem rewards.
+                  </div>
+                </div>
+
+                <div className="space-y-6 text-sm">
+                  <h3 className="text-lg font-bold">Submit your own token for Staking</h3>
+                  <div className='flex w-full'>
+                    <CreateNewPool whitelistedContracts={lands} />
                   </div>
                 </div>
               </div>
@@ -309,7 +316,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
   return (
     <Dialog>
       <DialogTrigger asChild>
-        <Button className='h-full' onClick={() => track('ViewCreateNewPool')}>Create New Pool</Button>
+        <Button className='w-full h-full' onClick={() => track('ViewCreateNewPool')}>Create New Pool</Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-5xl">
         <DialogHeader>
