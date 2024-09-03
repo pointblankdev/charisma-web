@@ -60,12 +60,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         const assetContract: string = await clarigen.ro(landsContract.getLandAssetContract(i))
         if (Number(amount)) {
             const tokenMetadata = await getLand(assetContract)
-            // console.log(tokenMetadata.wraps)
 
             const tokens = await velarApi.tokens(tokenMetadata.wraps.symbol)
 
-            const price = tokens[0]?.price || 0.000000000001
-            // console.log(tokens[0], tokenMetadata.wraps)
+            const price = Number(tokens[0]?.price) || 0.000000000001
 
             chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, tokenMetadata.wraps.decimals) * Number(price), fill: `hsl(var(--background))` });
             chartConfig0[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }

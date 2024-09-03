@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, TransactionVersion, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateSecretKey, generateWallet, getStxAddress } from "@stacks/wallet-sdk";
-import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId, getNftOwner, getStoredEnergy } from "./stacks-api";
+import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId, getNftOwner, getStoredEnergy, getLastLandId } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 import { tryResetEpochs } from "./try-reset-epochs";
@@ -309,6 +309,12 @@ describe('Stacks API', () => {
 
     it('should get stored energy', async () => {
         const result = await getStoredEnergy('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+        console.log(result)
+        expect(result).toBeDefined()
+    })
+
+    it('should get last land id', async () => {
+        const result = await getLastLandId()
         console.log(result)
         expect(result).toBeDefined()
     })

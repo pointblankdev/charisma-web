@@ -62,6 +62,10 @@ depends_on = []
 path = "contracts/giga-pepe-v2.clar"
 depends_on = []
 
+[contracts.energy-airdrop]
+path = "contracts/energy-airdrop.clar"
+depends_on = []
+
 # traits
 [contracts.dao-traits-v4]
 path = "contracts/dao-traits-v4.clar"

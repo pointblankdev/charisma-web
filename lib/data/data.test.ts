@@ -19,14 +19,10 @@ describe('staking pool data integrity', () => {
   });
 
   test('should get/update land metadata', async () => {
-    const contractId = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-edlc'
+    const contractId = 'SP3QJ0MM9G8M3DSF5NEX7CEJ99NFDQ81WG17T7RMC.tenmetsu'
     const land = await getLand(contractId)
-    land.name = 'STX-EDLC - Velar LP'
-    land.image = 'https://charisma.rocks/lands/img/stx-edlc-lp-icon.png'
-    land.description.description = 'EDLC Velar liquidity pool token'
-    land.wraps.decimals = 0
-    land.wraps.image = 'https://charisma.rocks/lands/img/stx-edlc-lp-icon.png'
-    land.cardImage = 'https://charisma.rocks/lands/img/card/stx-edlc-lp.png'
+    land.wraps.decimals = 6
+    land.wraps.totalSupply = 10000000000000000
     await setLand(contractId, land)
     console.log(land)
   })
@@ -61,6 +57,17 @@ describe('staking pool data integrity', () => {
       } else {
         expect(landMetadata.id).toBeTruthy()
         expect(landMetadata.whitelisted).toBeTruthy()
+      }
+    }
+  })
+
+  test('should all have decimals defined', async () => {
+    for (const land of lands) {
+      const landMetadata: Land = await getLand(land)
+      if (typeof landMetadata.wraps.decimals !== 'number') {
+        console.log('No decimals found for land', landMetadata.wraps)
+      } else {
+        expect(landMetadata.wraps.decimals).toBeDefined()
       }
     }
   })

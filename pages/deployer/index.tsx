@@ -50,6 +50,7 @@ import BattleRoyaleTemplate from "./battle-royale"
 import PrizeFightTemplate from "./prize-fight"
 import RestockFarmsTemplate from "./restock"
 import { useOpenContractCall, useOpenContractDeploy } from "@micro-stacks/react"
+import AirdropEnergyTemplate from "./energy-airdrop"
 
 const generateHeader = ({ name, sender, description }: any) => {
     return `;; Title: ${name}
@@ -144,9 +145,9 @@ export default function ContractDeployer({ data }: any) {
                                                 Configure the settings for the model and messages.
                                             </DrawerDescription>
                                         </DrawerHeader>
-                                        <div className="grid w-full items-start gap-6 overflow-auto p-4 pt-0">
-                                            <fieldset className="grid gap-6 rounded-lg border p-4">
-                                                <legend className="-ml-1 px-1 text-sm font-medium">
+                                        <div className="grid items-start w-full gap-6 p-4 pt-0 overflow-auto">
+                                            <fieldset className="grid gap-6 p-4 border rounded-lg">
+                                                <legend className="px-1 -ml-1 text-sm font-medium">
                                                     Configuration
                                                 </legend>
                                                 <div className="grid gap-3">
@@ -255,13 +256,13 @@ export default function ContractDeployer({ data }: any) {
                                     Deploy
                                 </Button>
                             </header>
-                            <main className="grid flex-1 gap-4 overflow-auto p-4 md:grid-cols-2 lg:grid-cols-3">
+                            <main className="grid flex-1 gap-4 p-4 overflow-auto md:grid-cols-2 lg:grid-cols-3">
                                 <div
-                                    className="relative hidden flex-col items-start gap-8 md:flex" x-chunk="dashboard-03-chunk-0"
+                                    className="relative flex-col items-start hidden gap-8 md:flex" x-chunk="dashboard-03-chunk-0"
                                 >
-                                    <div className="grid w-full items-start gap-6">
-                                        <fieldset className="grid gap-6 rounded-lg border p-4">
-                                            <legend className="-ml-1 px-1 text-sm font-medium">
+                                    <div className="grid items-start w-full gap-6">
+                                        <fieldset className="grid gap-6 p-4 border rounded-lg">
+                                            <legend className="px-1 -ml-1 text-sm font-medium">
                                                 Configuration
                                             </legend>
                                             <div className="grid gap-3">
@@ -280,6 +281,22 @@ export default function ContractDeployer({ data }: any) {
                                                                         <SelectValue placeholder="Select a model" />
                                                                     </SelectTrigger>
                                                                     <SelectContent>
+                                                                        <SelectItem value="energy">
+                                                                            <div className="flex items-start gap-3 text-foreground">
+                                                                                <Send className="size-5" />
+                                                                                <div className="grid gap-0.5">
+                                                                                    <p>
+                                                                                        Energy{" "}
+                                                                                        <span className="font-medium text-foreground">
+                                                                                            Airdropper
+                                                                                        </span>
+                                                                                    </p>
+                                                                                    <p className="text-xs" data-description>
+                                                                                        Distribute energy to multiple addresses.
+                                                                                    </p>
+                                                                                </div>
+                                                                            </div>
+                                                                        </SelectItem>
                                                                         <SelectItem value="restock">
                                                                             <div className="flex items-start gap-3 text-foreground">
                                                                                 <Scale className="size-5" />
@@ -433,8 +450,8 @@ export default function ContractDeployer({ data }: any) {
                                                 />
                                             </div>
                                         </fieldset>
-                                        <fieldset className="grid grid-cols-1 gap-4 rounded-lg border p-4">
-                                            <legend className="-ml-1 px-1 text-sm font-medium">
+                                        <fieldset className="grid grid-cols-1 gap-4 p-4 border rounded-lg">
+                                            <legend className="px-1 -ml-1 text-sm font-medium">
                                                 Contract Metadata
                                             </legend>
                                             <FormField
@@ -467,29 +484,31 @@ export default function ContractDeployer({ data }: any) {
                                         {!loading && <motion.div initial="hidden" animate="visible" variants={fadeIn}>
                                             {template === 'airdrop' ?
                                                 <AirdropTemplate onFormChange={handleContractChange} />
-                                                : template === 'pool' ?
-                                                    <LiquidStakedTemplate onFormChange={handleContractChange} />
-                                                    : template === 'index' ?
-                                                        <IndexTokenTemplate onFormChange={handleContractChange} />
-                                                        : template === 'proposal' ?
-                                                            <ProposalTemplate onFormChange={handleContractChange} />
-                                                            : template === 'restock' ?
-                                                                <RestockFarmsTemplate onFormChange={handleContractChange} />
-                                                                : template === 'strategy' ?
-                                                                    <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
-                                                                    : template === 'farm' ?
-                                                                        <FarmTemplate onFormChange={handleContractChange} />
-                                                                        : template === 'battle-royale' ?
-                                                                            <BattleRoyaleTemplate onFormChange={handleContractChange} />
-                                                                            : template === 'prize-fight' ?
-                                                                                <PrizeFightTemplate onFormChange={handleContractChange} />
-                                                                                : <div>...</div>
+                                                : template === 'energy' ?
+                                                    <AirdropEnergyTemplate onFormChange={handleContractChange} />
+                                                    : template === 'pool' ?
+                                                        <LiquidStakedTemplate onFormChange={handleContractChange} />
+                                                        : template === 'index' ?
+                                                            <IndexTokenTemplate onFormChange={handleContractChange} />
+                                                            : template === 'proposal' ?
+                                                                <ProposalTemplate onFormChange={handleContractChange} />
+                                                                : template === 'restock' ?
+                                                                    <RestockFarmsTemplate onFormChange={handleContractChange} />
+                                                                    : template === 'strategy' ?
+                                                                        <ArbitrageStrategyTemplate onFormChange={handleContractChange} />
+                                                                        : template === 'farm' ?
+                                                                            <FarmTemplate onFormChange={handleContractChange} />
+                                                                            : template === 'battle-royale' ?
+                                                                                <BattleRoyaleTemplate onFormChange={handleContractChange} />
+                                                                                : template === 'prize-fight' ?
+                                                                                    <PrizeFightTemplate onFormChange={handleContractChange} />
+                                                                                    : <div>...</div>
 
                                             }
                                         </motion.div>}
                                     </div>
                                 </div>
-                                <div className="relative flex h-full bg-black flex-col rounded-lg bg-muted/5 lg:col-span-2 overflow-hidden border m-3">
+                                <div className="relative flex flex-col h-full m-3 overflow-hidden bg-black border rounded-lg bg-muted/5 lg:col-span-2">
                                     <Badge variant="outline" className="absolute right-3 top-3">
                                         Output
                                     </Badge>
@@ -497,7 +516,7 @@ export default function ContractDeployer({ data }: any) {
                                         {String(header) + String(body)}
                                     </SyntaxHighlighter>
                                     {/* <div
-                                        className="relative overflow-hidden rounded-lg border bg-background focus-within:ring-1 focus-within:ring-ring" x-chunk="dashboard-03-chunk-1"
+                                        className="relative overflow-hidden border rounded-lg bg-background focus-within:ring-1 focus-within:ring-ring" x-chunk="dashboard-03-chunk-1"
                                     >
                                         <Label htmlFor="message" className="sr-only">
                                             Message
@@ -505,7 +524,7 @@ export default function ContractDeployer({ data }: any) {
                                         <Textarea
                                             id="message"
                                             placeholder="Type your message here..."
-                                            className="min-h-12 resize-none border-0 p-3 shadow-none focus-visible:ring-0"
+                                            className="p-3 border-0 shadow-none resize-none min-h-12 focus-visible:ring-0"
                                         />
                                         <div className="flex items-center p-3 pt-0">
                                             <TooltipProvider>

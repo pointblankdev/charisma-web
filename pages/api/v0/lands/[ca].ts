@@ -17,7 +17,6 @@ export default async function landsApi(
     try {
         const ca = req.query.ca as string
         if (req.method === 'POST') {
-            console.log(req.body)
             response = await setLand(ca, req.body)
             await addLand(ca)
         } else if (req.method === 'GET') {
@@ -30,7 +29,7 @@ export default async function landsApi(
             })
         }
     } catch (error: any) {
-        console.error(error)
+        // console.error(error)
         response = new Object(error)
         code = error.response.status
     }

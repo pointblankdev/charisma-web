@@ -27,6 +27,7 @@ import {
 } from "@components/ui/dropdown-menu"
 import spiral from '@public/quests/memobots/spiral.gif'
 import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png'
+import { useAccount } from '@micro-stacks/react';
 
 type Props = {
   children: React.ReactNode;
@@ -40,9 +41,12 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const activeRoute = router.asPath;
 
   const { wallet } = useWallet();
+  const { stxAddress } = useAccount();
   const { lands, block, token, setToken, storedEnergy } = useGlobalState()
 
   const playerLands = Object.values(lands).filter((land: any) => land.energy)
+
+  const showEnergyControls = activeRoute.includes('quests') && stxAddress
 
   return (
     <>
@@ -82,7 +86,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'sm:relative'
               )}
             >
-              <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-40">
+              <div className="flex items-center gap-2 pl-2 font-medium text-md text-muted sm:absolute sm:right-40">
                 {/* <Image
                   alt={'Experience Icon'}
                   src={experienceIcon}
@@ -96,9 +100,9 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
             </div>
           </header>
         )}
-        <DropdownMenu>
-          <DropdownMenuTrigger className="z-30 sm:sticky fixed bottom-16 sm:top-10 self-end m-4 mt-10 h-20 w-20 focus-visible:invisible">
-            <div className="flex flex-col items-center justify-center relative">
+        {showEnergyControls && <DropdownMenu>
+          <DropdownMenuTrigger className="fixed z-30 self-end w-20 h-20 m-4 mt-10 sm:sticky bottom-16 sm:top-10 focus-visible:invisible">
+            <div className="relative flex flex-col items-center justify-center">
               <Image
                 alt={'Energy Icon'}
                 src={token?.metadata?.image || energyIcon}
@@ -133,7 +137,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           <DropdownMenuContent className='mx-2 mt-0.5'>
             <DropdownMenuLabel>Select a token</DropdownMenuLabel>
             <DropdownMenuSeparator />
-            {playerLands.map((land: any) => <DropdownMenuItem onClick={() => setToken(land)} className='cursor-pointer flex space-x-2' key={land.metadata.id}>
+            {playerLands.map((land: any) => <DropdownMenuItem onClick={() => setToken(land)} className='flex space-x-2 cursor-pointer' key={land.metadata.id}>
               <Image
                 alt={'Token Icon'}
                 src={land.metadata.image}
@@ -144,8 +148,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               <div>{land.metadata.name}</div>
             </DropdownMenuItem>)}
           </DropdownMenuContent>
-        </DropdownMenu>
-        <div className={cn(styles.page, 'sm:-mt-24')}>
+        </DropdownMenu>}
+        <div className={cn(styles.page, showEnergyControls && 'sm:-mt-36')}>
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />
             <div className={cn(styles.full, className)}>{children}</div>
