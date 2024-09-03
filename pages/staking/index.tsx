@@ -95,7 +95,7 @@ export default function StakingIndex({ lands }: Props) {
                   </div>
                 </div>
 
-                <div className="space-y-6 text-sm">
+                <div className="w-full space-y-6 text-sm">
                   <h3 className="text-lg font-bold">Submit your own token for Staking</h3>
                   <div className='flex w-full'>
                     <CreateNewPool whitelistedContracts={lands} />
