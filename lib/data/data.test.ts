@@ -19,11 +19,11 @@ describe('staking pool data integrity', () => {
   });
 
   test('should get/update land metadata', async () => {
-    const contractId = 'SP3QJ0MM9G8M3DSF5NEX7CEJ99NFDQ81WG17T7RMC.tenmetsu'
+    const contractId = 'SP28FHT7VGBJ3B0584V1EVHED3MKTE1M8VQJDNB6R.rozar-stxcity'
     const land = await getLand(contractId)
-    land.wraps.decimals = 6
-    land.wraps.totalSupply = 10000000000000000
-    await setLand(contractId, land)
+    // land.wraps.decimals = 6
+    // land.wraps.totalSupply = 10000000000000000
+    // await setLand(contractId, land)
     console.log(land)
   })
 
