@@ -160,9 +160,6 @@ export default function QuestsIndex({ quests }: Props) {
                 Spend your accumulated energy to complete quests and claim their token or NFT rewards.
               </p>
             </div>
-            <Link passHref href={'/quest-deployer'}>
-              <Button className='h-full'><div className='flex flex-col leading-tight'><div>Create Your Own Quest</div><div className='text-primary-foreground text-xs font-semibold'>and Earn Royalities</div></div></Button>
-            </Link>
           </div>
           <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <Card
@@ -170,13 +167,13 @@ export default function QuestsIndex({ quests }: Props) {
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
               )}
             >
-              <div className="relative flex flex-col items-start text-md p-4 space-y-4 rounded-lg justify-between">
+              <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
                 <div className="space-y-4 text-sm leading-normal">
-                  <h3 className="font-bold text-lg">How to Claim Rewards</h3>
+                  <h3 className="text-lg font-bold">How to Claim Rewards</h3>
                   <p>
                     Complete quests in the Charisma ecosystem to earn rewards. Here's a quick guide:
                   </p>
-                  <ol className="list-decimal list-inside space-y-2">
+                  <ol className="space-y-2 list-decimal list-inside">
                     <li>
                       <strong>Browse Quests:</strong> Explore available quests and their rewards.
                     </li>
@@ -193,9 +190,15 @@ export default function QuestsIndex({ quests }: Props) {
                       <strong>Receive Rewards:</strong> Rewards are automatically sent to your wallet or inventory upon completion.
                     </li>
                   </ol>
-                  <p>
-                    Note: Some quests may have cooldown periods. Participate often to maximize your rewards and progress in the Charisma ecosystem.
-                  </p>
+                </div>
+
+                <div className="w-full space-y-6 text-sm">
+                  <h3 className="text-lg font-bold">Setup your own quest on Charisma</h3>
+                  <div className='flex w-full'>
+                    {/* <Link className='w-full' passHref href={'/quest-deployer'}> */}
+                    <Button disabled className='w-full h-full'><div className='flex flex-col leading-tight'><div>Create Your Own Quest</div><div className='text-xs font-semibold text-primary-foreground'>and Earn Royalities</div></div></Button>
+                    {/* </Link> */}
+                  </div>
                 </div>
               </div>
             </Card>
@@ -219,7 +222,7 @@ export default function QuestsIndex({ quests }: Props) {
                                   width={40}
                                   height={40}
                                   alt="guild-logo"
-                                  className="w-10 h-10 rounded-md border grow"
+                                  className="w-10 h-10 border rounded-md grow"
                                 />
                               ) : (
                                 <div className="w-10 h-10 bg-white border rounded-full" />
@@ -235,7 +238,7 @@ export default function QuestsIndex({ quests }: Props) {
                             </div>
                           </div>
                           {/* <div className="flex flex-col items-end leading-[1.1]">
-                            <div className="text-white text-sm font-semibold">{quest.ticker}</div>
+                            <div className="text-sm font-semibold text-white">{quest.ticker}</div>
                           </div> */}
                         </div>
                       </CardHeader>
@@ -283,7 +286,7 @@ export default function QuestsIndex({ quests }: Props) {
                                   width={40}
                                   height={40}
                                   alt="guild-logo"
-                                  className="w-10 h-10 rounded-md border grow"
+                                  className="w-10 h-10 border rounded-md grow"
                                 />
                               ) : (
                                 <div className="w-10 h-10 bg-white border rounded-full" />
@@ -299,7 +302,7 @@ export default function QuestsIndex({ quests }: Props) {
                             </div>
                           </div>
                           {/* <div className="flex flex-col items-end leading-[1.1]">
-                            <div className="text-white text-sm font-semibold">{quest.ticker}</div>
+                            <div className="text-sm font-semibold text-white">{quest.ticker}</div>
                           </div> */}
                         </div>
                       </CardHeader>
