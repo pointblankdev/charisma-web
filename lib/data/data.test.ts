@@ -19,11 +19,11 @@ describe('staking pool data integrity', () => {
   });
 
   test('should get/update land metadata', async () => {
-    const contractId = 'SP28FHT7VGBJ3B0584V1EVHED3MKTE1M8VQJDNB6R.rozar-stxcity'
+    const contractId = 'SP1NPDHF9CQ8B9Q045CCQS1MR9M9SGJ5TT6WFFCD2.honey-badger-stxcity'
     const land = await getLand(contractId)
-    land.cardImage = 'https://charisma.rocks/lands/img/card/rozar.png'
-    land.wraps.decimals = 6
-    await setLand(contractId, land)
+    // land.cardImage = 'https://charisma.rocks/lands/img/card/rozar.png'
+    // land.wraps.decimals = 6
+    // await setLand(contractId, land)
     console.log(land)
   })
 

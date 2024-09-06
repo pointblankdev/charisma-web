@@ -95,7 +95,7 @@ describe('metadata api', () => {
     })
 
     it('should remove land', async () => {
-        const response = await removeLand('SP1Z92MPDQEWZXW36VX71Q25HK/F5K2EPCJ304F275.tokensoft-token-v4kr5skoysg')
+        const response = await removeLand('SP16KWQY6ZPXNYT43A4RKXBXMFT3V7ZMV5YYNR1CK.mojo')
         console.log(response)
     })
 
