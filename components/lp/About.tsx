@@ -67,7 +67,7 @@ export default function About() {
         </div>
         <div className="mt-20">
           <a
-            href="#learn-more"
+            href="/https://docs.charisma.rocks/"
             className="relative inline-block px-10 py-2 bg-primary rounded-full text-white font-semibold hover:bg-primaryDark transition duration-500 transform hover:-translate-y-2 shadow-lg hover:shadow-xl"
           >
             <span className="absolute inset-0 bg-gradient-to-r from-purple-600 via-pink-500 to-red-500 opacity-0 hover:opacity-20 transition duration-500"></span>
