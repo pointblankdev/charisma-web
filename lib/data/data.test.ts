@@ -3,7 +3,7 @@ import { getLand, getLands, setLand } from "../db-providers/kv";
 import { Land } from '../db-providers/kv.types';
 import { contractFactory } from '@clarigen/core';
 import { clarigen } from "../clarigen/client";
-import { assert } from "console";
+import { getTransferFunction } from "../stacks-api";
 
 const landsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands';
 const landsContract = contractFactory(contracts.lands as any, landsContractId);
@@ -88,4 +88,15 @@ describe('staking pool data integrity', () => {
       expect(difficulty === storedDifficulty?.value).toBeTruthy()
     }
   })
+
+  test('should all have valid transfer functions', async () => {
+    for (const land of lands) {
+      console.log(land)
+      const landMetadata: Land = await getLand(land)
+      const transferFunction = await getTransferFunction(land)
+      console.log(transferFunction)
+      landMetadata.wraps.transferFunction = transferFunction
+      await setLand(land, landMetadata)
+    }
+  }, 200000)
 })

@@ -1212,3 +1212,33 @@ export async function getLastLandId() {
   const result = hexToCV((response as any).result);
   return Number(cvToJSON(result).value.value);
 }
+
+export async function getTransferFunction(contractAddress: string) {
+  const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
+  const code = sourceCode.source
+  // Regex to match the start of the transfer function
+  const transferStartRegex = /\(define-public\s+\(\s*transfer\s/;
+
+  const startMatch = transferStartRegex.exec(code);
+  if (!startMatch) {
+    return "Transfer function not found";
+  }
+
+  const startIndex = startMatch.index;
+  let parenthesesCount = 0;
+  let endIndex = startIndex;
+
+  // Parse through the code, keeping track of parentheses
+  for (let i = startIndex; i < code.length; i++) {
+    if (code[i] === '(') parenthesesCount++;
+    if (code[i] === ')') parenthesesCount--;
+
+    if (parenthesesCount === 0) {
+      endIndex = i + 1;
+      break;
+    }
+  }
+
+  // Extract the function
+  return code.substring(startIndex, endIndex).trim();
+}

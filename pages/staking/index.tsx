@@ -15,7 +15,7 @@ import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useState } from 'react';
-import { getContractSource, getDecimals, getSymbol, getTokenURI, getTotalSupply } from '@lib/stacks-api';
+import { getContractSource, getDecimals, getSymbol, getTokenURI, getTotalSupply, getTransferFunction } from '@lib/stacks-api';
 import { setLandMetadata } from '@lib/user-api';
 import energyIcon from '@public/creatures/img/energy.png';
 import { track } from '@vercel/analytics';
@@ -281,15 +281,8 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
 
     const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
     const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split(' ')[1].split(')')[0]
-    const transferFunctionRegex = /\(define-public\s+\(transfer\s+[^)]+\)[^)]*\)[^)]*\)/s;
-    const match = code.match(transferFunctionRegex);
 
-    if (match) {
-      const transferFunction = match[0];
-      console.log(transferFunction);
-    } else {
-      console.log("Transfer function not found");
-    }
+    const transferFunction = await getTransferFunction(contractAddress)
 
     const proposalName = `${stxAddress}.${safeName}`
 
@@ -312,7 +305,8 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
         asset: assetIdentifier,
         symbol: symbol,
         decimals: Number(decimals),
-        totalSupply: Number(totalSupply)
+        totalSupply: Number(totalSupply),
+        transferFunction: transferFunction
       },
       attributes: [
         {
