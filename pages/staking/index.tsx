@@ -42,6 +42,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     lands.push(metadata)
   }
 
+  // lands.sort((a, b) => {
+  //   console.log(a, b)
+  //   return 0
+  // })
+
   return {
     props: {
       lands
@@ -75,25 +80,25 @@ export default function StakingIndex({ lands }: Props) {
             </div>
 
           </div>
-          <div className='grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5'>
+          <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
             <Card
               className={cn(
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
               )}
             >
               <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
-                <div className="space-y-6 text-sm">
-                  <h3 className="text-lg font-bold">Stake Memecoins to Earn</h3>
-                  <div className="text-sm font-light">
+                <div className="space-y-2 text-sm">
+                  <h3 className="text-sm sm:text-md font-bold">Stake Memecoins to Earn</h3>
+                  <div className="text-xs font-light">
                     Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
                   </div>
-                  <div className="text-sm font-light">
+                  <div className="text-xs font-light">
                     Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
                   </div>
                 </div>
 
-                <div className="w-full space-y-6 text-sm">
-                  <h3 className="text-lg font-bold">Submit your own token for Staking</h3>
+                <div className="w-full space-y-2 text-sm">
+                  <h3 className="text-xs font-bold hidden sm:flex">Submit your own token for Staking</h3>
                   <div className='flex w-full'>
                     <CreateNewPool whitelistedContracts={lands} />
                   </div>

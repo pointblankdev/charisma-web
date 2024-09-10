@@ -10,7 +10,7 @@
         },
         {
             "path": "/api/v0/crons/operating-costs",
-            "schedule": "5 * * * *"
+            "schedule": "15 * * * *"
         },
         {
             "path": "/api/v0/crons/try-reset-epochs",
