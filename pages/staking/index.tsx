@@ -1,19 +1,11 @@
 import { GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '@components/ui/dialog';
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from '@components/ui/dialog';
 import Page from '@components/page';
-import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout/layout';
 import { cn } from '@lib/utils';
 import Image from 'next/image';
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@components/ui/card"
+import { Card, CardContent, CardHeader } from "@components/ui/card"
 import Link from 'next/link';
 import { getLand, getLands } from '@lib/db-providers/kv';
 import { Button } from '@components/ui/button';
@@ -24,28 +16,28 @@ import { zodResolver } from "@hookform/resolvers/zod"
 import * as z from "zod"
 import { useState } from 'react';
 import { getContractSource, getDecimals, getSymbol, getTokenURI, getTotalSupply } from '@lib/stacks-api';
-import { PostConditionMode } from '@stacks/transactions';
 import { setLandMetadata } from '@lib/user-api';
 import energyIcon from '@public/creatures/img/energy.png';
 import { track } from '@vercel/analytics';
 import { useAccount } from '@micro-stacks/react';
 import { useOpenContractDeploy } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
+import _ from 'lodash';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
   const landContractAddresses = await getLands()
 
-  const lands = []
+  let lands = []
   for (const ca of landContractAddresses) {
     const metadata = await getLand(ca)
     lands.push(metadata)
   }
 
-  // lands.sort((a, b) => {
-  //   console.log(a, b)
-  //   return 0
-  // })
+  // if lands have 'cha' in the .wraps.ca, sort them to the top
+  lands = _.sortBy(lands, (land) => {
+    return land.wraps.ca.includes('cha') ? 0 : 1
+  })
 
   return {
     props: {
@@ -87,7 +79,7 @@ export default function StakingIndex({ lands }: Props) {
               )}
             >
               <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
-                <div className="space-y-2 text-sm">
+                <div className="space-y-4 text-sm">
                   <h3 className="text-sm sm:text-md font-bold">Stake Memecoins to Earn</h3>
                   <div className="text-xs font-light">
                     Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
