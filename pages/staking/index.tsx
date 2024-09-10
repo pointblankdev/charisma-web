@@ -23,15 +23,21 @@ import { useAccount } from '@micro-stacks/react';
 import { useOpenContractDeploy } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import _ from 'lodash';
+import { PiScales, PiScalesDuotone, PiScalesLight } from 'react-icons/pi';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
   const landContractAddresses = await getLands()
 
   let lands = []
+  const proposals = []
   for (const ca of landContractAddresses) {
     const metadata = await getLand(ca)
-    lands.push(metadata)
+    if (metadata.id) {
+      lands.push(metadata)
+    } else {
+      proposals.push(metadata)
+    }
   }
 
   // if lands have 'cha' in the .wraps.ca, sort them to the top
@@ -41,7 +47,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   return {
     props: {
-      lands
+      lands,
+      proposals
     },
     revalidate: 60
   };
@@ -49,9 +56,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 type Props = {
   lands: any[];
+  proposals: any[];
 };
 
-export default function StakingIndex({ lands }: Props) {
+export default function StakingIndex({ lands, proposals }: Props) {
 
   const meta = {
     title: 'Charisma | Staking',
@@ -98,6 +106,54 @@ export default function StakingIndex({ lands }: Props) {
               </div>
             </Card>
             {lands.map((land) => {
+              return (
+                <Card key={land.wraps.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
+                  <Link href={`staking/${land.wraps.ca}`} className='w-full'>
+                    <CardContent className='w-full p-0'>
+                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                        <div className='flex gap-2'>
+                          <div className='min-w-max'>
+                            {land.image ?
+                              <Image src={land.wraps.image} width={40} height={40} alt='guild-logo' className='w-10 h-10 rounded-full grow' />
+                              : <div className='w-10 h-10 bg-white border rounded-full' />
+                            }
+                          </div>
+                          <div className=''>
+                            <div className='text-sm font-semibold leading-none text-secondary'>
+                              {land.name}
+                            </div>
+                            <div className='mt-1 text-xs leading-tight font-fine text-secondary'>
+                              {land.description.description}
+                            </div>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <Image
+                        src={land.cardImage}
+                        height={1200}
+                        width={600}
+                        alt='land-featured-image'
+                        className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-80', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
+                      />
+                      <div className='absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30' />
+                      <div className='absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20' />
+                    </CardContent>
+                  </Link>
+                </Card>
+              )
+            })}
+          </div>
+          <div className='flex justify-between'>
+            <div className="space-y-1">
+              <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">New Proposals</h2>
+              <div className="flex items-center text-base text-muted-foreground">
+                Proposals for new staking pools that are pending approval.
+              </div>
+            </div>
+
+          </div>
+          <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
+            {proposals.map((land) => {
               return (
                 <Card key={land.wraps.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
                   <Link href={`staking/${land.wraps.ca}`} className='w-full'>
