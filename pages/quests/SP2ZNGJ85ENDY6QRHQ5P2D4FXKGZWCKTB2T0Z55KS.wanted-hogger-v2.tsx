@@ -86,6 +86,7 @@ export default function WantedHogger({ stxAddress, lands, mob }: Props) {
   const healthPercentage = mob.health * 100 / mob.maxHealth
 
   const router = useRouter();
+  // eslint-disable-next-line @typescript-eslint/unbound-method
   const { get } = useSearchParams()
 
   const handleViewToggle = () => {
