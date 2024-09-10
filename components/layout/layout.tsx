@@ -94,7 +94,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={100}
                   className={`z-30 border rounded-full h-5 w-5`}
                 /> */}
-                <div>✨ {numeral(wallet.experience.balance).format('0a')}</div>
+                <div>✨ {numeral(wallet.experience.balance).format('0a')} EXP</div>
               </div>
               <ConnectWallet />
             </div>

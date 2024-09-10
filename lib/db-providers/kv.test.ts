@@ -430,18 +430,18 @@ describe('metadata api', () => {
 
     it('should update hogger health', async () => {
         const hogger = await getMob('hogger')
-        hogger.health = 0
+        // hogger.health = 0
         // hogger.maxHealth = 5900000
-        const response = await setMob('hogger', hogger)
-        console.log(response)
+        // const response = await setMob('hogger', hogger)
+        console.log(hogger)
     })
 
     it('should set hogger', async () => {
         const response = await setMob('hogger', {
-            level: 5,
-            health: 1005059,
-            maxHealth: 1700000,
-            regenRate: 50
+            level: 149,
+            health: 8426079,
+            maxHealth: 16000000,
+            regenRate: 1600
         })
         console.log(response)
     })
@@ -484,8 +484,16 @@ describe('nfts api', () => {
 
     // should get nft collection metadata
     it('should get nft collection metadata', async () => {
-        const response = await getNftCollectionMetadata('SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024')
+        const response = await getNftCollectionMetadata('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz')
         console.log(JSON.stringify(response, null, 2))
+    })
+
+    it('should update nft collection metadata (jumping pupperz)', async () => {
+        const data = await getNftCollectionMetadata('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz')
+        delete data.whitelisted
+        data.properties.whitelisted = true
+        await setNftCollectionMetadata('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz', data)
+        console.log(JSON.stringify(data, null, 2))
     })
 
     // should get nft item

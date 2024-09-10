@@ -90,9 +90,6 @@ export default function StakingIndex({ lands }: Props) {
                   <div className="text-sm font-light">
                     Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
                   </div>
-                  <div className="text-sm font-light">
-                    In addition, anyone can claim Charisma rewards through Quests, making your staked memecoins a gateway to both unique community offerings and broader ecosystem rewards.
-                  </div>
                 </div>
 
                 <div className="w-full space-y-6 text-sm">
