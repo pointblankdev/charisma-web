@@ -281,6 +281,16 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
 
     const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
     const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split(' ')[1].split(')')[0]
+    const transferFunctionRegex = /\(define-public\s+\(transfer\s+[^)]+\)[^)]*\)[^)]*\)/s;
+    const match = code.match(transferFunctionRegex);
+
+    if (match) {
+      const transferFunction = match[0];
+      console.log(transferFunction);
+    } else {
+      console.log("Transfer function not found");
+    }
+
     const proposalName = `${stxAddress}.${safeName}`
 
     const landMetadata = {

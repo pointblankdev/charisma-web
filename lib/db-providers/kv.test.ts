@@ -148,6 +148,11 @@ describe('metadata api', () => {
         console.log(response)
     })
 
+    it('should get something staking pool', async () => {
+        const response = await getLand('SP3MRT36YWK7R0SKFCQ1TDJB3Y3XBAVRFXPYBQ33E.Something-v420')
+        console.log(response)
+    })
+
     it('should update land 5', async () => {
         const contract = 'SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kr5skoysg'
         const land = await getLand(contract)
