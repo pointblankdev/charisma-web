@@ -86,11 +86,12 @@ export default function WantedHogger({ stxAddress, lands, mob }: Props) {
   const healthPercentage = mob.health * 100 / mob.maxHealth
 
   const router = useRouter();
-  // eslint-disable-next-line @typescript-eslint/unbound-method
-  const { get } = useSearchParams()
+
+  // use seach params to toggle between mob and quest view
+  const searchParams = useSearchParams()
 
   const handleViewToggle = () => {
-    const newView = get('view') === 'quest' ? 'mob' : 'quest';
+    const newView = searchParams.get('view') === 'quest' ? 'mob' : 'quest';
     router.push(`?view=${newView}`, undefined, { shallow: true });
   }
 
@@ -110,7 +111,7 @@ export default function WantedHogger({ stxAddress, lands, mob }: Props) {
           className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl"
         >
           <AnimatePresence mode="wait">
-            {get('view') === 'quest' ? (
+            {searchParams.get('view') === 'quest' ? (
               <motion.div
                 key="original-card"
                 initial="hidden"
