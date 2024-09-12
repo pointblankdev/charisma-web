@@ -885,7 +885,7 @@ export async function tryCallContractPublicFunction({
   );
 
   if (!isInMempool) {
-    Logger.oracle({ 'players-job': { contractAddress, functionName, args } });
+    Logger.oracle({ 'is-in-mempool': { contractAddress, functionName, args } });
 
     const wallet = await generateWallet({ secretKey: seedPhrase, password });
 

@@ -61,17 +61,6 @@ describe('staking pool data integrity', () => {
     }
   })
 
-  test('should all have decimals defined', async () => {
-    for (const land of lands) {
-      const landMetadata: Land = await getLand(land)
-      if (typeof landMetadata.wraps.decimals !== 'number') {
-        console.log('No decimals found for land', landMetadata.wraps)
-      } else {
-        expect(landMetadata.wraps.decimals).toBeDefined()
-      }
-    }
-  })
-
   it('should all have difficulty reflected in metadata', async () => {
     for (const land of lands) {
       const landMetadata: Land = await getLand(land)
@@ -86,6 +75,17 @@ describe('staking pool data integrity', () => {
         }
       }
       expect(difficulty === storedDifficulty?.value).toBeTruthy()
+    }
+  })
+
+  test('should all have decimals defined', async () => {
+    for (const land of lands) {
+      const landMetadata: Land = await getLand(land)
+      if (typeof landMetadata.wraps.decimals !== 'number') {
+        console.log('No decimals found for land', landMetadata.wraps)
+      } else {
+        expect(landMetadata.wraps.decimals).toBeDefined()
+      }
     }
   })
 
