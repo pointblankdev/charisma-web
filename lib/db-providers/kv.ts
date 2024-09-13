@@ -300,3 +300,22 @@ export async function getNftMetadata(ca: string, id: string): Promise<any> {
 export async function setNftMetadata(ca: string, id: string, data: any): Promise<void> {
   await kv.set(`nft:${ca}:${id}`, data);
 }
+
+// players
+
+export async function getPlayers(): Promise<any> {
+  return await kv.smembers('players');
+}
+
+export async function addPlayer(player: string): Promise<any> {
+  return await kv.sadd('players', player);
+}
+
+export async function removePlayer(player: string): Promise<any> {
+  return await kv.srem('players', player);
+}
+
+// is player in set
+export async function isPlayer(player: string): Promise<boolean> {
+  return await kv.sismember('players', player) ? true : false;
+}

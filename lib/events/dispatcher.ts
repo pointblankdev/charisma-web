@@ -1,6 +1,6 @@
 import { clarigen } from "@lib/clarigen/client";
 import { contractFactory } from '@clarigen/core';
-import { getMob, getNftCollectionMetadata, incrementRewardLeaderboard, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { addPlayer, getMob, getNftCollectionMetadata, incrementRewardLeaderboard, isPlayer, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { contracts } from "@lib/clarigen/types";
@@ -382,6 +382,8 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 const recipient = event.data.value['recipient']
                 await setLandsBalance(landId, recipient)
                 await setHadLandBefore(landId, recipient)
+                const existingPlayer = await isPlayer(recipient)
+                if (!existingPlayer) await addPlayer(recipient)
                 builder.addField({
                     name: `${symbol} ${event.data.value.type}`,
                     value: JSON.stringify(event.data.value).slice(0, 300)
