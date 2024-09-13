@@ -15,6 +15,7 @@ import {
   cvToHex,
   hexToCV,
   makeContractCall,
+  makeSTXTokenTransfer,
   parseToCV,
   PostConditionMode,
   principalCV,
@@ -865,6 +866,20 @@ export async function getTxsFromMempool(contractAddress: string) {
     offset += limit; // increment the offset for the next page
   }
   return transactions;
+}
+
+export async function sendStx({ seedPhrase, password, recipient, amount, fee }: any) {
+  const wallet = await generateWallet({ secretKey: seedPhrase, password });
+  const account = wallet.accounts[0];
+  const transaction = await makeSTXTokenTransfer({
+    recipient,
+    amount,
+    anchorMode: AnchorMode.Any,
+    senderKey: account.stxPrivateKey,
+    fee,
+  })
+  const broadcastResponse = await broadcastTransaction(transaction, network);
+  return broadcastResponse
 }
 
 export async function tryCallContractPublicFunction({
