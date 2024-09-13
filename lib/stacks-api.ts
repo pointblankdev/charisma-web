@@ -891,7 +891,16 @@ export async function tryCallContractPublicFunction({
   fee,
   nonce,
   args
-}: any) {
+}: {
+  seedPhrase: string;
+  password: string;
+  publicAddress: string;
+  contractAddress: string;
+  functionName: string;
+  fee?: number;
+  nonce?: number;
+  args?: any[];
+}) {
   const txsInMempool = await getTxsFromMempool(contractAddress);
 
   const isInMempool = txsInMempool.some(

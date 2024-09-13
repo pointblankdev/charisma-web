@@ -17,12 +17,14 @@ export default async function operatingCostsSwapAPI(
 
     const response: any = {}
     try {
+        const publicAddress = String(process.env.STACKS_ORACLE_ADDRESS);
         const password = String(process.env.STACKS_ORACLE_PASSWORD);
         const seedPhrase = String(process.env.STACKS_ORACLE_SECRET_KEY);
         const transactions = await tryCallContractPublicFunction({
             password,
             seedPhrase,
-            address: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-path2',
+            publicAddress,
+            contractAddress: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-path2',
             functionName: 'do-swap',
             args: [
                 uintCV(60000000),
