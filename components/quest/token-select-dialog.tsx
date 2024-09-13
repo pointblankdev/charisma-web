@@ -62,7 +62,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
             <DialogTrigger asChild>
                 <Button size={'sm'} className={`z-30`}>{buttonText}</Button>
             </DialogTrigger>
-            <DialogContent className="sm:max-w-2xl">
+            <DialogContent className="sm:max-w-2xl max-h-[90vh] overflow-y-auto">
                 <AlertDialogHeader>
                     <DialogTitle>Which staked token do you want to use?</DialogTitle>
                 </AlertDialogHeader>
