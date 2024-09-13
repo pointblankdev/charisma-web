@@ -4,6 +4,7 @@ import { Land } from '../db-providers/kv.types';
 import { contractFactory } from '@clarigen/core';
 import { clarigen } from "../clarigen/client";
 import { getTransferFunction } from "../stacks-api";
+import _ from "lodash";
 
 const landsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands';
 const landsContract = contractFactory(contracts.lands as any, landsContractId);
@@ -121,8 +122,8 @@ describe('player data', () => {
     const balances = []
     for (const player of players) {
       const balance: any = await getLandsBalance('SP739VRRCMXY223XPR28BWEBTJMA0B27DY8GTKCH.gyatt-bonding-curve', player)
-      if (balance > 0) balances.push({ [player]: balance })
+      if (balance > 0) balances.push({ address: player, balance: balance })
     }
-    console.log(balances)
+    console.log(_.sortBy(balances, 'balance').reverse())
   }, 200000)
 })
