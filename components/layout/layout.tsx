@@ -100,9 +100,6 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'sm:relative'
               )}
             >
-              <button onClick={clearCacheAndReload} className="text-sm mr-20 p-0 max-w-max" title='clear cache'>
-                <FaSync />
-              </button>
               <div className="flex items-center gap-2 text-md text-muted font-medium pl-2 sm:absolute sm:right-40">
                 {/* <Image
                   alt={'Experience Icon'}
@@ -111,7 +108,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={100}
                   className={`z-30 border rounded-full h-5 w-5`}
                 /> */}
-                <div>✨ {numeral(wallet.experience.balance).format('0a')}</div>
+                <div className={'cursor-pointer'} onClick={clearCacheAndReload} title='If your energy is not updating, try clicking here to clear your cache.'>✨ {numeral(wallet.experience.balance).format('0a')}</div>
               </div>
               <ConnectWallet />
             </div>
