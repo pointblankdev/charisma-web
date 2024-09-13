@@ -43,7 +43,7 @@ const WhitelistEDK = () => {
     const { openContractCall } = useOpenContractCall();
 
     const [questContractName, setQuestContractName] = useState('adventure-v0');
-    const [edkContractAddress, setEDKContractAddress] = useState('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.energy-helper-v1');
+    const [edkContractAddress, setEDKContractAddress] = useState('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.edk-v1');
     const [whitelist, setWhitelist] = useState(false);
 
     function setExtension() {

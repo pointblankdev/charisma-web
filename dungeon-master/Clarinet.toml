@@ -30,8 +30,12 @@ depends_on = []
 path = "contracts/energy-storage.clar"
 depends_on = []
 
-[contracts.energy-helper-v0]
-path = "contracts/energy-helper-v0.clar"
+[contracts.token-gate-v0]
+path = "contracts/token-gate-v0.clar"
+depends_on = []
+
+[contracts.edk-v0]
+path = "contracts/edk-v0.clar"
 depends_on = []
 
 [contracts.land-helper-v3]
@@ -56,6 +60,10 @@ depends_on = []
 
 [contracts.giga-pepe-v2]
 path = "contracts/giga-pepe-v2.clar"
+depends_on = []
+
+[contracts.energy-airdrop]
+path = "contracts/energy-airdrop.clar"
 depends_on = []
 
 # traits

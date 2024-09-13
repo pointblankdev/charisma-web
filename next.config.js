@@ -12,17 +12,17 @@ module.exports = {
         protocol: 'https',
         hostname: 'www.datocms-assets.com',
         port: '',
-        pathname: '/**',
+        pathname: '/**'
       },
       // TODO: REMOVE THIS
       {
-        protocol: "https",
-        hostname: "**",
-      },
-    ],
+        protocol: 'https',
+        hostname: '**'
+      }
+    ]
   },
   webpack5: true,
-  webpack: (config) => {
+  webpack: config => {
     config.resolve.fallback = { fs: false };
 
     return config;
@@ -32,32 +32,32 @@ module.exports = {
       {
         source: '/apps',
         destination: '/creatures',
-        permanent: true,
+        permanent: true
       },
       {
         source: '/stake',
         destination: '/stake/welsh',
-        permanent: true,
+        permanent: true
       },
       {
         source: '/stake-roo',
         destination: '/stake/roo',
-        permanent: true,
+        permanent: true
       },
       {
         source: '/woooooo',
         destination: '/apps/title-fight',
-        permanent: true,
+        permanent: true
       },
       {
         source: '/lands/json/:path*',
         destination: '/api/v0/lands/id/:path*',
-        permanent: true,
-      },
-    ]
+        permanent: true
+      }
+    ];
   },
   experimental: {
-    scrollRestoration: true,
+    scrollRestoration: true
   },
-  staticPageGenerationTimeout: 120, // Increase timeout to 120 seconds
+  staticPageGenerationTimeout: 120 // Increase timeout to 120 seconds
 };

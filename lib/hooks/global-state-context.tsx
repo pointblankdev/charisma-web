@@ -1,11 +1,10 @@
 import React, { createContext, useContext, useEffect } from 'react';
 import { usePersistedState } from './use-persisted-state';
-import { getClaimableAmount, getLandAmount } from '@lib/stacks-api';
+import { getClaimableAmount, getLandAmount, getLastLandId, getStoredEnergy } from '@lib/stacks-api';
 import { getLandDataById, getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useAccount } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
-import { getLand } from '@lib/db-providers/kv';
 
 
 const socketUrl = "https://api.mainnet.hiro.so";
@@ -20,6 +19,8 @@ interface GlobalState {
     setTapped: (block: any) => void;
     token: any;
     setToken: (token: any) => void;
+    storedEnergy: number;
+    setStoredEnergy: (amount: number) => void;
 }
 
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
@@ -30,6 +31,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [block, setBlock] = usePersistedState('block', {});
     const [tapped, setTapped] = usePersistedState('tapped', {});
     const [token, setToken] = usePersistedState('token', {})
+    const [storedEnergy, setStoredEnergy] = usePersistedState('storedEnergy', 0);
 
     const { toast } = useToast()
 
@@ -43,21 +45,28 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         [key: string]: LandData;
     }
 
-    const stakedTokens = [1, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13]
-
 
     useEffect(() => {
+
         const getLandData = async () => {
             if (stxAddress) {
 
+                const lastLandId = await getLastLandId()
+                const stakedTokens = Array.from({ length: lastLandId }, (_, i) => i + 1)
+
                 const newLandState: LandState = {};
+                const storedEnergy = await getStoredEnergy(stxAddress);
+                setStoredEnergy(storedEnergy);
 
                 for (const landId of stakedTokens) {
-                    const metadata = await getLandDataById(landId)
-                    const amount = await getLandAmount(landId, stxAddress);
-                    const energy = await getClaimableAmount(landId, stxAddress);
-
-                    newLandState[landId] = { amount, energy, metadata };
+                    try {
+                        const metadata = await getLandDataById(landId)
+                        const amount = await getLandAmount(landId, stxAddress);
+                        const energy = await getClaimableAmount(landId, stxAddress);
+                        newLandState[landId] = { amount, energy, metadata };
+                    } catch (error) {
+                        console.error('Error fetching land data:', error);
+                    }
                 }
 
                 setLands(newLandState)
@@ -92,7 +101,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
 
     return (
-        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped, token, setToken }}>
+        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped, token, setToken, storedEnergy, setStoredEnergy }}>
             {children}
         </GlobalStateContext.Provider>
     );

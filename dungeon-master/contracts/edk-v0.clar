@@ -2,11 +2,8 @@
 ;; This contract handles whitelisting of CDK contracts, wraps the tap function,
 ;; and manages energy for MemoBot NFT holders using the Energy Storage contract
 
-
 (use-trait nft-trait .dao-traits-v4.nft-trait)
 (use-trait cdk-trait .dao-traits-v4.cdk-trait)
-
-(impl-trait .dao-traits-v4.edk-trait)
 
 ;; Constants
 (define-constant ERR-INVALID-CDK (err u100))
@@ -54,7 +51,7 @@
     {
         event: "energy-usage",
         energy-to-use: energy-to-use,
-        energy-from-storage: (min stored-energy energy-to-use),
+        energy-from-storage: stored-energy,
         excess-energy: (- total-available-energy energy-to-use)
     }
   )
@@ -77,26 +74,33 @@
 ;; Wrapped tap function with energy management for NFT holders
 
 (define-public (tap (land-id uint) (cdk-contract <cdk-trait>) (energy-max-out (optional uint)))
-  (begin
-    (asserts! (is-whitelisted-cdk (contract-of cdk-contract)) ERR-INVALID-CDK)
-    (let (
-      (tapped-energy (unwrap-panic (contract-call? cdk-contract tap land-id)))
-    )
-      (if (is-nft-owner tx-sender)
-        (let (
+       (let (
+          (tapped-out (unwrap-panic (contract-call? cdk-contract tap land-id)))
           (stored-energy (contract-call? .energy-storage get-stored-energy tx-sender))
-          (energy-usage (calculate-energy-usage (get energy tapped-energy) stored-energy energy-max-out))
+          (energy-usage (calculate-energy-usage (get energy tapped-out) stored-energy energy-max-out))
+          (energy-out {type: "tap-energy", land-id: land-id, land-amount: (get land-amount tapped-out), energy: (get energy-to-use energy-usage)})
         )
-            (try! (use-stored-energy (get energy-from-storage energy-usage)))
-            (try! (store-excess-energy (get excess-energy energy-usage)))
-            (print energy-usage)
-            (ok tapped-energy)
+        (asserts! (is-whitelisted-cdk (contract-of cdk-contract)) ERR-INVALID-CDK)
+        (print energy-usage)
+        (and (is-nft-owner tx-sender)
+            (begin
+                (print {event: "energy-storage", used-energy: (get energy-from-storage energy-usage), stored-energy: (get excess-energy energy-usage)})
+                (try! (use-stored-energy (get energy-from-storage energy-usage)))
+                (try! (store-excess-energy (get excess-energy energy-usage)))
+            )
         )
-        (ok tapped-energy)
+        (ok energy-out)
       )
-    )
-  )
 )
+
+;; (define-read-only (get-untapped-amount (land-id uint) (user principal))
+;;        (let (
+;;           (tapped-out (unwrap-panic (contract-call? .lands get-untapped-amount land-id user)))
+;;           (stored-energy (contract-call? .energy-storage get-stored-energy tx-sender))
+;;         )
+;;         (+ tapped-out stored-energy)
+;;     )
+;; )
 
 ;; Utility functions
 

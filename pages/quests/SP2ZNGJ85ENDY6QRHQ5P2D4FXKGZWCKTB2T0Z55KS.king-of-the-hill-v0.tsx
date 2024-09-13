@@ -85,10 +85,10 @@ export default function KingOfTheHill({ stxAddress, lands, mob }: Props) {
   const healthPercentage = mob.health * 100 / mob.maxHealth
 
   const router = useRouter();
-  const { get } = useSearchParams()
+  const searchParams = useSearchParams()
 
   const handleViewToggle = () => {
-    const newView = get('view') === 'quest' ? 'mob' : 'quest';
+    const newView = searchParams.get('view') === 'quest' ? 'mob' : 'quest';
     router.push(`?view=${newView}`, undefined, { shallow: true });
   }
 
@@ -107,7 +107,7 @@ export default function KingOfTheHill({ stxAddress, lands, mob }: Props) {
           className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-3xl"
         >
           <AnimatePresence mode="wait">
-            {get('view') === 'quest' ? (
+            {searchParams.get('view') === 'quest' ? (
               <motion.div
                 key="original-card"
                 initial="hidden"

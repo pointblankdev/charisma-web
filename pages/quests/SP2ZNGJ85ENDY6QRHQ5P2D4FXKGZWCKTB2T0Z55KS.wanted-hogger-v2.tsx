@@ -86,10 +86,12 @@ export default function WantedHogger({ stxAddress, lands, mob }: Props) {
   const healthPercentage = mob.health * 100 / mob.maxHealth
 
   const router = useRouter();
-  const { get } = useSearchParams()
+
+  // use seach params to toggle between mob and quest view
+  const searchParams = useSearchParams()
 
   const handleViewToggle = () => {
-    const newView = get('view') === 'quest' ? 'mob' : 'quest';
+    const newView = searchParams.get('view') === 'quest' ? 'mob' : 'quest';
     router.push(`?view=${newView}`, undefined, { shallow: true });
   }
 
@@ -109,7 +111,7 @@ export default function WantedHogger({ stxAddress, lands, mob }: Props) {
           className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl"
         >
           <AnimatePresence mode="wait">
-            {get('view') === 'quest' ? (
+            {searchParams.get('view') === 'quest' ? (
               <motion.div
                 key="original-card"
                 initial="hidden"
@@ -258,7 +260,7 @@ export default function WantedHogger({ stxAddress, lands, mob }: Props) {
 
                         className="z-10 h-[4.5rem] w-[4.5rem] absolute top-[32px] left-[60px] transform scale-x-[-1] rounded-full"
                       />
-                      <div className="z-20 top-[79.2px] left-[59.8px] absolute px-1 font-semibold text-center min-w-6 rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
+                      <div className="z-20 top-[79.2px] left-[56px] absolute px-1 font-semibold text-center min-w-6 rounded-full text-md md:text-base lg:text-sm bg-transparent text-primary-foreground backdrop-blur-[4px]" >
                         {mob.level}
                       </div>
                     </> : ''}
