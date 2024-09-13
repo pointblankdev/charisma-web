@@ -73,7 +73,12 @@ function TokenBalances({ data }: Props) {
     return numeral(tokenAmount * token?.price).format('$0,0.00')
   }
 
-  const lands = data.lands.sort((a: any, b: any) => (a.id || 999) - (b.id || 999))
+//   const lands = data.lands.sort((a: any, b: any) => (a.id || 999) - (b.id || 999))
+
+  // Filter lands to show only those with a positive balance
+  const filteredLands = data.lands
+    .filter((land: any) => getTokenAmountWithDecimals(land) > 0)
+    .sort((a: any, b: any) => (a.id || 999) - (b.id || 999));
 
   return (
     <Card>
@@ -92,7 +97,7 @@ function TokenBalances({ data }: Props) {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {lands.map((land: any) => (
+            {filteredLands.map((land: any) => (
               <TableRow key={land.id}>
                 <TableCell className="sm:table-cell">
                   <Image
