@@ -64,7 +64,17 @@ export async function updateUserWithWallet(
 }
 
 export async function getLands(): Promise<any> {
-  return await kv.smembers('lands');
+  try { // I was getting error when a specific token is searched hence why I added the try catch block
+    const landData = await kv.smembers('lands');
+    if (!landData) {
+      throw new Error(`No data found for land`);
+    }
+    return landData;
+  } catch (error) {
+    console.error('Error fetching land data:', error);
+  }
+
+  // return await kv.smembers('lands');
 }
 
 export async function addLand(ca: string): Promise<any> {
