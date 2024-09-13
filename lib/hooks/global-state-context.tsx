@@ -6,7 +6,6 @@ import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useAccount } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 
-
 const socketUrl = "https://api.mainnet.hiro.so";
 const sc = new StacksApiSocketClient({ url: socketUrl });
 
@@ -21,6 +20,7 @@ interface GlobalState {
     setToken: (token: any) => void;
     storedEnergy: number;
     setStoredEnergy: (amount: number) => void;
+    updateTokenEnergy: (landId: string, energy: number) => void
 }
 
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
@@ -45,12 +45,20 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         [key: string]: LandData;
     }
 
+    // Function to update energy of a specific token in the lands state
+    const updateTokenEnergy = (landId: string, energy: number) => {
+        setLands((prevLands: LandState) => {
+            const updatedLands = { ...prevLands };
+            if (updatedLands[landId]) {
+                updatedLands[landId].energy = energy;
+            }
+            return updatedLands;
+        });
+    };
 
     useEffect(() => {
-
         const getLandData = async () => {
             if (stxAddress) {
-
                 const lastLandId = await getLastLandId()
                 const stakedTokens = Array.from({ length: lastLandId }, (_, i) => i + 1)
 
@@ -71,19 +79,31 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
                 setLands(newLandState)
             }
-        }
-        getLandData()
-    }, [stxAddress, setLands])
+        };
+
+        getLandData();
+    }, [stxAddress, setLands]);
 
     useEffect(() => {
-
-        sc.subscribeBlocks(block => {
+        sc.subscribeBlocks((block) => {
             setBlock(block as any)
             setTapped({})
             toast({
                 title: "New Block",
                 description: `Stacks block ${block.height} has been mined.`,
             })
+    
+            // When a new block is detected, re-fetch energy for all lands
+            const stakedTokens = Object.keys(lands);
+            stakedTokens.forEach((landId) => {
+                getClaimableAmount(parseInt(landId), stxAddress!)
+                    .then((energy) => {
+                        updateTokenEnergy(landId, energy); // Update the energy for each token
+                    })
+                    .catch((error) => {
+                        console.error(`Error updating energy for landId ${landId}:`, error);
+                    });
+            });
         });
 
         const getBlockData = async () => {
@@ -96,12 +116,11 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return () => {
             sc.unsubscribeBlocks()
         };
-    }, [setBlock])
-
-
+    }, [lands, stxAddress, setBlock, toast]);
+    
 
     return (
-        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped, token, setToken, storedEnergy, setStoredEnergy }}>
+        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped, token, setToken, storedEnergy, setStoredEnergy, updateTokenEnergy }}>
             {children}
         </GlobalStateContext.Provider>
     );
