@@ -70,7 +70,7 @@ export default function Leaderboard({ holders, expTotalSupply }: any) {
                             onChange={(e) => setSearchTerm(e.target.value)}
                             className="w-full"
                         />
-                        <Button onClick={() => setSearchTerm("")}>Clear</Button>
+                        <Button variant={'ghost'} onClick={() => setSearchTerm("")} className="text-muted-foreground">Clear</Button>
                     </div>
                 </div>
             </CardHeader>
