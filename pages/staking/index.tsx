@@ -47,6 +47,7 @@ import { useOpenContractDeploy } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import _ from 'lodash';
 import { PiScales, PiScalesDuotone, PiScalesLight } from 'react-icons/pi';
+import { Land } from '@lib/db-providers/kv.types';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
@@ -82,7 +83,7 @@ type Props = {
   proposals: any[];
 };
 
-export default function StakingIndex({ lands }: Props) {
+export default function StakingIndex({ lands, proposals }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLands, setFilteredLands] = useState(lands);
 
@@ -131,7 +132,7 @@ export default function StakingIndex({ lands }: Props) {
                 />
               </div>
             </div>
-          </div
+          </div>
           <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
             <Card
               className={cn(
@@ -225,7 +226,7 @@ export default function StakingIndex({ lands }: Props) {
 
           </div>
           <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
-            {proposals.map((land) => {
+            {proposals.map((land: Land) => {
               return (
                 <Card key={land.wraps.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
                   <Link href={`staking/${land.wraps.ca}`} className='w-full'>

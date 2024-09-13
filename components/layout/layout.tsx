@@ -22,7 +22,7 @@ import {
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuLabel,
-  DropdownMenuSeparator
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@components/ui/dropdown-menu';
 import spiral from '@public/quests/memobots/spiral.gif';
