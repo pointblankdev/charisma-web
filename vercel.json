@@ -10,7 +10,7 @@
         },
         {
             "path": "/api/v0/crons/stimulate",
-            "schedule": "* 0 * * *"
+            "schedule": "30 * * * *"
         },
         {
             "path": "/api/v0/crons/try-reset-epochs",
