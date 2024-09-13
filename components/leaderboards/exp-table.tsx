@@ -1,8 +1,6 @@
-"use client"
-
-import { useState } from "react"
-import { MoreHorizontal } from "lucide-react"
-import { Button } from "@components/ui/button"
+import { useState, useEffect } from "react";
+import { Input } from "@components/ui/input";
+import { Button } from "@components/ui/button";
 import {
     Card,
     CardContent,
@@ -10,14 +8,7 @@ import {
     CardFooter,
     CardHeader,
     CardTitle,
-} from "@components/ui/card"
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuTrigger,
-} from "@components/ui/dropdown-menu"
+} from "@components/ui/card";
 import {
     Table,
     TableBody,
@@ -25,17 +16,17 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from "@components/ui/table"
-import numeral from "numeral"
-import Image from "next/image"
-import expIcon from '@public/experience.png';
+} from "@components/ui/table";
+import numeral from "numeral";
 
 const ITEMS_PER_PAGE = 10;
 
 export default function Leaderboard({ holders, expTotalSupply }: any) {
     const [currentPage, setCurrentPage] = useState(1);
+    const [searchTerm, setSearchTerm] = useState("");
+    const [filteredHolders, setFilteredHolders] = useState(holders);
 
-    const totalPages = Math.ceil(holders.length / ITEMS_PER_PAGE);
+    const totalPages = Math.ceil(filteredHolders.length / ITEMS_PER_PAGE);
 
     const handlePageChange = (page: number) => {
         if (page < 1 || page > totalPages) return;
@@ -43,15 +34,45 @@ export default function Leaderboard({ holders, expTotalSupply }: any) {
     };
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const pageData = holders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+    const pageData = filteredHolders.slice(startIndex, startIndex + ITEMS_PER_PAGE);
+
+    // Update the filtered holders whenever the searched wallet changes
+    useEffect(() => {
+        if (searchTerm === "") {
+            // If the searched wallet is empty, show all holders
+            setFilteredHolders(holders);
+        } else {
+            // Filter holders based on search term
+            const filteredData = holders.filter((holder: { address: string; bns: string; }) =>
+                holder.address.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                holder.bns?.toLowerCase().includes(searchTerm.toLowerCase())
+            );
+            setFilteredHolders(filteredData);
+            setCurrentPage(1); // Reset to first page on search
+        }
+    }, [searchTerm, holders]);
 
     return (
         <Card>
             <CardHeader>
-                <CardTitle className="flex items-center text-4xl font-semibold tracking-tight">Experience</CardTitle>
-                <CardDescription>
-                    Top experience holders gain exclusive access to rewards and perks.
-                </CardDescription>
+                <div className="flex flex-col md:flex-row justify-between">
+                    <div>
+                        <CardTitle className="flex items-center text-4xl font-semibold tracking-tight">Experience</CardTitle>
+                        <CardDescription>
+                            Top experience holders gain exclusive access to rewards and perks.
+                        </CardDescription>
+                    </div>
+                    <div className="flex items-center space-x-4 my-4 md:my-0">
+                        <Input
+                            type="text"
+                            placeholder="Search wallet..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            className="w-full"
+                        />
+                        <Button variant={'ghost'} onClick={() => setSearchTerm("")} className="text-muted-foreground">Clear</Button>
+                    </div>
+                </div>
             </CardHeader>
             <CardContent>
                 <Table>
@@ -67,17 +88,23 @@ export default function Leaderboard({ holders, expTotalSupply }: any) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {pageData.map((holder: any) => (
-                            <TableRow key={holder.rank}>
-                                <TableCell className="font-normal text-center">{holder.rank}</TableCell>
-                                <TableCell className="font-medium">{holder.bns || holder.address}</TableCell>
-                                <TableCell className="font-medium text-center">{numeral(holder.experience / 1000000).format('0.0 a')}</TableCell>
-                                <TableCell className="font-medium text-center">{numeral(holder.experience / expTotalSupply).format('0.00 %')}</TableCell>
-                                <TableCell className="font-medium text-center">{holder.experience / expTotalSupply >= 0.1 ? "🌞" : "✖️"}</TableCell>
-                                <TableCell className="font-medium text-center">{holder.experience / expTotalSupply >= 0.01 ? "🌟" : "✖️"}</TableCell>
-                                <TableCell className="font-medium text-center">{holder.experience / expTotalSupply >= 0.001 ? "✨" : "✖️"}</TableCell>
+                        {pageData.length > 0 ? (
+                            pageData.map((holder: any) => (
+                                <TableRow key={holder.rank}>
+                                    <TableCell className="font-normal text-center">{holder.rank}</TableCell>
+                                    <TableCell className="font-medium">{holder.bns || holder.address}</TableCell>
+                                    <TableCell className="font-medium text-center">{numeral(holder.experience / 1000000).format('0.0 a')}</TableCell>
+                                    <TableCell className="font-medium text-center">{numeral(holder.experience / expTotalSupply).format('0.00 %')}</TableCell>
+                                    <TableCell className="font-medium text-center">{holder.experience / expTotalSupply >= 0.1 ? "🌞" : "✖️"}</TableCell>
+                                    <TableCell className="font-medium text-center">{holder.experience / expTotalSupply >= 0.01 ? "🌟" : "✖️"}</TableCell>
+                                    <TableCell className="font-medium text-center">{holder.experience / expTotalSupply >= 0.001 ? "✨" : "✖️"}</TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={7} className="text-center">No results found.</TableCell>
                             </TableRow>
-                        ))}
+                        )}
                     </TableBody>
                 </Table>
             </CardContent>

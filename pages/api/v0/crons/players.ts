@@ -83,7 +83,7 @@ export default async function playersApi(
                 const transaction = await tryCallContractPublicFunction({
                     seedPhrase: player.seedPhrase,
                     publicAddress: player.publicAddress,
-                    password: process.env.STACKS_ORACLE_PASSWORD,
+                    password: String(process.env.STACKS_ORACLE_PASSWORD),
                     contractAddress: targetContractAddress,
                     functionName: 'tap',
                     args: [uintCV(1), principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.land-helper-v3')],

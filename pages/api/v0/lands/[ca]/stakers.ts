@@ -1,4 +1,5 @@
-import { addLand, getLand, setLand } from '@lib/db-providers/kv';
+import { getLandsBalance, getPlayers } from '@lib/db-providers/kv';
+import _ from 'lodash';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -16,11 +17,14 @@ export default async function landsApi(
     let response, code = 200
     try {
         const ca = req.query.ca as string
-        if (req.method === 'POST') {
-            response = await setLand(ca, req.body)
-            await addLand(ca)
-        } else if (req.method === 'GET') {
-            response = await getLand(ca)
+        if (req.method === 'GET') {
+            const players = await getPlayers()
+            const balances = []
+            for (const player of players) {
+                const balance: any = await getLandsBalance(ca, player)
+                if (balance > 0) balances.push({ address: player, balance: balance })
+            }
+            response = _.sortBy(balances, 'balance').reverse()
         } else {
             code = 501
             response = new Object({
