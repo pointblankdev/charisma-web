@@ -37,53 +37,6 @@ describe('metadata api', () => {
         console.log(response)
     })
 
-    it('should get creature data', async () => {
-        const response = await getGlobalState('creatures:1')
-        console.log(response)
-        expect(response).toBeDefined()
-    });
-
-    it('should set creatures 1 data into global state', async () => {
-        const response = await cacheGlobalState('creatures:1', {
-            id: 1,
-            title: 'Farmers',
-            description: 'Farmers are the backbone of the economy.',
-            cost: 1000000,
-            power: 5
-        })
-        console.log(response)
-    })
-
-    it('should set creatures 2 data into global state', async () => {
-        const response = await cacheGlobalState('creatures:2', {
-            id: 2,
-            title: 'Blacksmiths',
-            cost: 1000000,
-            power: 5
-        })
-        console.log(response)
-    })
-
-    it('should set creatures 3 data into global state', async () => {
-        const response = await cacheGlobalState('creatures:3', {
-            id: 3,
-            title: 'Corgi Soldiers',
-            cost: 10000000,
-            power: 80
-        })
-        console.log(response)
-    })
-
-    it('should set creatures 4 data into global state', async () => {
-        const response = await cacheGlobalState('creatures:4', {
-            id: 4,
-            title: 'Alchemists',
-            cost: 10000000,
-            power: 25
-        })
-        console.log(response)
-    })
-
     it('should get lands', async () => {
         const response = await getLands()
         console.log(response)
@@ -95,7 +48,7 @@ describe('metadata api', () => {
     })
 
     it('should remove land', async () => {
-        const response = await removeLand('SP1Z92MPDQEWZXW36VX71Q25HK/F5K2EPCJ304F275.tokensoft-token-v4kr5skoysg')
+        const response = await removeLand('SP28FHT7VGBJ3B0584V1EVHED3MKTE1M8VQJDNB6R.rozar-stxcity')
         console.log(response)
     })
 
@@ -145,6 +98,11 @@ describe('metadata api', () => {
         const response = await getLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve')
         response.wraps.asset = 'FAIR'
         await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', response)
+        console.log(response)
+    })
+
+    it('should get something staking pool', async () => {
+        const response = await getLand('SP3MRT36YWK7R0SKFCQ1TDJB3Y3XBAVRFXPYBQ33E.Something-v420')
         console.log(response)
     })
 
@@ -430,18 +388,18 @@ describe('metadata api', () => {
 
     it('should update hogger health', async () => {
         const hogger = await getMob('hogger')
-        hogger.health = 0
+        // hogger.health = 0
         // hogger.maxHealth = 5900000
-        const response = await setMob('hogger', hogger)
-        console.log(response)
+        // const response = await setMob('hogger', hogger)
+        console.log(hogger)
     })
 
     it('should set hogger', async () => {
         const response = await setMob('hogger', {
-            level: 5,
-            health: 1005059,
-            maxHealth: 1700000,
-            regenRate: 50
+            level: 149,
+            health: 8426079,
+            maxHealth: 16000000,
+            regenRate: 1600
         })
         console.log(response)
     })
@@ -484,8 +442,16 @@ describe('nfts api', () => {
 
     // should get nft collection metadata
     it('should get nft collection metadata', async () => {
-        const response = await getNftCollectionMetadata('SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024')
+        const response = await getNftCollectionMetadata('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz')
         console.log(JSON.stringify(response, null, 2))
+    })
+
+    it('should update nft collection metadata (jumping pupperz)', async () => {
+        const data = await getNftCollectionMetadata('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz')
+        delete data.whitelisted
+        data.properties.whitelisted = true
+        await setNftCollectionMetadata('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz', data)
+        console.log(JSON.stringify(data, null, 2))
     })
 
     // should get nft item

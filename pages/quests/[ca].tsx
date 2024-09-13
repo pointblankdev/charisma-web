@@ -42,7 +42,7 @@ type Props = {
     contractAddress: `${string}.${string}`
 };
 
-export default function SpellScrollFireBolt({ stxAddress, lands, nftCollectionMetadata, contractAddress }: Props) {
+export default function QuestPage({ stxAddress, lands, nftCollectionMetadata, contractAddress }: Props) {
     const meta = {
         title: `Charisma | ${nftCollectionMetadata.name}`,
         description: nftCollectionMetadata.description.description,

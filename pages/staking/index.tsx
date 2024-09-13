@@ -10,7 +10,6 @@ import {
   DialogTrigger
 } from '@components/ui/dialog';
 import Page from '@components/page';
-import { META_DESCRIPTION } from '@lib/constants';
 import Layout from '@components/layout/layout';
 import { cn } from '@lib/utils';
 import Image from 'next/image';
@@ -38,34 +37,41 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useState } from 'react';
-import {
-  getContractSource,
-  getDecimals,
-  getSymbol,
-  getTokenURI,
-  getTotalSupply
-} from '@lib/stacks-api';
 import { PostConditionMode } from '@stacks/transactions';
+import { getContractSource, getDecimals, getSymbol, getTokenURI, getTotalSupply, getTransferFunction } from '@lib/stacks-api';
 import { setLandMetadata } from '@lib/user-api';
 import energyIcon from '@public/creatures/img/energy.png';
 import { track } from '@vercel/analytics';
 import { useAccount } from '@micro-stacks/react';
 import { useOpenContractDeploy } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
+import _ from 'lodash';
+import { PiScales, PiScalesDuotone, PiScalesLight } from 'react-icons/pi';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
   const landContractAddresses = await getLands()
 
-  const lands = []
+  let lands = []
+  const proposals = []
   for (const ca of landContractAddresses) {
     const metadata = await getLand(ca)
-    lands.push(metadata)
+    if (metadata.id) {
+      lands.push(metadata)
+    } else {
+      proposals.push(metadata)
+    }
   }
+
+  // if lands have 'cha' in the .wraps.ca, sort them to the top
+  lands = _.sortBy(lands, (land) => {
+    return land.wraps.ca.includes('cha') ? 0 : 1
+  })
 
   return {
     props: {
-      lands
+      lands,
+      proposals
     },
     revalidate: 60
   };
@@ -73,6 +79,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 type Props = {
   lands: any[];
+  proposals: any[];
 };
 
 export default function StakingIndex({ lands }: Props) {
@@ -124,35 +131,27 @@ export default function StakingIndex({ lands }: Props) {
                 />
               </div>
             </div>
-          </div>
-          <div className="grid grid-cols-1 gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-5">
+          </div
+          <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
             <Card
               className={cn(
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
               )}
             >
               <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
-                <div className="space-y-6 text-sm">
-                  <h3 className="text-lg font-bold">Stake Memecoins to Earn</h3>
-                  <div className="text-sm font-light">
-                    Stake your memecoins in a Stake-to-Earn pool to generate Energy with every
-                    block. The more you stake, the more Energy you accumulate, which can be used to
-                    unlock exclusive community rewards.
+                <div className="space-y-4 text-sm">
+                  <h3 className="text-sm sm:text-md font-bold">Stake Memecoins to Earn</h3>
+                  <div className="text-xs font-light">
+                    Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
                   </div>
-                  <div className="text-sm font-light">
-                    Energy is redeemable through Quests, where each memecoin community can offer
-                    their own tokens and NFTs on Charisma, purchaseable with Energy.
-                  </div>
-                  <div className="text-sm font-light">
-                    In addition, anyone can claim Charisma rewards through Quests, making your
-                    staked memecoins a gateway to both unique community offerings and broader
-                    ecosystem rewards.
+                  <div className="text-xs font-light">
+                    Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
                   </div>
                 </div>
 
-                <div className="w-full space-y-6 text-sm">
-                  <h3 className="text-lg font-bold">Submit your own token for Staking</h3>
-                  <div className="flex w-full">
+                <div className="w-full space-y-2 text-sm">
+                  <h3 className="text-xs font-bold hidden sm:flex">Submit your own token for Staking</h3>
+                  <div className='flex w-full'>
                     <CreateNewPool whitelistedContracts={lands} />
                   </div>
                 </div>
@@ -214,6 +213,54 @@ export default function StakingIndex({ lands }: Props) {
                   </Link>
                 </Card>
               );
+            })}
+          </div>
+          <div className='flex justify-between'>
+            <div className="space-y-1">
+              <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">New Proposals</h2>
+              <div className="flex items-center text-base text-muted-foreground">
+                Proposals for new staking pools that are pending approval.
+              </div>
+            </div>
+
+          </div>
+          <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
+            {proposals.map((land) => {
+              return (
+                <Card key={land.wraps.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
+                  <Link href={`staking/${land.wraps.ca}`} className='w-full'>
+                    <CardContent className='w-full p-0'>
+                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                        <div className='flex gap-2'>
+                          <div className='min-w-max'>
+                            {land.image ?
+                              <Image src={land.wraps.image} width={40} height={40} alt='guild-logo' className='w-10 h-10 rounded-full grow' />
+                              : <div className='w-10 h-10 bg-white border rounded-full' />
+                            }
+                          </div>
+                          <div className=''>
+                            <div className='text-sm font-semibold leading-none text-secondary'>
+                              {land.name}
+                            </div>
+                            <div className='mt-1 text-xs leading-tight font-fine text-secondary'>
+                              {land.description.description}
+                            </div>
+                          </div>
+                        </div>
+                      </CardHeader>
+                      <Image
+                        src={land.cardImage}
+                        height={1200}
+                        width={600}
+                        alt='land-featured-image'
+                        className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-80', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
+                      />
+                      <div className='absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30' />
+                      <div className='absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20' />
+                    </CardContent>
+                  </Link>
+                </Card>
+              )
             })}
           </div>
         </div>
@@ -315,16 +362,12 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
       .toLowerCase()
       .replace(/[^a-zA-Z0-9 ]/g, '')
       .replace(/\s+/g, '-')}`;
+    const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
+    const assetIdentifier = sourceCode.source.split('define-fungible-token')[1].split(' ')[1].split(')')[0]
 
-    const sourceCode = await getContractSource({
-      contractAddress: contractAddress.split('.')[0],
-      contractName: contractAddress.split('.')[1]
-    });
-    const assetIdentifier = sourceCode.source
-      .split('define-fungible-token')[1]
-      .split(' ')[1]
-      .split(')')[0];
-    const proposalName = `${stxAddress}.${safeName}`;
+    const transferFunction = await getTransferFunction(contractAddress)
+
+    const proposalName = `${stxAddress}.${safeName}`
 
     const landMetadata = {
       sip: 16,
@@ -345,7 +388,8 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
         asset: assetIdentifier,
         symbol: symbol,
         decimals: Number(decimals),
-        totalSupply: Number(totalSupply)
+        totalSupply: Number(totalSupply),
+        transferFunction: transferFunction
       },
       attributes: [
         {

@@ -15,6 +15,7 @@ import {
   cvToHex,
   hexToCV,
   makeContractCall,
+  makeSTXTokenTransfer,
   parseToCV,
   PostConditionMode,
   principalCV,
@@ -867,6 +868,20 @@ export async function getTxsFromMempool(contractAddress: string) {
   return transactions;
 }
 
+export async function sendStx({ seedPhrase, password, recipient, amount, fee }: any) {
+  const wallet = await generateWallet({ secretKey: seedPhrase, password });
+  const account = wallet.accounts[0];
+  const transaction = await makeSTXTokenTransfer({
+    recipient,
+    amount,
+    anchorMode: AnchorMode.Any,
+    senderKey: account.stxPrivateKey,
+    fee,
+  })
+  const broadcastResponse = await broadcastTransaction(transaction, network);
+  return broadcastResponse
+}
+
 export async function tryCallContractPublicFunction({
   seedPhrase,
   password,
@@ -876,7 +891,16 @@ export async function tryCallContractPublicFunction({
   fee,
   nonce,
   args
-}: any) {
+}: {
+  seedPhrase: string;
+  password: string;
+  publicAddress: string;
+  contractAddress: string;
+  functionName: string;
+  fee?: number;
+  nonce?: number;
+  args?: any[];
+}) {
   const txsInMempool = await getTxsFromMempool(contractAddress);
 
   const isInMempool = txsInMempool.some(
@@ -885,7 +909,7 @@ export async function tryCallContractPublicFunction({
   );
 
   if (!isInMempool) {
-    Logger.oracle({ 'players-job': { contractAddress, functionName, args } });
+    Logger.oracle({ 'is-in-mempool': { contractAddress, functionName, args } });
 
     const wallet = await generateWallet({ secretKey: seedPhrase, password });
 
@@ -1211,4 +1235,34 @@ export async function getLastLandId() {
   });
   const result = hexToCV((response as any).result);
   return Number(cvToJSON(result).value.value);
+}
+
+export async function getTransferFunction(contractAddress: string) {
+  const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
+  const code = sourceCode.source
+  // Regex to match the start of the transfer function
+  const transferStartRegex = /\(define-public\s+\(\s*transfer\s/;
+
+  const startMatch = transferStartRegex.exec(code);
+  if (!startMatch) {
+    return "Transfer function not found";
+  }
+
+  const startIndex = startMatch.index;
+  let parenthesesCount = 0;
+  let endIndex = startIndex;
+
+  // Parse through the code, keeping track of parentheses
+  for (let i = startIndex; i < code.length; i++) {
+    if (code[i] === '(') parenthesesCount++;
+    if (code[i] === ')') parenthesesCount--;
+
+    if (parenthesesCount === 0) {
+      endIndex = i + 1;
+      break;
+    }
+  }
+
+  // Extract the function
+  return code.substring(startIndex, endIndex).trim();
 }

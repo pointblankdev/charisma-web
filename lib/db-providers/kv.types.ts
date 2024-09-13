@@ -19,6 +19,7 @@ export interface Land {
     symbol: string;
     decimals: number;
     totalSupply: number;
+    transferFunction: string;
   };
   attributes: {
     trait_type: string;

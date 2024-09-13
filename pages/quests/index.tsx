@@ -161,7 +161,7 @@ export default function QuestsIndex({ quests }: Props) {
               </p>
             </div>
           </div>
-          <div className="grid gap-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+          <div className="">
             <Card
               className={cn(
                 'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
@@ -202,134 +202,134 @@ export default function QuestsIndex({ quests }: Props) {
                 </div>
               </div>
             </Card>
-            {quests.filter(q => q.featured).map((quest: any, i: number) => {
-              return (
-                <Card
-                  key={i}
-                  className={cn(
-                    'bg-black sm:col-span-3 text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
-                  )}
-                >
-                  <Link href={`/quests/${quest.ca}`} className="w-full">
-                    <CardContent className="w-full p-0">
-                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
-                        <div className="flex justify-between align-top">
-                          <div className="flex gap-2">
-                            <div className="min-w-max">
-                              {quest.image ? (
-                                <Image
-                                  src={quest.image}
-                                  width={40}
-                                  height={40}
-                                  alt="guild-logo"
-                                  className="w-10 h-10 border rounded-md grow"
-                                />
-                              ) : (
-                                <div className="w-10 h-10 bg-white border rounded-full" />
-                              )}
+            <div className="grid gap-2 lg:grid-cols-3 xl:grid-cols-4">
+              {quests.filter(q => q.featured).map((quest: any, i: number) => {
+                return (
+                    <Card
+                    key={i}
+                    className={cn(
+                        'bg-black sm:col-span-3 text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+                    )}
+                    >
+                    <Link href={`/quests/${quest.ca}`} className="w-full">
+                        <CardContent className="w-full p-0">
+                        <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                            <div className="flex justify-between align-top">
+                            <div className="flex gap-2">
+                                <div className="min-w-max">
+                                {quest.image ? (
+                                    <Image
+                                    src={quest.image}
+                                    width={40}
+                                    height={40}
+                                    alt="guild-logo"
+                                    className="w-10 h-10 rounded-md border grow"
+                                    />
+                                ) : (
+                                    <div className="w-10 h-10 bg-white border rounded-full" />
+                                )}
+                                </div>
+                                <div className="">
+                                <div className="text-sm font-semibold leading-none text-secondary">
+                                    {quest.name}
+                                </div>
+                                <div className="mt-1 text-xs leading-tight font-fine text-secondary">
+                                    {quest.description}
+                                </div>
+                                </div>
                             </div>
-                            <div className="">
-                              <div className="text-sm font-semibold leading-none text-secondary">
-                                {quest.name}
-                              </div>
-                              <div className="mt-1 text-xs leading-tight font-fine text-secondary">
-                                {quest.description}
-                              </div>
+                            {/* <div className="flex flex-col items-end leading-[1.1]">
+                                <div className="text-white text-sm font-semibold">{quest.ticker}</div>
+                            </div> */}
                             </div>
-                          </div>
-                          {/* <div className="flex flex-col items-end leading-[1.1]">
-                            <div className="text-sm font-semibold text-white">{quest.ticker}</div>
-                          </div> */}
-                        </div>
-                      </CardHeader>
-                      <Image
-                        src={quest.cardImage}
-                        height={1200}
-                        width={1200}
-                        alt="quest-featured-image"
-                        className={cn(
-                          'w-full object-cover transition-all group-hover/card:scale-105',
-                          'aspect-[2/3]',
-                          'sm:aspect-[2/1]',
-                          'opacity-80',
-                          'group-hover/card:opacity-100',
-                          'flex',
-                          'z-10',
-                          'relative'
-                        )}
-                      />
-                      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
-                    </CardContent>
-                  </Link>
+                        </CardHeader>
+                        <Image
+                            src={quest.cardImage}
+                            height={1200}
+                            width={1200}
+                            alt="quest-featured-image"
+                            className={cn(
+                            'w-full object-cover transition-all group-hover/card:scale-105',
+                            'aspect-[2/3]',
+                            'sm:aspect-[2/1]',
+                            'opacity-80',
+                            'group-hover/card:opacity-100',
+                            'flex',
+                            'z-10',
+                            'relative'
+                            )}
+                        />
+                        <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
+                        </CardContent>
+                    </Link>
 
-                </Card>
-              );
-            })}
-            {quests.filter(q => !q.featured).map((quest: any, i: number) => {
-              return (
-                <Card
-                  key={i}
-                  className={cn(
-                    'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
-                  )}
-                >
-                  <Link href={`/quests/${quest.ca}`} className="w-full">
-                    <CardContent className="w-full p-0">
-                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
-                        <div className="flex justify-between align-top">
-                          <div className="flex gap-2">
-                            <div className="min-w-max">
-                              {quest.image ? (
-                                <Image
-                                  src={quest.image}
-                                  width={40}
-                                  height={40}
-                                  alt="guild-logo"
-                                  className="w-10 h-10 border rounded-md grow"
-                                />
-                              ) : (
-                                <div className="w-10 h-10 bg-white border rounded-full" />
-                              )}
+                    </Card>
+                );
+                })}
+                {quests.filter(q => !q.featured).map((quest: any, i: number) => {
+                return (
+                    <Card
+                    key={i}
+                    className={cn(
+                        'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+                    )}
+                    >
+                    <Link href={`/quests/${quest.ca}`} className="w-full">
+                        <CardContent className="w-full p-0">
+                        <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                            <div className="flex justify-between align-top">
+                            <div className="flex gap-2">
+                                <div className="min-w-max">
+                                {quest.image ? (
+                                    <Image
+                                    src={quest.image}
+                                    width={40}
+                                    height={40}
+                                    alt="guild-logo"
+                                    className="w-10 h-10 rounded-md border grow"
+                                    />
+                                ) : (
+                                    <div className="w-10 h-10 bg-white border rounded-full" />
+                                )}
+                                </div>
+                                <div className="">
+                                <div className="text-sm font-semibold leading-none text-secondary">
+                                    {quest.name}
+                                </div>
+                                <div className="mt-1 text-xs leading-tight font-fine text-secondary">
+                                    {quest.description}
+                                </div>
+                                </div>
                             </div>
-                            <div className="">
-                              <div className="text-sm font-semibold leading-none text-secondary">
-                                {quest.name}
-                              </div>
-                              <div className="mt-1 text-xs leading-tight font-fine text-secondary">
-                                {quest.description}
-                              </div>
+                            {/* <div className="flex flex-col items-end leading-[1.1]">
+                                <div className="text-white text-sm font-semibold">{quest.ticker}</div>
+                            </div> */}
                             </div>
-                          </div>
-                          {/* <div className="flex flex-col items-end leading-[1.1]">
-                            <div className="text-sm font-semibold text-white">{quest.ticker}</div>
-                          </div> */}
-                        </div>
-                      </CardHeader>
-                      <Image
-                        src={quest.cardImage}
-                        height={1200}
-                        width={1200}
-                        alt="quest-featured-image"
-                        className={cn(
-                          'w-full object-cover transition-all group-hover/card:scale-105',
-                          'aspect-[2/3]',
-                          'opacity-80',
-                          'group-hover/card:opacity-100',
-                          'flex',
-                          'z-10',
-                          'relative'
-                        )}
-                      />
-                      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
-                    </CardContent>
-                  </Link>
-
-                </Card>
-              );
-            })}
-
+                        </CardHeader>
+                        <Image
+                            src={quest.cardImage}
+                            height={1200}
+                            width={1200}
+                            alt="quest-featured-image"
+                            className={cn(
+                            'w-full object-cover transition-all group-hover/card:scale-105',
+                            'aspect-[2/3]',
+                            'opacity-80',
+                            'group-hover/card:opacity-100',
+                            'flex',
+                            'z-10',
+                            'relative'
+                            )}
+                        />
+                        <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
+                        <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
+                        </CardContent>
+                    </Link>
+                    </Card>
+                   );
+                })}
+            </div>
           </div>
         </div>
       </Layout>
