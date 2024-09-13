@@ -18,10 +18,10 @@ export default async function operatingCostsSwapAPI(
     const response: any = {}
     try {
         const password = String(process.env.STACKS_ORACLE_PASSWORD);
-        const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY);
+        const seedPhrase = String(process.env.STACKS_ORACLE_SECRET_KEY);
         const transactions = await tryCallContractPublicFunction({
             password,
-            secretKey,
+            seedPhrase,
             address: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-path2',
             functionName: 'do-swap',
             args: [
