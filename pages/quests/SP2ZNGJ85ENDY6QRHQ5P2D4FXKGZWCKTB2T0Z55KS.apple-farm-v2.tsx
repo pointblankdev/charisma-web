@@ -18,43 +18,57 @@ import { cn } from '@lib/utils';
 import Link from 'next/link';
 import Typewriter from 'typewriter-effect';
 import { motion } from 'framer-motion';
-import journeyOfDiscovery from '@public/quests/journey-of-discovery.png'
-import experience from '@public/experience.png'
-import schaImg from '@public/liquid-staked-charisma.png'
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogTitle, DialogTrigger } from '@components/ui/dialog';
+import journeyOfDiscovery from '@public/quests/journey-of-discovery.png';
+import experience from '@public/experience.png';
+import schaImg from '@public/liquid-staked-charisma.png';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogTitle,
+  DialogTrigger
+} from '@components/ui/dialog';
 import { AlertDialogHeader } from '@components/ui/alert-dialog';
 import { getLand, getLands, getNftCollectionMetadata } from '@lib/db-providers/kv';
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { uintCV, contractPrincipalCV } from 'micro-stacks/clarity';
-import { FungibleConditionCode, makeStandardFungiblePostCondition, makeStandardSTXPostCondition } from '@stacks/transactions';
-import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
-import stxIcon from '@public/stx-logo.png'
-import energyIcon from '@public/lands/img/energy.png'
+import {
+  FungibleConditionCode,
+  makeStandardFungiblePostCondition,
+  makeStandardSTXPostCondition
+} from '@stacks/transactions';
+import {
+  getDehydratedStateFromSession,
+  parseAddress
+} from '@components/stacks-session/session-helpers';
+import stxIcon from '@public/stx-logo.png';
+import energyIcon from '@public/lands/img/energy.png';
 import TokenSelectDialog from '@components/quest/token-select-dialog';
-import abundantOrchard from '@public/quests/abundant-orchard/apple-orchard.png'
-import charismaIcon from '@public/charisma.png'
+import abundantOrchard from '@public/quests/abundant-orchard/apple-orchard.png';
+import charismaIcon from '@public/charisma.png';
 
 export async function getServerSideProps(ctx: GetServerSidePropsContext) {
   // get all lands from db
-  const landContractAddresses = await getLands()
+  const landContractAddresses = await getLands();
 
-  const lands = []
+  const lands = [];
   for (const ca of landContractAddresses) {
-    const metadata = await getLand(ca)
-    lands.push(metadata)
+    const metadata = await getLand(ca);
+    lands.push(metadata);
   }
 
-  const dehydratedState = await getDehydratedStateFromSession(ctx) as string
-  const stxAddress = await parseAddress(dehydratedState)
+  const dehydratedState = (await getDehydratedStateFromSession(ctx)) as string;
+  const stxAddress = await parseAddress(dehydratedState);
 
   return {
     props: {
       dehydratedState,
       stxAddress,
-      lands,
+      lands
     }
   };
-};
+}
 
 type Props = {
   stxAddress: string;
@@ -63,12 +77,12 @@ type Props = {
 
 export default function SpellScrollFireBolt({ lands, stxAddress }: Props) {
   const meta = {
-    title: "Charisma | Harvest the Apple Farm",
-    description: "The more tokens you stake, the greater the harvest.",
+    title: 'Charisma | Harvest the Apple Farm',
+    description: 'The more tokens you stake, the greater the harvest.',
     image: '/quests/pixel-rozar/pixel-rozar.png'
   };
 
-  const title = "Harvest the Apple Farm";
+  const title = 'Harvest the Apple Farm';
   const subtitle = 'The more tokens you stake, the greater the harvest.';
 
   const fadeIn = {
@@ -102,7 +116,7 @@ export default function SpellScrollFireBolt({ lands, stxAddress }: Props) {
               </div>
             </CardHeader>
             <CardContent className="z-20 flex-grow p-4 space-y-4">
-              <section className='grid grid-cols-1 sm:grid-cols-2 gap-4'>
+              <section className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div className="z-20">
                   <div className="z-30 text-xl font-semibold">Rewards</div>
                   <div className="z-30 mb-4 text-sm font-fine text-foreground">
@@ -125,7 +139,9 @@ export default function SpellScrollFireBolt({ lands, stxAddress }: Props) {
                 <div className="quest-details z-20 row-span-2 mt-8 sm:mt-0">
                   <h2 className="z-30 text-xl font-semibold mb-4">Quest Description</h2>
                   <div className="z-30 font-fine text-foreground leading-tight">
-                    <p className="mb-2 max-w-sm">Welcome to the Apple Farm, where you can harvest tokens by spending energy.</p>
+                    <p className="mb-2 max-w-sm">
+                      Welcome to the Apple Farm, where you can harvest tokens by spending energy.
+                    </p>
 
                     <h3 className="font-semibold mt-4 mb-2">Core Mechanics:</h3>
                     <ul className="list-disc list-inside mb-4 text-sm">
@@ -145,7 +161,6 @@ export default function SpellScrollFireBolt({ lands, stxAddress }: Props) {
                       <li>Accumulate experience to boost efficiency over time</li>
                       <li>Harvest frequently and restake into sCHA</li>
                     </ul>
-
                   </div>
                 </div>
                 <div className="z-20 mt-4">
@@ -183,13 +198,13 @@ export default function SpellScrollFireBolt({ lands, stxAddress }: Props) {
                 </Button>
               </Link>
 
-              {stxAddress &&
+              {stxAddress && (
                 <TokenSelectDialog
                   lands={lands}
                   contractId={'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.apple-farm-v2'}
                   buttonText={'Harvest Apples'}
                 />
-              }
+              )}
             </CardFooter>
             <Image
               src={abundantOrchard}

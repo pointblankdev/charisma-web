@@ -102,18 +102,18 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
                     {lands.map((land: any) => (
                         <div 
                             key={land.id} 
-                            onClick={() => {
-                                if (land.whitelisted && !tapped[land.id] && land.balances?.energy) { // to ensure click is triggered for only whiltelisted token and not just tapped
-                                    tap(land.id);
-                                }
-                            }}
+                            // onClick={() => {
+                            //     if (land.whitelisted && !tapped[land.id] && land.balances?.energy) { // to ensure click is triggered for only whiltelisted token and not just tapped
+                            //         tap(land.id);
+                            //     }
+                            // }}
                             className={`relative flex flex-col items-center space-y-2 group/token ${!land.whitelisted || tapped[land.id] ? 'opacity-20 grayscale' : 'cursor-pointer'}`}>
                             <Image
                                 alt={'token-logo'}
                                 src={land.image}
                                 width={100}
                                 height={100}
-                                // onClick={() => (tap(land.id))}
+                                onClick={() => (tap(land.id))}
                                 className={`w-24 h-24 z-20 border rounded-full ${(land.whitelisted && !tapped[land.id] && land.balances?.energy) && 'group-hover/token:z-40 group-hover/token:shadow-xl group-hover/token:scale-110 transition-all'}`}
                             />
                             {land.balances?.energy > 0 && (
