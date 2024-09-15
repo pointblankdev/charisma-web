@@ -30,7 +30,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
         if (lands.length > 0) {
             for (const land of lands) {
                 land.balances = landEnergy[land.id];
-                console.log(`Land ID: ${land.id}, Energy: ${land.balances.energy}, Whitelisted: ${land.whitelisted}, Tapped: ${tapped[land.id]}`);
+                console.log(`Land ID: ${land.id}, Energy: ${land.balances?.energy}, Whitelisted: ${land.whitelisted}, Tapped: ${tapped[land.id]}`);
             }
         }
     }, [lands, landEnergy, tapped]);
