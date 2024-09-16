@@ -86,6 +86,7 @@ type Props = {
 export default function StakingIndex({ lands, proposals }: Props) {
   const [searchQuery, setSearchQuery] = useState('');
   const [filteredLands, setFilteredLands] = useState(lands);
+  const [activeTab, setActiveTab] = useState('active');
 
   const handleSearch = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value.toLowerCase();
@@ -109,161 +110,219 @@ export default function StakingIndex({ lands, proposals }: Props) {
       <SkipNavContent />
       <Layout>
         <div className="m-2 space-y-6 sm:container sm:mx-auto sm:py-10">
-          <div className="flex justify-between">
-            <div className="flex flex-col md:flex-row justify-between w-full">
-              <div className="space-y-1">
-                <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">
-                  <>Stake-to-Earn</>
-                  <Image alt="energy-icon" src={energyIcon} className="mx-2 rounded-full w-9 h-9" />
-                </h2>
-                <div className="flex items-center text-base text-muted-foreground">
-                  The more you stake, the more energy you earn on every block– used to unlock
-                  community rewards.
-                </div>
-              </div>
-              {/* Search Bar */}
-              <div className="mt-4 md:mt-0">
-                <Input
-                  type="text"
-                  placeholder="Search tokens..."
-                  value={searchQuery}
-                  onChange={handleSearch}
-                  className="w-full"
-                />
-              </div>
-            </div>
-          </div>
-          <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
-            <Card
-              className={cn(
-                'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
-              )}
+          {/* Tabs */}
+          <div className="flex space-x-4 border-b">
+            <button
+              onClick={() => setActiveTab('active')}
+              className={`px-4 py-2 font-semibold ${
+                activeTab === 'active' ? 'border-b-2 border-red-500' : ''
+              }`}
             >
-              <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
-                <div className="space-y-4 text-sm">
-                  <h3 className="text-sm sm:text-md font-bold">Stake Memecoins to Earn</h3>
-                  <div className="text-xs font-light">
-                    Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
-                  </div>
-                  <div className="text-xs font-light">
-                    Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
-                  </div>
-                </div>
+              Active Proposals
+            </button>
+            <button
+              onClick={() => setActiveTab('new')}
+              className={`px-4 py-2 font-semibold ${
+                activeTab === 'new' ? 'border-b-2 border-red-500' : ''
+              }`}
+            >
+              New Proposals
+            </button>
+          </div>
 
-                <div className="w-full space-y-2 text-sm">
-                  <h3 className="text-xs font-bold hidden sm:flex">Submit your own token for Staking</h3>
-                  <div className='flex w-full'>
-                    <CreateNewPool whitelistedContracts={lands} />
+          {/* Active Proposals */}
+          {activeTab === 'active' && (
+            <div>
+              <div className="flex justify-between">
+                <div className="flex flex-col md:flex-row justify-between w-full mb-10">
+                  <div className="space-y-1">
+                    <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">
+                      <>Stake-to-Earn</>
+                      <Image
+                        alt="energy-icon"
+                        src={energyIcon}
+                        className="mx-2 rounded-full w-9 h-9"
+                      />
+                    </h2>
+                    <div className="flex items-center text-base text-muted-foreground">
+                      The more you stake, the more energy you earn on every
+                      block– used to unlock community rewards.
+                    </div>
+                  </div>
+                  <div className="mt-4 md:mt-0">
+                    <Input
+                      type="text"
+                      placeholder="Search tokens..."
+                      value={searchQuery}
+                      onChange={handleSearch}
+                      className="w-full"
+                    />
                   </div>
                 </div>
               </div>
-            </Card>
-            {filteredLands.map(land => {
-              return (
+
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                 <Card
-                  key={land.wraps.ca}
-                  className={cn(
-                    'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
-                  )}
+                   className={cn(
+                        'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+                    )}
                 >
-                  <Link href={`staking/${land.wraps.ca}`} className="w-full">
-                    <CardContent className="w-full p-0">
-                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
-                        <div className="flex gap-2">
-                          <div className="min-w-max">
-                            {land.image ? (
-                              <Image
-                                src={land.wraps.image}
-                                width={40}
-                                height={40}
-                                alt="guild-logo"
-                                className="w-10 h-10 rounded-full grow"
-                              />
-                            ) : (
-                              <div className="w-10 h-10 bg-white border rounded-full" />
-                            )}
-                          </div>
-                          <div className="">
-                            <div className="text-sm font-semibold leading-none text-secondary">
-                              {land.name}
+                    <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
+                        <div className="space-y-4 text-sm">
+                            <h3 className="text-sm sm:text-md font-bold">Stake Memecoins to Earn</h3>
+                            <div className="text-xs font-light">
+                                Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
                             </div>
-                            <div className="mt-1 text-xs leading-tight font-fine text-secondary">
-                              {land.description.description}
+                            <div className="text-xs font-light">
+                                Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
                             </div>
-                          </div>
                         </div>
-                      </CardHeader>
-                      <Image
-                        src={land.cardImage}
-                        height={1200}
-                        width={600}
-                        alt="land-featured-image"
-                        className={cn(
-                          'w-full object-cover transition-all group-hover/card:scale-105',
-                          'aspect-[1/2]',
-                          'opacity-80',
-                          'group-hover/card:opacity-100',
-                          'flex',
-                          'z-10',
-                          'relative'
-                        )}
-                      />
-                      <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
-                      <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
-                    </CardContent>
-                  </Link>
+
+                        <div className="w-full space-y-2 text-sm">
+                            <h3 className="text-xs font-bold hidden sm:flex">Submit your own token for Staking</h3>
+                            <div className='flex w-full'>
+                                <CreateNewPool whitelistedContracts={lands} />
+                            </div>
+                        </div>
+                    </div>
                 </Card>
-              );
-            })}
-          </div>
-          <div className='flex justify-between'>
-            <div className="space-y-1">
-              <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">New Proposals</h2>
-              <div className="flex items-center text-base text-muted-foreground">
-                Proposals for new staking pools that are pending approval.
+
+                {filteredLands.map((land) => {
+                  return (
+                    <Card
+                      key={land.wraps.ca}
+                      className={cn(
+                        'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+                      )}
+                    >
+                      <Link href={`staking/${land.wraps.ca}`} className="w-full">
+                        <CardContent className="w-full p-0">
+                          <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                            <div className="flex gap-2">
+                              <div className="min-w-max">
+                                {land.image ? (
+                                  <Image
+                                    src={land.wraps.image}
+                                    width={40}
+                                    height={40}
+                                    alt="guild-logo"
+                                    className="w-10 h-10 rounded-full grow"
+                                  />
+                                ) : (
+                                  <div className="w-10 h-10 bg-white border rounded-full" />
+                                )}
+                              </div>
+                              <div className="">
+                                <div className="text-sm font-semibold leading-none text-secondary">
+                                  {land.name}
+                                </div>
+                                <div className="mt-1 text-xs leading-tight font-fine text-secondary">
+                                  {land.description.description}
+                                </div>
+                              </div>
+                            </div>
+                          </CardHeader>
+                          <Image
+                            src={land.cardImage}
+                            height={1200}
+                            width={600}
+                            alt="land-featured-image"
+                            className={cn(
+                              'w-full object-cover transition-all group-hover/card:scale-105',
+                              'aspect-[1/2]',
+                              'opacity-80',
+                              'group-hover/card:opacity-100',
+                              'flex',
+                              'z-10',
+                              'relative'
+                            )}
+                          />
+                          <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
+                        </CardContent>
+                      </Link>
+                    </Card>
+                  );
+                })}
               </div>
             </div>
+          )}
 
-          </div>
-          <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6'>
-            {proposals.map((land: Land) => {
-              return (
-                <Card key={land.wraps.ca} className={cn('bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card')}>
-                  <Link href={`staking/${land.wraps.ca}`} className='w-full'>
-                    <CardContent className='w-full p-0'>
-                      <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
-                        <div className='flex gap-2'>
-                          <div className='min-w-max'>
-                            {land.image ?
-                              <Image src={land.wraps.image} width={40} height={40} alt='guild-logo' className='w-10 h-10 rounded-full grow' />
-                              : <div className='w-10 h-10 bg-white border rounded-full' />
-                            }
-                          </div>
-                          <div className=''>
-                            <div className='text-sm font-semibold leading-none text-secondary'>
-                              {land.name}
+          {/* New Proposals */}
+          {activeTab === 'new' && (
+            <div>
+              <div className="flex justify-between">
+                <div className="space-y-1 mb-10">
+                  <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">
+                    New Proposals
+                  </h2>
+                  <div className="flex items-center text-base text-muted-foreground">
+                    Proposals for new staking pools that are pending approval.
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
+                {proposals.map((land: Land) => {
+                  return (
+                    <Card
+                      key={land.wraps.ca}
+                      className={cn(
+                        'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+                      )}
+                    >
+                      <Link href={`staking/${land.wraps.ca}`} className="w-full">
+                        <CardContent className="w-full p-0">
+                          <CardHeader className="absolute inset-0 z-20 p-2 h-min backdrop-blur-sm group-hover/card:backdrop-blur-3xl">
+                            <div className="flex gap-2">
+                              <div className="min-w-max">
+                                {land.image ? (
+                                  <Image
+                                    src={land.wraps.image}
+                                    width={40}
+                                    height={40}
+                                    alt="guild-logo"
+                                    className="w-10 h-10 rounded-full grow"
+                                  />
+                                ) : (
+                                  <div className="w-10 h-10 bg-white border rounded-full" />
+                                )}
+                              </div>
+                              <div className="">
+                                <div className="text-sm font-semibold leading-none text-secondary">
+                                  {land.name}
+                                </div>
+                                <div className="mt-1 text-xs leading-tight font-fine text-secondary">
+                                  {land.description.description}
+                                </div>
+                              </div>
                             </div>
-                            <div className='mt-1 text-xs leading-tight font-fine text-secondary'>
-                              {land.description.description}
-                            </div>
-                          </div>
-                        </div>
-                      </CardHeader>
-                      <Image
-                        src={land.cardImage}
-                        height={1200}
-                        width={600}
-                        alt='land-featured-image'
-                        className={cn("w-full object-cover transition-all group-hover/card:scale-105", "aspect-[1/2]", 'opacity-80', 'group-hover/card:opacity-100', 'flex', 'z-10', 'relative')}
-                      />
-                      <div className='absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30' />
-                      <div className='absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20' />
-                    </CardContent>
-                  </Link>
-                </Card>
-              )
-            })}
-          </div>
+                          </CardHeader>
+                          <Image
+                            src={land.cardImage}
+                            height={1200}
+                            width={600}
+                            alt="land-featured-image"
+                            className={cn(
+                              'w-full object-cover transition-all group-hover/card:scale-105',
+                              'aspect-[1/2]',
+                              'opacity-80',
+                              'group-hover/card:opacity-100',
+                              'flex',
+                              'z-10',
+                              'relative'
+                            )}
+                          />
+                          <div className="absolute inset-0 z-0 bg-gradient-to-b from-white/50 to-transparent opacity-30" />
+                          <div className="absolute inset-0 bg-gradient-to-b from-transparent from-0% to-black/50 to-69% opacity-90 z-20" />
+                        </CardContent>
+                      </Link>
+                    </Card>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
       </Layout>
     </Page>
