@@ -25,16 +25,11 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
     const { toast } = useToast()
 
     // the tokens are still getting greyed out arbitrarily
-    // I decided to implement a useEffect to log the energy mapping to inspect and debug if lands are missing energy.
-    useEffect(() => {
-        if (lands.length > 0) {
-            for (const land of lands) {
-                land.balances = landEnergy[land.id];
-                console.log(`Land ID: ${land.id}, Energy: ${land.balances?.energy}, Whitelisted: ${land.whitelisted}, Tapped: ${tapped[land.id]}`);
-            }
-        }
-    }, [lands, landEnergy, tapped]);
-
+    // I reverted to the old implementation as the useEffect was causing the energy icon, and some tokens to completely grey out on mobile
+    for (const land of lands) {
+        land.balances = landEnergy[land.id];
+    }
+        
     function tap(landId: number) {
         const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
         const postConditions: any[] = [
