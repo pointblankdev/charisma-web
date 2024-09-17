@@ -40,7 +40,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
             lands.push(metadata)
         }
     }
-    const tokens = await velarApi.tokens();
+    const tokens = await velarApi.tokens('all');
 
     return {
         props: {
@@ -60,7 +60,7 @@ type Props = {
 export default function PortfolioPage({ data }: Props) {
     return (
         <SettingsLayout>
-            <main className="flex flex-1 flex-col gap-4 p-0 md:gap-8">
+            <main className="flex flex-col flex-1 gap-4 p-0 md:gap-8">
                 <TokenBalances data={data} />
             </main>
         </SettingsLayout>
@@ -102,8 +102,8 @@ function TokenBalances({ data }: Props) {
                                     className={`z-30 border rounded-full h-6 w-6 mt-3`}
                                 />
                             </TableHead>
-                            <TableHead className="md:table-cell text-right">Token Amount</TableHead>
-                            <TableHead className="md:table-cell text-right">Total Value (USD)</TableHead>
+                            <TableHead className="text-right md:table-cell">Token Amount</TableHead>
+                            <TableHead className="text-right md:table-cell">Total Value (USD)</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -112,7 +112,7 @@ function TokenBalances({ data }: Props) {
                                 <TableCell className="sm:table-cell">
                                     <Image
                                         alt="Product image"
-                                        className="aspect-square rounded-full overflow-hidden object-cover border"
+                                        className="object-cover overflow-hidden border rounded-full aspect-square"
                                         height="64"
                                         src={land.image}
                                         width="64"
@@ -121,13 +121,13 @@ function TokenBalances({ data }: Props) {
                                 <TableCell className="font-medium">
                                     <div className="text-lg">{land.name}</div>
                                 </TableCell>
-                                <TableCell className="md:table-cell text-lg text-right">
+                                <TableCell className="text-lg text-right md:table-cell">
                                     {getUntappedEnergy(land)}
                                 </TableCell>
-                                <TableCell className="md:table-cell text-lg text-right">
+                                <TableCell className="text-lg text-right md:table-cell">
                                     {land?.balance / Math.pow(10, 6)}
                                 </TableCell>
-                                <TableCell className="md:table-cell text-lg text-right">
+                                <TableCell className="text-lg text-right md:table-cell">
                                     {getTokenUSDValue(land)}
                                 </TableCell>
                             </TableRow>

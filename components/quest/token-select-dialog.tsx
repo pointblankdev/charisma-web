@@ -20,7 +20,7 @@ type TokenSelectDialogProps = {
 export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Quest', extraPostConditions = [] }: TokenSelectDialogProps) => {
 
     const { openContractCall } = useOpenContractCall();
-    const { lands: landEnergy, tapped, setTapped } = useGlobalState()
+    const { lands: landEnergy, tapped, setTapped, setTappedAt, block } = useGlobalState()
     const { stxAddress } = useAccount()
     const { toast } = useToast()
 
@@ -29,7 +29,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
     for (const land of lands) {
         land.balances = landEnergy[land.id];
     }
-        
+
     function tap(landId: number) {
         const burnTokenContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-charisma::liquid-staked-token'
         const postConditions: any[] = [
@@ -52,6 +52,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
             },
             onFinish: (result) => {
                 setTapped((tapped: any) => ({ ...tapped, [landId]: true }))
+                setTappedAt((tapped: any) => ({ ...tapped, [landId]: block.height }))
                 toast({
                     title: "Transaction Broadcasted",
                     description: result.txId,
@@ -75,7 +76,7 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
                     <DialogTitle>Which staked token do you want to use?</DialogTitle>
                 </AlertDialogHeader>
 
-                {/* <DialogDescription className='grid gap-2 grid-cols-4 space-x-4 py-4'>
+                {/* <DialogDescription className='grid grid-cols-4 gap-2 py-4 space-x-4'>
                     {lands.map((land: any) => (
                         <div className={`relative flex flex-col items-center space-y-2 ${!land.whitelisted || tapped[land.id] || !land.balances?.energy ? 'opacity-20 grayscale' : 'cursor-pointer'} group/token`}>
                             <Image
@@ -93,10 +94,10 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
                     ))}
                 </DialogDescription> */}
 
-                <DialogDescription className='grid gap-2 grid-cols-4 space-x-4 py-4'>
+                <DialogDescription className='grid grid-cols-4 gap-2 py-4 space-x-4'>
                     {lands.map((land: any) => (
-                        <div 
-                            key={land.id} 
+                        <div
+                            key={land.id}
                             // onClick={() => {
                             //     if (land.whitelisted && !tapped[land.id] && land.balances?.energy) { // to ensure click is triggered for only whiltelisted token and not just tapped
                             //         tap(land.id);
@@ -111,11 +112,11 @@ export const TokenSelectDialog = ({ lands, contractId, buttonText = 'Complete Qu
                                 onClick={() => (tap(land.id))}
                                 className={`w-24 h-24 z-20 border rounded-full ${(land.whitelisted && !tapped[land.id] && land.balances?.energy) && 'group-hover/token:z-40 group-hover/token:shadow-xl group-hover/token:scale-110 transition-all'}`}
                             />
-        
+
                             <div className={`z-30 opacity-0 absolute text-center px-3 py-1 border min-w-6 font-bold rounded-full top-0 text-md bg-card text-accent-foreground flex ${(land.whitelisted && !tapped[land.id] && land.balances?.energy) && 'group-hover/token:-top-6 group-hover/token:opacity-100 group-hover/token:z-50 group-hover/token:shadow-xl group-hover/token:scale-150 transition-all'}`}>
                                 <div className='z-30 text-white whitespace-nowrap'>{numeral(land.balances?.energy).format('0a')} ⚡</div>
                             </div>
-                           
+
                         </div>
                     ))}
                 </DialogDescription>

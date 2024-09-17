@@ -1,5 +1,5 @@
 const velarApi = {
-    tokens: async (symbol = 'all') => {
+    tokens: async (symbol: string) => {
         const response = await fetch(`https://api.velar.co/tokens/?symbol=${symbol}`)
         const data = await response.json();
 

@@ -22,7 +22,7 @@ import {
   CardTitle
 } from '@components/ui/card';
 import Link from 'next/link';
-import { getLand, getLands } from '@lib/db-providers/kv';
+import { getLand, getLands, setLand } from '@lib/db-providers/kv';
 import { Button } from '@components/ui/button';
 import {
   Form,
@@ -38,7 +38,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useState } from 'react';
 import { PostConditionMode } from '@stacks/transactions';
-import { getContractSource, getDecimals, getSymbol, getTokenURI, getTotalSupply, getTransferFunction } from '@lib/stacks-api';
+import { getContractSource, getDecimals, getLastLandId, getSymbol, getTokenURI, getTotalSupply, getTransferFunction } from '@lib/stacks-api';
 import { setLandMetadata } from '@lib/user-api';
 import energyIcon from '@public/creatures/img/energy.png';
 import { track } from '@vercel/analytics';
@@ -46,8 +46,8 @@ import { useAccount } from '@micro-stacks/react';
 import { useOpenContractDeploy } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import _ from 'lodash';
-import { PiScales, PiScalesDuotone, PiScalesLight } from 'react-icons/pi';
 import { Land } from '@lib/db-providers/kv.types';
+import { clarigen } from '@lib/clarigen/client';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
@@ -60,7 +60,16 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     if (metadata.id) {
       lands.push(metadata)
     } else {
-      proposals.push(metadata)
+      const landId = Number(await getLastLandId())
+      if (landId) {
+        metadata.id = landId
+        metadata.whitelisted = true
+        metadata.wraps.decimals = Number(await getDecimals(ca))
+        await setLand(ca, metadata)
+        lands.push(metadata)
+      } else {
+        proposals.push(metadata)
+      }
     }
   }
 
@@ -114,17 +123,15 @@ export default function StakingIndex({ lands, proposals }: Props) {
           <div className="flex space-x-4 border-b">
             <button
               onClick={() => setActiveTab('active')}
-              className={`px-4 py-2 font-semibold ${
-                activeTab === 'active' ? 'border-b-2 border-red-500' : ''
-              }`}
+              className={`px-4 py-2 font-semibold ${activeTab === 'active' ? 'border-b-2 border-red-500' : ''
+                }`}
             >
               Active Proposals
             </button>
             <button
               onClick={() => setActiveTab('new')}
-              className={`px-4 py-2 font-semibold ${
-                activeTab === 'new' ? 'border-b-2 border-red-500' : ''
-              }`}
+              className={`px-4 py-2 font-semibold ${activeTab === 'new' ? 'border-b-2 border-red-500' : ''
+                }`}
             >
               New Proposals
             </button>
@@ -134,7 +141,7 @@ export default function StakingIndex({ lands, proposals }: Props) {
           {activeTab === 'active' && (
             <div>
               <div className="flex justify-between">
-                <div className="flex flex-col md:flex-row justify-between w-full mb-10">
+                <div className="flex flex-col justify-between w-full mb-10 md:flex-row">
                   <div className="space-y-1">
                     <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">
                       <>Stake-to-Earn</>
@@ -163,28 +170,28 @@ export default function StakingIndex({ lands, proposals }: Props) {
 
               <div className="grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6">
                 <Card
-                   className={cn(
-                        'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
-                    )}
+                  className={cn(
+                    'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card'
+                  )}
                 >
-                    <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
-                        <div className="space-y-4 text-sm">
-                            <h3 className="text-sm sm:text-md font-bold">Stake Memecoins to Earn</h3>
-                            <div className="text-xs font-light">
-                                Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
-                            </div>
-                            <div className="text-xs font-light">
-                                Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
-                            </div>
-                        </div>
-
-                        <div className="w-full space-y-2 text-sm">
-                            <h3 className="text-xs font-bold hidden sm:flex">Submit your own token for Staking</h3>
-                            <div className='flex w-full'>
-                                <CreateNewPool whitelistedContracts={lands} />
-                            </div>
-                        </div>
+                  <div className="relative flex flex-col items-start justify-between p-4 space-y-4 rounded-lg text-md">
+                    <div className="space-y-4 text-sm">
+                      <h3 className="text-sm font-bold sm:text-md">Stake Memecoins to Earn</h3>
+                      <div className="text-xs font-light">
+                        Stake your memecoins in a Stake-to-Earn pool to generate Energy with every block. The more you stake, the more Energy you accumulate, which can be used to unlock exclusive community rewards.
+                      </div>
+                      <div className="text-xs font-light">
+                        Energy is redeemable through Quests, where each memecoin community can offer their own tokens and NFTs on Charisma, purchaseable with Energy.
+                      </div>
                     </div>
+
+                    <div className="w-full space-y-2 text-sm">
+                      <h3 className="hidden text-xs font-bold sm:flex">Submit your own token for Staking</h3>
+                      <div className='flex w-full'>
+                        <CreateNewPool whitelistedContracts={lands} />
+                      </div>
+                    </div>
+                  </div>
                 </Card>
 
                 {filteredLands.map((land) => {
@@ -252,7 +259,7 @@ export default function StakingIndex({ lands, proposals }: Props) {
           {activeTab === 'new' && (
             <div>
               <div className="flex justify-between">
-                <div className="space-y-1 mb-10">
+                <div className="mb-10 space-y-1">
                   <h2 className="flex items-end text-4xl font-semibold tracking-tight text-secondary">
                     New Proposals
                   </h2>

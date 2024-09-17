@@ -16,6 +16,8 @@ interface GlobalState {
     setBlock: (block: any) => void;
     tapped: any;
     setTapped: (block: any) => void;
+    tappedAt: any;
+    setTappedAt: (block: any) => void;
     token: any;
     setToken: (token: any) => void;
     storedEnergy: number;
@@ -30,6 +32,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [lands, setLands] = usePersistedState('lands', {});
     const [block, setBlock] = usePersistedState('block', {});
     const [tapped, setTapped] = usePersistedState('tapped', {});
+    const [tappedAt, setTappedAt] = usePersistedState('tappedAt', {});
     const [token, setToken] = usePersistedState('token', {})
     const [storedEnergy, setStoredEnergy] = usePersistedState('storedEnergy', 0);
 
@@ -92,7 +95,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 title: "New Block",
                 description: `Stacks block ${block.height} has been mined.`,
             })
-    
+
             // When a new block is detected, re-fetch energy for all lands
             const stakedTokens = Object.keys(lands);
             stakedTokens.forEach((landId) => {
@@ -117,10 +120,10 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             sc.unsubscribeBlocks()
         };
     }, [lands, stxAddress, setBlock, toast]);
-    
+
 
     return (
-        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped, token, setToken, storedEnergy, setStoredEnergy, updateTokenEnergy }}>
+        <GlobalStateContext.Provider value={{ lands, setLands, block, setBlock, tapped, setTapped, tappedAt, setTappedAt, token, setToken, storedEnergy, setStoredEnergy, updateTokenEnergy }}>
             {children}
         </GlobalStateContext.Provider>
     );

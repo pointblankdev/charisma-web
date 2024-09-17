@@ -33,7 +33,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
     lands.push(metadata)
   }
 
-  const tokens = await velarApi.tokens();
+  const tokens = await velarApi.tokens('all');
 
   return {
     props: {
@@ -53,7 +53,7 @@ type Props = {
 export default function PortfolioPage({ data }: Props) {
   return (
     <SettingsLayout>
-      <main className="flex flex-1 flex-col gap-4 p-0 md:gap-8">
+      <main className="flex flex-col flex-1 gap-4 p-0 md:gap-8">
         <TokenBalances data={data} />
       </main>
     </SettingsLayout>
@@ -64,7 +64,7 @@ function TokenBalances({ data }: Props) {
   const { getBalanceByKey } = useWallet();
 
   const getTokenAmountWithDecimals = (land: any) => {
-    return getBalanceByKey(`${land.wraps.ca}::${land.wraps.asset}`) / Math.pow(10, land.wraps.decimals) || 0
+    return getBalanceByKey(`${land.wraps.ca}::${land.wraps.asset}`) / Math.pow(10, land.wraps.decimals || 6) || 0
   }
 
   const getTokenUSDValue = (land: any) => {
@@ -73,7 +73,7 @@ function TokenBalances({ data }: Props) {
     return numeral(tokenAmount * token?.price).format('$0,0.00')
   }
 
-//   const lands = data.lands.sort((a: any, b: any) => (a.id || 999) - (b.id || 999))
+  //   const lands = data.lands.sort((a: any, b: any) => (a.id || 999) - (b.id || 999))
 
   // Filter lands to show only those with a positive balance
   const filteredLands = data.lands
@@ -92,8 +92,8 @@ function TokenBalances({ data }: Props) {
             <TableRow>
               <TableHead className="w-[100px] sm:table-cell"><span className="sr-only">Image</span></TableHead>
               <TableHead><span className="sr-only">Name</span></TableHead>
-              <TableHead className="md:table-cell text-right">Token Amount</TableHead>
-              <TableHead className="md:table-cell text-right">Total Value (USD)</TableHead>
+              <TableHead className="text-right md:table-cell">Token Amount</TableHead>
+              <TableHead className="text-right md:table-cell">Total Value (USD)</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -102,7 +102,7 @@ function TokenBalances({ data }: Props) {
                 <TableCell className="sm:table-cell">
                   <Image
                     alt="Product image"
-                    className="aspect-square rounded-full overflow-hidden object-cover border"
+                    className="object-cover overflow-hidden border rounded-full aspect-square"
                     height="64"
                     src={land.image}
                     width="64"
@@ -111,10 +111,10 @@ function TokenBalances({ data }: Props) {
                 <TableCell className="font-medium">
                   <div className="text-lg">{land.name}</div>
                 </TableCell>
-                <TableCell className="md:table-cell text-lg text-right">
+                <TableCell className="text-lg text-right md:table-cell">
                   {getTokenAmountWithDecimals(land)}
                 </TableCell>
-                <TableCell className="md:table-cell text-lg text-right">
+                <TableCell className="text-lg text-right md:table-cell">
                   {getTokenUSDValue(land)}
                 </TableCell>
               </TableRow>

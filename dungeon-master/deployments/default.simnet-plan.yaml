@@ -83,6 +83,11 @@ plan:
             path: contracts/edk-v0.clar
             clarity-version: 1
         - emulated-contract-publish:
+            contract-name: energy-airdrop
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/energy-airdrop.clar
+            clarity-version: 1
+        - emulated-contract-publish:
             contract-name: experience
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/experience.clar
@@ -127,4 +132,7 @@ plan:
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/token-gate-v0.clar
             clarity-version: 1
+      epoch: "2.1"
+    - id: 2
+      transactions: []
       epoch: "2.1"
