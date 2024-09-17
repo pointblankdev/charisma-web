@@ -411,7 +411,6 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
         }
 
-
         else if (event.data.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission") {
             symbol = '⚖️'
 

@@ -80,7 +80,7 @@ export default async function getMetadata(
                     let builder = new EmbedBuilder()
 
                     // send message to discord
-                    builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/charisma.png', icon_url: 'https://beta.charisma.rocks/governance' })
+                    builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/governance', icon_url: 'https://beta.charisma.rocks/charisma.png' })
                     builder.setTitle('Vote Cast for Governance Proposal')
                     builder.setThumbnail({ url: 'https://beta.charisma.rocks/voting.png' })
 
