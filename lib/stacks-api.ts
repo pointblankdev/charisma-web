@@ -1190,7 +1190,7 @@ export async function getLandId(contractAddress: string) {
     }
   });
   const result = hexToCV((response as any).result);
-  return Number(cvToJSON(result).value.value);
+  return Number(cvToJSON(result).value?.value) || null;
 }
 export async function getLandContractById(id: number | string) {
   const response = await scApi.callReadOnlyFunction({

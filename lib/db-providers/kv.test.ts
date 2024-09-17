@@ -48,7 +48,7 @@ describe('metadata api', () => {
     })
 
     it('should remove land', async () => {
-        const response = await removeLand('SP1HM6VC441GS3F6W9WATAD053A56GM1ZSW9JMX6Z.jackbinswitch-stxcity')
+        const response = await removeLand('SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token')
         console.log(response)
     })
 

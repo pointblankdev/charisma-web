@@ -59,7 +59,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     if (metadata.id) {
       lands.push(metadata)
     } else {
-      const landId = Number(await getLandId(ca))
+      const landId = await getLandId(ca)
       if (landId) {
         metadata.id = landId
         metadata.whitelisted = true
