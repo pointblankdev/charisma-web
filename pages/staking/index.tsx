@@ -457,14 +457,14 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
           Create New Pool
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-5xl">
+       <DialogContent className="sm:max-w-5xl max-w-full w-full sm:p-6 p-4">
         <DialogHeader>
           <DialogTitle>New Stake-to-Earn Pool</DialogTitle>
         </DialogHeader>
-        <DialogDescription className="flex space-x-4">
+       <DialogDescription className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
           <Card
             className={cn(
-              'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card w-96'
+              'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card sm:w-96 w-full'
             )}
           >
             <CardContent className="w-full p-0">
@@ -595,7 +595,7 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
                   />
                 </fieldset>
               </form>
-              <div className="flex justify-end">
+              <div className="flex justify-end mt-4">
                 <Button disabled={isWhitelisted} onClick={handleCreatePool}>
                   Create Pool
                 </Button>
