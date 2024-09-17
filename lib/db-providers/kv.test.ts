@@ -48,7 +48,7 @@ describe('metadata api', () => {
     })
 
     it('should remove land', async () => {
-        const response = await removeLand('SP28FHT7VGBJ3B0584V1EVHED3MKTE1M8VQJDNB6R.rozar-stxcity')
+        const response = await removeLand('SP1HM6VC441GS3F6W9WATAD053A56GM1ZSW9JMX6Z.jackbinswitch-stxcity')
         console.log(response)
     })
 
@@ -72,12 +72,12 @@ describe('metadata api', () => {
         console.log(land)
     })
 
-    it('should update fair land', async () => {
-        const land = await getLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve')
-        // land.whitelisted = true
-        // land.id = 7
-        // land.wraps.symbol = 'FAIR'
-        await setLand('SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve', land)
+    it('should update various land', async () => {
+        const ca = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-stone'
+        const land = await getLand(ca)
+        // land.whitelisted = false
+        // land.id = null
+        // await setLand(ca, land)
         console.log(land)
     })
 

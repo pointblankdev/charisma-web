@@ -38,7 +38,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useState } from 'react';
 import { PostConditionMode } from '@stacks/transactions';
-import { getContractSource, getDecimals, getLastLandId, getSymbol, getTokenURI, getTotalSupply, getTransferFunction } from '@lib/stacks-api';
+import { getContractSource, getDecimals, getLandId, getLastLandId, getSymbol, getTokenURI, getTotalSupply, getTransferFunction } from '@lib/stacks-api';
 import { setLandMetadata } from '@lib/user-api';
 import energyIcon from '@public/creatures/img/energy.png';
 import { track } from '@vercel/analytics';
@@ -47,7 +47,6 @@ import { useOpenContractDeploy } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import _ from 'lodash';
 import { Land } from '@lib/db-providers/kv.types';
-import { clarigen } from '@lib/clarigen/client';
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // get all staking lands from db
@@ -60,7 +59,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     if (metadata.id) {
       lands.push(metadata)
     } else {
-      const landId = Number(await getLastLandId())
+      const landId = Number(await getLandId(ca))
       if (landId) {
         metadata.id = landId
         metadata.whitelisted = true
@@ -523,11 +522,11 @@ const CreateNewPool = ({ whitelistedContracts }: any) => {
           Create New Pool
         </Button>
       </DialogTrigger>
-       <DialogContent className="sm:max-w-5xl max-w-full w-full sm:p-6 p-4">
+      <DialogContent className="w-full max-w-full p-4 sm:max-w-5xl sm:p-6">
         <DialogHeader>
           <DialogTitle>New Stake-to-Earn Pool</DialogTitle>
         </DialogHeader>
-       <DialogDescription className="flex flex-col sm:flex-row sm:space-x-4 space-y-4 sm:space-y-0">
+        <DialogDescription className="flex flex-col space-y-4 sm:flex-row sm:space-x-4 sm:space-y-0">
           <Card
             className={cn(
               'bg-black text-primary-foreground border-accent-foreground p-0 flex relative overflow-hidden rounded-md group/card sm:w-96 w-full'
