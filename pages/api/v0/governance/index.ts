@@ -86,6 +86,7 @@ export default async function proposalSubmittedApi(
                         builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
 
                         for (const event of tx.metadata.receipt.events) {
+                            // await Logger.error({ 'Inspect': { type: event.type, keys: Object.keys(event.data) } })
                             builder = await handleContractEvent(event, builder)
                         }
 
