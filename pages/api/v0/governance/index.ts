@@ -1,5 +1,6 @@
 import { getExperienceLeaderboard, getMob, setMob, updateExperienceLeaderboard } from '@lib/db-providers/kv';
 import { handleContractEvent } from '@lib/events/dispatcher';
+import Logger from '@lib/logger';
 import { getNameFromAddress, getTokenBalance, getTotalSupply, hasPercentageBalance } from '@lib/stacks-api';
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -77,19 +78,24 @@ export default async function proposalSubmittedApi(
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
 
-                if (tx.metadata.success) {
-                    let builder = new EmbedBuilder()
-                    // send message to discord
-                    builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/governance', icon_url: 'https://beta.charisma.rocks/charisma.png' })
-                    builder.setTitle('New Proposal Submitted')
-                    builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
+                try {
+                    if (tx.metadata.success) {
+                        let builder = new EmbedBuilder()
+                        // send message to discord
+                        builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/governance', icon_url: 'https://beta.charisma.rocks/charisma.png' })
+                        builder.setTitle('New Proposal Submitted')
+                        builder.setThumbnail({ url: 'https://beta.charisma.rocks/ext-proposal.png' })
 
-                    for (const event of tx.metadata.receipt.events) {
-                        builder = await handleContractEvent(event, builder)
+                        for (const event of tx.metadata.receipt.events) {
+                            builder = await handleContractEvent(event, builder)
+                        }
+
+                        hook.addEmbed(builder.getEmbed());
+                        await hook.send();
                     }
 
-                    hook.addEmbed(builder.getEmbed());
-                    await hook.send();
+                } catch (error: any) {
+                    await Logger.error({ 'Governance API Error': { error: error?.message, events: tx.metadata.receipt?.events?.map(e => Object.keys(e.data)) } })
                 }
                 response = {}
             }
