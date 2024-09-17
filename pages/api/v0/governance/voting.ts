@@ -87,11 +87,13 @@ export default async function getMetadata(
                         builder.setThumbnail({ url: 'https://beta.charisma.rocks/voting.png' })
 
                         for (const event of tx.metadata.receipt.events) {
+                            await Logger.error({ 'Inspect': { type: event.type, keys: Object.keys(event.data) } })
                             builder = await handleContractEvent(event, builder)
                         }
 
                         hook.addEmbed(builder.getEmbed());
                         await hook.send();
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second to avoid rate limiting
                     }
 
                 } catch (error: any) {

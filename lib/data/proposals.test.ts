@@ -43,7 +43,7 @@ describe('proposals', () => {
   })
 
   it('should get vote data', async () => {
-    const resp = await getVoteData('', '')
+    const resp = await getVoteData('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmp003-drip-amount-3', 'SP1454QJJZC5E7Q5D25R32Q1WYCGAN2MZHC1W349D')
     console.log(resp)
   })
 

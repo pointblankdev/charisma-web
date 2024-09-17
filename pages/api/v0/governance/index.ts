@@ -77,7 +77,6 @@ export default async function proposalSubmittedApi(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
-
                 try {
                     if (tx.metadata.success) {
                         let builder = new EmbedBuilder()
@@ -92,6 +91,7 @@ export default async function proposalSubmittedApi(
 
                         hook.addEmbed(builder.getEmbed());
                         await hook.send();
+                        await new Promise(resolve => setTimeout(resolve, 1000)); // Wait for 1 second to avoid rate limiting
                     }
 
                 } catch (error: any) {
