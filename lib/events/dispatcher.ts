@@ -1,6 +1,6 @@
 import { clarigen } from "@lib/clarigen/client";
 import { contractFactory } from '@clarigen/core';
-import { addPlayer, getMob, getNftCollectionMetadata, incrementRewardLeaderboard, isPlayer, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, incrementRewardLeaderboard, isPlayer, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { contracts } from "@lib/clarigen/types";
@@ -414,14 +414,21 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.data.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission") {
             symbol = '⚖️'
 
-            // increment proposal list data structure in vercel kv storage
-            // todo: ...
+            if (event.data.value.event === 'propose') {
+                // increment proposal list data structure in vercel kv storage
+                await addCachedProposal(event.data.value.proposal);
+                builder.addField({
+                    name: `${symbol} ${event.data.value.type}`,
+                    value: JSON.stringify(event.data.value).slice(0, 300)
+                });
+            } else {
 
-            await Logger.error({ 'Unknown governance proposal event': event.data })
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
+                await Logger.error({ 'Unknown governance proposal event': event.data })
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300)
+                });
+            }
         }
 
         else if (event.data.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting") {

@@ -329,3 +329,17 @@ export async function removePlayer(player: string): Promise<any> {
 export async function isPlayer(player: string): Promise<boolean> {
   return await kv.sismember('players', player) ? true : false;
 }
+
+// proposals
+
+export async function getCachedProposals(): Promise<any> {
+  return await kv.smembers('proposals');
+}
+
+export async function addCachedProposal(proposal: string): Promise<any> {
+  return await kv.sadd('proposals', proposal);
+}
+
+export async function removeCachedProposal(proposal: string): Promise<any> {
+  return await kv.srem('proposals', proposal);
+}
