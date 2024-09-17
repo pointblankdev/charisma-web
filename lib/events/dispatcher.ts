@@ -448,6 +448,13 @@ export const handleContractEvent = async (event: any, builder: any) => {
                     name: `${symbol} ${event.data.value.event}`,
                     value: JSON.stringify(event.data.value).slice(0, 300)
                 });
+            } else if (event.data.value.event === 'propose') {
+                // increment proposal list data structure in vercel kv storage
+                await addCachedProposal(event.data.value.proposal);
+                builder.addField({
+                    name: `${symbol} ${event.data.value.event}`,
+                    value: JSON.stringify(event.data.value).slice(0, 300)
+                });
             } else {
 
                 await Logger.error({ 'Unknown governance proposal event': event.data })
