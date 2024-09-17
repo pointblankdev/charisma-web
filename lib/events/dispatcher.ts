@@ -418,7 +418,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 // increment proposal list data structure in vercel kv storage
                 await addCachedProposal(event.data.value.proposal);
                 builder.addField({
-                    name: `${symbol} ${event.data.value.type}`,
+                    name: `${symbol} ${event.data.value.event}`,
                     value: JSON.stringify(event.data.value).slice(0, 300)
                 });
             } else {
