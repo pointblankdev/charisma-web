@@ -7,6 +7,7 @@ import {
 } from '../../lib/stacks-api';
 import { ConfUser } from '@lib/types';
 import { kv } from '@vercel/kv';
+import _ from 'lodash';
 
 export async function getUserById(id: string): Promise<ConfUser> {
   const { name, username, createdAt } = (await kv.hmget(
@@ -342,4 +343,19 @@ export async function addCachedProposal(proposal: string): Promise<any> {
 
 export async function removeCachedProposal(proposal: string): Promise<any> {
   return await kv.srem('proposals', proposal);
+}
+
+// proposals-users events
+
+// { for: 18000000, against: 2000000 }
+
+export async function getVoteData(proposal: string, userAddress: string): Promise<any> {
+  const data = await kv.get(`vote-data:${proposal}:${userAddress}`)
+  // merge into object of for and against
+  const response = _.merge({ for: 0, against: 0 }, data);
+  return response;
+}
+
+export async function setVoteData(proposal: string, userAddress: string, data: any): Promise<void> {
+  await kv.set(`vote-data:${proposal}:${userAddress}`, data);
 }

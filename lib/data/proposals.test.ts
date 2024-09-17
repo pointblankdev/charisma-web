@@ -1,4 +1,4 @@
-import { addCachedProposal, getCachedProposals, removeCachedProposal } from "../db-providers/kv";
+import { addCachedProposal, getCachedProposals, getVoteData, removeCachedProposal, setVoteData } from "../db-providers/kv";
 import { getProposals, getVotes } from "./proposals";
 
 describe('proposals', () => {
@@ -39,6 +39,16 @@ describe('proposals', () => {
 
   it('remove a proposal from cache', async () => {
     const resp = await removeCachedProposal('test');
+    console.log(resp)
+  })
+
+  it('should get vote data', async () => {
+    const resp = await getVoteData('', '')
+    console.log(resp)
+  })
+
+  it('should set vote data', async () => {
+    const resp = await setVoteData('', '', { for: 10, against: 5 })
     console.log(resp)
   })
 })

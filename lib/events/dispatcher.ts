@@ -1,6 +1,6 @@
 import { clarigen } from "@lib/clarigen/client";
 import { contractFactory } from '@clarigen/core';
-import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, incrementRewardLeaderboard, isPlayer, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setVoteData, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { contracts } from "@lib/clarigen/types";
@@ -434,14 +434,28 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.data.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting") {
             symbol = '⚖️'
 
-            // increment proposal-user votes data structure in vercel kv storage
-            // todo: ...
+            if (event.data.value.event === 'vote') {
+                // increment proposal-user votes data structure in vercel kv storage
+                const voteData = await getVoteData(event.data.value.proposal, event.data.value.voter);
+                // {for: 0, against: 0}
+                if (event.data.value.for) {
+                    voteData.for += event.data.value.amount;
+                } else {
+                    voteData.against += event.data.value.amount;
+                }
+                await setVoteData(event.data.value.proposal, event.data.value.voter, voteData);
+                builder.addField({
+                    name: `${symbol} ${event.data.value.event}`,
+                    value: JSON.stringify(event.data.value).slice(0, 300)
+                });
+            } else {
 
-            await Logger.error({ 'Unknown governance proposal event': event.data })
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
+                await Logger.error({ 'Unknown governance proposal event': event.data })
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 300)
+                });
+            }
         }
 
         else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt") {
