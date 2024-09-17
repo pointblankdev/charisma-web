@@ -12,10 +12,6 @@
             "path": "/api/v0/crons/stimulate",
             "schedule": "0 * * * *"
         },
-        // {
-        //     "path": "/api/v0/crons/operating-costs",
-        //     "schedule": "* 0 * * *"
-        // },
         {
             "path": "/api/v0/crons/try-reset-epochs",
             "schedule": "*/5 * * * *"
