@@ -425,7 +425,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.data.contract_identifier === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme001-proposal-voting") {
             symbol = '⚖️'
 
-            console.error('Unknown governance proposal event:', event.data)
+            await Logger.error({ 'Unknown governance proposal event': event.data })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)

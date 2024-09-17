@@ -48,7 +48,7 @@ describe('metadata api', () => {
     })
 
     it('should remove land', async () => {
-        const response = await removeLand('SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token')
+        const response = await removeLand('SP3VG3RBWCXWBS0ZF9XVRKBQH0HX3MFZCAJFZR1B8.cumrocket-stxcity')
         console.log(response)
     })
 
@@ -73,11 +73,11 @@ describe('metadata api', () => {
     })
 
     it('should update various land', async () => {
-        const ca = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-stone'
+        const ca = 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx-roo'
         const land = await getLand(ca)
-        // land.whitelisted = false
-        // land.id = null
-        // await setLand(ca, land)
+        land.whitelisted = false
+        land.id = null
+        await setLand(ca, land)
         console.log(land)
     })
 
