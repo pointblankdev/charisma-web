@@ -148,7 +148,7 @@ export default function LeaderboardPage({ wchaPriceData, holders, expTotalSupply
                             <RewardsLeaderboardTable wchaPriceData={wchaPriceData} holders={holders} topRewardedPlayers={topRewardedPlayers} />
                         </TabsContent>
                         <TabsContent value="3">
-                            <LandsTVLChart chartData={chartData0} chartConfig={chartConfig0} />
+                            <LandsTVLChart chartData={chartData0} />
                         </TabsContent>
                         <TabsContent value="4">
                             <TokensDifficultyChart chartData={chartData2} chartConfig={chartConfig2} />
