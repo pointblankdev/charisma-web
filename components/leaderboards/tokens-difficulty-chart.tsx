@@ -1,91 +1,110 @@
-import { TrendingUp } from "lucide-react"
-import { Bar, BarChart, CartesianGrid, LabelList, XAxis, YAxis } from "recharts"
+import React, { useState } from 'react';
 import {
-    Card,
-    CardContent,
-    CardDescription,
-    CardFooter,
-    CardHeader,
-    CardTitle,
-} from "@components/ui/card"
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from '@components/ui/card';
+import numeral from 'numeral';
+import { ChartConfig } from '@components/ui/chart';
 import {
-    ChartConfig,
-    ChartContainer,
-    ChartTooltip,
-    ChartTooltipContent,
-} from "@components/ui/chart"
+    Table,
+    TableBody,
+    TableCell,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@components/ui/table";
+
+interface ChartDataItem {
+  id: string;
+  score: number;
+}
 
 export function TokensDifficultyChart({ chartData, chartConfig }: { chartData: any[], chartConfig: ChartConfig }) {
-    return (
-        <Card>
-            <CardHeader>
-                <CardTitle>Energy Output of Staked Tokens</CardTitle>
-                <CardDescription>Normalized with Difficulty Adjustment</CardDescription>
-            </CardHeader>
-            <CardContent>
-                <ChartContainer config={chartConfig}>
-                    <BarChart
-                        style={{ fill: 'white' }}
-                        accessibilityLayer
-                        data={chartData}
-                        layout="vertical"
-                        margin={{
-                            right: 16,
-                        }}
+  // State for sorting between ascending and descending
+  const [sortConfig, setSortConfig] = useState<{
+    key: keyof ChartDataItem;
+    direction: 'ascending' | 'descending';
+  }>({ key: 'score', direction: 'descending' });
 
-                    >
+  // the function to handle the sorting
+  const sortedData = React.useMemo(() => {
+    const sortableItems = [...chartData];
+    sortableItems.sort((a, b) => {
+      if (a[sortConfig.key] < b[sortConfig.key]) {
+        return sortConfig.direction === 'ascending' ? -1 : 1;
+      }
+      if (a[sortConfig.key] > b[sortConfig.key]) {
+        return sortConfig.direction === 'ascending' ? 1 : -1;
+      }
+      return 0;
+    });
+    return sortableItems;
+  }, [chartData, sortConfig]);
 
-                        <CartesianGrid horizontal={false} />
-                        <YAxis
-                            dataKey="id"
-                            type="category"
-                            tickLine={false}
-                            tickMargin={10}
-                            axisLine={false}
-                            hide
+  const requestSort = (key: keyof ChartDataItem) => {
+    let direction: 'ascending' | 'descending' = 'ascending';
+    if (
+      sortConfig.key === key &&
+      sortConfig.direction === 'ascending'
+    ) {
+      direction = 'descending';
+    }
+    setSortConfig({ key, direction });
+  };
 
-                        />
-                        <XAxis dataKey="score" type="number" hide />
-                        <ChartTooltip
-                            cursor={false}
-                            content={
-                                <ChartTooltipContent indicator="line" />
-                            }
-
-                        />
-                        <Bar
-                            dataKey="score"
-                            layout="vertical"
-                            fill="var(--color-tokens)"
-                            radius={4}
-                        >
-                            <LabelList
-                                dataKey="id"
-                                position="insideLeft"
-                                offset={8}
-                                className="fill-[--color-label]"
-                                fontSize={12}
-                            />
-                            <LabelList
-                                dataKey="score"
-                                position="right"
-                                offset={8}
-                                className="fill-foreground"
-                                fontSize={12}
-                                formatter={(value: number) => `${value.toFixed(0)}`}
-                            />
-                        </Bar>
-                    </BarChart>
-                </ChartContainer>
-            </CardContent>
-            {/* <CardFooter className="flex-col items-start gap-2 text-sm">
-                <div className="flex gap-2 font-medium leading-none">
-                    Trending up by 5.2% this month <TrendingUp className="h-4 w-4" />
-                </div>
-                <div className="leading-none text-muted-foreground">
-                    Showing total tokens for the last 6 months
-                </div>
-            </CardFooter> */}
-        </Card>
-    )
+  return (
+    <Card>
+      <CardHeader>
+        <CardTitle>Energy Output of Staked Tokens</CardTitle>
+        <CardDescription>
+          Normalized with Difficulty Adjustment
+        </CardDescription>
+      </CardHeader>
+      <CardContent>
+        <div className="overflow-x-auto">
+          <Table className="min-w-full divide-y divide-gray-200">
+            <TableHeader>
+              <TableRow>
+                <TableHead
+                  onClick={() => requestSort('id')}
+                  className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider cursor-pointer"
+                >
+                  Token{' '}
+                  {sortConfig.key === 'id' &&
+                    (sortConfig.direction === 'ascending'
+                      ? '▲'
+                      : '▼')}
+                </TableHead>
+                <TableHead
+                  onClick={() => requestSort('score')}
+                  className="px-6 py-3 text-left text-xs font-medium  uppercase tracking-wider cursor-pointer"
+                >
+                  Energy Output{' '}
+                  {sortConfig.key === 'score' &&
+                    (sortConfig.direction === 'ascending'
+                      ? '▲'
+                      : '▼')}
+                </TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {sortedData.map((item) => (
+                <TableRow key={item.id}>
+                  <TableCell className="px-6 whitespace-nowrap text-sm">
+                    {item.id}
+                  </TableCell>
+                  <TableCell className="px-6 whitespace-nowrap text-sm">
+                    {numeral(item.score).format('0,0')}
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </div>
+      </CardContent>
+    </Card>
+  );
 }

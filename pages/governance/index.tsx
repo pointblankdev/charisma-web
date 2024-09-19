@@ -44,7 +44,7 @@ const Card: React.FC<CardProps> = ({ href, src, alt, title, subtitle }) => (
       'overflow-hidden'
     )}
   >
-    <div className="overflow-hidden rounded-md relative group">
+    <div className="relative overflow-hidden rounded-md group">
       <Image
         src={src}
         alt={alt}
@@ -55,7 +55,7 @@ const Card: React.FC<CardProps> = ({ href, src, alt, title, subtitle }) => (
         )}
       />
     </div>
-    <div className="absolute left-0 right-0 bottom-0 p-2 h-min hidden group-hover/card:block group-hover/card:backdrop-blur-3xl">
+    <div className="absolute bottom-0 left-0 right-0 hidden p-2 h-min group-hover/card:block group-hover/card:backdrop-blur-3xl">
       <h1 className="font-semibold leading-none md:leading-6">{title}</h1>
       <h2 className="text-sm leading-none md:leading-6">{subtitle}</h2>
     </div>
@@ -207,7 +207,7 @@ export default function Governance({ data }: Props) {
         <Layout>
           <div className="m-2 py-10 sm:max-w-[1400px] sm:px-4">
             <Tabs defaultValue="proposals" className="">
-              <div className="flex justify-between items-baseline mb-4 flex-wrap gap-2">
+              <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
                 <TabsList className="flex flex-wrap gap-2 mb-4">
                   <TabsTrigger value="proposals" className="flex-grow sm:flex-grow-0">
                     Proposals
@@ -217,7 +217,7 @@ export default function Governance({ data }: Props) {
                   </TabsTrigger>
                 </TabsList>
                 <Link href="/governance/guide" className="ml-auto">
-                  <Button variant={'link'} className="block ml-auto mt-2 sm:mt-0 sm:inline-block">
+                  <Button variant={'link'} className="block mt-2 ml-auto sm:mt-0 sm:inline-block">
                     Contributer Guide 📕
                   </Button>
                 </Link>
@@ -226,7 +226,7 @@ export default function Governance({ data }: Props) {
                 <DataTable columns={columns} data={data} />
               </TabsContent>
               <TabsContent value="extentions">
-                <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
+                <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6">
                   {cards.map((card, index) => (
                     <Card key={index} {...card} />
                   ))}
@@ -242,6 +242,8 @@ export default function Governance({ data }: Props) {
 
 export const getServerSideProps: GetServerSideProps<Props> = async () => {
   try {
+    // TODO: utilize the new proposal data provided by chainhooks to get initial list of proposals
+    // we will still need to enrich this data with proposal metadata, tbd
     const [proposals, transactions] = await Promise.all([
       getProposals(),
       fetchAllContractTransactions(
