@@ -56,58 +56,26 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     };
 
     for (let i = 1; i <= Number(uniqueLandTypes); i++) {
-        const amount = await clarigen.roOk(landsContract.getTotalSupply(i));
-        const assetContract: string = await clarigen.ro(landsContract.getLandAssetContract(i));
-      
-        const tokenMetadata = await getLand(assetContract);
-      
-        // Add null checks
-        if (Number(amount) && tokenMetadata && tokenMetadata.wraps && tokenMetadata.wraps.symbol) {
-          const tokens = await velarApi.tokens(tokenMetadata.wraps.symbol);
-          const price = Number(tokens[0]?.price) || 0.000000000001;
-      
-          chartData0.push({
-            id: tokenMetadata.name,
-            score:
-              (Number(amount) / Math.pow(10, tokenMetadata.wraps.decimals || 6)) *
-              Number(price),
-            fill: `hsl(var(--background))`,
-          });
-          chartConfig0[tokenMetadata.name] = {
-            label: tokenMetadata.name,
-            color: `hsl(var(--secondary))`,
-          };
-      
-          chartData1.push({
-            id: tokenMetadata.name,
-            score: Number(amount) / tokenMetadata.wraps.totalSupply,
-            fill: `hsl(var(--background))`,
-          });
-          chartConfig1[tokenMetadata.name] = {
-            label: tokenMetadata.name,
-            color: `hsl(var(--secondary))`,
-          };
-      
-          const landDifficulty: bigint = await clarigen.ro(
-            landsContract.getLandDifficulty(i)
-          );
-          chartData2.push({
-            id: tokenMetadata.name,
-            score: Number(amount) / Number(landDifficulty),
-            fill: `hsl(var(--background))`,
-          });
-          chartConfig2[tokenMetadata.name] = {
-            label: tokenMetadata.name,
-            color: `hsl(var(--secondary))`,
-          };
-        } else {
-          console.warn(
-            `Skipping asset contract due to missing data: ${assetContract}`
-          );
-          // Optionally handle the error or provide default values
+        const amount = await clarigen.roOk(landsContract.getTotalSupply(i))
+        const assetContract: string = await clarigen.ro(landsContract.getLandAssetContract(i))
+        if (Number(amount)) {
+            const tokenMetadata = await getLand(assetContract)
+
+            const tokens = await velarApi.tokens(tokenMetadata.wraps.symbol)
+
+            const price = Number(tokens[0]?.price) || 0.000000000001
+
+            chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, tokenMetadata.wraps.decimals || 6) * Number(price), fill: `hsl(var(--background))` });
+            chartConfig0[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+
+            chartData1.push({ id: tokenMetadata.name, score: Number(amount) / tokenMetadata.wraps.totalSupply, fill: `hsl(var(--background))` });
+            chartConfig1[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+
+            const landDifficulty: bigint = await clarigen.ro(landsContract.getLandDifficulty(i))
+            chartData2.push({ id: tokenMetadata.name, score: Number(amount) / Number(landDifficulty), fill: `hsl(var(--background))` });
+            chartConfig2[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
         }
-      }
-      
+    }
 
 
 
