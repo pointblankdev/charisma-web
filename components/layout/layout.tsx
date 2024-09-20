@@ -153,7 +153,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
             </div>
           </DropdownMenuTrigger>
           <DropdownMenuContent className="mx-2 mt-0.5">
-            <DropdownMenuLabel>Select a token</DropdownMenuLabel>
+            <DropdownMenuLabel>Select Token</DropdownMenuLabel>
             <DropdownMenuSeparator />
             {playerLands.map((land: any) => (
               <DropdownMenuItem
@@ -168,7 +168,10 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={10}
                   className={`z-30 rounded-full h-5 w-5`}
                 />
-                <div>{land.metadata.name}</div>
+                <span className={`px-2 py-0.5 border-2 rounded-full text-xs font-medium`}>
+                    {numeral(land?.energy).format('0.0a')} ⚡
+                </span>
+                <div>{land.metadata?.wraps.symbol}</div>
               </DropdownMenuItem>
             ))}
           </DropdownMenuContent>
