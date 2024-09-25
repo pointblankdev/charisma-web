@@ -16,8 +16,8 @@ export default async function arbitrage(
 
     const response: any = {}
     try {
-        const transactions = await runAll()
-        response.transactions = transactions
+        // const transactions = await runAll()
+        // response.transactions = transactions
 
     } catch (error: any) {
         await Logger.error({ 'arbitage-error': error?.message });
