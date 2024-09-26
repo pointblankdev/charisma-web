@@ -18,85 +18,85 @@ import velarApi from '@lib/velar-api';
 import { LandsTVLChart } from '@components/leaderboards/lands-tvl-chart';
 
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
-    const experienceHolders = await getExperienceLeaderboard(0, -1)
-    const experienceTotalSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
-    const topRewardedPlayers = await getRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', 0, -1)
+// export const getStaticProps: GetStaticProps<Props> = async () => {
+//     const experienceHolders = await getExperienceLeaderboard(0, -1)
+//     const experienceTotalSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience')
+//     const topRewardedPlayers = await getRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', 0, -1)
 
-    const landsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands';
-    const landsContract = contractFactory(contracts.lands as any, landsContractId);
-    const uniqueLandTypes: bigint = await clarigen.roOk(landsContract.getLastLandId());
+//     const landsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lands';
+//     const landsContract = contractFactory(contracts.lands as any, landsContractId);
+//     const uniqueLandTypes: bigint = await clarigen.roOk(landsContract.getLastLandId());
 
-    const chartData0 = [
-    ]
+//     const chartData0 = [
+//     ]
 
-    const chartConfig0: ChartConfig = {
-        tokens: {
-            label: "Stake-to-Earn TVL",
-        },
-    };
-
-
-    const chartData1 = [
-    ]
-
-    const chartConfig1: ChartConfig = {
-        tokens: {
-            label: "Total Supply Staked",
-        },
-    };
-
-    const chartData2 = [
-    ]
-
-    const chartConfig2: ChartConfig = {
-        score: {
-            label: "Tokens Staked / Difficulty",
-        },
-    };
-
-    for (let i = 1; i <= Number(uniqueLandTypes); i++) {
-        const amount = await clarigen.roOk(landsContract.getTotalSupply(i))
-        const assetContract: string = await clarigen.ro(landsContract.getLandAssetContract(i))
-        if (Number(amount)) {
-            const tokenMetadata = await getLand(assetContract)
-
-            const tokens = await velarApi.tokens(tokenMetadata.wraps.symbol)
-
-            const price = Number(tokens[0]?.price) || 0.000000000001
-
-            chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, tokenMetadata.wraps.decimals || 6) * Number(price), fill: `hsl(var(--background))` });
-            chartConfig0[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
-
-            chartData1.push({ id: tokenMetadata.name, score: Number(amount) / tokenMetadata.wraps.totalSupply, fill: `hsl(var(--background))` });
-            chartConfig1[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
-
-            const landDifficulty: bigint = await clarigen.ro(landsContract.getLandDifficulty(i))
-            chartData2.push({ id: tokenMetadata.name, score: Number(amount) / Number(landDifficulty), fill: `hsl(var(--background))` });
-            chartConfig2[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
-        }
-    }
+//     const chartConfig0: ChartConfig = {
+//         tokens: {
+//             label: "Stake-to-Earn TVL",
+//         },
+//     };
 
 
+//     const chartData1 = [
+//     ]
 
-    const [wchaPriceData] = await velarApi.tokens('wCHA')
+//     const chartConfig1: ChartConfig = {
+//         tokens: {
+//             label: "Total Supply Staked",
+//         },
+//     };
 
-    return {
-        props: {
-            wchaPriceData,
-            holders: experienceHolders,
-            expTotalSupply: Number(experienceTotalSupply),
-            topRewardedPlayers,
-            chartData0: chartData0.sort((a, b) => b.score - a.score),
-            chartConfig0,
-            chartData1: chartData1.sort((a, b) => b.score - a.score),
-            chartConfig1,
-            chartData2: chartData2.sort((a, b) => b.score - a.score),
-            chartConfig2,
-        },
-        revalidate: 60
-    };
-};
+//     const chartData2 = [
+//     ]
+
+//     const chartConfig2: ChartConfig = {
+//         score: {
+//             label: "Tokens Staked / Difficulty",
+//         },
+//     };
+
+//     for (let i = 1; i <= Number(uniqueLandTypes); i++) {
+//         const amount = await clarigen.roOk(landsContract.getTotalSupply(i))
+//         const assetContract: string = await clarigen.ro(landsContract.getLandAssetContract(i))
+//         if (Number(amount)) {
+//             const tokenMetadata = await getLand(assetContract)
+
+//             const tokens = await velarApi.tokens(tokenMetadata.wraps.symbol)
+
+//             const price = Number(tokens[0]?.price) || 0.000000000001
+
+//             chartData0.push({ id: tokenMetadata.name, score: Number(amount) / Math.pow(10, tokenMetadata.wraps.decimals || 6) * Number(price), fill: `hsl(var(--background))` });
+//             chartConfig0[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+
+//             chartData1.push({ id: tokenMetadata.name, score: Number(amount) / tokenMetadata.wraps.totalSupply, fill: `hsl(var(--background))` });
+//             chartConfig1[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+
+//             const landDifficulty: bigint = await clarigen.ro(landsContract.getLandDifficulty(i))
+//             chartData2.push({ id: tokenMetadata.name, score: Number(amount) / Number(landDifficulty), fill: `hsl(var(--background))` });
+//             chartConfig2[tokenMetadata.name] = { label: tokenMetadata.name, color: `hsl(var(--secondary))` }
+//         }
+//     }
+
+
+
+//     const [wchaPriceData] = await velarApi.tokens('wCHA')
+
+//     return {
+//         props: {
+//             wchaPriceData,
+//             holders: experienceHolders,
+//             expTotalSupply: Number(experienceTotalSupply),
+//             topRewardedPlayers,
+//             chartData0: chartData0.sort((a, b) => b.score - a.score),
+//             chartConfig0,
+//             chartData1: chartData1.sort((a, b) => b.score - a.score),
+//             chartConfig1,
+//             chartData2: chartData2.sort((a, b) => b.score - a.score),
+//             chartConfig2,
+//         },
+//         revalidate: 60
+//     };
+// };
 
 type Props = {
     wchaPriceData: any;
@@ -120,7 +120,7 @@ export default function LeaderboardPage({ wchaPriceData, holders, expTotalSupply
     return (
         <Page meta={meta} fullViewport>
             <SkipNavContent />
-            <Layout>
+            {/* <Layout>
                 <div className="m-2 space-y-6 sm:container sm:mx-auto sm:py-10">
                     <div className='flex justify-between'>
                         <div className="space-y-1">
@@ -129,7 +129,6 @@ export default function LeaderboardPage({ wchaPriceData, holders, expTotalSupply
                                 Top ranked players and teams in the Charisma ecosystem.
                             </p>
                         </div>
-                        {/* button placeholder */}
                     </div>
                     <Tabs defaultValue="1" className="w-full">
                         <div className="overflow-x-auto">
@@ -158,7 +157,7 @@ export default function LeaderboardPage({ wchaPriceData, holders, expTotalSupply
                         </TabsContent>
                     </Tabs>
                 </div>
-            </Layout>
+            </Layout> */}
         </Page >
     );
 }
