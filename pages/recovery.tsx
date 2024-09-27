@@ -60,7 +60,7 @@ const RecoveryClaim = () => {
       </div>
       <div className='flex flex-col items-center w-full space-y-4'>
         <Image src={bluePill} alt='Blue Pill' width={250} height={250} />
-        <Button disabled onClick={() => makeChoice(false)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-primary'>Select Blue Pill</Button>
+        <Button disabled onClick={() => makeChoice(false)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-blue-800 bg-blue-800'>Select Blue Pill</Button>
       </div>
     </div>
   );
