@@ -200,7 +200,7 @@ const FAQSection = () => {
     {
       question: 'What is the Red Pill option?',
       answer:
-        `The Red Pill option allows users to support Charisma's long-term recovery and receive 150% of their lost tokens' USD value in CHA tokens. Red Pill holders will also have exclusive access to wrap into the new Charisma token, giving their existing CHA tokens trade value. The more users choose the Red Pill, the stronger Charisma will recover.`,
+        `The Red Pill option allows users to support Charisma's long-term recovery and receive 150% of their lost tokens' USD value in CHA tokens. Red Pill holders will also have exclusive access to wrap into the new Charisma token, giving their existing CHA tokens trade value. The more users choose the Red Pill, the faster Charisma will recover.`,
     },
     {
       question: 'What is the Blue Pill option?',
