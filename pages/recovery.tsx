@@ -19,7 +19,7 @@ import Image from 'next/image';
 export default function RecoveryClaimPage() {
   const meta = {
     title: 'Charisma | Recovery Claim',
-    description: META_DESCRIPTION,
+    description: "Charisma Recovery Plan: Decision Guide",
   };
 
   return (
