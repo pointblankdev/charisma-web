@@ -218,7 +218,7 @@ const CharismaRecoveryPlan = () => {
               <strong>Synthetic Redemptions:</strong> A smart contract will allow users to redeem synthetic tokens for original tokens at a 1:1 ratio.
             </li>
             <li>
-              <strong>Contract Priority Controls:</strong> The contract will enforce a check to verify that the Blue Pill NFT is held for priority redemptions. This check will be lifted once either 10 million WELSH and 500,000 ROO tokens are redeemed, or 90% of all Blue Pill holder redemptions are fulfilled.
+              <strong>Contract Priority Controls:</strong> The contract will enforce a check to verify that the Blue Pill NFT is held for priority redemptions. This check will be lifted once either 20 million WELSH and 500,000 ROO tokens are redeemed, or 50% of all synthetic WELSH and ROO tokens are burned through redemptions.
             </li>
             <li>
               <strong>Redemption Funding:</strong> Redemptions will be supported by community donations and all Charisma-generated revenue until full collateralization is achieved.
