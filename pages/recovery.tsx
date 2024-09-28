@@ -11,6 +11,8 @@ import { useOpenContractCall } from '@micro-stacks/react';
 import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
 import redPill from '@public/sip9/pills/red-pill.gif';
 import bluePill from '@public/sip9/pills/blue-pill.gif';
+import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
+import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import Image from 'next/image';
 
 
@@ -28,7 +30,7 @@ export default function RecoveryClaimPage() {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
           <CharismaRecoveryPlan />
-          <p className='p-8 mx-auto my-[100vh] text-2xl font-light text-center max-w-prose'>"You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit hole goes."</p>
+          <p className='sm:p-8 mx-auto my-[100vh] text-lg sm:text-2xl font-light text-center max-w-prose'>"You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit hole goes."</p>
           <RecoveryClaim />
           <FAQSection />
         </div>
@@ -53,14 +55,14 @@ const RecoveryClaim = () => {
   }
 
   return (
-    <div className='flex w-full p-24 my-[100vh]'>
+    <div className='flex w-full p-24 my-[100vh] bg-gray-900/50 rounded-full'>
       <div className='flex flex-col items-center w-full space-y-4'>
-        <Image src={redPill} alt='Red Pill' width={250} height={250} />
-        <Button disabled onClick={() => makeChoice(true)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-primary'>Select Red Pill</Button>
+        <Image src={redPillFloating} alt='Red Pill' width={250} height={250} className='transition-all cursor-pointer hover:scale-125 hover:-translate-y-4' />
+        {/* <Button disabled onClick={() => makeChoice(true)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-primary'>Select Red Pill</Button> */}
       </div>
       <div className='flex flex-col items-center w-full space-y-4'>
-        <Image src={bluePill} alt='Blue Pill' width={250} height={250} />
-        <Button disabled onClick={() => makeChoice(false)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-blue-800 bg-blue-800'>Select Blue Pill</Button>
+        <Image src={bluePillFloating} alt='Blue Pill' width={250} height={250} className='transition-all cursor-pointer hover:scale-125 hover:-translate-y-4' />
+        {/* <Button disabled onClick={() => makeChoice(false)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-blue-800 bg-blue-800'>Select Blue Pill</Button> */}
       </div>
     </div>
   );
@@ -68,7 +70,7 @@ const RecoveryClaim = () => {
 
 const CharismaRecoveryPlan = () => {
   return (
-    <div className="p-8">
+    <div className="sm:p-8">
       <div className="max-w-5xl p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-white/90">
         {/* Introduction */}
         <section className="mb-8">
@@ -230,7 +232,7 @@ const FAQSection = () => {
   ];
 
   return (
-    <div className="p-8">
+    <div className="sm:p-8">
       <div className="max-w-4xl p-6 mx-auto rounded-lg shadow-lg bg-white/90">
         <h2 className="mb-6 text-2xl font-semibold text-gray-800">Frequently Asked Questions</h2>
 
