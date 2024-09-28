@@ -32,7 +32,6 @@ export default function RecoveryClaimPage() {
           <CharismaRecoveryPlan />
           {/* <p className='sm:p-8 mx-auto my-[100vh] text-lg sm:text-2xl font-light text-center max-w-prose'>"You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit hole goes."</p> */}
           <RecoveryClaim />
-          {/* <FAQSection /> */}
         </div>
       </Layout>
     </Page>
@@ -82,7 +81,7 @@ const CharismaRecoveryPlan = () => {
     {
       question: 'What is this recovery plan?',
       answer:
-        `The Charisma Recovery Plan is a two-pronged approach to address the recent governance attack on Charisma. The plan offers two recovery options: the Red Pill and the Blue Pill. These options determine how users will be compensated for their lost tokens and provide different paths forward depending on each user's choice.`,
+        `The Charisma Recovery Plan is a two-pronged approach to address the recent governance attack on Charisma. There are many steps in the restoration plan that will be the same for everyone. Additionally, the plan offers two options for personalization: the Red Pill and the Blue Pill.`,
     },
     {
       question: 'What caused the need for a recovery plan?',
@@ -92,7 +91,7 @@ const CharismaRecoveryPlan = () => {
     {
       question: 'What are my options for recovery?',
       answer:
-        `To address this, Charisma is offering two recovery options: the Red Pill and the Blue Pill. These options determine how users will be compensated for their lost tokens and provide different paths forward depending on each user's choice. After the token burn and supply normalization, as well as 90% of users having made their recovery choice, the recovery process will begin.`,
+        `To address this, Charisma is offering two options: the Red Pill and the Blue Pill. While our goal is for all users will be fully restored, this option let's us personalize your recovery experience.`,
     },
   ];
 
@@ -240,77 +239,5 @@ const CharismaRecoveryPlan = () => {
         </section>
       </div>
     </div >
-  );
-};
-
-const FAQSection = () => {
-  const [openFAQ, setOpenFAQ] = useState(null);
-
-  const toggleFAQ = (index: any) => {
-    setOpenFAQ(openFAQ === index ? null : index);
-  };
-
-  const faqs = [
-    {
-      question: 'What is the Red Pill option?',
-      answer:
-        `The Red Pill option allows users to support Charisma's long-term recovery and receive 150% of their lost tokens' USD value in CHA tokens. Red Pill holders will also have exclusive access to wrap into the new Charisma token, giving their existing CHA tokens trade value. The more users choose the Red Pill, the faster Charisma will recover.`,
-    },
-    {
-      question: 'What is the Blue Pill option?',
-      answer:
-        'The Blue Pill option is for users seeking immediate restitution. It provides the exact amount of tokens lost in the attack. Blue Pill holders will not have access to the new Charisma token, giving their existing CHA tokens no trade value until liquidity is restored for the STX-sCHA and STX-wCHA Velar pools. The more users choose the Blue Pill, the longer it will take for Charisma to recover.',
-    },
-    {
-      question: 'How does the vesting schedule work?',
-      answer:
-        'The vesting schedule for the Red Pill option follows a block-based release model. Initially, tokens can be wrapped into the new Charisma token every 10 blocks, but after the Nakamoto upgrade, blocks-per-tx will be adjusted to 100, meaning you can wrap tokens every 8-17 minutes depending on block times. Like iQC, it is first-come first-serve, so the earlier you wrap your tokens, the earlier you can swap them for other tokens. If CHA price has stabilized, the community can vote to reduce blocks-per-tx to speed up the release of tokens.',
-    },
-    {
-      question: 'What is the new Charisma token?',
-      answer:
-        'The new Charisma token will be exclusively available to Red Pill holders and is designed to restore liquidity while preventing large sell-offs. It will be immediately listed on a DEX and funded with liquidity to ensure all Red Pill holders have access to trading liquidity for their Charisma tokens. It will follow a vesting schedule and iQC-like liquidity controls to ensure fair access and market stability. This will serve as the single primary trading token for Charisma moving forward.',
-    },
-    {
-      question: 'How is the recovery timeline structured?',
-      answer:
-        'Tokens will be dispensed immediately after the burn and normalization. Red Pill holders will follow the vesting schedule, with liquidity flowing gradually into the market over the next few months. Blue Pill holders will have immediate access to their WELSH and ROO tokens, but lose the ability to swap their CHA tokens until there is more STX liquidity available to supply to STX-sCHA or STX-wCHA LPs.',
-    },
-    {
-      question: 'Are there min and max values for blocks-per-tx and max-liquidity-flow?',
-      answer:
-        'Yes, there are min and max values for both blocks-per-tx and max-liquidity-flow. The min value for blocks-per-tx is 1 block, and the max is 1,000,000 blocks. For max-liquidity-flow, the min value is 1 token, and the max is 10,000 tokens. These parameters ensure controlled liquidity flow and prevent scenarios where a large amount of CHA tokens and dumped on the market. By enforcing these liquidity controls, the system prevents sudden sell-offs and market instability. This doubles as a security measure to protect the ecosystem from future attacks.',
-    },
-  ];
-
-  return (
-    <div className="sm:p-8">
-      <div className="max-w-4xl p-6 mx-auto rounded-lg shadow-lg bg-white/90">
-        <h2 className="mb-6 text-2xl font-semibold text-gray-800">Frequently Asked Questions</h2>
-
-        <div className="space-y-4">
-          {faqs.map((faq, index) => (
-            <div key={index} className="pb-4 border-b border-gray-300">
-              <button
-                className="w-full text-left focus:outline-none"
-                onClick={() => toggleFAQ(index)}
-              >
-                <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-medium text-gray-700">
-                    {faq.question}
-                  </h3>
-                  <span className="text-gray-500">
-                    {openFAQ === index ? '-' : '+'}
-                  </span>
-                </div>
-              </button>
-              {openFAQ === index && (
-                <p className="mt-2 text-gray-600">{faq.answer}</p>
-              )}
-            </div>
-          ))}
-        </div>
-      </div>
-    </div>
   );
 };
