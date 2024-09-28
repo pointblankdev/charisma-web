@@ -52,7 +52,7 @@ const HeroSection = () => {
         </div>
         <div className='flex flex-col items-center justify-center w-full px-4 text-lg text-center -translate-y-16 sm:text-md sm:text-start sm:items-start sm:justify-start sm:px-0'>
           <div className='flex items-baseline justify-center w-full text-center sm:justify-start'>
-            <div className='py-4 text-6xl sm:py-0'>Charisma</div><div className='text-lg text-primary'>CHA</div>
+            <div className='py-4 text-6xl sm:py-0'>Charisma</div><div className='text-lg font-bold text-primary'>CHA</div>
           </div>
           <div className='mt-4 text-lg grow text-secondary/80'>Introducing the new Charisma token– a secure gateway for swaps.</div>
           <div className='mt-8 text-md text-secondary/80'>
