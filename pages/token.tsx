@@ -50,7 +50,7 @@ const HeroSection = () => {
           <div className='flex items-baseline justify-center w-full text-center sm:justify-start'>
             <div className='py-4 text-6xl sm:py-0'>Charisma</div><div className='text-lg text-primary'>CHA</div>
           </div>
-          <div className='mt-4 grow text-secondary/80'>Introducing the simplified Charisma token, and consolidating everything into one unified, tradeable SIP10 token.</div>
+          <div className='mt-4 grow text-secondary/80'>Introducing the simplified Charisma token– the new unified, tradeable token.</div>
           <div className='mt-8 text-secondary/80'>
             You can wrap your governance tokens into the new Charisma token if you hold a Red Pill NFT.
             Once wrapped, you can swap tokens on any compatible DEX or exchange.
