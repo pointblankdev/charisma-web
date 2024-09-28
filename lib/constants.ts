@@ -21,21 +21,29 @@ export const API_URL = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:
 
 export const NAVIGATION = [
   {
-    name: 'Swap',
-    route: '/swap'
+    name: 'The New Token',
+    route: '/token'
   },
   {
-    name: 'Staking',
-    route: '/staking'
+    name: 'The Recovery Plan',
+    route: '/recovery'
   },
-  {
-    name: 'Rewards',
-    route: '/quests'
-  },
-  {
-    name: 'Leaderboard',
-    route: '/leaderboard'
-  },
+  // {
+  //   name: 'Swap',
+  //   route: '/swap'
+  // },
+  // {
+  //   name: 'Staking',
+  //   route: '/staking'
+  // },
+  // {
+  //   name: 'Rewards',
+  //   route: '/quests'
+  // },
+  // {
+  //   name: 'Leaderboard',
+  //   route: '/leaderboard'
+  // },
   // {
   //   name: 'Portfolio',
   //   route: '/portfolio'
