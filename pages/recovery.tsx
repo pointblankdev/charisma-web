@@ -233,7 +233,9 @@ const CharismaRecoveryPlan = () => {
         <section>
           <h2 className="mb-4 text-xl font-semibold text-gray-800">Final Thoughts</h2>
           <p className="leading-relaxed text-gray-700">
-            The <strong>Red Pill</strong> offers greater rewards and exclusive access to the new Charisma token, positioning you for long-term growth while supporting Charisma's recovery. On the other hand, the <strong>Blue Pill</strong> provides priority on redemptions if you prefer a simpler recovery path.
+            The <strong>Red Pill</strong> offers greater rewards and exclusive access to the new Charisma token, positioning you for long-term growth while supporting Charisma's recovery.
+            On the other hand, the <strong>Blue Pill</strong> provides priority on redemptions if you prefer a simpler recovery path.
+            Both plans fully restore your lost tokens, but the Red Pill offers more value and control over your recovery, while the Blue Pill provides higher priority restitution.
           </p>
         </section>
       </div>
