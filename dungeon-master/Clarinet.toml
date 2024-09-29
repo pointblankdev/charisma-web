@@ -86,6 +86,13 @@ depends_on = []
 path = "contracts/charisma.clar"
 depends_on = []
 
+[contracts.synthetic-welsh]
+path = "contracts/synthetic-welsh.clar"
+
+[contracts.synthetic-roo]
+path = "contracts/synthetic-roo.clar"
+depends_on = []
+
 # traits
 [contracts.dao-traits-v4]
 path = "contracts/dao-traits-v4.clar"

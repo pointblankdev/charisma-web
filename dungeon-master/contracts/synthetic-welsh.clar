@@ -3,7 +3,7 @@
 (define-fungible-token synthetic-welsh)
 (define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/v0/tokens/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh"))
 (define-constant contract-creator tx-sender)
-(impl-trait 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.sip-010-trait)
+(impl-trait .dao-traits-v4.sip010-ft-trait)
 
 ;; SIP-010 Standard
 
@@ -77,9 +77,16 @@
   )
 )
 
-;; mint assets for those lost in charisma exploit
+(define-public (burn (amount uint))
+  (ft-burn? synthetic-welsh amount tx-sender)
+)
+
+;; initial minting
 
 (begin
+  ;; mint 2m for dex lp
+  (try! (ft-mint? synthetic-welsh u2000000000000 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS)) 
+  ;; mint ious for those who lost in the exploit
   (try! (ft-mint? synthetic-welsh u33894836660127 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS)) 
   (try! (ft-mint? synthetic-welsh u18920953288246 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q)) 
   (try! (ft-mint? synthetic-welsh u6055324553993 'SP1X7X9SCHHK4JG4K5NXZ4TDNWKBQR759A85XC1PC)) 

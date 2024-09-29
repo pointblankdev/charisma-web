@@ -141,7 +141,7 @@ const CharismaRecoveryPlan = () => {
               <strong>New Charisma Token:</strong> A new Charisma token will be listed on a DEX, with $40k total initial liquidity provided.
             </li>
             <li>
-              <strong>Synthetic WELSH:</strong> A synthetic WELSH token will be listed on a DEX, with $20k total initial liquidity provided.
+              <strong>Synthetic WELSH:</strong> A synthetic WELSH token will be listed on a DEX, with $10k total initial liquidity provided.
             </li>
             <li>
               <strong>Synthetic ROO:</strong> A synthetic ROO token will be listed on a DEX, with $10k total initial liquidity provided.
