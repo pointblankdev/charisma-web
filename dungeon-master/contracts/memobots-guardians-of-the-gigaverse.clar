@@ -116,7 +116,7 @@
 )
 
 ;; Mint a new NFT.
-(define-private (mint (recipient principal))
+(define-public (mint (recipient principal))
   ;; Create the new token ID by incrementing the last minted ID.
   (let ((token-id (+ (var-get last-token-id) u1)))
     (try! (is-authorized))

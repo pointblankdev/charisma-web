@@ -62,8 +62,28 @@ depends_on = []
 path = "contracts/giga-pepe-v2.clar"
 depends_on = []
 
+[contracts.gbab-v0]
+path = "contracts/gbab-v0.clar"
+depends_on = []
+
+[contracts.recovery-claim-test]
+path = "contracts/recovery-claim-test.clar"
+depends_on = []
+
 [contracts.energy-airdrop]
 path = "contracts/energy-airdrop.clar"
+depends_on = []
+
+[contracts.cha-reset]
+path = "contracts/cha-reset.clar"
+depends_on = []
+
+[contracts.the-red-pill]
+path = "contracts/the-red-pill.clar"
+depends_on = []
+
+[contracts.charisma]
+path = "contracts/charisma.clar"
 depends_on = []
 
 # traits

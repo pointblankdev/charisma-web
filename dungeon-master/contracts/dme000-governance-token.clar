@@ -16,7 +16,7 @@
 
 (define-data-var token-name (string-ascii 32) "Charisma")
 (define-data-var token-symbol (string-ascii 10) "CHA")
-(define-data-var token-uri (optional (string-utf8 256)) none)
+(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/charisma.json"))
 (define-data-var token-decimals uint u6)
 
 ;; --- Authorization check

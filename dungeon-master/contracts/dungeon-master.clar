@@ -79,5 +79,3 @@
 		(as-contract (contract-call? extension callback sender memo))
 	)
 )
-
-(set-extension 'ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM.energy-helper-v0 true)

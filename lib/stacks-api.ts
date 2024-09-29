@@ -1266,3 +1266,22 @@ export async function getTransferFunction(contractAddress: string) {
   // Extract the function
   return code.substring(startIndex, endIndex).trim();
 }
+
+
+export async function getBalancesAtBlock() {
+  const response = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'cha-gbab',
+    functionName: 'get-balances-at-block',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: [
+        cvToHex(parseToCV("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS", 'principal')),
+        cvToHex(parseToCV("166688", 'uint128'))
+      ]
+    }
+  });
+  // const result = hexToCV((response as any).result);
+  console.log(response)
+  return response;
+}

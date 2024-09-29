@@ -1,5 +1,31 @@
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, removeLand, removeNftCollection, setContractMetadata, setHadLandBefore, setLand, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata } from "./kv";
+import id from "date-fns/locale/id/index.js";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, removeLand, removeNftCollection, setContractMetadata, setHadLandBefore, setLand, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata, setNftMetadata } from "./kv";
 import { Land } from "./kv.types";
+
+describe('tokens api', () => {
+
+    it('should set welsh contract metadata by id', async () => {
+        const ca = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh'
+        const metadata = {
+            name: "Synthetic Welsh",
+            description: "A synthetic asset redeemable 1:1 for Welshcorgicoin.",
+            image: "https://charisma.rocks/welsh-logo.png"
+        }
+        const response = await setContractMetadata(ca, metadata)
+        console.log(response)
+    })
+
+    it('should set roo contract metadata by id', async () => {
+        const ca = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo'
+        const metadata = {
+            name: "Synthetic Roo",
+            description: "A synthetic asset redeemable 1:1 for Roo.",
+            image: "https://charisma.rocks/roo-logo.png"
+        }
+        const response = await setContractMetadata(ca, metadata)
+        console.log(response)
+    })
+})
 
 describe('metadata api', () => {
     it('should get contract metadata by id', async () => {
@@ -452,6 +478,47 @@ describe('nfts api', () => {
         data.properties.whitelisted = true
         await setNftCollectionMetadata('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz', data)
         console.log(JSON.stringify(data, null, 2))
+    })
+
+    it('should update nft collection metadata (the-blue-pill)', async () => {
+        const contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-blue-pill'
+        const data = {
+            "sip": 16,
+            "name": "Charisma Blue Pill NFT",
+            "description": {
+                "type": "string",
+                "description": "This is your last chance. After this, there is no turning back. You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit hole goes."
+            },
+            "attributes": [
+                {
+                    "trait_type": "color",
+                    "value": "Blue"
+                }
+            ],
+            "properties": {
+                "collection": "Charisma Blue Pill NFT",
+                "collection_image": "https://charisma.rocks/sip9/pills/blue-pill.gif",
+                "category": "image",
+            }
+        }
+        const metadata = await setNftCollectionMetadata(contractAddress, data)
+        console.log(JSON.stringify(metadata, null, 2))
+    })
+
+    it('should set nft item metadata (the-blue-pill)', async () => {
+        for (let id = 1; id <= 10000; id++) {
+            const response = await setNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-blue-pill', `${id}`, {
+                "name": `Blue Pill #${id}`,
+                "image": "https://charisma.rocks/sip9/pills/blue-pill.gif"
+            })
+            console.log(JSON.stringify(response, null, 2))
+        }
+    }, 400000)
+
+    // should get nft item
+    it('should get nft item metadata (the-red-pill)', async () => {
+        const response = await getNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-red-pill', '1000')
+        console.log(JSON.stringify(response, null, 2))
     })
 
     // should get nft item
