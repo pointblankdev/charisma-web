@@ -4,6 +4,22 @@
   (match prior ok-value result err-value (err err-value))
 )
 
+(define-public (burn-many-1)
+  (fold check-err (map burn-tokens (var-get holders-1)) (ok true))
+)
+
+(define-public (burn-many-2)
+  (fold check-err (map burn-tokens (var-get holders-2)) (ok true))
+)
+
+(define-public (burn-many-3)
+  (fold check-err (map burn-tokens (var-get holders-3)) (ok true))
+)
+
+(define-public (burn-many-4)
+  (fold check-err (map burn-tokens (var-get holders-4)) (ok true))
+)
+
 (define-public (burn-many (address-list (list 200 principal)))
   (fold check-err (map burn-tokens address-list) (ok true))
 )
