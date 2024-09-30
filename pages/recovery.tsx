@@ -97,30 +97,30 @@ const CharismaRecoveryPlan = () => {
 
   return (
     <div className="sm:p-8">
-      <div className="max-w-5xl p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-white/90">
+      <div className="max-w-5xl p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-gray-900/80">
         {/* Introduction */}
         <section className="mb-8">
-          <h1 className="mb-8 text-4xl font-bold text-gray-800">
+          <h1 className="mb-8 text-4xl font-bold">
             Charisma Recovery Plan
           </h1>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <div key={index} className="pb-4 border-b border-gray-300">
+              <div key={index} className="pb-4 border-b border-gray-800">
                 <button
                   className="w-full text-left focus:outline-none"
                   onClick={() => toggleFAQ(index)}
                 >
                   <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-medium text-gray-700">
+                    <h3 className="text-lg font-medium">
                       {faq.question}
                     </h3>
-                    <span className="text-gray-500">
+                    <span className="">
                       {openFAQ === index ? '-' : '+'}
                     </span>
                   </div>
                 </button>
                 {openFAQ === index && (
-                  <p className="mt-2 text-gray-600">{faq.answer}</p>
+                  <p className="mt-2 text-gray-300">{faq.answer}</p>
                 )}
               </div>
             ))}
@@ -129,14 +129,14 @@ const CharismaRecoveryPlan = () => {
 
         {/* Token Redemptions */}
         <section className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">Token Burns, Airdrops and Redemptions </h2>
-          <p className="leading-relaxed text-gray-700">
+          <h2 className="mb-4 text-xl font-semibold">Token Burns, Airdrops and Redemptions </h2>
+          <p className="leading-relaxed">
             All CHA balances will be revert to their state on block 166688, and a new tradeable Charisma token will be created with swapping LP.
             Additionally, synthetic tokens will be airdropped to users who lost WELSH and ROO tokens.
             This will happen regardless of the recovery option chosen.
             <strong>These synthetic tokens will be redeemable for the original tokens at a 1:1 ratio.</strong>
           </p>
-          <ul className="mt-4 ml-6 leading-relaxed text-gray-700 list-disc">
+          <ul className="mt-4 ml-6 leading-relaxed list-disc">
             <li>
               <strong>New Charisma Token:</strong> A new Charisma token will be listed on a DEX, with $40k total initial liquidity provided.
             </li>
@@ -149,12 +149,12 @@ const CharismaRecoveryPlan = () => {
           </ul>
         </section>
 
-        <hr className="border-t border-gray-300" />
+        <hr className="border-t border-gray-800" />
 
         {/* New Charisma Token */}
         <section className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-gray-800">New Charisma Token and Liquidity Pool</h2>
-          <p className="leading-relaxed text-gray-700">
+          <h2 className="mb-4 text-lg font-semibold text-gray-100">New Charisma Token and Liquidity Pool</h2>
+          <p className="leading-relaxed text-gray-300">
             A new wrapped Charisma token will be created and listed on a DEX to restore liquidity and bring value back to CHA holders.
             Only Red Pill holders can wrap their CHA tokens into this new token, helping maintain price stability.
             Wrapping and unwrapping will use controls similar to iQC to limit the flow of existing CHA tokens into it to keep the CHA token price stable.
@@ -162,29 +162,29 @@ const CharismaRecoveryPlan = () => {
         </section>
 
         <section className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-gray-800">Synthetic WELSH Token and Liquidity Pool</h2>
-          <p className="leading-relaxed text-gray-700">
-            A synthetic WELSH token will be created and listed on a DEX to restore value for users who lost WELSH tokens. This token will be backed by an initial liquidity pool funded with $20k STX, ensuring stable swap prices. Blue Pill holders will have priority access to redeem synthetic WELSH for original tokens at a 1:1 ratio, while maintaining a fair system that allows all holders to eventually recover their value.
+          <h2 className="mb-4 text-lg font-semibold text-gray-100">Synthetic WELSH Token and Liquidity Pool</h2>
+          <p className="leading-relaxed text-gray-300">
+            A synthetic WELSH token will be created and listed on a DEX to restore value for users who lost WELSH tokens. This token will be backed by an initial liquidity pool funded with $10k total value, ensuring stable swap prices. Blue Pill holders will have priority access to redeem synthetic WELSH for original tokens at a 1:1 ratio, while maintaining a fair system that allows all holders to eventually recover their value.
           </p>
         </section>
 
         <section className="mb-8">
-          <h2 className="mb-4 text-lg font-semibold text-gray-800">Synthetic ROO Token and Liquidity Pool</h2>
-          <p className="leading-relaxed text-gray-700">
-            A synthetic ROO token will be created and listed on a DEX to compensate users who lost ROO tokens. The liquidity pool for this token will be funded with $10k STX to provide price stability for swaps. Blue Pill holders will receive priority when redeeming synthetic ROO for original tokens at a 1:1 ratio, while the process will also ensure that other holders have fair access to recover their tokens over time.
+          <h2 className="mb-4 text-lg font-semibold text-gray-100">Synthetic ROO Token and Liquidity Pool</h2>
+          <p className="leading-relaxed text-gray-300">
+            A synthetic ROO token will be created and listed on a DEX to compensate users who lost ROO tokens. The liquidity pool will be funded with $10k total value to provide price stability for swaps. Blue Pill holders will receive priority when redeeming synthetic ROO for original tokens at a 1:1 ratio, while the process will also ensure that other holders have fair access to recover their tokens over time.
           </p>
         </section>
 
-        <hr className="border-t border-gray-300" />
+        <hr className="border-t border-gray-800" />
 
         {/* Red Pill vs Blue Pill */}
         <section className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">The Recovery Choices</h2>
+          <h2 className="mb-4 text-xl font-semibold text-gray-100">The Recovery Choices</h2>
 
           {/* Red Pill */}
           <div className="mb-6">
             <h3 className="mb-2 text-lg font-bold text-red-500">🔴 The Red Pill</h3>
-            <p className="leading-relaxed text-gray-700">
+            <p className="leading-relaxed text-gray-200">
               The Red Pill allows holders to wrap their CHA tokens, offering a constant stream of value and helping stabilize the token's price.
               Wrapping tokens follows a custom vesting schedule after supply normalization, allowing gradual trading at stable prices.
               Without the Red Pill, users cannot unlock with the value of their held CHA governance tokens.
@@ -194,7 +194,7 @@ const CharismaRecoveryPlan = () => {
           {/* Blue Pill */}
           <div>
             <h3 className="mb-2 text-lg font-bold text-blue-500">🔵 The Blue Pill</h3>
-            <p className="mt-4 leading-relaxed text-gray-700">
+            <p className="mt-4 leading-relaxed text-gray-200">
               The Blue Pill provides holders with priority access to token redemptions, specifically the synthetic tokens being airdropped to users who lost WELSH and ROO tokens.
               These synthetic tokens will be redeemable for the original tokens at a 1:1 ratio, with Blue Pill holders getting first in line for redemptions.
               This priority access for Blue Pill holders aims to help restore user balances efficiently, while still allowing Red Pill holders eventual access to recover their tokens.
@@ -202,12 +202,12 @@ const CharismaRecoveryPlan = () => {
           </div>
         </section>
 
-        <hr className="border-t border-gray-300" />
+        <hr className="border-t border-gray-800" />
 
         {/* Recovery Timeline */}
         <section className="mb-8">
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">Recovery Timeline</h2>
-          <ul className="ml-6 leading-relaxed text-gray-700 list-disc">
+          <h2 className="mb-4 text-xl font-semibold text-gray-100">Recovery Timeline</h2>
+          <ul className="ml-6 leading-relaxed text-gray-200 list-disc">
             <li>
               <strong>Immediate Token Airdrop:</strong> Existing CHA governance and synthetic tokens will be issued first.
             </li>
@@ -226,12 +226,12 @@ const CharismaRecoveryPlan = () => {
           </ul>
         </section>
 
-        <hr className="border-t border-gray-300" />
+        <hr className="border-t border-gray-800" />
 
         {/* Final Thoughts */}
         <section>
-          <h2 className="mb-4 text-xl font-semibold text-gray-800">Final Thoughts</h2>
-          <p className="leading-relaxed text-gray-700">
+          <h2 className="mb-4 text-xl font-semibold text-gray-100">Final Thoughts</h2>
+          <p className="leading-relaxed text-gray-200">
             The <strong>Red Pill</strong> offers greater rewards and exclusive access to the new Charisma token, positioning you for long-term growth while supporting Charisma's recovery.
             On the other hand, the <strong>Blue Pill</strong> provides priority on redemptions if you prefer a simpler recovery path.
             Both plans fully restore your lost tokens, but the Red Pill offers more value and control over your recovery, while the Blue Pill provides higher priority restitution.
