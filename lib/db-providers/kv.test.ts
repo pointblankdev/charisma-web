@@ -505,11 +505,11 @@ describe('nfts api', () => {
         console.log(JSON.stringify(metadata, null, 2))
     })
 
-    it('should set nft item metadata (the-blue-pill)', async () => {
-        for (let id = 1; id <= 10000; id++) {
-            const response = await setNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-blue-pill', `${id}`, {
+    it('should set nft item metadata (the-red-pill)', async () => {
+        for (let id = 1; id <= 500; id++) {
+            const response = await setNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-red-pill', `${id}`, {
                 "name": `Blue Pill #${id}`,
-                "image": "https://charisma.rocks/sip9/pills/blue-pill.gif"
+                "image": "https://charisma.rocks/sip9/pills/red-pill-nft.gif"
             })
             console.log(JSON.stringify(response, null, 2))
         }

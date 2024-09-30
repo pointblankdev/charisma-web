@@ -78,8 +78,12 @@ depends_on = []
 path = "contracts/cha-reset.clar"
 depends_on = []
 
-[contracts.the-red-pill]
-path = "contracts/the-red-pill.clar"
+[contracts.charisma-claims]
+path = "contracts/charisma-claims.clar"
+depends_on = []
+
+[contracts.red-pill-nft]
+path = "contracts/red-pill-nft.clar"
 depends_on = []
 
 [contracts.charisma]

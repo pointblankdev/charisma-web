@@ -15,15 +15,54 @@ import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
 import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
+import useWallet from '@lib/hooks/wallet-balance-provider';
+import { GetStaticProps } from 'next';
+import { getTotalSupply } from '@lib/stacks-api';
+
+export const getStaticProps: GetStaticProps<Props> = () => {
+
+  const syntheticWelshIssued = 100
+  const syntheticRooIssued = 100
+
+  const syntheticWelshRemainingSupply = 100//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
+  const syntheticRooRemainingSupply = 100//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
+
+  const syntheticWelshRedemptionsAvailable = 0//await getAvailableRedemptions('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
+  const syntheticRooRedemptionsAvailable = 0//await getAvailableRedemptions('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
+
+  return {
+    props: {
+      data: {
+        syntheticWelsh: {
+          issued: syntheticWelshIssued,
+          burned: syntheticWelshIssued - syntheticWelshRemainingSupply,
+          remaining: syntheticWelshRemainingSupply,
+          available: syntheticWelshRedemptionsAvailable
+        },
+        syntheticRoo: {
+          issued: syntheticRooIssued,
+          burned: syntheticRooIssued - syntheticRooRemainingSupply,
+          remaining: syntheticRooRemainingSupply,
+          available: syntheticRooRedemptionsAvailable
+        }
+      }
+    },
+    revalidate: 60
+  };
+};
+
+type Props = {
+  data: any;
+};
 
 
-
-
-export default function RecoveryClaimPage() {
+export default function RecoveryClaimPage({ data }: Props) {
   const meta = {
     title: 'Charisma | Recovery Claim',
-    description: "Charisma Recovery Plan: Decision Guide",
+    description: "Charisma Recovery Plan",
   };
+
+  console.log(data)
 
   return (
     <Page meta={meta} fullViewport>
@@ -51,7 +90,7 @@ export default function RecoveryClaimPage() {
               <RecoveryClaim />
             </TabsContent>
             <TabsContent value="redemptions">
-              <TokenRedemptions />
+              <TokenRedemptions data={data} />
             </TabsContent>
           </Tabs>
         </div>
@@ -60,11 +99,44 @@ export default function RecoveryClaimPage() {
   );
 }
 
-const TokenRedemptions = () => {
+const TokenRedemptions = ({ data }: any) => {
+
+  const { balances } = useWallet();
+
+  const iouWelsh: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'];
+  const iouRoo: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo'];
 
   return (
     <div className="max-w-5xl p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-gray-900/80">
-      WIP
+      <div className='grid grid-cols-3'>
+        <div></div>
+        <div>Synthetic Welsh (iouWELSH)</div>
+        <div>Synthetic Roo (iouROO)</div>
+
+        <div>Total Issued</div>
+        <div>{data.syntheticWelsh.issued}</div>
+        <div>{data.syntheticRoo.issued}</div>
+
+        <div>Total Redeemed</div>
+        <div>{data.syntheticWelsh.burned}</div>
+        <div>{data.syntheticRoo.burned}</div>
+
+        <div>Redemptions Remaining</div>
+        <div>{data.syntheticWelsh.remaining}</div>
+        <div>{data.syntheticRoo.remaining}</div>
+
+        <div className='mt-4'>Your Balances</div>
+        <div className='mt-4'>{iouWelsh?.count || 0}</div>
+        <div className='mt-4'>{iouRoo?.count || 0}</div>
+
+        <div>Redemptions Available</div>
+        <div>{data.syntheticWelsh.available}</div>
+        <div>{data.syntheticRoo.available}</div>
+
+        <div className='mt-4'>Redeem Tokens</div>
+        <div className='mt-4'><Button disabled={data.syntheticWelsh.available === 0} className='h-6' >Redeem iouWELSH</Button></div>
+        <div className='mt-4'><Button disabled={data.syntheticRoo.available === 0} className='h-6' >Redeem iouROO</Button></div>
+      </div>
     </div>
   )
 }
