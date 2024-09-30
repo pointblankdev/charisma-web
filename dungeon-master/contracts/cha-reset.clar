@@ -1,4 +1,10 @@
-;; --- Utility functions for burning and minting tokens ---
+(define-private (burn-tokens (address principal))
+  (let (
+    (amount (unwrap-panic (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token get-balance address)))
+  )
+    (ok (if (> amount u0) (try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-burn amount address)) true))
+  )
+)
 
 (define-private (check-err (result (response bool uint)) (prior (response bool uint)))
   (match prior ok-value result err-value (err err-value))
@@ -20,69 +26,20 @@
   (fold check-err (map burn-tokens (var-get holders-4)) (ok true))
 )
 
-(define-public (burn-many (address-list (list 200 principal)))
-  (fold check-err (map burn-tokens address-list) (ok true))
+(define-read-only (get-holders-1) 
+  (var-get holders-1)
 )
 
-(define-private (burn-tokens (address principal))
-  (let (
-    (amount (unwrap-panic (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token get-balance address)))
-    (burnOk (and (> amount u0) (try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-burn amount address))))
-  )
-    (ok burnOk)
-  )
+(define-read-only (get-holders-2) 
+  (var-get holders-2)
 )
 
-(define-public (mint-many-a (address-list (list 200 principal)))
-  (fold check-err (map mint-a address-list) (ok true))
+(define-read-only (get-holders-3) 
+  (var-get holders-3)
 )
 
-(define-public (mint-many-b (address-list (list 200 principal)))
-  (fold check-err (map mint-b address-list) (ok true))
-)
-
-(define-public (mint-many-c (address-list (list 200 principal)))
-  (fold check-err (map mint-c address-list) (ok true))
-)
-
-(define-public (mint-many-d (address-list (list 200 principal)))
-  (fold check-err (map mint-d address-list) (ok true))
-)
-
-(define-public (mint-a (address principal))
-  (let (
-    (amount (unwrap-panic (contract-call? .gbab-v0 get-cha-at-block address u166688)))
-    (mintOk (and (> amount u0) (try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-mint amount address))))
-  )
-    (ok mintOk)
-  )
-)
-
-(define-public (mint-b (address principal))
-  (let (
-    (amount (unwrap-panic (contract-call? .gbab-v0 get-scha-at-block address u166688)))
-    (mintOk (and (> amount u0) (try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-mint (/ (* u11 amount) u10) address))))
-  )
-    (ok mintOk)
-  )
-)
-
-(define-public (mint-c (address principal))
-  (let (
-    (amount (unwrap-panic (contract-call? .gbab-v0 get-wcha-at-block address u166688)))
-    (mintOk (and (> amount u0) (try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-mint amount address))))
-  )
-    (ok mintOk)
-  )
-)
-
-(define-public (mint-d (address principal))
-  (let (
-    (amount (unwrap-panic (contract-call? .gbab-v0 get-staked-scha-at-block address u166688)))
-    (mintOk (and (> amount u0) (try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-mint (/ (* u11 amount) u10) address))))
-  )
-    (ok mintOk)
-  )
+(define-read-only (get-holders-4) 
+  (var-get holders-4)
 )
 
 (define-data-var holders-1 (list 200 principal)

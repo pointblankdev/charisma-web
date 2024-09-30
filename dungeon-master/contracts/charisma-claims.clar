@@ -23,6 +23,11 @@
     (map-set claimed tx-sender true)
     (map-set red-pill tx-sender choice)
     (var-set last-id (+ (var-get last-id) u1))
+    (print {
+      address: tx-sender,
+      last-id: (var-get last-id),
+      red-pill: choice
+    })
     (ok {
       last-id: (var-get last-id),
       red-pill: choice

@@ -480,11 +480,11 @@ describe('nfts api', () => {
         console.log(JSON.stringify(data, null, 2))
     })
 
-    it('should update nft collection metadata (the-blue-pill)', async () => {
-        const contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-blue-pill'
+    it('should update nft collection metadata (the-red-pill)', async () => {
+        const contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft'
         const data = {
             "sip": 16,
-            "name": "Charisma Blue Pill NFT",
+            "name": "Charisma Red Pill NFT",
             "description": {
                 "type": "string",
                 "description": "This is your last chance. After this, there is no turning back. You take the blue pill - the story ends, you wake up in your bed and believe whatever you want to believe. You take the red pill - you stay in Wonderland and I show you how deep the rabbit hole goes."
@@ -492,12 +492,12 @@ describe('nfts api', () => {
             "attributes": [
                 {
                     "trait_type": "color",
-                    "value": "Blue"
+                    "value": "Red"
                 }
             ],
             "properties": {
-                "collection": "Charisma Blue Pill NFT",
-                "collection_image": "https://charisma.rocks/sip9/pills/blue-pill.gif",
+                "collection": "Charisma Red Pill NFT",
+                "collection_image": "https://charisma.rocks/sip9/pills/red-pill.gif",
                 "category": "image",
             }
         }
@@ -507,8 +507,8 @@ describe('nfts api', () => {
 
     it('should set nft item metadata (the-red-pill)', async () => {
         for (let id = 1; id <= 500; id++) {
-            const response = await setNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-red-pill', `${id}`, {
-                "name": `Blue Pill #${id}`,
+            const response = await setNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft', `${id}`, {
+                "name": `Red Pill #${id}`,
                 "image": "https://charisma.rocks/sip9/pills/red-pill-nft.gif"
             })
             console.log(JSON.stringify(response, null, 2))
@@ -517,7 +517,7 @@ describe('nfts api', () => {
 
     // should get nft item
     it('should get nft item metadata (the-red-pill)', async () => {
-        const response = await getNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-red-pill', '1000')
+        const response = await getNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-red-pill', '469')
         console.log(JSON.stringify(response, null, 2))
     })
 

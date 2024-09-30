@@ -16,7 +16,7 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import { forEach } from 'lodash';
 import ConnectWallet from '../stacks-session/connect';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import charismaLogo from '@public/charisma.png';
+import charismaLogo from '@public/charisma-logo.png';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -158,7 +158,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
             {playerLands.map((land: any) => (
               <DropdownMenuItem
                 onClick={() => setToken(land)}
-                className="cursor-pointer flex space-x-2"
+                className="flex space-x-2 cursor-pointer"
                 key={land.metadata.id}
               >
                 <Image

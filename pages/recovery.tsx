@@ -3,12 +3,12 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
-import { PostConditionMode } from "@stacks/transactions";
+import { makeStandardFungiblePostCondition, Pc, PostConditionMode, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
+import { useAccount, useOpenContractCall } from '@micro-stacks/react';
+import { boolCV } from '@stacks/transactions';
 import redPill from '@public/sip9/pills/red-pill.gif';
 import bluePill from '@public/sip9/pills/blue-pill.gif';
 import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
@@ -18,14 +18,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { GetStaticProps } from 'next';
 import { getTotalSupply } from '@lib/stacks-api';
+import numeral from 'numeral';
 
 export const getStaticProps: GetStaticProps<Props> = () => {
 
-  const syntheticWelshIssued = 100
-  const syntheticRooIssued = 100
+  const syntheticWelshIssued = 82051765949740
+  const syntheticRooIssued = 1036055176569
 
-  const syntheticWelshRemainingSupply = 100//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
-  const syntheticRooRemainingSupply = 100//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
+  const syntheticWelshRemainingSupply = 82051765949740//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
+  const syntheticRooRemainingSupply = 1036055176569//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
 
   const syntheticWelshRedemptionsAvailable = 0//await getAvailableRedemptions('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
   const syntheticRooRedemptionsAvailable = 0//await getAvailableRedemptions('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
@@ -101,6 +102,38 @@ export default function RecoveryClaimPage({ data }: Props) {
 
 const TokenRedemptions = ({ data }: any) => {
 
+  const { openContractCall } = useOpenContractCall();
+  const { stxAddress } = useAccount();
+
+
+  function redeemWelsh(amount: number) {
+    openContractCall({
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'welsh-redemptions',
+      functionName: "redeem-tokens",
+      functionArgs: [uintCV(amount)],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(stxAddress as string).willSendEq(amount).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', 'synthetic-welsh') as any,
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-redemptions').willSendEq(amount).ft('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'welshcorgicoin') as any,
+      ],
+    });
+  }
+
+  function redeemRoo(amount: number) {
+    openContractCall({
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'roo-redemptions',
+      functionName: "redeem-tokens",
+      functionArgs: [uintCV(amount)],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(stxAddress as string).willSendEq(amount).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', 'synthetic-roo') as any,
+        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-redemptions').willSendEq(amount).ft('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', 'kangaroo') as any,
+      ],
+    });
+  }
+
   const { balances } = useWallet();
 
   const iouWelsh: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'];
@@ -114,28 +147,28 @@ const TokenRedemptions = ({ data }: any) => {
         <div>Synthetic Roo (iouROO)</div>
 
         <div>Total Issued</div>
-        <div>{data.syntheticWelsh.issued}</div>
-        <div>{data.syntheticRoo.issued}</div>
+        <div>{numeral(data.syntheticWelsh.issued / Math.pow(10, 6)).format('0 a')}</div>
+        <div>{numeral(data.syntheticRoo.issued / Math.pow(10, 6)).format('0 a')}</div>
 
         <div>Total Redeemed</div>
-        <div>{data.syntheticWelsh.burned}</div>
-        <div>{data.syntheticRoo.burned}</div>
+        <div>{numeral(data.syntheticWelsh.burned / Math.pow(10, 6)).format('0 a')}</div>
+        <div>{numeral(data.syntheticRoo.burned / Math.pow(10, 6)).format('0 a')}</div>
 
         <div>Redemptions Remaining</div>
-        <div>{data.syntheticWelsh.remaining}</div>
-        <div>{data.syntheticRoo.remaining}</div>
+        <div>{numeral(data.syntheticWelsh.remaining / Math.pow(10, 6)).format('0 a')}</div>
+        <div>{numeral(data.syntheticRoo.remaining / Math.pow(10, 6)).format('0 a')}</div>
 
         <div className='mt-4'>Your Balances</div>
-        <div className='mt-4'>{iouWelsh?.count || 0}</div>
-        <div className='mt-4'>{iouRoo?.count || 0}</div>
+        <div className='mt-4'>{iouWelsh?.count / Math.pow(10, 6) || 0}</div>
+        <div className='mt-4'>{iouRoo?.count / Math.pow(10, 6) || 0}</div>
 
         <div>Redemptions Available</div>
-        <div>{data.syntheticWelsh.available}</div>
-        <div>{data.syntheticRoo.available}</div>
+        <div>{data.syntheticWelsh.available / Math.pow(10, 6)}</div>
+        <div>{data.syntheticRoo.available / Math.pow(10, 6)}</div>
 
         <div className='mt-4'>Redeem Tokens</div>
-        <div className='mt-4'><Button disabled={data.syntheticWelsh.available === 0} className='h-6' >Redeem iouWELSH</Button></div>
-        <div className='mt-4'><Button disabled={data.syntheticRoo.available === 0} className='h-6' >Redeem iouROO</Button></div>
+        <div className='mt-4'><Button disabled={data.syntheticWelsh.available === 0} onClick={() => redeemWelsh(10000000000)} className='h-6' >Redeem iouWELSH</Button></div>
+        <div className='mt-4'><Button disabled={data.syntheticRoo.available === 0} onClick={() => redeemRoo(100000000)} className='h-6' >Redeem iouROO</Button></div>
       </div>
     </div>
   )
@@ -151,7 +184,7 @@ const RecoveryClaim = () => {
       contractName: 'recovery-claim',
       functionName: "claim",
       functionArgs: [boolCV(choice)],
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
       postConditions: [],
     });
   }

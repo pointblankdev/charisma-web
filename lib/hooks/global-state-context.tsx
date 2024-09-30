@@ -59,67 +59,67 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         });
     };
 
-    useEffect(() => {
-        const getLandData = async () => {
-            if (stxAddress) {
-                const lastLandId = await getLastLandId()
-                const stakedTokens = Array.from({ length: lastLandId }, (_, i) => i + 1)
+    // useEffect(() => {
+    //     const getLandData = async () => {
+    //         if (stxAddress) {
+    //             const lastLandId = await getLastLandId()
+    //             const stakedTokens = Array.from({ length: lastLandId }, (_, i) => i + 1)
 
-                const newLandState: LandState = {};
-                const storedEnergy = await getStoredEnergy(stxAddress);
-                setStoredEnergy(storedEnergy);
+    //             const newLandState: LandState = {};
+    //             const storedEnergy = await getStoredEnergy(stxAddress);
+    //             setStoredEnergy(storedEnergy);
 
-                for (const landId of stakedTokens) {
-                    try {
-                        const metadata = await getLandDataById(landId)
-                        const amount = await getLandAmount(landId, stxAddress);
-                        const energy = await getClaimableAmount(landId, stxAddress);
-                        newLandState[landId] = { amount, energy, metadata };
-                    } catch (error) {
-                        console.error('Error fetching land data:', error);
-                    }
-                }
+    //             for (const landId of stakedTokens) {
+    //                 try {
+    //                     const metadata = await getLandDataById(landId)
+    //                     const amount = await getLandAmount(landId, stxAddress);
+    //                     const energy = await getClaimableAmount(landId, stxAddress);
+    //                     newLandState[landId] = { amount, energy, metadata };
+    //                 } catch (error) {
+    //                     console.error('Error fetching land data:', error);
+    //                 }
+    //             }
 
-                setLands(newLandState)
-            }
-        };
+    //             setLands(newLandState)
+    //         }
+    //     };
 
-        getLandData();
-    }, [stxAddress, setLands]);
+    //     getLandData();
+    // }, [stxAddress, setLands]);
 
-    useEffect(() => {
-        sc.subscribeBlocks((block) => {
-            setBlock(block as any)
-            setTapped({})
-            toast({
-                title: "New Block",
-                description: `Stacks block ${block.height} has been mined.`,
-            })
+    // useEffect(() => {
+    //     sc.subscribeBlocks((block) => {
+    //         setBlock(block as any)
+    //         setTapped({})
+    //         toast({
+    //             title: "New Block",
+    //             description: `Stacks block ${block.height} has been mined.`,
+    //         })
 
-            // When a new block is detected, re-fetch energy for all lands
-            const stakedTokens = Object.keys(lands);
-            stakedTokens.forEach((landId) => {
-                getClaimableAmount(parseInt(landId), stxAddress!)
-                    .then((energy) => {
-                        updateTokenEnergy(landId, energy); // Update the energy for each token
-                    })
-                    .catch((error) => {
-                        console.error(`Error updating energy for landId ${landId}:`, error);
-                    });
-            });
-        });
+    //         // When a new block is detected, re-fetch energy for all lands
+    //         const stakedTokens = Object.keys(lands);
+    //         stakedTokens.forEach((landId) => {
+    //             getClaimableAmount(parseInt(landId), stxAddress!)
+    //                 .then((energy) => {
+    //                     updateTokenEnergy(landId, energy); // Update the energy for each token
+    //                 })
+    //                 .catch((error) => {
+    //                     console.error(`Error updating energy for landId ${landId}:`, error);
+    //                 });
+    //         });
+    //     });
 
-        const getBlockData = async () => {
-            const block = await getLatestBlock()
-            setBlock(block)
-        }
+    //     const getBlockData = async () => {
+    //         const block = await getLatestBlock()
+    //         setBlock(block)
+    //     }
 
-        getBlockData()
+    //     getBlockData()
 
-        return () => {
-            sc.unsubscribeBlocks()
-        };
-    }, [lands, stxAddress, setBlock, toast]);
+    //     return () => {
+    //         sc.unsubscribeBlocks()
+    //     };
+    // }, [lands, stxAddress, setBlock, toast]);
 
 
     return (

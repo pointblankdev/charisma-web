@@ -33,7 +33,7 @@
 (define-data-var last-id uint u1)
 (define-data-var total-price uint u100000000)
 (define-data-var creator-address principal 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS)
-(define-data-var base-uri (string-ascii 200) "https://charisma.rocks/api/v0/nfts/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill/{id}.json")
+(define-data-var base-uri (string-ascii 200) "https://charisma.rocks/api/v0/nfts/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft/{id}.json")
 (define-data-var mint-paused bool true)
 (define-data-var metadata-frozen bool false)
 
