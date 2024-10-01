@@ -151,62 +151,64 @@ const TokenRedemptions = ({ data }: any) => {
   }
 
   useEffect(() => {
-    callReadOnlyFunction({
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'cha-recovery',
-      functionName: 'get-claim-amount-a',
-      functionArgs: [
-        principalCV(stxAddress as string),
-      ],
-      senderAddress: stxAddress as string,
-    }).then((response: any) => {
-      setClaimA(Number(response?.value?.value))
-    }).catch(console.error)
-    callReadOnlyFunction({
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'cha-recovery',
-      functionName: 'get-claim-amount-b',
-      functionArgs: [
-        principalCV(stxAddress as string),
-      ],
-      senderAddress: stxAddress as string,
-    }).then((response: any) => {
-      setClaimB(Number(response?.value?.value))
-    }).catch(console.error)
-    callReadOnlyFunction({
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'cha-recovery',
-      functionName: 'get-claim-amount-c',
-      functionArgs: [
-        principalCV(stxAddress as string),
-      ],
-      senderAddress: stxAddress as string,
-    }).then((response: any) => {
-      setClaimC(Number(response?.value?.value))
-    }).catch(console.error)
-    callReadOnlyFunction({
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'cha-recovery',
-      functionName: 'get-claim-amount-d',
-      functionArgs: [
-        principalCV(stxAddress as string),
-      ],
-      senderAddress: stxAddress as string,
-    }).then((response: any) => {
-      setClaimD(Number(response?.value?.value))
-    }).catch(console.error)
+    if (stxAddress) {
+      callReadOnlyFunction({
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'cha-recovery',
+        functionName: 'get-claim-amount-a',
+        functionArgs: [
+          principalCV(stxAddress),
+        ],
+        senderAddress: stxAddress,
+      }).then((response: any) => {
+        setClaimA(Number(response?.value?.value))
+      }).catch(console.error)
+      callReadOnlyFunction({
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'cha-recovery',
+        functionName: 'get-claim-amount-b',
+        functionArgs: [
+          principalCV(stxAddress),
+        ],
+        senderAddress: stxAddress,
+      }).then((response: any) => {
+        setClaimB(Number(response?.value?.value))
+      }).catch(console.error)
+      callReadOnlyFunction({
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'cha-recovery',
+        functionName: 'get-claim-amount-c',
+        functionArgs: [
+          principalCV(stxAddress),
+        ],
+        senderAddress: stxAddress,
+      }).then((response: any) => {
+        setClaimC(Number(response?.value?.value))
+      }).catch(console.error)
+      callReadOnlyFunction({
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'cha-recovery',
+        functionName: 'get-claim-amount-d',
+        functionArgs: [
+          principalCV(stxAddress),
+        ],
+        senderAddress: stxAddress,
+      }).then((response: any) => {
+        setClaimD(Number(response?.value?.value))
+      }).catch(console.error)
 
-    callReadOnlyFunction({
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'cha-recovery',
-      functionName: 'get-all-claims',
-      functionArgs: [
-        principalCV(stxAddress as string),
-      ],
-      senderAddress: stxAddress as string,
-    }).then((response: any) => {
-      setClaims(cvToJSON(response).value)
-    })
+      callReadOnlyFunction({
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'cha-recovery',
+        functionName: 'get-all-claims',
+        functionArgs: [
+          principalCV(stxAddress),
+        ],
+        senderAddress: stxAddress,
+      }).then((response: any) => {
+        setClaims(cvToJSON(response).value)
+      })
+    }
   }, [stxAddress]);
 
   const { balances } = useWallet();
