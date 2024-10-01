@@ -1,8 +1,8 @@
 (define-private (burn-tokens (address principal))
   (let (
-    (amount (unwrap-panic (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token get-balance address)))
+    (amount (unwrap-panic (contract-call? .dme000-governance-token get-balance address)))
   )
-    (ok (if (> amount u0) (try! (contract-call? 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token dmg-burn amount address)) true))
+    (ok (if (> amount u0) (try! (contract-call? .dme000-governance-token dmg-burn amount address)) true))
   )
 )
 

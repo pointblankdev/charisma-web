@@ -649,6 +649,24 @@ export async function getTotalSupply(contract: string) {
   return Number(json.value.value);
 }
 
+export async function getAvailableRedemptions(contract: string) {
+  const [address, name] = contract.split('.');
+
+  const response: any = await scApi.callReadOnlyFunction({
+    contractAddress: address,
+    contractName: name,
+    functionName: 'get-available-tokens',
+    readOnlyFunctionArgs: {
+      sender: address,
+      arguments: []
+    }
+  });
+
+  const cv = hexToCV(response.result);
+  const json = cvToJSON(cv);
+  return Number(json.value.value);
+}
+
 export async function getTotalInPool(contract: string) {
   const [address, name] = contract.split('.');
 

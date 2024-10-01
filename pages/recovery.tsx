@@ -17,15 +17,15 @@ import Image from 'next/image';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { GetStaticProps } from 'next';
-import { getTotalSupply } from '@lib/stacks-api';
+import { getAvailableRedemptions, getTotalSupply } from '@lib/stacks-api';
 import numeral from 'numeral';
 
-export const getStaticProps: GetStaticProps<Props> = () => {
+export const getStaticProps: GetStaticProps<Props> = async () => {
 
-  const syntheticWelshIssued = 82051765949740
+  const syntheticWelshIssued = 86943663098322
   const syntheticRooIssued = 1036055176569
 
-  const syntheticWelshRemainingSupply = 82051765949740//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
+  const syntheticWelshRemainingSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
   const syntheticRooRemainingSupply = 1036055176569//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
 
   const syntheticWelshRedemptionsAvailable = 0//await getAvailableRedemptions('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
@@ -139,6 +139,7 @@ const TokenRedemptions = ({ data }: any) => {
   const iouWelsh: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'];
   const iouRoo: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo'];
 
+  console.log(iouWelsh)
   return (
     <div className="max-w-5xl p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-gray-900/80">
       <div className='grid grid-cols-3'>
@@ -159,8 +160,8 @@ const TokenRedemptions = ({ data }: any) => {
         <div>{numeral(data.syntheticRoo.remaining / Math.pow(10, 6)).format('0 a')}</div>
 
         <div className='mt-4'>Your Balances</div>
-        <div className='mt-4'>{iouWelsh?.count / Math.pow(10, 6) || 0}</div>
-        <div className='mt-4'>{iouRoo?.count / Math.pow(10, 6) || 0}</div>
+        <div className='mt-4'>{numeral(iouWelsh?.balance / Math.pow(10, 6)).format('0 a') || 0}</div>
+        <div className='mt-4'>{numeral(iouRoo?.balance / Math.pow(10, 6)).format('0 a') || 0}</div>
 
         <div>Redemptions Available</div>
         <div>{data.syntheticWelsh.available / Math.pow(10, 6)}</div>

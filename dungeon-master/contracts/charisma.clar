@@ -1,7 +1,7 @@
 ;; SIP10 Token: Charisma
 ;; https://charisma.rocks
 
-;; (impl-trait .dao-traits-v2.sip010-ft-trait)
+(impl-trait .dao-traits-v4.sip010-ft-trait)
 
 (define-constant err-unauthorized (err u401))
 (define-constant err-liquidity-lock (err u402))
@@ -40,7 +40,7 @@
 )
 
 (define-read-only (is-red-pilled)
-    (ok (asserts! (contract-call? .the-red-pill has-balance tx-sender) err-not-red-pilled))
+    (ok (asserts! (contract-call? .red-pill-nft has-balance tx-sender) err-not-red-pilled))
 )
 
 (define-read-only (is-unlocked)
