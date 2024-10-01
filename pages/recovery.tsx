@@ -160,8 +160,8 @@ const TokenRedemptions = ({ data }: any) => {
       ],
       senderAddress: stxAddress as string,
     }).then((response: any) => {
-      setClaimA(Number(response.value.value))
-    })
+      setClaimA(Number(response?.value?.value))
+    }).catch(console.error)
     callReadOnlyFunction({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'cha-recovery',
@@ -171,8 +171,8 @@ const TokenRedemptions = ({ data }: any) => {
       ],
       senderAddress: stxAddress as string,
     }).then((response: any) => {
-      setClaimB(Number(response.value.value))
-    })
+      setClaimB(Number(response?.value?.value))
+    }).catch(console.error)
     callReadOnlyFunction({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'cha-recovery',
@@ -182,8 +182,8 @@ const TokenRedemptions = ({ data }: any) => {
       ],
       senderAddress: stxAddress as string,
     }).then((response: any) => {
-      setClaimC(Number(response.value.value))
-    })
+      setClaimC(Number(response?.value?.value))
+    }).catch(console.error)
     callReadOnlyFunction({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'cha-recovery',
@@ -193,8 +193,8 @@ const TokenRedemptions = ({ data }: any) => {
       ],
       senderAddress: stxAddress as string,
     }).then((response: any) => {
-      setClaimD(Number(response.value.value))
-    })
+      setClaimD(Number(response?.value?.value))
+    }).catch(console.error)
 
     callReadOnlyFunction({
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
