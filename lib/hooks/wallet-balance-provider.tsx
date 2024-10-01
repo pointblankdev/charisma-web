@@ -7,6 +7,7 @@ import { createContext, useContext } from 'react';
 export type Wallet = {
   experience: { balance: number, amount: number }
   charisma: { balance: number, amount: number }
+  redPilled: boolean
 }
 
 export type WalletBalancesContextType = {
@@ -40,17 +41,19 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
 
   const getBalanceByKey = (key: string) => {
     if (key === 'STX::native') {
-        return Number(balances?.stx?.balance || 0);
+      return Number(balances?.stx?.balance || 0);
     }
     return Number((balances?.fungible_tokens?.[key] as any)?.balance)
   };
 
   const experience = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience')
   const charisma = getBalanceByKey('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma')
+  const redPill: any = balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft::red-pill']
 
   const wallet: Wallet = {
     experience: { amount: experience, balance: experience / Math.pow(10, 6) },
     charisma: { amount: charisma, balance: charisma / Math.pow(10, 6) },
+    redPilled: redPill?.count > 0
   }
 
   return (

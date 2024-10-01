@@ -2,21 +2,25 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
-import { useState } from 'react';
-import { PostConditionMode } from "@stacks/transactions";
+import { ChangeEvent, useState } from 'react';
+import { Pc, PostConditionMode, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useOpenContractCall } from '@micro-stacks/react';
+import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
 import redPill from '@public/sip9/pills/red-pill-floating.gif';
 import bluePill from '@public/sip9/pills/blue-pill.gif';
 import charismaFloating from '@public/sip9/pills/cha-floating.gif';
 import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import Image from 'next/image';
-import charisma from '@public/charisma.png';
+import charismaSquare from '@public/charisma-logo-square.png';
+import dmgLogo from '@public/dmg-logo.png';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import numeral from 'numeral';
+import { usePersistedState } from '@lib/hooks/use-persisted-state';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { CharismaToken } from '@lib/cha-token-api';
 
 
 
@@ -88,6 +92,7 @@ const FeaturesSection = () => {
 };
 
 const StatsSection = () => {
+  const { charismaTokenStats } = useGlobalState()
 
   return (
     <div>
@@ -95,19 +100,19 @@ const StatsSection = () => {
       <div className='w-full pb-8 text-center text-md text-muted/90'>View the token contract's wrapping rate-limits.</div>
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-gray-900/50'>
-          <div className='text-4xl font-semibold'>100</div>
+          <div className='text-4xl font-semibold'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
           <div className='text-muted/80'>Tokens per Transaction</div>
         </div>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-gray-900/50'>
-          <div className='text-4xl font-semibold'>10</div>
+          <div className='text-4xl font-semibold'>{charismaTokenStats.blocksPerTransaction}</div>
           <div className='text-muted/80'>Blocks per Transaction</div>
         </div>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-gray-900/50'>
-          <div className='text-4xl font-semibold blur'>2</div>
+          <div className='text-4xl font-semibold'>{charismaTokenStats.transactionsAvailable}</div>
           <div className='text-muted/80'>Transactions Available</div>
         </div>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-gray-900/50'>
-          <div className='text-4xl font-semibold blur'>0</div>
+          <div className='text-4xl font-semibold'>{charismaTokenStats.blocksUntilUnlock}</div>
           <div className='text-muted/80'>Blocks until Unlocked</div>
         </div>
       </div>
@@ -115,41 +120,106 @@ const StatsSection = () => {
   );
 };
 
-
 const WrappingSection = () => {
+  const { charismaTokenStats, charismaClaims } = useGlobalState();
+  const { wallet } = useWallet();
+  const { stxAddress } = useAccount();
+  const [amount, setAmount] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
-  const { wallet, balances } = useWallet()
+  const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
+      setAmount(value);
+      validateAmount(value);
+    }
+  };
 
-  const redPillBalances: any = balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft::red-pill']
+  const validateAmount = (value: string) => {
+    const numValue = Number(value);
+    const maxAllowed = charismaTokenStats.tokensPerTransaction / Math.pow(10, 6);
+    const balance = wallet.charisma.balance;
+
+    if (numValue > balance) {
+      setError('Insufficient balance');
+    } else if (numValue > maxAllowed) {
+      setError(`Maximum allowed amount is ${maxAllowed}`);
+    } else if (numValue <= 0) {
+      setError('Amount must be greater than 0');
+    } else {
+      setError('');
+    }
+  };
+
+  const handleMaxAmountClick = () => {
+    const maxAllowed = charismaTokenStats.tokensPerTransaction / Math.pow(10, 6);
+    const maxAmount = Math.min(wallet.charisma.balance, maxAllowed);
+    const formattedAmount = maxAmount.toString();
+    setAmount(formattedAmount);
+    validateAmount(formattedAmount);
+  }
+
+  const { openContractCall } = useOpenContractCall();
+
+  const handleWrap = () => {
+    if (!error && amount && stxAddress) {
+      const amountIn = Number(amount) * Math.pow(10, 6)
+      openContractCall({
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'charisma-token',
+        functionName: "wrap",
+        functionArgs: [uintCV(amountIn)],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [Pc.principal(stxAddress).willSendEq(amountIn).ft('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', 'charisma')] as any[],
+      });
+    }
+  }
+
+  const handleMintRedPill = () => {
+    if (stxAddress) {
+      const postConditions = [] as any[]
+      if (!charismaClaims.hasFreeClaim && !charismaClaims.hasClaimed) {
+        postConditions.push(Pc.principal(stxAddress).willSendEq(100000000).ustx())
+      }
+      openContractCall({
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'red-pill-nft',
+        functionName: "claim",
+        functionArgs: [],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions,
+      });
+    }
+  }
 
   return (
     <div className='mt-20 mb-12'>
       <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Wrap CHA</div>
       <div className='w-full pb-8 text-center text-md text-muted/90'>Wrap your governance tokens into the new CHA token.</div>
-      <div className='container flex h-48 p-6 space-x-2 rounded-2xl max-w-prose bg-gray-900/50 leading-0 blur'>
+      <div className='container flex h-48 p-6 space-x-2 rounded-2xl max-w-prose bg-gray-900/50 leading-0'>
         <div className='w-full'>
           <div className='font-bold text-muted-foreground'>
             Available
           </div>
           <div className='flex items-center mt-2 space-x-1 font-bold'>
             <div>{numeral(wallet.charisma.balance).format('0.00a')}</div>
-            <div className='pb-1'><Image src={charisma} alt='Charisma' width={20} height={20} className='inline' /></div>
+            <div className='pb-1'><Image src={dmgLogo} alt='DMG Logo' width={20} height={20} className='inline' /></div>
           </div>
         </div>
         <div className='w-full'>
           <div className='font-bold text-muted-foreground'>
             CHA Price
           </div>
-          <div className='mt-2 font-bold'>
-            $0.XX
+          <div className='mt-2 font-bold blur'>
+            $X.XX
           </div>
         </div>
         <div className='w-full'>
           <div className='font-bold text-muted-foreground'>
             Total Value
           </div>
-          <div className='mt-2 font-bold'>
-            $0.XX
+          <div className='mt-2 font-bold blur'>
+            $X.XX
           </div>
         </div>
         <div className='w-full'>
@@ -157,31 +227,66 @@ const WrappingSection = () => {
             Red Pilled
           </div>
           <div className='font-bold'>
-            {redPillBalances?.count > 0 ? <Image src={redPill} alt='Red Pill' width={50} height={50} className='inline' /> : <div className='flex mt-2 space-x-2 font-bold'><div>No</div><div className='px-2 font-normal rounded-full cursor-pointer bg-primary'>Mint</div></div>}
-          </div>
-        </div>
-      </div>
-      <div className='container flex flex-col p-6 pb-0 -translate-y-20 border blur bg-background rounded-2xl max-w-prose min-h-48'>
-        <div className='w-full space-y-2 grow'>
-          <div className='flex justify-between py-2'>
-            <div>Wrap Amount</div>
-            <div className='px-2 rounded-full cursor-pointer bg-primary'>Max</div>
-          </div>
-          <Input disabled className='font-bold bg-white/10' />
-          <div className='pt-2 rounded-lg'>
-            {/* <div>Conversion Rate</div> */}
-            <div className='flex justify-between'>
-              <div>Receive</div>
-              <div className='flex items-center space-x-1'>
-                <div>0</div>
-                <div className='pb-1'><Image src={charisma} alt='Charisma' width={20} height={20} className='inline' /></div>
+            {wallet.redPilled ? (
+              <Image src={redPill} alt='Red Pill' width={50} height={50} className='inline' />
+            ) : (
+              <div className='flex items-center mt-2 space-x-2 font-bold'>
+                <div>No</div>
+                {!charismaClaims.hasClaimed && <Button onClick={handleMintRedPill} className='h-6 px-2 font-normal rounded-full cursor-pointer bg-primary'>
+                  Mint
+                </Button>}
               </div>
-            </div>
+            )}
           </div>
-          <Button disabled className='w-full'>Wrap</Button>
         </div>
       </div>
-      <div className='text-center text-muted-foreground'>Token wrapping almost ready to go live– stay tuned!</div>
+      <div className='container flex flex-col p-6 pb-0 -translate-y-20 border bg-background rounded-2xl max-w-prose min-h-48'>
+        <div className='relative w-full space-y-2 grow'>
+          {wallet.redPilled ? (
+            <>
+              <div className='flex justify-between py-2'>
+                <div>Wrap Amount</div>
+                <div onClick={handleMaxAmountClick} className='px-2 rounded-full cursor-pointer bg-primary'>Max</div>
+              </div>
+              <Input
+                className='font-bold bg-white/10'
+                value={amount}
+                onChange={handleAmountChange}
+                disabled={!wallet.redPilled}
+              />
+              {error && <div className="absolute text-sm text-red-500">{error}</div>}
+              <div className='pt-8 rounded-lg'>
+                <div className='flex justify-between'>
+                  <div>Receive</div>
+                  <div className='flex items-center space-x-1'>
+                    <div>{Number(amount)}</div>
+                    <div className='pb-1'>
+                      <Image src={charismaSquare} alt='Charisma Logo' width={20} height={20} className='inline rounded-full' />
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <Button onClick={handleWrap} className='w-full' disabled={!!error || !amount}>
+                Wrap
+              </Button>
+            </>
+          ) : (
+            <div className='text-center'>
+              <p className='mb-4'>You need to mint a Red Pill NFT before wrapping tokens.</p>
+              {!charismaClaims.hasClaimed ? (
+                <Button onClick={handleMintRedPill} className='px-4 py-2 font-light rounded-full cursor-pointer bg-primary'>
+                  Mint Red Pill NFT
+                </Button>
+              ) : (
+                <div>
+                  <p className='my-12 text-lg font-semibold'>You have already made a NFT claim for this wallet address.</p>
+                </div>
+              )
+              }
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
