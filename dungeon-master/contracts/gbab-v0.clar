@@ -18,15 +18,15 @@
  )
 )
 
-;; (define-read-only (get-wcha-at-block (address principal) (block uint))
-;;  (let
-;; 	(
-;; 		(block-hash (unwrap! (get-block-info? id-header-hash block) (err u500)))
-;; 		(wcha-balance (at-block block-hash (unwrap! (contract-call? .wrapped-charisma get-balance address) (err u500))))
-;; 	)
-;; 	(ok wcha-balance)
-;;  )
-;; )
+(define-read-only (get-wcha-at-block (address principal) (block uint))
+ (let
+	(
+		(block-hash (unwrap! (get-block-info? id-header-hash block) (err u500)))
+		(wcha-balance (at-block block-hash (unwrap! (contract-call? .liquid-staked-charisma get-balance address) (err u500))))
+	)
+	(ok wcha-balance)
+ )
+)
 
 (define-read-only (get-staked-scha-at-block (address principal) (block uint))
  (let

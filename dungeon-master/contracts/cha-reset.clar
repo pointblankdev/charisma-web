@@ -1,6 +1,8 @@
 (define-private (burn-tokens (address principal))
   (let (
-    (amount (unwrap-panic (contract-call? .dme000-governance-token get-balance address)))
+    (total-amount (unwrap-panic (contract-call? .dme000-governance-token get-balance address)))
+    (amount-locked (unwrap-panic (contract-call? .dme000-governance-token dmg-get-locked address)))
+    (amount (- total-amount amount-locked))
   )
     (ok (if (> amount u0) (try! (contract-call? .dme000-governance-token dmg-burn amount address)) true))
   )

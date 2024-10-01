@@ -86,8 +86,8 @@ depends_on = []
 path = "contracts/red-pill-nft.clar"
 depends_on = []
 
-[contracts.charisma]
-path = "contracts/charisma.clar"
+[contracts.charisma-token]
+path = "contracts/charisma-token.clar"
 depends_on = []
 
 [contracts.synthetic-welsh]
@@ -95,6 +95,10 @@ path = "contracts/synthetic-welsh.clar"
 
 [contracts.synthetic-roo]
 path = "contracts/synthetic-roo.clar"
+depends_on = []
+
+[contracts.cha-recovery]
+path = "contracts/cha-recovery.clar"
 depends_on = []
 
 # traits

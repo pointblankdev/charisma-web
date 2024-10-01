@@ -1,4 +1,4 @@
-;; SIP10 Token: Charisma
+;; The Charisma Token
 ;; https://charisma.rocks
 
 (impl-trait .dao-traits-v4.sip010-ft-trait)
@@ -16,12 +16,12 @@
 
 (define-data-var token-name (string-ascii 32) "Charisma")
 (define-data-var token-symbol (string-ascii 10) "CHA")
-(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/metadata/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma.json"))
+(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/metadata/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token.json"))
 (define-data-var token-decimals uint u6)
 
 (define-data-var block-counter uint u0)
 
-(define-data-var blocks-per-tx uint u10)
+(define-data-var blocks-per-tx uint u1)
 (define-constant min-blocks-per-tx u1)
 (define-constant max-blocks-per-tx u100000)
 
@@ -140,6 +140,10 @@
             token-amount: amount-out
         })
     )
+)
+
+(define-public (burn (amount uint))
+  (ft-burn? charisma amount tx-sender)
 )
 
 (define-read-only (get-blocks-per-tx)

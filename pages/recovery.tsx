@@ -2,8 +2,8 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
-import { useState } from 'react';
-import { makeStandardFungiblePostCondition, Pc, PostConditionMode, uintCV } from "@stacks/transactions";
+import { useEffect, useState } from 'react';
+import { callReadOnlyFunction, cvToJSON, makeStandardFungiblePostCondition, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
@@ -63,8 +63,6 @@ export default function RecoveryClaimPage({ data }: Props) {
     description: "Charisma Recovery Plan",
   };
 
-  console.log(data)
-
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -105,6 +103,13 @@ const TokenRedemptions = ({ data }: any) => {
   const { openContractCall } = useOpenContractCall();
   const { stxAddress } = useAccount();
 
+  const [claimA, setClaimA] = useState(0);
+  const [claimB, setClaimB] = useState(0);
+  const [claimC, setClaimC] = useState(0);
+  const [claimD, setClaimD] = useState(0);
+
+  const [claims, setClaims] = useState({ a: { value: false }, b: { value: false }, c: { value: false }, d: { value: false } });
+
 
   function redeemWelsh(amount: number) {
     openContractCall({
@@ -134,42 +139,141 @@ const TokenRedemptions = ({ data }: any) => {
     });
   }
 
+  function claim(method: string) {
+    openContractCall({
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: 'cha-recovery',
+      functionName: method,
+      functionArgs: [],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [],
+    });
+  }
+
+  useEffect(() => {
+    callReadOnlyFunction({
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'cha-recovery',
+      functionName: 'get-claim-amount-a',
+      functionArgs: [
+        principalCV(stxAddress as string),
+      ],
+      senderAddress: stxAddress as string,
+    }).then((response: any) => {
+      setClaimA(Number(response.value.value))
+    })
+    callReadOnlyFunction({
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'cha-recovery',
+      functionName: 'get-claim-amount-b',
+      functionArgs: [
+        principalCV(stxAddress as string),
+      ],
+      senderAddress: stxAddress as string,
+    }).then((response: any) => {
+      setClaimB(Number(response.value.value))
+    })
+    callReadOnlyFunction({
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'cha-recovery',
+      functionName: 'get-claim-amount-c',
+      functionArgs: [
+        principalCV(stxAddress as string),
+      ],
+      senderAddress: stxAddress as string,
+    }).then((response: any) => {
+      setClaimC(Number(response.value.value))
+    })
+    callReadOnlyFunction({
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'cha-recovery',
+      functionName: 'get-claim-amount-d',
+      functionArgs: [
+        principalCV(stxAddress as string),
+      ],
+      senderAddress: stxAddress as string,
+    }).then((response: any) => {
+      setClaimD(Number(response.value.value))
+    })
+
+    callReadOnlyFunction({
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'cha-recovery',
+      functionName: 'get-all-claims',
+      functionArgs: [
+        principalCV(stxAddress as string),
+      ],
+      senderAddress: stxAddress as string,
+    }).then((response: any) => {
+      setClaims(cvToJSON(response).value)
+    })
+  }, [stxAddress]);
+
   const { balances } = useWallet();
 
   const iouWelsh: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'];
   const iouRoo: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo'];
 
-  console.log(iouWelsh)
   return (
-    <div className="max-w-5xl p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-gray-900/80">
-      <div className='grid grid-cols-3'>
-        <div></div>
-        <div>Synthetic Welsh (iouWELSH)</div>
-        <div>Synthetic Roo (iouROO)</div>
+    <div className='max-w-5xl space-y-4'>
+      <div className="p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-gray-900/80">
+        <div className='grid grid-cols-3'>
+          <div></div>
+          <div>Synthetic Welsh (iouWELSH)</div>
+          <div>Synthetic Roo (iouROO)</div>
 
-        <div>Total Issued</div>
-        <div>{numeral(data.syntheticWelsh.issued / Math.pow(10, 6)).format('0 a')}</div>
-        <div>{numeral(data.syntheticRoo.issued / Math.pow(10, 6)).format('0 a')}</div>
+          <div>Total Issued</div>
+          <div>{numeral(data.syntheticWelsh.issued / Math.pow(10, 6)).format('0 a')}</div>
+          <div>{numeral(data.syntheticRoo.issued / Math.pow(10, 6)).format('0 a')}</div>
 
-        <div>Total Redeemed</div>
-        <div>{numeral(data.syntheticWelsh.burned / Math.pow(10, 6)).format('0 a')}</div>
-        <div>{numeral(data.syntheticRoo.burned / Math.pow(10, 6)).format('0 a')}</div>
+          <div>Total Redeemed</div>
+          <div>{numeral(data.syntheticWelsh.burned / Math.pow(10, 6)).format('0 a')}</div>
+          <div>{numeral(data.syntheticRoo.burned / Math.pow(10, 6)).format('0 a')}</div>
 
-        <div>Redemptions Remaining</div>
-        <div>{numeral(data.syntheticWelsh.remaining / Math.pow(10, 6)).format('0 a')}</div>
-        <div>{numeral(data.syntheticRoo.remaining / Math.pow(10, 6)).format('0 a')}</div>
+          <div>Redemptions Remaining</div>
+          <div>{numeral(data.syntheticWelsh.remaining / Math.pow(10, 6)).format('0 a')}</div>
+          <div>{numeral(data.syntheticRoo.remaining / Math.pow(10, 6)).format('0 a')}</div>
 
-        <div className='mt-4'>Your Balances</div>
-        <div className='mt-4'>{numeral(iouWelsh?.balance / Math.pow(10, 6)).format('0 a') || 0}</div>
-        <div className='mt-4'>{numeral(iouRoo?.balance / Math.pow(10, 6)).format('0 a') || 0}</div>
+          <div className='mt-4'>Your Balances</div>
+          <div className='mt-4'>{numeral(iouWelsh?.balance / Math.pow(10, 6)).format('0 a') || 0}</div>
+          <div className='mt-4'>{numeral(iouRoo?.balance / Math.pow(10, 6)).format('0 a') || 0}</div>
 
-        <div>Redemptions Available</div>
-        <div>{data.syntheticWelsh.available / Math.pow(10, 6)}</div>
-        <div>{data.syntheticRoo.available / Math.pow(10, 6)}</div>
+          <div>Redemptions Available</div>
+          <div>{data.syntheticWelsh.available / Math.pow(10, 6)}</div>
+          <div>{data.syntheticRoo.available / Math.pow(10, 6)}</div>
 
-        <div className='mt-4'>Redeem Tokens</div>
-        <div className='mt-4'><Button disabled={data.syntheticWelsh.available === 0} onClick={() => redeemWelsh(10000000000)} className='h-6' >Redeem iouWELSH</Button></div>
-        <div className='mt-4'><Button disabled={data.syntheticRoo.available === 0} onClick={() => redeemRoo(100000000)} className='h-6' >Redeem iouROO</Button></div>
+          <div className='mt-4'>Redeem Tokens</div>
+          <div className='mt-4'><Button disabled={data.syntheticWelsh.available === 0} onClick={() => redeemWelsh(10000000000)} className='h-6' >Redeem iouWELSH</Button></div>
+          <div className='mt-4'><Button disabled={data.syntheticRoo.available === 0} onClick={() => redeemRoo(100000000)} className='h-6' >Redeem iouROO</Button></div>
+        </div>
+      </div>
+
+      <div className="p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-gray-900/80">
+        <div className='grid grid-cols-5'>
+          <div></div>
+          <div>CHA</div>
+          <div>sCHA</div>
+          <div>wCHA</div>
+          <div>Staked sCHA</div>
+
+          <div>Recovered</div>
+          <div>{!claims.a.value ? numeral(claimA / Math.pow(10, 6)).format('0.0a') : 0}</div>
+          <div>{!claims.b.value ? numeral(claimB / Math.pow(10, 6)).format('0.0a') : 0}</div>
+          <div>{!claims.c.value ? numeral(claimC / Math.pow(10, 6)).format('0.0a') : 0}</div>
+          <div>{!claims.d.value ? numeral(claimD / Math.pow(10, 6)).format('0.0a') : 0}</div>
+
+          <div>Claimed (CHA)</div>
+          <div>{claims.a.value ? numeral(claimA / Math.pow(10, 6)).format('0.0a') : 0}</div>
+          <div>{claims.b.value ? numeral(claimB / Math.pow(10, 6)).format('0.0a') : 0}</div>
+          <div>{claims.c.value ? numeral(claimC / Math.pow(10, 6)).format('0.0a') : 0}</div>
+          <div>{claims.d.value ? numeral(claimD / Math.pow(10, 6)).format('0.0a') : 0}</div>
+
+          <div className='mt-4'>Claim Tokens</div>
+          <div className='mt-4'><Button disabled={claims.a.value || !claimA} onClick={() => claim('mint-a')} className='h-6' >Claim</Button></div>
+          <div className='mt-4'><Button disabled={claims.b.value || !claimB} onClick={() => claim('mint-b')} className='h-6' >Claim</Button></div>
+          <div className='mt-4'><Button disabled={claims.c.value || !claimC} onClick={() => claim('mint-c')} className='h-6' >Claim</Button></div>
+          <div className='mt-4'><Button disabled={claims.d.value || !claimD} onClick={() => claim('mint-d')} className='h-6' >Claim</Button></div>
+        </div>
       </div>
     </div>
   )
@@ -182,9 +286,9 @@ const RecoveryClaim = () => {
   function makeChoice(choice: boolean) {
     openContractCall({
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'recovery-claim',
+      contractName: choice ? 'red-pill-nft' : 'blue-pill-nft',
       functionName: "claim",
-      functionArgs: [boolCV(choice)],
+      functionArgs: [],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [],
     });
@@ -193,13 +297,13 @@ const RecoveryClaim = () => {
   return (
     <div className='space-y-8'>
       <div className='text-xl text-center'>Select your recovery choice...</div>
-      <div className='flex w-full p-24 rounded-full bg-gray-900/50'>
+      <div className='flex w-full p-24 rounded-full bg-gray-900/80'>
         <div className='flex flex-col items-center w-full space-y-4'>
-          <Image src={redPillFloating} alt='Red Pill' width={250} height={250} className='transition-all cursor-pointer hover:scale-125 hover:-translate-y-4' />
+          <Image onClick={() => makeChoice(true)} src={redPillFloating} alt='Red Pill' width={250} height={250} className='transition-all cursor-pointer hover:scale-125 hover:-translate-y-4' />
           {/* <Button disabled onClick={() => makeChoice(true)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-primary'>Select Red Pill</Button> */}
         </div>
         <div className='flex flex-col items-center w-full space-y-4'>
-          <Image src={bluePillFloating} alt='Blue Pill' width={250} height={250} className='transition-all cursor-pointer hover:scale-125 hover:-translate-y-4' />
+          <Image onClick={() => makeChoice(false)} src={bluePillFloating} alt='Blue Pill' width={250} height={250} className='transition-all cursor-pointer hover:scale-125 hover:-translate-y-4' />
           {/* <Button disabled onClick={() => makeChoice(false)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-blue-800 bg-blue-800'>Select Blue Pill</Button> */}
         </div>
       </div>

@@ -67,7 +67,7 @@
   display: none;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1032px) {
   .show-on-mobile {
     display: none;
   }

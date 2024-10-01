@@ -16,7 +16,7 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import { forEach } from 'lodash';
 import ConnectWallet from '../stacks-session/connect';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import charismaLogo from '@public/charisma-logo.png';
+import dmgLogo from '@public/dmg-logo.png';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -75,7 +75,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               <MobileMenu key={router.asPath} />
               <div className={cn(styleUtils['hide-on-mobile'])}>
                 <Link href="/" className={cn(styles.logo)}>
-                  <Image src={charismaLogo} alt="Logo" width="64" height="64" />
+                  <Image src={dmgLogo} alt="DMG Logo" width="64" height="64" />
                 </Link>
               </div>
             </div>

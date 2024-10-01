@@ -5,7 +5,7 @@ import { Land } from "./kv.types";
 describe('tokens api', () => {
 
     it('should set charisma contract metadata by id', async () => {
-        const ca = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma'
+        const ca = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
         const metadata = {
             name: "Charisma",
             description: "The primary token of the Charisma ecosystem.",

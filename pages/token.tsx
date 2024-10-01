@@ -120,7 +120,7 @@ const WrappingSection = () => {
 
   const { wallet, balances } = useWallet()
 
-  const redPillBalances: any = balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-red-pill::red-pill']
+  const redPillBalances: any = balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft::red-pill']
 
   return (
     <div className='mt-20 mb-12'>
