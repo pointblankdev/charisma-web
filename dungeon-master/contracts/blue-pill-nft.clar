@@ -1,8 +1,8 @@
-;; Charisma - Red Pill NFT
+;; Charisma - Blue Pill NFT
 
 (impl-trait .dao-traits-v4.nft-trait)
 
-(define-non-fungible-token red-pill uint)
+(define-non-fungible-token blue-pill uint)
 
 ;; Constants
 (define-constant DEPLOYER tx-sender)
@@ -33,7 +33,7 @@
 (define-data-var last-id uint u1)
 (define-data-var total-price uint u100000000)
 (define-data-var creator-address principal 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS)
-(define-data-var base-uri (string-ascii 200) "https://charisma.rocks/api/v0/nfts/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft/{id}.json")
+(define-data-var base-uri (string-ascii 200) "https://charisma.rocks/api/v0/nfts/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blue-pill-nft/{id}.json")
 (define-data-var mint-paused bool true)
 (define-data-var metadata-frozen bool false)
 
@@ -72,13 +72,13 @@
         (try! (stx-transfer? total-commission tx-sender COMM-ADDR))
       )    
     )
-    (try! (contract-call? .charisma-claims claim true))
+    (try! (contract-call? .charisma-claims claim false))
     (ok id-reached)))
 
 (define-private (mint-many-iter (ignore bool) (next-id uint))
   (if (or (is-eq (var-get mint-limit) u0) (<= next-id (var-get mint-limit)))
     (begin
-      (unwrap! (nft-mint? red-pill next-id tx-sender) next-id)
+      (unwrap! (nft-mint? blue-pill next-id tx-sender) next-id)
       (+ next-id u1)    
     )
     next-id))
@@ -107,10 +107,10 @@
 (define-public (burn (token-id uint))
   (begin 
     (asserts! (is-owner token-id tx-sender) (err ERR-NOT-AUTHORIZED))
-    (nft-burn? red-pill token-id tx-sender)))
+    (nft-burn? blue-pill token-id tx-sender)))
 
 (define-private (is-owner (token-id uint) (user principal))
-    (is-eq user (unwrap! (nft-get-owner? red-pill token-id) false)))
+    (is-eq user (unwrap! (nft-get-owner? blue-pill token-id) false)))
 
 (define-public (set-base-uri (new-base-uri (string-ascii 200)))
   (begin
@@ -132,7 +132,7 @@
 
 ;; read-only functions
 (define-read-only (get-owner (token-id uint))
-  (ok (nft-get-owner? red-pill token-id)))
+  (ok (nft-get-owner? blue-pill token-id)))
 
 (define-read-only (get-last-token-id)
   (ok (- (var-get last-id) u1)))
