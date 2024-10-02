@@ -19,6 +19,7 @@ import Image, { StaticImageData } from 'next/image';
 import charisma from '@public/charisma.png';
 import stxLogo from '@public/stx-logo.png';
 import welshLogo from '@public/welsh-logo.png';
+import chaLogo from '@public/charisma-logo-square.png';
 import rooLogo from '@public/roo-logo.png';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import numeral from 'numeral';
@@ -54,8 +55,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   // Define tokens
   const tokens: TokenInfo[] = [
+    { symbol: 'CHA', name: 'Charisma', image: chaLogo, tokenName: 'charisma', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token' },
     { symbol: 'WELSH', name: 'Welsh', image: welshLogo, tokenName: 'welshcorgicoin', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token' },
     { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: welshLogo, tokenName: 'synthetic-welsh', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh' },
+    { symbol: 'ROO', name: 'Roo', image: rooLogo, tokenName: 'kangaroo', contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo' },
+    { symbol: 'iouROO', name: 'Synthetic Roo', image: rooLogo, tokenName: 'synthetic-roo', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo' },
     // Add other tokens here
   ];
 
@@ -63,8 +67,20 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const pools: PoolInfo[] = [
     {
       id: 1,
-      token0: tokens[0], // WELSH
-      token1: tokens[1], // iouWELSH
+      token0: tokens[1], // WELSH
+      token1: tokens[2], // iouWELSH
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
+    {
+      id: 2,
+      token0: tokens[3], // ROO
+      token1: tokens[4], // iouROO
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
+    {
+      id: 3,
+      token0: tokens[0], // CHA
+      token1: tokens[1], // WELSH
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
     // Add other pools here
@@ -242,6 +258,7 @@ const SwapInterface = ({ data }: Props) => {
   }, [fromAmount, calculateEstimatedAmountOut]);
 
   const { getBalanceByKey } = useWallet();
+  const cha = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token::charisma');
   const welsh = getBalanceByKey('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin');
   const roo = getBalanceByKey('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo');
   const iouWelsh = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh');
@@ -250,6 +267,8 @@ const SwapInterface = ({ data }: Props) => {
   const getBalance = useMemo(() => {
     return (symbol: any) => {
       switch (symbol) {
+        case 'CHA':
+          return cha || 0;
         case 'WELSH':
           return welsh || 0;
         case 'ROO':
@@ -269,6 +288,10 @@ const SwapInterface = ({ data }: Props) => {
       switch (symbol) {
         case 'STX':
           return data.prices.find((token: any) => token.symbol === 'STX').price;
+        case 'CHA':
+          const welshPrice = data.prices.find((token: any) => token.symbol === 'WELSH').price;
+          const reserveRatio = reserves.reserveA ? (reserves.reserveB / reserves.reserveA) : 1;
+          return welshPrice * Number(reserveRatio);
         case 'WELSH':
           return data.prices.find((token: any) => token.symbol === 'WELSH').price;
         case 'ROO':
@@ -290,13 +313,25 @@ const SwapInterface = ({ data }: Props) => {
     // setToAmount(fromAmount);
   };
 
-  const selectToken = (token: any, isFrom: boolean) => {
-    if (isFrom) {
-      setFromToken(token);
-      setShowFromTokens(false);
-    } else {
-      setToToken(token);
-      setShowToTokens(false);
+
+  const isTokenPairValid = useCallback((token1: TokenInfo, token2: TokenInfo) => {
+    return data.pools.some(pool =>
+      (pool.token0.symbol === token1.symbol && pool.token1.symbol === token2.symbol) ||
+      (pool.token1.symbol === token1.symbol && pool.token0.symbol === token2.symbol)
+    );
+  }, [data.pools]);
+
+  const selectToken = (token: TokenInfo, isFrom: boolean) => {
+    const otherToken = isFrom ? toToken : fromToken;
+
+    if (isTokenPairValid(token, otherToken)) {
+      if (isFrom) {
+        setFromToken(token);
+        setShowFromTokens(false);
+      } else {
+        setToToken(token);
+        setShowToTokens(false);
+      }
     }
   };
 
@@ -418,16 +453,22 @@ const SwapInterface = ({ data }: Props) => {
                   </button>
                   {showFromTokens && (
                     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
-                      {data.tokens.map((token) => (
-                        <button
-                          key={token.symbol}
-                          className="flex items-center w-full px-4 py-2 text-left hover:bg-accent-foreground"
-                          onClick={() => selectToken(token, true)}
-                        >
-                          <Image src={token.image} alt={token.symbol} width={24} height={24} className="mr-2 rounded-full" />
-                          <span className="text-white">{token.symbol}</span>
-                        </button>
-                      ))}
+                      {data.tokens.map((token) => {
+                        const isDisabled = !isTokenPairValid(token, toToken);
+                        return (
+                          <button
+                            key={token.symbol}
+                            className={`flex items-center w-full px-4 py-2 text-left ${isDisabled
+                              ? 'opacity-50 cursor-not-allowed'
+                              : 'hover:bg-accent-foreground'
+                              }`}
+                            onClick={() => !isDisabled && selectToken(token, true)}
+                          >
+                            <Image src={token.image} alt={token.symbol} width={24} height={24} className="mr-2 rounded-full" />
+                            <span className={isDisabled ? 'text-gray-500' : 'text-white'}>{token.symbol}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
@@ -485,16 +526,22 @@ const SwapInterface = ({ data }: Props) => {
                   </button>
                   {showToTokens && (
                     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
-                      {data.tokens.map((token) => (
-                        <button
-                          key={token.symbol}
-                          className="flex items-center w-full px-4 py-2 text-left hover:bg-accent-foreground"
-                          onClick={() => selectToken(token, false)}
-                        >
-                          <Image src={token.image} alt={token.symbol} width={24} height={24} className="mr-2 rounded-full" />
-                          <span className="text-white">{token.symbol}</span>
-                        </button>
-                      ))}
+                      {data.tokens.map((token) => {
+                        const isDisabled = !isTokenPairValid(token, fromToken);
+                        return (
+                          <button
+                            key={token.symbol}
+                            className={`flex items-center w-full px-4 py-2 text-left ${isDisabled
+                              ? 'opacity-50 cursor-not-allowed'
+                              : 'hover:bg-accent-foreground'
+                              }`}
+                            onClick={() => !isDisabled && selectToken(token, false)}
+                          >
+                            <Image src={token.image} alt={token.symbol} width={24} height={24} className="mr-2 rounded-full" />
+                            <span className={isDisabled ? 'text-gray-500' : 'text-white'}>{token.symbol}</span>
+                          </button>
+                        );
+                      })}
                     </div>
                   )}
                 </div>
