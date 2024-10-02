@@ -313,7 +313,6 @@ const SwapInterface = ({ data }: Props) => {
     // setToAmount(fromAmount);
   };
 
-
   const isTokenPairValid = useCallback((token1: TokenInfo, token2: TokenInfo) => {
     return data.pools.some(pool =>
       (pool.token0.symbol === token1.symbol && pool.token1.symbol === token2.symbol) ||
@@ -321,14 +320,26 @@ const SwapInterface = ({ data }: Props) => {
     );
   }, [data.pools]);
 
-  const selectToken = (token: TokenInfo, isFrom: boolean) => {
-    const otherToken = isFrom ? toToken : fromToken;
+  const getFirstValidPair = useCallback((token: TokenInfo) => {
+    return data.tokens.find(t => t.symbol !== token.symbol && isTokenPairValid(token, t));
+  }, [data.tokens, isTokenPairValid]);
 
-    if (isTokenPairValid(token, otherToken)) {
-      if (isFrom) {
-        setFromToken(token);
-        setShowFromTokens(false);
-      } else {
+  const selectToken = (token: TokenInfo, isFrom: boolean) => {
+    if (isFrom) {
+      setFromToken(token);
+      setShowFromTokens(false);
+
+      // Check if current 'to' token forms a valid pair with the new 'from' token
+      if (!isTokenPairValid(token, toToken)) {
+        // If not, find the first valid 'to' token and set it
+        const firstValidToToken = getFirstValidPair(token);
+        if (firstValidToToken) {
+          setToToken(firstValidToToken);
+        }
+      }
+    } else {
+      // For 'to' token, only allow selection if it forms a valid pair
+      if (isTokenPairValid(fromToken, token)) {
         setToToken(token);
         setShowToTokens(false);
       }
@@ -453,22 +464,16 @@ const SwapInterface = ({ data }: Props) => {
                   </button>
                   {showFromTokens && (
                     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
-                      {data.tokens.map((token) => {
-                        const isDisabled = !isTokenPairValid(token, toToken);
-                        return (
-                          <button
-                            key={token.symbol}
-                            className={`flex items-center w-full px-4 py-2 text-left ${isDisabled
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-accent-foreground'
-                              }`}
-                            onClick={() => !isDisabled && selectToken(token, true)}
-                          >
-                            <Image src={token.image} alt={token.symbol} width={24} height={24} className="mr-2 rounded-full" />
-                            <span className={isDisabled ? 'text-gray-500' : 'text-white'}>{token.symbol}</span>
-                          </button>
-                        );
-                      })}
+                      {data.tokens.map((token) => (
+                        <button
+                          key={token.symbol}
+                          className="flex items-center w-full px-4 py-2 text-left hover:bg-accent-foreground"
+                          onClick={() => selectToken(token, true)}
+                        >
+                          <Image src={token.image} alt={token.symbol} width={24} height={24} className="mr-2 rounded-full" />
+                          <span className="text-white">{token.symbol}</span>
+                        </button>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -527,7 +532,7 @@ const SwapInterface = ({ data }: Props) => {
                   {showToTokens && (
                     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
                       {data.tokens.map((token) => {
-                        const isDisabled = !isTokenPairValid(token, fromToken);
+                        const isDisabled = !isTokenPairValid(fromToken, token);
                         return (
                           <button
                             key={token.symbol}
