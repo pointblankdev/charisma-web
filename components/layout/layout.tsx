@@ -28,6 +28,7 @@ import {
 import spiral from '@public/quests/memobots/spiral.gif';
 import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png';
 import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
+import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import { FaSync } from 'react-icons/fa';
 import { useAccount } from '@micro-stacks/react';
 
