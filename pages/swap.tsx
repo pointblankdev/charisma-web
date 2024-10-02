@@ -442,7 +442,7 @@ const SwapInterface = ({ data }: Props) => {
                 <span className="text-gray-400">
                   ${(getPrice(fromToken.symbol) * Number(fromAmount)).toFixed(2)}
                   {fromToken.symbol.startsWith('iou') && (
-                    <span className="px-1.5 ml-2 text-sm text-white/50 rounded-full cursor-pointer bg-accent-foreground pb-0.5" title={syntheticPriceDisclaimer}>
+                    <span className="px-1.5 ml-2 text-sm text-white/50 rounded-full cursor-help bg-accent-foreground pb-0.5" title={syntheticPriceDisclaimer}>
                       ℹ
                     </span>
                   )}
@@ -510,7 +510,7 @@ const SwapInterface = ({ data }: Props) => {
                 <span className="text-gray-400">
                   ${(getPrice(toToken.symbol) * Number(estimatedAmountOut)).toFixed(2)}
                   {toToken.symbol.startsWith('iou') && (
-                    <span className="px-1.5 ml-2 text-sm text-white/50 rounded-full cursor-pointer bg-accent-foreground pb-0.5" title={syntheticPriceDisclaimer}>
+                    <span className="px-1.5 ml-2 text-sm text-white/50 rounded-full cursor-help bg-accent-foreground pb-0.5" title={syntheticPriceDisclaimer}>
                       ℹ
                     </span>
                   )}

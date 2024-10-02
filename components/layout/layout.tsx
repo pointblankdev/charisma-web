@@ -27,6 +27,7 @@ import {
 } from '@components/ui/dropdown-menu';
 import spiral from '@public/quests/memobots/spiral.gif';
 import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png';
+import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
 import { FaSync } from 'react-icons/fa';
 import { useAccount } from '@micro-stacks/react';
 
@@ -104,7 +105,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'sm:relative'
               )}
             >
-              <div className="flex items-center gap-2 pl-2 font-medium text-md text-muted sm:absolute sm:right-40">
+              <div className="flex items-center pl-2 font-medium text-md text-muted sm:absolute sm:right-40">
                 {/* <Image
                   alt={'Experience Icon'}
                   src={experienceIcon}
@@ -112,8 +113,10 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                   height={100}
                   className={`z-30 border rounded-full h-5 w-5`}
                 /> */}
-                <div className={'cursor-pointer'} onClick={clearCacheAndReload} title='If your energy is not updating, try clicking here to clear your cache.'>✨ {numeral(wallet.experience.balance).format('0a')}</div>
+                {/* <div className={'cursor-pointer'} onClick={clearCacheAndReload} title='If your energy is not updating, try clicking here to clear your cache.'>✨ {numeral(wallet.experience.balance).format('0a')}</div> */}
               </div>
+              {wallet.redPilled && <Image src={redPillFloating} alt="Red Pill" width="40" height="40" className='cursor-help' title={'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'} />}
+              {wallet.bluePilled && <Image src={bluePillFloating} alt="Blue Pill" width="40" height="40" className='cursor-help' title={'The Blue Pill NFT offers your early access to Charisma Recovery token redemptions.'} />}
               <ConnectWallet />
             </div>
           </header>
