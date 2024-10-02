@@ -86,7 +86,7 @@ export default function SwapPage({ data }: Props) {
   const meta = {
     title: 'Charisma | Swap',
     description: "Swap tokens on the Charisma DEX",
-    image: 'https://charisma.com/swap-screenshot.png',
+    image: 'https://charisma.rocks/swap-screenshot.png',
   };
 
   return (
