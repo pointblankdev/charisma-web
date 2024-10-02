@@ -291,6 +291,7 @@ const SwapInterface = ({ data }: Props) => {
         case 'CHA':
           const welshPrice = data.prices.find((token: any) => token.symbol === 'WELSH').price;
           const reserveRatio = reserves.reserveA ? (reserves.reserveB / reserves.reserveA) : 1;
+          console.log(reserveRatio)
           return welshPrice * Number(reserveRatio);
         case 'WELSH':
           return data.prices.find((token: any) => token.symbol === 'WELSH').price;
@@ -304,7 +305,7 @@ const SwapInterface = ({ data }: Props) => {
           return 0;
       }
     };
-  }, [welsh, roo, iouWelsh, iouRoo]);
+  }, [welsh, roo, iouWelsh, iouRoo, reserves]);
 
   const handleSwap = () => {
     setFromToken(toToken);
