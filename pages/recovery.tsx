@@ -24,13 +24,15 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 export const getStaticProps: GetStaticProps<Props> = async () => {
 
   const syntheticWelshIssued = 86943663098322
-  const syntheticRooIssued = 1036055176569
+  const syntheticRooIssued = 1176056176569
 
   const syntheticWelshRemainingSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
-  const syntheticRooRemainingSupply = 1036055176569//await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
+  const syntheticRooRemainingSupply = await getTotalSupply('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
 
-  const syntheticWelshRedemptionsAvailable = 0//await getAvailableRedemptions('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
-  const syntheticRooRedemptionsAvailable = 0//await getAvailableRedemptions('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo');
+  const {
+    welsh: syntheticWelshRedemptionsAvailable,
+    roo: syntheticRooRedemptionsAvailable
+  } = await getAvailableRedemptions();
 
   return {
     props: {
@@ -61,8 +63,10 @@ type Props = {
 export default function RecoveryClaimPage({ data }: Props) {
   const meta = {
     title: 'Charisma | Recovery Claim',
-    description: "Charisma Recovery Plan",
+    description: "Charisma Recovery",
   };
+
+  console.log(data)
 
   return (
     <Page meta={meta} fullViewport>
@@ -113,31 +117,35 @@ const TokenRedemptions = ({ data }: any) => {
 
 
   function redeemWelsh(amount: number) {
-    openContractCall({
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'welsh-redemptions',
-      functionName: "redeem-tokens",
-      functionArgs: [uintCV(amount)],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(stxAddress as string).willSendEq(amount).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', 'synthetic-welsh') as any,
-        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-redemptions').willSendEq(amount).ft('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'welshcorgicoin') as any,
-      ],
-    });
+    if (stxAddress) {
+      openContractCall({
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'redemption-vault',
+        functionName: "redeem-welsh",
+        functionArgs: [uintCV(amount)],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [
+          Pc.principal(stxAddress).willSendLte(amount).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', 'synthetic-welsh') as any,
+          Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.redemption-vault').willSendLte(amount).ft('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'welshcorgicoin') as any,
+        ],
+      });
+    }
   }
 
   function redeemRoo(amount: number) {
-    openContractCall({
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'roo-redemptions',
-      functionName: "redeem-tokens",
-      functionArgs: [uintCV(amount)],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(stxAddress as string).willSendEq(amount).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', 'synthetic-roo') as any,
-        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-redemptions').willSendEq(amount).ft('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', 'kangaroo') as any,
-      ],
-    });
+    if (stxAddress) {
+      openContractCall({
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'redemption-vault',
+        functionName: "redeem-roo",
+        functionArgs: [uintCV(amount)],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [
+          Pc.principal(stxAddress).willSendLte(amount).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', 'synthetic-roo') as any,
+          Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.redemption-vault').willSendLte(amount).ft('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', 'kangaroo') as any,
+        ],
+      });
+    }
   }
 
   function claim(method: string) {
@@ -226,20 +234,20 @@ const TokenRedemptions = ({ data }: any) => {
           <div>Synthetic Roo (iouROO)</div>
 
           <div>Total Issued</div>
-          <div>{numeral(data.syntheticWelsh.issued / Math.pow(10, 6)).format('0 a')}</div>
-          <div>{numeral(data.syntheticRoo.issued / Math.pow(10, 6)).format('0 a')}</div>
+          <div>{data.syntheticWelsh.issued / Math.pow(10, 6)}</div>
+          <div>{data.syntheticRoo.issued / Math.pow(10, 6)}</div>
 
           <div>Total Redeemed</div>
-          <div>{numeral(data.syntheticWelsh.burned / Math.pow(10, 6)).format('0 a')}</div>
-          <div>{numeral(data.syntheticRoo.burned / Math.pow(10, 6)).format('0 a')}</div>
+          <div>{data.syntheticWelsh.burned / Math.pow(10, 6)}</div>
+          <div>{data.syntheticRoo.burned / Math.pow(10, 6)}</div>
 
           <div>Redemptions Remaining</div>
-          <div>{numeral(data.syntheticWelsh.remaining / Math.pow(10, 6)).format('0 a')}</div>
-          <div>{numeral(data.syntheticRoo.remaining / Math.pow(10, 6)).format('0 a')}</div>
+          <div>{data.syntheticWelsh.remaining / Math.pow(10, 6)}</div>
+          <div>{data.syntheticRoo.remaining / Math.pow(10, 6)}</div>
 
           <div className='mt-4'>Your Balances</div>
-          <div className='mt-4'>{numeral(iouWelsh?.balance / Math.pow(10, 6)).format('0 a') || 0}</div>
-          <div className='mt-4'>{numeral(iouRoo?.balance / Math.pow(10, 6)).format('0 a') || 0}</div>
+          <div className='mt-4'>{iouWelsh?.balance / Math.pow(10, 6) || 0}</div>
+          <div className='mt-4'>{iouRoo?.balance / Math.pow(10, 6) || 0}</div>
 
           <div>Redemptions Available</div>
           <div>{data.syntheticWelsh.available / Math.pow(10, 6)}</div>

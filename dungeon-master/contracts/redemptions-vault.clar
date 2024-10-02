@@ -1,8 +1,6 @@
 ;; Charisma Token Redemptions Vault
 ;; https://charisma.rocks
 
-(impl-trait .dao-traits-v4.sip010-ft-trait)
-
 (define-constant err-unauthorized (err u401))
 (define-constant err-liquidity-lock (err u402))
 (define-constant err-not-blue-pilled (err u403))
@@ -51,10 +49,10 @@
     (final-amount (if (> claim-amount available-tokens) available-tokens claim-amount))
   )
     (asserts! (or (not (var-get lock-enabled)) (try! (is-blue-pilled))) err-not-blue-pilled)
-    (asserts! (>= (contract-call? .synthetic-welsh get-balance tx-sender) final-amount) err-insufficient-ious)
+    (asserts! (>= (unwrap-panic (contract-call? .synthetic-welsh get-balance tx-sender)) final-amount) err-insufficient-ious)
     
     ;; Burn synthetic-welsh tokens
-    (try! (contract-call? .synthetic-welsh burn final-amount tx-sender))
+    (try! (contract-call? .synthetic-welsh burn final-amount))
     
     ;; Transfer welshcorgicoin tokens
     (as-contract (contract-call? 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token transfer final-amount contract tx-sender none))
@@ -68,10 +66,10 @@
     (final-amount (if (> claim-amount available-tokens) available-tokens claim-amount))
   )
     (asserts! (or (not (var-get lock-enabled)) (try! (is-blue-pilled))) err-not-blue-pilled)
-    (asserts! (>= (contract-call? .synthetic-roo get-balance tx-sender) final-amount) err-insufficient-ious)
+    (asserts! (>= (unwrap-panic (contract-call? .synthetic-roo get-balance tx-sender)) final-amount) err-insufficient-ious)
     
     ;; Burn synthetic-roo tokens
-    (try! (contract-call? .synthetic-roo burn final-amount tx-sender))
+    (try! (contract-call? .synthetic-roo burn final-amount))
     
     ;; Transfer roo tokens
     (as-contract (contract-call? 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo transfer final-amount contract tx-sender none))

@@ -243,7 +243,7 @@ const WrappingSection = () => {
       <div className='container flex flex-col p-6 pb-0 -translate-y-20 border bg-background rounded-2xl max-w-prose min-h-48'>
         <div className='relative w-full space-y-2 grow'>
           {wallet.redPilled ? (
-            <>
+            <div className=''>
               <div className='flex justify-between py-2'>
                 <div>Wrap Amount</div>
                 <div onClick={handleMaxAmountClick} className='px-2 rounded-full cursor-pointer bg-primary'>Max</div>
@@ -266,10 +266,10 @@ const WrappingSection = () => {
                   </div>
                 </div>
               </div>
-              <Button onClick={handleWrap} className='w-full' disabled={!!error || !amount}>
+              <Button onClick={handleWrap} className='w-full mb-5' disabled={!!error || !amount}>
                 Wrap
               </Button>
-            </>
+            </div>
           ) : (
             <div className='text-center'>
               <p className='mb-4'>You need to mint a Red Pill NFT before wrapping tokens.</p>

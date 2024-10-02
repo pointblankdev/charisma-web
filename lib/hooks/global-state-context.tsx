@@ -40,7 +40,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [storedEnergy, setStoredEnergy] = usePersistedState('storedEnergy', 0);
 
     const [charismaTokenStats, setCharismaTokenStats] = usePersistedState('charismaTokenStats', {})
-    const [charismaClaims, setCharismaClaims] = usePersistedState('charismaClaims', {})
+    const [charismaClaims, setCharismaClaims] = usePersistedState('charismaClaims', { hasFreeClaim: false, hasClaimed: false } as any)
 
     const { toast } = useToast()
 
@@ -94,7 +94,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
                 // transactions available
                 const transactionsAvailable = await CharismaToken.getTransactionsAvailable()
-                setCharismaTokenStats({ transactionsAvailable })
+                setCharismaTokenStats((stats: any) => ({ ...stats, transactionsAvailable }))
 
                 // blocks until unlocked
                 const blocksUntilUnlock = await CharismaToken.getBlocksUntilUnlock()

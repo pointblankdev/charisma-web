@@ -86,6 +86,10 @@ depends_on = []
 path = "contracts/red-pill-nft.clar"
 depends_on = []
 
+[contracts.blue-pill-nft]
+path = "contracts/blue-pill-nft.clar"
+depends_on = []
+
 [contracts.charisma-token]
 path = "contracts/charisma-token.clar"
 depends_on = []
@@ -100,6 +104,36 @@ depends_on = []
 [contracts.cha-recovery]
 path = "contracts/cha-recovery.clar"
 depends_on = []
+
+[contracts.redemptions-vault]
+path = "contracts/redemptions-vault.clar"
+depends_on = []
+
+[contracts.univ2-share-fee-to]
+path = "contracts/univ2-share-fee-to.clar"
+depends_on = []
+
+[contracts.univ2-core]
+path = "contracts/univ2-core.clar"
+depends_on = []
+
+[contracts.univ2-library]
+path = "contracts/univ2-library.clar"
+depends_on = []
+
+[contracts.univ2-router]
+path = "contracts/univ2-router.clar"
+depends_on = []
+
+[contracts.welsh-iouwelsh]
+path = "contracts/welsh-iouwelsh.clar"
+depends_on = []
+
+[contracts.lp-recovery-calc]
+path = "contracts/lp-recovery-calc.clar"
+depends_on = []
+
+
 
 # traits
 [contracts.dao-traits-v4]

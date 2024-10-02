@@ -649,22 +649,32 @@ export async function getTotalSupply(contract: string) {
   return Number(json.value.value);
 }
 
-export async function getAvailableRedemptions(contract: string) {
-  const [address, name] = contract.split('.');
-
-  const response: any = await scApi.callReadOnlyFunction({
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-available-tokens',
+export async function getAvailableRedemptions() {
+  const responseWelsh: any = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'redemption-vault',
+    functionName: 'get-available-welsh',
     readOnlyFunctionArgs: {
-      sender: address,
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       arguments: []
     }
   });
+  const cv1 = hexToCV(responseWelsh.result);
+  const json1 = cvToJSON(cv1);
 
-  const cv = hexToCV(response.result);
-  const json = cvToJSON(cv);
-  return Number(json.value.value);
+  const responseRoo: any = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'redemption-vault',
+    functionName: 'get-available-roo',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: []
+    }
+  });
+  const cv2 = hexToCV(responseRoo.result);
+  const json2 = cvToJSON(cv2);
+
+  return { welsh: Number(json1.value.value), roo: Number(json2.value.value) };
 }
 
 export async function getTotalInPool(contract: string) {

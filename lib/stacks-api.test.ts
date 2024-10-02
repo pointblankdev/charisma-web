@@ -1,7 +1,7 @@
 import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, TransactionVersion, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateSecretKey, generateWallet, getStxAddress } from "@stacks/wallet-sdk";
-import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId, getNftOwner, getStoredEnergy, getLastLandId, getTransferFunction, getBalancesAtBlock } from "./stacks-api";
+import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId, getNftOwner, getStoredEnergy, getLastLandId, getTransferFunction, getBalancesAtBlock, getAvailableRedemptions } from "./stacks-api";
 import { get } from "lodash";
 import { writeFileSync } from "fs";
 import { tryResetEpochs } from "./try-reset-epochs";
@@ -341,6 +341,11 @@ describe('Source code', () => {
 describe('Recovery', () => {
     it('should get balances at block', async () => {
         const response = await getBalancesAtBlock()
+        console.log(response)
+    })
+
+    it('should get available redemptions', async () => {
+        const response = await getAvailableRedemptions()
         console.log(response)
     })
 })
