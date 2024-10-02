@@ -85,7 +85,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 export default function SwapPage({ data }: Props) {
   const meta = {
     title: 'Charisma | Swap',
-    description: "The Charisma Swap",
+    description: "Swap tokens on the Charisma DEX",
     image: 'https://charisma.com/swap-screenshot.png',
   };
 
