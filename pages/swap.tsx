@@ -106,6 +106,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     //   token1: tokens[1], // CHA
     //   swapFee: { num: 995, den: 1000 }, // 0.5% fee
     // },
+    {
+      id: 5,
+      token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'iouWELSH') as TokenInfo,
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
     // Add other pools here
   ];
 
