@@ -36,7 +36,23 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                 dehydratedState: await getDehydratedStateFromSession(ctx),
                 nfts: [
                     {
+                        id: 0,
+                        ca: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft::red-pill',
+                        name: `Red Pill`,
+                        image: '/sip9/pills/red-pill-nft.gif',
+                        amount: 0,
+                        utilty: 'The Red Pill enables you to wrap your earned rewards into Charisma tokens.'
+                    },
+                    {
                         id: 1,
+                        ca: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blue-pill-nft::blue-pill',
+                        name: `Blue Pill`,
+                        image: '/sip9/pills/blue-pill-nft.gif',
+                        amount: 0,
+                        utilty: 'The Blue Pill offers your early access to Charisma Recovery token redemptions.'
+                    },
+                    {
+                        id: 2,
                         ca: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven::raven',
                         name: `Odin's Raven`,
                         image: '/odins-raven/img/4.gif',
@@ -44,7 +60,7 @@ export async function getServerSideProps(ctx: GetServerSidePropsContext) {
                         utilty: 'Protocol burn fees are reduced by up to 50% when holding this NFT.'
                     },
                     {
-                        id: 2,
+                        id: 3,
                         ca: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse::memobots-guardians-of-the-gigaverse',
                         name: `MemoBot`,
                         image: hiddenMemobot,
@@ -64,7 +80,7 @@ type Props = {
 export default function PortfolioPage({ data }: Props) {
     return (
         <SettingsLayout>
-            <main className="flex flex-1 flex-col gap-4 p-0 md:gap-8">
+            <main className="flex flex-col flex-1 gap-4 p-0 md:gap-8">
                 <TokenBalances data={data} />
             </main>
         </SettingsLayout>
@@ -80,6 +96,8 @@ function TokenBalances({ data }: Props) {
         return nft
     })
 
+    const heldNfts = nfts.filter((nft: any) => nft.amount > 0)
+
     return (
         <Card>
             <CardHeader className="p-2 sm:p-4">
@@ -92,17 +110,17 @@ function TokenBalances({ data }: Props) {
                         <TableRow>
                             <TableHead className="w-[100px] sm:table-cell"><span className="sr-only">Image</span></TableHead>
                             <TableHead><span className="sr-only">Name</span></TableHead>
-                            <TableHead className="md:table-cell text-right">Amount</TableHead>
-                            <TableHead className="md:table-cell text-center">Utility Bonus</TableHead>
+                            <TableHead className="text-right md:table-cell">Amount</TableHead>
+                            <TableHead className="text-center md:table-cell">Utility Bonus</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {nfts.map((nft: any) => (
+                        {heldNfts.map((nft: any) => (
                             <TableRow key={nft.id}>
                                 <TableCell className="sm:table-cell">
                                     <Image
                                         alt="Product image"
-                                        className="aspect-square rounded-full overflow-hidden object-cover border"
+                                        className="object-cover overflow-hidden border rounded-full aspect-square"
                                         height="64"
                                         src={nft.image}
                                         width="64"
@@ -111,10 +129,10 @@ function TokenBalances({ data }: Props) {
                                 <TableCell className="font-medium">
                                     <div className="text-lg">{nft.name}</div>
                                 </TableCell>
-                                <TableCell className="md:table-cell text-lg text-right">
+                                <TableCell className="text-lg text-right md:table-cell">
                                     {nft.amount}
                                 </TableCell>
-                                <TableCell className="md:table-cell text-lg text-center">
+                                <TableCell className="text-lg text-center md:table-cell">
                                     {nft.utilty}
                                 </TableCell>
                             </TableRow>
