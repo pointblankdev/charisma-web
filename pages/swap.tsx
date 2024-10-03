@@ -31,7 +31,7 @@ type TokenInfo = {
   symbol: string;
   name: string;
   image: StaticImageData;
-  tokenName: string;
+  tokenName?: string;
   contractAddress: string;
 };
 
@@ -44,6 +44,7 @@ type PoolInfo = {
 
 type Props = {
   data: {
+    chaPerStx: number;
     prices: any;
     tokens: TokenInfo[];
     pools: PoolInfo[];
@@ -53,8 +54,24 @@ type Props = {
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const prices = await velarApi.tokens('all');
 
+  const result: any = await callReadOnlyFunction({
+    contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    contractName: "univ2-core",
+    functionName: "lookup-pool",
+    functionArgs: [
+      principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx'),
+      principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token')
+    ],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+  });
+  const poolInfo = result.value.data.pool;
+  const reserve0 = BigInt(poolInfo.data.reserve0.value);
+  const reserve1 = BigInt(poolInfo.data.reserve1.value);
+  const chaPerStx = Number(reserve1) / Number(reserve0);
+
   // Define tokens
   const tokens: TokenInfo[] = [
+    // { symbol: 'STX', name: 'Stacks', image: stxLogo, contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx' },
     { symbol: 'CHA', name: 'Charisma', image: chaLogo, tokenName: 'charisma', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token' },
     { symbol: 'WELSH', name: 'Welsh', image: welshLogo, tokenName: 'welshcorgicoin', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token' },
     { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: welshLogo, tokenName: 'synthetic-welsh', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh' },
@@ -67,28 +84,35 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const pools: PoolInfo[] = [
     {
       id: 1,
-      token0: tokens[1], // WELSH
-      token1: tokens[2], // iouWELSH
+      token0: tokens.find(token => token.symbol === 'WELSH') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'iouWELSH') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
     {
       id: 2,
-      token0: tokens[3], // ROO
-      token1: tokens[4], // iouROO
+      token0: tokens.find(token => token.symbol === 'ROO') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'iouROO') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
     {
       id: 3,
-      token0: tokens[0], // CHA
-      token1: tokens[1], // WELSH
+      token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'WELSH') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
+    // {
+    //   id: 4,
+    //   token0: tokens[0], // wSTX
+    //   token1: tokens[1], // CHA
+    //   swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    // },
     // Add other pools here
   ];
 
   return {
     props: {
       data: {
+        chaPerStx,
         prices,
         tokens,
         pools,
@@ -257,7 +281,8 @@ const SwapInterface = ({ data }: Props) => {
     calculateEstimatedAmountOut(fromAmount);
   }, [fromAmount, calculateEstimatedAmountOut]);
 
-  const { getBalanceByKey } = useWallet();
+  const { getBalanceByKey, balances } = useWallet();
+  const stx = balances.stx?.balance;
   const cha = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token::charisma');
   const welsh = getBalanceByKey('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin');
   const roo = getBalanceByKey('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo');
@@ -267,6 +292,8 @@ const SwapInterface = ({ data }: Props) => {
   const getBalance = useMemo(() => {
     return (symbol: any) => {
       switch (symbol) {
+        case 'STX':
+          return stx || 0;
         case 'CHA':
           return cha || 0;
         case 'WELSH':
@@ -281,7 +308,7 @@ const SwapInterface = ({ data }: Props) => {
           return 0;
       }
     };
-  }, [welsh, roo, iouWelsh, iouRoo]);
+  }, [stx, welsh, roo, iouWelsh, iouRoo]);
 
   const getPrice = useMemo(() => {
     return (symbol: any) => {
@@ -289,10 +316,9 @@ const SwapInterface = ({ data }: Props) => {
         case 'STX':
           return data.prices.find((token: any) => token.symbol === 'STX').price;
         case 'CHA':
-          const welshPrice = data.prices.find((token: any) => token.symbol === 'WELSH').price;
-          const reserveRatio = reserves.reserveA ? (reserves.reserveB / reserves.reserveA) : 1;
-          console.log(reserveRatio)
-          return welshPrice * Number(reserveRatio);
+          const stxPrice = data.prices.find((token: any) => token.symbol === 'STX').price;
+          const price = stxPrice / data.chaPerStx
+          return price;
         case 'WELSH':
           return data.prices.find((token: any) => token.symbol === 'WELSH').price;
         case 'ROO':
@@ -305,7 +331,7 @@ const SwapInterface = ({ data }: Props) => {
           return 0;
       }
     };
-  }, [welsh, roo, iouWelsh, iouRoo, reserves]);
+  }, [stx, welsh, roo, iouWelsh, iouRoo, reserves, fromToken, currentPool]);
 
   const handleSwap = () => {
     setFromToken(toToken);
@@ -381,6 +407,22 @@ const SwapInterface = ({ data }: Props) => {
     const [fromTokenPrincipal, fromTokenContract] = fromToken.contractAddress.split('.');
     const [toTokenPrincipal, toTokenContract] = toToken.contractAddress.split('.');
 
+    const dexContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core'
+
+    let fromPostCondition;
+    if (fromToken.tokenName) {
+      fromPostCondition = Pc.principal(stxAddress as string).willSendEq(amountInMicroTokens).ft(fromToken.contractAddress as any, fromToken.tokenName)
+    } else {
+      fromPostCondition = Pc.principal(stxAddress as string).willSendEq(amountInMicroTokens).ustx()
+    }
+
+    let toPostCondition;
+    if (toToken.tokenName) {
+      toPostCondition = Pc.principal(dexContract).willSendGte(minAmountOutMicroTokens).ft(toToken.contractAddress as any, toToken.tokenName)
+    } else {
+      toPostCondition = Pc.principal(dexContract).willSendGte(amountInMicroTokens).ustx()
+    }
+
     openContractCall({
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName: 'univ2-router',
@@ -397,8 +439,8 @@ const SwapInterface = ({ data }: Props) => {
       ],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(stxAddress as string).willSendEq(amountInMicroTokens).ft(fromToken.contractAddress as any, fromToken.tokenName),
-        Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(minAmountOutMicroTokens).ft(toToken.contractAddress as any, toToken.tokenName),
+        fromPostCondition,
+        toPostCondition
       ] as any[],
     });
   }, [fromAmount, estimatedAmountOut, fromToken, toToken, stxAddress, openContractCall, calculateMinimumAmountOut, currentPool]);
