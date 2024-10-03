@@ -15,10 +15,10 @@ const sidebarNavItems = [
     title: "SIP10 Tokens",
     href: "/portfolio",
   },
-  {
-    title: "SIP13 Tokens",
-    href: "/portfolio/sip13",
-  },
+  // {
+  //   title: "SIP13 Tokens",
+  //   href: "/portfolio/sip13",
+  // },
   {
     title: "SIP9 Tokens",
     href: "/portfolio/sip9",
@@ -34,10 +34,10 @@ export default function SettingsLayout({ children }: SettingsLayoutProps) {
 
     <Page meta={meta} fullViewport>
       <Layout>
-        <div className="sm:container sm:mx-auto sm:py-10 space-y-6 m-2">
+        <div className="m-2 space-y-6 sm:container sm:mx-auto sm:py-10">
           <div className="space-y-0.5">
             <h2 className="text-2xl font-semibold tracking-tight text-secondary">Portfolio</h2>
-            <p className="text-muted-foreground text-sm">
+            <p className="text-sm text-muted-foreground">
               View, manage and grow your bag on Charisma.
             </p>
           </div>
