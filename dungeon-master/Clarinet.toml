@@ -133,6 +133,10 @@ depends_on = []
 path = "contracts/lp-recovery-calc.clar"
 depends_on = []
 
+[contracts.wstx-scha]
+path = "contracts/wstx-scha.clar"
+depends_on = []
+
 [contracts.fix-ious]
 path = "contracts/fix-ious.clar"
 depends_on = []
