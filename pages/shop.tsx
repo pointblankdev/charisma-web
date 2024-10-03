@@ -38,7 +38,7 @@ export default function ShopPage() {
 
       const postConditions: any = []
       if (!charismaClaims.hasFreeClaim) {
-        postConditions.push(Pc.principal(stxAddress).willSendEq(100000).ustx())
+        postConditions.push(Pc.principal(stxAddress).willSendEq(100000000).ustx())
       }
       openContractCall({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -70,7 +70,7 @@ export default function ShopPage() {
               <div className='z-10 flex justify-between px-2 py-1'>
                 <div className='text-lg font-bold'>Red Pill NFT</div>
                 <div className='flex items-center space-x-1 font-semibold'>
-                  <div>0.1</div><div><Image src={stxLogo} className='rounded-full' alt='STX logo' width={16} height={16} /></div>
+                  <div>100</div><div><Image src={stxLogo} className='rounded-full' alt='STX logo' width={16} height={16} /></div>
                 </div>
               </div>
               <div className='grow'></div>
@@ -84,7 +84,7 @@ export default function ShopPage() {
               <div className='z-10 flex justify-between px-2 py-1'>
                 <div className='text-lg font-bold'>Blue Pill NFT</div>
                 <div className='flex items-center space-x-1 font-semibold'>
-                  <div>0.1</div><div><Image src={stxLogo} className='rounded-full' alt='STX logo' width={16} height={16} /></div>
+                  <div>100</div><div><Image src={stxLogo} className='rounded-full' alt='STX logo' width={16} height={16} /></div>
                 </div>
               </div>
               <div className='grow'></div>
