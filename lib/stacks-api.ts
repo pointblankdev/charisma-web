@@ -652,7 +652,7 @@ export async function getTotalSupply(contract: string) {
 export async function getAvailableRedemptions() {
   const responseWelsh: any = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'redemption-vault',
+    contractName: 'redemption-vault-v0',
     functionName: 'get-available-welsh',
     readOnlyFunctionArgs: {
       sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
@@ -664,7 +664,7 @@ export async function getAvailableRedemptions() {
 
   const responseRoo: any = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'redemption-vault',
+    contractName: 'redemption-vault-v0',
     functionName: 'get-available-roo',
     readOnlyFunctionArgs: {
       sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',

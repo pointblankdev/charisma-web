@@ -115,17 +115,47 @@ const TokenRedemptions = ({ data }: any) => {
   const [claims, setClaims] = useState({ a: { value: false }, b: { value: false }, c: { value: false }, d: { value: false } });
 
 
+  function depositWelsh(amount: number) {
+    if (stxAddress) {
+      openContractCall({
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'redemption-vault-v0',
+        functionName: "deposit-welsh",
+        functionArgs: [uintCV(amount)],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [
+          Pc.principal(stxAddress).willSendLte(amount).ft('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'welshcorgicoin') as any,
+        ],
+      });
+    }
+  }
+
+  function depositRoo(amount: number) {
+    if (stxAddress) {
+      openContractCall({
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: 'redemption-vault-v0',
+        functionName: "deposit-roo",
+        functionArgs: [uintCV(amount)],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [
+          Pc.principal(stxAddress).willSendLte(amount).ft('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', 'kangaroo') as any,
+        ],
+      });
+    }
+  }
+
   function redeemWelsh(amount: number) {
     if (stxAddress) {
       openContractCall({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: 'redemption-vault',
+        contractName: 'redemption-vault-v0',
         functionName: "redeem-welsh",
         functionArgs: [uintCV(amount)],
         postConditionMode: PostConditionMode.Deny,
         postConditions: [
           Pc.principal(stxAddress).willSendLte(amount).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', 'synthetic-welsh') as any,
-          Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.redemption-vault').willSendLte(amount).ft('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'welshcorgicoin') as any,
+          Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.redemption-vault-v0').willSendLte(amount).ft('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', 'welshcorgicoin') as any,
         ],
       });
     }
@@ -135,13 +165,13 @@ const TokenRedemptions = ({ data }: any) => {
     if (stxAddress) {
       openContractCall({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: 'redemption-vault',
+        contractName: 'redemption-vault-v0',
         functionName: "redeem-roo",
         functionArgs: [uintCV(amount)],
         postConditionMode: PostConditionMode.Deny,
         postConditions: [
           Pc.principal(stxAddress).willSendLte(amount).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', 'synthetic-roo') as any,
-          Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.redemption-vault').willSendLte(amount).ft('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', 'kangaroo') as any,
+          Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.redemption-vault-v0').willSendLte(amount).ft('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', 'kangaroo') as any,
         ],
       });
     }
@@ -251,6 +281,10 @@ const TokenRedemptions = ({ data }: any) => {
           <div className='text-left'>Redemptions Available</div>
           <div>{data.syntheticWelsh.available / Math.pow(10, 6)}</div>
           <div>{data.syntheticRoo.available / Math.pow(10, 6)}</div>
+
+          <div className='mt-4 text-left'>Donate Tokens</div>
+          <div className='mt-4'><Button onClick={() => depositWelsh(10000000000)} className='h-6 bg-blue-800' >Donate WELSH</Button></div>
+          <div className='mt-4'><Button onClick={() => depositRoo(100000000)} className='h-6 bg-blue-800' >Donate ROO</Button></div>
 
           <div className='mt-4 text-left'>Redeem Tokens</div>
           <div className='mt-4'><Button disabled={data.syntheticWelsh.available === 0 || !wallet.bluePilled} onClick={() => redeemWelsh(10000000000)} className='h-6 bg-blue-800' >Redeem iouWELSH</Button></div>
