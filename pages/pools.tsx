@@ -334,8 +334,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
         contractPrincipalCV(pool.contractAddress.split('.')[0], pool.contractAddress.split('.')[1]),
         uintCV(parseFloat(amount0) * 1000000),
         uintCV(parseFloat(amount1) * 1000000),
-        uintCV(0),
-        uintCV(0)
+        uintCV(parseFloat(amount0) * 800000),
+        uintCV(parseFloat(amount1) * 800000)
       ],
       onFinish: (data) => {
         console.log('Transaction successful', data);

@@ -64,7 +64,7 @@ export default function ShopPage() {
       <SkipNavContent />
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:pb-10 md:max-w-5xl">
-          <div className='mt-2 mb-4 font-semibold text-center text-muted/90'>All sales go to WELSH & ROO token redemptions</div>
+          <div className='mt-2 mb-4 font-light text-center text-muted-foreground/90'>All sales go to WELSH & ROO token redemptions</div>
           <div className='grid grid-cols-2 gap-2 md:grid-cols-3 lg:grid-cols-4'>
             <div className='relative flex flex-col w-full overflow-hidden rounded-lg h-60 sm:h-60 bg-gray-900/80'>
               <div className='z-10 flex justify-between px-2 py-1'>
@@ -77,7 +77,7 @@ export default function ShopPage() {
               <Button disabled={charismaClaims.hasClaimed} onClick={buyRedPill} className='h-8 text-md w-14 absolute bottom-2 right-2 z-10 hover:bg-[#ffffffee] hover:text-primary'>
                 <div>Claim</div>
               </Button>
-              <Image src={redPillNft} className='absolute inset-0 h-60' alt='Red Pill' width={300} height={300} />
+              <Image src={redPillNft} className='absolute inset-0 opacity-80 h-60 hover:opacity-100' alt='Red Pill' width={300} height={300} />
             </div>
 
             <div className='relative flex flex-col w-full overflow-hidden rounded-lg h-60 sm:h-60 bg-gray-900/80'>
@@ -91,7 +91,7 @@ export default function ShopPage() {
               <Button disabled={charismaClaims.hasClaimed} onClick={buyBluePill} className='h-8 text-md w-14 absolute bottom-2 right-2 z-10 hover:bg-[#ffffffee] hover:text-primary'>
                 <div>Claim</div>
               </Button>
-              <Image src={bluePillNft} className='absolute inset-0 h-60' alt='Blue Pill' width={300} height={300} />
+              <Image src={bluePillNft} className='absolute inset-0 opacity-80 h-60 hover:opacity-100' alt='Blue Pill' width={300} height={300} />
             </div>
           </div>
         </div>
