@@ -275,7 +275,7 @@ const PoolsInterface = ({ data }: Props) => {
                         <Button size="sm" onClick={() => handleLiquidityAction(pool, true)}>
                           <Plus className="w-4 h-4 mr-1" /> Add
                         </Button>
-                        <Button size="sm" variant="destructive" onClick={() => handleLiquidityAction(pool, false)}>
+                        <Button size="sm" variant="outline" onClick={() => handleLiquidityAction(pool, false)}>
                           <Minus className="w-4 h-4 mr-1" /> Remove
                         </Button>
                       </div>
