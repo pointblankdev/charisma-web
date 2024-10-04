@@ -8,7 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { ArrowUpDown, Minus, Plus } from 'lucide-react';
 import numeral from 'numeral';
 import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
-import { callReadOnlyFunction, cvToJSON, principalCV, uintCV } from "@stacks/transactions";
+import { callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { useOpenContractCall } from '@micro-stacks/react';
 import velarApi from '@lib/velar-api';
 import { Button } from '@components/ui/button';
@@ -23,7 +23,9 @@ import {
 } from '@components/ui/dialog';
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
-import { result } from 'lodash';
+import { Slider } from "@components/ui/slider";
+import { useAccount } from '@micro-stacks/react';
+import useWallet from '@lib/hooks/wallet-balance-provider';
 
 type TokenInfo = {
   symbol: string;
@@ -31,6 +33,7 @@ type TokenInfo = {
   image: string;
   contractAddress: string;
   price: number;
+  tokenId?: string
 };
 
 type PoolInfo = {
@@ -105,36 +108,36 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const poolsData = [
     {
       id: 1,
-      token0: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token' },
-      token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh' },
+      token0: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin' },
+      token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', tokenId: 'synthetic-welsh' },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh',
     },
     {
       id: 2,
-      token0: { symbol: '$ROO', name: 'Roo', image: '/roo-logo.png', contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo' },
-      token1: { symbol: 'iouROO', name: 'Synthetic Roo', image: '/roo-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo' },
+      token0: { symbol: '$ROO', name: 'Roo', image: '/roo-logo.png', contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', tokenId: 'kangaroo' },
+      token1: { symbol: 'iouROO', name: 'Synthetic Roo', image: '/roo-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', tokenId: 'synthetic-roo' },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-iouroo',
     },
     {
       id: 3,
-      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token' },
-      token1: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token' },
+      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma' },
+      token1: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin' },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh',
     },
     {
       id: 4,
       token0: { symbol: 'STX', name: 'Stacks', image: '/stx-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx' },
-      token1: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token' },
+      token1: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma' },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha',
     },
     {
       id: 5,
-      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token' },
-      token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh' },
+      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma' },
+      token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', tokenId: 'synthetic-welsh' },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-iouwelsh',
     },
@@ -296,55 +299,86 @@ const PoolsInterface = ({ data }: Props) => {
 };
 
 const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAdd: boolean, onClose: () => void }) => {
-  const [amount0, setAmount0] = useState('');
-  const [amount1, setAmount1] = useState('');
+  const [sliderValue, setSliderValue] = useState(0);
+  const [amount0, setAmount0] = useState('0');
+  const [amount1, setAmount1] = useState('0');
   const { openContractCall } = useOpenContractCall();
+  const { stxAddress } = useAccount();
+  const { getBalanceByKey, balances, getKeyByContractAddress } = useWallet();
 
   const calculateUsdValue = (amount: string, price: number) => {
     const numericAmount = parseFloat(amount) || 0;
     return Number((numericAmount * price).toFixed(2));
   };
 
-  const handleInputChange = (value: string, setAmount: React.Dispatch<React.SetStateAction<string>>) => {
-    // Only allow numbers and a single decimal point
-    if (/^\d*\.?\d*$/.test(value) || value === '') {
-      setAmount(value);
-    }
-  };
+  useEffect(() => {
+    if (pool && isAdd) {
+      const maxAmount0 = pool.reserves.token0 / 1000000; // Convert to standard units
+      const maxAmount1 = pool.reserves.token1 / 1000000;
 
-  const isBalanced = () => {
-    if (!pool || !amount0 || !amount1) return false;
-    const usdValue0 = calculateUsdValue(amount0, pool.token0.price);
-    const usdValue1 = calculateUsdValue(amount1, pool.token1.price);
-    const ratio = Math.max(usdValue0, usdValue1) / Math.min(usdValue0, usdValue1);
-    return ratio <= 1.1; // Within 10%
+      const newAmount0 = (maxAmount0 * sliderValue / 100).toFixed(6);
+      const newAmount1 = (maxAmount1 * sliderValue / 100).toFixed(6);
+
+      setAmount0(newAmount0);
+      setAmount1(newAmount1);
+    }
+  }, [sliderValue, pool, isAdd]);
+
+  const checkBalances = () => {
+    if (!pool || !stxAddress) return true;
+
+    const getBalance = (token: TokenInfo) => {
+      if (token.symbol === 'STX') {
+        return (Number(balances.stx.balance) || 0) / 1000000; // Convert micro-STX to STX
+      } else {
+        return getBalanceByKey(getKeyByContractAddress(token.contractAddress)) / 1000000;
+      }
+    };
+
+    const balance0 = getBalance(pool.token0);
+    const balance1 = getBalance(pool.token1);
+    return parseFloat(amount0) <= balance0 && parseFloat(amount1) <= balance1;
   };
 
   const handleAddLiquidity = useCallback(() => {
     if (!pool) return;
-
-    openContractCall({
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "univ2-router",
-      functionName: "add-liquidity",
-      functionArgs: [
-        uintCV(pool.id),
-        contractPrincipalCV(pool.token0.contractAddress.split('.')[0], pool.token0.contractAddress.split('.')[1]),
-        contractPrincipalCV(pool.token1.contractAddress.split('.')[0], pool.token1.contractAddress.split('.')[1]),
-        contractPrincipalCV(pool.contractAddress.split('.')[0], pool.contractAddress.split('.')[1]),
-        uintCV(parseFloat(amount0) * 1000000),
-        uintCV(parseFloat(amount1) * 1000000),
-        uintCV(parseFloat(amount0) * 800000),
-        uintCV(parseFloat(amount1) * 800000)
-      ],
-      onFinish: (data) => {
-        console.log('Transaction successful', data);
-        onClose();
-      },
-      onCancel: () => {
-        console.log('Transaction cancelled');
+    if (stxAddress) {
+      const postConditions: any = []
+      if (pool.token0.symbol !== 'STX') {
+        postConditions.push(Pc.principal(stxAddress).willSendLte(parseFloat(amount0) * 1000000).ft(pool.token0.contractAddress as any, pool.token0.tokenId as string) as any);
+      } else {
+        postConditions.push(Pc.principal(stxAddress).willSendLte(parseFloat(amount0) * 1000000).ustx() as any);
       }
-    });
+      if (pool.token1.symbol !== 'STX') {
+        postConditions.push(Pc.principal(stxAddress).willSendLte(parseFloat(amount1) * 1000000).ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any);
+      } else {
+        postConditions.push(Pc.principal(stxAddress).willSendLte(parseFloat(amount1) * 1000000).ustx() as any);
+      }
+      openContractCall({
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "univ2-router",
+        functionName: "add-liquidity",
+        functionArgs: [
+          uintCV(pool.id),
+          contractPrincipalCV(pool.token0.contractAddress.split('.')[0], pool.token0.contractAddress.split('.')[1]),
+          contractPrincipalCV(pool.token1.contractAddress.split('.')[0], pool.token1.contractAddress.split('.')[1]),
+          contractPrincipalCV(pool.contractAddress.split('.')[0], pool.contractAddress.split('.')[1]),
+          uintCV(parseFloat(amount0) * 1000000),
+          uintCV(parseFloat(amount1) * 1000000),
+          uintCV(1),
+          uintCV(1)
+        ],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions,
+        onFinish: (data) => {
+          console.log('Transaction successful', data);
+          onClose();
+        },
+        onCancel: () => {
+          console.log('Transaction cancelled');
+        }
+      });
+    }
   }, [pool, amount0, amount1, openContractCall, onClose]);
 
   const handleRemoveLiquidity = useCallback(() => {
@@ -375,6 +409,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
 
   if (!pool) return null;
 
+  const hasEnoughBalance = checkBalances();
+
   return (
     <DialogContent className="sm:max-w-[425px]">
       <DialogHeader>
@@ -386,51 +422,66 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
         </DialogDescription>
       </DialogHeader>
       <div className="grid gap-4 py-4">
-        <div className="grid items-center grid-cols-4 gap-4">
-          <Label htmlFor="token0" className="text-right">
-            {pool.token0.symbol}
-          </Label>
-          <div className="flex items-center col-span-3">
-            <Input
-              type='number'
-              id="token0"
-              className="flex-grow"
-              value={amount0}
-              onChange={(e) => handleInputChange(e.target.value, setAmount0)}
+        {isAdd && (
+          <div className="grid gap-2">
+            <Label>Liquidity to add (%)</Label>
+            <Slider
+              value={[sliderValue]}
+              onValueChange={(value) => setSliderValue(value[0])}
+              max={100}
+              step={1}
             />
-            <span className="ml-2 text-sm text-gray-500">
-              ${calculateUsdValue(amount0, pool.token0.price).toFixed(2)}
-            </span>
+          </div>
+        )}
+        <div className="grid items-center grid-cols-4 gap-4">
+          <div className="flex justify-end">
+            <Image
+              src={pool.token0.image}
+              alt={pool.token0.symbol}
+              width={24}
+              height={24}
+              className="rounded-full"
+            />
+          </div>
+          <div className="col-span-3">
+            <div className="flex justify-between">
+              <span>{parseFloat(amount0).toFixed(6)} {pool.token0.symbol}</span>
+              <span className="text-sm text-gray-500">
+                ${calculateUsdValue(amount0, pool.token0.price).toFixed(2)}
+              </span>
+            </div>
           </div>
         </div>
         <div className="grid items-center grid-cols-4 gap-4">
-          <Label htmlFor="token1" className="text-right">
-            {pool.token1.symbol}
-          </Label>
-          <div className="flex items-center col-span-3">
-            <Input
-              type='number'
-              id="token1"
-              className="flex-grow"
-              value={amount1}
-              onChange={(e) => handleInputChange(e.target.value, setAmount1)}
+          <div className="flex justify-end">
+            <Image
+              src={pool.token1.image}
+              alt={pool.token1.symbol}
+              width={24}
+              height={24}
+              className="rounded-full"
             />
-            <span className="ml-2 text-sm text-gray-500">
-              ${calculateUsdValue(amount1, pool.token1.price).toFixed(2)}
-            </span>
+          </div>
+          <div className="col-span-3">
+            <div className="flex justify-between">
+              <span>{parseFloat(amount1).toFixed(6)} {pool.token1.symbol}</span>
+              <span className="text-sm text-gray-500">
+                ${calculateUsdValue(amount1, pool.token1.price).toFixed(2)}
+              </span>
+            </div>
           </div>
         </div>
       </div>
       <DialogFooter className="flex items-center justify-between">
         {isAdd && (
-          <span className={`text-sm ${isBalanced() ? 'text-green-500' : 'text-red-500'}`}>
-            {isBalanced() ? 'Values are balanced' : 'Values must be < 10% to add liquidity'}
+          <span className={`text-sm ${hasEnoughBalance ? 'text-green-500' : 'text-red-500'}`}>
+            {hasEnoughBalance ? 'Sufficient balance' : 'Insufficient balance'}
           </span>
         )}
         <Button
           type="submit"
           onClick={isAdd ? handleAddLiquidity : handleRemoveLiquidity}
-          disabled={isAdd && !isBalanced()}
+          disabled={isAdd && !hasEnoughBalance}
         >
           {isAdd ? 'Add Liquidity' : 'Remove Liquidity'}
         </Button>

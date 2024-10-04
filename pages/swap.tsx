@@ -157,7 +157,7 @@ const SwapInterface = ({ data }: Props) => {
   const [showToTokens, setShowToTokens] = useState(false);
   const [estimatedAmountOut, setEstimatedAmountOut] = useState('0');
   const [isCalculating, setIsCalculating] = useState(false);
-  const [slippage, setSlippage] = useState(4); // 4% default slippage
+  const [slippage, setSlippage] = useState(10); // 10% default slippage
   const [reserves, setReserves] = useState({ reserveA: BigInt(0), reserveB: BigInt(0) });
 
   const { openContractCall } = useOpenContractCall();
