@@ -135,7 +135,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             nftMetadata.properties.minted = Number(tokensMinted)
             await setNftCollectionMetadata(pixelRozarContractId, nftMetadata)
 
-            builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/pixel-rozar/pixel-rozar.png' })
+            builder.setThumbnail({ url: 'https://charisma.rocks/quests/pixel-rozar/pixel-rozar.png' })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)
@@ -186,7 +186,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             nftMetadata.properties.minted = Number(tokensMinted)
             await setNftCollectionMetadata(memobotsContractId, nftMetadata)
 
-            builder.setThumbnail({ url: 'https://beta.charisma.rocks/quests/memobots/hidden-memobot.png' })
+            builder.setThumbnail({ url: 'https://charisma.rocks/quests/memobots/hidden-memobot.png' })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)
@@ -203,7 +203,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             nftMetadata.properties.minted = Number(tokensMinted)
             await setNftCollectionMetadata(jumpingPupperzContractId, nftMetadata)
 
-            builder.setThumbnail({ url: 'https://beta.charisma.rocks/_next/image?url=https%3A%2F%2Fvinzomniacstudios.mypinata.cloud%2Fipfs%2FQmXXVN1H15o5aSaMwQ9SssHkBFX5CzLRBzSSTJ8fYoh37t&w=300&q=75' })
+            builder.setThumbnail({ url: 'https://charisma.rocks/_next/image?url=https%3A%2F%2Fvinzomniacstudios.mypinata.cloud%2Fipfs%2FQmXXVN1H15o5aSaMwQ9SssHkBFX5CzLRBzSSTJ8fYoh37t&w=300&q=75' })
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 300)
@@ -347,8 +347,8 @@ export const handleContractEvent = async (event: any, builder: any) => {
                         .addField({ name: 'Max Health', value: String(newMaxHp), inline: true })
                         .addField({ name: 'Regen Rate', value: String(newRegen), inline: true })
                         .setDescription(`If defeated, everyone who contributes to the battle receives a share of the rewards. Experience is divided up evenly, and CHA tokens are split based on damage dealt to Hogger.`)
-                        .setThumbnail({ url: 'https://beta.charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
-                        .setUrl('http://beta.charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=mob')
+                        .setThumbnail({ url: 'https://charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
+                        .setUrl('http://charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=mob')
 
                     generalChatHook.addEmbed(hoggerRespawnedAlert.getEmbed());
                     await generalChatHook.send()

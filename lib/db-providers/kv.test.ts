@@ -187,7 +187,7 @@ describe('metadata api', () => {
     it('should update not land', async () => {
         const contract = 'SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope'
         const land = await getLand(contract)
-        land.cardImage = 'https://beta.charisma.rocks/liquid-nothing-21.png'
+        land.cardImage = 'https://charisma.rocks/liquid-nothing-21.png'
         console.log(land)
         await setLand(contract, land)
     })

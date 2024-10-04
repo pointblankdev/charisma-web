@@ -78,8 +78,8 @@ export default async function landsIndexApi(
                     if (tx.metadata.success) {
                         let builder = new EmbedBuilder()
                         // send message to discord
-                        builder.setAuthor({ name: `Charisma Event`, icon_url: 'https://beta.charisma.rocks/charisma.png', url: 'https://beta.charisma.rocks/staking' })
-                        builder.setThumbnail({ url: 'https://beta.charisma.rocks/charisma.png' })
+                        builder.setAuthor({ name: `Charisma Event`, icon_url: 'https://charisma.rocks/charisma.png', url: 'https://charisma.rocks/staking' })
+                        builder.setThumbnail({ url: 'https://charisma.rocks/charisma.png' })
 
                         for (const event of tx.metadata.receipt.events) {
                             // await Logger.error({ 'Inspect': { type: event.type, keys: Object.keys(event.data) } })

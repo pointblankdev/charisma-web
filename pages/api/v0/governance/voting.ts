@@ -82,9 +82,9 @@ export default async function getMetadata(
                         let builder = new EmbedBuilder()
 
                         // send message to discord
-                        builder.setAuthor({ name: `Governance`, url: 'https://beta.charisma.rocks/governance', icon_url: 'https://beta.charisma.rocks/charisma.png' })
+                        builder.setAuthor({ name: `Governance`, url: 'https://charisma.rocks/governance', icon_url: 'https://charisma.rocks/charisma.png' })
                         builder.setTitle('Vote Cast for Governance Proposal')
-                        builder.setThumbnail({ url: 'https://beta.charisma.rocks/voting.png' })
+                        builder.setThumbnail({ url: 'https://charisma.rocks/voting.png' })
 
                         for (const event of tx.metadata.receipt.events) {
                             await Logger.error({ 'Inspect': { type: event.type, keys: Object.keys(event.data) } })
