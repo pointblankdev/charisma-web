@@ -220,7 +220,9 @@ const WrappingSection = ({ data }: Props) => {
         functionName: "wrap",
         functionArgs: [uintCV(amountIn)],
         postConditionMode: PostConditionMode.Deny,
-        postConditions: [Pc.principal(stxAddress).willSendEq(amountIn).ft('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', 'charisma')] as any[],
+        postConditions: [
+          // Pc.principal(stxAddress).willSendEq(amountIn).ft('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', 'charisma')
+        ] as any[],
       });
     }
   }
