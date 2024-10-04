@@ -283,8 +283,8 @@ const TokenRedemptions = ({ data }: any) => {
           <div>{data.syntheticRoo.available / Math.pow(10, 6)}</div>
 
           <div className='mt-4 text-left'>Donate Tokens</div>
-          <div className='mt-4'><Button onClick={() => depositWelsh(10000000000)} className='h-6' >Donate WELSH</Button></div>
-          <div className='mt-4'><Button onClick={() => depositRoo(100000000)} className='h-6' >Donate ROO</Button></div>
+          <div className='mt-4'><Button onClick={() => depositWelsh(10000000000)} className='h-6' >Donate 10k WELSH</Button></div>
+          <div className='mt-4'><Button onClick={() => depositRoo(100000000)} className='h-6' >Donate 100 ROO</Button></div>
 
           <div className='mt-4 text-left'>Redeem Tokens</div>
           <div className='mt-4'><Button disabled={data.syntheticWelsh.available === 0 || !wallet.bluePilled} onClick={() => redeemWelsh(10000000000)} className='h-6 bg-blue-800' >Redeem iouWELSH</Button></div>
