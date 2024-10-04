@@ -26,6 +26,7 @@ import { Label } from '@components/ui/label';
 import { Slider } from "@components/ui/slider";
 import { useAccount } from '@micro-stacks/react';
 import useWallet from '@lib/hooks/wallet-balance-provider';
+import cmc from '@lib/cmc-api';
 
 type TokenInfo = {
   symbol: string;
@@ -34,6 +35,7 @@ type TokenInfo = {
   contractAddress: string;
   price: number;
   tokenId?: string
+  decimals: number;
 };
 
 type PoolInfo = {
@@ -108,43 +110,43 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const poolsData = [
     {
       id: 1,
-      token0: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin' },
-      token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', tokenId: 'synthetic-welsh' },
+      token0: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin', decimals: 6 },
+      token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', tokenId: 'synthetic-welsh', decimals: 6 },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh',
     },
     {
       id: 2,
-      token0: { symbol: '$ROO', name: 'Roo', image: '/roo-logo.png', contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', tokenId: 'kangaroo' },
-      token1: { symbol: 'iouROO', name: 'Synthetic Roo', image: '/roo-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', tokenId: 'synthetic-roo' },
+      token0: { symbol: '$ROO', name: 'Roo', image: '/roo-logo.png', contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', tokenId: 'kangaroo', decimals: 6 },
+      token1: { symbol: 'iouROO', name: 'Synthetic Roo', image: '/roo-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', tokenId: 'synthetic-roo', decimals: 6 },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-iouroo',
     },
     {
       id: 3,
-      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma' },
-      token1: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin' },
+      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6 },
+      token1: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin', decimals: 6 },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh',
     },
     {
       id: 4,
-      token0: { symbol: 'STX', name: 'Stacks', image: '/stx-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx' },
-      token1: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma' },
+      token0: { symbol: 'STX', name: 'Stacks', image: '/stx-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx', decimals: 6 },
+      token1: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6 },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha',
     },
     {
       id: 5,
-      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma' },
-      token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', tokenId: 'synthetic-welsh' },
+      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6 },
+      token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', tokenId: 'synthetic-welsh', decimals: 6 },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-iouwelsh',
     },
     {
       id: 6,
-      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma' },
-      token1: { symbol: 'ORDI', name: 'Ordi', image: '/ordi-logo.png', contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi', tokenId: 'brc20-ordi' },
+      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6 },
+      token1: { symbol: 'ORDI', name: 'Ordi', image: '/ordi-logo.png', contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi', tokenId: 'brc20-ordi', decimals: 8 },
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-ordi',
     },
@@ -161,6 +163,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   tokenPrices['iouWELSH'] = tokenPrices['WELSH'];
   tokenPrices['iouROO'] = tokenPrices['$ROO'];
 
+  const { data } = await cmc.getQuotes({ symbol: ['ORDI'] })
+  tokenPrices['ORDI'] = data['ORDI'].quote.USD.price;
+
   // Fetch reserves and calculate TVL for each pool
   const pools: PoolInfo[] = await Promise.all(poolsData.map(async (pool) => {
     const reserves = await getPoolReserves(pool.id, pool.token0.contractAddress, pool.token1.contractAddress);
@@ -168,7 +173,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const token0Price = tokenPrices[pool.token0.symbol] || 0;
     const token1Price = tokenPrices[pool.token1.symbol] || 0;
 
-    const tvl = (reserves.token0 / 1e6 * token0Price) + (reserves.token1 / 1e6 * token1Price);
+    const tvl = (reserves.token0 / 10 ** pool.token0.decimals * token0Price) + (reserves.token1 / 10 ** pool.token1.decimals * token1Price);
 
     return {
       ...pool,
@@ -268,15 +273,15 @@ const PoolsInterface = ({ data }: Props) => {
                   <tr key={pool.id} className="border-t border-gray-700">
                     <td className="py-4">
                       <div className="flex items-center">
-                        <Image src={pool.token0.image} alt={pool.token0.symbol} width={24} height={24} className="mr-2 rounded-full" />
-                        <Image src={pool.token1.image} alt={pool.token1.symbol} width={24} height={24} className="mr-2 rounded-full" />
+                        <Image src={pool.token0.image} alt={pool.token0.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
+                        <Image src={pool.token1.image} alt={pool.token1.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                         <span className="text-white">{pool.token0.symbol}/{pool.token1.symbol}</span>
                       </div>
                     </td>
                     <td className="py-4 text-white">
-                      {numeral(pool.reserves.token0 / 1000000).format('0,0.00')} {pool.token0.symbol}
+                      {numeral(pool.reserves.token0 / 10 ** pool.token0.decimals).format('0,0.00')} {pool.token0.symbol}
                       <br />
-                      {numeral(pool.reserves.token1 / 1000000).format('0,0.00')} {pool.token1.symbol}
+                      {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format('0,0.00')} {pool.token1.symbol}
                     </td>
                     <td className="py-4 text-white">${numeral(pool.tvl).format('0,0.00')}</td>
                     <td className="py-4 text-white">${numeral(pool.volume24h).format('0,0')}</td>
@@ -320,11 +325,11 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
 
   useEffect(() => {
     if (pool && isAdd) {
-      const maxAmount0 = pool.reserves.token0 / 1000000; // Convert to standard units
-      const maxAmount1 = pool.reserves.token1 / 1000000;
+      const maxAmount0 = pool.reserves.token0 / 10 ** pool.token0.decimals;
+      const maxAmount1 = pool.reserves.token1 / 10 ** pool.token1.decimals;
 
-      const newAmount0 = (maxAmount0 * sliderValue / 100).toFixed(6);
-      const newAmount1 = (maxAmount1 * sliderValue / 100).toFixed(6);
+      const newAmount0 = (maxAmount0 * sliderValue / 100).toFixed(pool.token0.decimals);
+      const newAmount1 = (maxAmount1 * sliderValue / 100).toFixed(pool.token1.decimals);
 
       setAmount0(newAmount0);
       setAmount1(newAmount1);
@@ -336,9 +341,9 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
 
     const getBalance = (token: TokenInfo) => {
       if (token.symbol === 'STX') {
-        return (Number(balances.stx.balance) || 0) / 1000000; // Convert micro-STX to STX
+        return Number(balances.stx.balance) / 10 ** token.decimals;
       } else {
-        return getBalanceByKey(getKeyByContractAddress(token.contractAddress)) / 1000000;
+        return getBalanceByKey(getKeyByContractAddress(token.contractAddress)) / 10 ** token.decimals;
       }
     };
 
@@ -348,45 +353,49 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
   };
 
   const handleAddLiquidity = useCallback(() => {
-    if (!pool) return;
-    if (stxAddress) {
-      const postConditions: any = []
-      if (pool.token0.symbol !== 'STX') {
-        postConditions.push(Pc.principal(stxAddress).willSendLte(parseFloat(amount0) * 1000000).ft(pool.token0.contractAddress as any, pool.token0.tokenId as string) as any);
-      } else {
-        postConditions.push(Pc.principal(stxAddress).willSendLte(parseFloat(amount0) * 1000000).ustx() as any);
-      }
-      if (pool.token1.symbol !== 'STX') {
-        postConditions.push(Pc.principal(stxAddress).willSendLte(parseFloat(amount1) * 1000000).ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any);
-      } else {
-        postConditions.push(Pc.principal(stxAddress).willSendLte(parseFloat(amount1) * 1000000).ustx() as any);
-      }
-      openContractCall({
-        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: "univ2-router",
-        functionName: "add-liquidity",
-        functionArgs: [
-          uintCV(pool.id),
-          contractPrincipalCV(pool.token0.contractAddress.split('.')[0], pool.token0.contractAddress.split('.')[1]),
-          contractPrincipalCV(pool.token1.contractAddress.split('.')[0], pool.token1.contractAddress.split('.')[1]),
-          contractPrincipalCV(pool.contractAddress.split('.')[0], pool.contractAddress.split('.')[1]),
-          uintCV(parseFloat(amount0) * 1000000),
-          uintCV(parseFloat(amount1) * 1000000),
-          uintCV(1),
-          uintCV(1)
-        ],
-        postConditionMode: PostConditionMode.Deny,
-        postConditions,
-        onFinish: (data) => {
-          console.log('Transaction successful', data);
-          onClose();
-        },
-        onCancel: () => {
-          console.log('Transaction cancelled');
-        }
-      });
+    if (!pool || !stxAddress) return;
+
+    const postConditions: any = []
+    if (pool.token0.symbol !== 'STX') {
+      const amount0BigInt = BigInt(Math.floor(parseFloat(amount0) * 10 ** pool.token0.decimals));
+      postConditions.push(Pc.principal(stxAddress).willSendLte(amount0BigInt).ft(pool.token0.contractAddress as any, pool.token0.tokenId as string) as any);
+    } else {
+      const amount0BigInt = BigInt(Math.floor(parseFloat(amount0) * 10 ** pool.token0.decimals));
+      postConditions.push(Pc.principal(stxAddress).willSendLte(amount0BigInt).ustx() as any);
     }
-  }, [pool, amount0, amount1, openContractCall, onClose]);
+    if (pool.token1.symbol !== 'STX') {
+      const amount1BigInt = BigInt(Math.floor(parseFloat(amount1) * 10 ** pool.token1.decimals));
+      postConditions.push(Pc.principal(stxAddress).willSendLte(amount1BigInt).ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any);
+    } else {
+      const amount1BigInt = BigInt(Math.floor(parseFloat(amount1) * 10 ** pool.token1.decimals));
+      postConditions.push(Pc.principal(stxAddress).willSendLte(amount1BigInt).ustx() as any);
+    }
+
+    openContractCall({
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "univ2-router",
+      functionName: "add-liquidity",
+      functionArgs: [
+        uintCV(pool.id),
+        contractPrincipalCV(pool.token0.contractAddress.split('.')[0], pool.token0.contractAddress.split('.')[1]),
+        contractPrincipalCV(pool.token1.contractAddress.split('.')[0], pool.token1.contractAddress.split('.')[1]),
+        contractPrincipalCV(pool.contractAddress.split('.')[0], pool.contractAddress.split('.')[1]),
+        uintCV(BigInt(Math.floor(parseFloat(amount0) * 10 ** pool.token0.decimals))),
+        uintCV(BigInt(Math.floor(parseFloat(amount1) * 10 ** pool.token1.decimals))),
+        uintCV(1),
+        uintCV(1)
+      ],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions,
+      onFinish: (data) => {
+        console.log('Transaction successful', data);
+        onClose();
+      },
+      onCancel: () => {
+        console.log('Transaction cancelled');
+      }
+    });
+  }, [pool, amount0, amount1, stxAddress, openContractCall, onClose]);
 
   const handleRemoveLiquidity = useCallback(() => {
     if (!pool) return;
@@ -452,7 +461,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
           </div>
           <div className="col-span-3">
             <div className="flex justify-between">
-              <span>{parseFloat(amount0).toFixed(6)} {pool.token0.symbol}</span>
+              <span>{parseFloat(amount0).toFixed(pool.token0.decimals)} {pool.token0.symbol}</span>
               <span className="text-sm text-gray-500">
                 ${calculateUsdValue(amount0, pool.token0.price).toFixed(2)}
               </span>
@@ -471,7 +480,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
           </div>
           <div className="col-span-3">
             <div className="flex justify-between">
-              <span>{parseFloat(amount1).toFixed(6)} {pool.token1.symbol}</span>
+              <span>{parseFloat(amount1).toFixed(pool.token1.decimals)} {pool.token1.symbol}</span>
               <span className="text-sm text-gray-500">
                 ${calculateUsdValue(amount1, pool.token1.price).toFixed(2)}
               </span>

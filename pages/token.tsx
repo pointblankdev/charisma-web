@@ -3,7 +3,7 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { ChangeEvent, useState } from 'react';
-import { Pc, PostConditionMode, uintCV } from "@stacks/transactions";
+import { callReadOnlyFunction, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
@@ -21,11 +21,78 @@ import numeral from 'numeral';
 import { usePersistedState } from '@lib/hooks/use-persisted-state';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { CharismaToken } from '@lib/cha-token-api';
+import { GetStaticProps } from 'next';
+import velarApi from '@lib/velar-api';
 
 
+async function getPoolReserves(poolId: number, token0Address: string, token1Address: string): Promise<{ token0: number; token1: number }> {
+  try {
+    const result: any = await callReadOnlyFunction({
+      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+      contractName: "univ2-core",
+      functionName: "lookup-pool",
+      functionArgs: [
+        principalCV(token0Address),
+        principalCV(token1Address)
+      ],
+      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    });
 
+    if (result.value) {
+      const poolInfo = result.value.data.pool;
+      const reserve0 = Number(poolInfo.data.reserve0.value);
+      const reserve1 = Number(poolInfo.data.reserve1.value);
+      return { token0: reserve0, token1: reserve1 };
+    } else {
+      console.error("Pool not found");
+      return { token0: 0, token1: 0 };
+    }
+  } catch (error) {
+    console.error("Error fetching reserves:", error);
+    return { token0: 0, token1: 0 };
+  }
+}
 
-export default function TokenPage() {
+async function getTokenPrices(): Promise<{ [key: string]: number }> {
+  const prices = await velarApi.tokens('all');
+  return prices.reduce((acc: { [key: string]: number }, token: any) => {
+    acc[token.symbol] = token.price;
+    return acc;
+  }, {});
+}
+
+async function calculateChaPrice(stxPrice: number): Promise<number> {
+  const stxChaReserves = await getPoolReserves(
+    4,
+    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx",
+    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token"
+  );
+
+  // Calculate CHA price based on STX-CHA pool reserves
+  const chaPrice = (stxPrice * stxChaReserves.token0) / stxChaReserves.token1;
+  return chaPrice;
+}
+
+type Props = {
+  data: {
+    chaPrice: number;
+  };
+};
+
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const tokenPrices = await getTokenPrices();
+  const chaPrice = await calculateChaPrice(tokenPrices['STX']);
+  return {
+    props: {
+      data: {
+        chaPrice,
+      }
+    },
+    revalidate: 60
+  };
+};
+
+export default function TokenPage({ data }: Props) {
   const meta = {
     title: 'Charisma | Token',
     description: "The New Charisma Token",
@@ -39,7 +106,7 @@ export default function TokenPage() {
           <HeroSection />
           {/* <FeaturesSection /> */}
           <StatsSection />
-          <WrappingSection />
+          <WrappingSection data={data} />
         </div>
       </Layout>
     </Page>
@@ -120,7 +187,7 @@ const StatsSection = () => {
   );
 };
 
-const WrappingSection = () => {
+const WrappingSection = ({ data }: Props) => {
   const { charismaTokenStats, charismaClaims } = useGlobalState();
   const { wallet } = useWallet();
   const { stxAddress } = useAccount();
@@ -208,18 +275,18 @@ const WrappingSection = () => {
         </div>
         <div className='w-full'>
           <div className='font-bold text-muted-foreground'>
-            CHA Price
+            Token Price
           </div>
-          <div className='mt-2 font-bold blur'>
-            $X.XX
+          <div className='mt-2 font-bold'>
+            {numeral(data.chaPrice).format('$0.00')}
           </div>
         </div>
         <div className='w-full'>
           <div className='font-bold text-muted-foreground'>
             Total Value
           </div>
-          <div className='mt-2 font-bold blur'>
-            $X.XX
+          <div className='mt-2 font-bold'>
+            {numeral(wallet.charisma.balance * data.chaPrice).format('$0,0.00')}
           </div>
         </div>
         <div className='w-full'>

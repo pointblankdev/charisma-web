@@ -5,6 +5,7 @@ const velarApi = {
 
         if (symbol === 'all') {
             // proxy tokens
+            data.push({ name: 'Ordi', symbol: 'ORDI', price: "32.00" })
         }
         if (symbol === 'STX-wCHA') {
             data.push({ name: 'STX-wCHA', symbol: 'STX-wCHA', price: "0.00000117499" })

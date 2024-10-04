@@ -21,11 +21,13 @@ import stxLogo from '@public/stx-logo.png';
 import welshLogo from '@public/welsh-logo.png';
 import chaLogo from '@public/charisma-logo-square.png';
 import rooLogo from '@public/roo-logo.png';
+import ordiLogo from '@public/ordi-logo.png';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import numeral from 'numeral';
 import { ChevronDown, ArrowUpDown } from 'lucide-react';
 import velarApi from '@lib/velar-api';
 import { GetStaticProps } from 'next';
+import cmc from '@lib/cmc-api';
 
 type TokenInfo = {
   symbol: string;
@@ -33,6 +35,7 @@ type TokenInfo = {
   image: StaticImageData;
   tokenName?: string;
   contractAddress: string;
+  decimals: number;
 };
 
 type PoolInfo = {
@@ -46,13 +49,15 @@ type Props = {
   data: {
     chaPerStx: number;
     prices: any;
+    ordiPriceData: any;
     tokens: TokenInfo[];
     pools: PoolInfo[];
   };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const prices = await velarApi.tokens('all');
+  const velarPriceData = await velarApi.tokens('all');
+  const ordiPriceData = await cmc.getQuotes({ symbol: ['ORDI'] })
 
   const result: any = await callReadOnlyFunction({
     contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -71,13 +76,54 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   // Define tokens
   const tokens: TokenInfo[] = [
-    // { symbol: 'STX', name: 'Stacks', image: stxLogo, contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx' },
-    { symbol: 'CHA', name: 'Charisma', image: chaLogo, tokenName: 'charisma', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token' },
-    { symbol: 'WELSH', name: 'Welsh', image: welshLogo, tokenName: 'welshcorgicoin', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token' },
-    { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: welshLogo, tokenName: 'synthetic-welsh', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh' },
-    { symbol: 'ROO', name: 'Roo', image: rooLogo, tokenName: 'kangaroo', contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo' },
-    { symbol: 'iouROO', name: 'Synthetic Roo', image: rooLogo, tokenName: 'synthetic-roo', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo' },
-    // Add other tokens here
+    {
+      symbol: 'CHA',
+      name: 'Charisma',
+      image: chaLogo,
+      tokenName: 'charisma',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
+      decimals: 6
+    },
+    {
+      symbol: 'WELSH',
+      name: 'Welsh',
+      image: welshLogo,
+      tokenName: 'welshcorgicoin',
+      contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
+      decimals: 6
+    },
+    {
+      symbol: 'iouWELSH',
+      name: 'Synthetic Welsh',
+      image: welshLogo,
+      tokenName: 'synthetic-welsh',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh',
+      decimals: 6
+    },
+    {
+      symbol: 'ROO',
+      name: 'Roo',
+      image: rooLogo,
+      tokenName: 'kangaroo',
+      contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo',
+      decimals: 6
+    },
+    {
+      symbol: 'iouROO',
+      name: 'Synthetic Roo',
+      image: rooLogo,
+      tokenName: 'synthetic-roo',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo',
+      decimals: 6
+    },
+    {
+      symbol: 'ORDI',
+      name: 'Ordi',
+      image: ordiLogo,
+      tokenName: 'brc20-ordi',
+      contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi',
+      decimals: 8
+    },
   ];
 
   // Define pools
@@ -112,6 +158,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       token1: tokens.find(token => token.symbol === 'iouWELSH') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
+    {
+      id: 6,
+      token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'ORDI') as TokenInfo,
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
     // Add other pools here
   ];
 
@@ -119,7 +171,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     props: {
       data: {
         chaPerStx,
-        prices,
+        prices: velarPriceData,
+        ordiPriceData,
         tokens,
         pools,
       }
@@ -236,7 +289,7 @@ const SwapInterface = ({ data }: Props) => {
     setIsCalculating(true);
 
     try {
-      const amountInMicroTokens = BigInt(Math.floor(parseFloat(amount) * 1000000));
+      const amountInMicroTokens = BigInt(Math.floor(parseFloat(amount) * 10 ** fromToken.decimals));
 
       // Determine if the input token is token0 or token1 in the pool
       const isFromToken0 = fromToken.contractAddress === currentPool.token0.contractAddress;
@@ -269,7 +322,7 @@ const SwapInterface = ({ data }: Props) => {
       });
 
       if (result.value) {
-        const estimatedOut = (Number(result.value.value) / 1000000).toFixed(6);
+        const estimatedOut = (Number(result.value.value) / 10 ** toToken.decimals).toFixed(toToken.decimals);
         setEstimatedAmountOut(estimatedOut);
         console.log('Estimated amount out:', estimatedOut);
       } else {
@@ -281,7 +334,16 @@ const SwapInterface = ({ data }: Props) => {
     } finally {
       setIsCalculating(false);
     }
-  }, [stxAddress, reserves]);
+  }, [stxAddress, reserves, fromToken.decimals, toToken.decimals]);
+
+  const formatBalance = (balance: number, decimals: number) => {
+    return (balance / 10 ** decimals).toFixed(decimals);
+  };
+
+  const handleUseMax = () => {
+    const maxBalance = getBalance(fromToken.symbol);
+    setFromAmount(formatBalance(maxBalance, fromToken.decimals));
+  };
 
   useEffect(() => {
     calculateEstimatedAmountOut(fromAmount);
@@ -294,6 +356,7 @@ const SwapInterface = ({ data }: Props) => {
   const roo = getBalanceByKey('SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo');
   const iouWelsh = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh');
   const iouRoo = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo');
+  const ordi = getBalanceByKey('SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi::brc20-ordi');
 
   const getBalance = useMemo(() => {
     return (symbol: any) => {
@@ -310,11 +373,13 @@ const SwapInterface = ({ data }: Props) => {
           return iouWelsh || 0;
         case 'iouROO':
           return iouRoo || 0;
+        case 'ORDI':
+          return ordi || 0;
         default:
           return 0;
       }
     };
-  }, [stx, welsh, roo, iouWelsh, iouRoo]);
+  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi]);
 
   const getPrice = useMemo(() => {
     return (symbol: any) => {
@@ -333,11 +398,13 @@ const SwapInterface = ({ data }: Props) => {
           return data.prices.find((token: any) => token.symbol === 'WELSH').price;
         case 'iouROO':
           return data.prices.find((token: any) => token.symbol === '$ROO').price;
+        case 'ORDI':
+          return data.ordiPriceData.data['ORDI'].quote.USD.price;
         default:
           return 0;
       }
     };
-  }, [stx, welsh, roo, iouWelsh, iouRoo, reserves, fromToken, currentPool]);
+  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi, reserves, fromToken, currentPool]);
 
   const handleSwap = () => {
     setFromToken(toToken);
@@ -379,15 +446,6 @@ const SwapInterface = ({ data }: Props) => {
     }
   };
 
-  const formatBalance = (balance: number) => {
-    return (balance / 1000000).toFixed(6);
-  };
-
-  const handleUseMax = () => {
-    const maxBalance = getBalance(fromToken.symbol);
-    setFromAmount(formatBalance(maxBalance));
-  };
-
   const handleAmountChange = (e: ChangeEvent<HTMLInputElement>, setAmount: { (value: SetStateAction<string>): void; (value: SetStateAction<string>): void; (arg0: any): void; }) => {
     const value = e.target.value;
     // Allow only numbers and a single decimal point
@@ -400,8 +458,8 @@ const SwapInterface = ({ data }: Props) => {
   const swapTokens = useCallback(() => {
     if (!currentPool) return;
 
-    const amountInMicroTokens = Math.floor(parseFloat(fromAmount) * 1000000);
-    const minAmountOutMicroTokens = Math.floor(parseFloat(calculateMinimumAmountOut(estimatedAmountOut)) * 1000000);
+    const amountInMicroTokens = Math.floor(parseFloat(fromAmount) * 10 ** fromToken.decimals);
+    const minAmountOutMicroTokens = Math.floor(parseFloat(calculateMinimumAmountOut(estimatedAmountOut)) * 10 ** toToken.decimals);
 
     const {
       token0: { contractAddress: token0Address },
@@ -475,7 +533,7 @@ const SwapInterface = ({ data }: Props) => {
   return (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4">
       <div className="mt-6">
-        <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] overflow-hidden">
+        <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)]">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-2xl font-bold text-white/95">Swap</h1>
 
@@ -507,7 +565,7 @@ const SwapInterface = ({ data }: Props) => {
                     className="flex items-center px-3 py-1 border rounded-full shadow-lg border-primary/30 shadow-primary/10"
                     onClick={() => setShowFromTokens(!showFromTokens)}
                   >
-                    <Image src={fromToken.image} alt={fromToken.symbol} width={24} height={24} className="mr-2 rounded-full" />
+                    <Image src={fromToken.image} alt={fromToken.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                     <span className="mr-1 text-white">{fromToken.symbol}</span>
                     <ChevronDown className="text-gray-400" size={16} />
                   </button>
@@ -519,7 +577,7 @@ const SwapInterface = ({ data }: Props) => {
                           className="flex items-center w-full px-4 py-2 text-left hover:bg-accent-foreground"
                           onClick={() => selectToken(token, true)}
                         >
-                          <Image src={token.image} alt={token.symbol} width={24} height={24} className="mr-2 rounded-full" />
+                          <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                           <span className="text-white">{token.symbol}</span>
                         </button>
                       ))}
@@ -544,7 +602,7 @@ const SwapInterface = ({ data }: Props) => {
                   )}
                 </span>
                 <div>
-                  <span className="mr-2 text-gray-400">Balance: {formatBalance(getBalance(fromToken.symbol))}</span>
+                  <span className="mr-2 text-gray-400">Balance: {formatBalance(getBalance(fromToken.symbol), fromToken.decimals)}</span>
                   <button
                     className="text-sm text-primary hover:text-primary"
                     onClick={handleUseMax}
@@ -574,7 +632,7 @@ const SwapInterface = ({ data }: Props) => {
                     className="flex items-center px-3 py-1 border rounded-full shadow-lg border-primary/30 shadow-primary/10"
                     onClick={() => setShowToTokens(!showToTokens)}
                   >
-                    <Image src={toToken.image} alt={toToken.symbol} width={24} height={24} className="mr-2 rounded-full" />
+                    <Image src={toToken.image} alt={toToken.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                     <span className="mr-1 text-white">{toToken.symbol}</span>
                     <ChevronDown className="text-gray-400" size={16} />
                   </button>
@@ -591,7 +649,7 @@ const SwapInterface = ({ data }: Props) => {
                               }`}
                             onClick={() => !isDisabled && selectToken(token, false)}
                           >
-                            <Image src={token.image} alt={token.symbol} width={24} height={24} className="mr-2 rounded-full" />
+                            <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                             <span className={isDisabled ? 'text-gray-500' : 'text-white'}>{token.symbol}</span>
                           </button>
                         );
@@ -617,7 +675,7 @@ const SwapInterface = ({ data }: Props) => {
                     </span>
                   )}
                 </span>
-                <span className="text-gray-400">Balance: {formatBalance(getBalance(toToken.symbol))}</span>
+                <span className="text-gray-400">Balance: {formatBalance(getBalance(toToken.symbol), toToken.decimals)}</span>
               </div>
             </div>
 
