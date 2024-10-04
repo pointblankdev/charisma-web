@@ -212,6 +212,8 @@ const SwapInterface = ({ data }: Props) => {
   const [isCalculating, setIsCalculating] = useState(false);
   const [slippage, setSlippage] = useState(10); // 10% default slippage
   const [reserves, setReserves] = useState({ reserveA: BigInt(0), reserveB: BigInt(0) });
+  const [swapPath, setSwapPath] = useState<TokenInfo[]>([]);
+  const [isMultiHop, setIsMultiHop] = useState(false);
 
   const { openContractCall } = useOpenContractCall();
   const { stxAddress } = useAccount();
@@ -281,7 +283,8 @@ const SwapInterface = ({ data }: Props) => {
   };
 
   const calculateEstimatedAmountOut = useCallback(async (amount: string) => {
-    if (!amount || isNaN(parseFloat(amount)) || !stxAddress || !currentPool) {
+    if (!amount || isNaN(parseFloat(amount)) || !stxAddress || !fromToken || !toToken) {
+      console.log('Invalid input:', { amount, stxAddress, fromToken, toToken });
       setEstimatedAmountOut('0');
       return;
     }
@@ -290,42 +293,62 @@ const SwapInterface = ({ data }: Props) => {
 
     try {
       const amountInMicroTokens = BigInt(Math.floor(parseFloat(amount) * 10 ** fromToken.decimals));
+      console.log('Amount in micro tokens:', amountInMicroTokens.toString());
 
-      // Determine if the input token is token0 or token1 in the pool
-      const isFromToken0 = fromToken.contractAddress === currentPool.token0.contractAddress;
+      let result: any;
+      const contractAddress = "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS";
+      const contractName = 'univ2-path2';
 
-      // Set the correct reserves based on the swap direction
-      const reserveIn = isFromToken0 ? reserves.reserveA : reserves.reserveB;
-      const reserveOut = isFromToken0 ? reserves.reserveB : reserves.reserveA;
+      if (isMultiHop) {
+        console.log('Calculating multi-hop swap:', { swapPath });
+        const functionName = `get-amount-out-${swapPath.length}`;
+        console.log('Using function:', functionName);
 
-      console.log('Calculating amount out:', {
-        amountIn: amountInMicroTokens,
-        reserveIn,
-        reserveOut,
-        swapFee: currentPool.swapFee
-      });
-
-      const result: any = await callReadOnlyFunction({
-        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-        contractName: 'univ2-library',
-        functionName: 'get-amount-out',
-        functionArgs: [
-          uintCV(amountInMicroTokens),
-          uintCV(reserveIn),
-          uintCV(reserveOut),
-          tupleCV({
-            num: uintCV(currentPool.swapFee.num),
-            den: uintCV(currentPool.swapFee.den)
-          })
-        ],
-        senderAddress: stxAddress,
-      });
-
-      if (result.value) {
-        const estimatedOut = (Number(result.value.value) / 10 ** toToken.decimals).toFixed(toToken.decimals);
-        setEstimatedAmountOut(estimatedOut);
-        console.log('Estimated amount out:', estimatedOut);
+        result = await callReadOnlyFunction({
+          contractAddress,
+          contractName,
+          functionName,
+          functionArgs: [
+            uintCV(amountInMicroTokens),
+            ...swapPath.map(token => contractPrincipalCV(token.contractAddress.split('.')[0], token.contractAddress.split('.')[1]))
+          ] as any[],
+          senderAddress: stxAddress,
+        });
       } else {
+        console.log('Calculating single-hop swap');
+        if (!currentPool) {
+          throw new Error('No current pool found for single-hop swap');
+        }
+        result = await callReadOnlyFunction({
+          contractAddress,
+          contractName,
+          functionName: 'amount-out',
+          functionArgs: [
+            uintCV(amountInMicroTokens),
+            contractPrincipalCV(fromToken.contractAddress.split('.')[0], fromToken.contractAddress.split('.')[1]),
+            contractPrincipalCV(toToken.contractAddress.split('.')[0], toToken.contractAddress.split('.')[1])
+          ] as any[],
+          senderAddress: stxAddress,
+        });
+      }
+
+      console.log('Raw result:', result);
+
+      if (result.data || result.value) {
+        let estimatedOut: string;
+        if (isMultiHop) {
+          // The structure of the result might be different for multi-hop
+          // Adjust this based on the actual structure returned by your contract
+          const lastHopResult = result.data[Object.keys(result.data).pop() as string];
+          console.log('Last hop result:', lastHopResult);
+          estimatedOut = (Number(lastHopResult.value) / 10 ** toToken.decimals).toFixed(toToken.decimals);
+        } else {
+          estimatedOut = (Number(result.value) / 10 ** toToken.decimals).toFixed(toToken.decimals);
+        }
+        console.log('Estimated amount out:', estimatedOut);
+        setEstimatedAmountOut(estimatedOut);
+      } else {
+        console.error('No value in result:', result);
         setEstimatedAmountOut('0');
       }
     } catch (error) {
@@ -334,7 +357,7 @@ const SwapInterface = ({ data }: Props) => {
     } finally {
       setIsCalculating(false);
     }
-  }, [stxAddress, reserves, fromToken.decimals, toToken.decimals]);
+  }, [stxAddress, fromToken, toToken, isMultiHop, swapPath, currentPool]);
 
   const formatBalance = (balance: number, decimals: number) => {
     return (balance / 10 ** decimals).toFixed(decimals);
@@ -414,11 +437,35 @@ const SwapInterface = ({ data }: Props) => {
   };
 
   const isTokenPairValid = useCallback((token1: TokenInfo, token2: TokenInfo) => {
-    return data.pools.some(pool =>
+    // Check for direct pool
+    const directPool = data.pools.find(pool =>
       (pool.token0.symbol === token1.symbol && pool.token1.symbol === token2.symbol) ||
       (pool.token1.symbol === token1.symbol && pool.token0.symbol === token2.symbol)
     );
-  }, [data.pools]);
+
+    if (directPool) return true;
+
+    // Check for multi-hop path
+    const intermediateTokens = data.tokens.filter(token =>
+      token.symbol !== token1.symbol && token.symbol !== token2.symbol
+    );
+
+    for (const intermediateToken of intermediateTokens) {
+      const firstHop = data.pools.some(pool =>
+        (pool.token0.symbol === token1.symbol && pool.token1.symbol === intermediateToken.symbol) ||
+        (pool.token1.symbol === token1.symbol && pool.token0.symbol === intermediateToken.symbol)
+      );
+
+      const secondHop = data.pools.some(pool =>
+        (pool.token0.symbol === intermediateToken.symbol && pool.token1.symbol === token2.symbol) ||
+        (pool.token1.symbol === intermediateToken.symbol && pool.token0.symbol === token2.symbol)
+      );
+
+      if (firstHop && secondHop) return true;
+    }
+
+    return false;
+  }, [data.pools, data.tokens]);
 
   const getFirstValidPair = useCallback((token: TokenInfo) => {
     return data.tokens.find(t => t.symbol !== token.symbol && isTokenPairValid(token, t));
@@ -432,17 +479,14 @@ const SwapInterface = ({ data }: Props) => {
       // Check if current 'to' token forms a valid pair with the new 'from' token
       if (!isTokenPairValid(token, toToken)) {
         // If not, find the first valid 'to' token and set it
-        const firstValidToToken = getFirstValidPair(token);
+        const firstValidToToken = data.tokens.find(t => t.symbol !== token.symbol && isTokenPairValid(token, t));
         if (firstValidToToken) {
           setToToken(firstValidToToken);
         }
       }
     } else {
-      // For 'to' token, only allow selection if it forms a valid pair
-      if (isTokenPairValid(fromToken, token)) {
-        setToToken(token);
-        setShowToTokens(false);
-      }
+      setToToken(token);
+      setShowToTokens(false);
     }
   };
 
@@ -456,58 +500,133 @@ const SwapInterface = ({ data }: Props) => {
 
 
   const swapTokens = useCallback(() => {
-    if (!currentPool) return;
+    if (!fromToken || !toToken) return;
 
     const amountInMicroTokens = Math.floor(parseFloat(fromAmount) * 10 ** fromToken.decimals);
     const minAmountOutMicroTokens = Math.floor(parseFloat(calculateMinimumAmountOut(estimatedAmountOut)) * 10 ** toToken.decimals);
 
-    const {
-      token0: { contractAddress: token0Address },
-      token1: { contractAddress: token1Address }
-    } = currentPool;
+    const contractName = isMultiHop ? `univ2-path2` : "univ2-router";
+    const functionName = isMultiHop ? `swap-${swapPath.length}` : "swap-exact-tokens-for-tokens";
+    const functionArgs = isMultiHop
+      ? [
+        uintCV(amountInMicroTokens),
+        uintCV(minAmountOutMicroTokens),
+        ...swapPath.map(token => contractPrincipalCV(token.contractAddress.split('.')[0], token.contractAddress.split('.')[1])),
+        contractPrincipalCV("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS", "univ2-share-fee-to")
+      ]
+      : [
+        uintCV(currentPool!.id),
+        contractPrincipalCV(currentPool!.token0.contractAddress.split('.')[0], currentPool!.token0.contractAddress.split('.')[1]),
+        contractPrincipalCV(currentPool!.token1.contractAddress.split('.')[0], currentPool!.token1.contractAddress.split('.')[1]),
+        contractPrincipalCV(fromToken.contractAddress.split('.')[0], fromToken.contractAddress.split('.')[1]),
+        contractPrincipalCV(toToken.contractAddress.split('.')[0], toToken.contractAddress.split('.')[1]),
+        contractPrincipalCV("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS", "univ2-share-fee-to"),
+        uintCV(amountInMicroTokens),
+        uintCV(minAmountOutMicroTokens)
+      ];
 
-    const [token0AddressPrincipal, token0AddressContract] = token0Address.split('.');
-    const [token1AddressPrincipal, token1AddressContract] = token1Address.split('.');
-    const [fromTokenPrincipal, fromTokenContract] = fromToken.contractAddress.split('.');
-    const [toTokenPrincipal, toTokenContract] = toToken.contractAddress.split('.');
+    const postConditions: any[] = [];
 
-    const dexContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core'
-
-    let fromPostCondition;
+    // Add post-condition for the initial token transfer from the user
     if (fromToken.tokenName) {
-      fromPostCondition = Pc.principal(stxAddress as string).willSendEq(amountInMicroTokens).ft(fromToken.contractAddress as any, fromToken.tokenName)
+      postConditions.push(
+        Pc.principal(stxAddress as string)
+          .willSendEq(amountInMicroTokens)
+          .ft(fromToken.contractAddress as any, fromToken.tokenName)
+      );
     } else {
-      fromPostCondition = Pc.principal(stxAddress as string).willSendEq(amountInMicroTokens).ustx()
+      postConditions.push(
+        Pc.principal(stxAddress as string)
+          .willSendEq(amountInMicroTokens)
+          .ustx()
+      );
     }
 
-    let toPostCondition;
+    if (isMultiHop) {
+      // Add post-conditions for intermediate hops
+      for (let i = 1; i < swapPath.length - 1; i++) {
+        const intermediateToken = swapPath[i];
+        if (intermediateToken.tokenName) {
+          // "Out" condition for the previous hop
+          postConditions.push(
+            Pc.principal("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core")
+              .willSendGte(1)
+              .ft(intermediateToken.contractAddress as any, intermediateToken.tokenName)
+          );
+          // "In" condition for the next hop
+          postConditions.push(
+            Pc.principal(stxAddress as string)
+              .willSendGte(1)
+              .ft(intermediateToken.contractAddress as any, intermediateToken.tokenName)
+          );
+        } else {
+          // For STX
+          postConditions.push(
+            Pc.principal("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core")
+              .willSendGte(1)
+              .ustx()
+          );
+          postConditions.push(
+            Pc.principal(stxAddress as string)
+              .willSendGte(1)
+              .ustx()
+          );
+        }
+      }
+    }
+
+    // Add post-condition for the final token transfer to the user
     if (toToken.tokenName) {
-      toPostCondition = Pc.principal(dexContract).willSendGte(minAmountOutMicroTokens).ft(toToken.contractAddress as any, toToken.tokenName)
+      postConditions.push(
+        Pc.principal("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core")
+          .willSendGte(minAmountOutMicroTokens)
+          .ft(toToken.contractAddress as any, toToken.tokenName)
+      );
     } else {
-      toPostCondition = Pc.principal(dexContract).willSendGte(amountInMicroTokens).ustx()
+      postConditions.push(
+        Pc.principal("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core")
+          .willSendGte(minAmountOutMicroTokens)
+          .ustx()
+      );
     }
 
     openContractCall({
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: 'univ2-router',
-      functionName: "swap-exact-tokens-for-tokens",
-      functionArgs: [
-        uintCV(currentPool.id),
-        contractPrincipalCV(token0AddressPrincipal, token0AddressContract),
-        contractPrincipalCV(token1AddressPrincipal, token1AddressContract),
-        contractPrincipalCV(fromTokenPrincipal, fromTokenContract),
-        contractPrincipalCV(toTokenPrincipal, toTokenContract),
-        contractPrincipalCV("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS", "univ2-share-fee-to"),
-        uintCV(amountInMicroTokens),
-        uintCV(minAmountOutMicroTokens)
-      ],
+      contractName,
+      functionName,
+      functionArgs,
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        fromPostCondition,
-        toPostCondition
-      ] as any[],
+      postConditions,
     });
-  }, [fromAmount, estimatedAmountOut, fromToken, toToken, stxAddress, openContractCall, calculateMinimumAmountOut, currentPool]);
+  }, [fromAmount, estimatedAmountOut, fromToken, toToken, stxAddress, openContractCall, calculateMinimumAmountOut, currentPool, isMultiHop, swapPath]);
+
+  const findBestSwapPath = useCallback(() => {
+    const directPool = data.pools.find(pool =>
+      (pool.token0.symbol === fromToken.symbol && pool.token1.symbol === toToken.symbol) ||
+      (pool.token1.symbol === fromToken.symbol && pool.token0.symbol === toToken.symbol)
+    );
+
+    if (directPool) {
+      setIsMultiHop(false);
+      setSwapPath([fromToken, toToken]);
+    } else {
+      const intermediateToken = data.tokens.find(token =>
+        isTokenPairValid(fromToken, token) && isTokenPairValid(token, toToken)
+      );
+
+      if (intermediateToken) {
+        setIsMultiHop(true);
+        setSwapPath([fromToken, intermediateToken, toToken]);
+      } else {
+        setIsMultiHop(false);
+        setSwapPath([]);
+      }
+    }
+  }, [fromToken, toToken, data.pools, data.tokens, isTokenPairValid]);
+
+  useEffect(() => {
+    findBestSwapPath();
+  }, [fromToken, toToken, findBestSwapPath]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
   const toDropdownRef = useRef<HTMLDivElement>(null);
@@ -643,11 +762,10 @@ const SwapInterface = ({ data }: Props) => {
                         return (
                           <button
                             key={token.symbol}
-                            className={`flex items-center w-full px-4 py-2 text-left ${isDisabled
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-accent-foreground'
+                            className={`flex items-center w-full px-4 py-2 text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'
                               }`}
                             onClick={() => !isDisabled && selectToken(token, false)}
+                            disabled={isDisabled}
                           >
                             <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                             <span className={isDisabled ? 'text-gray-500' : 'text-white'}>{token.symbol}</span>
@@ -678,6 +796,13 @@ const SwapInterface = ({ data }: Props) => {
                 <span className="text-gray-400">Balance: {formatBalance(getBalance(toToken.symbol), toToken.decimals)}</span>
               </div>
             </div>
+
+            {/* Display swap path */}
+            {isMultiHop && (
+              <div className="mt-4 text-sm text-gray-400">
+                Swap path: {swapPath.map(token => token.symbol).join(' → ')}
+              </div>
+            )}
 
             <div className='pt-4 text-muted-foreground'>Minimum received: {calculateMinimumAmountOut(estimatedAmountOut)} {toToken.symbol}</div>
 
