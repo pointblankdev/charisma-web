@@ -400,10 +400,10 @@ export const handleContractEvent = async (event: any, builder: any) => {
             }
         }
 
-        else if (event.data.contract_identifier === "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core") {
+        else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core") {
             symbol = '💱'
 
-            console.error('Unknown velar swap event:', event.data)
+            console.error('Unknown charisma swap event:', event.data)
             builder.addField({
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 1200)

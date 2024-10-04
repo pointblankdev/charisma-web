@@ -82,9 +82,9 @@ export default async function velarWatcher(
                     if (tx.metadata.success) {
                         let builder = new EmbedBuilder()
                         // send message to discord
-                        builder.setAuthor({ name: `Velar Watcher`, icon_url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png', url: 'https://beta.charisma.rocks/staking' })
+                        builder.setAuthor({ name: `Charisma DEX`, icon_url: 'https://charisma.rocks/dmg-logo.png', url: 'https://charisma.rocks/swap' })
                         builder.setTitle('New Event')
-                        builder.setThumbnail({ url: 'https://velar.com/static/logo-099a44a980879c6b9ea66042dc4464e7.png' })
+                        builder.setThumbnail({ url: 'https://charisma.rocks/dmg-logo.gif' })
 
                         for (const event of tx.metadata.receipt.events) {
                             builder = await handleContractEvent(event, builder)

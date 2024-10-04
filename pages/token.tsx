@@ -104,7 +104,6 @@ export default function TokenPage({ data }: Props) {
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
           <HeroSection />
-          {/* <FeaturesSection /> */}
           <StatsSection />
           <WrappingSection data={data} />
         </div>
@@ -137,22 +136,6 @@ const HeroSection = () => {
             Once wrapped, you can swap tokens on any compatible DEX or exchange.
           </div> */}
         </div>
-      </div>
-    </div>
-  );
-};
-
-
-const FeaturesSection = () => {
-
-  return (
-    <div className='flex flex-col w-full font-light text-center sm:flex-row sm:px-36'>
-      {/* <div className='m-4'>
-        <Image src={redPill} alt='Red Pill' width={400} height={400} className='mx-auto' />
-      </div> */}
-      <div className='m-4 text-xl leading-tight'>
-        The Charisma token limits how many tokens can be wrapped per transaction, and how many wrapping transactions can occur in a set of blocks.
-        This ensures fair access for all users and prevents sudden token surges from flooding the market.
       </div>
     </div>
   );
@@ -295,7 +278,7 @@ const WrappingSection = ({ data }: Props) => {
           </div>
           <div className='font-bold'>
             {wallet.redPilled ? (
-              <Image src={redPill} alt='Red Pill' width={50} height={50} className='inline' />
+              <Image src={redPill} alt='Red Pill' width={50} height={50} className='inline cursor-help' title={'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'} />
             ) : (
               <div className='flex items-center mt-2 space-x-2 font-bold'>
                 <div>No</div>

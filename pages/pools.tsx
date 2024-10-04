@@ -227,6 +227,9 @@ const PoolsInterface = ({ data }: Props) => {
     return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
   });
 
+  // Calculate total TVL
+  const totalTVL = data.pools.reduce((sum, pool) => sum + pool.tvl, 0);
+
   const handleSort = (newSortBy: 'tvl' | 'volume') => {
     if (newSortBy === sortBy) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
@@ -251,7 +254,10 @@ const PoolsInterface = ({ data }: Props) => {
     <div className="max-w-screen-lg sm:mx-auto sm:px-4">
       <div className="mt-6">
         <div className="relative px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] overflow-hidden">
-          <h1 className="mb-4 text-2xl font-bold text-white/95">Liquidity Pools</h1>
+          <div className="flex items-center justify-between mb-4">
+            <h1 className="text-2xl font-bold text-white/95">Liquidity Pools</h1>
+            <span className="px-3 text-lg font-light text-white border rounded-full border-primary bg-accent-foreground ">${numeral(totalTVL).format('0,0.00')}</span>
+          </div>
 
           <div className="overflow-x-auto">
             <table className="w-full">
