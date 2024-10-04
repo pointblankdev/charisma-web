@@ -318,8 +318,11 @@ const WrappingSection = ({ data }: Props) => {
                   </div>
                 </div>
               </div>
-              <Button onClick={handleWrap} className='w-full mb-5' disabled={!!error || !amount}>
+              {/* <Button onClick={handleWrap} className='w-full mb-5' disabled={!!error || !amount}>
                 Wrap
+              </Button> */}
+              <Button onClick={handleWrap} className='w-full mb-5' disabled>
+                Disabled While Seeding DEX Liquidity...
               </Button>
             </div>
           ) : (
