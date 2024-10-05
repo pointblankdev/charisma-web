@@ -273,7 +273,7 @@ const SwapInterface = ({ data }: Props) => {
     const estimated = parseFloat(estimatedAmount);
     if (isNaN(estimated)) return '0';
     const minAmount = estimated * (1 - slippage / 100);
-    return minAmount.toFixed(6);
+    return minAmount.toFixed(toToken.decimals);
   }, [slippage]);
 
 
@@ -815,12 +815,15 @@ const SwapInterface = ({ data }: Props) => {
 
             {/* Display swap path */}
             {isMultiHop && (
-              <div className="mt-4 text-sm text-gray-400">
-                Swap path: {swapPath.map(token => token.symbol).join(' → ')}
+              <div className='pt-6 flex justify-between'>
+                <div className="text-sm text-gray-400">
+                  Swap path: {swapPath.map(token => token.symbol).join(' → ')}
+                </div>
+                <div className='text-sm text-gray-400'>Minimum received: {calculateMinimumAmountOut(estimatedAmountOut)} {toToken.symbol}</div>
               </div>
             )}
 
-            <div className='pt-4 text-muted-foreground'>Minimum received: {calculateMinimumAmountOut(estimatedAmountOut)} {toToken.symbol}</div>
+
 
             {/* Swap Button */}
             <Button
