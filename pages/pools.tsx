@@ -309,10 +309,18 @@ const PoolsInterface = ({ data }: Props) => {
   };
 
   const canEqualize = (pool: PoolInfo) => {
-    return (
+    if (
       (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
       (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
-    );
+    ) {
+      const token0Reserve = pool.reserves.token0 / 10 ** pool.token0.decimals;
+      const token1Reserve = pool.reserves.token1 / 10 ** pool.token1.decimals;
+      const priceRatio = token0Reserve / token1Reserve;
+
+      // Check if the price ratio is outside the 90-110% range
+      return priceRatio < 0.9 || priceRatio > 1.1;
+    }
+    return false;
   };
 
   const handleQuickBuy = (pool: PoolInfo) => {
