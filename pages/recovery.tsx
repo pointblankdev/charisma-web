@@ -330,17 +330,24 @@ const TokenRedemptions = ({ data }: any) => {
 const RecoveryClaim = () => {
   const { charismaClaims } = useGlobalState();
   const { wallet } = useWallet();
+  const { stxAddress } = useAccount();
   const { openContractCall } = useOpenContractCall();
 
   function makeChoice(choice: boolean) {
-    openContractCall({
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: choice ? 'red-pill-nft' : 'blue-pill-nft',
-      functionName: "claim",
-      functionArgs: [],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions: [],
-    });
+    if (stxAddress) {
+      const postConditions = [] as any[]
+      if (!charismaClaims.hasFreeClaim && !charismaClaims.hasClaimed) {
+        postConditions.push(Pc.principal(stxAddress).willSendEq(100000000).ustx())
+      }
+      openContractCall({
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: choice ? 'red-pill-nft' : 'blue-pill-nft',
+        functionName: "claim",
+        functionArgs: [],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions,
+      });
+    }
   }
 
   const renderClaimStatus = () => {
