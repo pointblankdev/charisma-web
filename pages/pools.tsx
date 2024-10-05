@@ -154,17 +154,17 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   // Fetch token prices
   const tokenPrices = await getTokenPrices();
+  const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH'] })
 
   // Calculate CHA price
-  const chaPrice = await calculateChaPrice(tokenPrices['STX']);
+  const chaPrice = await calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price);
   tokenPrices['CHA'] = chaPrice;
 
   // Calculate IOU prices
-  tokenPrices['iouWELSH'] = tokenPrices['WELSH'];
+  tokenPrices['iouWELSH'] = cmcPriceData.data['WELSH'].quote.USD.price;
   tokenPrices['iouROO'] = tokenPrices['$ROO'];
 
-  const { data } = await cmc.getQuotes({ symbol: ['ORDI'] })
-  tokenPrices['ORDI'] = data['ORDI'].quote.USD.price;
+  tokenPrices['ORDI'] = cmcPriceData.data['ORDI'].quote.USD.price
 
   // Fetch reserves and calculate TVL for each pool
   const pools: PoolInfo[] = await Promise.all(poolsData.map(async (pool) => {
@@ -276,7 +276,7 @@ const PoolsInterface = ({ data }: Props) => {
               </thead>
               <tbody>
                 {sortedPools.map((pool) => (
-                  <tr key={pool.id} className="border-t border-gray-700">
+                  <tr key={pool.id} className="border-t border-gray-700/50">
                     <td className="py-4">
                       <div className="flex items-center">
                         <Image src={pool.token0.image} alt={pool.token0.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />

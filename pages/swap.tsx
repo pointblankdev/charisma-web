@@ -49,7 +49,7 @@ type Props = {
   data: {
     chaPerStx: number;
     prices: any;
-    ordiPriceData: any;
+    cmcPriceData: any;
     tokens: TokenInfo[];
     pools: PoolInfo[];
   };
@@ -57,7 +57,7 @@ type Props = {
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const velarPriceData = await velarApi.tokens('all');
-  const ordiPriceData = await cmc.getQuotes({ symbol: ['ORDI'] })
+  const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH'] })
 
   const result: any = await callReadOnlyFunction({
     contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -172,7 +172,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       data: {
         chaPerStx,
         prices: velarPriceData,
-        ordiPriceData,
+        cmcPriceData,
         tokens,
         pools,
       }
@@ -408,21 +408,21 @@ const SwapInterface = ({ data }: Props) => {
     return (symbol: any) => {
       switch (symbol) {
         case 'STX':
-          return data.prices.find((token: any) => token.symbol === 'STX').price;
+          return data.cmcPriceData.data['STX'].quote.USD.price;
         case 'CHA':
           const stxPrice = data.prices.find((token: any) => token.symbol === 'STX').price;
           const price = stxPrice / data.chaPerStx
           return price;
         case 'WELSH':
-          return data.prices.find((token: any) => token.symbol === 'WELSH').price;
+          return data.cmcPriceData.data['WELSH'].quote.USD.price;
         case 'ROO':
           return data.prices.find((token: any) => token.symbol === '$ROO').price;
         case 'iouWELSH':
-          return data.prices.find((token: any) => token.symbol === 'WELSH').price;
+          return data.cmcPriceData.data['WELSH'].quote.USD.price;
         case 'iouROO':
           return data.prices.find((token: any) => token.symbol === '$ROO').price;
         case 'ORDI':
-          return data.ordiPriceData.data['ORDI'].quote.USD.price;
+          return data.cmcPriceData.data['ORDI'].quote.USD.price;
         default:
           return 0;
       }
