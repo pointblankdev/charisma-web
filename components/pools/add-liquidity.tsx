@@ -6,11 +6,13 @@ import { callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uin
 import { useOpenContractCall } from '@micro-stacks/react';
 import { Button } from '@components/ui/button';
 import {
+    Dialog,
     DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
+    DialogTrigger,
 } from '@components/ui/dialog';
 import { Label } from '@components/ui/label';
 import { Slider } from "@components/ui/slider";
@@ -22,7 +24,6 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     const [sliderValue, setSliderValue] = useState(0);
     const [amount0, setAmount0] = useState('0');
     const [amount1, setAmount1] = useState('0');
-    const [lpTokenBalance, setLpTokenBalance] = useState(0);
     const { openContractCall } = useOpenContractCall();
     const { stxAddress } = useAccount();
     const { getBalanceByKey, balances, getKeyByContractAddress } = useWallet();
@@ -33,7 +34,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     };
 
     useEffect(() => {
-        if (pool && stxAddress) {
+        if (pool) {
             if (isAdd) {
                 const maxAmount0 = pool.reserves.token0 / 10 ** pool.token0.decimals;
                 const maxAmount1 = pool.reserves.token1 / 10 ** pool.token1.decimals;
@@ -44,29 +45,17 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 setAmount0(newAmount0);
                 setAmount1(newAmount1);
             } else {
-                // Fetch LP token balance
-                callReadOnlyFunction({
-                    contractAddress: pool.contractAddress.split('.')[0],
-                    contractName: pool.contractAddress.split('.')[1],
-                    functionName: "get-balance",
-                    functionArgs: [principalCV(stxAddress)],
-                    senderAddress: stxAddress,
-                }).then((response: any) => {
-                    const balance = Number(cvToJSON(response).value);
-                    setLpTokenBalance(balance);
+                const totalSupply = pool.lpTokenBalance;
+                const share = totalSupply > 0 ? sliderValue / 100 : 0;
 
-                    const totalSupply = pool.reserves.token0 + pool.reserves.token1;
-                    const share = balance / totalSupply;
+                const newAmount0 = (share * pool.reserves.token0 / 10 ** pool.token0.decimals).toFixed(pool.token0.decimals);
+                const newAmount1 = (share * pool.reserves.token1 / 10 ** pool.token1.decimals).toFixed(pool.token1.decimals);
 
-                    const newAmount0 = (share * pool.reserves.token0 * sliderValue / 100).toFixed(pool.token0.decimals);
-                    const newAmount1 = (share * pool.reserves.token1 * sliderValue / 100).toFixed(pool.token1.decimals);
-
-                    setAmount0(newAmount0);
-                    setAmount1(newAmount1);
-                });
+                setAmount0(newAmount0);
+                setAmount1(newAmount1);
             }
         }
-    }, [sliderValue, pool, isAdd, stxAddress]);
+    }, [pool, isAdd, sliderValue]);
 
     const checkBalances = () => {
         if (!pool || !stxAddress) return true;
@@ -134,13 +123,9 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     }, [pool, amount0, amount1, stxAddress, openContractCall, onClose]);
 
     const handleRemoveLiquidity = useCallback(() => {
-        if (!pool || !stxAddress) return;
+        if (!pool) return;
 
-        const lpTokensToRemove = BigInt(Math.floor(lpTokenBalance * sliderValue / 100));
-
-        const postConditions: any = [
-            Pc.principal(stxAddress).willSendLte(lpTokensToRemove).ft(pool.contractAddress as any, 'lp-token') as any,
-        ];
+        const lpTokensToRemove = BigInt(Math.floor(pool.lpTokenBalance * sliderValue / 100));
 
         openContractCall({
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -155,8 +140,6 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 uintCV(1),
                 uintCV(1)
             ],
-            postConditionMode: PostConditionMode.Deny,
-            postConditions,
             onFinish: (data) => {
                 console.log('Transaction successful', data);
                 onClose();
@@ -165,7 +148,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 console.log('Transaction cancelled');
             }
         });
-    }, [pool, sliderValue, lpTokenBalance, stxAddress, openContractCall, onClose]);
+    }, [pool, sliderValue, openContractCall, onClose]);
 
     if (!pool) return null;
 

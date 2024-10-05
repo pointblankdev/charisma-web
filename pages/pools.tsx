@@ -1,4 +1,4 @@
-import { GetStaticProps } from 'next';
+import { GetServerSideProps, GetServerSidePropsContext, GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import Layout from '@components/layout/layout';
@@ -31,6 +31,8 @@ import RebalanceDialog from '@components/pools/rebalance-dialog';
 import EqualizeDialog from '@components/pools/equalize-dialog';
 import QuickBuyDialog from '@components/pools/quick-buy-dialog';
 import LiquidityDialog from '@components/pools/add-liquidity';
+import { getDehydratedStateFromSession, parseAddress } from '@components/stacks-session/session-helpers';
+import Logger from '@lib/logger';
 
 export type TokenInfo = {
   symbol: string;
@@ -51,6 +53,7 @@ export type PoolInfo = {
     token1: number;
   };
   tvl: number;
+  lpTokenBalance: number;
   volume24h: number;
   contractAddress: string;
 };
@@ -58,6 +61,8 @@ export type PoolInfo = {
 type Props = {
   data: {
     pools: PoolInfo[];
+    dehydratedState: string;
+    stxAddress: string;
   };
 };
 
@@ -109,7 +114,36 @@ async function calculateChaPrice(stxPrice: number): Promise<number> {
   return chaPrice;
 }
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+// New function to get LP token balance
+async function getLpTokenBalance(poolContractAddress: string, stxAddress: string): Promise<number> {
+  try {
+    const result: any = await callReadOnlyFunction({
+      contractAddress: poolContractAddress.split('.')[0],
+      contractName: poolContractAddress.split('.')[1],
+      functionName: "get-balance",
+      functionArgs: [principalCV(stxAddress)],
+      senderAddress: poolContractAddress.split('.')[0],
+    });
+
+    return Number(result.value.value);
+  } catch (error) {
+    console.error("Error fetching LP token balance:", error);
+    return 0;
+  }
+}
+
+export const getServerSideProps = async (ctx: GetServerSidePropsContext) => {
+
+  let stxAddress = ''
+
+  const state = await getDehydratedStateFromSession(ctx) as string
+
+  try {
+    stxAddress = await parseAddress(state)
+  } catch (error: any) {
+    await Logger.error({ 'Error parsing stx address': { message: error?.message, state } });
+  }
+
   // Define pools
   const poolsData = [
     {
@@ -186,12 +220,16 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
     const tvl = (reserves.token0 / 10 ** pool.token0.decimals * token0Price) + (reserves.token1 / 10 ** pool.token1.decimals * token1Price);
 
+    // Fetch LP token balance
+    const lpTokenBalance = await getLpTokenBalance(pool.contractAddress, stxAddress);
+
     return {
       ...pool,
       token0: { ...pool.token0, price: token0Price },
       token1: { ...pool.token1, price: token1Price },
       reserves,
       tvl,
+      lpTokenBalance,
     };
   }));
 
@@ -199,9 +237,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     props: {
       data: {
         pools,
+        dehydratedState: await getDehydratedStateFromSession(ctx),
+        stxAddress
       }
-    },
-    revalidate: 60
+    }
   };
 };
 
