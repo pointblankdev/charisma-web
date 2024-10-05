@@ -79,7 +79,7 @@ const RecoveryClaim = () => {
             const altText = wallet.redPilled ? 'Red Pill' : 'Blue Pill';
             return (
                 <div className='flex justify-center w-full'>
-                    <Image src={claimedPill} alt={altText} width={250} height={250} className='transition-all' />
+                    <Image src={claimedPill} alt={altText} width={250} height={250} className='transition-all -translate-y-12 cursor-help' title={wallet.redPilled ? 'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.' : 'The Blue Pill NFT offers your early access to Charisma Recovery token redemptions.'} />
                 </div>
             );
         } else {
@@ -94,6 +94,7 @@ const RecoveryClaim = () => {
                             width={250}
                             height={250}
                             className={`transition-all ${!charismaClaims.hasClaimed ? 'cursor-pointer hover:scale-125 hover:-translate-y-4' : ''}`}
+                            title={'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'}
                         />
                     </div>
                     <div className='flex flex-col items-center w-full space-y-4'>
@@ -104,6 +105,7 @@ const RecoveryClaim = () => {
                             width={250}
                             height={250}
                             className={`transition-all ${!charismaClaims.hasClaimed ? 'cursor-pointer hover:scale-125 hover:-translate-y-4' : ''}`}
+                            title={'The Blue Pill NFT offers your early access to Charisma Recovery token redemptions.'}
                         />
                     </div>
                 </>
@@ -114,7 +116,7 @@ const RecoveryClaim = () => {
     return (
         <div className='space-y-8'>
             {renderClaimStatus()}
-            <div className='flex w-full p-24 rounded-full bg-gray-900/80'>
+            <div className='flex w-full p-24 rounded-full bg-[var(--sidebar)] border-[var(--accents-7)] border-b-8'>
                 {renderPills()}
             </div>
         </div>

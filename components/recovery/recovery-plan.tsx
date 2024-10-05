@@ -26,7 +26,7 @@ const CharismaRecoveryPlan = () => {
     ];
 
     return (
-        <div className="max-w-5xl p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-gray-900/80">
+        <div className="max-w-5xl p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
             {/* Introduction */}
             <section className="mb-8">
                 <h1 className="mb-8 text-4xl font-bold">
@@ -34,7 +34,7 @@ const CharismaRecoveryPlan = () => {
                 </h1>
                 <div className="space-y-4">
                     {faqs.map((faq, index) => (
-                        <div key={index} className="pb-4 border-b border-gray-800">
+                        <div key={index} className="pb-4 border-b border-white/10">
                             <button
                                 className="w-full text-left focus:outline-none"
                                 onClick={() => toggleFAQ(index)}
@@ -78,7 +78,7 @@ const CharismaRecoveryPlan = () => {
                 </ul>
             </section>
 
-            <hr className="border-t border-gray-800" />
+            <hr className="border-t border-white/10" />
 
             {/* New Charisma Token */}
             <section className="mb-8">
@@ -104,7 +104,7 @@ const CharismaRecoveryPlan = () => {
                 </p>
             </section>
 
-            <hr className="border-t border-gray-800" />
+            <hr className="border-t border-white/10" />
 
             {/* Red Pill vs Blue Pill */}
             <section className="mb-8">
@@ -131,7 +131,7 @@ const CharismaRecoveryPlan = () => {
                 </div>
             </section>
 
-            <hr className="border-t border-gray-800" />
+            <hr className="border-t border-white/10" />
 
             {/* Recovery Timeline */}
             <section className="mb-8">
@@ -155,7 +155,7 @@ const CharismaRecoveryPlan = () => {
                 </ul>
             </section>
 
-            <hr className="border-t border-gray-800" />
+            <hr className="border-t border-white/10" />
 
             {/* Final Thoughts */}
             <section>

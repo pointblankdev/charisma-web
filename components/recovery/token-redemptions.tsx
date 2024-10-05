@@ -163,7 +163,7 @@ const TokenRedemptions = ({ data }: any) => {
 
     return (
         <div className='max-w-5xl space-y-4'>
-            <div className="flex w-full p-6 rounded-lg shadow-lg bg-gray-900/80">
+            <div className="flex w-full p-6 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
                 <div className='grid grid-cols-3 text-right grow'>
                     <div className='text-left'></div>
                     <div>Synthetic Welsh (iouWELSH)</div>
@@ -203,7 +203,7 @@ const TokenRedemptions = ({ data }: any) => {
                 </div>
             </div>
 
-            <div className="p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-gray-900/80">
+            <div className="p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
                 <div className='grid grid-cols-5'>
                     <div></div>
                     <div>CHA</div>
