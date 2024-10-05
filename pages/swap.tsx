@@ -668,7 +668,7 @@ const SwapInterface = ({ data }: Props) => {
   return (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4">
       <div className="mt-6">
-        <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)]">
+        <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-2xl font-bold text-white/95">Swap</h1>
 

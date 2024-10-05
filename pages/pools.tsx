@@ -349,7 +349,7 @@ const PoolsInterface = ({ data }: Props) => {
   return (
     <div className="max-w-screen-3xl sm:mx-auto sm:px-4">
       <div className="mt-6">
-        <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] overflow-hidden">
+        <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
           <div className="flex items-center justify-between mb-4 px-4 sm:px-0">
             <h1 className="text-2xl font-bold text-white/95">Liquidity Pools</h1>
             <span className="px-3 text-lg font-light text-white border rounded-full border-primary bg-accent-foreground">

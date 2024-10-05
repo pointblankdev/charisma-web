@@ -117,7 +117,7 @@ const HeroSection = () => {
   return (
     <div className='flex flex-col items-center rounded-full'>
       <Image src={charismaFloating} alt='Red Pill' width={300} height={300} className='transition-all scale-150 translate-y-24 cursor-pointer sm:hidden' />
-      <div className='flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-gray-900/50 rounded-lg sm:rounded-lg mt-12'>
+      <div className='flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
         <div className='flex-col items-center hidden w-full space-y-4 sm:w-64 sm:flex'>
           <Image src={charismaFloating} alt='Red Pill' width={300} height={300} className='transition-all -translate-x-12 -translate-y-20 cursor-pointer scale-[2]' />
           {/* <Button disabled onClick={() => makeChoice(true)} size={'sm'} className='text-sm w-36 hover:bg-[#ffffffee] hover:text-primary'>Select Red Pill</Button> */}
@@ -149,19 +149,19 @@ const StatsSection = () => {
       <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>TOKEN STATS</div>
       <div className='w-full pb-8 text-center text-md text-muted/90'>View the token contract's wrapping rate-limits.</div>
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
-        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-gray-900/50'>
+        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
           <div className='text-muted/80'>Tokens per Transaction</div>
         </div>
-        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-gray-900/50'>
+        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.blocksPerTransaction}</div>
           <div className='text-muted/80'>Blocks per Transaction</div>
         </div>
-        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-gray-900/50'>
+        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.transactionsAvailable}</div>
           <div className='text-muted/80'>Transactions Available</div>
         </div>
-        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-gray-900/50'>
+        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.blocksUntilUnlock}</div>
           <div className='text-muted/80'>Blocks until Unlocked</div>
         </div>
@@ -248,7 +248,7 @@ const WrappingSection = ({ data }: Props) => {
     <div className='mt-20 mb-12'>
       <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Wrap CHA</div>
       <div className='w-full pb-8 text-center text-md text-muted/90'>Wrap your governance tokens into the new CHA token.</div>
-      <div className='container flex h-48 p-6 space-x-2 rounded-2xl max-w-prose bg-gray-900/50 leading-0'>
+      <div className='container flex h-48 p-6 space-x-2 rounded-2xl max-w-prose bg-[var(--sidebar)] border-t-2 border-[var(--accents-7)] leading-0'>
         <div className='w-full'>
           <div className='font-bold text-muted-foreground'>
             Available
@@ -292,7 +292,7 @@ const WrappingSection = ({ data }: Props) => {
           </div>
         </div>
       </div>
-      <div className='container flex flex-col p-6 pb-0 -translate-y-20 border bg-background rounded-2xl max-w-prose min-h-48'>
+      <div className='container flex flex-col p-6 pb-0 -translate-y-20 border-t-2 bg-background rounded-2xl max-w-prose min-h-48'>
         <div className='relative w-full space-y-2 grow'>
           {wallet.redPilled ? (
             <div className=''>
