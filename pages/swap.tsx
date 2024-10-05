@@ -814,14 +814,13 @@ const SwapInterface = ({ data }: Props) => {
             </div>
 
             {/* Display swap path */}
-            {isMultiHop && (
-              <div className='pt-6 flex justify-between'>
-                <div className="text-sm text-gray-400">
-                  Swap path: {swapPath.map(token => token.symbol).join(' → ')}
-                </div>
-                <div className='text-sm text-gray-400'>Minimum received: {calculateMinimumAmountOut(estimatedAmountOut)} {toToken.symbol}</div>
+
+            <div className='pt-6 flex justify-between'>
+              <div className="text-sm text-gray-400">
+                Swap path: {swapPath.map(token => token.symbol).join(' → ')}
               </div>
-            )}
+              <div className='text-sm text-gray-400'>Minimum received: {calculateMinimumAmountOut(estimatedAmountOut)} {toToken.symbol}</div>
+            </div>
 
 
 
