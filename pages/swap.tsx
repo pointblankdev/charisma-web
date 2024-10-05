@@ -3,7 +3,7 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { SetStateAction, ChangeEvent, useMemo, useState, useEffect, useCallback, useRef } from 'react';
-import { callReadOnlyFunction, cvToJSON, hexToCV, Pc, PostConditionMode, principalCV, tupleCV, uintCV } from "@stacks/transactions";
+import { callReadOnlyFunction, cvToJSON, hexToCV, listCV, Pc, PostConditionMode, principalCV, tupleCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
@@ -164,6 +164,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       token1: tokens.find(token => token.symbol === 'ORDI') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
+    {
+      id: 7,
+      token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'ROO') as TokenInfo,
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
     // Add other pools here
   ];
 
@@ -304,14 +310,19 @@ const SwapInterface = ({ data }: Props) => {
         const functionName = `get-amount-out-${swapPath.length}`;
         console.log('Using function:', functionName);
 
+        const functionArgs = [
+          uintCV(amountInMicroTokens),
+          ...swapPath.map(token => contractPrincipalCV(token.contractAddress.split('.')[0], token.contractAddress.split('.')[1])),
+        ] as any
+
+        // weird hack due to extra arg in the contract
+        if (swapPath.length === 4) functionArgs.push(listCV([]))
+
         result = await callReadOnlyFunction({
           contractAddress,
           contractName,
           functionName,
-          functionArgs: [
-            uintCV(amountInMicroTokens),
-            ...swapPath.map(token => contractPrincipalCV(token.contractAddress.split('.')[0], token.contractAddress.split('.')[1]))
-          ] as any[],
+          functionArgs,
           senderAddress: stxAddress,
         });
       } else {
@@ -334,30 +345,23 @@ const SwapInterface = ({ data }: Props) => {
 
       console.log('Raw result:', result);
 
-      if (result.data || result.value) {
-        let estimatedOut: string;
-        if (isMultiHop) {
-          // The structure of the result might be different for multi-hop
-          // Adjust this based on the actual structure returned by your contract
-          const lastHopResult = result.data[Object.keys(result.data).pop() as string];
-          console.log('Last hop result:', lastHopResult);
-          estimatedOut = (Number(lastHopResult.value) / 10 ** toToken.decimals).toFixed(toToken.decimals);
-        } else {
-          estimatedOut = (Number(result.value) / 10 ** toToken.decimals).toFixed(toToken.decimals);
-        }
-        console.log('Estimated amount out:', estimatedOut);
-        setEstimatedAmountOut(estimatedOut);
+      let estimatedOut: string;
+      if (isMultiHop) {
+        const lastHopResult = result.data[Object.keys(result.data).pop() as string];
+        console.log('Last hop result:', lastHopResult);
+        estimatedOut = (Number(lastHopResult.value) / 10 ** toToken.decimals).toFixed(toToken.decimals);
       } else {
-        console.error('No value in result:', result);
-        setEstimatedAmountOut('0');
+        estimatedOut = (Number(result.value) / 10 ** toToken.decimals).toFixed(toToken.decimals);
       }
+      console.log('Estimated amount out:', estimatedOut);
+      setEstimatedAmountOut(estimatedOut);
     } catch (error) {
       console.error('Error calculating estimated amount out:', error);
       setEstimatedAmountOut('0');
     } finally {
       setIsCalculating(false);
     }
-  }, [stxAddress, fromToken, toToken, isMultiHop, swapPath, currentPool]);
+  }, [stxAddress, fromToken, toToken, isMultiHop, currentPool]);
 
   const formatBalance = (balance: number, decimals: number) => {
     return (balance / 10 ** decimals).toFixed(decimals);
@@ -436,40 +440,35 @@ const SwapInterface = ({ data }: Props) => {
     // setToAmount(fromAmount);
   };
 
-  const isTokenPairValid = useCallback((token1: TokenInfo, token2: TokenInfo) => {
-    // Check for direct pool
-    const directPool = data.pools.find(pool =>
-      (pool.token0.symbol === token1.symbol && pool.token1.symbol === token2.symbol) ||
-      (pool.token1.symbol === token1.symbol && pool.token0.symbol === token2.symbol)
-    );
+  const isTokenPairValid = useCallback((token1: TokenInfo, token2: TokenInfo, maxHops = 5) => {
+    const findPath = (start: TokenInfo, end: TokenInfo, path: TokenInfo[] = []): TokenInfo[] | null => {
+      if (path.length > maxHops) return null;
 
-    if (directPool) return true;
-
-    // Check for multi-hop path
-    const intermediateTokens = data.tokens.filter(token =>
-      token.symbol !== token1.symbol && token.symbol !== token2.symbol
-    );
-
-    for (const intermediateToken of intermediateTokens) {
-      const firstHop = data.pools.some(pool =>
-        (pool.token0.symbol === token1.symbol && pool.token1.symbol === intermediateToken.symbol) ||
-        (pool.token1.symbol === token1.symbol && pool.token0.symbol === intermediateToken.symbol)
+      // Check for direct pool
+      const directPool = data.pools.find(pool =>
+        (pool.token0.symbol === start.symbol && pool.token1.symbol === end.symbol) ||
+        (pool.token1.symbol === start.symbol && pool.token0.symbol === end.symbol)
       );
 
-      const secondHop = data.pools.some(pool =>
-        (pool.token0.symbol === intermediateToken.symbol && pool.token1.symbol === token2.symbol) ||
-        (pool.token1.symbol === intermediateToken.symbol && pool.token0.symbol === token2.symbol)
-      );
+      if (directPool) return [...path, end];
 
-      if (firstHop && secondHop) return true;
-    }
+      // Check for multi-hop path
+      for (const pool of data.pools) {
+        let nextToken: TokenInfo | undefined;
+        if (pool.token0.symbol === start.symbol) nextToken = pool.token1;
+        else if (pool.token1.symbol === start.symbol) nextToken = pool.token0;
 
-    return false;
-  }, [data.pools, data.tokens]);
+        if (nextToken && !path.some(t => t.symbol === nextToken!.symbol)) {
+          const result = findPath(nextToken, end, [...path, nextToken]);
+          if (result) return result;
+        }
+      }
 
-  const getFirstValidPair = useCallback((token: TokenInfo) => {
-    return data.tokens.find(t => t.symbol !== token.symbol && isTokenPairValid(token, t));
-  }, [data.tokens, isTokenPairValid]);
+      return null;
+    };
+
+    return findPath(token1, token2) !== null;
+  }, [data.pools]);
 
   const selectToken = (token: TokenInfo, isFrom: boolean) => {
     if (isFrom) {
@@ -601,28 +600,45 @@ const SwapInterface = ({ data }: Props) => {
   }, [fromAmount, estimatedAmountOut, fromToken, toToken, stxAddress, openContractCall, calculateMinimumAmountOut, currentPool, isMultiHop, swapPath]);
 
   const findBestSwapPath = useCallback(() => {
-    const directPool = data.pools.find(pool =>
-      (pool.token0.symbol === fromToken.symbol && pool.token1.symbol === toToken.symbol) ||
-      (pool.token1.symbol === fromToken.symbol && pool.token0.symbol === toToken.symbol)
-    );
+    const findPath = (start: TokenInfo, end: TokenInfo, maxHops = 5): TokenInfo[] | null => {
+      const queue: { path: TokenInfo[], visited: Set<string> }[] = [{ path: [start], visited: new Set([start.symbol]) }];
 
-    if (directPool) {
-      setIsMultiHop(false);
-      setSwapPath([fromToken, toToken]);
-    } else {
-      const intermediateToken = data.tokens.find(token =>
-        isTokenPairValid(fromToken, token) && isTokenPairValid(token, toToken)
-      );
+      while (queue.length > 0) {
+        const { path, visited } = queue.shift()!;
+        const current = path[path.length - 1];
 
-      if (intermediateToken) {
-        setIsMultiHop(true);
-        setSwapPath([fromToken, intermediateToken, toToken]);
-      } else {
-        setIsMultiHop(false);
-        setSwapPath([]);
+        if (current.symbol === end.symbol) {
+          return path;
+        }
+
+        if (path.length > maxHops) continue;
+
+        for (const pool of data.pools) {
+          let nextToken: TokenInfo | undefined;
+          if (pool.token0.symbol === current.symbol) nextToken = pool.token1;
+          else if (pool.token1.symbol === current.symbol) nextToken = pool.token0;
+
+          if (nextToken && !visited.has(nextToken.symbol)) {
+            const newPath = [...path, nextToken];
+            const newVisited = new Set(visited).add(nextToken.symbol);
+            queue.push({ path: newPath, visited: newVisited });
+          }
+        }
       }
+
+      return null;
+    };
+
+    const path = findPath(fromToken, toToken);
+
+    if (path) {
+      setIsMultiHop(path.length > 2);
+      setSwapPath(path);
+    } else {
+      setIsMultiHop(false);
+      setSwapPath([]);
     }
-  }, [fromToken, toToken, data.pools, data.tokens, isTokenPairValid]);
+  }, [fromToken, toToken, data.pools]);
 
   useEffect(() => {
     findBestSwapPath();
