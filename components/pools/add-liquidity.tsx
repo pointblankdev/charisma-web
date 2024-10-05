@@ -1,18 +1,16 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import numeral from 'numeral';
-import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
-import { callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
+import { contractPrincipalCV, uintCV } from 'micro-stacks/clarity';
+import { Pc, PostConditionMode } from "@stacks/transactions";
 import { useOpenContractCall } from '@micro-stacks/react';
 import { Button } from '@components/ui/button';
 import {
-    Dialog,
     DialogContent,
     DialogDescription,
     DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from '@components/ui/dialog';
 import { Label } from '@components/ui/label';
 import { Slider } from "@components/ui/slider";
@@ -33,6 +31,11 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
         return Number((numericAmount * price).toFixed(2));
     };
 
+    const getLpTokenBalance = useCallback(() => {
+        if (!pool) return 0;
+        return getBalanceByKey(getKeyByContractAddress(pool.contractAddress)) || 0;
+    }, [pool, getBalanceByKey, getKeyByContractAddress]);
+
     useEffect(() => {
         if (pool) {
             if (isAdd) {
@@ -45,8 +48,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 setAmount0(newAmount0);
                 setAmount1(newAmount1);
             } else {
-                const totalSupply = pool.lpTokenBalance;
-                const share = totalSupply > 0 ? sliderValue / 100 : 0;
+                const lpTokenBalance = getLpTokenBalance();
+                const share = lpTokenBalance > 0 ? sliderValue / 100 : 0;
 
                 const newAmount0 = (share * pool.reserves.token0 / 10 ** pool.token0.decimals).toFixed(pool.token0.decimals);
                 const newAmount1 = (share * pool.reserves.token1 / 10 ** pool.token1.decimals).toFixed(pool.token1.decimals);
@@ -55,7 +58,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 setAmount1(newAmount1);
             }
         }
-    }, [pool, isAdd, sliderValue]);
+    }, [pool, isAdd, sliderValue, getLpTokenBalance]);
 
     const checkBalances = () => {
         if (!pool || !stxAddress) return true;
@@ -73,7 +76,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
             const balance1 = getBalance(pool.token1);
             return parseFloat(amount0) <= balance0 && parseFloat(amount1) <= balance1;
         } else {
-            return sliderValue <= 100; // Can't remove more than 100% of LP tokens
+            const lpTokenBalance = getLpTokenBalance();
+            return (lpTokenBalance * sliderValue / 100) <= lpTokenBalance;
         }
     };
 
@@ -123,9 +127,14 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     }, [pool, amount0, amount1, stxAddress, openContractCall, onClose]);
 
     const handleRemoveLiquidity = useCallback(() => {
-        if (!pool) return;
+        if (!pool || !stxAddress) return;
 
-        const lpTokensToRemove = BigInt(Math.floor(pool.lpTokenBalance * sliderValue / 100));
+        const lpTokenBalance = getLpTokenBalance();
+        const lpTokensToRemove = BigInt(Math.floor(lpTokenBalance * sliderValue / 100));
+
+        const postConditions: any = [
+            Pc.principal(stxAddress).willSendLte(lpTokensToRemove).ft(pool.contractAddress as any, 'lp-token') as any,
+        ];
 
         openContractCall({
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -140,6 +149,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 uintCV(1),
                 uintCV(1)
             ],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions,
             onFinish: (data) => {
                 console.log('Transaction successful', data);
                 onClose();
@@ -148,11 +159,12 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 console.log('Transaction cancelled');
             }
         });
-    }, [pool, sliderValue, openContractCall, onClose]);
+    }, [pool, sliderValue, stxAddress, openContractCall, onClose, getLpTokenBalance]);
 
     if (!pool) return null;
 
     const hasEnoughBalance = checkBalances();
+    const lpTokenBalance = getLpTokenBalance();
 
     return (
         <DialogContent className="sm:max-w-[425px]">
@@ -213,6 +225,11 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                         </div>
                     </div>
                 </div>
+                {!isAdd && (
+                    <div className="text-sm text-gray-500">
+                        Your LP Token Balance: {numeral(lpTokenBalance / 10 ** 6).format('0,0.000000')}
+                    </div>
+                )}
             </div>
             <DialogFooter className="flex items-center justify-between">
                 <span className={`text-sm ${hasEnoughBalance ? 'text-green-500' : 'text-red-500'}`}>
