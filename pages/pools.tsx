@@ -410,14 +410,14 @@ const PoolsInterface = ({ data }: Props) => {
                             </span>
                             <button
                               type="button"
-                              className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-background hover:bg-accent/80 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                              className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
                               onClick={() => handleLiquidityAction(pool, true)}
                             >
                               <Plus className="w-4 h-4" />
                             </button>
                             <button
                               type="button"
-                              className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/80 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                              className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
                               onClick={() => handleLiquidityAction(pool, false)}
                             >
                               <Minus className="w-4 h-4" />
