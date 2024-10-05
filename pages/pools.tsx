@@ -5,7 +5,7 @@ import Layout from '@components/layout/layout';
 import { Card } from '@components/ui/card';
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
-import { ArrowUpDown, Minus, Plus } from 'lucide-react';
+import { ArrowUpDown, Minus, Plus, RefreshCw, Scale } from 'lucide-react';
 import numeral from 'numeral';
 import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
 import { callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
@@ -27,6 +27,8 @@ import { Slider } from "@components/ui/slider";
 import { useAccount } from '@micro-stacks/react';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import cmc from '@lib/cmc-api';
+import RebalanceDialog from '@components/pools/rebalance-dialog';
+import EqualizeDialog from '@components/pools/equalize-dialog';
 
 type TokenInfo = {
   symbol: string;
@@ -38,7 +40,7 @@ type TokenInfo = {
   decimals: number;
 };
 
-type PoolInfo = {
+export type PoolInfo = {
   id: number;
   token0: TokenInfo;
   token1: TokenInfo;
@@ -222,13 +224,39 @@ export default function PoolsPage({ data }: Props) {
 }
 
 const PoolsInterface = ({ data }: Props) => {
-  const [sortBy, setSortBy] = useState<'tvl' | 'volume'>('tvl');
+  const [sortBy, setSortBy] = useState<'tvl' | 'volume' | 'virtualChaPrice'>('tvl');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedPool, setSelectedPool] = useState<PoolInfo | null>(null);
   const [isAddLiquidity, setIsAddLiquidity] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
+  const [isRebalanceDialogOpen, setIsRebalanceDialogOpen] = useState(false);
+  const [selectedPoolForRebalance, setSelectedPoolForRebalance] = useState<PoolInfo | null>(null);
+  const [isEqualizeDialogOpen, setIsEqualizeDialogOpen] = useState(false);
+  const [selectedPoolForEqualize, setSelectedPoolForEqualize] = useState<PoolInfo | null>(null);
+
+  const calculateVirtualChaPrice = (pool: PoolInfo) => {
+    if (pool.token0.symbol === 'CHA' || pool.token1.symbol === 'CHA') {
+      const chaToken = pool.token0.symbol === 'CHA' ? pool.token0 : pool.token1;
+      const otherToken = pool.token0.symbol === 'CHA' ? pool.token1 : pool.token0;
+      const chaReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token0 : pool.reserves.token1;
+      const otherReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
+
+      // Convert reserves to actual token amounts
+      const chaAmount = chaReserve / 10 ** chaToken.decimals;
+      const otherAmount = otherReserve / 10 ** otherToken.decimals;
+
+      // Calculate the price
+      return (otherToken.price * otherAmount) / chaAmount;
+    }
+    return null;
+  };
 
   const sortedPools = [...data.pools].sort((a, b) => {
+    if (sortBy === 'virtualChaPrice') {
+      const priceA = calculateVirtualChaPrice(a) || 0;
+      const priceB = calculateVirtualChaPrice(b) || 0;
+      return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
+    }
     const valueA = sortBy === 'tvl' ? a.tvl : a.volume24h;
     const valueB = sortBy === 'tvl' ? b.tvl : b.volume24h;
     return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
@@ -237,7 +265,7 @@ const PoolsInterface = ({ data }: Props) => {
   // Calculate total TVL
   const totalTVL = data.pools.reduce((sum, pool) => sum + pool.tvl, 0);
 
-  const handleSort = (newSortBy: 'tvl' | 'volume') => {
+  const handleSort = (newSortBy: 'tvl' | 'volume' | 'virtualChaPrice') => {
     if (newSortBy === sortBy) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -257,13 +285,42 @@ const PoolsInterface = ({ data }: Props) => {
     setSelectedPool(null);
   };
 
+  const handleRebalance = (pool: PoolInfo) => {
+    setSelectedPoolForRebalance(pool);
+    setIsRebalanceDialogOpen(true);
+  };
+
+  const handleCloseRebalanceDialog = () => {
+    setIsRebalanceDialogOpen(false);
+    setSelectedPoolForRebalance(null);
+  };
+
+  const handleEqualize = (pool: PoolInfo) => {
+    setSelectedPoolForEqualize(pool);
+    setIsEqualizeDialogOpen(true);
+  };
+
+  const handleCloseEqualizeDialog = () => {
+    setIsEqualizeDialogOpen(false);
+    setSelectedPoolForEqualize(null);
+  };
+
+  const canEqualize = (pool: PoolInfo) => {
+    return (
+      (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
+      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
+    );
+  };
+
   return (
-    <div className="max-w-screen-lg sm:mx-auto sm:px-4">
+    <div className="max-w-screen-2xl sm:mx-auto sm:px-4">
       <div className="mt-6">
         <div className="relative px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] overflow-hidden">
           <div className="flex items-center justify-between mb-4">
             <h1 className="text-2xl font-bold text-white/95">Liquidity Pools</h1>
-            <span className="px-3 text-lg font-light text-white border rounded-full border-primary bg-accent-foreground ">${numeral(totalTVL).format('0,0.00')}</span>
+            <span className="px-3 text-lg font-light text-white border rounded-full border-primary bg-accent-foreground ">
+              ${numeral(totalTVL).format('0,0.00')}
+            </span>
           </div>
 
           <div className="overflow-x-auto">
@@ -275,41 +332,61 @@ const PoolsInterface = ({ data }: Props) => {
                   <th className="py-2 cursor-pointer" onClick={() => handleSort('tvl')}>
                     TVL {sortBy === 'tvl' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
-                  <th className="py-2 cursor-pointer" onClick={() => handleSort('volume')}>
+                  <th className="py-2 cursor-pointer hidden" onClick={() => handleSort('volume')}>
                     Volume (24h) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
+                  </th>
+                  <th className="py-2 cursor-pointer" onClick={() => handleSort('virtualChaPrice')}>
+                    Virtual CHA Price {sortBy === 'virtualChaPrice' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="py-2 sr-only">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {sortedPools.map((pool) => (
-                  <tr key={pool.id} className="border-t border-gray-700/50">
-                    <td className="py-4">
-                      <div className="flex items-center">
-                        <Image src={pool.token0.image} alt={pool.token0.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                        <Image src={pool.token1.image} alt={pool.token1.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                        <span className="text-white">{pool.token0.symbol}/{pool.token1.symbol}</span>
-                      </div>
-                    </td>
-                    <td className="py-4 text-white">
-                      {numeral(pool.reserves.token0 / 10 ** pool.token0.decimals).format('0,0.00')} {pool.token0.symbol}
-                      <br />
-                      {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format('0,0.00')} {pool.token1.symbol}
-                    </td>
-                    <td className="py-4 text-white">${numeral(pool.tvl).format('0,0.00')}</td>
-                    <td className="py-4 text-white">${numeral(pool.volume24h).format('0,0')}</td>
-                    <td className="py-4">
-                      <div className="flex space-x-2">
-                        <Button size="sm" onClick={() => handleLiquidityAction(pool, true)}>
-                          <Plus className="w-4 h-4 mr-1" /> Add
-                        </Button>
-                        <Button size="sm" variant="outline" onClick={() => handleLiquidityAction(pool, false)}>
-                          <Minus className="w-4 h-4 mr-1" /> Remove
-                        </Button>
-                      </div>
-                    </td>
-                  </tr>
-                ))}
+                {sortedPools.map((pool) => {
+                  const virtualChaPrice = calculateVirtualChaPrice(pool);
+                  const referenceChaPrice = data.pools.find(p => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')?.token1.price || 0;
+                  const needsRebalance = virtualChaPrice !== null && Math.abs(virtualChaPrice - referenceChaPrice) / referenceChaPrice > 0.01; // 1% threshold
+                  const canEqualizePool = canEqualize(pool);
+
+                  return (
+                    <tr key={pool.id} className="border-t border-gray-700/50">
+                      <td className="py-4">
+                        <div className="flex items-center">
+                          <Image src={pool.token0.image} alt={pool.token0.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
+                          <Image src={pool.token1.image} alt={pool.token1.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
+                          <span className="text-white">{pool.token0.symbol}/{pool.token1.symbol}</span>
+                        </div>
+                      </td>
+                      <td className="py-4 text-white">
+                        {numeral(pool.reserves.token0 / 10 ** pool.token0.decimals).format('0,0.00')} {pool.token0.symbol}
+                        <br />
+                        {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format('0,0.00')} {pool.token1.symbol}
+                      </td>
+                      <td className="py-4 text-white">${numeral(pool.tvl).format('0,0.00')}</td>
+                      <td className="py-4 text-white hidden">${numeral(pool.volume24h).format('0,0')}</td>
+                      <td className="py-4 text-white text-center">
+                        {virtualChaPrice ? `$${numeral(virtualChaPrice).format('0,0.0000')}` : '-'}
+                      </td>
+                      <td className="py-4">
+                        <div className="flex space-x-2 justify-start">
+                          <Button size="sm" variant="outline" onClick={() => handleLiquidityAction(pool, true)}>
+                            <Plus className="w-4 h-4 mr-1" /> Add Liquidity
+                          </Button>
+                          {needsRebalance && (
+                            <Button size="sm" onClick={() => handleRebalance(pool)}>
+                              <RefreshCw className="w-4 h-4 mr-1" /> Rebalance
+                            </Button>
+                          )}
+                          {canEqualizePool && (
+                            <Button size="sm" variant="secondary" onClick={() => handleEqualize(pool)}>
+                              <Scale className="w-4 h-4 mr-1" /> Equalize
+                            </Button>
+                          )}
+                        </div>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
@@ -318,6 +395,21 @@ const PoolsInterface = ({ data }: Props) => {
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <LiquidityDialog pool={selectedPool} isAdd={isAddLiquidity} onClose={handleCloseDialog} />
+      </Dialog>
+
+      <Dialog open={isRebalanceDialogOpen} onOpenChange={setIsRebalanceDialogOpen}>
+        <RebalanceDialog
+          pool={selectedPoolForRebalance}
+          referenceChaPrice={data.pools.find(p => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')?.token1.price || 0}
+          onClose={handleCloseRebalanceDialog}
+        />
+      </Dialog>
+
+      <Dialog open={isEqualizeDialogOpen} onOpenChange={setIsEqualizeDialogOpen}>
+        <EqualizeDialog
+          pool={selectedPoolForEqualize}
+          onClose={handleCloseEqualizeDialog}
+        />
       </Dialog>
     </div>
   );
