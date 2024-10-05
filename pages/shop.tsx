@@ -38,7 +38,7 @@ export default function ShopPage() {
 
       const postConditions: any = []
       if (!charismaClaims.hasFreeClaim) {
-        postConditions.push(Pc.principal(stxAddress).willSendEq(100000000).ustx())
+        postConditions.push(Pc.principal(stxAddress).willSendEq(1000000).ustx())
       }
       openContractCall({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",

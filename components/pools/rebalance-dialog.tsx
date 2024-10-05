@@ -78,8 +78,8 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
         const tokenIn = trade.action === 'buy' ? (isChaToken0 ? pool.token1 : pool.token0) : (isChaToken0 ? pool.token0 : pool.token1);
         const tokenOut = trade.action === 'buy' ? (isChaToken0 ? pool.token0 : pool.token1) : (isChaToken0 ? pool.token1 : pool.token0);
 
-        const amountIn = BigInt(Math.floor(trade.sellAmount * 10 ** tokenIn.decimals));
-        const minAmountOut = BigInt(Math.floor((trade.action === 'buy' ? trade.amount : trade.receiveAmount) as any * 0.90 * 10 ** tokenOut.decimals)); // 1% slippage
+        const amountIn = BigInt(Math.floor(trade.sellAmount * 0.9 * 10 ** tokenIn.decimals));
+        const minAmountOut = BigInt(Math.floor((trade.action === 'buy' ? trade.amount : trade.receiveAmount) as any * 0.8 * 10 ** tokenOut.decimals)); // 1% slippage
 
         const postConditions = [
             // Condition for the token being sent

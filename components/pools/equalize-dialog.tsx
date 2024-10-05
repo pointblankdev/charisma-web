@@ -60,8 +60,8 @@ const EqualizeDialog: React.FC<EqualizeDialogProps> = ({ pool, onClose }) => {
         const sellToken = pool.token0.symbol === trade.sellToken ? pool.token0 : pool.token1;
         const buyToken = pool.token0.symbol === trade.buyToken ? pool.token0 : pool.token1;
 
-        const sellAmount = BigInt(Math.floor(trade.sellAmount * 10 ** sellToken.decimals));
-        const minBuyAmount = BigInt(Math.floor(trade.buyAmount * 0.90 * 10 ** buyToken.decimals)); // 1% slippage tolerance
+        const sellAmount = BigInt(Math.floor(trade.sellAmount * 0.9 * 10 ** sellToken.decimals));
+        const minBuyAmount = BigInt(Math.floor(trade.buyAmount * 0.8 * 10 ** buyToken.decimals)); // 1% slippage tolerance
 
         const postConditions = [
             // Condition for the token being sent
