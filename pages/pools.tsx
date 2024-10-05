@@ -403,10 +403,26 @@ const PoolsInterface = ({ data }: Props) => {
                         {virtualChaPrice ? `$${numeral(virtualChaPrice).format('0,0.0000')}` : '-'}
                       </td>
                       <td className="py-4 min-w-64">
-                        <div className="flex space-x-2 justify-start">
-                          <Button size="sm" variant="outline" onClick={() => handleLiquidityAction(pool, true)}>
-                            <Plus className="w-4 h-4 mr-1" /> Add Liquidity
-                          </Button>
+                        <div className="flex space-x-6 justify-start">
+                          <div className="flex rounded-md">
+                            <span className="px-4 py-1 text-sm font-medium border rounded-l-md border-gray-700/80 bg-background">
+                              Liquidity
+                            </span>
+                            <button
+                              type="button"
+                              className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-background hover:bg-accent/80 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                              onClick={() => handleLiquidityAction(pool, true)}
+                            >
+                              <Plus className="w-4 h-4" />
+                            </button>
+                            <button
+                              type="button"
+                              className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/80 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-indigo-500 focus:border-indigo-500"
+                              onClick={() => handleLiquidityAction(pool, false)}
+                            >
+                              <Minus className="w-4 h-4" />
+                            </button>
+                          </div>
                           {poolNeedsRebalance && (
                             <Button size="sm" onClick={() => handleRebalance(pool)}>
                               <RefreshCw className="w-4 h-4 mr-1" /> Rebalance

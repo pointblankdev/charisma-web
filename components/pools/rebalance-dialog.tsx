@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import {
     DialogContent,
     DialogDescription,
@@ -7,12 +7,14 @@ import {
     DialogTitle,
 } from '@components/ui/dialog';
 import { Button } from '@components/ui/button';
+import { Slider } from '@components/ui/slider';
 import { useOpenContractCall } from '@micro-stacks/react';
 import { contractPrincipalCV, uintCV } from 'micro-stacks/clarity';
 import { Pc, PostConditionMode } from "@stacks/transactions";
 import { useAccount } from '@micro-stacks/react';
 import numeral from 'numeral';
 import { PoolInfo } from 'pages/pools';
+import useWallet from '@lib/hooks/wallet-balance-provider';
 
 type RebalanceDialogProps = {
     pool: PoolInfo | null;
@@ -22,8 +24,11 @@ type RebalanceDialogProps = {
 
 const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPrice, onClose }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const [sliderValue, setSliderValue] = useState(90);
+    const [exceedsBalance, setExceedsBalance] = useState(false);
     const { openContractCall } = useOpenContractCall();
     const { stxAddress } = useAccount();
+    const { getBalanceByKey, balances, getKeyByContractAddress } = useWallet();
 
     const calculateTrade = useCallback(() => {
         if (!pool) return null;
@@ -47,9 +52,11 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
                 action: 'buy',
                 amount: chaToReceive,
                 sellAmount: otherToSell,
-                sellToken: otherToken.symbol,
-                buyToken: 'CHA',
-                currentPrice
+                sellToken: otherToken,
+                buyToken: chaToken,
+                currentPrice,
+                chaAmount,
+                otherAmount
             };
         } else {
             // Need to sell CHA
@@ -59,34 +66,68 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
                 action: 'sell',
                 amount: chaToSell,
                 sellAmount: chaToSell,
-                sellToken: 'CHA',
-                buyToken: otherToken.symbol,
+                sellToken: chaToken,
+                buyToken: otherToken,
                 receiveAmount: otherToReceive,
-                currentPrice
+                currentPrice,
+                chaAmount,
+                otherAmount
             };
         }
     }, [pool, referenceChaPrice]);
 
     const trade = calculateTrade();
 
+    const calculateSimulatedPrice = useCallback(() => {
+        if (!trade) return null;
+
+        const percentageToExecute = sliderValue / 100;
+        let newChaAmount, newOtherAmount;
+
+        if (trade.action === 'buy') {
+            newChaAmount = trade.chaAmount + (trade.amount * percentageToExecute);
+            newOtherAmount = trade.otherAmount - (trade.sellAmount * percentageToExecute);
+        } else {
+            newChaAmount = trade.chaAmount - (trade.amount * percentageToExecute);
+            newOtherAmount = trade.otherAmount + (trade.receiveAmount! * percentageToExecute);
+        }
+
+        const simulatedPrice = (trade.sellToken.price * newOtherAmount) / newChaAmount;
+
+        // Interpolate between current price and reference price based on slider value
+        return trade.currentPrice + (referenceChaPrice - trade.currentPrice) * (percentageToExecute);
+    }, [trade, sliderValue, referenceChaPrice]);
+
+    const simulatedPrice = calculateSimulatedPrice();
+
+    useEffect(() => {
+        if (trade && stxAddress) {
+            const tokenToSell = trade.sellToken;
+            let balance;
+            if (tokenToSell.symbol === 'STX') {
+                balance = Number(balances.stx.balance) / 10 ** tokenToSell.decimals;
+            } else {
+                balance = getBalanceByKey(getKeyByContractAddress(tokenToSell.contractAddress)) / 10 ** tokenToSell.decimals;
+            }
+            setExceedsBalance(trade.sellAmount * (sliderValue / 100) > balance);
+        }
+    }, [trade, stxAddress, sliderValue, balances, getBalanceByKey, getKeyByContractAddress]);
+
     const handleRebalance = useCallback(() => {
         if (!pool || !stxAddress || !trade) return;
 
         setIsLoading(true);
 
-        const isChaToken0 = pool.token0.symbol === 'CHA';
-        const tokenIn = trade.action === 'buy' ? (isChaToken0 ? pool.token1 : pool.token0) : (isChaToken0 ? pool.token0 : pool.token1);
-        const tokenOut = trade.action === 'buy' ? (isChaToken0 ? pool.token0 : pool.token1) : (isChaToken0 ? pool.token1 : pool.token0);
+        const tokenIn = trade.sellToken;
+        const tokenOut = trade.buyToken;
 
-        const amountIn = BigInt(Math.floor(trade.sellAmount * 0.9 * 10 ** tokenIn.decimals));
-        const minAmountOut = BigInt(Math.floor((trade.action === 'buy' ? trade.amount : trade.receiveAmount) as any * 0.8 * 10 ** tokenOut.decimals)); // 1% slippage
+        const amountIn = BigInt(Math.floor(trade.sellAmount * (sliderValue / 100) * 10 ** tokenIn.decimals));
+        const minAmountOut = BigInt(Math.floor((trade.action === 'buy' ? trade.amount : trade.receiveAmount) as any * (sliderValue / 100) * 0.8 * 10 ** tokenOut.decimals)); // 1% slippage
 
         const postConditions = [
-            // Condition for the token being sent
             Pc.principal(stxAddress)
                 .willSendLte(amountIn)
                 .ft(tokenIn.contractAddress as any, tokenIn.tokenId as string) as any,
-            // Condition for the token being received
             Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
                 .willSendGte(minAmountOut)
                 .ft(tokenOut.contractAddress as any, tokenOut.tokenId as string) as any,
@@ -114,7 +155,7 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
                 setIsLoading(false);
             },
         });
-    }, [pool, stxAddress, trade, openContractCall, onClose]);
+    }, [pool, stxAddress, trade, sliderValue, openContractCall, onClose]);
 
     if (!pool || !trade) return null;
 
@@ -129,15 +170,31 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
             <div className="py-4">
                 <p>Current CHA Price: ${numeral(trade.currentPrice).format('0,0.0000')}</p>
                 <p>Reference CHA Price: ${numeral(referenceChaPrice).format('0,0.0000')}</p>
-                <p>Required Action: {trade.action === 'buy' ? 'Buy' : 'Sell'} {numeral(trade.amount).format('0,0.0000')} CHA</p>
+                <p>Simulated Target Price: ${numeral(simulatedPrice).format('0,0.0000')}</p>
+                <p>Required Action: {trade.action === 'buy' ? 'Buy' : 'Sell'} {numeral(trade.amount * (sliderValue / 100)).format('0,0.0000')} CHA</p>
                 <p className="text-sm text-gray-500">
                     (This will {trade.action === 'buy' ? 'sell' : 'receive'} approximately{' '}
-                    {numeral(trade.action === 'buy' ? trade.sellAmount : trade.receiveAmount).format('0,0.0000')}{' '}
-                    {trade.action === 'buy' ? trade.sellToken : trade.buyToken})
+                    {numeral((trade.action === 'buy' ? trade.sellAmount : trade.receiveAmount) as any * (sliderValue / 100)).format('0,0.0000')}{' '}
+                    {trade.sellToken.symbol})
                 </p>
+                <div className="mt-4">
+                    <label className="block text-sm font-medium text-gray-200">Rebalance Amount (%)</label>
+                    <Slider
+                        value={[sliderValue]}
+                        onValueChange={(value) => setSliderValue(value[0])}
+                        max={100}
+                        step={1}
+                    />
+                    <span className="text-sm text-gray-300">{sliderValue}%</span>
+                </div>
+                {exceedsBalance && (
+                    <p className="mt-2 text-sm text-red-600">
+                        Warning: The selected amount exceeds your balance.
+                    </p>
+                )}
             </div>
             <DialogFooter>
-                <Button type="submit" onClick={handleRebalance} disabled={isLoading}>
+                <Button type="submit" onClick={handleRebalance} disabled={isLoading || exceedsBalance}>
                     {isLoading ? 'Rebalancing...' : 'Execute Rebalance'}
                 </Button>
             </DialogFooter>
