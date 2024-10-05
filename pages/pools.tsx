@@ -319,7 +319,7 @@ const PoolsInterface = ({ data }: Props) => {
       const priceRatio = token0Reserve / token1Reserve;
 
       // Check if the price ratio is outside the 90-110% range
-      return priceRatio < 0.9 || priceRatio > 1.1;
+      return priceRatio < 0.95 || priceRatio > 1;
     }
     return false;
   };
