@@ -12,7 +12,7 @@ import { kv } from '@vercel/kv';
 
 
 interface DataPoint {
-    time: UTCTimestamp;
+    time: UTCTimestamp | number;
     open: number;
     high: number;
     low: number;
@@ -22,6 +22,9 @@ interface DataPoint {
 
 interface PoolData {
     id: string;
+    symbol: string;
+    token0: string;
+    token1: string;
     data: DataPoint[];
 }
 
@@ -50,40 +53,32 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
     // Fetch the last 1000 swap events (adjust as needed)
     const poolData = await getPoolData(id)
 
+    const cleanPoolData = poolData.swaps.filter((swap: SwapEvent) => swap.price && swap.timestamp)
+
     // Parse and aggregate the data by day
-    const dailyData = poolData.swaps.reduce((acc, swap: SwapEvent) => {
-        const date = new Date(swap.timestamp);
-        const dayKey = startOfDay(date).getTime();
+    const data = cleanPoolData.reduce((acc: DataPoint[], swap: SwapEvent) => {
+        const day = startOfDay(swap.timestamp).getTime();
 
-        if (swap.price) {
-            if (!acc[dayKey]) {
-                acc[dayKey] = {
-                    time: format(dayKey, 'yyyy-MM-dd'),
-                    open: swap.price,
-                    high: swap.price,
-                    low: swap.price,
-                    close: swap.price,
-                    volume: swap.volume
-                };
-            } else {
-                acc[dayKey].high = Math.max(acc[dayKey].high, swap.price);
-                acc[dayKey].low = Math.min(acc[dayKey].low, swap.price);
-                acc[dayKey].close = swap.price;
-                acc[dayKey].volume += swap.volume;
-            }
+        const lastDataPoint = acc[acc.length - 1];
+        if (lastDataPoint && lastDataPoint.time === day) {
+            lastDataPoint.open = lastDataPoint.open || swap.price;
+            lastDataPoint.high = Math.max(lastDataPoint.high, swap.price);
+            lastDataPoint.low = Math.min(lastDataPoint.low, swap.price);
+            lastDataPoint.close = swap.price;
+            lastDataPoint.volume += swap.volume;
+        } else {
+            acc.push({
+                time: swap.timestamp,
+                open: swap.price,
+                high: swap.price,
+                low: swap.price,
+                close: swap.price,
+                volume: swap.volume,
+            });
         }
-        return acc;
-    }, {} as Record<number, {
-        time: string;
-        open: number;
-        high: number;
-        low: number;
-        close: number;
-        volume: number;
-    }>);
 
-    console.log(dailyData)
-    const data = Object.values(dailyData).sort((a, b) => parseISO(a.time).getTime() - parseISO(b.time).getTime());
+        return acc;
+    }, []);
 
 
     return {
@@ -92,7 +87,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
             symbol: meta.symbol,
             token0: meta.token0,
             token1: meta.token1,
-            data,
+            data: data,
         },
         revalidate: 60, // Revalidate every minute
     };
@@ -134,7 +129,7 @@ const calculateRSI = (data: DataPoint[], period: number) => {
     return rsi;
 };
 
-const PoolDetail: React.FC<PoolData> = ({ id, data }) => {
+const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) => {
     const chartContainerRef = useRef<HTMLDivElement>(null);
     const [currentPrice, setCurrentPrice] = useState<number>(0);
     const [priceChange, setPriceChange] = useState<number>(0);
@@ -205,7 +200,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data }) => {
                 wickDownColor: '#FF5252',
             });
 
-            candlestickSeries.setData(data);
+            candlestickSeries.setData(data as any);
 
             const volumeSeries = chart.addHistogramSeries({
                 color: '#26a69a',
@@ -220,35 +215,35 @@ const PoolDetail: React.FC<PoolData> = ({ id, data }) => {
                     time: d.time,
                     value: d.volume,
                     color: d.close > d.open ? 'rgba(76, 175, 80, 0.5)' : 'rgba(255, 82, 82, 0.5)',
-                }))
+                } as any))
             );
 
-            const smaData = calculateSMA(data, 20);
-            const smaSeries = chart.addLineSeries({
-                color: '#2962FF',
-                lineWidth: 2,
-                priceLineVisible: false,
-            });
-            smaSeries.setData(smaData);
+            // const smaData = calculateSMA(data, 20);
+            // const smaSeries = chart.addLineSeries({
+            //     color: '#2962FF',
+            //     lineWidth: 2,
+            //     priceLineVisible: false,
+            // });
+            // smaSeries.setData(smaData);
 
-            const rsiData = calculateRSI(data, 14);
-            const rsiSeries = chart.addLineSeries({
-                color: '#E91E63',
-                lineWidth: 2,
-                priceScaleId: 'right',
-                priceLineVisible: false,
-            });
-            rsiSeries.setData(rsiData);
+            // const rsiData = calculateRSI(data, 14);
+            // const rsiSeries = chart.addLineSeries({
+            //     color: '#E91E63',
+            //     lineWidth: 2,
+            //     priceScaleId: 'right',
+            //     priceLineVisible: false,
+            // });
+            // rsiSeries.setData(rsiData);
 
-            const rsiLevels = [30, 70];
-            rsiLevels.forEach(level => {
-                chart.addLineSeries({
-                    color: '#787B86',
-                    lineWidth: 1,
-                    lineStyle: LineStyle.Dashed,
-                    priceScaleId: 'right',
-                }).setData(rsiData.map(d => ({ time: d.time, value: level })));
-            });
+            // const rsiLevels = [30, 70];
+            // rsiLevels.forEach(level => {
+            //     chart.addLineSeries({
+            //         color: '#787B86',
+            //         lineWidth: 1,
+            //         lineStyle: LineStyle.Dashed,
+            //         priceScaleId: 'right',
+            //     }).setData(rsiData.map(d => ({ time: d.time, value: level })));
+            // });
 
             chart.timeScale().fitContent();
 
@@ -271,16 +266,16 @@ const PoolDetail: React.FC<PoolData> = ({ id, data }) => {
                     const dateStr = param.time
                     const price = param.seriesData?.get(candlestickSeries) || 0 as any;
                     const volume = param.seriesData?.get(volumeSeries) || {};
-                    const sma = param.seriesData?.get(smaSeries) || {};
-                    const rsi = param.seriesData?.get(rsiSeries) || {};
+                    // const sma = param.seriesData?.get(smaSeries) || {};
+                    // const rsi = param.seriesData?.get(rsiSeries) || {};
 
                     setTooltipData({
-                        time: dateStr,
-                        price: price ? `$${price.close.toFixed(2)}` : 'N/A',
-                        open: price ? `$${price.open.toFixed(2)}` : 'N/A',
-                        high: price ? `$${price.high.toFixed(2)}` : 'N/A',
-                        low: price ? `$${price.low.toFixed(2)}` : 'N/A',
-                        close: price ? `$${price.close.toFixed(2)}` : 'N/A',
+                        time: new Date(dateStr as any).toString(),
+                        price: price ? `${price.close.toFixed(2)} ${symbol}` : 'N/A',
+                        open: price ? `${price.open.toFixed(2)} ${symbol}` : 'N/A',
+                        high: price ? `${price.high.toFixed(2)} ${symbol}` : 'N/A',
+                        low: price ? `${price.low.toFixed(2)} ${symbol}` : 'N/A',
+                        close: price ? `${price.close.toFixed(2)} ${symbol}` : 'N/A',
                         // volume: volume ? volume.toFixed(0) : 'N/A',
                         // sma: sma ? sma.toFixed(2) : 'N/A',
                         // rsi: rsi ? rsi.toFixed(2) : 'N/A',
@@ -312,6 +307,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data }) => {
                     <div ref={chartContainerRef} style={{ width: '100%', height: '100%' }} />
                     <div style={{
                         position: 'absolute',
+                        zIndex: 1000,
                         top: 10,
                         left: 10,
                         background: 'rgba(0,0,0,0.7)',
@@ -319,10 +315,10 @@ const PoolDetail: React.FC<PoolData> = ({ id, data }) => {
                         borderRadius: '5px',
                         color: '#fff',
                     }}>
-                        <div>Pool: {id}</div>
+                        <div>Pool: {symbol}</div>
                         <div>Current Price: ${currentPrice.toFixed(2)}</div>
                         <div>24h Change: ${priceChange.toFixed(2)} ({((priceChange / data[0].close) * 100).toFixed(2)}%)</div>
-                        {/* <div>Last Update: {format(new Date(data[data.length - 1].time), 'HH:mm:ss')}</div> */}
+                        <div>Last Update: {format(new Date(data[data.length - 1].time), 'HH:mm:ss')}</div>
                     </div>
                     {tooltipVisible && (
                         <div style={{
