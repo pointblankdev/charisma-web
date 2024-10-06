@@ -196,8 +196,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
     // calculate all transaction volume 
     const volume = poolData.swaps.reduce((sum: any, swap: any) => {
-      console.log(swap['amt-in'], swap['amt-out'])
-      // i want to add up all the volume of each token so i have a total volume of each token
       sum.token0 += swap['token-in'] === swap.pool.token0 ? swap['amt-in'] : swap['amt-out']
       sum.token1 += swap['token-in'] === swap.pool.token1 ? swap['amt-in'] : swap['amt-out']
       return sum
@@ -280,7 +278,6 @@ const PoolsInterface = ({ data }: Props) => {
       const priceB = calculateVirtualChaPrice(b) || 0;
       return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
     }
-    console.log(a.token1)
     const valueA = sortBy === 'tvl' ? a.tvl : ((a.volume.token0 / (10 ** a.token0.decimals)) * a.token0.price) + ((a.volume.token1 / (10 ** a.token1.decimals)) * a.token1.price);
     const valueB = sortBy === 'tvl' ? b.tvl : ((b.volume.token0 / (10 ** b.token0.decimals)) * b.token0.price) + ((b.volume.token1 / (10 ** b.token1.decimals)) * b.token1.price);
     return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
