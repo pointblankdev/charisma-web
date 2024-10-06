@@ -1,5 +1,5 @@
 import id from "date-fns/locale/id/index.js";
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, getPoolData, removeLand, removeNftCollection, saveSwapEvent, setContractMetadata, setHadLandBefore, setLand, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata, setNftMetadata } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, clearSwapData, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, getPoolData, removeLand, removeNftCollection, saveSwapEvent, setContractMetadata, setHadLandBefore, setLand, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata, setNftMetadata } from "./kv";
 import { Land } from "./kv.types";
 import { kv } from "@vercel/kv";
 
@@ -618,5 +618,15 @@ describe('swap data storage', () => {
     it('should get pool data', async () => {
         const response = await getPoolData('1')
         console.log(response)
+    })
+
+    it('should clear swap data', async () => {
+        await clearSwapData('1')
+        await clearSwapData('2')
+        await clearSwapData('3')
+        await clearSwapData('4')
+        await clearSwapData('5')
+        await clearSwapData('6')
+        await clearSwapData('7')
     })
 })

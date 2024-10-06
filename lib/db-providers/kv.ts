@@ -441,3 +441,8 @@ export async function getPoolData(poolId: string, limit = 100): Promise<PoolData
     swaps: swaps.reverse() as any,  // Reverse to get chronological order
   };
 }
+
+export async function clearSwapData(poolId: string): Promise<void> {
+  // clear all items from list
+  await kv.lpop(`pool:${poolId}:swaps`, 999999);
+}
