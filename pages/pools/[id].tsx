@@ -26,15 +26,13 @@ interface PoolData {
 
 export const getStaticPaths: GetStaticPaths = () => {
     // Fetch all pool symbols
-    const poolSymbols = ["1", "2", "3"] //await kv.smembers('pool:symbols');
+    const poolIds = ["1", "2", "3"] //await kv.smembers('pool:ids');
 
     return {
         paths: [
-            { params: { id: '1' } },
             { params: { id: '2' } },
-            { params: { id: '3' } },
         ],
-        // paths: [{ params: { id: "1" } }],//poolSymbols.map(symbol => ({ params: { id: symbol } })),
+        // paths: poolIds.map(symbol => ({ params: { id: symbol } })),
         fallback: 'blocking',
     };
 };

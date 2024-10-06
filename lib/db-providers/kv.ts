@@ -425,6 +425,9 @@ export async function saveSwapEvent(event: any) {
     token1: event.value.pool.token1,
   });
 
+  // Add pool to the list of known pools
+  await kv.sadd('pool:ids', poolId);
+
 }
 
 export async function getPoolData(poolId: string, limit = 100): Promise<PoolData> {
