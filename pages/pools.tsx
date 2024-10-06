@@ -33,6 +33,7 @@ import QuickBuyDialog from '@components/pools/quick-buy-dialog';
 import LiquidityDialog from '@components/pools/add-liquidity';
 import Link from 'next/link';
 import { getPoolData } from '@lib/db-providers/kv';
+import { useGlobalState } from '@lib/hooks/global-state-context';
 
 export type TokenInfo = {
   symbol: string;
@@ -229,20 +230,46 @@ export default function PoolsPage({ data }: Props) {
     image: 'https://charisma.rocks/pools-screenshot.png',
   };
 
+  const { wallet } = useWallet();
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
         <div className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
-          <div className='my-2 font-light text-center text-muted-foreground/90'>View and manage liquidity pools on the Charisma DEX</div>
-          <PoolsInterface data={data} />
+          {wallet.experience.balance >= 1000 || wallet.redPilled ? (
+            <>
+              <div className='my-2 font-light text-center text-muted-foreground/90'>View and manage liquidity pools on the Charisma DEX</div>
+              <PoolsInterface data={data} wallet={wallet} />
+            </>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
+              <Card className="w-full max-w-lg p-6 text-center">
+                <h2 className="text-2xl font-bold mb-4">Access Restricted</h2>
+                <p className="mb-4">
+                  To view and manage liquidity pools, you need either:
+                </p>
+                <ul className="list-disc list-inside mb-4 text-left">
+                  <li className={wallet.experience.balance >= 1000 ? "text-green-500" : "text-red-500"}>
+                    At least 1000 Experience {wallet.experience.balance >= 1000 ? "✓" : "✗"}
+                  </li>
+                  <li className={wallet.redPilled ? "text-green-500" : "text-red-500"}>
+                    Own the Red Pill NFT {wallet.redPilled ? "✓" : "✗"}
+                  </li>
+                </ul>
+                <p className="text-sm text-muted-foreground">
+                  Continue using Charisma to gain more experience and unlock this feature.
+                </p>
+              </Card>
+            </div>
+          )}
         </div>
       </Layout>
     </Page>
   );
 }
 
-const PoolsInterface = ({ data }: Props) => {
+const PoolsInterface = ({ data, wallet }: any) => {
   const [sortBy, setSortBy] = useState<'tvl' | 'volume' | 'virtualChaPrice'>('tvl');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedPool, setSelectedPool] = useState<PoolInfo | null>(null);
@@ -272,7 +299,11 @@ const PoolsInterface = ({ data }: Props) => {
     return null;
   };
 
-  const sortedPools = [...data.pools].sort((a, b) => {
+  const filteredPools = data.pools.filter((pool: any) =>
+    !(pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA') || wallet.experience.balance >= 4000
+  );
+
+  const sortedPools = [...filteredPools].sort((a, b) => {
     if (sortBy === 'virtualChaPrice') {
       const priceA = calculateVirtualChaPrice(a) || 0;
       const priceB = calculateVirtualChaPrice(b) || 0;
@@ -284,7 +315,7 @@ const PoolsInterface = ({ data }: Props) => {
   });
 
   // Calculate total TVL
-  const totalTVL = data.pools.reduce((sum, pool) => sum + pool.tvl, 0);
+  const totalTVL = data.pools.reduce((sum: any, pool: any) => Number(sum) + Number(pool.tvl), 0);
 
   const handleSort = (newSortBy: 'tvl' | 'volume' | 'virtualChaPrice') => {
     if (newSortBy === sortBy) {
@@ -395,7 +426,7 @@ const PoolsInterface = ({ data }: Props) => {
               <tbody>
                 {sortedPools.map((pool) => {
                   const virtualChaPrice = calculateVirtualChaPrice(pool);
-                  const referenceChaPrice = data.pools.find(p => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')?.token1.price || 0;
+                  const referenceChaPrice = data.pools.find((p: any) => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')?.token1.price || 0;
                   const poolNeedsRebalance = needsRebalance(pool, virtualChaPrice, referenceChaPrice);
                   const canEqualizePool = canEqualize(pool);
                   const isStxCha = isStxChaPool(pool);
@@ -486,7 +517,7 @@ const PoolsInterface = ({ data }: Props) => {
       <Dialog open={isRebalanceDialogOpen} onOpenChange={setIsRebalanceDialogOpen}>
         <RebalanceDialog
           pool={selectedPoolForRebalance}
-          referenceChaPrice={data.pools.find(p => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')?.token1.price || 0}
+          referenceChaPrice={data.pools.find((p: any) => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')?.token1.price || 0}
           onClose={handleCloseRebalanceDialog}
         />
       </Dialog>

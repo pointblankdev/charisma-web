@@ -21,41 +21,21 @@ export const API_URL = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:
 
 export const NAVIGATION = [
   {
+    name: 'Wrap',
+    route: '/token'
+  },
+  {
     name: 'Swap',
     route: '/swap'
   },
   {
-    name: 'Wrap',
-    route: '/token'
+    name: 'Pools',
+    route: '/pools'
   },
-  // {
-  //   name: 'Shop',
-  //   route: '/shop'
-  // },
   {
-    name: 'Recovery',
+    name: 'Recover',
     route: '/recovery'
   },
-  // {
-  //   name: 'Swap',
-  //   route: '/swap'
-  // },
-  // {
-  //   name: 'Staking',
-  //   route: '/staking'
-  // },
-  // {
-  //   name: 'Rewards',
-  //   route: '/quests'
-  // },
-  // {
-  //   name: 'Leaderboard',
-  //   route: '/leaderboard'
-  // },
-  // {
-  //   name: 'Portfolio',
-  //   route: '/portfolio'
-  // },
 ];
 
 export type TicketGenerationState = 'default' | 'loading';
