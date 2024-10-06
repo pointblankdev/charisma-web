@@ -404,7 +404,7 @@ const PoolsInterface = ({ data }: Props) => {
                         {virtualChaPrice ? `$${numeral(virtualChaPrice).format('0,0.0000')}` : '-'}
                       </td>
                       <td className="py-4 min-w-64">
-                        <div className="flex space-x-6 justify-start">
+                        <div className="flex space-x-6 justify-between">
                           <div className="flex rounded-md">
                             <span className="px-4 py-1 text-sm font-medium border border-r-0 rounded-l-md border-gray-700/80 bg-background">
                               Liquidity
