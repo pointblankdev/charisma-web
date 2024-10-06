@@ -316,8 +316,8 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                         color: '#fff',
                     }}>
                         <div>Pool: {symbol}</div>
-                        <div>Current Price: ${currentPrice.toFixed(2)}</div>
-                        <div>24h Change: ${priceChange.toFixed(2)} ({((priceChange / data[0].close) * 100).toFixed(2)}%)</div>
+                        <div>Current Price: {currentPrice.toFixed(2)}</div>
+                        <div>24h Change: {priceChange.toFixed(2)} ({((priceChange / data[0].close) * 100).toFixed(2)}%)</div>
                         <div>Last Update: {format(new Date(data[data.length - 1].time), 'HH:mm:ss')}</div>
                     </div>
                     {tooltipVisible && (
