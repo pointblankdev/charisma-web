@@ -153,8 +153,8 @@ const StatsSection = () => {
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='flex items-center space-x-0'>
-            <div className='text-4xl font-semibold -mr-4'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
-            <Image src={dmgLogoPulse} alt='DMG Logo' width={64} height={64} className='inline w-10 h-10 rounded-full translate-x-3' />
+            <div className='text-4xl font-semibold -mr-0'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
+            <Image src={charismaSquare} alt='DMG Logo' width={64} height={64} className='inline w-7 h-7 rounded-full translate-x-1.5 translate-y-0.5' />
           </div>
           <div className='text-muted/80'>Token Wrap Reward</div>
         </div>
@@ -267,7 +267,7 @@ const WrappingSection = ({ data }: Props) => {
           </div>
           <div className='flex items-center mt-2 space-x-1 font-bold'>
             <div>{numeral(wallet.charisma.balance).format('0.00a')}</div>
-            <div className='pb-1'><Image src={dmgLogo} alt='DMG Logo' width={20} height={20} className='inline' /></div>
+            <div className='pb-1'><Image src={wallet.charisma.balance > 0 ? dmgLogoPulse : dmgLogo} alt='DMG Logo' width={20} height={20} className='inline' /></div>
           </div>
         </div>
         <div className='w-full'>
