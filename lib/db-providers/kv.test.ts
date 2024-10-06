@@ -616,7 +616,7 @@ describe('swap data storage', () => {
     })
 
     it('should get pool data', async () => {
-        const response = await getPoolData('2')
+        const response = await getPoolData('1')
         console.log(response)
     })
 })
