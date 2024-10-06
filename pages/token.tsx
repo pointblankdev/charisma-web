@@ -156,11 +156,11 @@ const StatsSection = () => {
             <div className='text-4xl font-semibold -mr-0'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
             <Image src={charismaSquare} alt='DMG Logo' width={64} height={64} className='inline w-7 h-7 rounded-full translate-x-1.5 translate-y-0.5' />
           </div>
-          <div className='text-muted/80'>Token Wrap Reward</div>
+          <div className='text-muted/80'>Token Reward</div>
         </div>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{stat2Message}</div>
-          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Wrap Capacity Utilization' : 'Blocks per Transaction'}</div>
+          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Capacity Utilization' : 'Blocks per Transaction'}</div>
         </div>
         {!isUnlocked && <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.transactionsAvailable}</div>
