@@ -348,7 +348,7 @@ const PoolsInterface = ({ data }: Props) => {
 
 
   return (
-    <div className="max-w-screen-3xl sm:mx-auto sm:px-4">
+    <div className="sm:mx-auto sm:px-4">
       <div className="mt-6">
         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
           <div className="flex items-center justify-between mb-4 px-4 sm:px-0">
@@ -406,7 +406,7 @@ const PoolsInterface = ({ data }: Props) => {
                       <td className="py-4 min-w-64">
                         <div className="flex space-x-6 justify-between">
                           <div className="flex rounded-md">
-                            <span className="px-4 py-1 text-sm font-medium border border-r-0 rounded-l-md border-gray-700/80 bg-background">
+                            <span className="px-4 py-1 text-sm font-medium border border-r-0 rounded-l-md border-gray-700/80 bg-background leading-7">
                               Liquidity
                             </span>
                             <button
@@ -435,13 +435,13 @@ const PoolsInterface = ({ data }: Props) => {
                             </Button>
                           )}
                           {isStxCha && (
-                            <Button size="sm" variant="secondary" onClick={() => handleQuickBuy(pool)}>
+                            <Button size="sm" variant="secondary" onClick={() => handleQuickBuy(pool)} className='whitespace-nowrap'>
                               <ShoppingCart className="w-4 h-4 mr-1" /> Quick Buy
                             </Button>
                           )}
 
                           <Link href={`/pools/${pool.id}`} passHref>
-                            <Button variant="link">View Chart</Button>
+                            <Button variant="link" className='whitespace-nowrap'>View Chart</Button>
                           </Link>
                         </div>
                       </td>
