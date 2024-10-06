@@ -130,12 +130,10 @@ const HeroSection = () => {
           <div className='mt-4 text-lg grow text-secondary/80'>Introducing the new Charisma token– stability, security, swaps.</div>
           <div className='mt-8 text-md text-secondary/80'>
             The token contract limits how many tokens can be wrapped per transaction, and how many wrapping transactions can occur in a set of blocks.
-            This ensures fair access for all users and prevents supply inflation.
           </div>
-          {/* <div className='mt-8 text-md text-secondary/80'>
-            You can wrap your governance tokens into the new Charisma token only if you hold a Red Pill NFT.
-            Once wrapped, you can swap tokens on any compatible DEX or exchange.
-          </div> */}
+          <div className='mt-8 text-md text-secondary/80'>
+            This ensures fair access for all users and adds an exciting element of competition to token supply issuance.
+          </div>
         </div>
       </div>
     </div>
