@@ -144,6 +144,7 @@ const StatsSection = () => {
   const { charismaTokenStats } = useGlobalState()
 
   const isUnlocked = charismaTokenStats.blocksUntilUnlock <= 1;
+  const stat2Message = charismaTokenStats.blocksPerTransaction === 1 ? charismaTokenStats.transactionsAvailable === 0 ? '100%' : (Number((1 / (Number(charismaTokenStats.transactionsAvailable) + 1))) * 100).toFixed(2) + "%" : charismaTokenStats.blocksPerTransaction
 
   return (
     <div>
@@ -158,8 +159,8 @@ const StatsSection = () => {
           <div className='text-muted/80'>Token Wrap Reward</div>
         </div>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
-          <div className='text-4xl font-semibold'>{charismaTokenStats.blocksPerTransaction}</div>
-          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Winner per Block' : 'Blocks per Transaction'}</div>
+          <div className='text-4xl font-semibold'>{stat2Message}</div>
+          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Wrap Capacity Utilization' : 'Blocks per Transaction'}</div>
         </div>
         {!isUnlocked && <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.transactionsAvailable}</div>
