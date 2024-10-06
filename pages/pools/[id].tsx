@@ -9,7 +9,7 @@ import { startOfDay, parseISO, format } from 'date-fns';
 import { createChart, ColorType, UTCTimestamp, IChartApi, ISeriesApi, LineStyle, CrosshairMode } from 'lightweight-charts';
 import { getPoolData } from '@lib/db-providers/kv';
 import { kv } from '@vercel/kv';
-import _ from 'lodash';
+import _, { last } from 'lodash';
 import velarApi from '@lib/velar-api';
 import { callReadOnlyFunction, principalCV } from '@stacks/transactions';
 import cmc from '@lib/cmc-api';
@@ -128,6 +128,27 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
         }
     }
 
+    const getDecimalsByContract = (contract: string) => {
+        switch (contract) {
+            case 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx':
+                return 6
+            case 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token':
+                return 6
+            case 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token':
+                return 6
+            case 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo':
+                return 6
+            case 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh':
+                return 6
+            case 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo':
+                return 6
+            case 'ORDI':
+                return 8
+            default:
+                return 0;
+        }
+    }
+
     // Fetch pool metadata
     const meta = await kv.hgetall(`pool:${id}:meta`);
 
@@ -142,24 +163,27 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
 
     // Parse and aggregate the data by block height
 
-    const groupedSwaps = _.groupBy(poolData.swaps, (swap: any) => swap.pool['block-height']);
+    const groupedSwaps = _.groupBy(poolData.swaps, (swap: any) => Math.floor(swap.pool['block-height'] / (6)));
 
     // loop through keys and create a data point for each block height
+    let lastClose = 0
     const data: DataPoint[] = Object.keys(groupedSwaps).map((blockHeight) => {
-        const swaps = groupedSwaps[blockHeight];
+        const swaps = _.sortBy(groupedSwaps[blockHeight], 'timestamp', 'asc');
         const prices = swaps.map((swap: any) => poolData.token1 === swap['token-out'] ? swap['amt-in-adjusted'] / swap['amt-out'] : swap['amt-out'] / swap['amt-in-adjusted']);
         const volume = swaps.reduce((acc: number, swap: any) => Number(acc) + (
-            Number(swap['amt-in']) * getPriceByContract(swap['token-in'])
-            + Number(swap['amt-out']) * getPriceByContract(swap['token-out'])
+            Number(swap['amt-in']) / 10 ** getDecimalsByContract(swap['token-in']) * getPriceByContract(swap['token-in'])
+            + Number(swap['amt-out']) / 10 ** getDecimalsByContract(swap['token-out']) * getPriceByContract(swap['token-out'])
         ), 0);
-        return {
+        const dataPoint = {
             time: Number(blockHeight),
-            open: prices[0],
+            open: lastClose,
             high: Math.max(...prices),
             low: Math.min(...prices),
             close: prices[prices.length - 1],
             volume,
-        };
+        }
+        lastClose = dataPoint.close
+        return dataPoint;
     });
 
 
@@ -267,25 +291,31 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 },
                 crosshair: {
                     mode: CrosshairMode.Normal,
+                    vertLine: {
+                        labelVisible: false,
+                    }
+
                 },
                 timeScale: {
-                    timeVisible: true,
+                    timeVisible: false,
                     secondsVisible: false,
+                    tickMarkFormatter: (time: number) => `${time}`,
                 },
             });
 
             const candlestickSeries = chart.addCandlestickSeries({
                 upColor: '#c1121f',
-                downColor: '#12C1B4',
-                borderVisible: false,
+                downColor: '#0e0e10',
+                borderVisible: true,
                 wickUpColor: '#c1121f',
-                wickDownColor: '#12C1B4',
+                wickDownColor: '#0e0e10',
+                borderColor: '#333333'
             });
 
             candlestickSeries.setData(data as any);
 
             const volumeSeries = chart.addHistogramSeries({
-                color: '#26a69a',
+                color: '#c1121f',
                 priceFormat: {
                     type: 'volume',
                 },
@@ -296,8 +326,8 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 data.map(d => ({
                     time: d.time,
                     value: d.volume,
-                    color: d.close > d.open ? 'rgba(76, 175, 80, 0.5)' : 'rgba(255, 82, 82, 0.5)',
-                } as any))
+                    color: d.close > d.open ? '#c1121f20' : '#0e0e1020',
+                }))
             );
 
             // const smaData = calculateSMA(data, 20);
@@ -345,20 +375,20 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 ) {
                     setTooltipVisible(false);
                 } else {
-                    const dateStr = param.time
+                    const blockHeight = param.time;
                     const price = param.seriesData?.get(candlestickSeries) || 0 as any;
-                    const volume = param.seriesData?.get(volumeSeries) || {};
+                    const volume = param.seriesData?.get(volumeSeries) as any;
                     // const sma = param.seriesData?.get(smaSeries) || {};
                     // const rsi = param.seriesData?.get(rsiSeries) || {};
 
                     setTooltipData({
-                        time: new Date(dateStr as any).toString(),
+                        time: `Block ${blockHeight}`,
                         price: price ? `${price.close.toFixed(2)} ${symbol}` : 'N/A',
                         open: price ? `${price.open.toFixed(2)} ${symbol}` : 'N/A',
                         high: price ? `${price.high.toFixed(2)} ${symbol}` : 'N/A',
                         low: price ? `${price.low.toFixed(2)} ${symbol}` : 'N/A',
                         close: price ? `${price.close.toFixed(2)} ${symbol}` : 'N/A',
-                        // volume: volume ? volume.toFixed(0) : 'N/A',
+                        volume: volume ? `$${volume.value!.toFixed(2)}` : 'N/A',
                         // sma: sma ? sma.toFixed(2) : 'N/A',
                         // rsi: rsi ? rsi.toFixed(2) : 'N/A',
                     } as any);
@@ -385,7 +415,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 64px)' }}>
+                <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 105px)' }}>
                     <div ref={chartContainerRef} style={{ width: '100%', height: '100%' }} />
                     <div style={{
                         position: 'absolute',
@@ -398,9 +428,9 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                         color: '#fff',
                     }}>
                         <div>Pool: {symbol}</div>
-                        <div>Current Price: {currentPrice.toFixed(2)}</div>
+                        <div>Current Price: {currentPrice.toFixed(2)} {symbol.split('-')[0]}</div>
                         <div>24h Change: {priceChange.toFixed(2)} ({((priceChange / data[0].close) * 100).toFixed(2)}%)</div>
-                        <div>Last Update: {format(new Date(data[data.length - 1].time), 'HH:mm:ss')}</div>
+                        <div>Last Update: Block {data[data.length - 1].time}</div>
                     </div>
                     {tooltipVisible && (
                         <div style={{
@@ -421,9 +451,9 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                             <div>High: {tooltipData.high}</div>
                             <div>Low: {tooltipData.low}</div>
                             <div>Close: {tooltipData.close}</div>
-                            {/* <div>Volume: {tooltipData.volume}</div>
-                            <div>SMA(20): {tooltipData.sma}</div>
-                            <div>RSI(14): {tooltipData.rsi}</div> */}
+                            <div>Volume: {tooltipData.volume}</div>
+                            {/* <div>SMA(20): {tooltipData.sma}</div> */}
+                            {/* <div>RSI(14): {tooltipData.rsi}</div> */}
                         </div>
                     )}
                 </div>
