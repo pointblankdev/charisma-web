@@ -33,7 +33,7 @@ import QuickBuyDialog from '@components/pools/quick-buy-dialog';
 import LiquidityDialog from '@components/pools/add-liquidity';
 import Link from 'next/link';
 import { getPoolData } from '@lib/db-providers/kv';
-import { useGlobalState } from '@lib/hooks/global-state-context';
+import { motion } from 'framer-motion';
 
 export type TokenInfo = {
   symbol: string;
@@ -232,12 +232,20 @@ export default function PoolsPage({ data }: Props) {
 
   const { wallet } = useWallet();
 
+  // implement loading check
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    if (wallet.redPilled) setLoading(false);
+  }, [wallet]);
+
+  const isAuthorized = wallet.experience.balance >= 1000 || wallet.redPilled;
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
-          {wallet.experience.balance >= 1000 || wallet.redPilled ? (
+        {!loading && <motion.div initial="hidden" animate="visible" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
+          {isAuthorized ? (
             <>
               <div className='my-2 font-light text-center text-muted-foreground/90'>View and manage liquidity pools on the Charisma DEX</div>
               <PoolsInterface data={data} wallet={wallet} />
@@ -263,7 +271,7 @@ export default function PoolsPage({ data }: Props) {
               </Card>
             </div>
           )}
-        </div>
+        </motion.div>}
       </Layout>
     </Page>
   );
