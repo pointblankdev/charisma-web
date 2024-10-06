@@ -129,6 +129,11 @@ const CharismaRecoveryPlan = () => {
                         This priority access for Blue Pill holders aims to help restore user balances efficiently, while still allowing Red Pill holders eventual access to recover their tokens.
                     </p>
                 </div>
+                <div className="mt-4">
+                    <p className="leading-relaxed text-gray-200">
+                        <strong>Please note:</strong> Not everyone has a free claim to the Charisma Pill NFT. Only users who held sCHA (the protocol burn token) at the time of the attack are eligible for a free claim. All other users can still claim a Charisma NFT for 100 STX, which is donated to redemptions.
+                    </p>
+                </div>
             </section>
 
             <hr className="border-t border-white/10" />

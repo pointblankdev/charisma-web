@@ -16,6 +16,7 @@ import cmc from '@lib/cmc-api';
 
 
 interface DataPoint {
+    ts: Date;
     time: UTCTimestamp | number;
     open: number;
     high: number;
@@ -174,6 +175,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
             + Number(swap['amt-out']) / 10 ** getDecimalsByContract(swap['token-out']) * getPriceByContract(swap['token-out'])
         ), 0);
         const dataPoint = {
+            ts: swaps[0].timestamp,
             time: Number(blockHeight),
             open: lastClose,
             high: Math.max(...prices),
@@ -323,6 +325,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
 
             volumeSeries.setData(
                 data.map(d => ({
+                    ts: d.ts,
                     time: d.time,
                     value: d.volume,
                     color: d.close > d.open ? '#c1121f20' : '#0e0e1080',
@@ -379,8 +382,9 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                     const volume = param.seriesData?.get(volumeSeries) as any;
                     // const sma = param.seriesData?.get(smaSeries) || {};
                     // const rsi = param.seriesData?.get(rsiSeries) || {};
-
+                    console.log(param)
                     setTooltipData({
+                        // ts: param
                         time: `${blockHeight}`,
                         price: price ? `${price.close.toFixed(2)} ${symbol}` : 'N/A',
                         open: price ? `${price.open.toFixed(2)} ${symbol}` : 'N/A',
