@@ -384,7 +384,7 @@ const PoolsInterface = ({ data }: Props) => {
                     TVL {sortBy === 'tvl' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="py-2 cursor-pointer text-center" onClick={() => handleSort('volume')}>
-                    Volume (Total) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
+                    Trading Volume (Total) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="py-2 cursor-pointer hidden sm:flex" onClick={() => handleSort('virtualChaPrice')}>
                     Virtual CHA Price {sortBy === 'virtualChaPrice' && <ArrowUpDown className="inline ml-1" size={16} />}
