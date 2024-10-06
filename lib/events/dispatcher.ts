@@ -414,10 +414,29 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 try {
                     await saveSwapEvent(event.data)
                 } catch (error) {
-                    await Logger.error(event.data.value)
+                    await Logger.error(event.data)
                 }
+            } else if (event.data.value.op === 'mint') {
+
+                builder.addField({
+                    name: `${symbol} ${event.data.value.op}`,
+                    value: JSON.stringify(event.data.value).slice(0, 1200)
+                });
+            } else if (event.data.value.op === 'burn') {
+
+                builder.addField({
+                    name: `${symbol} ${event.data.value.op}`,
+                    value: JSON.stringify(event.data.value).slice(0, 1200)
+                });
+            } else if (event.data.value.op === 'create') {
+
+                builder.addField({
+                    name: `${symbol} ${event.data.value.op}`,
+                    value: JSON.stringify(event.data.value).slice(0, 1200)
+                });
             } else {
-                console.error('Unknown charisma swap event:', event.data)
+
+                console.error('Unknown Charisma Swap Event:', event.data)
                 builder.addField({
                     name: `${symbol} ${event.type}`,
                     value: JSON.stringify(event.data).slice(0, 1200)
