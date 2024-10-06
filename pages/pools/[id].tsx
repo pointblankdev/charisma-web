@@ -7,8 +7,12 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { startOfDay, parseISO, format } from 'date-fns';
 import { createChart, ColorType, UTCTimestamp, IChartApi, ISeriesApi, LineStyle, CrosshairMode } from 'lightweight-charts';
-import { getPoolData, SwapEvent } from '@lib/db-providers/kv';
+import { getPoolData } from '@lib/db-providers/kv';
 import { kv } from '@vercel/kv';
+import _ from 'lodash';
+import velarApi from '@lib/velar-api';
+import { callReadOnlyFunction, principalCV } from '@stacks/transactions';
+import cmc from '@lib/cmc-api';
 
 
 interface DataPoint {
@@ -25,7 +29,55 @@ interface PoolData {
     symbol: string;
     token0: string;
     token1: string;
-    data: DataPoint[];
+    data: any[];
+}
+
+async function getTokenPrices(): Promise<{ [key: string]: number }> {
+    const prices = await velarApi.tokens('all');
+    return prices.reduce((acc: { [key: string]: number }, token: any) => {
+        acc[token.symbol] = token.price;
+        return acc;
+    }, {});
+}
+
+async function getPoolReserves(poolId: number, token0Address: string, token1Address: string): Promise<{ token0: number; token1: number }> {
+    try {
+        const result: any = await callReadOnlyFunction({
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: "univ2-core",
+            functionName: "lookup-pool",
+            functionArgs: [
+                principalCV(token0Address),
+                principalCV(token1Address)
+            ],
+            senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        });
+
+        if (result.value) {
+            const poolInfo = result.value.data.pool;
+            const reserve0 = Number(poolInfo.data.reserve0.value);
+            const reserve1 = Number(poolInfo.data.reserve1.value);
+            return { token0: reserve0, token1: reserve1 };
+        } else {
+            console.error("Pool not found");
+            return { token0: 0, token1: 0 };
+        }
+    } catch (error) {
+        console.error("Error fetching reserves:", error);
+        return { token0: 0, token1: 0 };
+    }
+}
+
+async function calculateChaPrice(stxPrice: number): Promise<number> {
+    const stxChaReserves = await getPoolReserves(
+        4,
+        "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx",
+        "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token"
+    );
+
+    // Calculate CHA price based on STX-CHA pool reserves
+    const chaPrice = (stxPrice * stxChaReserves.token0) / stxChaReserves.token1;
+    return chaPrice;
 }
 
 export const getStaticPaths: GetStaticPaths = async () => {
@@ -41,6 +93,41 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
     const id = params?.id as string;
 
+    // Fetch token prices
+    const tokenPrices = await getTokenPrices();
+    const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH'] })
+
+    // Calculate CHA price
+    const chaPrice = await calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price);
+    tokenPrices['CHA'] = chaPrice;
+
+    // Calculate IOU prices
+    tokenPrices['iouWELSH'] = cmcPriceData.data['WELSH'].quote.USD.price;
+    tokenPrices['iouROO'] = tokenPrices['$ROO'];
+
+    tokenPrices['ORDI'] = cmcPriceData.data['ORDI'].quote.USD.price
+
+    const getPriceByContract = (contract: string) => {
+        switch (contract) {
+            case 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx':
+                return tokenPrices['STX']
+            case 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token':
+                return tokenPrices['CHA']
+            case 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token':
+                return tokenPrices['WELSH']
+            case 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo':
+                return tokenPrices['$ROO']
+            case 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh':
+                return tokenPrices['iouWELSH']
+            case 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo':
+                return tokenPrices['iouROO']
+            case 'ORDI':
+                return tokenPrices['ORDI']
+            default:
+                return 0;
+        }
+    }
+
     // Fetch pool metadata
     const meta = await kv.hgetall(`pool:${id}:meta`);
 
@@ -53,32 +140,27 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
     // Fetch the last 1000 swap events (adjust as needed)
     const poolData = await getPoolData(id)
 
-    const cleanPoolData = poolData.swaps.filter((swap: SwapEvent) => swap.price && swap.timestamp)
+    // Parse and aggregate the data by block height
 
-    // Parse and aggregate the data by day
-    const data = cleanPoolData.reduce((acc: DataPoint[], swap: SwapEvent) => {
-        const day = startOfDay(swap.timestamp).getTime();
+    const groupedSwaps = _.groupBy(poolData.swaps, (swap: any) => swap.pool['block-height']);
 
-        const lastDataPoint = acc[acc.length - 1];
-        if (lastDataPoint && lastDataPoint.time === day) {
-            lastDataPoint.open = lastDataPoint.open || swap.price;
-            lastDataPoint.high = Math.max(lastDataPoint.high, swap.price);
-            lastDataPoint.low = Math.min(lastDataPoint.low, swap.price);
-            lastDataPoint.close = swap.price;
-            lastDataPoint.volume += swap.volume;
-        } else {
-            acc.push({
-                time: swap.timestamp,
-                open: swap.price,
-                high: swap.price,
-                low: swap.price,
-                close: swap.price,
-                volume: swap.volume,
-            });
-        }
-
-        return acc;
-    }, []);
+    // loop through keys and create a data point for each block height
+    const data: DataPoint[] = Object.keys(groupedSwaps).map((blockHeight) => {
+        const swaps = groupedSwaps[blockHeight];
+        const prices = swaps.map((swap: any) => poolData.token1 === swap['token-out'] ? swap['amt-in-adjusted'] / swap['amt-out'] : swap['amt-out'] / swap['amt-in-adjusted']);
+        const volume = swaps.reduce((acc: number, swap: any) => Number(acc) + (
+            Number(swap['amt-in']) * getPriceByContract(swap['token-in'])
+            + Number(swap['amt-out']) * getPriceByContract(swap['token-out'])
+        ), 0);
+        return {
+            time: Number(blockHeight),
+            open: prices[0],
+            high: Math.max(...prices),
+            low: Math.min(...prices),
+            close: prices[prices.length - 1],
+            volume,
+        };
+    });
 
 
     return {
@@ -87,7 +169,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
             symbol: meta.symbol,
             token0: meta.token0,
             token1: meta.token1,
-            data: data,
+            data,
         },
         revalidate: 60, // Revalidate every minute
     };

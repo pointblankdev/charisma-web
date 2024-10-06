@@ -412,7 +412,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 });
 
                 try {
-                    await saveSwapEvent(event.data)
+                    await saveSwapEvent(event.data.value)
                 } catch (error) {
                     await Logger.error(event.data)
                 }

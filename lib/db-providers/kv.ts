@@ -360,69 +360,29 @@ export async function setVoteData(proposal: string, userAddress: string, data: a
   await kv.set(`vote-data:${proposal}:${userAddress}`, data);
 }
 
-// swap events to timeseries data
-
-export interface SwapEvent {
-  timestamp: number;
-  poolId: string;
-  amountIn: number;
-  amountOut: number;
-  tokenIn: string;
-  tokenOut: string;
-  price: number;
-  volume: number;
-  reserve0: number;
-  reserve1: number;
-  fees: {
-    lps: number;
-    protocol: number;
-    rest: number;
-    share: number;
-  };
-}
+// swap event timeseries data
 
 interface PoolData {
   symbol: string;
   token0: string;
   token1: string;
-  swaps: SwapEvent[];
+  swaps: any[];
 }
 
-
 export async function saveSwapEvent(event: any) {
-  const poolId = event.value['id'];
+  const poolId = event['id'];
   const timestamp = Date.now();
 
-  const swapEvent: SwapEvent = {
-    timestamp,
-    poolId: poolId,
-    amountIn: Number(event.value['amt-in']),
-    amountOut: Number(event.value['amt-out']),
-    tokenIn: event.value['token-in'],
-    tokenOut: event.value['token-out'],
-    price: Number(event.value['amt-out']) / Number(event.value['amt-in']),
-    volume: Number(event.value['amt-in']),
-    reserve0: Number(event.value.pool.reserve0),
-    reserve1: Number(event.value.pool.reserve1),
-    fees: {
-      lps: Number(event.value['amt-fee-lps']),
-      protocol: Number(event.value['amt-fee-protocol']),
-      rest: Number(event.value['amt-fee-rest']),
-      share: Number(event.value['amt-fee-share']),
-    }
-  };
+  const swapEvent = { timestamp, ...event }
 
-  // Append the new swap event to the pool's data
-  await kv.lpush(`pool:${poolId}:swaps`, JSON.stringify(swapEvent));
-
-  // Optionally, keep only the last N swap events to limit storage
-  await kv.ltrim(`pool:${poolId}:swaps`, 0, 99999);  // Keep last 100,000 events
+  // store the swap event in a sorted set
+  await kv.zadd(`pool:${poolId}:swaps`, { score: swapEvent.pool['block-height'], member: swapEvent });
 
   // Update pool metadata if needed
   await kv.hset(`pool:${poolId}:meta`, {
-    symbol: event.value.pool.symbol,
-    token0: event.value.pool.token0,
-    token1: event.value.pool.token1,
+    symbol: event.pool.symbol,
+    token0: event.pool.token0,
+    token1: event.pool.token1,
   });
 
   // Add pool to the list of known pools
@@ -430,19 +390,20 @@ export async function saveSwapEvent(event: any) {
 
 }
 
-export async function getPoolData(poolId: string, limit = 100): Promise<PoolData> {
-  const swaps = await kv.lrange(`pool:${poolId}:swaps`, 0, limit - 1);
+export async function getPoolData(poolId: string): Promise<PoolData> {
+
+  const swaps = await kv.zrange(`pool:${poolId}:swaps`, 0, 999999, { rev: true });
   const meta: any = await kv.hgetall(`pool:${poolId}:meta`);
 
   return {
     symbol: meta?.symbol,
     token0: meta?.token0,
     token1: meta?.token1,
-    swaps: swaps.reverse() as any,  // Reverse to get chronological order
+    swaps: swaps,
   };
 }
 
 export async function clearSwapData(poolId: string): Promise<void> {
   // clear all items from list
-  await kv.lpop(`pool:${poolId}:swaps`, 999999);
+  await kv.del(`pool:${poolId}:swaps`);
 }
