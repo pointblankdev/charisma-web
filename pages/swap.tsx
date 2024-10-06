@@ -692,7 +692,7 @@ const SwapInterface = ({ data }: Props) => {
 
           <div className="mb-2 space-y-4">
             {/* From Section */}
-            <div className="p-4 rounded-lg shadow-xl shadow-primary/10">
+            <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-400">From</span>
                 <div className="relative" ref={fromDropdownRef}>
@@ -759,7 +759,7 @@ const SwapInterface = ({ data }: Props) => {
             </div>
 
             {/* To Section */}
-            <div className="p-4 rounded-lg shadow-xl shadow-primary/10">
+            <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
               <div className="flex items-center justify-between mb-2">
                 <span className="text-gray-400">To</span>
                 <div className="relative" ref={toDropdownRef}>
