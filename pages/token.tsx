@@ -147,7 +147,7 @@ const StatsSection = () => {
 
   return (
     <div>
-      <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>WIN THE BLOCK</div>
+      <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>WIN THE BLOCK</div>
       <div className='w-full pb-8 text-center text-md text-muted/90'>Bid for a chance to win the block reward.</div>
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
