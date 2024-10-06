@@ -391,7 +391,7 @@ interface PoolData {
 
 
 export async function saveSwapEvent(event: any) {
-  Logger.error({ 'Saving swap event': event });
+  await Logger.error({ 'Saving swap event': event });
   const poolId = event.value['id'];
   const timestamp = Date.now();
 

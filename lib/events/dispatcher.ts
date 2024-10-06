@@ -411,7 +411,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
             try {
                 await saveSwapEvent(event.data)
             } catch (error) {
-                Logger.error({ 'saveSwapEvent error': event.data })
+                await Logger.error({ 'saveSwapEvent error': event.data })
             }
 
         }
