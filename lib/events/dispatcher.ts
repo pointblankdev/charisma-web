@@ -1,6 +1,6 @@
 import { clarigen } from "@lib/clarigen/client";
 import { contractFactory } from '@clarigen/core';
-import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setVoteData, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, saveSwapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setVoteData, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { contracts } from "@lib/clarigen/types";
@@ -408,6 +408,11 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 name: `${symbol} ${event.type}`,
                 value: JSON.stringify(event.data).slice(0, 1200)
             });
+            try {
+                await saveSwapEvent(event.data)
+            } catch (error) {
+                Logger.error({ 'saveSwapEvent error': event.data })
+            }
 
         }
 

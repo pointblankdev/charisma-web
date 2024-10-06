@@ -1,6 +1,7 @@
 import id from "date-fns/locale/id/index.js";
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, removeLand, removeNftCollection, setContractMetadata, setHadLandBefore, setLand, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata, setNftMetadata } from "./kv";
+import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, getPoolData, removeLand, removeNftCollection, saveSwapEvent, setContractMetadata, setHadLandBefore, setLand, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata, setNftMetadata } from "./kv";
 import { Land } from "./kv.types";
+import { kv } from "@vercel/kv";
 
 describe('tokens api', () => {
 
@@ -567,5 +568,55 @@ describe('nfts api', () => {
         data.properties.whitelisted = true
         await setNftCollectionMetadata(contractId, data)
         console.log(JSON.stringify(data, null, 2))
+    })
+})
+
+// swap data storage
+
+describe('swap data storage', () => {
+    it('should save swap data', async () => {
+        const event = {
+            contract_identifier: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core",
+            topic: "print",
+            value: {
+                "a": 155448396503,
+                "amt-fee-lps": 8275000,
+                "amt-fee-protocol": 8275000,
+                "amt-fee-rest": 8275000,
+                "amt-fee-share": 0,
+                "amt-in": 3310000000,
+                "amt-in-adjusted": 3293450000,
+                "amt-out": 3207140160,
+                "b": 162925239045,
+                "b0": 155448396503,
+                "b1": 162933514045,
+                "id": 2,
+                "k": 2.532646715940928e+22,
+                "op": "swap",
+                "pool": {
+                    "block-height": 168656,
+                    "burn-block-height": 864362,
+                    "lp-token": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-iouroo",
+                    "protocol-fee": { "den": 1000, "num": 500 },
+                    "reserve0": 158655536663,
+                    "reserve1": 159631789045,
+                    "share-fee": { "den": 1000, "num": 0 },
+                    "swap-fee": { "den": 1000, "num": 995 },
+                    "symbol": "$ROO-iouROO",
+                    "token0": "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo",
+                    "token1": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo"
+                },
+                "token-in": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo",
+                "token-out": "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo",
+                "user": "SP308TTPX0XTY1TQ7DPDD45DEHRNDPG1DCJHJ6RR8"
+            }
+        }
+        const response = await saveSwapEvent(event)
+        console.log(response)
+    })
+
+    it('should get pool data', async () => {
+        const response = await getPoolData('2')
+        console.log(response)
     })
 })

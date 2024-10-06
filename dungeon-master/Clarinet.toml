@@ -141,6 +141,9 @@ depends_on = []
 path = "contracts/fix-ious.clar"
 depends_on = []
 
+[contracts.lp-batch-checker]
+path = "contracts/lp-batch-checker.clar"
+depends_on = []
 
 
 # traits

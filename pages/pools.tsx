@@ -31,6 +31,7 @@ import RebalanceDialog from '@components/pools/rebalance-dialog';
 import EqualizeDialog from '@components/pools/equalize-dialog';
 import QuickBuyDialog from '@components/pools/quick-buy-dialog';
 import LiquidityDialog from '@components/pools/add-liquidity';
+import Link from 'next/link';
 
 export type TokenInfo = {
   symbol: string;
@@ -405,7 +406,7 @@ const PoolsInterface = ({ data }: Props) => {
                       <td className="py-4 min-w-64">
                         <div className="flex space-x-6 justify-start">
                           <div className="flex rounded-md">
-                            <span className="px-4 py-1 text-sm font-medium border rounded-l-md border-gray-700/80 bg-background">
+                            <span className="px-4 py-1 text-sm font-medium border border-r-0 rounded-l-md border-gray-700/80 bg-background">
                               Liquidity
                             </span>
                             <button
@@ -438,6 +439,10 @@ const PoolsInterface = ({ data }: Props) => {
                               <ShoppingCart className="w-4 h-4 mr-1" /> Quick Buy
                             </Button>
                           )}
+
+                          <Link href={`/pools/${pool.id}`} passHref>
+                            <Button variant="link">View Chart</Button>
+                          </Link>
                         </div>
                       </td>
                     </tr>
