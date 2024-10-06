@@ -1,3 +1,4 @@
+import Logger from '@lib/logger';
 import {
   getLandBalance,
   getLandContractById,
@@ -390,6 +391,7 @@ interface PoolData {
 
 
 export async function saveSwapEvent(event: any) {
+  Logger.error({ 'Saving swap event': event });
   const poolId = event.value['id'];
   const timestamp = Date.now();
 
