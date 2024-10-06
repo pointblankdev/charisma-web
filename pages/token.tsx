@@ -155,7 +155,7 @@ const StatsSection = () => {
             <div className='text-4xl font-semibold -mr-4'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
             <Image src={dmgLogoPulse} alt='DMG Logo' width={64} height={64} className='inline w-10 h-10 rounded-full translate-x-3' />
           </div>
-          <div className='text-muted/80'>Tokens Wrapped</div>
+          <div className='text-muted/80'>Token Wrap Reward</div>
         </div>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.blocksPerTransaction}</div>
