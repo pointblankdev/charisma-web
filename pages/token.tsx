@@ -148,16 +148,16 @@ const StatsSection = () => {
 
   return (
     <div>
-      <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>TOKEN STATS</div>
-      <div className='w-full pb-8 text-center text-md text-muted/90'>View the token contract's wrapping rate-limits.</div>
+      <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>WIN THE BLOCK</div>
+      <div className='w-full pb-8 text-center text-md text-muted/90'>Bid for a chance to win the block reward.</div>
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
-          <div className='text-muted/80'>Tokens per Transaction</div>
+          <div className='text-muted/80'>Token Block Reward</div>
         </div>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.blocksPerTransaction}</div>
-          <div className='text-muted/80'>Blocks per Transaction</div>
+          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Winner per Block' : 'Blocks per Transaction'}</div>
         </div>
         {!isUnlocked && <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.transactionsAvailable}</div>
@@ -256,7 +256,7 @@ const WrappingSection = ({ data }: Props) => {
   return (
     <div className='mt-20 mb-12'>
       <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Wrap CHA</div>
-      <div className='w-full pb-8 text-center text-md text-muted/90'>Wrap your governance tokens into the new CHA token.</div>
+      <div className='w-full pb-8 text-center text-md text-muted/90'>Convert your governance tokens into Charisma tokens.</div>
       <div className='container flex h-48 p-6 space-x-2 rounded-2xl max-w-prose bg-[var(--sidebar)] border-t-2 border-[var(--accents-7)] leading-0'>
         <div className='w-full'>
           <div className='font-bold text-muted-foreground'>
