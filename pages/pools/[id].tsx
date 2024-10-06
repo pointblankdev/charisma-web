@@ -85,7 +85,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const poolIds = await kv.smembers('pool:ids');
 
     return {
-        paths: poolIds.map(id => ({ params: { id: String(id) } })),
+        paths: [{ params: { id: '2' } }], //poolIds.map(id => ({ params: { id: String(id) } })),
         fallback: 'blocking',
     };
 };
@@ -275,11 +275,11 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
             });
 
             const candlestickSeries = chart.addCandlestickSeries({
-                upColor: '#4CAF50',
-                downColor: '#FF5252',
+                upColor: '#c1121f',
+                downColor: '#12C1B4',
                 borderVisible: false,
-                wickUpColor: '#4CAF50',
-                wickDownColor: '#FF5252',
+                wickUpColor: '#c1121f',
+                wickDownColor: '#12C1B4',
             });
 
             candlestickSeries.setData(data as any);
