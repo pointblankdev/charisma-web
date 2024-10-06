@@ -326,7 +326,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 data.map(d => ({
                     time: d.time,
                     value: d.volume,
-                    color: d.close > d.open ? '#c1121f20' : '#0e0e1020',
+                    color: d.close > d.open ? '#c1121f20' : '#0e0e1080',
                 }))
             );
 
