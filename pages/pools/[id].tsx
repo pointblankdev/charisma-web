@@ -162,8 +162,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
     const poolData = await getPoolData(id)
 
     // Parse and aggregate the data by block height
-
-    const groupedSwaps = _.groupBy(poolData.swaps, (swap: any) => Math.floor(swap.pool['block-height'] / (6)));
+    const groupedSwaps = _.groupBy(poolData.swaps, (swap: any) => swap.pool['block-height']);
 
     // loop through keys and create a data point for each block height
     let lastClose = 0
@@ -382,7 +381,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                     // const rsi = param.seriesData?.get(rsiSeries) || {};
 
                     setTooltipData({
-                        time: `Block ${blockHeight}`,
+                        time: `${blockHeight}`,
                         price: price ? `${price.close.toFixed(2)} ${symbol}` : 'N/A',
                         open: price ? `${price.open.toFixed(2)} ${symbol}` : 'N/A',
                         high: price ? `${price.high.toFixed(2)} ${symbol}` : 'N/A',
@@ -415,17 +414,21 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 105px)' }}>
+                <div style={{ position: 'relative', width: '100%', height: 'calc(100vh - 105px)', overflow: 'hidden' }}>
                     <div ref={chartContainerRef} style={{ width: '100%', height: '100%' }} />
                     <div style={{
                         position: 'absolute',
                         zIndex: 1000,
                         top: 10,
                         left: 10,
-                        background: 'rgba(0,0,0,0.7)',
+                        background: '#0e0e10',
                         padding: '10px',
                         borderRadius: '5px',
-                        color: '#fff',
+                        border: '1px solid #333',
+                        color: '#ffffffDD',
+                        fontSize: '16px',
+                        fontWeight: '300',
+                        boxShadow: '4px 10px 32px #c1121e10',
                     }}>
                         <div>Pool: {symbol}</div>
                         <div>Current Price: {currentPrice.toFixed(2)} {symbol.split('-')[0]}</div>
@@ -445,7 +448,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                             zIndex: 1000,
                             pointerEvents: 'none',
                         }}>
-                            <div>Time: {tooltipData.time}</div>
+                            <div>Block: {tooltipData.time}</div>
                             <div>Price: {tooltipData.price}</div>
                             <div>Open: {tooltipData.open}</div>
                             <div>High: {tooltipData.high}</div>
