@@ -403,15 +403,25 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.data.contract_identifier === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core") {
             symbol = '💱'
 
-            console.error('Unknown charisma swap event:', event.data)
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 1200)
-            });
-            try {
-                await saveSwapEvent(event.data)
-            } catch (error) {
-                await Logger.error({ 'saveSwapEvent error': event.data })
+
+            if (event.data.value.op === 'swap') {
+
+                builder.addField({
+                    name: `${symbol} ${event.data.value.op}`,
+                    value: JSON.stringify(event.data.value).slice(0, 1200)
+                });
+
+                try {
+                    await saveSwapEvent(event.data)
+                } catch (error) {
+                    await Logger.error(event.data.value)
+                }
+            } else {
+                console.error('Unknown charisma swap event:', event.data)
+                builder.addField({
+                    name: `${symbol} ${event.type}`,
+                    value: JSON.stringify(event.data).slice(0, 1200)
+                });
             }
 
         }
