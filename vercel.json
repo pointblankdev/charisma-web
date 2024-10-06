@@ -3,22 +3,6 @@
         {
             "path": "/api/v0/blocks/cache",
             "schedule": "* * * * *"
-        },
-        {
-            "path": "/api/v0/crons/arbitrage",
-            "schedule": "0 * * * *"
-        },
-        {
-            "path": "/api/v0/crons/stimulate",
-            "schedule": "0 * * * *"
-        },
-        {
-            "path": "/api/v0/crons/try-reset-epochs",
-            "schedule": "*/5 * * * *"
-        },
-        {
-            "path": "/api/v0/crons/players",
-            "schedule": "*/20 * * * *"
         }
     ]
 }
