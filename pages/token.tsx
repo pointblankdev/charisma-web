@@ -16,6 +16,7 @@ import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import Image from 'next/image';
 import charismaSquare from '@public/charisma-logo-square.png';
 import dmgLogo from '@public/dmg-logo.png';
+import dmgLogoPulse from '@public/dmg-logo.gif';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import numeral from 'numeral';
 import { usePersistedState } from '@lib/hooks/use-persisted-state';
@@ -152,8 +153,11 @@ const StatsSection = () => {
       <div className='w-full pb-8 text-center text-md text-muted/90'>Bid for a chance to win the block reward.</div>
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
-          <div className='text-4xl font-semibold'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
-          <div className='text-muted/80'>Token Block Reward</div>
+          <div className='flex items-center space-x-0'>
+            <div className='text-4xl font-semibold -mr-4'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
+            <Image src={dmgLogoPulse} alt='DMG Logo' width={64} height={64} className='inline w-10 h-10 rounded-full translate-x-3' />
+          </div>
+          <div className='text-muted/80'>Tokens Wrapped</div>
         </div>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.blocksPerTransaction}</div>
@@ -255,7 +259,7 @@ const WrappingSection = ({ data }: Props) => {
 
   return (
     <div className='mt-20 mb-12'>
-      <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Wrap CHA</div>
+      <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Wrap Tokens</div>
       <div className='w-full pb-8 text-center text-md text-muted/90'>Convert your governance tokens into Charisma tokens.</div>
       <div className='container flex h-48 p-6 space-x-2 rounded-2xl max-w-prose bg-[var(--sidebar)] border-t-2 border-[var(--accents-7)] leading-0'>
         <div className='w-full'>
