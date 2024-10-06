@@ -144,6 +144,8 @@ const HeroSection = () => {
 const StatsSection = () => {
   const { charismaTokenStats } = useGlobalState()
 
+  const isUnlocked = charismaTokenStats.blocksUntilUnlock <= 1;
+
   return (
     <div>
       <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>TOKEN STATS</div>
@@ -157,14 +159,21 @@ const StatsSection = () => {
           <div className='text-4xl font-semibold'>{charismaTokenStats.blocksPerTransaction}</div>
           <div className='text-muted/80'>Blocks per Transaction</div>
         </div>
-        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
+        {!isUnlocked && <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.transactionsAvailable}</div>
           <div className='text-muted/80'>Transactions Available</div>
-        </div>
-        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
-          <div className='text-4xl font-semibold'>{charismaTokenStats.blocksUntilUnlock}</div>
-          <div className='text-muted/80'>Blocks until Unlocked</div>
-        </div>
+        </div>}
+        {isUnlocked ? (
+          <div className='flex flex-col col-span-2 items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-primary'>
+            <div className='text-2xl font-semibold text-primary'>Wrap Now!</div>
+            <div className='text-center text-muted/80'>Tokens are available for wrapping</div>
+          </div>
+        ) : (
+          <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
+            <div className='text-4xl font-semibold'>{charismaTokenStats.blocksUntilUnlock}</div>
+            <div className='text-muted/80'>Blocks until Unlocked</div>
+          </div>
+        )}
       </div>
     </div>
   );
@@ -291,6 +300,7 @@ const WrappingSection = ({ data }: Props) => {
             )}
           </div>
         </div>
+
       </div>
       <div className='container flex flex-col p-6 pb-0 -translate-y-20 border-t-2 bg-background rounded-2xl max-w-prose min-h-48'>
         <div className='relative w-full space-y-2 grow'>
