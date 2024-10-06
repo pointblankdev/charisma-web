@@ -169,7 +169,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH'] })
 
   // Calculate CHA price
-  const chaPrice = await calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price);
+  const chaPrice = await calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price) || 0.21;
   tokenPrices['CHA'] = chaPrice;
 
   // Calculate IOU prices
