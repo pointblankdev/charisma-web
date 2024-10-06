@@ -39,7 +39,7 @@ export default function Hero() {
         {META_DESCRIPTION}
       </h2>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <p>Earn real yield while having fun with your community.</p>
+        <em>"Spellbinding" — The New York Times</em>
       </div>
     </div>
   );

@@ -6,7 +6,7 @@ export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
 export const META_DESCRIPTION =
-  'Stake your memecoins and earn rewards on Stacks.';
+  'The next-generation DeFi protocol on Stacks.';
 export const DATE = '31 October 2023';
 export const SHORT_DATE = 'Jan 1 - 9:00am PST';
 export const FULL_DATE = 'Jan 1st 9am Pacific Time (GMT-7)';
