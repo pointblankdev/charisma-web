@@ -159,7 +159,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
         };
     }
 
-    // Fetch the last 1000 swap events (adjust as needed)
+    // Fetch the last 999999 swap events (adjust as needed)
     const poolData = await getPoolData(id)
 
     // Parse and aggregate the data by block height

@@ -32,6 +32,7 @@ import EqualizeDialog from '@components/pools/equalize-dialog';
 import QuickBuyDialog from '@components/pools/quick-buy-dialog';
 import LiquidityDialog from '@components/pools/add-liquidity';
 import Link from 'next/link';
+import { getPoolData } from '@lib/db-providers/kv';
 
 export type TokenInfo = {
   symbol: string;
@@ -52,7 +53,10 @@ export type PoolInfo = {
     token1: number;
   };
   tvl: number;
-  volume24h: number;
+  volume: {
+    token0: number;
+    token1: number;
+  };
   contractAddress: string;
 };
 
@@ -187,14 +191,28 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
     const tvl = (reserves.token0 / 10 ** pool.token0.decimals * token0Price) + (reserves.token1 / 10 ** pool.token1.decimals * token1Price);
 
+    // Fetch swap events for volume calculation
+    const poolData = await getPoolData(pool.id.toString())
+
+    // calculate all transaction volume 
+    const volume = poolData.swaps.reduce((sum: any, swap: any) => {
+      console.log(swap['amt-in'], swap['amt-out'])
+      // i want to add up all the volume of each token so i have a total volume of each token
+      sum.token0 += swap['token-in'] === swap.pool.token0 ? swap['amt-in'] : swap['amt-out']
+      sum.token1 += swap['token-in'] === swap.pool.token1 ? swap['amt-in'] : swap['amt-out']
+      return sum
+    }, { token0: 0, token1: 0 })
+
     return {
       ...pool,
       token0: { ...pool.token0, price: token0Price },
       token1: { ...pool.token1, price: token1Price },
       reserves,
       tvl,
+      volume
     };
   }));
+
 
   return {
     props: {
@@ -217,7 +235,7 @@ export default function PoolsPage({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="sm:container sm:mx-auto sm:pb-10 md:max-w-7xl">
+        <div className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
           <div className='my-2 font-light text-center text-muted-foreground/90'>View and manage liquidity pools on the Charisma DEX</div>
           <PoolsInterface data={data} />
         </div>
@@ -262,8 +280,9 @@ const PoolsInterface = ({ data }: Props) => {
       const priceB = calculateVirtualChaPrice(b) || 0;
       return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
     }
-    const valueA = sortBy === 'tvl' ? a.tvl : a.volume24h;
-    const valueB = sortBy === 'tvl' ? b.tvl : b.volume24h;
+    console.log(a.token1)
+    const valueA = sortBy === 'tvl' ? a.tvl : ((a.volume.token0 / (10 ** a.token0.decimals)) * a.token0.price) + ((a.volume.token1 / (10 ** a.token1.decimals)) * a.token1.price);
+    const valueB = sortBy === 'tvl' ? b.tvl : ((b.volume.token0 / (10 ** b.token0.decimals)) * b.token0.price) + ((b.volume.token1 / (10 ** b.token1.decimals)) * b.token1.price);
     return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
   });
 
@@ -367,8 +386,8 @@ const PoolsInterface = ({ data }: Props) => {
                   <th className="py-2 cursor-pointer" onClick={() => handleSort('tvl')}>
                     TVL {sortBy === 'tvl' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
-                  <th className="py-2 cursor-pointer hidden" onClick={() => handleSort('volume')}>
-                    Volume (24h) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
+                  <th className="py-2 cursor-pointer text-center" onClick={() => handleSort('volume')}>
+                    Volume (Total) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="py-2 cursor-pointer hidden sm:flex" onClick={() => handleSort('virtualChaPrice')}>
                     Virtual CHA Price {sortBy === 'virtualChaPrice' && <ArrowUpDown className="inline ml-1" size={16} />}
@@ -399,7 +418,16 @@ const PoolsInterface = ({ data }: Props) => {
                         {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format('0,0.00')} {pool.token1.symbol}
                       </td>
                       <td className="py-4 text-white min-w-24">${numeral(pool.tvl).format('0,0.00')}</td>
-                      <td className="py-4 text-white hidden">${numeral(pool.volume24h).format('0,0')}</td>
+                      <td className="py-4 text-white min-w-64">
+                        <div className='flex justify-between'>
+                          <div>{numeral(pool.volume.token0 / 10 ** pool.token0.decimals).format('0,0')} {pool.token0.symbol}</div>
+                          <div>{numeral(pool.volume.token0 / 10 ** pool.token0.decimals * pool.token0.price).format('$0,0.00')}</div>
+                        </div>
+                        <div className='flex justify-between'>
+                          <div>{numeral(pool.volume.token1 / 10 ** pool.token1.decimals).format('0,0')} {pool.token1.symbol}</div>
+                          <div>{numeral(pool.volume.token1 / 10 ** pool.token1.decimals * pool.token1.price).format('$0,0.00')}</div>
+                        </div>
+                      </td>
                       <td className="py-4 text-white text-center min-w-24 sm:min-w-36">
                         {virtualChaPrice ? `$${numeral(virtualChaPrice).format('0,0.0000')}` : '-'}
                       </td>
