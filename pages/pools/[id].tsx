@@ -5,10 +5,11 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Layout from '@components/layout/layout';
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import { startOfDay, addMinutes, format } from 'date-fns';
+import { startOfDay, parseISO, format } from 'date-fns';
 import { createChart, ColorType, UTCTimestamp, IChartApi, ISeriesApi, LineStyle, CrosshairMode } from 'lightweight-charts';
 import { getPoolData, SwapEvent } from '@lib/db-providers/kv';
 import { kv } from '@vercel/kv';
+
 
 interface DataPoint {
     time: UTCTimestamp;
@@ -49,15 +50,41 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
     // Fetch the last 1000 swap events (adjust as needed)
     const poolData = await getPoolData(id)
 
-    // Parse and format the data for the chart
-    const data = poolData.swaps.map((swap: SwapEvent) => ({
-        time: format(new Date(swap.timestamp), 'yyyy-MM-dd'),
-        open: swap.price,
-        high: swap.price,
-        low: swap.price,
-        close: swap.price,
-        volume: swap.volume,
-    }));
+    // Parse and aggregate the data by day
+    const dailyData = poolData.swaps.reduce((acc, swap: SwapEvent) => {
+        const date = new Date(swap.timestamp);
+        const dayKey = startOfDay(date).getTime();
+
+        if (swap.price) {
+            if (!acc[dayKey]) {
+                acc[dayKey] = {
+                    time: format(dayKey, 'yyyy-MM-dd'),
+                    open: swap.price,
+                    high: swap.price,
+                    low: swap.price,
+                    close: swap.price,
+                    volume: swap.volume
+                };
+            } else {
+                acc[dayKey].high = Math.max(acc[dayKey].high, swap.price);
+                acc[dayKey].low = Math.min(acc[dayKey].low, swap.price);
+                acc[dayKey].close = swap.price;
+                acc[dayKey].volume += swap.volume;
+            }
+        }
+        return acc;
+    }, {} as Record<number, {
+        time: string;
+        open: number;
+        high: number;
+        low: number;
+        close: number;
+        volume: number;
+    }>);
+
+    console.log(dailyData)
+    const data = Object.values(dailyData).sort((a, b) => parseISO(a.time).getTime() - parseISO(b.time).getTime());
+
 
     return {
         props: {
