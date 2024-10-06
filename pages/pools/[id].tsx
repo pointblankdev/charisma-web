@@ -24,15 +24,12 @@ interface PoolData {
     data: DataPoint[];
 }
 
-export const getStaticPaths: GetStaticPaths = () => {
+export const getStaticPaths: GetStaticPaths = async () => {
     // Fetch all pool symbols
-    const poolIds = ["1", "2", "3"] //await kv.smembers('pool:ids');
+    const poolIds = await kv.smembers('pool:ids');
 
     return {
-        paths: [
-            { params: { id: '2' } },
-        ],
-        // paths: poolIds.map(symbol => ({ params: { id: symbol } })),
+        paths: poolIds.map(symbol => ({ params: { id: symbol } })),
         fallback: 'blocking',
     };
 };
