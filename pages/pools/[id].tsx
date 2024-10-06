@@ -85,7 +85,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
     const poolIds = await kv.smembers('pool:ids');
 
     return {
-        paths: [{ params: { id: '2' } }], //poolIds.map(id => ({ params: { id: String(id) } })),
+        paths: poolIds.map(id => ({ params: { id: String(id) } })),
         fallback: 'blocking',
     };
 };
