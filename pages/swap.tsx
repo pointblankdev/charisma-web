@@ -416,7 +416,7 @@ const SwapInterface = ({ data }: Props) => {
         case 'CHA':
           const stxPrice = data.prices.find((token: any) => token.symbol === 'STX').price;
           const price = stxPrice / data.chaPerStx
-          return price;
+          return price || 0.21;
         case 'WELSH':
           return data.cmcPriceData.data['WELSH'].quote.USD.price;
         case 'ROO':
