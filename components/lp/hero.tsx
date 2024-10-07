@@ -2,7 +2,7 @@
 import { cn } from '@lib/utils';
 import styleUtils from '@components/utils.module.css';
 import styles from './hero.module.css';
-import { BRAND_NAME, DATE, FUNNY_QUOTE, META_DESCRIPTION } from '@lib/constants';
+import { BRAND_NAME, FUNNY_QUOTE, META_DESCRIPTION } from '@lib/constants';
 import Image from 'next/image';
 import charisma from '@public/charisma.png'
 

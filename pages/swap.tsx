@@ -76,6 +76,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   // Define tokens
   const tokens: TokenInfo[] = [
+    // {
+    //   symbol: 'STX',
+    //   name: 'Stacks',
+    //   image: stxLogo,
+    //   // tokenName: 'wstx',
+    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx',
+    //   decimals: 6
+    // },
     {
       symbol: 'CHA',
       name: 'Charisma',

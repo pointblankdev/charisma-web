@@ -22,6 +22,10 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     const [sliderValue, setSliderValue] = useState(0);
     const [amount0, setAmount0] = useState('0');
     const [amount1, setAmount1] = useState('0');
+    const [maxSliderValue, setMaxSliderValue] = useState(100);
+    const [selectedLpAmount, setSelectedLpAmount] = useState(0);
+    const [limitingToken, setLimitingToken] = useState<'token0' | 'token1' | null>(null);
+    const [animate, setAnimate] = useState(false);
     const { openContractCall } = useOpenContractCall();
     const { stxAddress } = useAccount();
     const { getBalanceByKey, balances, getKeyByContractAddress } = useWallet();
@@ -36,50 +40,69 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
         return getBalanceByKey(getKeyByContractAddress(pool.contractAddress)) || 0;
     }, [pool, getBalanceByKey, getKeyByContractAddress]);
 
-    useEffect(() => {
-        if (pool) {
-            if (isAdd) {
-                const maxAmount0 = pool.reserves.token0 / 10 ** pool.token0.decimals;
-                const maxAmount1 = pool.reserves.token1 / 10 ** pool.token1.decimals;
-
-                const newAmount0 = (maxAmount0 * sliderValue / 100).toFixed(pool.token0.decimals);
-                const newAmount1 = (maxAmount1 * sliderValue / 100).toFixed(pool.token1.decimals);
-
-                setAmount0(newAmount0);
-                setAmount1(newAmount1);
-            } else {
-                const lpTokenBalance = getLpTokenBalance();
-                const share = lpTokenBalance > 0 ? sliderValue / 100 : 0;
-
-                const newAmount0 = (share * pool.reserves.token0 / 10 ** pool.token0.decimals).toFixed(pool.token0.decimals);
-                const newAmount1 = (share * pool.reserves.token1 / 10 ** pool.token1.decimals).toFixed(pool.token1.decimals);
-
-                setAmount0(newAmount0);
-                setAmount1(newAmount1);
-            }
-        }
-    }, [pool, isAdd, sliderValue, getLpTokenBalance]);
-
-    const checkBalances = () => {
-        if (!pool || !stxAddress) return true;
-
-        if (isAdd) {
-            const getBalance = (token: TokenInfo) => {
-                if (token.symbol === 'STX') {
-                    return Number(balances.stx.balance) / 10 ** token.decimals;
-                } else {
-                    return getBalanceByKey(getKeyByContractAddress(token.contractAddress)) / 10 ** token.decimals;
-                }
-            };
-
-            const balance0 = getBalance(pool.token0);
-            const balance1 = getBalance(pool.token1);
-            return parseFloat(amount0) <= balance0 && parseFloat(amount1) <= balance1;
+    const getTokenBalance = useCallback((token: TokenInfo) => {
+        if (token.symbol === 'STX') {
+            return Number(balances.stx.balance) / 10 ** token.decimals;
         } else {
-            const lpTokenBalance = getLpTokenBalance();
-            return (lpTokenBalance * sliderValue / 100) <= lpTokenBalance;
+            return getBalanceByKey(getKeyByContractAddress(token.contractAddress)) / 10 ** token.decimals;
         }
-    };
+    }, [balances.stx.balance, getBalanceByKey, getKeyByContractAddress]);
+
+    useEffect(() => {
+        if (pool && isAdd) {
+            const balance0 = getTokenBalance(pool.token0);
+            const balance1 = getTokenBalance(pool.token1);
+            const reserve0 = pool.reserves.token0 / 10 ** pool.token0.decimals;
+            const reserve1 = pool.reserves.token1 / 10 ** pool.token1.decimals;
+
+            // Calculate the maximum amounts that can be added based on the current pool ratio
+            const maxAmount0ByBalance = balance0;
+            const maxAmount1ByBalance = balance1;
+            const maxAmount0ByRatio = (maxAmount1ByBalance * reserve0) / reserve1;
+            const maxAmount1ByRatio = (maxAmount0ByBalance * reserve1) / reserve0;
+
+            // Determine the limiting factor and token
+            let maxAmount0, maxAmount1;
+            if (maxAmount0ByRatio <= maxAmount0ByBalance) {
+                maxAmount0 = maxAmount0ByRatio;
+                maxAmount1 = maxAmount1ByBalance;
+                setLimitingToken('token1');
+            } else {
+                maxAmount0 = maxAmount0ByBalance;
+                maxAmount1 = maxAmount1ByRatio;
+                setLimitingToken('token0');
+            }
+
+            // Set the max slider value to 100 (representing 100% of the limiting amount)
+            setMaxSliderValue(100);
+
+            // Calculate amounts based on the slider value
+            const amount0 = (maxAmount0 * sliderValue / 100);
+            const amount1 = (maxAmount1 * sliderValue / 100);
+
+            setAmount0(amount0.toFixed(pool.token0.decimals));
+            setAmount1(amount1.toFixed(pool.token1.decimals));
+
+            // Trigger animation if slider is at max
+            if (sliderValue === 100 && !animate) {
+                setAnimate(true);
+                setTimeout(() => setAnimate(false), 1000);
+            }
+        } else if (pool) {
+            const lpTokenBalance = getLpTokenBalance();
+            setMaxSliderValue(100);
+
+            const share = lpTokenBalance > 0 ? sliderValue / 100 : 0;
+            const newAmount0 = (share * pool.reserves.token0 / 10 ** pool.token0.decimals).toFixed(pool.token0.decimals);
+            const newAmount1 = (share * pool.reserves.token1 / 10 ** pool.token1.decimals).toFixed(pool.token1.decimals);
+
+            setAmount0(newAmount0);
+            setAmount1(newAmount1);
+            setSelectedLpAmount(Math.floor(lpTokenBalance * share));
+            setLimitingToken(null);
+
+        }
+    }, [pool, isAdd, sliderValue, getLpTokenBalance, getTokenBalance, animate]);
 
     const handleAddLiquidity = useCallback(() => {
         if (!pool || !stxAddress) return;
@@ -130,7 +153,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
         if (!pool || !stxAddress) return;
 
         const lpTokenBalance = getLpTokenBalance();
-        const lpTokensToRemove = BigInt(Math.floor(lpTokenBalance * sliderValue / 100));
+        const lpTokensToRemove = Math.floor(lpTokenBalance * sliderValue / 100);
 
         const postConditions: any = [
             Pc.principal(stxAddress).willSendLte(lpTokensToRemove).ft(pool.contractAddress as any, 'lp-token') as any,
@@ -163,17 +186,14 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
 
     if (!pool) return null;
 
-    const hasEnoughBalance = checkBalances();
     const lpTokenBalance = getLpTokenBalance();
 
     return (
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-lg">
             <DialogHeader>
                 <DialogTitle>{isAdd ? 'Add Liquidity' : 'Remove Liquidity'}</DialogTitle>
                 <DialogDescription>
-                    {isAdd
-                        ? `Add liquidity to the ${pool.token0.symbol}/${pool.token1.symbol} pool`
-                        : `Remove liquidity from the ${pool.token0.symbol}/${pool.token1.symbol} pool`}
+                    {isAdd ? `Add liquidity to the ${pool.token0.symbol}/${pool.token1.symbol} pool` : `Remove liquidity from the ${pool.token0.symbol}/${pool.token1.symbol} pool`}
                 </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
@@ -181,11 +201,17 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                     <Label>{isAdd ? 'Liquidity to add (%)' : 'Liquidity to remove (%)'}</Label>
                     <Slider
                         value={[sliderValue]}
-                        onValueChange={(value) => setSliderValue(value[0])}
+                        onValueChange={(value) => {
+                            setSliderValue(value[0]);
+                            if (value[0] === 100 && !animate) {
+                                setAnimate(true);
+                                setTimeout(() => setAnimate(false), 1000);
+                            }
+                        }}
                         max={100}
-                        step={1}
+                        step={0.1}  // Increased precision
                     />
-                    <div className="text-right text-sm text-gray-500">{sliderValue}%</div>
+                    <div className="text-right text-sm text-gray-500">{sliderValue.toFixed(2)}%</div>
                 </div>
                 <div className="grid items-center grid-cols-4 gap-4">
                     <div className="flex justify-end">
@@ -194,7 +220,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                             alt={pool.token0.symbol}
                             width={24}
                             height={24}
-                            className="rounded-full"
+                            className={`rounded-full ${animate && limitingToken === 'token0' ? 'shake' : ''}`}
                         />
                     </div>
                     <div className="col-span-3">
@@ -213,7 +239,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                             alt={pool.token1.symbol}
                             width={24}
                             height={24}
-                            className="rounded-full"
+                            className={`rounded-full ${animate && limitingToken === 'token1' ? 'shake' : ''}`}
                         />
                     </div>
                     <div className="col-span-3">
@@ -225,20 +251,18 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                         </div>
                     </div>
                 </div>
-                {!isAdd && (
-                    <div className="text-sm text-gray-500">
-                        Your LP Token Balance: {numeral(lpTokenBalance / 10 ** 6).format('0,0.000000')}
-                    </div>
-                )}
             </div>
             <DialogFooter className="flex items-center justify-between">
-                <span className={`text-sm ${hasEnoughBalance ? 'text-green-500' : 'text-red-500'}`}>
-                    {hasEnoughBalance ? 'Sufficient balance' : 'Insufficient balance'}
+                <span className="text-sm text-gray-500">
+                    {isAdd
+                        ? `Your balance: ${numeral(getTokenBalance(pool.token0)).format('0,0.00')} ${pool.token0.symbol} / ${numeral(getTokenBalance(pool.token1)).format('0,0.00')} ${pool.token1.symbol}`
+                        : `Your balance: ${numeral(lpTokenBalance).format('0,0')} → ${numeral(lpTokenBalance - selectedLpAmount).format('0,0')}`
+                    }
                 </span>
                 <Button
                     type="submit"
                     onClick={isAdd ? handleAddLiquidity : handleRemoveLiquidity}
-                    disabled={!hasEnoughBalance}
+                    disabled={sliderValue === 0}
                 >
                     {isAdd ? 'Add Liquidity' : 'Remove Liquidity'}
                 </Button>
