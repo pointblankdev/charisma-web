@@ -304,12 +304,34 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 },
             });
 
-            const candlestickSeries = chart.addCandlestickSeries({
+            const candlestickSeries = chart.addCandlestickSeries(token1.endsWith('charisma-token') ? {
                 upColor: '#c1121f',
                 downColor: '#0e0e10',
                 borderVisible: true,
                 wickUpColor: '#c1121f',
                 wickDownColor: '#0e0e10',
+                borderColor: '#333333'
+            } : token0.endsWith('charisma-token') ? {
+                upColor: '#0e0e10',
+                downColor: '#c1121f',
+                borderVisible: true,
+                wickUpColor: '#0e0e10',
+                wickDownColor: '#c1121f',
+                borderColor: '#333333'
+            } : token0.endsWith('welshcorgicoin-token') ? {
+                upColor: '#3990D7',
+                downColor: '#D78039',
+                borderVisible: true,
+                wickUpColor: '#3990D7',
+                wickDownColor: '#D78039',
+                borderColor: '#333333'
+            } : {
+                // use standard colors
+                upColor: '#6384B0',
+                downColor: '#B08F63',
+                borderVisible: true,
+                wickUpColor: '#6384B0',
+                wickDownColor: '#B08F63',
                 borderColor: '#333333'
             });
 
@@ -327,7 +349,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 data.map(d => ({
                     time: d.time,
                     value: d.volume,
-                    color: d.close > d.open ? '#c1121f20' : '#0e0e1080',
+                    color: d.close > d.open ? '#f3e4e50A' : '#0e0e1080',
                 }))
             );
 
