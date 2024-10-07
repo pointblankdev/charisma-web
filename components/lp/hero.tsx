@@ -2,7 +2,7 @@
 import { cn } from '@lib/utils';
 import styleUtils from '@components/utils.module.css';
 import styles from './hero.module.css';
-import { BRAND_NAME, DATE, META_DESCRIPTION } from '@lib/constants';
+import { BRAND_NAME, DATE, FUNNY_QUOTE, META_DESCRIPTION } from '@lib/constants';
 import Image from 'next/image';
 import charisma from '@public/charisma.png'
 
@@ -39,7 +39,7 @@ export default function Hero() {
         {META_DESCRIPTION}
       </h2>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
-        <em>"Spellbinding" — The New York Times</em>
+        <em>{FUNNY_QUOTE}</em>
       </div>
     </div>
   );
