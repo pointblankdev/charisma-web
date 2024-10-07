@@ -3,6 +3,7 @@ import { getAccountBalance } from '@lib/stacks-api';
 import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
 import { useAccount } from '@micro-stacks/react';
 import { createContext, useContext } from 'react';
+import { useGlobalState } from './global-state-context';
 
 export type Wallet = {
   experience: { balance: number, amount: number }
@@ -23,6 +24,7 @@ export const WalletBalancesContext = createContext<WalletBalancesContextType | n
 
 export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { stxAddress } = useAccount()
+  const { setIsMempoolSubscribed } = useGlobalState()
 
   const [balances, setBalances] = useState<AddressBalanceResponse>({} as AddressBalanceResponse);
 

@@ -14,7 +14,8 @@
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
     "test:costs": "vitest run --costs",
-    "test:report": "vitest run --coverage --costs"
+    "test:report": "vitest run --coverage --costs",
+    "lint": "tslint --fix --ext .ts,.tsx ."
   },
   "dependencies": {
     "@clarigen/node": "^2.0.1",

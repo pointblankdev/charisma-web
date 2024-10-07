@@ -364,7 +364,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
             setCurrentPrice(lastDataPoint.close);
             setPriceChange(lastDataPoint.close - data[0].close);
 
-            chart.subscribeCrosshairMove((param) => {
+            chart.subscribeCrosshairMove((param: any) => {
 
                 if (
                     param.point === undefined ||
@@ -378,7 +378,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 } else {
                     const blockHeight = param.time;
                     const price = param.seriesData?.get(candlestickSeries) || 0 as any;
-                    const volume = param.seriesData?.get(volumeSeries) as any;
+                    const volume = param.seriesData?.get(volumeSeries)
                     // const sma = param.seriesData?.get(smaSeries) || {};
                     // const rsi = param.seriesData?.get(rsiSeries) || {};
 

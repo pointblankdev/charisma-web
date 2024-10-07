@@ -2,7 +2,7 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
-import { ChangeEvent, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { callReadOnlyFunction, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
@@ -103,7 +103,7 @@ export default function TokenPage({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
+        <div className="m-2 rounded-full sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
           <HeroSection />
           <StatsSection />
           <WrappingSection data={data} />
@@ -116,7 +116,7 @@ export default function TokenPage({ data }: Props) {
 const HeroSection = () => {
 
   return (
-    <div className='flex flex-col items-center rounded-full'>
+    <div className='flex flex-col items-center overflow-hidden'>
       <Image src={charismaFloating} alt='Red Pill' width={300} height={300} className='transition-all scale-150 translate-y-24 cursor-pointer sm:hidden' />
       <div className='flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
         <div className='flex-col items-center hidden w-full space-y-4 sm:w-64 sm:flex'>
@@ -153,7 +153,7 @@ const StatsSection = () => {
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='flex items-center space-x-0'>
-            <div className='text-4xl font-semibold -mr-0'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
+            <div className='-mr-0 text-4xl font-semibold'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
             <Image src={charismaSquare} alt='DMG Logo' width={64} height={64} className='inline w-7 h-7 rounded-full translate-x-1.5 translate-y-0.5' />
           </div>
           <div className='text-muted/80'>Token Reward</div>
@@ -183,7 +183,7 @@ const StatsSection = () => {
 };
 
 const WrappingSection = ({ data }: Props) => {
-  const { charismaTokenStats, charismaClaims } = useGlobalState();
+  const { charismaTokenStats, charismaClaims, setIsMempoolSubscribed } = useGlobalState();
   const { wallet } = useWallet();
   const { stxAddress } = useAccount();
   const [amount, setAmount] = useState<string>('');
@@ -256,41 +256,47 @@ const WrappingSection = ({ data }: Props) => {
     }
   }
 
+  useEffect(() => {
+    if (wallet.redPilled && wallet.experience.balance > 4000) {
+      setIsMempoolSubscribed(true)
+    }
+  }, [wallet.redPilled, wallet.experience.balance, setIsMempoolSubscribed])
+
   return (
     <div className='mt-20 mb-12'>
       <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Wrap Tokens</div>
       <div className='w-full pb-8 text-center text-md text-muted/90'>Convert your governance tokens into Charisma tokens.</div>
       <div className='container flex h-48 p-6 space-x-2 rounded-2xl max-w-prose bg-[var(--sidebar)] border-t-2 border-[var(--accents-7)] leading-0'>
         <div className='w-full'>
-          <div className='font-bold text-muted-foreground'>
+          <div className='font-bold text-center text-muted-foreground'>
             Available
           </div>
-          <div className='flex items-center mt-2 space-x-1 font-bold'>
-            <div>{numeral(wallet.charisma.balance).format('0.00a')}</div>
+          <div className='flex items-center justify-center mt-2 space-x-1 font-bold text-center'>
+            <div className='ml-3'>{numeral(wallet.charisma.balance).format('0.00a')}</div>
             <div className='pb-1'><Image src={wallet.charisma.balance > 0 ? dmgLogoPulse : dmgLogo} alt='DMG Logo' width={20} height={20} className='inline' /></div>
           </div>
         </div>
         <div className='w-full'>
-          <div className='font-bold text-muted-foreground'>
+          <div className='font-bold text-center text-muted-foreground whitespace-nowrap'>
             Token Price
           </div>
-          <div className='mt-2 font-bold'>
+          <div className='mt-2 font-bold text-center'>
             {numeral(data.chaPrice).format('$0.00')}
           </div>
         </div>
         <div className='w-full'>
-          <div className='font-bold text-muted-foreground'>
+          <div className='font-bold text-center text-muted-foreground whitespace-nowrap'>
             Total Value
           </div>
-          <div className='mt-2 font-bold'>
+          <div className='mt-2 font-bold text-center'>
             {numeral(wallet.charisma.balance * data.chaPrice).format('$0,0.00')}
           </div>
         </div>
         <div className='w-full'>
-          <div className='font-bold text-muted-foreground'>
+          <div className='font-bold text-center text-muted-foreground whitespace-nowrap'>
             Red Pilled
           </div>
-          <div className='font-bold'>
+          <div className='items-center font-bold text-center'>
             {wallet.redPilled ? (
               <Image src={redPill} alt='Red Pill' width={50} height={50} className='inline cursor-help' title={'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'} />
             ) : (

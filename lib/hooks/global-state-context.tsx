@@ -1,8 +1,8 @@
-import React, { createContext, useCallback, useContext, useEffect } from 'react';
+import React, { createContext, useCallback, useContext, useEffect, useSyncExternalStore } from 'react';
 import { usePersistedState } from './use-persisted-state';
 import { getClaimableAmount, getLandAmount, getLastLandId, getStoredEnergy } from '@lib/stacks-api';
 import { getLandDataById, getLatestBlock } from '@lib/user-api';
-import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
+import { StacksApiSocketClient, TransactionEventsResponse } from '@stacks/blockchain-api-client';
 import { useAccount } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
@@ -26,6 +26,8 @@ interface GlobalState {
     updateTokenEnergy: (landId: string, energy: number) => void
     charismaTokenStats: any
     charismaClaims: any
+    isMempoolSubscribed: boolean
+    setIsMempoolSubscribed: (isMempoolSubscribed: boolean) => void
 }
 
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
@@ -38,6 +40,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [tappedAt, setTappedAt] = usePersistedState('tappedAt', {});
     const [token, setToken] = usePersistedState('token', {})
     const [storedEnergy, setStoredEnergy] = usePersistedState('storedEnergy', 0);
+    const [isMempoolSubscribed, setIsMempoolSubscribed] = usePersistedState('isMempoolSubscribed', false);
 
     const [charismaTokenStats, setCharismaTokenStats] = usePersistedState('charismaTokenStats', {})
     const [charismaClaims, setCharismaClaims] = usePersistedState('charismaClaims', { hasFreeClaim: false, hasClaimed: false } as any)
@@ -124,6 +127,53 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         };
     }, [stxAddress, setBlock, toast, getCharismaTokenStats]);
 
+    useEffect(() => {
+        if (isMempoolSubscribed) {
+            sc.subscribeMempool((tx: any) => {
+                if (tx?.contract_call?.contract_id === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token") {
+                    let description;
+
+                    switch (tx?.contract_call?.function_name) {
+                        case 'wrap':
+                            const shortSenderAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`
+                            const newFeeRate = Math.ceil((Number((tx.fee_rate / 10 ** 6).toFixed(6)) + 0.01) * 100) / 100
+                            description = (
+                                <div className="mt-4 space-y-2">
+                                    <p className='flex justify-between text-xs'><div>Sender Address: {shortSenderAddress}</div><div>Sender Fee: {tx.fee_rate / 10 ** 6} STX</div></p>
+                                    <p className='font-light text-md'>Suggested fee to outbid this transaction: <strong>{newFeeRate} STX</strong></p>
+                                    <p className='text-xs text-muted-foreground'>{new Date(tx.receipt_time_iso).toString()}</p>
+                                </div>
+                            );
+                            break;
+                        default:
+                            description = (
+                                <div>
+                                    <p>Transaction ID: {tx.tx_id}</p>
+                                    <p>Transaction Type: {tx.tx_type}</p>
+                                    <p>Contract ID: {tx?.contract_call?.contract_id}</p>
+                                    <p>Function Name: {tx?.contract_call?.function_name}</p>
+                                    <p>Sender Address: {tx.sender_address}</p>
+                                    <p>Fee Rate: {tx.fee_rate}</p>
+                                    <p>Nonce: {tx.nonce}</p>
+                                    <p>Receipt Time: {new Date(tx.receipt_time_iso).toString()}</p>
+                                </div>
+                            );
+                            break;
+                    }
+
+                    toast({
+                        title: "New Wrap Transaction",
+                        description,
+                    });
+                }
+            });
+        }
+
+        return () => {
+            sc.unsubscribeMempool()
+        };
+    }, [toast, isMempoolSubscribed]);
+
     return (
         <GlobalStateContext.Provider value={{
             lands,
@@ -140,7 +190,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             setStoredEnergy,
             updateTokenEnergy,
             charismaTokenStats,
-            charismaClaims
+            charismaClaims,
+            isMempoolSubscribed,
+            setIsMempoolSubscribed
         }}>
             {children}
         </GlobalStateContext.Provider>
