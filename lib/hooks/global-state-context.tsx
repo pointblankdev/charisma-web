@@ -29,6 +29,7 @@ interface GlobalState {
     charismaClaims: any
     isMempoolSubscribed: boolean
     setIsMempoolSubscribed: (isMempoolSubscribed: boolean) => void
+    highestBid: number
 }
 
 const formatTime = (dateString: string) => {
@@ -48,7 +49,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [storedEnergy, setStoredEnergy] = usePersistedState('storedEnergy', 0);
     const [isMempoolSubscribed, setIsMempoolSubscribed] = usePersistedState('isMempoolSubscribed', false);
     const [highestBid, setHighestBid] = usePersistedState('highestBid', 0);
-
     const [charismaTokenStats, setCharismaTokenStats] = usePersistedState('charismaTokenStats', {})
     const [charismaClaims, setCharismaClaims] = usePersistedState('charismaClaims', { hasFreeClaim: false, hasClaimed: false } as any)
 
@@ -142,19 +142,19 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             sc.subscribeMempool((tx: any) => {
                 if (tx?.contract_call?.contract_id === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token") {
                     let description;
-
+                    const feeRateAmount = tx.fee_rate / 10 ** 6
                     switch (tx?.contract_call?.function_name) {
                         case 'wrap':
                             const shortSenderAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`
-                            const newFeeRate = Math.ceil((Number((tx.fee_rate / 10 ** 6).toFixed(6)) + 0.01) * 100) / 100
+                            const newFeeRate = Math.ceil((Number((feeRateAmount).toFixed(6)) + 0.01) * 100) / 100
                             description = (
                                 <div className="w-full mt-4 space-y-2">
-                                    <p className='flex justify-between w-full text-xs'><div>Sender Address: {shortSenderAddress}</div><div>Sender Fee: {tx.fee_rate / 10 ** 6} STX</div></p>
+                                    <p className='flex justify-between w-full text-xs'><div>Sender Address: {shortSenderAddress}</div><div>Sender Fee: {feeRateAmount} STX</div></p>
                                     <p className='font-light text-md'>Suggested fee to outbid this tx: <strong>{newFeeRate} STX</strong></p>
                                     <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
                             );
-                            setHighestBid(tx.fee_rate / 10 ** 6)
+                            if (highestBid < feeRateAmount) setHighestBid(feeRateAmount)
                             break;
                         default:
                             description = (
@@ -203,7 +203,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             charismaTokenStats,
             charismaClaims,
             isMempoolSubscribed,
-            setIsMempoolSubscribed
+            setIsMempoolSubscribed,
+            highestBid
         }}>
             {children}
         </GlobalStateContext.Provider>

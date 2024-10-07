@@ -16,6 +16,7 @@ import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import Image from 'next/image';
 import charismaSquare from '@public/charisma-logo-square.png';
 import dmgLogo from '@public/dmg-logo.png';
+import stxLogo from '@public/stx-logo.png';
 import dmgLogoPulse from '@public/dmg-logo.gif';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import numeral from 'numeral';
@@ -24,6 +25,7 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import { CharismaToken } from '@lib/cha-token-api';
 import { GetStaticProps } from 'next';
 import velarApi from '@lib/velar-api';
+import PricesService from '@lib/prices-service';
 
 
 async function getPoolReserves(poolId: number, token0Address: string, token1Address: string): Promise<{ token0: number; token1: number }> {
@@ -76,6 +78,7 @@ async function calculateChaPrice(stxPrice: number): Promise<number> {
 
 type Props = {
   data: {
+    tokenPrices: { [key: string]: number };
     chaPrice: number;
   };
 };
@@ -86,6 +89,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   return {
     props: {
       data: {
+        tokenPrices,
         chaPrice,
       }
     },
@@ -105,7 +109,7 @@ export default function TokenPage({ data }: Props) {
       <Layout>
         <div className="m-2 rounded-full sm:container sm:mx-auto sm:py-10 md:max-w-5xl">
           <HeroSection />
-          <StatsSection />
+          <StatsSection data={data} />
           <WrappingSection data={data} />
         </div>
       </Layout>
@@ -140,11 +144,12 @@ const HeroSection = () => {
   );
 };
 
-const StatsSection = () => {
-  const { charismaTokenStats } = useGlobalState()
+const StatsSection = ({ data }: any) => {
+  const { charismaTokenStats, highestBid } = useGlobalState()
 
   const isUnlocked = charismaTokenStats.blocksUntilUnlock <= 1;
   const stat2Message = charismaTokenStats.blocksPerTransaction === 1 ? charismaTokenStats.transactionsAvailable === 0 ? '100%' : (Number((1 / (Number(charismaTokenStats.transactionsAvailable) + 1))) * 100).toFixed(2) + "%" : charismaTokenStats.blocksPerTransaction
+  const profitMargin = ((data.chaPrice * charismaTokenStats.tokensPerTransaction / 10 ** 6) - (data.tokenPrices['STX'] * highestBid)).toFixed(2)
 
   return (
     <div>
@@ -152,24 +157,31 @@ const StatsSection = () => {
       <div className='w-full pb-8 text-center text-md text-muted/90'>Bid in the mempool for a chance to win the block.</div>
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
+          <div className='text-4xl font-semibold'>{stat2Message}</div>
+          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Capacity Utilization' : 'Blocks per Transaction'}</div>
+        </div>
+        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='flex items-center space-x-0'>
             <div className='-mr-0 text-4xl font-semibold'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
             <Image src={charismaSquare} alt='DMG Logo' width={64} height={64} className='inline w-7 h-7 rounded-full translate-x-1.5 translate-y-0.5' />
           </div>
-          <div className='text-muted/80'>Token Reward</div>
-        </div>
-        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
-          <div className='text-4xl font-semibold'>{stat2Message}</div>
-          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Capacity Utilization' : 'Blocks per Transaction'}</div>
+          <div className='text-muted/80'>Block Subsidy</div>
         </div>
         {!isUnlocked && <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{charismaTokenStats.transactionsAvailable}</div>
           <div className='text-muted/80'>Transactions Available</div>
         </div>}
+        {highestBid > 0 && <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
+          <div className='flex items-center space-x-0'>
+            <div className='-mr-0 text-4xl font-semibold'>{(Math.ceil(highestBid * 100) / 100).toFixed(2)}</div>
+            <Image src={stxLogo} alt='DMG Logo' width={64} height={64} className='inline w-7 h-7 rounded-full translate-x-1.5 translate-y-0.5' />
+          </div>
+          <div className='text-muted/80'>Highest Active Bid</div>
+        </div>}
         {isUnlocked ? (
-          <div className='flex flex-col col-span-2 items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-primary'>
-            <div className='text-2xl font-semibold text-primary'>Wrap Now!</div>
-            <div className='text-center text-muted/80'>Tokens are available for wrapping</div>
+          <div className={`flex flex-col ${highestBid === 0 ? 'col-span-2' : 'col-span-1'} items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]`}>
+            <div className='text-4xl font-semibold'>${profitMargin}</div>
+            <div className='text-center text-muted/80'>Profit Margin</div>
           </div>
         ) : (
           <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
