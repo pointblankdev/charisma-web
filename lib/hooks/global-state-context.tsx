@@ -144,7 +144,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                             const newFeeRate = Math.ceil((Number((tx.fee_rate / 10 ** 6).toFixed(6)) + 0.01) * 100) / 100
                             description = (
                                 <div className="mt-4 space-y-2">
-                                    <p className='flex justify-between text-xs'><div>Sender Address: {shortSenderAddress}</div><div>Sender Fee: {tx.fee_rate / 10 ** 6} STX</div></p>
+                                    <p className='flex justify-between w-full text-xs'><div>Sender Address: {shortSenderAddress}</div><div>Sender Fee: {tx.fee_rate / 10 ** 6} STX</div></p>
                                     <p className='font-light text-md'>Suggested fee to outbid this tx: <strong>{newFeeRate} STX</strong></p>
                                     <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
