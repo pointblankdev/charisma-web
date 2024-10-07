@@ -237,7 +237,7 @@ export default function PoolsPage({ data }: Props) {
   // implement loading check
   const [loading, setLoading] = useState(true);
   useEffect(() => {
-    if (wallet.redPilled) setLoading(false);
+    if (wallet) setLoading(false);
   }, [wallet]);
 
   const isAuthorized = wallet.experience.balance >= 1000 || wallet.redPilled;
