@@ -381,7 +381,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                     const volume = param.seriesData?.get(volumeSeries) as any;
                     // const sma = param.seriesData?.get(smaSeries) || {};
                     // const rsi = param.seriesData?.get(rsiSeries) || {};
-                    console.log(param)
+
                     setTooltipData({
                         // ts: param
                         time: `${blockHeight}`,
