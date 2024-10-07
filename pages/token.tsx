@@ -257,7 +257,7 @@ const WrappingSection = ({ data }: Props) => {
   }
 
   useEffect(() => {
-    if (wallet.redPilled && wallet.experience.balance > 4000) {
+    if (wallet.redPilled && wallet.experience.balance > 2000) {
       setIsMempoolSubscribed(true)
     }
   }, [wallet.redPilled, wallet.experience.balance, setIsMempoolSubscribed])
