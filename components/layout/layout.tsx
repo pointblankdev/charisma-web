@@ -26,7 +26,7 @@ import {
 import spiral from '@public/quests/memobots/spiral.gif';
 import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
 import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
-import { useAccount } from '@micro-stacks/react';
+import { useAccount, useAuth } from '@micro-stacks/react';
 
 type Props = {
   children: React.ReactNode;
@@ -41,6 +41,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   const { wallet } = useWallet();
   const { stxAddress } = useAccount();
+  const { isSignedIn } = useAuth();
+
   const { lands, token, setToken, storedEnergy } = useGlobalState()
 
   const playerLands = Object.values(lands).filter((land: any) => land.energy);
@@ -78,7 +80,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               </div>
             </div>
             <div className={styles.tabs}>
-              {NAVIGATION.map(({ name, route }, i) => (
+              {isSignedIn && NAVIGATION.map(({ name, route }, i) => (
                 <Link
                   key={i}
                   href={route}

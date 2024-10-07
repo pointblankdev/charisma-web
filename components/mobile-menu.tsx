@@ -10,7 +10,7 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
-import { useAuth } from '@micro-stacks/react';
+import { useAccount, useAuth } from '@micro-stacks/react';
 
 const mobileNav = [...NAVIGATION]
 
@@ -57,7 +57,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
             </svg>
           </button>
 
-          {mobileNav.map(({ name, route }) => (
+          {isSignedIn && mobileNav.map(({ name, route }) => (
             <Link key={name} href={route}
               className={cn(styles['nav-item'], {
                 [styles['nav-active']]: activeRoute.startsWith(route)
