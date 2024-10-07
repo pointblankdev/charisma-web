@@ -457,7 +457,7 @@ const PoolsInterface = ({ data, wallet }: any) => {
                         </span>
                       );
                     }
-                    return '-';
+                    return <>-</>;
                   }
 
                   return (
