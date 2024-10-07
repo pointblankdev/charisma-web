@@ -158,9 +158,9 @@ const StatsSection = ({ data }: any) => {
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{stat2Message}</div>
-          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Capacity Utilization' : 'Blocks per Transaction'}</div>
+          <div className='text-muted/80'>{charismaTokenStats.blocksPerTransaction === 1 ? 'Wrap Capacity' : 'Blocks per Transaction'}</div>
         </div>
-        <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
+        <div className={`flex flex-col items-center justify-center ${highestBid === 0 ? 'col-span-2' : 'col-span-1'} p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]`}>
           <div className='flex items-center space-x-0'>
             <div className='-mr-0 text-4xl font-semibold'>{charismaTokenStats.tokensPerTransaction / Math.pow(10, 6)}</div>
             <Image src={charismaSquare} alt='DMG Logo' width={64} height={64} className='inline w-7 h-7 rounded-full translate-x-1.5 translate-y-0.5' />
@@ -179,9 +179,9 @@ const StatsSection = ({ data }: any) => {
           <div className='text-muted/80'>Highest Active Bid</div>
         </div>}
         {isUnlocked ? (
-          <div className={`flex flex-col ${highestBid === 0 ? 'col-span-2' : 'col-span-1'} items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]`}>
+          <div className={`flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]`}>
             <div className='text-4xl font-semibold'>${profitMargin}</div>
-            <div className='text-center text-muted/80'>Profit Margin</div>
+            <div className='text-center text-muted/80'>Net Profit</div>
           </div>
         ) : (
           <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
