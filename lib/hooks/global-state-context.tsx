@@ -167,12 +167,12 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                             description = (
                                 <div>
                                     <p>Transaction ID: {tx.tx_id}</p>
-                                    <p>Transaction Type: {tx.tx_type}</p>
-                                    <p>Contract ID: {tx?.contract_call?.contract_id}</p>
+                                    {/* <p>Transaction Type: {tx.tx_type}</p> */}
+                                    {/* <p>Contract ID: {tx?.contract_call?.contract_id}</p> */}
                                     <p>Function Name: {tx?.contract_call?.function_name}</p>
                                     <p>Sender Address: {tx.sender_address}</p>
                                     <p>Fee Rate: {tx.fee_rate}</p>
-                                    <p>Nonce: {tx.nonce}</p>
+                                    {/* <p>Nonce: {tx.nonce}</p> */}
                                     <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
                             );
@@ -180,7 +180,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     }
 
                     toast({
-                        title: "New Wrap Transaction",
+                        title: "New Charisma Transaction",
                         description,
                     });
                 }
