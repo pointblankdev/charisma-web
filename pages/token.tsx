@@ -154,7 +154,7 @@ const StatsSection = ({ data }: any) => {
   return (
     <div>
       <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>WIN THE BLOCK</div>
-      <div className='w-full pb-8 text-center text-md text-muted/90'>Bid in the mempool for a chance to win the block.</div>
+      <div className='w-full pb-8 text-center text-md text-muted/90'>Bid in the mempool to wrap your tokens.</div>
       <div className='grid grid-cols-2 gap-4 sm:grid-cols-4'>
         <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='text-4xl font-semibold'>{stat2Message}</div>
