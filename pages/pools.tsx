@@ -466,7 +466,7 @@ const PoolsInterface = ({ data, wallet }: any) => {
                         <div className="flex items-center">
                           <Image src={pool.token0.image} alt={pool.token0.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                           <Image src={pool.token1.image} alt={pool.token1.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                          <span className="text-white">{pool.token0.symbol}/{pool.token1.symbol}</span>
+                          <span className="text-white">{pool.token0.symbol}-{pool.token1.symbol}</span>
                         </div>
                       </td>
                       <td className="py-4 text-white min-w-48">
