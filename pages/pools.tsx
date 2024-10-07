@@ -64,6 +64,7 @@ export type PoolInfo = {
 type Props = {
   data: {
     pools: PoolInfo[];
+    tokenPrices: { [key: string]: number };
   };
 };
 
@@ -217,6 +218,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     props: {
       data: {
         pools,
+        tokenPrices
       }
     },
     revalidate: 60
@@ -278,7 +280,7 @@ export default function PoolsPage({ data }: Props) {
 }
 
 const PoolsInterface = ({ data, wallet }: any) => {
-  const [sortBy, setSortBy] = useState<'tvl' | 'volume' | 'virtualChaPrice'>('tvl');
+  const [sortBy, setSortBy] = useState<'tvl' | 'volume' | 'priceAlignment'>('tvl');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedPool, setSelectedPool] = useState<PoolInfo | null>(null);
   const [isAddLiquidity, setIsAddLiquidity] = useState(false);
@@ -290,19 +292,22 @@ const PoolsInterface = ({ data, wallet }: any) => {
   const [isQuickBuyDialogOpen, setIsQuickBuyDialogOpen] = useState(false);
   const [selectedPoolForQuickBuy, setSelectedPoolForQuickBuy] = useState<PoolInfo | null>(null);
 
-  const calculateVirtualChaPrice = (pool: PoolInfo) => {
+  const calculatePriceAlignment = (pool: PoolInfo) => {
+    if (pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA') {
+      return 100; // STX-CHA pool is always 100% aligned
+    }
+
     if (pool.token0.symbol === 'CHA' || pool.token1.symbol === 'CHA') {
       const chaToken = pool.token0.symbol === 'CHA' ? pool.token0 : pool.token1;
       const otherToken = pool.token0.symbol === 'CHA' ? pool.token1 : pool.token0;
       const chaReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token0 : pool.reserves.token1;
       const otherReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
 
-      // Convert reserves to actual token amounts
       const chaAmount = chaReserve / 10 ** chaToken.decimals;
       const otherAmount = otherReserve / 10 ** otherToken.decimals;
 
-      // Calculate the price
-      return (otherToken.price * otherAmount) / chaAmount;
+      const poolChaPrice = (otherToken.price * otherAmount) / chaAmount;
+      return (poolChaPrice / data.tokenPrices['CHA']) * 100;
     }
     return null;
   };
@@ -311,11 +316,16 @@ const PoolsInterface = ({ data, wallet }: any) => {
     !(pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA') || wallet.experience.balance >= 4000
   );
 
+  const getAlignmentColor = (alignment: number) => {
+    const hue = Math.max(0, Math.min(120, 120 * (1 - Math.abs(alignment - 100) / 15)));
+    return `hsl(${hue}, 100%, 40%, 90%)`;
+  };
+
   const sortedPools = [...filteredPools].sort((a, b) => {
-    if (sortBy === 'virtualChaPrice') {
-      const priceA = calculateVirtualChaPrice(a) || 0;
-      const priceB = calculateVirtualChaPrice(b) || 0;
-      return sortOrder === 'asc' ? priceA - priceB : priceB - priceA;
+    if (sortBy === 'priceAlignment') {
+      const alignmentA = calculatePriceAlignment(a) || 0;
+      const alignmentB = calculatePriceAlignment(b) || 0;
+      return sortOrder === 'asc' ? alignmentA - alignmentB : alignmentB - alignmentA;
     }
     const valueA = sortBy === 'tvl' ? a.tvl : ((a.volume.token0 / (10 ** a.token0.decimals)) * a.token0.price) + ((a.volume.token1 / (10 ** a.token1.decimals)) * a.token1.price);
     const valueB = sortBy === 'tvl' ? b.tvl : ((b.volume.token0 / (10 ** b.token0.decimals)) * b.token0.price) + ((b.volume.token1 / (10 ** b.token1.decimals)) * b.token1.price);
@@ -325,7 +335,7 @@ const PoolsInterface = ({ data, wallet }: any) => {
   // Calculate total TVL
   const totalTVL = data.pools.reduce((sum: any, pool: any) => Number(sum) + Number(pool.tvl), 0);
 
-  const handleSort = (newSortBy: 'tvl' | 'volume' | 'virtualChaPrice') => {
+  const handleSort = (newSortBy: 'tvl' | 'volume' | 'priceAlignment') => {
     if (newSortBy === sortBy) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -394,13 +404,12 @@ const PoolsInterface = ({ data, wallet }: any) => {
     return pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA';
   };
 
-  const needsRebalance = (pool: PoolInfo, virtualChaPrice: number | null, referenceChaPrice: number) => {
+  const needsRebalance = (pool: PoolInfo, alignment: number | null) => {
     if (isStxChaPool(pool)) {
-      return false; // STX-CHA pool never needs rebalancing
+      return false;
     }
-    return virtualChaPrice !== null && Math.abs(virtualChaPrice - referenceChaPrice) / referenceChaPrice > 0.01; // 1% threshold
+    return alignment !== null && Math.abs(alignment - 100) > 1; // 1% threshold
   };
-
 
   return (
     <div className="sm:mx-auto sm:px-4">
@@ -425,19 +434,31 @@ const PoolsInterface = ({ data, wallet }: any) => {
                   <th className="py-2 text-center cursor-pointer" onClick={() => handleSort('volume')}>
                     Trading Volume (Total) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
-                  <th className="hidden py-2 cursor-pointer sm:flex" onClick={() => handleSort('virtualChaPrice')}>
-                    Virtual CHA Price {sortBy === 'virtualChaPrice' && <ArrowUpDown className="inline ml-1" size={16} />}
+                  <th className="items-center hidden py-2 cursor-pointer sm:flex" onClick={() => handleSort('priceAlignment')}>
+                    Price Alignment {sortBy === 'priceAlignment' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="py-2 sr-only">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedPools.map((pool) => {
-                  const virtualChaPrice = calculateVirtualChaPrice(pool);
-                  const referenceChaPrice = data.pools.find((p: any) => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')?.token1.price || 0;
-                  const poolNeedsRebalance = needsRebalance(pool, virtualChaPrice, referenceChaPrice);
+                  const priceAlignment = calculatePriceAlignment(pool);
+                  const poolNeedsRebalance = needsRebalance(pool, priceAlignment);
                   const canEqualizePool = canEqualize(pool);
                   const isStxCha = isStxChaPool(pool);
+
+                  const PriceAlignment = ({ pool }: any) => {
+                    const alignment = calculatePriceAlignment(pool);
+                    if (alignment !== null) {
+                      const color = getAlignmentColor(alignment);
+                      return (
+                        <span style={{ color }}>
+                          {alignment.toPrecision(3)}%
+                        </span>
+                      );
+                    }
+                    return '-';
+                  }
 
                   return (
                     <tr key={pool.id} className="border-t border-gray-700/50">
@@ -465,7 +486,7 @@ const PoolsInterface = ({ data, wallet }: any) => {
                         </div>
                       </td>
                       <td className="py-4 text-center text-white min-w-24 sm:min-w-36">
-                        {virtualChaPrice ? `$${numeral(virtualChaPrice).format('0,0.0000')}` : '-'}
+                        <PriceAlignment pool={pool} />
                       </td>
                       <td className="py-4 min-w-64">
                         <div className="flex justify-between space-x-6">
@@ -546,4 +567,3 @@ const PoolsInterface = ({ data, wallet }: any) => {
     </div>
   );
 };
-
