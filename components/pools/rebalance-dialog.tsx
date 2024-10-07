@@ -173,9 +173,9 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
                 <p>Simulated Target Price: ${numeral(simulatedPrice).format('0,0.0000')}</p>
                 <p>Required Action: {trade.action === 'buy' ? 'Buy' : 'Sell'} {numeral(trade.amount * (sliderValue / 100)).format('0,0.0000')} CHA</p>
                 <p className="text-sm text-gray-500">
-                    (This will {trade.action === 'buy' ? 'sell' : 'receive'} approximately{' '}
-                    {numeral((trade.action === 'buy' ? trade.sellAmount : trade.receiveAmount) as any * (sliderValue / 100)).format('0,0.0000')}{' '}
-                    {trade.sellToken.symbol})
+                    (You will {trade.action === 'buy' ? 'sell' : 'receive'} approximately{' '}
+                    {numeral((trade.action === 'buy' ? trade.sellAmount : trade.receiveAmount ?? 0) * (sliderValue / 100)).format('0,0.0000')}{' '}
+                    {trade.action === 'buy' ? trade.sellToken.symbol : trade.buyToken.symbol})
                 </p>
                 <div className="mt-4">
                     <label className="block text-sm font-medium text-gray-200">Rebalance Amount (%)</label>
