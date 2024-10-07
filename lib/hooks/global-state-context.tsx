@@ -6,6 +6,7 @@ import { StacksApiSocketClient, TransactionEventsResponse } from '@stacks/blockc
 import { useAccount } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
+import { set } from 'lodash';
 
 const socketUrl = "https://api.mainnet.hiro.so";
 const sc = new StacksApiSocketClient({ url: socketUrl });
@@ -46,6 +47,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [token, setToken] = usePersistedState('token', {})
     const [storedEnergy, setStoredEnergy] = usePersistedState('storedEnergy', 0);
     const [isMempoolSubscribed, setIsMempoolSubscribed] = usePersistedState('isMempoolSubscribed', false);
+    const [highestBid, setHighestBid] = usePersistedState('highestBid', 0);
 
     const [charismaTokenStats, setCharismaTokenStats] = usePersistedState('charismaTokenStats', {})
     const [charismaClaims, setCharismaClaims] = usePersistedState('charismaClaims', { hasFreeClaim: false, hasClaimed: false } as any)
@@ -109,6 +111,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                 description: `Stacks block ${block.height} has been mined.`,
             })
 
+            // Reset highest wrap bid on each new block
+            setHighestBid(0)
+
             // Update Charisma token stats on each new block
             // We're calling this asynchronously without awaiting to avoid returning a Promise
             getCharismaTokenStats().catch(error => {
@@ -130,7 +135,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return () => {
             sc.unsubscribeBlocks()
         };
-    }, [stxAddress, setBlock, toast, getCharismaTokenStats]);
+    }, [stxAddress, setBlock, toast, getCharismaTokenStats, setHighestBid]);
 
     useEffect(() => {
         if (isMempoolSubscribed) {
@@ -149,6 +154,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                                     <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
                             );
+                            setHighestBid(tx.fee_rate / 10 ** 6)
                             break;
                         default:
                             description = (
