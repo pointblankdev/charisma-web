@@ -147,10 +147,17 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                         case 'wrap':
                             const shortSenderAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`
                             const newFeeRate = Math.ceil((Number((feeRateAmount).toFixed(6)) + 0.01) * 100) / 100
+                            const isBidLower = feeRateAmount < highestBid;
+                            const bidStatus = isBidLower ? "Lower than current highest bid" : "New highest bid";
+                            const suggestedFee = isBidLower ? highestBid + 0.01 : newFeeRate;
                             description = (
                                 <div className="w-full mt-4 space-y-2">
-                                    <p className='flex justify-between w-full text-xs'><div>Sender Address: {shortSenderAddress}</div><div>Sender Fee: {feeRateAmount} STX</div></p>
-                                    <p className='font-light text-md'>Suggested fee to outbid this tx: <strong>{newFeeRate} STX</strong></p>
+                                    <p className='flex justify-between w-full text-xs'>
+                                        <div>Sender Address: {shortSenderAddress}</div>
+                                        <div>Sender Fee: {feeRateAmount} STX</div>
+                                    </p>
+                                    <p className='font-light text-md'>{bidStatus}</p>
+                                    <p className='font-light text-md'>Suggested fee to outbid: <strong>{suggestedFee.toFixed(2)} STX</strong></p>
                                     <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
                             );
