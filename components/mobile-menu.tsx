@@ -12,7 +12,7 @@ import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
 import { useAuth } from '@micro-stacks/react';
 
-const mobileNav = [...NAVIGATION, { name: 'Governance', route: '/governance' }]
+const mobileNav = [...NAVIGATION]
 
 
 function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof useDialog>[0]) {
@@ -38,7 +38,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
       <FocusScope contain restoreFocus autoFocus>
         <nav className={styles.nav} {...overlayProps} {...dialogProps} {...modalProps} ref={ref}>
           <button
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-600"
+            className="absolute p-2 rounded-full top-4 right-4 hover:bg-gray-600"
             aria-label="Close Menu"
             onClick={props.onClose}
           >
@@ -56,7 +56,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
               <path d="M6 6l12 12" />
             </svg>
           </button>
-          
+
           {mobileNav.map(({ name, route }) => (
             <Link key={name} href={route}
               className={cn(styles['nav-item'], {

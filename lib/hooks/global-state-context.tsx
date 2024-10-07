@@ -30,6 +30,11 @@ interface GlobalState {
     setIsMempoolSubscribed: (isMempoolSubscribed: boolean) => void
 }
 
+const formatTime = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+};
+
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -140,8 +145,8 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                             description = (
                                 <div className="mt-4 space-y-2">
                                     <p className='flex justify-between text-xs'><div>Sender Address: {shortSenderAddress}</div><div>Sender Fee: {tx.fee_rate / 10 ** 6} STX</div></p>
-                                    <p className='font-light text-md'>Suggested fee to outbid this transaction: <strong>{newFeeRate} STX</strong></p>
-                                    <p className='text-xs text-muted-foreground'>{new Date(tx.receipt_time_iso).toString()}</p>
+                                    <p className='font-light text-md'>Suggested fee to outbid this tx: <strong>{newFeeRate} STX</strong></p>
+                                    <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
                             );
                             break;
@@ -155,7 +160,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                                     <p>Sender Address: {tx.sender_address}</p>
                                     <p>Fee Rate: {tx.fee_rate}</p>
                                     <p>Nonce: {tx.nonce}</p>
-                                    <p>Receipt Time: {new Date(tx.receipt_time_iso).toString()}</p>
+                                    <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
                             );
                             break;

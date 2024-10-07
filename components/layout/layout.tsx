@@ -7,13 +7,11 @@ import styles from './layout.module.css';
 import styleUtils from '../utils.module.css';
 import MobileMenu from '../mobile-menu';
 import Footer from './footer';
-import React, { useEffect } from 'react';
+import React from 'react';
 import Image from 'next/image';
 import energyIcon from '@public/creatures/img/energy.png';
-import experienceIcon from '@public/experience.png';
 import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
-import { forEach } from 'lodash';
 import ConnectWallet from '../stacks-session/connect';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import dmgLogo from '@public/dmg-logo.png';
@@ -26,10 +24,8 @@ import {
   DropdownMenuTrigger
 } from '@components/ui/dropdown-menu';
 import spiral from '@public/quests/memobots/spiral.gif';
-import hiddenMemobot from '@public/quests/memobots/hidden-memobot.png';
 import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
 import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
-import { FaSync } from 'react-icons/fa';
 import { useAccount } from '@micro-stacks/react';
 
 type Props = {
@@ -45,7 +41,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   const { wallet } = useWallet();
   const { stxAddress } = useAccount();
-  const { lands, block, token, setToken, storedEnergy } = useGlobalState()
+  const { lands, token, setToken, storedEnergy } = useGlobalState()
 
   const playerLands = Object.values(lands).filter((land: any) => land.energy);
 

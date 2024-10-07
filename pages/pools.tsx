@@ -112,7 +112,7 @@ async function calculateChaPrice(stxPrice: number): Promise<number> {
 
   // Calculate CHA price based on STX-CHA pool reserves
   const chaPrice = (stxPrice * stxChaReserves.token0) / stxChaReserves.token1;
-  return chaPrice || 0.21;
+  return chaPrice || 0.30;
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
@@ -253,11 +253,11 @@ export default function PoolsPage({ data }: Props) {
           ) : (
             <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
               <Card className="w-full max-w-lg p-6 text-center">
-                <h2 className="text-2xl font-bold mb-4">Access Restricted</h2>
+                <h2 className="mb-4 text-2xl font-bold">Access Restricted</h2>
                 <p className="mb-4">
                   To view and manage liquidity pools, you need either:
                 </p>
-                <ul className="list-disc list-inside mb-4 text-left">
+                <ul className="mb-4 text-left list-disc list-inside">
                   <li className={wallet.experience.balance >= 1000 ? "text-green-500" : "text-red-500"}>
                     At least 1000 Experience {wallet.experience.balance >= 1000 ? "✓" : "✗"}
                   </li>
@@ -406,14 +406,14 @@ const PoolsInterface = ({ data, wallet }: any) => {
     <div className="sm:mx-auto sm:px-4">
       <div className="mt-6">
         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
-          <div className="flex items-center justify-between mb-4 px-4 sm:px-0">
+          <div className="flex items-center justify-between px-4 mb-4 sm:px-0">
             <h1 className="text-2xl font-bold text-white/95">Liquidity Pools</h1>
             <span className="px-3 text-lg font-light text-white border rounded-full border-primary bg-accent-foreground">
               ${numeral(totalTVL).format('0,0.00')}
             </span>
           </div>
 
-          <div className="overflow-x-auto px-4 sm:px-0">
+          <div className="px-4 overflow-x-auto sm:px-0">
             <table className="w-full">
               <thead>
                 <tr className="text-left text-gray-400">
@@ -422,10 +422,10 @@ const PoolsInterface = ({ data, wallet }: any) => {
                   <th className="py-2 cursor-pointer" onClick={() => handleSort('tvl')}>
                     TVL {sortBy === 'tvl' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
-                  <th className="py-2 cursor-pointer text-center" onClick={() => handleSort('volume')}>
+                  <th className="py-2 text-center cursor-pointer" onClick={() => handleSort('volume')}>
                     Trading Volume (Total) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
-                  <th className="py-2 cursor-pointer hidden sm:flex" onClick={() => handleSort('virtualChaPrice')}>
+                  <th className="hidden py-2 cursor-pointer sm:flex" onClick={() => handleSort('virtualChaPrice')}>
                     Virtual CHA Price {sortBy === 'virtualChaPrice' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="py-2 sr-only">Actions</th>
@@ -464,13 +464,13 @@ const PoolsInterface = ({ data, wallet }: any) => {
                           <div>{numeral(pool.volume.token1 / 10 ** pool.token1.decimals * pool.token1.price).format('$0,0.00')}</div>
                         </div>
                       </td>
-                      <td className="py-4 text-white text-center min-w-24 sm:min-w-36">
+                      <td className="py-4 text-center text-white min-w-24 sm:min-w-36">
                         {virtualChaPrice ? `$${numeral(virtualChaPrice).format('0,0.0000')}` : '-'}
                       </td>
                       <td className="py-4 min-w-64">
-                        <div className="flex space-x-6 justify-between">
+                        <div className="flex justify-between space-x-6">
                           <div className="flex rounded-md">
-                            <span className="px-4 py-1 text-sm font-medium border border-r-0 rounded-l-md border-gray-700/80 bg-background leading-7">
+                            <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
                               Liquidity
                             </span>
                             <button

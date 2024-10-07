@@ -416,7 +416,7 @@ const SwapInterface = ({ data }: Props) => {
         case 'CHA':
           const stxPrice = data.prices.find((token: any) => token.symbol === 'STX').price;
           const price = stxPrice / data.chaPerStx
-          return price || 0.21;
+          return price || 0.30;
         case 'WELSH':
           return data.cmcPriceData.data['WELSH'].quote.USD.price;
         case 'ROO':
@@ -815,7 +815,7 @@ const SwapInterface = ({ data }: Props) => {
 
             {/* Display swap path */}
 
-            <div className='pt-6 flex justify-between'>
+            <div className='flex justify-between pt-6'>
               <div className="text-sm text-gray-400">
                 Swap path: {swapPath.map(token => token.symbol).join(' → ')}
               </div>
