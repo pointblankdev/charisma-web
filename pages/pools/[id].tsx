@@ -304,34 +304,29 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 },
             });
 
-            const candlestickSeries = chart.addCandlestickSeries(token1.endsWith('charisma-token') ? {
-                upColor: '#c1121f',
-                downColor: '#0e0e10',
+            const tokenColors: { [key: string]: string } = {
+                'wstx': '#FC6431',
+                'charisma-token': '#c1121f',
+                'welshcorgicoin-token': '#D78039',
+                'synthetic-welsh': '#3990D7',
+                'kangaroo': '#B08F63',
+                'synthetic-roo': '#6384B0',
+                'brc20-ordi': '#bababa',
+                'default-up': 'green',
+                'default-down': 'red',
+            };
+
+            const getTokenColor = (tokenAddress: string) => {
+                const tokenName = tokenAddress.split('.').pop() || '';
+                return tokenColors[tokenName] || tokenColors['default-up'];
+            };
+
+            const candlestickSeries = chart.addCandlestickSeries({
+                upColor: getTokenColor(token1),
+                downColor: getTokenColor(token0),
                 borderVisible: true,
-                wickUpColor: '#c1121f',
-                wickDownColor: '#0e0e10',
-                borderColor: '#333333'
-            } : token0.endsWith('charisma-token') ? {
-                upColor: '#0e0e10',
-                downColor: '#c1121f',
-                borderVisible: true,
-                wickUpColor: '#0e0e10',
-                wickDownColor: '#c1121f',
-                borderColor: '#333333'
-            } : token0.endsWith('welshcorgicoin-token') ? {
-                upColor: '#3990D7',
-                downColor: '#D78039',
-                borderVisible: true,
-                wickUpColor: '#3990D7',
-                wickDownColor: '#D78039',
-                borderColor: '#333333'
-            } : {
-                // use standard colors
-                upColor: '#6384B0',
-                downColor: '#B08F63',
-                borderVisible: true,
-                wickUpColor: '#6384B0',
-                wickDownColor: '#B08F63',
+                wickUpColor: getTokenColor(token1),
+                wickDownColor: getTokenColor(token0),
                 borderColor: '#333333'
             });
 
