@@ -164,7 +164,7 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
             <DialogHeader>
                 <DialogTitle>Rebalance Pool</DialogTitle>
                 <DialogDescription>
-                    Rebalance the {pool.token0.symbol}/{pool.token1.symbol} pool to match the reference CHA price.
+                    Rebalance the {pool.token0.symbol}/{pool.token1.symbol} pool to match the STX-CHA price.
                 </DialogDescription>
             </DialogHeader>
             <div className="py-4">
