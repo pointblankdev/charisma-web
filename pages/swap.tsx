@@ -22,6 +22,7 @@ import welshLogo from '@public/welsh-logo.png';
 import chaLogo from '@public/charisma-logo-square.png';
 import rooLogo from '@public/roo-logo.png';
 import ordiLogo from '@public/ordi-logo.png';
+import dogLogo from '@public/sip10/dogLogo.webp';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import numeral from 'numeral';
 import { ChevronDown, ArrowUpDown } from 'lucide-react';
@@ -57,7 +58,7 @@ type Props = {
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const velarPriceData = await velarApi.tokens('all');
-  const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH'] })
+  const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH', 'DOG'] })
 
   const result: any = await callReadOnlyFunction({
     contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -132,6 +133,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi',
       decimals: 8
     },
+    {
+      symbol: 'DOG',
+      name: 'DOG-GO-TO-THE-MOON',
+      image: dogLogo,
+      tokenName: 'runes-dog',
+      contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog',
+      decimals: 8
+    },
   ];
 
   // Define pools
@@ -176,6 +185,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       id: 7,
       token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
       token1: tokens.find(token => token.symbol === 'ROO') as TokenInfo,
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
+    {
+      id: 8,
+      token0: tokens.find(token => token.symbol === 'WELSH') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'DOG') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
     // Add other pools here
@@ -392,6 +407,7 @@ const SwapInterface = ({ data }: Props) => {
   const iouWelsh = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh');
   const iouRoo = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo');
   const ordi = getBalanceByKey('SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi::brc20-ordi');
+  const dog = getBalanceByKey('SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog::runes-dog');
 
   const getBalance = useMemo(() => {
     return (symbol: any) => {
@@ -410,11 +426,13 @@ const SwapInterface = ({ data }: Props) => {
           return iouRoo || 0;
         case 'ORDI':
           return ordi || 0;
+        case 'DOG':
+          return dog || 0;
         default:
           return 0;
       }
     };
-  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi]);
+  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi, dog]);
 
   const getPrice = useMemo(() => {
     return (symbol: any) => {
@@ -435,11 +453,13 @@ const SwapInterface = ({ data }: Props) => {
           return data.prices.find((token: any) => token.symbol === '$ROO').price;
         case 'ORDI':
           return data.cmcPriceData.data['ORDI'].quote.USD.price;
+        case 'DOG':
+          return data.cmcPriceData.data['DOG'].quote.USD.price;
         default:
           return 0;
       }
     };
-  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi, reserves, fromToken, currentPool]);
+  }, [data.cmcPriceData.data, data.prices, data.chaPerStx]);
 
   const handleSwap = () => {
     setFromToken(toToken);

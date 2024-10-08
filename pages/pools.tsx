@@ -168,11 +168,18 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-roo',
     },
+    {
+      id: 8,
+      token0: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin', decimals: 6 },
+      token1: { symbol: 'DOG', name: 'DOG-GO-TO-THE-MOON', image: '/sip10/dogLogo.webp', contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog', tokenId: 'runes-dog', decimals: 8 },
+      volume24h: 0,
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
+    },
   ];
 
   // Fetch token prices
   const tokenPrices = await getTokenPrices();
-  const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH'] })
+  const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH', 'DOG'] })
 
   // Calculate CHA price
   const chaPrice = await calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price);
@@ -183,6 +190,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   tokenPrices['iouROO'] = tokenPrices['$ROO'];
 
   tokenPrices['ORDI'] = cmcPriceData.data['ORDI'].quote.USD.price
+  tokenPrices['DOG'] = cmcPriceData.data['DOG'].quote.USD.price
 
   // Fetch reserves and calculate TVL for each pool
   const pools: PoolInfo[] = await Promise.all(poolsData.map(async (pool) => {

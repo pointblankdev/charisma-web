@@ -312,6 +312,7 @@ const PoolDetail: React.FC<PoolData> = ({ id, data, symbol, token0, token1 }) =>
                 'kangaroo': '#B08F63',
                 'synthetic-roo': '#6384B0',
                 'brc20-ordi': '#bababa',
+                'runes-dog': '#EF954C',
                 'default-up': 'green',
                 'default-down': 'red',
             };

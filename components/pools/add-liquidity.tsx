@@ -155,8 +155,23 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
         const lpTokenBalance = getLpTokenBalance();
         const lpTokensToRemove = Math.floor(lpTokenBalance * sliderValue / 100);
 
+        // Calculate the minimum amounts of tokens to receive
+        const minAmount0 = BigInt(Math.floor(parseFloat(amount0) * 0.80 * 10 ** pool.token0.decimals)); // 20% slippage
+        const minAmount1 = BigInt(Math.floor(parseFloat(amount1) * 0.80 * 10 ** pool.token1.decimals)); // 20% slippage
+
         const postConditions: any = [
+            // Post condition for sending LP tokens
             Pc.principal(stxAddress).willSendLte(lpTokensToRemove).ft(pool.contractAddress as any, 'lp-token') as any,
+
+            // Post condition for receiving token0
+            pool.token0.symbol !== 'STX'
+                ? Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(minAmount0).ft(pool.token0.contractAddress as any, pool.token0.tokenId as string) as any
+                : Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(minAmount0).ustx() as any,
+
+            // Post condition for receiving token1
+            pool.token1.symbol !== 'STX'
+                ? Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(minAmount1).ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any
+                : Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(minAmount1).ustx() as any,
         ];
 
         openContractCall({
@@ -169,8 +184,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 contractPrincipalCV(pool.token1.contractAddress.split('.')[0], pool.token1.contractAddress.split('.')[1]),
                 contractPrincipalCV(pool.contractAddress.split('.')[0], pool.contractAddress.split('.')[1]),
                 uintCV(lpTokensToRemove),
-                uintCV(1),
-                uintCV(1)
+                uintCV(minAmount0),  // Minimum amount of token0 to receive
+                uintCV(minAmount1),  // Minimum amount of token1 to receive
             ],
             postConditionMode: PostConditionMode.Deny,
             postConditions,
@@ -182,7 +197,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 console.log('Transaction cancelled');
             }
         });
-    }, [pool, sliderValue, stxAddress, openContractCall, onClose, getLpTokenBalance]);
+    }, [pool, stxAddress, getLpTokenBalance, sliderValue, amount0, amount1, openContractCall, onClose]);
 
     if (!pool) return null;
 
