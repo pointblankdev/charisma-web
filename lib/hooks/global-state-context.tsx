@@ -157,7 +157,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                                         <div>Sender Fee: {feeRateAmount} STX</div>
                                     </p>
                                     <p className='font-light text-md'>{bidStatus}</p>
-                                    <p className='font-light text-md'>Suggested fee to outbid: <strong>{suggestedFee.toFixed(2)} STX</strong></p>
+                                    <p className='font-light text-md'>Suggested fee to outbid: <strong>{Number(suggestedFee.toFixed(2)) / 100} STX</strong></p>
                                     <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
                             );
