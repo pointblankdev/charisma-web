@@ -7,7 +7,7 @@ import styles from './layout.module.css';
 import styleUtils from '../utils.module.css';
 import MobileMenu from '../mobile-menu';
 import Footer from './footer';
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import ConnectWallet from '../stacks-session/connect';
 import useWallet from '@lib/hooks/wallet-balance-provider';
@@ -30,7 +30,13 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const { wallet } = useWallet();
   const { stxAddress } = useAccount();
 
-  const navigationTabs = stxAddress ? NAVIGATION : []
+  const [navigationTabs, setNavigationTabs] = useState([] as any[]);
+
+  useEffect(() => {
+    if (stxAddress) {
+      setNavigationTabs(NAVIGATION);
+    }
+  }, [stxAddress]);
 
   return (
     <>
