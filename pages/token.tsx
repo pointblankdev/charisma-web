@@ -128,7 +128,7 @@ export default function TokenPage({ data }: Props) {
     description: "The New Charisma Token",
   };
 
-  const { setWrapTransactions } = useGlobalState()
+  const { setWrapTransactions, wrapTransactions } = useGlobalState()
   const { wallet } = useWallet();
 
   useEffect(() => {
@@ -156,7 +156,7 @@ export default function TokenPage({ data }: Props) {
               </div>
               <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
                 <div className='m-2 space-y-2'>
-                  {data.transactions
+                  {wrapTransactions
                     .filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
                     .map((tx: Transaction) => {
                       return (
