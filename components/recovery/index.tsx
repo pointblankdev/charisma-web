@@ -37,7 +37,7 @@ export default function RecoveryClaimPage({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="m-2 sm:container sm:mx-auto sm:py-4 md:max-w-5xl">
+        <div className="m-2 sm:container sm:mx-auto sm:py-4 md:max-w-7xl">
           <div className="flex flex-wrap items-baseline justify-between gap-2 mb-4">
             <nav className="flex flex-wrap gap-2 mb-4">
               <Link href="/recovery/plan" className={`px-4 py-2 rounded-md ${tab === 'plan' ? 'bg-primary/70 text-white' : 'bg-[var(--sidebar)]'}`}>

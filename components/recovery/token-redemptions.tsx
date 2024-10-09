@@ -46,6 +46,7 @@ const TokenRedemptions = ({ data }: any) => {
                 senderAddress: stxAddress,
             }).then((response: any) => {
                 const claimed = cvToJSON(response).value;
+                console.log('claimed', claimed);
                 setHasClaimedA(claimed);
             }).catch(console.error)
 
@@ -216,7 +217,7 @@ const TokenRedemptions = ({ data }: any) => {
     const formatNumber = (num: number) => numeral(num / Math.pow(10, 6)).format('0,0.00');
 
     return (
-        <div className='max-w-5xl space-y-8 px-4 sm:px-0'>
+        <div className='w-full space-y-8 px-4 sm:px-0'>
             <h2 className="text-xl font-bold mb-4">Synthetic Tokens</h2>
             <div className="flex flex-wrap p-4 sm:p-6 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)] sm:space-x-8">
 
