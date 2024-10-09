@@ -168,7 +168,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                                 <div className="w-full mt-4 space-y-2">
                                     <p className='flex justify-between w-full text-sm'>
                                         <div>Sender Address: {shortSenderAddress}</div>
-                                        <div>Sender Fee: {tx.fee_rate} STX</div>
+                                        <div>Sender Fee: {Number(tx.fee_rate) / 10 ** 6} STX</div>
                                     </p>
                                     <p className='font-light text-sm'>{bidStatus}</p>
                                     {/* <p className='font-light text-md'>Suggested fee to outbid: <strong>{suggestedFee.toFixed(2)} STX</strong></p> */}
