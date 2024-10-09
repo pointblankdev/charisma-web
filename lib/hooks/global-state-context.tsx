@@ -41,6 +41,11 @@ const formatTime = (dateString: string) => {
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 };
 
+const isWithinLast6Hours = (timestamp: string) => {
+    const sixHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+    return new Date(timestamp) > sixHoursAgo;
+};
+
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -153,10 +158,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                         case 'wrap':
 
                             getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token').then((txs) => {
-                                const wrapTxs = txs.filter((tx: any) => tx.contract_call.function_name === 'wrap')
+                                const wrapTxs = txs.filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
                                 setWrapTransactions(wrapTxs)
                             })
-                            // setWrapTransactions((prev: any) => [...prev, tx])
                             const shortSenderAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`
                             const isBidLower = Number(tx.fee_rate) < highestBid;
                             const bidStatus = isBidLower ? "Lower than current highest bid" : "New highest bid";
