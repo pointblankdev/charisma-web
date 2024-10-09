@@ -320,8 +320,8 @@ const PoolsInterface = ({ data, wallet }: any) => {
     return null;
   };
 
-  const filteredPools = data.pools.filter((pool: any) =>
-    !(pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA') || wallet.experience.balance >= 4000
+  const filteredPools = data.pools.filter((pool: any) => pool && true
+    // !(pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA') || wallet.experience.balance >= 4000
   );
 
   const getAlignmentColor = (alignment: number) => {
