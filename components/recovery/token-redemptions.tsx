@@ -266,7 +266,7 @@ const TokenRedemptions = ({ data }: any) => {
                             <div>Recovered:</div>
                             <div>{formatNumber([claimA, claimB, claimC, claimD][index])}</div>
                             <div>Claimed:</div>
-                            <div>{claims[['a', 'b', 'c', 'd'][index]].value ? formatNumber([claimA, claimB, claimC, claimD][index]) : '0'} (CHA)</div>
+                            <div>{claims[['a', 'b', 'c', 'd'][index]].value ? formatNumber([claimA, claimB, claimC, claimD][index]) : '0'} CHA</div>
                         </div>
                         <div className="mt-2">
                             <Button
