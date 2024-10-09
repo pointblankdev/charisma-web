@@ -798,6 +798,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
               <button
                 className="p-2 mx-auto rounded-full bg-[var(--sidebar)]"
                 onClick={handleSwap}
+                disabled={fromToken.symbol === 'STX' && !hasHighExperience}
               >
                 <ArrowUpDown className="text-gray-400" size={24} />
               </button>
