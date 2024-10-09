@@ -826,7 +826,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                             className={`flex items-center w-full px-4 py-2 text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'}`}
                             onClick={() => !isDisabled && selectToken(token, false)}
                             disabled={isDisabled}
-                            title={token.symbol === 'STX' && !hasHighExperience ? 'STX is available as a swap destination for users with over 4000 experience.' : ''}
+                            title={token.symbol === 'STX' ? 'STX is available as a swap destination for users with over 4000 experience.' : ''}
                           >
                             <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                             <span className={isDisabled ? 'text-gray-500' : 'text-white'}>
