@@ -148,6 +148,8 @@ export default function TokenPage({ data }: Props) {
 
   const hasEnoughExperience = wallet.experience.balance >= 100;
 
+  const recentTransactions = wrapTransactions.filter(tx => isWithinLast6Hours(tx.receipt_time_iso));
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -167,8 +169,7 @@ export default function TokenPage({ data }: Props) {
               </div>
               <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
                 <div className='m-2 space-y-2'>
-                  {_.uniqBy(wrapTransactions, tx => tx.sender_address)
-                    .filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
+                  {_.uniqBy(recentTransactions, tx => tx.sender_address)
                     .map((tx: Transaction) => {
                       return (
                         <div key={tx.tx_id} className='p-4 bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg'>

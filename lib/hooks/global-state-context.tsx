@@ -121,7 +121,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
             // Reset highest wrap bid on each new block
             setHighestBid(0)
-            setWrapTransactions(wrapTransactions.filter((tx: any) => isWithinLast6Hours(tx.receipt_time_iso)))
 
             // Update Charisma token stats on each new block
             // We're calling this asynchronously without awaiting to avoid returning a Promise
@@ -144,7 +143,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return () => {
             sc.unsubscribeBlocks()
         };
-    }, [stxAddress, setBlock, toast, getCharismaTokenStats, setHighestBid, setWrapTransactions, wrapTransactions]);
+    }, [stxAddress, setBlock, toast, getCharismaTokenStats, setHighestBid]);
 
     useEffect(() => {
         if (isMempoolSubscribed) {
