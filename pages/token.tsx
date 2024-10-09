@@ -169,7 +169,6 @@ export default function TokenPage({ data }: Props) {
                 <div className='m-2 space-y-2'>
                   {_.uniqBy(wrapTransactions.reverse(), tx => tx.sender_address)
                     .filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
-                    .reverse()
                     .map((tx: Transaction) => {
                       return (
                         <div key={tx.tx_id} className='p-4 bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg'>
