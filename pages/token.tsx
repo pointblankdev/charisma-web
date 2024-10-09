@@ -167,7 +167,7 @@ export default function TokenPage({ data }: Props) {
               </div>
               <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
                 <div className='m-2 space-y-2'>
-                  {_.uniqBy(wrapTransactions.reverse(), tx => tx.sender_address)
+                  {_.uniqBy(wrapTransactions, tx => tx.sender_address)
                     .filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
                     .map((tx: Transaction) => {
                       return (
