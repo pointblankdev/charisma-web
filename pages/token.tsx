@@ -163,7 +163,7 @@ export default function TokenPage({ data }: Props) {
               <div className='w-full pb-8 text-center text-md text-muted/90'>
                 Recent transactions in the mempool.
                 <p className='mt-2 text-sm text-yellow-500'>
-                  ✨ Experienced User Feature
+                  ✨ Experience Bonus Feature
                 </p>
               </div>
               <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
