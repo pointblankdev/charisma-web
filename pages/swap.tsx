@@ -252,10 +252,8 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
 
   const hasHighExperience = experienceBalance >= 4000;
 
-  // Filter tokens
-  const availableTokens = data.tokens.filter(token =>
-    token.symbol !== 'STX' || hasHighExperience
-  );
+  // Remove STX filtering from availableTokens
+  const availableTokens = data.tokens;
 
   // Filter pools
   const availablePools = data.pools.filter(pool =>
@@ -528,8 +526,11 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
         }
       }
     } else {
-      setToToken(token);
-      setShowToTokens(false);
+      // Only allow selecting STX as 'to' token if user has high experience
+      if (token.symbol !== 'STX' || hasHighExperience) {
+        setToToken(token);
+        setShowToTokens(false);
+      }
     }
   };
 
@@ -755,10 +756,9 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                           key={token.symbol}
                           className="flex items-center w-full px-4 py-2 text-left hover:bg-accent-foreground"
                           onClick={() => selectToken(token, true)}
-                          title={token.symbol === 'STX' ? 'STX is available in swaps for users with over 4000 experience.' : ''}
                         >
                           <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                          <span className="text-white">{token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}</span>
+                          <span className="text-white">{token.symbol}</span>
                         </button>
                       ))}
                     </div>
@@ -816,26 +816,23 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                     <span className="mr-1 text-white">{toToken.symbol}</span>
                     <ChevronDown className="text-gray-400" size={16} />
                   </button>
-                  {showToTokens && (
-                    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
-                      {availableTokens.map((token) => {
-                        const isDisabled = !isTokenPairValid(fromToken, token);
-                        return (
-                          <button
-                            key={token.symbol}
-                            className={`flex items-center w-full px-4 py-2 text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'
-                              }`}
-                            onClick={() => !isDisabled && selectToken(token, false)}
-                            disabled={isDisabled}
-                            title={token.symbol === 'STX' ? 'STX is available in swaps for users with over 4000 experience.' : ''}
-                          >
-                            <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                            <span className={isDisabled ? 'text-gray-500' : 'text-white'}>{token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}</span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  )}
+                  {availableTokens.map((token) => {
+                    const isDisabled = !isTokenPairValid(fromToken, token) || (token.symbol === 'STX' && !hasHighExperience);
+                    return (
+                      <button
+                        key={token.symbol}
+                        className={`flex items-center w-full px-4 py-2 text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'}`}
+                        onClick={() => !isDisabled && selectToken(token, false)}
+                        disabled={isDisabled}
+                        title={token.symbol === 'STX' && !hasHighExperience ? 'STX is available as a swap destination for users with over 4000 experience.' : ''}
+                      >
+                        <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
+                        <span className={isDisabled ? 'text-gray-500' : 'text-white'}>
+                          {token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}
+                        </span>
+                      </button>
+                    );
+                  })}
                 </div>
               </div>
               <input
