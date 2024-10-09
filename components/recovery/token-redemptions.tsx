@@ -283,7 +283,7 @@ const TokenRedemptions = ({ data }: any) => {
             <h2 className="text-xl font-bold mb-4">Index & LP Token Recovery</h2>
             <div className="p-4 sm:p-6 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)] flex w-full flex-wrap sm:flex-nowrap sm:space-x-8">
                 <div className="mb-6 w-full">
-                    <h3 className="text-lg font-semibold mb-2">Index Tokens</h3>
+                    <h3 className="text-lg font-semibold mb-2">Index Tokens (CHA)</h3>
                     {/* <div className="grid grid-cols-2 gap-2">
                         <div>Recovered:</div>
                         <div>{formatNumber(recoveredIndexes)}</div>
