@@ -264,8 +264,8 @@ const TokenRedemptions = ({ data }: any) => {
                         <div className="grid grid-cols-2 gap-2">
                             <div>Recovered:</div>
                             <div>{formatNumber([claimA, claimB, claimC, claimD][index])}</div>
-                            <div>Claimed (CHA):</div>
-                            <div>{claims[['a', 'b', 'c', 'd'][index]].value ? formatNumber([claimA, claimB, claimC, claimD][index]) : '0'}</div>
+                            <div>Claimed:</div>
+                            <div>{claims[['a', 'b', 'c', 'd'][index]].value ? formatNumber([claimA, claimB, claimC, claimD][index]) : '0'} (CHA)</div>
                         </div>
                         <div className="mt-2">
                             <Button
@@ -284,12 +284,6 @@ const TokenRedemptions = ({ data }: any) => {
             <div className="p-4 sm:p-6 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)] flex w-full flex-wrap sm:flex-nowrap sm:space-x-8">
                 <div className="mb-6 w-full">
                     <h3 className="text-lg font-semibold mb-2">Index Tokens (CHA)</h3>
-                    {/* <div className="grid grid-cols-2 gap-2">
-                        <div>Recovered:</div>
-                        <div>{formatNumber(recoveredIndexes)}</div>
-                        <div>Claimed:</div>
-                        <div>{lpIndexClaims.index ? formatNumber(recoveredIndexes) : '0'}</div>
-                    </div> */}
                     <div className="mt-2">
                         <Button
                             disabled={hasClaimedA}
@@ -302,12 +296,6 @@ const TokenRedemptions = ({ data }: any) => {
                 </div>
                 <div className="mb-6 w-full">
                     <h3 className="text-lg font-semibold mb-2">Velar LP (CHA)</h3>
-                    {/* <div className="grid grid-cols-2 gap-2">
-                        <div>Recovered:</div>
-                        <div>{formatNumber(1)}</div>
-                        <div>Claimed:</div>
-                        <div>{lpIndexClaims.lp ? formatNumber(1) : '0'}</div>
-                    </div> */}
                     <div className="mt-2">
                         <Button
                             disabled={hasClaimedB}
@@ -320,12 +308,6 @@ const TokenRedemptions = ({ data }: any) => {
                 </div>
                 <div className="mb-6 w-full">
                     <h3 className="text-lg font-semibold mb-2">Velar LP (synSTX)</h3>
-                    {/* <div className="grid grid-cols-2 gap-2">
-                        <div>Recovered:</div>
-                        <div>{formatNumber(1)}</div>
-                        <div>Claimed:</div>
-                        <div>{lpIndexClaims.velar ? formatNumber(1) : '0'}</div>
-                    </div> */}
                     <div className="mt-2">
                         <Button
                             disabled={hasClaimedC}
