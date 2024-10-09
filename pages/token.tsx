@@ -2,7 +2,7 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, use, useEffect, useState } from 'react';
 import { callReadOnlyFunction, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
@@ -26,7 +26,24 @@ import { CharismaToken } from '@lib/cha-token-api';
 import { GetStaticProps } from 'next';
 import velarApi from '@lib/velar-api';
 import PricesService from '@lib/prices-service';
+import { getTxsFromMempool } from '@lib/stacks-api';
+import { set } from 'lodash';
 
+type Transaction = {
+  anchor_mode: "any";
+  contract_call: any;
+  fee_rate: string;
+  nonce: number;
+  post_condition_mode: "deny";
+  post_conditions: any[];
+  receipt_time: number;
+  receipt_time_iso: string;
+  sender_address: string;
+  sponsored: boolean;
+  tx_id: string;
+  tx_status: "pending" | "success" | "failed"; // Add other possible statuses if needed
+  tx_type: "contract_call";
+};
 
 async function getPoolReserves(poolId: number, token0Address: string, token1Address: string): Promise<{ token0: number; token1: number }> {
   try {
@@ -76,21 +93,29 @@ async function calculateChaPrice(stxPrice: number): Promise<number> {
   return chaPrice;
 }
 
+const isWithinLast6Hours = (timestamp: string) => {
+  const sixHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
+  return new Date(timestamp) > sixHoursAgo;
+};
+
 type Props = {
   data: {
     tokenPrices: { [key: string]: number };
     chaPrice: number;
+    transactions: Transaction[];
   };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const tokenPrices = await getTokenPrices();
   const chaPrice = await calculateChaPrice(tokenPrices['STX']);
+  const transactions = await getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token');
   return {
     props: {
       data: {
         tokenPrices,
         chaPrice,
+        transactions
       }
     },
     revalidate: 60
@@ -103,6 +128,15 @@ export default function TokenPage({ data }: Props) {
     description: "The New Charisma Token",
   };
 
+  const { setWrapTransactions } = useGlobalState()
+  const { wallet } = useWallet();
+
+  useEffect(() => {
+    setWrapTransactions(data.transactions)
+  }, [data.transactions, setWrapTransactions])
+
+  const hasEnoughExperience = wallet.experience.balance >= 100;
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -111,6 +145,35 @@ export default function TokenPage({ data }: Props) {
           <HeroSection />
           <StatsSection data={data} />
           <WrappingSection data={data} />
+          {hasEnoughExperience && (
+            <div title={`This feature is unlocked for users with over 100 experience points.`}>
+              <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>The Mempool</div>
+              <div className='w-full pb-8 text-center text-md text-muted/90'>
+                Recent transactions in the mempool.
+                <p className='mt-2 text-sm text-yellow-500'>
+                  ✨ Experienced User Feature
+                </p>
+              </div>
+              <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
+                <div className='m-2 space-y-2'>
+                  {data.transactions
+                    .filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
+                    .map((tx: Transaction) => {
+                      return (
+                        <div key={tx.tx_id} className='p-4 bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg'>
+                          <div className='flex justify-between'>
+                            <div>Transaction ID: {tx.tx_id}</div>
+                            <div>Fee Rate: {Number(tx.fee_rate) / 10 ** 6} STX</div>
+                          </div>
+                          <div className='mt-2'>Sender Address: {tx.sender_address}</div>
+                          <div className='mt-2'>Receipt Time: {new Date(tx.receipt_time_iso).toString()}</div>
+                        </div>
+                      );
+                    })}
+                </div>
+              </Card>
+            </div>
+          )}
         </div>
       </Layout>
     </Page>
@@ -144,12 +207,27 @@ const HeroSection = () => {
   );
 };
 
-const StatsSection = ({ data }: any) => {
-  const { charismaTokenStats, highestBid } = useGlobalState()
+const StatsSection = ({ data }: Props) => {
+  const { charismaTokenStats, highestBid, setHighestBid } = useGlobalState()
+
+
+  useEffect(() => {
+    // find the highest bid
+    const newHighestBid = data.transactions
+      .filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
+      .reduce((acc, tx) => {
+        if (tx.contract_call.function_name === 'wrap') {
+          const amount = Number(tx.fee_rate)
+          return Math.max(amount, acc)
+        }
+        return acc
+      }, 0)
+    setHighestBid(newHighestBid)
+  }, [data.transactions, setHighestBid])
 
   const isUnlocked = charismaTokenStats.blocksUntilUnlock <= 1;
   const stat2Message = charismaTokenStats.blocksPerTransaction === 1 ? charismaTokenStats.transactionsAvailable === 0 ? '100%' : (Number((1 / (Number(charismaTokenStats.transactionsAvailable) + 1))) * 100).toFixed(2) + "%" : charismaTokenStats.blocksPerTransaction
-  const profitMargin = ((data.chaPrice * charismaTokenStats.tokensPerTransaction / 10 ** 6) - (data.tokenPrices['STX'] * highestBid)).toFixed(2)
+  const profitMargin = ((data.chaPrice * charismaTokenStats.tokensPerTransaction / 10 ** 6) - (data.tokenPrices['STX'] * highestBid / 10 ** 6)).toFixed(2)
 
   return (
     <div>
@@ -173,7 +251,7 @@ const StatsSection = ({ data }: any) => {
         </div>}
         {highestBid > 0 && <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
           <div className='flex items-center space-x-0'>
-            <div className='-mr-0 text-4xl font-semibold'>{(Math.ceil(highestBid * 100) / 100).toFixed(2)}</div>
+            <div className='-mr-0 text-4xl font-semibold'>{(Math.ceil(highestBid / 10 ** 6 * 100) / 100).toFixed(2)}</div>
             <Image src={stxLogo} alt='DMG Logo' width={64} height={64} className='inline w-7 h-7 rounded-full translate-x-1.5 translate-y-0.5' />
           </div>
           <div className='text-muted/80'>Highest Active Bid</div>

@@ -1,12 +1,13 @@
 import React, { createContext, useCallback, useContext, useEffect, useSyncExternalStore } from 'react';
 import { usePersistedState } from './use-persisted-state';
-import { getClaimableAmount, getLandAmount, getLastLandId, getStoredEnergy } from '@lib/stacks-api';
+import { getClaimableAmount, getLandAmount, getLastLandId, getStoredEnergy, getTxsFromMempool } from '@lib/stacks-api';
 import { getLandDataById, getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient, TransactionEventsResponse } from '@stacks/blockchain-api-client';
 import { useAccount } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
 import { set } from 'lodash';
+import { hi } from 'date-fns/locale';
 
 const socketUrl = "https://api.mainnet.hiro.so";
 const sc = new StacksApiSocketClient({ url: socketUrl });
@@ -30,6 +31,9 @@ interface GlobalState {
     isMempoolSubscribed: boolean
     setIsMempoolSubscribed: (isMempoolSubscribed: boolean) => void
     highestBid: number
+    setHighestBid: (highestBid: number) => void
+    wrapTransactions: any[]
+    setWrapTransactions: any
 }
 
 const formatTime = (dateString: string) => {
@@ -51,6 +55,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     const [highestBid, setHighestBid] = usePersistedState('highestBid', 0);
     const [charismaTokenStats, setCharismaTokenStats] = usePersistedState('charismaTokenStats', {})
     const [charismaClaims, setCharismaClaims] = usePersistedState('charismaClaims', { hasFreeClaim: false, hasClaimed: false } as any)
+    const [wrapTransactions, setWrapTransactions] = usePersistedState('wrapTransactions', [] as any)
 
     const { toast } = useToast()
 
@@ -113,6 +118,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
             // Reset highest wrap bid on each new block
             setHighestBid(0)
+            setWrapTransactions([])
 
             // Update Charisma token stats on each new block
             // We're calling this asynchronously without awaiting to avoid returning a Promise
@@ -135,33 +141,36 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return () => {
             sc.unsubscribeBlocks()
         };
-    }, [stxAddress, setBlock, toast, getCharismaTokenStats, setHighestBid]);
+    }, [stxAddress, setBlock, toast, getCharismaTokenStats, setHighestBid, setWrapTransactions]);
 
     useEffect(() => {
         if (isMempoolSubscribed) {
             sc.subscribeMempool((tx: any) => {
                 if (tx?.contract_call?.contract_id === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token") {
+                    if (highestBid < Number(tx.fee_rate)) setHighestBid(Number(tx.fee_rate))
                     let description;
-                    const feeRateAmount = tx.fee_rate / 10 ** 6
                     switch (tx?.contract_call?.function_name) {
                         case 'wrap':
+
+                            getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token').then((txs) => {
+                                const wrapTxs = txs.filter((tx: any) => tx.contract_call.function_name === 'wrap')
+                                setWrapTransactions(wrapTxs)
+                            })
+                            // setWrapTransactions((prev: any) => [...prev, tx])
                             const shortSenderAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`
-                            const newFeeRate = Math.ceil((Number((feeRateAmount).toFixed(6)) + 0.01) * 100) / 100
-                            const isBidLower = feeRateAmount < highestBid;
+                            const isBidLower = Number(tx.fee_rate) < highestBid;
                             const bidStatus = isBidLower ? "Lower than current highest bid" : "New highest bid";
-                            const suggestedFee = isBidLower ? highestBid + 0.01 : newFeeRate;
                             description = (
                                 <div className="w-full mt-4 space-y-2">
-                                    <p className='flex justify-between w-full text-xs'>
+                                    <p className='flex justify-between w-full text-sm'>
                                         <div>Sender Address: {shortSenderAddress}</div>
-                                        <div>Sender Fee: {feeRateAmount} STX</div>
+                                        <div>Sender Fee: {tx.fee_rate} STX</div>
                                     </p>
-                                    <p className='font-light text-md'>{bidStatus}</p>
+                                    <p className='font-light text-sm'>{bidStatus}</p>
                                     {/* <p className='font-light text-md'>Suggested fee to outbid: <strong>{suggestedFee.toFixed(2)} STX</strong></p> */}
                                     <p className='text-xs text-muted-foreground'>{formatTime(tx.receipt_time_iso)}</p>
                                 </div>
                             );
-                            if (highestBid < feeRateAmount) setHighestBid(feeRateAmount)
                             break;
                         default:
                             description = (
@@ -190,7 +199,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return () => {
             sc.unsubscribeMempool()
         };
-    }, [toast, isMempoolSubscribed]);
+    }, [toast, isMempoolSubscribed, highestBid, setHighestBid, setWrapTransactions]);
 
     return (
         <GlobalStateContext.Provider value={{
@@ -211,7 +220,10 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             charismaClaims,
             isMempoolSubscribed,
             setIsMempoolSubscribed,
-            highestBid
+            highestBid,
+            setHighestBid,
+            wrapTransactions,
+            setWrapTransactions
         }}>
             {children}
         </GlobalStateContext.Provider>

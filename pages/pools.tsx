@@ -439,7 +439,7 @@ const PoolsInterface = ({ data, wallet }: any) => {
                   <th className="py-2 cursor-pointer" onClick={() => handleSort('tvl')}>
                     TVL {sortBy === 'tvl' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
-                  <th className="py-2 text-center cursor-pointer" onClick={() => handleSort('volume')}>
+                  <th className="py-2 cursor-pointer" onClick={() => handleSort('volume')}>
                     Trading Volume (Total) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="items-center hidden py-2 cursor-pointer sm:flex" onClick={() => handleSort('priceAlignment')}>
