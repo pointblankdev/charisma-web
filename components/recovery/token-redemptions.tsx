@@ -319,7 +319,7 @@ const TokenRedemptions = ({ data }: any) => {
                     </div>
                 </div>
                 <div className="mb-6 w-full">
-                    <h3 className="text-lg font-semibold mb-2">Velar LP (STX)</h3>
+                    <h3 className="text-lg font-semibold mb-2">Velar LP (synSTX)</h3>
                     {/* <div className="grid grid-cols-2 gap-2">
                         <div>Recovered:</div>
                         <div>{formatNumber(1)}</div>
