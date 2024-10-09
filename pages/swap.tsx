@@ -816,23 +816,27 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                     <span className="mr-1 text-white">{toToken.symbol}</span>
                     <ChevronDown className="text-gray-400" size={16} />
                   </button>
-                  {availableTokens.map((token) => {
-                    const isDisabled = !isTokenPairValid(fromToken, token) || (token.symbol === 'STX' && !hasHighExperience);
-                    return (
-                      <button
-                        key={token.symbol}
-                        className={`flex items-center w-full px-4 py-2 text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'}`}
-                        onClick={() => !isDisabled && selectToken(token, false)}
-                        disabled={isDisabled}
-                        title={token.symbol === 'STX' && !hasHighExperience ? 'STX is available as a swap destination for users with over 4000 experience.' : ''}
-                      >
-                        <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                        <span className={isDisabled ? 'text-gray-500' : 'text-white'}>
-                          {token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}
-                        </span>
-                      </button>
-                    );
-                  })}
+                  {showToTokens && (
+                    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
+                      {availableTokens.map((token) => {
+                        const isDisabled = !isTokenPairValid(fromToken, token) || (token.symbol === 'STX' && !hasHighExperience);
+                        return (
+                          <button
+                            key={token.symbol}
+                            className={`flex items-center w-full px-4 py-2 text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'}`}
+                            onClick={() => !isDisabled && selectToken(token, false)}
+                            disabled={isDisabled}
+                            title={token.symbol === 'STX' && !hasHighExperience ? 'STX is available as a swap destination for users with over 4000 experience.' : ''}
+                          >
+                            <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
+                            <span className={isDisabled ? 'text-gray-500' : 'text-white'}>
+                              {token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
                 </div>
               </div>
               <input
