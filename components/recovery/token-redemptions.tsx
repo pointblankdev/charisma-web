@@ -19,7 +19,59 @@ const TokenRedemptions = ({ data }: any) => {
     const [claimC, setClaimC] = useState(0);
     const [claimD, setClaimD] = useState(0);
 
-    const [claims, setClaims] = useState({ a: { value: false }, b: { value: false }, c: { value: false }, d: { value: false } });
+    const [claims, setClaims] = useState({ a: { value: false }, b: { value: false }, c: { value: false }, d: { value: false } } as any);
+    const [hasClaimedA, setHasClaimedA] = useState(false);
+    const [hasClaimedB, setHasClaimedB] = useState(false);
+    const [hasClaimedC, setHasClaimedC] = useState(false);
+
+    function claimLpIndex(method: string) {
+        openContractCall({
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'lp-index-recovery',
+            functionName: method,
+            functionArgs: [],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    useEffect(() => {
+        if (stxAddress) {
+            // Add new contract calls for lp-index-recovery
+            callReadOnlyFunction({
+                contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+                contractName: 'lp-index-recovery',
+                functionName: 'has-claimed-a',
+                functionArgs: [principalCV(stxAddress)],
+                senderAddress: stxAddress,
+            }).then((response: any) => {
+                const claimed = cvToJSON(response).value;
+                setHasClaimedA(claimed);
+            }).catch(console.error)
+
+            callReadOnlyFunction({
+                contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+                contractName: 'lp-index-recovery',
+                functionName: 'has-claimed-b',
+                functionArgs: [principalCV(stxAddress)],
+                senderAddress: stxAddress,
+            }).then((response: any) => {
+                const claimed = cvToJSON(response).value;
+                setHasClaimedB(claimed);
+            }).catch(console.error)
+
+            callReadOnlyFunction({
+                contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+                contractName: 'lp-index-recovery',
+                functionName: 'has-claimed-c',
+                functionArgs: [principalCV(stxAddress)],
+                senderAddress: stxAddress,
+            }).then((response: any) => {
+                const claimed = cvToJSON(response).value;
+                setHasClaimedC(claimed);
+            }).catch(console.error)
+        }
+    }, [stxAddress]);
 
 
     function depositWelsh(amount: number) {
@@ -161,73 +213,128 @@ const TokenRedemptions = ({ data }: any) => {
     const iouWelsh: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'];
     const iouRoo: any = balances?.fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo'];
 
+    const formatNumber = (num: number) => numeral(num / Math.pow(10, 6)).format('0,0.00');
+
     return (
-        <div className='max-w-5xl space-y-4'>
-            <div className="flex w-full p-6 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
-                <div className='grid grid-cols-3 text-right grow'>
-                    <div className='text-left'></div>
-                    <div>Synthetic Welsh (iouWELSH)</div>
-                    <div>Synthetic Roo (iouROO)</div>
+        <div className='max-w-5xl space-y-8 px-4 sm:px-0'>
+            <h2 className="text-xl font-bold mb-4">Synthetic Tokens</h2>
+            <div className="flex flex-wrap p-4 sm:p-6 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)] sm:space-x-8">
 
-                    <div className='text-left'>Total Issued</div>
-                    <div>{data.syntheticWelsh.issued / Math.pow(10, 6)}</div>
-                    <div>{data.syntheticRoo.issued / Math.pow(10, 6)}</div>
+                {['Welsh', 'Roo'].map((token, index) => (
+                    <div key={token} className="mb-6">
+                        <h3 className="text-lg font-semibold mb-2">Synthetic {token} (iou{token.toUpperCase()})</h3>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div>Total Issued:</div>
+                            <div>{formatNumber(data[`synthetic${token}`].issued)}</div>
+                            <div>Total Redeemed:</div>
+                            <div>{formatNumber(data[`synthetic${token}`].burned)}</div>
+                            <div>Redemptions Remaining:</div>
+                            <div>{formatNumber(data[`synthetic${token}`].remaining)}</div>
+                            <div>Your Balance:</div>
+                            <div>{formatNumber(index === 0 ? iouWelsh?.balance : iouRoo?.balance)}</div>
+                            <div>Redemptions Available:</div>
+                            <div>{formatNumber(data[`synthetic${token}`].available)}</div>
+                        </div>
+                        <div className="mt-4 space-y-2">
+                            <Button onClick={() => index === 0 ? depositWelsh(10000000000) : depositRoo(100000000)} className='w-full'>
+                                Donate {index === 0 ? '10k WELSH' : '100 ROO'}
+                            </Button>
+                            <Button
+                                disabled={data[`synthetic${token}`].available === 0 || !wallet.bluePilled}
+                                onClick={() => index === 0 ? redeemWelsh(10000000000) : redeemRoo(100000000)}
+                                className='w-full bg-blue-800'
+                            >
+                                Redeem iou{token.toUpperCase()}
+                            </Button>
+                        </div>
+                    </div>
+                ))}
 
-                    <div className='text-left'>Total Redeemed</div>
-                    <div>{data.syntheticWelsh.burned / Math.pow(10, 6)}</div>
-                    <div>{data.syntheticRoo.burned / Math.pow(10, 6)}</div>
-
-                    <div className='text-left'>Redemptions Remaining</div>
-                    <div>{data.syntheticWelsh.remaining / Math.pow(10, 6)}</div>
-                    <div>{data.syntheticRoo.remaining / Math.pow(10, 6)}</div>
-
-                    <div className='mt-4 text-left'>Your Balances</div>
-                    <div className='mt-4'>{iouWelsh?.balance / Math.pow(10, 6) || 0}</div>
-                    <div className='mt-4'>{iouRoo?.balance / Math.pow(10, 6) || 0}</div>
-
-                    <div className='text-left'>Redemptions Available</div>
-                    <div>{data.syntheticWelsh.available / Math.pow(10, 6)}</div>
-                    <div>{data.syntheticRoo.available / Math.pow(10, 6)}</div>
-
-                    <div className='mt-4 text-left'>Donate Tokens</div>
-                    <div className='mt-4'><Button onClick={() => depositWelsh(10000000000)} className='h-6' >Donate 10k WELSH</Button></div>
-                    <div className='mt-4'><Button onClick={() => depositRoo(100000000)} className='h-6' >Donate 100 ROO</Button></div>
-
-                    <div className='mt-4 text-left'>Redeem Tokens</div>
-                    <div className='mt-4'><Button disabled={data.syntheticWelsh.available === 0 || !wallet.bluePilled} onClick={() => redeemWelsh(10000000000)} className='h-6 bg-blue-800' >Redeem iouWELSH</Button></div>
-                    <div className='mt-4'><Button disabled={data.syntheticRoo.available === 0 || !wallet.bluePilled} onClick={() => redeemRoo(100000000)} className='h-6 bg-blue-800' >Redeem iouROO</Button></div>
-                </div>
-                <div className='ml-6'>
-                    <div className='text-center'>Blue Pilled</div>
-                    {wallet.bluePilled ? <Image src={bluePillFloating} alt='Blue Pill' width={120} height={120} /> : <div className='m-2 text-center'>❌</div>}
+                <div className='mt-4 flex flex-col items-center mb-4'>
+                    <div className='text-center font-bold mb-2'>Blue Pilled Status</div>
+                    {wallet.bluePilled ? <Image src={bluePillFloating} alt='Blue Pill' width={120} height={120} /> : <div className='text-4xl'>❌</div>}
                 </div>
             </div>
 
-            <div className="p-6 mx-auto space-y-8 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
-                <div className='grid grid-cols-5'>
-                    <div></div>
-                    <div>CHA</div>
-                    <div>sCHA</div>
-                    <div>wCHA</div>
-                    <div>Staked sCHA</div>
+            <h2 className="text-xl font-bold mb-4">Token Recovery</h2>
+            <div className="p-4 sm:p-6 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)] flex flex-wrap sm:flex-nowrap sm:space-x-8">
+                {['CHA', 'sCHA', 'wCHA', 'Staked sCHA'].map((tokenType, index) => (
+                    <div key={tokenType} className="mb-6 w-full">
+                        <h3 className="text-lg font-semibold mb-2">{tokenType}</h3>
+                        <div className="grid grid-cols-2 gap-2">
+                            <div>Recovered:</div>
+                            <div>{formatNumber([claimA, claimB, claimC, claimD][index])}</div>
+                            <div>Claimed (CHA):</div>
+                            <div>{claims[['a', 'b', 'c', 'd'][index]].value ? formatNumber([claimA, claimB, claimC, claimD][index]) : '0'}</div>
+                        </div>
+                        <div className="mt-2">
+                            <Button
+                                disabled={claims[['a', 'b', 'c', 'd'][index]].value || ![claimA, claimB, claimC, claimD][index]}
+                                onClick={() => claim(`mint-${['a', 'b', 'c', 'd'][index]}`)}
+                                className='w-full'
+                            >
+                                Claim
+                            </Button>
+                        </div>
+                    </div>
+                ))}
+            </div>
 
-                    <div>Recovered</div>
-                    <div>{!claims.a.value ? numeral(claimA / Math.pow(10, 6)).format('0.0a') : 0}</div>
-                    <div>{!claims.b.value ? numeral(claimB / Math.pow(10, 6)).format('0.0a') : 0}</div>
-                    <div>{!claims.c.value ? numeral(claimC / Math.pow(10, 6)).format('0.0a') : 0}</div>
-                    <div>{!claims.d.value ? numeral(claimD / Math.pow(10, 6)).format('0.0a') : 0}</div>
-
-                    <div>Claimed (CHA)</div>
-                    <div>{claims.a.value ? numeral(claimA / Math.pow(10, 6)).format('0.0a') : 0}</div>
-                    <div>{claims.b.value ? numeral(claimB / Math.pow(10, 6)).format('0.0a') : 0}</div>
-                    <div>{claims.c.value ? numeral(claimC / Math.pow(10, 6)).format('0.0a') : 0}</div>
-                    <div>{claims.d.value ? numeral(claimD / Math.pow(10, 6)).format('0.0a') : 0}</div>
-
-                    <div className='mt-4'>Claim Tokens</div>
-                    <div className='mt-4'><Button disabled={claims.a.value || !claimA} onClick={() => claim('mint-a')} className='h-6' >Claim</Button></div>
-                    <div className='mt-4'><Button disabled={claims.b.value || !claimB} onClick={() => claim('mint-b')} className='h-6' >Claim</Button></div>
-                    <div className='mt-4'><Button disabled={claims.c.value || !claimC} onClick={() => claim('mint-c')} className='h-6' >Claim</Button></div>
-                    <div className='mt-4'><Button disabled={claims.d.value || !claimD} onClick={() => claim('mint-d')} className='h-6' >Claim</Button></div>
+            <h2 className="text-xl font-bold mb-4">Index & LP Token Recovery</h2>
+            <div className="p-4 sm:p-6 rounded-lg shadow-lg bg-[var(--sidebar)] border border-[var(--accents-7)] flex w-full flex-wrap sm:flex-nowrap sm:space-x-8">
+                <div className="mb-6 w-full">
+                    <h3 className="text-lg font-semibold mb-2">Index Tokens</h3>
+                    {/* <div className="grid grid-cols-2 gap-2">
+                        <div>Recovered:</div>
+                        <div>{formatNumber(recoveredIndexes)}</div>
+                        <div>Claimed:</div>
+                        <div>{lpIndexClaims.index ? formatNumber(recoveredIndexes) : '0'}</div>
+                    </div> */}
+                    <div className="mt-2">
+                        <Button
+                            disabled={hasClaimedA}
+                            onClick={() => claimLpIndex('mint-a')}
+                            className='w-full'
+                        >
+                            Claim
+                        </Button>
+                    </div>
+                </div>
+                <div className="mb-6 w-full">
+                    <h3 className="text-lg font-semibold mb-2">Velar LP (CHA)</h3>
+                    {/* <div className="grid grid-cols-2 gap-2">
+                        <div>Recovered:</div>
+                        <div>{formatNumber(1)}</div>
+                        <div>Claimed:</div>
+                        <div>{lpIndexClaims.lp ? formatNumber(1) : '0'}</div>
+                    </div> */}
+                    <div className="mt-2">
+                        <Button
+                            disabled={hasClaimedB}
+                            onClick={() => claimLpIndex('mint-c')}
+                            className='w-full'
+                        >
+                            Claim
+                        </Button>
+                    </div>
+                </div>
+                <div className="mb-6 w-full">
+                    <h3 className="text-lg font-semibold mb-2">Velar LP (STX)</h3>
+                    {/* <div className="grid grid-cols-2 gap-2">
+                        <div>Recovered:</div>
+                        <div>{formatNumber(1)}</div>
+                        <div>Claimed:</div>
+                        <div>{lpIndexClaims.velar ? formatNumber(1) : '0'}</div>
+                    </div> */}
+                    <div className="mt-2">
+                        <Button
+                            disabled={hasClaimedC}
+                            onClick={() => claimLpIndex('mint-c')}
+                            className='w-full'
+                        >
+                            Claim
+                        </Button>
+                    </div>
                 </div>
             </div>
         </div>

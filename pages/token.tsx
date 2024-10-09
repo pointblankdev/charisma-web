@@ -147,7 +147,6 @@ export default function TokenPage({ data }: Props) {
   }, [data.transactions, setWrapTransactions])
 
   const hasEnoughExperience = wallet.experience.balance >= 100;
-
   const recentTransactions = wrapTransactions.filter(tx => isWithinLast6Hours(tx.receipt_time_iso));
 
   return (

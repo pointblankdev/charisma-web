@@ -77,14 +77,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   // Define tokens
   const tokens: TokenInfo[] = [
-    // {
-    //   symbol: 'STX',
-    //   name: 'Stacks',
-    //   image: stxLogo,
-    //   // tokenName: 'wstx',
-    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx',
-    //   decimals: 6
-    // },
+    {
+      symbol: 'STX',
+      name: 'Stacks',
+      image: stxLogo,
+      // tokenName: 'wstx',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx',
+      decimals: 6
+    },
     {
       symbol: 'CHA',
       name: 'Charisma',
@@ -163,12 +163,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       token1: tokens.find(token => token.symbol === 'WELSH') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
-    // {
-    //   id: 4,
-    //   token0: tokens[0], // wSTX
-    //   token1: tokens[1], // CHA
-    //   swapFee: { num: 995, den: 1000 }, // 0.5% fee
-    // },
+    {
+      id: 4,
+      token0: tokens[0], // wSTX
+      token1: tokens[1], // CHA
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
     {
       id: 5,
       token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
@@ -217,20 +217,23 @@ export default function SwapPage({ data }: Props) {
     image: 'https://charisma.rocks/swap-screenshot.png',
   };
 
+  const { wallet } = useWallet();
+  const experienceBalance = wallet.experience.balance;
+
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
         <div className="sm:container sm:mx-auto sm:pb-10 md:max-w-5xl">
           <div className='my-2 font-light text-center text-muted-foreground/90'>All trading fees go to WELSH & ROO token redemptions</div>
-          <SwapInterface data={data} />
+          <SwapInterface data={data} experienceBalance={experienceBalance} />
         </div>
       </Layout>
     </Page>
   );
 }
 
-const SwapInterface = ({ data }: Props) => {
+const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], experienceBalance: number }) => {
   const [fromToken, setFromToken] = useState(data.tokens[2]);
   const [toToken, setToToken] = useState(data.tokens[1]);
   const [fromAmount, setFromAmount] = useState('');
@@ -247,12 +250,25 @@ const SwapInterface = ({ data }: Props) => {
   const { openContractCall } = useOpenContractCall();
   const { stxAddress } = useAccount();
 
+  const hasHighExperience = experienceBalance >= 4000;
+
+  // Filter tokens
+  const availableTokens = data.tokens.filter(token =>
+    token.symbol !== 'STX' || hasHighExperience
+  );
+
+  // Filter pools
+  const availablePools = data.pools.filter(pool =>
+    pool.id !== 4 || hasHighExperience
+  );
+
+
   const currentPool = useMemo(() => {
-    return data.pools.find(pool =>
+    return availablePools.find(pool =>
       (pool.token0.symbol === fromToken.symbol && pool.token1.symbol === toToken.symbol) ||
       (pool.token1.symbol === fromToken.symbol && pool.token0.symbol === toToken.symbol)
     );
-  }, [fromToken, toToken, data.pools]);
+  }, [fromToken, toToken, availablePools]);
 
   const fetchReserves = useCallback(async () => {
     if (!currentPool) return;
@@ -506,7 +522,7 @@ const SwapInterface = ({ data }: Props) => {
       // Check if current 'to' token forms a valid pair with the new 'from' token
       if (!isTokenPairValid(token, toToken)) {
         // If not, find the first valid 'to' token and set it
-        const firstValidToToken = data.tokens.find(t => t.symbol !== token.symbol && isTokenPairValid(token, t));
+        const firstValidToToken = availableTokens.find(t => t.symbol !== token.symbol && isTokenPairValid(token, t));
         if (firstValidToToken) {
           setToToken(firstValidToToken);
         }
@@ -641,7 +657,7 @@ const SwapInterface = ({ data }: Props) => {
 
         if (path.length > maxHops) continue;
 
-        for (const pool of data.pools) {
+        for (const pool of availablePools) {
           let nextToken: TokenInfo | undefined;
           if (pool.token0.symbol === current.symbol) nextToken = pool.token1;
           else if (pool.token1.symbol === current.symbol) nextToken = pool.token0;
@@ -734,14 +750,15 @@ const SwapInterface = ({ data }: Props) => {
                   </button>
                   {showFromTokens && (
                     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
-                      {data.tokens.map((token) => (
+                      {availableTokens.map((token) => (
                         <button
                           key={token.symbol}
                           className="flex items-center w-full px-4 py-2 text-left hover:bg-accent-foreground"
                           onClick={() => selectToken(token, true)}
+                          title={token.symbol === 'STX' ? 'STX is available in swaps for users with over 4000 experience.' : ''}
                         >
                           <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                          <span className="text-white">{token.symbol}</span>
+                          <span className="text-white">{token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}</span>
                         </button>
                       ))}
                     </div>
@@ -801,7 +818,7 @@ const SwapInterface = ({ data }: Props) => {
                   </button>
                   {showToTokens && (
                     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
-                      {data.tokens.map((token) => {
+                      {availableTokens.map((token) => {
                         const isDisabled = !isTokenPairValid(fromToken, token);
                         return (
                           <button
@@ -810,9 +827,10 @@ const SwapInterface = ({ data }: Props) => {
                               }`}
                             onClick={() => !isDisabled && selectToken(token, false)}
                             disabled={isDisabled}
+                            title={token.symbol === 'STX' ? 'STX is available in swaps for users with over 4000 experience.' : ''}
                           >
                             <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                            <span className={isDisabled ? 'text-gray-500' : 'text-white'}>{token.symbol}</span>
+                            <span className={isDisabled ? 'text-gray-500' : 'text-white'}>{token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}</span>
                           </button>
                         );
                       })}
