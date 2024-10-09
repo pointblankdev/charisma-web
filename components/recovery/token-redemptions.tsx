@@ -311,7 +311,7 @@ const TokenRedemptions = ({ data }: any) => {
                     <div className="mt-2">
                         <Button
                             disabled={hasClaimedB}
-                            onClick={() => claimLpIndex('mint-c')}
+                            onClick={() => claimLpIndex('mint-b')}
                             className='w-full'
                         >
                             Claim
