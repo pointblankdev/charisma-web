@@ -307,7 +307,7 @@ const TokenRedemptions = ({ data }: any) => {
                         </Button>
                     </div>
                 </div>
-                {/* <div className="mb-6 w-full">
+                <div className="mb-6 w-full">
                     <h3 className="text-lg font-semibold mb-2">Velar LP (synSTX)</h3>
                     <div className="mt-2">
                         <Button
@@ -318,7 +318,7 @@ const TokenRedemptions = ({ data }: any) => {
                             Claim
                         </Button>
                     </div>
-                </div> */}
+                </div>
             </div>
         </div>
     )
