@@ -152,18 +152,14 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         if (isMempoolSubscribed) {
             sc.subscribeMempool((tx: any) => {
                 if (tx?.contract_call?.contract_id === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token") {
-                    if (highestBid < Number(tx.fee_rate)) setHighestBid(Number(tx.fee_rate))
                     let description;
                     switch (tx?.contract_call?.function_name) {
                         case 'wrap':
-
-                            getTxsFromMempool('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token').then((txs) => {
-                                const wrapTxs = txs.filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
-                                setWrapTransactions(wrapTxs)
-                            })
+                            setWrapTransactions((wrapTxs: any[]) => [tx, ...wrapTxs])
                             const shortSenderAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`
-                            const isBidLower = Number(tx.fee_rate) < highestBid;
-                            const bidStatus = isBidLower ? "Lower than current highest bid" : "New highest bid";
+                            const isBidHigher = Number(tx.fee_rate) > highestBid;
+                            if (isBidHigher) setHighestBid(Number(tx.fee_rate))
+                            const bidStatus = isBidHigher ? "New highest bid" : "Lower than current highest bid";
                             description = (
                                 <div className="w-full mt-4 space-y-2">
                                     <p className='flex justify-between w-full text-sm'>
