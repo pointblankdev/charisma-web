@@ -6,9 +6,6 @@ import { StacksApiSocketClient, TransactionEventsResponse } from '@stacks/blockc
 import { useAccount } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
-import { set } from 'lodash';
-import { hi } from 'date-fns/locale';
-import { wrap } from 'module';
 
 const socketUrl = "https://api.mainnet.hiro.so";
 const sc = new StacksApiSocketClient({ url: socketUrl });
