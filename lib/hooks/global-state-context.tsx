@@ -8,6 +8,7 @@ import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
 import { set } from 'lodash';
 import { hi } from 'date-fns/locale';
+import { wrap } from 'module';
 
 const socketUrl = "https://api.mainnet.hiro.so";
 const sc = new StacksApiSocketClient({ url: socketUrl });
@@ -123,7 +124,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
             // Reset highest wrap bid on each new block
             setHighestBid(0)
-            setWrapTransactions([])
+            setWrapTransactions(wrapTransactions.filter((tx: any) => isWithinLast6Hours(tx.receipt_time_iso)))
 
             // Update Charisma token stats on each new block
             // We're calling this asynchronously without awaiting to avoid returning a Promise
@@ -146,7 +147,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         return () => {
             sc.unsubscribeBlocks()
         };
-    }, [stxAddress, setBlock, toast, getCharismaTokenStats, setHighestBid, setWrapTransactions]);
+    }, [stxAddress, setBlock, toast, getCharismaTokenStats, setHighestBid, setWrapTransactions, wrapTransactions]);
 
     useEffect(() => {
         if (isMempoolSubscribed) {
@@ -155,7 +156,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     let description;
                     switch (tx?.contract_call?.function_name) {
                         case 'wrap':
-                            setWrapTransactions((wrapTxs: any[]) => [tx, ...wrapTxs])
+                            setWrapTransactions((wrapTxs: any[]) => [tx, ...wrapTxs.filter((tx: any) => isWithinLast6Hours(tx.receipt_time_iso))])
                             const shortSenderAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`
                             const isBidHigher = Number(tx.fee_rate) > highestBid;
                             if (isBidHigher) setHighestBid(Number(tx.fee_rate))

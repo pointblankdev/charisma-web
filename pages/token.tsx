@@ -27,7 +27,7 @@ import { GetStaticProps } from 'next';
 import velarApi from '@lib/velar-api';
 import PricesService from '@lib/prices-service';
 import { getTxsFromMempool } from '@lib/stacks-api';
-import { set } from 'lodash';
+import _, { set } from 'lodash';
 
 type Transaction = {
   anchor_mode: "any";
@@ -98,6 +98,17 @@ const isWithinLast6Hours = (timestamp: string) => {
   return new Date(timestamp) > sixHoursAgo;
 };
 
+function formatRelativeTime(dateString: string): string {
+  const date = new Date(dateString);
+  const now = new Date();
+  const diffInSeconds = Math.floor((now.getTime() - date.getTime()) / 1000);
+
+  if (diffInSeconds < 60) return `${diffInSeconds} seconds ago`;
+  if (diffInSeconds < 3600) return `${Math.floor(diffInSeconds / 60)} minutes ago`;
+  if (diffInSeconds < 86400) return `${Math.floor(diffInSeconds / 3600)} hours ago`;
+  return `${Math.floor(diffInSeconds / 86400)} days ago`;
+}
+
 type Props = {
   data: {
     tokenPrices: { [key: string]: number };
@@ -156,8 +167,9 @@ export default function TokenPage({ data }: Props) {
               </div>
               <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
                 <div className='m-2 space-y-2'>
-                  {wrapTransactions
+                  {_.uniqBy(wrapTransactions.reverse(), tx => tx.sender_address)
                     .filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
+                    .reverse()
                     .map((tx: Transaction) => {
                       return (
                         <div key={tx.tx_id} className='p-4 bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg'>
@@ -166,7 +178,7 @@ export default function TokenPage({ data }: Props) {
                             <div>Fee Rate: {Number(tx.fee_rate) / 10 ** 6} STX</div>
                           </div>
                           <div className='mt-2'>Sender Address: {tx.sender_address}</div>
-                          <div className='mt-2'>Receipt Time: {new Date(tx.receipt_time_iso).toString()}</div>
+                          <div className='mt-2'>Receipt Time: {formatRelativeTime(tx.receipt_time_iso)}</div>
                         </div>
                       );
                     })}
