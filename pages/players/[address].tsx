@@ -229,8 +229,6 @@ const HeroSection = ({ playerData, tokenPrices, lpTokenPrices }: { playerData: P
         return tvl;
     }, [playerData, tokenPrices, lpTokenPrices]);
 
-    console.log(playerData.pilled)
-
     return (
         <div className='flex flex-col items-center overflow-hidden'>
             <Image src={pillImage} alt='Charisma Pilled' width={300} height={300} className='transition-all scale-150 translate-y-24 cursor-pointer sm:hidden' />
