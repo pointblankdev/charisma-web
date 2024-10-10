@@ -16,6 +16,9 @@ const Logger = {
             console.error('Error log failure to Discord');
         }
     },
+    debug: (message: any) => {
+        console.debug(message);
+    },
     oracle: async (message: any) => {
         console.log(message);
         try {
