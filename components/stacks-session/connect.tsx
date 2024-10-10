@@ -47,8 +47,8 @@ const ConnectWallet = () => {
               <ListItem href="/portfolio" title="Portfolio">
                 View your Charisma supported token balances.
               </ListItem>
-              <ListItem href="/governance" title="Governance">
-                Vote on DAO proposals using the Charisma token.
+              <ListItem href="/players" title="Players">
+                View all Charisma players and their stats.
               </ListItem>
               <ListItem title="Sign Out" onClick={() => signOut(() => { router.push('/') })} className="cursor-pointer">
                 Securely disconnect your wallet.

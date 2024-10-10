@@ -352,12 +352,12 @@ export async function trackBurnEvent(event: any) {
   await kv.zadd(`player:${player}:burns`, { score: timestamp, member: burnEvent });
 
   // Add player to the list of known players
-  await kv.srem('players', player);
+  await kv.sadd('players', player)
 
 }
 
 export async function getPlayerEventData(player: string): Promise<any> {
-  const burns = await kv.zrange(`player:${player}:burns`, 0, 999999, { rev: true });
+  const burns = await kv.zrange(`player:${player}:burns`, 0, 10000000, { rev: true });
 
   return {
     player: player,

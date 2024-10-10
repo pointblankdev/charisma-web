@@ -93,6 +93,9 @@ export const getStaticProps: GetStaticProps<PlayersPageProps> = async () => {
         };
     }));
 
+    // Sort players by experience in descending order
+    players.sort((a, b) => b.experience - a.experience);
+
     return {
         props: {
             players,
@@ -208,16 +211,16 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                         {pageData.map((player, index) => (
                                             <TableRow key={index} className="border-t border-gray-700/50">
                                                 <TableCell className="py-4 font-medium text-white">{player.stxAddress}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.experience).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.governanceTokens).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.chaTokens).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.iouWELSH).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.iouROO).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.synSTX).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.burnedGovernanceTokens).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.burnedIouWELSH).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.burnedIouROO).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.burnedSynSTX).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.experience / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.governanceTokens / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.chaTokens / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.iouWELSH / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.iouROO / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.synSTX / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.burnedGovernanceTokens / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.burnedIouWELSH / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.burnedIouROO / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.burnedSynSTX / 10 ** 6).format('0,0')}</TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

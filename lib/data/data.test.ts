@@ -1,5 +1,5 @@
 import { contracts } from "../clarigen/types";
-import { addPlayer, getLand, getLands, getLandsBalance, getPlayers, getPlayerTokens, isPlayer, setLand } from "../db-providers/kv";
+import { addPlayer, getLand, getLands, getLandsBalance, getPlayerEventData, getPlayers, getPlayerTokens, isPlayer, setLand } from "../db-providers/kv";
 import { Land } from '../db-providers/kv.types';
 import { contractFactory } from '@clarigen/core';
 import { clarigen } from "../clarigen/client";
@@ -175,5 +175,10 @@ describe('player data', () => {
       if (balance > 0) balances.push({ address: player, balance: balance })
     }
     console.log(_.sortBy(balances, 'balance').reverse())
+  }, 200000)
+
+  it('should get all burn data for a player', async () => {
+    const data = await getPlayerEventData('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
+    console.log(data)
   }, 200000)
 })
