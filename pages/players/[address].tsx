@@ -229,20 +229,25 @@ const HeroSection = ({ playerData, tokenPrices, lpTokenPrices }: { playerData: P
         return tvl;
     }, [playerData, tokenPrices, lpTokenPrices]);
 
+    console.log(playerData.pilled)
+
     return (
         <div className='flex flex-col items-center overflow-hidden'>
             <Image src={pillImage} alt='Charisma Pilled' width={300} height={300} className='transition-all scale-150 translate-y-24 cursor-pointer sm:hidden' />
             <div className='relative flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
+                <div className='flex-col items-center hidden w-full space-y-4 sm:w-64 sm:flex'>
+                    <Image src={pillImage} alt='Charisma Pilled' width={300} height={300} className='transition-all -translate-x-12 -translate-y-20 cursor-pointer scale-[2]' />
+                </div>
                 {/* TVL Display */}
                 <div className='absolute top-4 right-4 sm:top-8 sm:right-8 text-right'>
                     <div className='text-sm text-secondary/80'>Total Portfolio Value</div>
                     <div className='text-2xl sm:text-4xl font-bold'><span>${numeral(totalTVL).format('0,0.00')}</span><span className='text-lg'>+ LP</span></div>
                 </div>
                 <div className='flex flex-col items-center justify-center w-full px-4 text-lg text-center -translate-y-16 sm:text-md sm:text-start sm:items-start sm:justify-start sm:px-0'>
-                    <div className='flex items-baseline justify-center w-full text-center sm:justify-start'>
+                    <div className='flex items-baseline justify-center w-full text-center sm:justify-start mt-10 sm:mt-0'>
                         <div className='py-4 text-6xl sm:py-0'>{playerData.bnsName || 'Player Profile'}</div>
                     </div>
-                    <div className='mt-4 text-lg grow text-secondary/80'>{playerData.stxAddress}</div>
+                    <div className='mt-4 text-base grow text-secondary/80'>{playerData.stxAddress}</div>
                     <div className='mt-8 text-md text-secondary/80'>
                         View detailed information and token events for this player.
                     </div>
