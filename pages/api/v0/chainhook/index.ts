@@ -83,8 +83,8 @@ export default async function chainhookApi(
                             builder = await handleContractEvent(event, builder)
                         }
 
-                        // hook.addEmbed(builder.getEmbed());
-                        // await hook.send();
+                        hook.addEmbed(builder.getEmbed());
+                        await hook.send();
                     }
 
                 } catch (error) {

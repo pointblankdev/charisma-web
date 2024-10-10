@@ -136,4 +136,44 @@ describe('player data', () => {
     }
     console.log(_.sortBy(balances, 'balance').reverse())
   }, 200000)
+
+  it('should get all players holding CHA', async () => {
+    const players = await getPlayers()
+    const balances = []
+    for (const player of players) {
+      const balance: any = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', player)
+      if (balance > 0) balances.push({ address: player, balance: balance })
+    }
+    console.log(_.sortBy(balances, 'balance').reverse())
+  }, 200000)
+
+  it('should get all players holding iouWELSH', async () => {
+    const players = await getPlayers()
+    const balances = []
+    for (const player of players) {
+      const balance: any = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', player)
+      if (balance > 0) balances.push({ address: player, balance: balance })
+    }
+    console.log(_.sortBy(balances, 'balance').reverse())
+  }, 200000)
+
+  it('should get all players holding iouROO', async () => {
+    const players = await getPlayers()
+    const balances = []
+    for (const player of players) {
+      const balance: any = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', player)
+      if (balance > 0) balances.push({ address: player, balance: balance })
+    }
+    console.log(_.sortBy(balances, 'balance').reverse())
+  }, 200000)
+
+  it('should get all players holding synSTX', async () => {
+    const players = await getPlayers()
+    const balances = []
+    for (const player of players) {
+      const balance: any = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', player)
+      if (balance > 0) balances.push({ address: player, balance: balance })
+    }
+    console.log(_.sortBy(balances, 'balance').reverse())
+  }, 200000)
 })
