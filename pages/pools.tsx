@@ -34,6 +34,7 @@ import LiquidityDialog from '@components/pools/add-liquidity';
 import Link from 'next/link';
 import { getPoolData } from '@lib/db-providers/kv';
 import { motion } from 'framer-motion';
+import { getTotalSupply } from '@lib/stacks-api';
 
 export type TokenInfo = {
   symbol: string;
@@ -59,6 +60,7 @@ export type PoolInfo = {
     token1: number;
   };
   contractAddress: string;
+  totalLpSupply: number;
 };
 
 type Props = {
@@ -194,6 +196,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
   // Fetch reserves and calculate TVL for each pool
   const pools: PoolInfo[] = await Promise.all(poolsData.map(async (pool) => {
+    // lookup total supply of LP tokens
+    const totalLpSupply = await getTotalSupply(pool.contractAddress);
+
     const reserves = await getPoolReserves(pool.id, pool.token0.contractAddress, pool.token1.contractAddress);
 
     const token0Price = tokenPrices[pool.token0.symbol] || 0;
@@ -217,7 +222,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       token1: { ...pool.token1, price: token1Price },
       reserves,
       tvl,
-      volume
+      volume,
+      totalLpSupply
     };
   }));
 

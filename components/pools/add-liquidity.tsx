@@ -28,7 +28,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     const [animate, setAnimate] = useState(false);
     const { openContractCall } = useOpenContractCall();
     const { stxAddress } = useAccount();
-    const { getBalanceByKey, balances, getKeyByContractAddress } = useWallet();
+    const { getBalanceByKey, balances, getKeyByContractAddress, wallet } = useWallet();
 
     const calculateUsdValue = (amount: string, price: number) => {
         const numericAmount = parseFloat(amount) || 0;
@@ -49,58 +49,67 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     }, [balances.stx.balance, getBalanceByKey, getKeyByContractAddress]);
 
     useEffect(() => {
-        if (pool && isAdd) {
-            const balance0 = getTokenBalance(pool.token0);
-            const balance1 = getTokenBalance(pool.token1);
-            const reserve0 = pool.reserves.token0 / 10 ** pool.token0.decimals;
-            const reserve1 = pool.reserves.token1 / 10 ** pool.token1.decimals;
-
-            // Calculate the maximum amounts that can be added based on the current pool ratio
-            const maxAmount0ByBalance = balance0;
-            const maxAmount1ByBalance = balance1;
-            const maxAmount0ByRatio = (maxAmount1ByBalance * reserve0) / reserve1;
-            const maxAmount1ByRatio = (maxAmount0ByBalance * reserve1) / reserve0;
-
-            // Determine the limiting factor and token
-            let maxAmount0, maxAmount1;
-            if (maxAmount0ByRatio <= maxAmount0ByBalance) {
-                maxAmount0 = maxAmount0ByRatio;
-                maxAmount1 = maxAmount1ByBalance;
-                setLimitingToken('token1');
-            } else {
-                maxAmount0 = maxAmount0ByBalance;
-                maxAmount1 = maxAmount1ByRatio;
-                setLimitingToken('token0');
-            }
-
-            // Set the max slider value to 100 (representing 100% of the limiting amount)
-            setMaxSliderValue(100);
-
-            // Calculate amounts based on the slider value
-            const amount0 = (maxAmount0 * sliderValue / 100);
-            const amount1 = (maxAmount1 * sliderValue / 100);
-
-            setAmount0(amount0.toFixed(pool.token0.decimals));
-            setAmount1(amount1.toFixed(pool.token1.decimals));
-
-            // Trigger animation if slider is at max
-            if (sliderValue === 100 && !animate) {
-                setAnimate(true);
-                setTimeout(() => setAnimate(false), 1000);
-            }
-        } else if (pool) {
+        if (pool) {
             const lpTokenBalance = getLpTokenBalance();
-            setMaxSliderValue(100);
+            const totalLpSupply = pool.totalLpSupply; // Assuming 6 decimals for LP tokens
+            const userShareOfPool = lpTokenBalance / totalLpSupply;
 
-            const share = lpTokenBalance > 0 ? sliderValue / 100 : 0;
-            const newAmount0 = (share * pool.reserves.token0 / 10 ** pool.token0.decimals).toFixed(pool.token0.decimals);
-            const newAmount1 = (share * pool.reserves.token1 / 10 ** pool.token1.decimals).toFixed(pool.token1.decimals);
+            if (isAdd) {
+                const balance0 = getTokenBalance(pool.token0);
+                const balance1 = getTokenBalance(pool.token1);
+                const reserve0 = pool.reserves.token0 / 10 ** pool.token0.decimals;
+                const reserve1 = pool.reserves.token1 / 10 ** pool.token1.decimals;
 
-            setAmount0(newAmount0);
-            setAmount1(newAmount1);
-            setSelectedLpAmount(Math.floor(lpTokenBalance * share));
-            setLimitingToken(null);
+                // Calculate the maximum amounts that can be added based on the current pool ratio
+                const maxAmount0ByBalance = balance0;
+                const maxAmount1ByBalance = balance1;
+                const maxAmount0ByRatio = (maxAmount1ByBalance * reserve0) / reserve1;
+                const maxAmount1ByRatio = (maxAmount0ByBalance * reserve1) / reserve0;
 
+                // Determine the limiting factor and token
+                let maxAmount0, maxAmount1;
+                if (maxAmount0ByRatio <= maxAmount0ByBalance) {
+                    maxAmount0 = maxAmount0ByRatio;
+                    maxAmount1 = maxAmount1ByBalance;
+                    setLimitingToken('token1');
+                } else {
+                    maxAmount0 = maxAmount0ByBalance;
+                    maxAmount1 = maxAmount1ByRatio;
+                    setLimitingToken('token0');
+                }
+
+                // Set the max slider value to 100 (representing 100% of the limiting amount)
+                setMaxSliderValue(100);
+
+                // Calculate amounts based on the slider value
+                const amount0 = (maxAmount0 * sliderValue / 100);
+                const amount1 = (maxAmount1 * sliderValue / 100);
+
+                setAmount0(amount0.toFixed(pool.token0.decimals));
+                setAmount1(amount1.toFixed(pool.token1.decimals));
+
+                // Trigger animation if slider is at max
+                if (sliderValue === 100 && !animate) {
+                    setAnimate(true);
+                    setTimeout(() => setAnimate(false), 1000);
+                }
+            } else if (pool) {
+                // For removing liquidity, calculate user's share of the pool
+                const userReserve0 = (pool.reserves.token0 * userShareOfPool) / 10 ** pool.token0.decimals;
+                const userReserve1 = (pool.reserves.token1 * userShareOfPool) / 10 ** pool.token1.decimals;
+
+                setMaxSliderValue(100);
+
+                const share = lpTokenBalance > 0 ? sliderValue / 100 : 0;
+                const newAmount0 = (userReserve0 * share).toFixed(pool.token0.decimals);
+                const newAmount1 = (userReserve1 * share).toFixed(pool.token1.decimals);
+
+                setAmount0(newAmount0);
+                setAmount1(newAmount1);
+                setSelectedLpAmount(Math.floor(lpTokenBalance * share));
+                setLimitingToken(null);
+
+            }
         }
     }, [pool, isAdd, sliderValue, getLpTokenBalance, getTokenBalance, animate]);
 
@@ -199,16 +208,34 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
         });
     }, [pool, stxAddress, getLpTokenBalance, sliderValue, amount0, amount1, openContractCall, onClose]);
 
+
+    const calculateUserPoolShare = useCallback(() => {
+        if (!pool) return 0;
+        const lpTokenBalance = getLpTokenBalance();
+        const totalLpSupply = pool.totalLpSupply;
+        return (lpTokenBalance / totalLpSupply) * 100;
+    }, [pool, getLpTokenBalance]);
+
+
     if (!pool) return null;
 
     const lpTokenBalance = getLpTokenBalance();
+    const userPoolShare = calculateUserPoolShare();
 
     return (
         <DialogContent className="sm:max-w-lg">
             <DialogHeader>
                 <DialogTitle>{isAdd ? 'Add Liquidity' : 'Remove Liquidity'}</DialogTitle>
                 <DialogDescription>
-                    {isAdd ? `Add liquidity to the ${pool.token0.symbol}/${pool.token1.symbol} pool` : `Remove liquidity from the ${pool.token0.symbol}/${pool.token1.symbol} pool`}
+                    {wallet.experience.balance > 2000 ? (
+                        <div className="text-sm text-yellow-500" title="Experience Bonus Feature: Your share of the pool">
+                            ✨ Your pool share: {userPoolShare.toFixed(2)}%
+                        </div>
+                    ) : (
+                        <div className="text-sm">
+                            {isAdd ? `Add liquidity to the ${pool.token0.symbol}/${pool.token1.symbol} pool` : `Remove liquidity from the ${pool.token0.symbol}/${pool.token1.symbol} pool`}
+                        </div>
+                    )}
                 </DialogDescription>
             </DialogHeader>
             <div className="grid gap-4 py-4">
