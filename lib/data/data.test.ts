@@ -1,5 +1,5 @@
 import { contracts } from "../clarigen/types";
-import { addPlayer, getLand, getLands, getLandsBalance, getPlayers, isPlayer, setLand } from "../db-providers/kv";
+import { addPlayer, getLand, getLands, getLandsBalance, getPlayers, getPlayerTokens, isPlayer, setLand } from "../db-providers/kv";
 import { Land } from '../db-providers/kv.types';
 import { contractFactory } from '@clarigen/core';
 import { clarigen } from "../clarigen/client";
@@ -143,11 +143,11 @@ describe('player balance data', () => {
     expect(isInSet).toBeTruthy()
   })
 
-  it('should get all players holding gyatt', async () => {
+  it('should get all players holding DMG', async () => {
     const players = await getPlayers()
     const balances = []
     for (const player of players) {
-      const balance: any = await getLandsBalance('SP739VRRCMXY223XPR28BWEBTJMA0B27DY8GTKCH.gyatt-bonding-curve', player)
+      const balance: any = await getPlayerTokens('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', player)
       if (balance > 0) balances.push({ address: player, balance: balance })
     }
     console.log(_.sortBy(balances, 'balance').reverse())
