@@ -1,29 +1,50 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
 import { Pc, PostConditionMode } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
-import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
 import { useAccount, useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
-import redPill from '@public/sip9/pills/red-pill-floating.gif';
+import Image from 'next/image';
+import stxLogo from '@public/stx-logo.png';
 import redPillNft from '@public/sip9/pills/red-pill-nft.gif';
 import bluePillNft from '@public/sip9/pills/blue-pill-nft.gif';
-import bluePill from '@public/sip9/pills/blue-pill.gif';
-import charismaFloating from '@public/sip9/pills/cha-floating.gif';
-import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
-import Image from 'next/image';
-import charisma from '@public/charisma.png';
-import stxLogo from '@public/stx-logo.png';
-import useWallet from '@lib/hooks/wallet-balance-provider';
-import numeral from 'numeral';
 import { useGlobalState } from '@lib/hooks/global-state-context';
+import { callReadOnlyFunction, cvToValue } from '@stacks/transactions';
 
+export async function getStaticProps() {
+  const redPillPrice = await callReadOnlyFunction({
+    contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    contractName: "red-pill-nft",
+    functionName: "get-price",
+    functionArgs: [],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+  });
 
-export default function ShopPage() {
+  const bluePillPrice = await callReadOnlyFunction({
+    contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+    contractName: "blue-pill-nft",
+    functionName: "get-price",
+    functionArgs: [],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+  });
+
+  return {
+    props: {
+      redPillPrice: cvToValue(redPillPrice).value,
+      bluePillPrice: cvToValue(bluePillPrice).value,
+    },
+    revalidate: 60,
+  };
+}
+
+interface ShopPageProps {
+  redPillPrice: number;
+  bluePillPrice: number;
+}
+
+export default function ShopPage({ redPillPrice, bluePillPrice }: ShopPageProps) {
   const meta = {
     title: 'Charisma | Shop',
     description: "The Charisma Shop",
@@ -35,10 +56,10 @@ export default function ShopPage() {
 
   function makeChoice(choice: boolean) {
     if (stxAddress) {
-
       const postConditions: any = []
       if (!charismaClaims.hasFreeClaim) {
-        postConditions.push(Pc.principal(stxAddress).willSendLte(100000000).ustx())
+        const price = choice ? redPillPrice : bluePillPrice;
+        postConditions.push(Pc.principal(stxAddress).willSendEq(price).ustx())
       }
       openContractCall({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -70,7 +91,7 @@ export default function ShopPage() {
               <div className='z-10 flex justify-between px-2 py-1'>
                 <div className='text-lg font-bold'>Red Pill NFT</div>
                 <div className='flex items-center space-x-1 font-semibold'>
-                  <div>100</div><div><Image src={stxLogo} className='rounded-full' alt='STX logo' width={16} height={16} /></div>
+                  <div>{redPillPrice / 1000000}</div><div><Image src={stxLogo} className='rounded-full' alt='STX logo' width={16} height={16} /></div>
                 </div>
               </div>
               <div className='grow'></div>
@@ -84,7 +105,7 @@ export default function ShopPage() {
               <div className='z-10 flex justify-between px-2 py-1'>
                 <div className='text-lg font-bold'>Blue Pill NFT</div>
                 <div className='flex items-center space-x-1 font-semibold'>
-                  <div>100</div><div><Image src={stxLogo} className='rounded-full' alt='STX logo' width={16} height={16} /></div>
+                  <div>{bluePillPrice / 1000000}</div><div><Image src={stxLogo} className='rounded-full' alt='STX logo' width={16} height={16} /></div>
                 </div>
               </div>
               <div className='grow'></div>
