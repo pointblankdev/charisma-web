@@ -1249,7 +1249,6 @@ export async function getNftOwner(contractAddress: string, id: number) {
   return String(cvToJSON(result).value.value.value);
 }
 
-
 export async function getLastLandId() {
   const response = await scApi.callReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
@@ -1294,7 +1293,6 @@ export async function getTransferFunction(contractAddress: string) {
   // Extract the function
   return code.substring(startIndex, endIndex).trim();
 }
-
 
 export async function getBalancesAtBlock() {
   const response = await scApi.callReadOnlyFunction({

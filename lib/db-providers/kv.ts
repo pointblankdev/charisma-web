@@ -259,7 +259,7 @@ export async function clearRewardsLeaderboard(token: string) {
   }
 }
 
-// tokens
+// lands
 
 export async function getLandsBalance(contractAddress: string, user: string) {
   const landId = await getLandId(contractAddress);
@@ -329,6 +329,45 @@ export async function removePlayer(player: string): Promise<any> {
 // is player in set
 export async function isPlayer(player: string): Promise<boolean> {
   return await kv.sismember('players', player) ? true : false;
+}
+
+// player tokens
+
+export async function getPlayerTokens(contractAddress: string, player: string): Promise<any> {
+  return await kv.get(`player:${player}tokens:${contractAddress}`);
+}
+
+export async function setPlayerTokens(contractAddress: string, player: string, amount: number): Promise<any> {
+  return await kv.set(`player:${player}tokens:${contractAddress}`, amount);
+}
+
+// player burns
+
+export async function trackBurnEvent(event: any) {
+  const player = event.sender
+  const timestamp = Date.now();
+  const burnEvent = { timestamp, ...event }
+
+  // store the swap event in a sorted set
+  await kv.zadd(`player:${player}:burns`, { score: timestamp, member: burnEvent });
+
+  // Add player to the list of known players
+  await kv.srem('players', player);
+
+}
+
+export async function getPlayerEventData(player: string): Promise<any> {
+  const burns = await kv.zrange(`player:${player}:burns`, 0, 999999, { rev: true });
+
+  return {
+    player: player,
+    burns: burns,
+  };
+}
+
+export async function clearPlayerEventData(player: string): Promise<void> {
+  // clear all items from list
+  await kv.del(`player:${player}:burns`);
 }
 
 // proposals

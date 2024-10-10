@@ -1,6 +1,6 @@
 import { clarigen } from "@lib/clarigen/client";
 import { contractFactory } from '@clarigen/core';
-import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, saveSwapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setVoteData, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, saveSwapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setPlayerTokens, setVoteData, trackBurnEvent, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { contracts } from "@lib/clarigen/types";
@@ -8,11 +8,18 @@ import Logger from "@lib/logger";
 
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
+const trackedContracts = [
+    "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token",
+    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience",
+    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
+    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh",
+    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo",
+    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx",
+]
 
 export const handleContractEvent = async (event: any, builder: any) => {
 
     let symbol = '❓';
-
 
     if (event.type === 'STXTransferEvent') {
         symbol = '🟠'
@@ -23,17 +30,17 @@ export const handleContractEvent = async (event: any, builder: any) => {
         });
     }
 
-    else if (event.type === 'FTBurnEvent') {
-        symbol = '🔻'
+    else if (event.type === 'FTTransferEvent') {
+        symbol = '➡️'
 
-        builder.addField({
-            name: `${symbol} ${event.type}`,
-            value: JSON.stringify(event.data).slice(0, 300)
-        });
-    }
-
-    else if (event.type === 'NFTBurnEvent') {
-        symbol = '🔻'
+        const contractId = event.data.asset_identifier.split('::')[0]
+        if (trackedContracts.includes(contractId)) {
+            // get the user's token balance
+            const balance = await getTokenBalance(contractId, event.data.recipient)
+            // save the balance in kv storage
+            await addPlayer(event.data.recipient)
+            await setPlayerTokens(contractId, event.data.recipient, balance)
+        }
 
         builder.addField({
             name: `${symbol} ${event.type}`,
@@ -43,6 +50,15 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
     else if (event.type === 'FTMintEvent') {
         symbol = '🔺'
+
+        const contractId = event.data.asset_identifier.split('::')[0]
+        if (trackedContracts.includes(contractId)) {
+            // get the user's token balance
+            const balance = await getTokenBalance(contractId, event.data.recipient)
+            // save the balance in kv storage
+            await addPlayer(event.data.recipient)
+            await setPlayerTokens(contractId, event.data.recipient, balance)
+        }
 
         if (event.data.asset_identifier.split('::')[0] === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience") {
             symbol = '✨'
@@ -76,6 +92,49 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 value: JSON.stringify(event.data).slice(0, 300)
             });
         }
+    }
+
+    else if (event.type === 'FTBurnEvent') {
+        symbol = '🔻'
+
+        const contractId = event.data.asset_identifier.split('::')[0]
+        if (trackedContracts.includes(contractId)) {
+            // get the user's token balance
+            const balance = await getTokenBalance(contractId, event.data.sender)
+            // save the balance in kv storage
+            await addPlayer(event.data.sender)
+            await setPlayerTokens(contractId, event.data.sender, balance)
+        }
+
+        if (trackedContracts.includes(contractId)) {
+            symbol = '🔥'
+
+            // track redemptions burned, timestamp, and by whom
+            await trackBurnEvent(event.data)
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+
+        }
+
+        else {
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+        }
+    }
+
+    else if (event.type === 'NFTTransferEvent') {
+        symbol = '➡️'
+
+        builder.addField({
+            name: `${symbol} ${event.type}`,
+            value: JSON.stringify(event.data).slice(0, 300)
+        });
     }
 
     else if (event.type === 'NFTMintEvent') {
@@ -211,6 +270,25 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
         }
 
+        else if (contractId === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft" || contractId === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blue-pill-nft") {
+            symbol = '💊'
+
+            const pill: any = {};
+            if (contractId.split('.')[1] === 'red-pill-nft') {
+                pill.color = 'RED'
+                pill.url = 'https://charisma.rocks/sip9/pills/red-pill.gif'
+            } else {
+                pill.color = 'BLUE'
+                pill.url = 'https://charisma.rocks/sip9/pills/blue-pill.gif'
+            }
+            builder.setThumbnail({ url: pill.url })
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+
+        }
+
         else {
 
             builder.addField({
@@ -220,17 +298,8 @@ export const handleContractEvent = async (event: any, builder: any) => {
         }
     }
 
-    else if (event.type === 'FTTransferEvent') {
-        symbol = '➡️'
-
-        builder.addField({
-            name: `${symbol} ${event.type}`,
-            value: JSON.stringify(event.data).slice(0, 300)
-        });
-    }
-
-    else if (event.type === 'NFTTransferEvent') {
-        symbol = '➡️'
+    else if (event.type === 'NFTBurnEvent') {
+        symbol = '🔻'
 
         builder.addField({
             name: `${symbol} ${event.type}`,
