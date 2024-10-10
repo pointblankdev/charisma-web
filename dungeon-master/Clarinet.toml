@@ -149,6 +149,10 @@ depends_on = []
 path = "contracts/all-lp-calculator.clar"
 depends_on = []
 
+[contracts.hodl]
+path = "contracts/hodl.clar"
+depends_on = []
+
 
 # traits
 [contracts.dao-traits-v4]
