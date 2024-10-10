@@ -419,8 +419,8 @@ export const handleContractEvent = async (event: any, builder: any) => {
                         .setThumbnail({ url: 'https://charisma.rocks/quests/wanted-hogger/hogger-icon.png' })
                         .setUrl('http://charisma.rocks/quests/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wanted-hogger-v2?view=mob')
 
-                    generalChatHook.addEmbed(hoggerRespawnedAlert.getEmbed());
-                    await generalChatHook.send()
+                    // generalChatHook.addEmbed(hoggerRespawnedAlert.getEmbed());
+                    // await generalChatHook.send()
                 } catch (error) {
                     console.error('generalChatHook error:', error)
                 }
