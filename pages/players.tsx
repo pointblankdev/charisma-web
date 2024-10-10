@@ -16,6 +16,9 @@ import numeral from "numeral";
 import { ArrowUpDown, User } from 'lucide-react';
 import { getPlayerEventData, getPlayerPill, getPlayers, getPlayerTokens } from '@lib/db-providers/kv';
 import Link from 'next/link';
+import redPill from '@public/sip9/pills/red-pill-floating.gif';
+import bluePill from '@public/sip9/pills/blue-pill-floating.gif';
+import Image from 'next/image';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -164,7 +167,7 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                     <div className="mt-6">
                         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
                             <div className="flex items-center justify-between px-4 mb-4 sm:px-0">
-                                <h1 className="text-2xl font-bold text-white/95">Players</h1>
+                                <h1 className="text-2xl font-bold text-white/95">Charisma Players List</h1>
                                 <Input
                                     type="text"
                                     placeholder="Search by STX address..."
@@ -182,7 +185,7 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                                 STX Address {sortBy === 'stxAddress' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
                                             <TableHead className="py-2">
-                                                Pill
+                                                Pilled
                                             </TableHead>
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('experience')}>
                                                 Experience {sortBy === 'experience' && <ArrowUpDown className="inline ml-1" size={16} />}
@@ -224,7 +227,7 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                             <TableRow key={index} className="border-t border-gray-700/50">
                                                 <TableCell className="py-4 font-medium text-white">{player.stxAddress}</TableCell>
                                                 <TableCell className="py-4 text-white">
-                                                    {player.pill === 'RED' ? '🟥 Red' : player.pill === 'BLUE' ? '🟦 Blue' : ''}
+                                                    {player.pill === 'RED' ? <Image src={redPill} alt='Red Pill' width={30} height={30} /> : player.pill === 'BLUE' ? <Image src={bluePill} alt='Blue Pill' width={30} height={30} /> : ''}
                                                 </TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.experience / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.governanceTokens / 10 ** 6).format('0,0')}</TableCell>

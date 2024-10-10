@@ -343,7 +343,7 @@ const TokenEventsSection = ({
                     if (event) {
                         setTooltipData({
                             time: new Date(event.timestamp).toLocaleString(),
-                            amount: numeral(event.amount / 10 ** 6).format('0,0.00'),
+                            amount: numeral(event.amount / 10 ** 6).format('0a'),
                             type: event.type,
                             token: event.token,
                         });
@@ -390,7 +390,7 @@ const TokenEventsSection = ({
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground">Total Amount:</span>
-                                <span className="text-base">{numeral(totalAmount).format('0,0.00')}</span>
+                                <span className="text-base">{numeral(totalAmount).format('0a')}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground">Burn Events:</span>
@@ -398,11 +398,11 @@ const TokenEventsSection = ({
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground">Largest Event:</span>
-                                <span className="text-base">{numeral(largestEvent).format('0,0.00')}</span>
+                                <span className="text-base">{numeral(largestEvent).format('0a')}</span>
                             </div>
                             <div className="flex justify-between items-center">
                                 <span className="text-muted-foreground">Average Amount:</span>
-                                <span className="text-base">{numeral(averageAmount).format('0,0.00')}</span>
+                                <span className="text-base">{numeral(averageAmount).format('0a')}</span>
                             </div>
                             <div className="pt-4">
                                 <div className="text-sm text-muted-foreground">First Event:</div>
