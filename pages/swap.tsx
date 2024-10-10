@@ -317,7 +317,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
     if (isNaN(estimated)) return '0';
     const minAmount = estimated * (1 - slippage / 100);
     return minAmount.toFixed(toToken.decimals);
-  }, [slippage]);
+  }, [slippage, toToken.decimals]);
 
 
   const handleSlippageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -404,7 +404,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
     } finally {
       setIsCalculating(false);
     }
-  }, [stxAddress, fromToken, toToken, isMultiHop, currentPool]);
+  }, [stxAddress, fromToken, toToken, isMultiHop, swapPath, currentPool]);
 
   const formatBalance = (balance: number, decimals: number) => {
     return (balance / 10 ** decimals).toFixed(decimals);
@@ -664,16 +664,14 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
 
         if (path.length > maxHops) continue;
 
-        for (const pool of availablePools) {
+        for (const pool of data.pools) {
           let nextToken: TokenInfo | undefined;
           if (pool.token0.symbol === current.symbol) nextToken = pool.token1;
           else if (pool.token1.symbol === current.symbol) nextToken = pool.token0;
 
           if (nextToken && !visited.has(nextToken.symbol)) {
             // Check if the path is allowed for low experience users
-            if (!hasHighExperience && current.symbol === 'STX' && nextToken.symbol !== 'CHA') {
-              continue;
-            }
+            if (!hasHighExperience && nextToken.symbol === 'STX') continue;
             const newPath = [...path, nextToken];
             const newVisited = new Set(visited).add(nextToken.symbol);
             queue.push({ path: newPath, visited: newVisited });
@@ -693,7 +691,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
       setIsMultiHop(false);
       setSwapPath([]);
     }
-  }, [fromToken, toToken, data.pools]);
+  }, [fromToken, toToken, data.pools, hasHighExperience]);
 
   useEffect(() => {
     findBestSwapPath();

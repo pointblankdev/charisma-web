@@ -8,7 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
 import Image from 'next/image';
 import { SkipNavContent } from '@reach/skip-nav';
-import charismaFloating from '@public/sip9/pills/cha-floating.gif';
 import charismaSquare from '@public/charisma-logo-square.png';
 import dmgLogo from '@public/dmg-logo.png';
 import stxLogo from '@public/stx-logo.png';
@@ -20,9 +19,10 @@ import synStxLogo from '@public/sip10/synthetic-stx/logo.png';
 import experienceLogo from '@public/experience.png';
 import redPill from '@public/sip9/pills/red-pill-floating.gif';
 import bluePill from '@public/sip9/pills/blue-pill-floating.gif';
-import { createChart, ColorType, UTCTimestamp, IChartApi, LineStyle, CrosshairMode } from 'lightweight-charts';
+import { createChart, ColorType, UTCTimestamp, LineStyle, CrosshairMode } from 'lightweight-charts';
 import { getNameFromAddress, getTokenBalance } from '@lib/stacks-api';
-import { get } from 'lodash';
+import PricesService from '@lib/prices-service';
+
 
 interface PlayerData {
     stxAddress: string;
@@ -51,6 +51,8 @@ interface TokenEvent {
 interface PlayerProfileProps {
     playerData: PlayerData;
     tokenEvents: TokenEvent[];
+    tokenPrices: any;
+    lpTokenPrices: any;
 }
 
 export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async (context) => {
@@ -110,6 +112,21 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
         return total;
     }, 0);
 
+    // Fetch token prices using PricesService
+    const tokenPrices = await PricesService.getAllTokenPrices();
+
+    // Calculate LP token prices
+    const lpTokenPrices: any = {
+        'WELSH-iouWELSH': (tokenPrices['WELSH'] + tokenPrices['iouWELSH']) / 2,
+        'ROO-iouROO': (tokenPrices['$ROO'] + tokenPrices['iouROO']) / 2,
+        'CHA-WELSH': (tokenPrices['CHA'] + tokenPrices['WELSH']) / 2,
+        'STX-CHA': (tokenPrices['STX'] + tokenPrices['CHA']) / 2,
+        'CHA-iouWELSH': (tokenPrices['CHA'] + tokenPrices['iouWELSH']) / 2,
+        'CHA-ORDI': (tokenPrices['CHA'] + tokenPrices['ORDI']) / 2,
+        'CHA-ROO': (tokenPrices['CHA'] + tokenPrices['$ROO']) / 2,
+        'WELSH-DOG': (tokenPrices['WELSH'] + (tokenPrices['DOG'] || 0)) / 2, // Assuming DOG price might not be available
+    };
+
     const playerData: PlayerData = {
         stxAddress: address,
         bnsName: bnsName.names[0] || '',
@@ -147,15 +164,18 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
         // Add transfer and mint events here when available
     ];
 
+
     return {
         props: {
             playerData,
             tokenEvents,
+            tokenPrices,
+            lpTokenPrices,
         },
     };
 };
 
-export default function PlayerProfile({ playerData, tokenEvents }: PlayerProfileProps) {
+export default function PlayerProfile({ playerData, tokenEvents, tokenPrices, lpTokenPrices }: PlayerProfileProps) {
     const [selectedToken, setSelectedToken] = useState('all');
 
     const filteredEvents = selectedToken === 'all'
@@ -172,7 +192,7 @@ export default function PlayerProfile({ playerData, tokenEvents }: PlayerProfile
             <SkipNavContent />
             <Layout>
                 <div className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
-                    <HeroSection playerData={playerData} />
+                    <HeroSection playerData={playerData} tokenPrices={tokenPrices} lpTokenPrices={lpTokenPrices} />
                     <StatsSection playerData={playerData} />
                     <LPTokensSection lpTokenBalances={playerData.lpTokenBalances} />
                     <BurnedTokensSection playerData={playerData} />
@@ -188,14 +208,35 @@ export default function PlayerProfile({ playerData, tokenEvents }: PlayerProfile
     );
 }
 
-const HeroSection = ({ playerData }: { playerData: PlayerData }) => {
+const HeroSection = ({ playerData, tokenPrices, lpTokenPrices }: { playerData: PlayerData; tokenPrices: any; lpTokenPrices: any }) => {
     const pillImage = playerData.pilled === 'RED' ? redPill : playerData.pilled === 'BLUE' ? bluePill : '';
+
+    const totalTVL = useMemo(() => {
+        let tvl = 0;
+
+        // Calculate TVL for main tokens
+        tvl += (playerData.chaTokens / 10 ** 6) * tokenPrices.CHA;
+        tvl += (playerData.governanceTokens / 10 ** 6) * tokenPrices.CHA;
+        tvl += (playerData.iouWELSH / 10 ** 6) * tokenPrices.WELSH;
+        tvl += (playerData.iouROO / 10 ** 6) * tokenPrices['$ROO'];
+        tvl += (playerData.synSTX / 10 ** 6) * tokenPrices.STX;
+
+        // Calculate TVL for LP tokens
+        // Object.entries(playerData.lpTokenBalances).forEach(([poolName, balance]) => {
+        //     tvl += (balance / 10 ** 6) * (lpTokenPrices[poolName] || 0);
+        // });
+
+        return tvl;
+    }, [playerData, tokenPrices, lpTokenPrices]);
+
     return (
         <div className='flex flex-col items-center overflow-hidden'>
             <Image src={pillImage} alt='Charisma Pilled' width={300} height={300} className='transition-all scale-150 translate-y-24 cursor-pointer sm:hidden' />
-            <div className='flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
-                <div className='flex-col items-center hidden w-full space-y-4 sm:w-64 sm:flex'>
-                    <Image src={pillImage} alt='Charisma Pilled' width={300} height={300} className='transition-all -translate-x-12 -translate-y-20 cursor-pointer scale-[2]' />
+            <div className='relative flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
+                {/* TVL Display */}
+                <div className='absolute top-4 right-4 sm:top-8 sm:right-8 text-right'>
+                    <div className='text-sm text-secondary/80'>Total Portfolio Value</div>
+                    <div className='text-2xl sm:text-4xl font-bold'><span>${numeral(totalTVL).format('0,0.00')}</span><span className='text-lg'>+ LP</span></div>
                 </div>
                 <div className='flex flex-col items-center justify-center w-full px-4 text-lg text-center -translate-y-16 sm:text-md sm:text-start sm:items-start sm:justify-start sm:px-0'>
                     <div className='flex items-baseline justify-center w-full text-center sm:justify-start'>
