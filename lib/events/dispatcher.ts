@@ -273,6 +273,9 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (contractId === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft" || contractId === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blue-pill-nft") {
             symbol = '💊'
 
+            console.log(symbol)
+            console.log(event)
+
             const pill: any = {};
             if (contractId.split('.')[1] === 'red-pill-nft') {
                 pill.color = 'RED'

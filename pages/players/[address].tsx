@@ -1,8 +1,7 @@
 import { GetServerSideProps } from 'next';
 import Layout from '@components/layout/layout';
 import Page from '@components/page';
-import { getPlayerEventData, getPlayerTokens } from '@lib/db-providers/kv';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area } from 'recharts';
+import { getPlayerEventData, getPlayerPill, getPlayerTokens } from '@lib/db-providers/kv';
 import numeral from 'numeral';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@components/ui/card';
@@ -20,9 +19,12 @@ import experienceLogo from '@public/experience.png';
 import redPill from '@public/sip9/pills/red-pill-floating.gif';
 import bluePill from '@public/sip9/pills/blue-pill-floating.gif';
 import { createChart, ColorType, UTCTimestamp, IChartApi, LineStyle, CrosshairMode } from 'lightweight-charts';
+import { getNameFromAddress } from '@lib/stacks-api';
 
 interface PlayerData {
     stxAddress: string;
+    bnsName: string;
+    pilled: string;
     experience: number;
     chaTokens: number;
     governanceTokens: number;
@@ -50,12 +52,16 @@ interface PlayerProfileProps {
 export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async (context) => {
     const address = context.params?.address as string;
 
+    const bnsName = await getNameFromAddress(address);
+
     const governanceTokens = await getPlayerTokens('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', address);
     const experience = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address);
     const chaBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', address);
     const iouWELSHBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', address);
     const iouROOBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', address);
     const synSTXBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', address);
+
+    const pilled = await getPlayerPill(address);
 
     const eventData = await getPlayerEventData(address);
 
@@ -89,6 +95,8 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
 
     const playerData: PlayerData = {
         stxAddress: address,
+        bnsName: bnsName.names[0] || '',
+        pilled,
         experience,
         chaTokens: chaBalance,
         governanceTokens,
@@ -153,16 +161,17 @@ export default function PlayerProfile({ playerData, tokenEvents }: PlayerProfile
 }
 
 const HeroSection = ({ playerData }: { playerData: PlayerData }) => {
+    const pillImage = playerData.pilled === 'RED' ? redPill : playerData.pilled === 'BLUE' ? bluePill : '';
     return (
         <div className='flex flex-col items-center overflow-hidden'>
-            <Image src={charismaFloating} alt='Charisma Logo' width={300} height={300} className='transition-all scale-150 translate-y-24 cursor-pointer sm:hidden' />
+            <Image src={pillImage} alt='Charisma Pilled' width={300} height={300} className='transition-all scale-150 translate-y-24 cursor-pointer sm:hidden' />
             <div className='flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
                 <div className='flex-col items-center hidden w-full space-y-4 sm:w-64 sm:flex'>
-                    <Image src={charismaFloating} alt='Charisma Logo' width={300} height={300} className='transition-all -translate-x-12 -translate-y-20 cursor-pointer scale-[2]' />
+                    <Image src={pillImage} alt='Charisma Pilled' width={300} height={300} className='transition-all -translate-x-12 -translate-y-20 cursor-pointer scale-[2]' />
                 </div>
                 <div className='flex flex-col items-center justify-center w-full px-4 text-lg text-center -translate-y-16 sm:text-md sm:text-start sm:items-start sm:justify-start sm:px-0'>
                     <div className='flex items-baseline justify-center w-full text-center sm:justify-start'>
-                        <div className='py-4 text-6xl sm:py-0'>Player Profile</div>
+                        <div className='py-4 text-6xl sm:py-0'>{playerData.bnsName || 'Player Profile'}</div>
                     </div>
                     <div className='mt-4 text-lg grow text-secondary/80'>{playerData.stxAddress}</div>
                     <div className='mt-8 text-md text-secondary/80'>
