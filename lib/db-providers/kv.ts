@@ -341,6 +341,34 @@ export async function setPlayerTokens(contractAddress: string, player: string, a
   return await kv.set(`player:${player}tokens:${contractAddress}`, amount);
 }
 
+// player transfers
+
+export async function trackTransferEvent(event: any) {
+  const player = event.sender
+  const timestamp = Date.now();
+  const transferEvent = { timestamp, ...event }
+
+  // store the swap event in a sorted set
+  await kv.zadd(`player:${player}:transfers`, { score: timestamp, member: transferEvent });
+
+  // Add player to the list of known players
+  await kv.sadd('players', player)
+}
+
+// player mints
+
+export async function trackMintEvent(event: any) {
+  const player = event.sender
+  const timestamp = Date.now();
+  const mintEvent = { timestamp, ...event }
+
+  // store the swap event in a sorted set
+  await kv.zadd(`player:${player}:mints`, { score: timestamp, member: mintEvent });
+
+  // Add player to the list of known players
+  await kv.sadd('players', player)
+}
+
 // player burns
 
 export async function trackBurnEvent(event: any) {
@@ -353,20 +381,25 @@ export async function trackBurnEvent(event: any) {
 
   // Add player to the list of known players
   await kv.sadd('players', player)
-
 }
 
 export async function getPlayerEventData(player: string): Promise<any> {
-  const burns = await kv.zrange(`player:${player}:burns`, 0, 10000000, { rev: true });
+  const transfers = await kv.zrange(`player:${player}:transfers`, 0, 999999, { rev: true });
+  const mints = await kv.zrange(`player:${player}:mints`, 0, 999999, { rev: true });
+  const burns = await kv.zrange(`player:${player}:burns`, 0, 999999, { rev: true });
 
   return {
     player: player,
+    transfers: transfers,
+    mints: mints,
     burns: burns,
   };
 }
 
 export async function clearPlayerEventData(player: string): Promise<void> {
   // clear all items from list
+  await kv.del(`player:${player}:transfers`);
+  await kv.del(`player:${player}:mints`);
   await kv.del(`player:${player}:burns`);
 }
 

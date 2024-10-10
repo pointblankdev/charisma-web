@@ -1,5 +1,5 @@
 import { contracts } from "../clarigen/types";
-import { addPlayer, getLand, getLands, getLandsBalance, getPlayerEventData, getPlayers, getPlayerTokens, isPlayer, setLand } from "../db-providers/kv";
+import { addPlayer, clearPlayerEventData, getLand, getLands, getLandsBalance, getPlayerEventData, getPlayers, getPlayerTokens, isPlayer, setLand } from "../db-providers/kv";
 import { Land } from '../db-providers/kv.types';
 import { contractFactory } from '@clarigen/core';
 import { clarigen } from "../clarigen/client";
@@ -180,5 +180,12 @@ describe('player data', () => {
   it('should get all burn data for a player', async () => {
     const data = await getPlayerEventData('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
     console.log(data)
+  }, 200000)
+
+  it('should clear player event data', async () => {
+    const players = await getPlayers()
+    for (const player of players) {
+      await clearPlayerEventData(player)
+    }
   }, 200000)
 })
