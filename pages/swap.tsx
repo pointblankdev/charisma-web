@@ -234,7 +234,7 @@ export default function SwapPage({ data }: Props) {
 }
 
 const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], experienceBalance: number }) => {
-  const [fromToken, setFromToken] = useState(data.tokens[2]);
+  const [fromToken, setFromToken] = useState(data.tokens[0]);
   const [toToken, setToToken] = useState(data.tokens[1]);
   const [fromAmount, setFromAmount] = useState('');
   const [toAmount, setToAmount] = useState('');
