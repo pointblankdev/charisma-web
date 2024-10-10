@@ -1,6 +1,6 @@
 import { clarigen } from "@lib/clarigen/client";
 import { contractFactory } from '@clarigen/core';
-import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, saveSwapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setPlayerTokens, setVoteData, trackBurnEvent, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, saveSwapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setPlayerPill, setPlayerTokens, setVoteData, trackBurnEvent, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
 import { contracts } from "@lib/clarigen/types";
@@ -281,6 +281,8 @@ export const handleContractEvent = async (event: any, builder: any) => {
                 pill.color = 'BLUE'
                 pill.url = 'https://charisma.rocks/sip9/pills/blue-pill.gif'
             }
+
+            await setPlayerPill(event.data.recipient, pill.color)
             builder.setThumbnail({ url: pill.url })
             builder.addField({
                 name: `${symbol} ${event.type}`,

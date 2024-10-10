@@ -13,8 +13,9 @@ import { Button } from "@components/ui/button";
 import Layout from '@components/layout/layout';
 import Page from '@components/page';
 import numeral from "numeral";
-import { ArrowUpDown } from 'lucide-react';
+import { ArrowUpDown, User } from 'lucide-react';
 import { getPlayerEventData, getPlayers, getPlayerTokens } from '@lib/db-providers/kv';
+import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 10;
 
@@ -205,6 +206,9 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('burnedSynSTX')}>
                                                 Burned synSTX {sortBy === 'burnedSynSTX' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
+                                            <TableHead className="py-2">
+                                                Actions
+                                            </TableHead>
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
@@ -221,6 +225,14 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                                 <TableCell className="py-4 text-white">{numeral(player.burnedIouWELSH / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.burnedIouROO / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.burnedSynSTX / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">
+                                                    <Link href={`/players/${player.stxAddress}`} passHref>
+                                                        <Button size="sm" variant="outline">
+                                                            <User className="w-4 h-4 mr-2" />
+                                                            View Profile
+                                                        </Button>
+                                                    </Link>
+                                                </TableCell>
                                             </TableRow>
                                         ))}
                                     </TableBody>

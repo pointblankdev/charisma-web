@@ -331,6 +331,16 @@ export async function isPlayer(player: string): Promise<boolean> {
   return await kv.sismember('players', player) ? true : false;
 }
 
+// player red/blue pilled
+
+export async function getPlayerPill(player: string): Promise<any> {
+  return await kv.get(`player:${player}:pill`);
+}
+
+export async function setPlayerPill(player: string, pill: string): Promise<any> {
+  return await kv.set(`player:${player}:pill`, pill);
+}
+
 // player tokens
 
 export async function getPlayerTokens(contractAddress: string, player: string): Promise<any> {
