@@ -14,12 +14,15 @@ import dmgLogo from '@public/dmg-logo.png';
 import stxLogo from '@public/stx-logo.png';
 import welshLogo from '@public/welsh-logo.png';
 import rooLogo from '@public/roo-logo.png';
+import dogLogo from '@public/sip10/dogLogo.jpg';
+import ordiLogo from '@public/ordi-logo.png';
 import synStxLogo from '@public/sip10/synthetic-stx/logo.png';
 import experienceLogo from '@public/experience.png';
 import redPill from '@public/sip9/pills/red-pill-floating.gif';
 import bluePill from '@public/sip9/pills/blue-pill-floating.gif';
 import { createChart, ColorType, UTCTimestamp, IChartApi, LineStyle, CrosshairMode } from 'lightweight-charts';
-import { getNameFromAddress } from '@lib/stacks-api';
+import { getNameFromAddress, getTokenBalance } from '@lib/stacks-api';
+import { get } from 'lodash';
 
 interface PlayerData {
     stxAddress: string;
@@ -35,6 +38,7 @@ interface PlayerData {
     burnedIouWELSH: number;
     burnedIouROO: number;
     burnedSynSTX: number;
+    lpTokenBalances: Record<string, number>;
 }
 
 interface TokenEvent {
@@ -60,6 +64,19 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
     const iouWELSHBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', address);
     const iouROOBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', address);
     const synSTXBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', address);
+
+
+    // Fetch LP token balances
+    const lpTokenBalances = await Promise.all([
+        getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh', address),
+        getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-iouroo', address),
+        getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh', address),
+        getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha', address),
+        getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-iouwelsh', address),
+        getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-ordi', address),
+        getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-roo', address),
+        getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog', address),
+    ]);
 
     const pilled = await getPlayerPill(address);
 
@@ -107,6 +124,16 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
         burnedIouWELSH,
         burnedIouROO,
         burnedSynSTX,
+        lpTokenBalances: {
+            'WELSH-iouWELSH': lpTokenBalances[0],
+            'ROO-iouROO': lpTokenBalances[1],
+            'CHA-WELSH': lpTokenBalances[2],
+            'STX-CHA': lpTokenBalances[3],
+            'CHA-iouWELSH': lpTokenBalances[4],
+            'CHA-ORDI': lpTokenBalances[5],
+            'CHA-ROO': lpTokenBalances[6],
+            'WELSH-DOG': lpTokenBalances[7],
+        },
     };
 
     // Combine all token events into a single array
@@ -136,7 +163,7 @@ export default function PlayerProfile({ playerData, tokenEvents }: PlayerProfile
         : tokenEvents.filter(event => event.token === selectedToken);
 
     const meta = {
-        title: `Charisma | Player Profile - ${playerData.stxAddress}`,
+        title: `Charisma | Player Profile - ${playerData.bnsName}`,
         description: `Detailed profile and token events for player ${playerData.stxAddress}`,
     };
 
@@ -147,6 +174,7 @@ export default function PlayerProfile({ playerData, tokenEvents }: PlayerProfile
                 <div className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
                     <HeroSection playerData={playerData} />
                     <StatsSection playerData={playerData} />
+                    <LPTokensSection lpTokenBalances={playerData.lpTokenBalances} />
                     <BurnedTokensSection playerData={playerData} />
                     <TokenEventsSection
                         playerData={playerData}
@@ -200,6 +228,47 @@ const StatsSection = ({ playerData }: { playerData: PlayerData }) => {
     );
 };
 
+const LPTokensSection = ({ lpTokenBalances }: { lpTokenBalances: Record<string, number> }) => {
+    const getTokenIcons = (poolName: string) => {
+        const [token1, token2] = poolName.split('-');
+        return [
+            token1 === 'STX' ? stxLogo :
+                token1 === 'CHA' ? charismaSquare :
+                    token1 === 'WELSH' ? welshLogo :
+                        token1 === 'ROO' ? rooLogo :
+                            token1 === 'iouWELSH' ? welshLogo :
+                                token1 === 'iouROO' ? rooLogo :
+                                    token1 === 'ORDI' ? ordiLogo :
+                                        token1 === 'DOG' && dogLogo,
+            token2 === 'STX' ? stxLogo :
+                token2 === 'CHA' ? charismaSquare :
+                    token2 === 'WELSH' ? welshLogo :
+                        token2 === 'ROO' ? rooLogo :
+                            token2 === 'iouWELSH' ? welshLogo :
+                                token2 === 'iouROO' ? rooLogo :
+                                    token2 === 'ORDI' ? ordiLogo :
+                                        token2 === 'DOG' && dogLogo,
+        ];
+    };
+
+    return (
+        <div className="mt-12">
+            <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>LP Tokens</div>
+            <div className='w-full pb-8 text-center text-md text-muted/90'>Overview of player's liquidity pool tokens.</div>
+            <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
+                {Object.entries(lpTokenBalances).map(([poolName, balance]) => (
+                    <LpStatCard
+                        key={poolName}
+                        title={poolName}
+                        value={balance}
+                        icons={getTokenIcons(poolName) as any}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const BurnedTokensSection = ({ playerData }: { playerData: PlayerData }) => {
     return (
         <div className="mt-12">
@@ -219,7 +288,20 @@ const StatCard = ({ title, value, icon }: { title: string, value: number, icon: 
     <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
         <div className='flex items-center space-x-2'>
             <div className='text-4xl font-semibold'>{numeral(value / 10 ** 6).format('0a')}</div>
-            <Image src={icon} alt={title} width={30} height={30} className='inline rounded-full' />
+            <Image src={icon} alt={title} width={32} height={32} className='inline rounded-full' />
+        </div>
+        <div className='text-center text-muted/80'>{title}</div>
+    </div>
+);
+
+const LpStatCard = ({ title, value, icons }: { title: string, value: number, icons: [any, any] }) => (
+    <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
+        <div className='flex items-center space-x-2'>
+            <div className='text-4xl font-semibold'>{numeral(value / 10 ** 6).format('0a')}</div>
+            <div className="relative w-12 h-8">
+                <Image src={icons[0]} alt={title.split('-')[0]} width={32} height={32} className='absolute left-0 top-0 rounded-full z-10' />
+                <Image src={icons[1]} alt={title.split('-')[1]} width={32} height={32} className='absolute left-6 top-0 rounded-full z-20' />
+            </div>
         </div>
         <div className='text-center text-muted/80'>{title}</div>
     </div>
