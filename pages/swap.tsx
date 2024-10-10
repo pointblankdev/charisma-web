@@ -256,9 +256,15 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
   const availableTokens = data.tokens;
 
   // Filter pools
-  const availablePools = data.pools.filter(pool =>
-    pool.id !== 4 || hasHighExperience
-  );
+  const availablePools = useMemo(() => {
+    return data.pools.filter(pool => {
+      if (pool.id === 4) {
+        // Allow STX-CHA pool for all users, but only for trading from STX to CHA if low experience
+        return hasHighExperience || (fromToken.symbol === 'STX' && toToken.symbol === 'CHA');
+      }
+      return true;
+    });
+  }, [data.pools, hasHighExperience, fromToken, toToken]);
 
 
   const currentPool = useMemo(() => {
@@ -664,6 +670,10 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
           else if (pool.token1.symbol === current.symbol) nextToken = pool.token0;
 
           if (nextToken && !visited.has(nextToken.symbol)) {
+            // Check if the path is allowed for low experience users
+            if (!hasHighExperience && current.symbol === 'STX' && nextToken.symbol !== 'CHA') {
+              continue;
+            }
             const newPath = [...path, nextToken];
             const newVisited = new Set(visited).add(nextToken.symbol);
             queue.push({ path: newPath, visited: newVisited });
