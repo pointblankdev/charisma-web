@@ -69,7 +69,7 @@ export default async function chainhookApi(
     if (req.method === 'POST') {
         for (const a of chainhookPayload.apply) {
             for (const tx of a.transactions) {
-
+                console.log(tx.metadata)
                 try {
 
                     if (tx.metadata.success) {

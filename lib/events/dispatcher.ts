@@ -33,7 +33,6 @@ export const handleContractEvent = async (event: any, builder: any) => {
     else if (event.type === 'FTTransferEvent') {
         symbol = '➡️'
 
-        console.log(event)
         const contractId = event.data.asset_identifier.split('::')[0]
         if (trackedContracts.includes(contractId)) {
             // get the user's token balance
