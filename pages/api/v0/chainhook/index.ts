@@ -84,7 +84,7 @@ export default async function chainhookApi(
                         }
 
                         hook.addEmbed(builder.getEmbed());
-                        await hook.send();
+                        // await hook.send();
                     }
 
                 } catch (error) {

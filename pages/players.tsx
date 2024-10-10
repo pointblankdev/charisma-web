@@ -14,7 +14,7 @@ import Layout from '@components/layout/layout';
 import Page from '@components/page';
 import numeral from "numeral";
 import { ArrowUpDown, User } from 'lucide-react';
-import { getPlayerEventData, getPlayers, getPlayerTokens } from '@lib/db-providers/kv';
+import { getPlayerEventData, getPlayerPill, getPlayers, getPlayerTokens } from '@lib/db-providers/kv';
 import Link from 'next/link';
 
 const ITEMS_PER_PAGE = 10;
@@ -31,6 +31,7 @@ interface Player {
     burnedIouWELSH: number;
     burnedIouROO: number;
     burnedSynSTX: number;
+    pill: 'RED' | 'BLUE';
 }
 
 interface PlayersPageProps {
@@ -79,6 +80,9 @@ export const getStaticProps: GetStaticProps<PlayersPageProps> = async () => {
             return total;
         }, 0);
 
+        // Fetch pill data using getPlayerPill
+        const pill = await getPlayerPill(address);
+
         return {
             stxAddress: address,
             experience,
@@ -91,6 +95,7 @@ export const getStaticProps: GetStaticProps<PlayersPageProps> = async () => {
             burnedIouWELSH,
             burnedIouROO,
             burnedSynSTX,
+            pill
         };
     }));
 
@@ -176,6 +181,9 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('stxAddress')}>
                                                 STX Address {sortBy === 'stxAddress' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
+                                            <TableHead className="py-2">
+                                                Pill
+                                            </TableHead>
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('experience')}>
                                                 Experience {sortBy === 'experience' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
@@ -215,6 +223,9 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                         {pageData.map((player, index) => (
                                             <TableRow key={index} className="border-t border-gray-700/50">
                                                 <TableCell className="py-4 font-medium text-white">{player.stxAddress}</TableCell>
+                                                <TableCell className="py-4 text-white">
+                                                    {player.pill === 'RED' ? '🟥 Red' : player.pill === 'BLUE' ? '🟦 Blue' : ''}
+                                                </TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.experience / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.governanceTokens / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.chaTokens / 10 ** 6).format('0,0')}</TableCell>
