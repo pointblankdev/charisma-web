@@ -10,7 +10,8 @@ const Logger = {
             const embed = new EmbedBuilder()
             embed.setDescription(JSON.stringify(message))
             errorLogsWebhook.addEmbed(embed.getEmbed());
-            await errorLogsWebhook.send()
+            await new Promise((resolve) => setTimeout(resolve, 1));
+            // await errorLogsWebhook.send()
         } catch (error) {
             console.error('Error log failure to Discord');
         }
@@ -21,7 +22,8 @@ const Logger = {
             const embed = new EmbedBuilder()
             embed.setDescription(JSON.stringify(message))
             oracleLogsWebhook.addEmbed(embed.getEmbed());
-            await oracleLogsWebhook.send()
+            await new Promise((resolve) => setTimeout(resolve, 1));
+            // await oracleLogsWebhook.send()
         } catch (error) {
             console.error('Oracle log failure to Discord');
         }
