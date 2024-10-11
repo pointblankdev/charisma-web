@@ -20,9 +20,9 @@ export default function AdminDashboard() {
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-4xl">
+                <div className="m-2 sm:container sm:mx-auto sm:py-10">
                     <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
                         <CreatePool />
                         <UpdateSwapFee />
                         <UpdateProtocolFee />
