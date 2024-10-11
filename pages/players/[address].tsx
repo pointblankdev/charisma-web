@@ -421,28 +421,59 @@ const BurnedTokensSection = ({ playerData }: { playerData: PlayerData }) => {
     );
 };
 
-const StatCard = ({ title, value, icon }: { title: string, value: number, icon: any }) => (
-    <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
-        <div className='flex items-center space-x-2'>
-            <div className='text-4xl font-semibold'>{numeral(value / 10 ** 6).format('0a')}</div>
-            <Image src={icon} alt={title} width={32} height={32} className='inline rounded-full' />
-        </div>
-        <div className='text-center text-muted/80'>{title}</div>
-    </div>
-);
+const StatCard = ({ title, value, icon }: { title: string, value: number, icon: any }) => {
+    const [useFormat, setUseFormat] = useState(true);
 
-const LpStatCard = ({ title, value, icons }: { title: string, value: number, icons: [any, any] }) => (
-    <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
-        <div className='flex items-center space-x-2'>
-            <div className='text-4xl font-semibold'>{numeral(value / 10 ** 6).format('0a')}</div>
-            <div className="relative w-12 h-8">
-                <Image src={icons[0]} alt={title.split('-')[0]} width={32} height={32} className='absolute left-0 top-0 rounded-full z-10' />
-                <Image src={icons[1]} alt={title.split('-')[1]} width={32} height={32} className='absolute left-6 top-0 rounded-full z-20' />
+    const toggleFormat = () => {
+        setUseFormat(!useFormat);
+    };
+
+    const displayValue = useFormat
+        ? numeral(value / 10 ** 6).format('0a')
+        : numeral(value / 10 ** 6).value()?.toFixed(0)
+
+    return (
+        <div
+            className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)] cursor-pointer'
+            onClick={toggleFormat}
+        >
+            <div className='flex items-center space-x-2'>
+                <div className='text-4xl font-semibold'>{displayValue}</div>
+                <Image src={icon} alt={title} width={32} height={32} className='inline rounded-full' />
             </div>
+            <div className='text-center text-muted/80'>{title}</div>
         </div>
-        <div className='text-center text-muted/80'>{title}</div>
-    </div>
-);
+    );
+};
+
+
+const LpStatCard = ({ title, value, icons }: { title: string, value: number, icons: [any, any] }) => {
+    const [useFormat, setUseFormat] = useState(true);
+
+    const toggleFormat = () => {
+        setUseFormat(!useFormat);
+    };
+
+    const displayValue = useFormat
+        ? numeral(value / 10 ** 6).format('0a')
+        : numeral(value / 10 ** 6).value()?.toFixed(0)
+
+    return (
+        <div
+            className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)] cursor-pointer'
+            onClick={toggleFormat}
+        >
+            <div className='flex items-center space-x-2'>
+                <div className='text-4xl font-semibold'>{displayValue}</div>
+                <div className="relative w-12 h-8">
+                    <Image src={icons[0]} alt={title.split('-')[0]} width={32} height={32} className='absolute left-0 top-0 rounded-full z-10' />
+                    <Image src={icons[1]} alt={title.split('-')[1]} width={32} height={32} className='absolute left-6 top-0 rounded-full z-20' />
+                </div>
+            </div>
+            <div className='text-center text-muted/80'>{title}</div>
+        </div>
+    );
+};
 
 const TokenEventsSection = ({
     playerData,
