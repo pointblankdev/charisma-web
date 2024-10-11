@@ -34,12 +34,12 @@ export const NAVIGATION = [
     route: '/pools'
   },
   {
-    name: 'Recover',
-    route: '/recovery'
-  },
-  {
     name: 'Players',
     route: '/players'
+  },
+  {
+    name: 'Recover',
+    route: '/recovery'
   },
 ];
 
