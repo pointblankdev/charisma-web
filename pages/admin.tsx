@@ -32,6 +32,10 @@ export default function AdminDashboard() {
                         <Swap />
                         <Collect />
                     </div>
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
+                        <SetBlocksPerTx />
+                        <SetMaxLiquidityFlow />
+                    </div>
                 </div>
             </Layout>
         </Page>
@@ -353,6 +357,82 @@ const Collect = () => {
             </div>
             <div className="mt-auto flex justify-end">
                 <Button onClick={collect}>Collect</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetBlocksPerTx = () => {
+    const [newBlocksPerTx, setNewBlocksPerTx] = useState('');
+
+    function setBlocksPerTx() {
+        openContractCall({
+            network: network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'charisma-token',
+            functionName: "set-blocks-per-tx",
+            functionArgs: [
+                uintCV(parseInt(newBlocksPerTx)),
+            ],
+            postConditionMode: PostConditionMode.Allow,
+            postConditions: [],
+        }, (window as any).AsignaProvider);
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full'>
+            <div>
+                <h2 className="text-xl font-bold mb-2">Set Blocks Per Transaction</h2>
+                <p className="text-sm mb-4">Sets the number of blocks that must pass between transactions. Min: 1, Max: 100,000.</p>
+                <Input
+                    className='mb-2'
+                    type="number"
+                    placeholder='New Blocks Per Tx'
+                    min="1"
+                    max="100000"
+                    onChange={e => setNewBlocksPerTx(e.target.value)}
+                />
+            </div>
+            <div className="mt-auto flex justify-end">
+                <Button onClick={setBlocksPerTx}>Set Blocks Per Tx</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetMaxLiquidityFlow = () => {
+    const [newMaxLiquidityFlow, setNewMaxLiquidityFlow] = useState('');
+
+    function setMaxLiquidityFlow() {
+        openContractCall({
+            network: network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'charisma-token',
+            functionName: "set-max-liquidity-flow",
+            functionArgs: [
+                uintCV(parseInt(newMaxLiquidityFlow) * 1000000), // Convert to microtokens
+            ],
+            postConditionMode: PostConditionMode.Allow,
+            postConditions: [],
+        }, (window as any).AsignaProvider);
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full'>
+            <div>
+                <h2 className="text-xl font-bold mb-2">Set Max Liquidity Flow</h2>
+                <p className="text-sm mb-4">Sets the maximum amount of tokens that can be wrapped or unwrapped in a single transaction. Min: 1, Max: 1,000.</p>
+                <Input
+                    className='mb-2'
+                    type="number"
+                    placeholder='New Max Liquidity Flow'
+                    min="1"
+                    max="1000"
+                    onChange={e => setNewMaxLiquidityFlow(e.target.value)}
+                />
+            </div>
+            <div className="mt-auto flex justify-end">
+                <Button onClick={setMaxLiquidityFlow}>Set Max Liquidity Flow</Button>
             </div>
         </Card>
     );

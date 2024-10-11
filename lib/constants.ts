@@ -38,7 +38,7 @@ export const NAVIGATION = [
     route: '/players'
   },
   {
-    name: 'Recover',
+    name: 'Recovery',
     route: '/recovery'
   },
 ];
