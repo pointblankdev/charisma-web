@@ -1,63 +1,57 @@
-import React, { useEffect } from "react";
-import {
-  NavigationMenu,
-  NavigationMenuContent,
-  NavigationMenuItem,
-  NavigationMenuList,
-  NavigationMenuTrigger,
-} from "@components/ui/navigation-menu"
-import { useAccount, useAuth } from '@micro-stacks/react';
-import ListItem from "./list-item";
-import { useRouter } from "next/navigation";
+import React, { useEffect, useState } from "react";
+import { AppConfig, showConnect, UserSession } from "@stacks/connect-react";
+import { cn } from '@lib/utils';
+import { Button } from "@components/ui/button";
+import { StacksMainnet } from "@stacks/network";
+import { useGlobalState } from "@lib/hooks/global-state-context";
+
+export const appConfig = new AppConfig(["store_write", "publish_data"]);
+
+export const userSession = new UserSession({ appConfig });
+
+export const appDetails = {
+  name: "Charisma",
+  icon: "https://charisma.rocks/dmg-logo.png",
+};
+
+export const network = new StacksMainnet()
+
+function authenticate() {
+  showConnect({
+    appDetails,
+    onFinish: () => {
+      window.location.pathname = '/token';
+    },
+    userSession,
+  });
+}
+
+function disconnect() {
+  userSession.signUserOut("/");
+}
+
+function toggleSession() {
+  if (userSession.isUserSignedIn()) {
+    disconnect();
+  } else {
+    authenticate();
+  }
+}
 
 const ConnectWallet = () => {
-  const { openAuthRequest, isRequestPending, signOut, isSignedIn } = useAuth();
-  const { stxAddress } = useAccount();
-  const router = useRouter();
+  const [mounted, setMounted] = useState(false);
+  const { stxAddress } = useGlobalState();
 
-  const shortAddress = `${stxAddress?.slice(0, 4)}...${stxAddress?.slice(-4)}`
-
-  const handleConnect = async () => {
-    if (isSignedIn) await signOut(() => { router.push('/') })
-    else await openAuthRequest({
-      onFinish: () => {
-        router.push('/token')
-      }
-    });
-  }
-  const label = isRequestPending ? 'Loading...' : isSignedIn ? shortAddress : 'Connect';
-
-  const [isClientSide, setIsClientSide] = React.useState(false);
+  const shortAddress = `${stxAddress.slice(0, 4)}...${stxAddress.slice(-4)}`
 
   useEffect(() => {
-    setIsClientSide(true)
-  }, [])
+    setMounted(true)
+  }, []);
 
   return (
-    <NavigationMenu className="hidden sm:block">
-      <NavigationMenuList>
-        <NavigationMenuItem>
-          <NavigationMenuTrigger className={!isSignedIn ? "" : ''}>
-            <div onClick={handleConnect}>
-              {isClientSide && label}
-            </div>
-          </NavigationMenuTrigger>
-          {isSignedIn && <NavigationMenuContent>
-            <ul className="grid gap-3 p-6 md:w-[400px]">
-              <ListItem href="/portfolio" title="Portfolio">
-                View your Charisma supported token balances.
-              </ListItem>
-              <ListItem href="/players" title="Players">
-                View all Charisma players and their stats.
-              </ListItem>
-              <ListItem title="Sign Out" onClick={() => signOut(() => { router.push('/') })} className="cursor-pointer">
-                Securely disconnect your wallet.
-              </ListItem>
-            </ul>
-          </NavigationMenuContent>}
-        </NavigationMenuItem>
-      </NavigationMenuList>
-    </NavigationMenu>
+    <Button onClick={toggleSession} className={cn('whitespace-nowrap', 'w-full', 'bg-transparent')}>
+      {mounted && userSession.isUserSignedIn() ? shortAddress : 'Connect Wallet'}
+    </Button>
   );
 };
 

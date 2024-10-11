@@ -7,8 +7,6 @@ import { callReadOnlyFunction, Pc, PostConditionMode, principalCV, uintCV } from
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useAccount, useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
 import redPill from '@public/sip9/pills/red-pill-floating.gif';
 import bluePill from '@public/sip9/pills/blue-pill.gif';
 import charismaFloating from '@public/sip9/pills/cha-floating.gif';
@@ -28,6 +26,8 @@ import velarApi from '@lib/velar-api';
 import PricesService from '@lib/prices-service';
 import { getTxsFromMempool } from '@lib/stacks-api';
 import _, { set } from 'lodash';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 type Transaction = {
   anchor_mode: "any";
@@ -284,11 +284,11 @@ const StatsSection = ({ data }: Props) => {
 };
 
 const WrappingSection = ({ data }: Props) => {
-  const { charismaTokenStats, charismaClaims, setIsMempoolSubscribed } = useGlobalState();
+  const { charismaTokenStats, charismaClaims, setIsMempoolSubscribed, stxAddress } = useGlobalState();
   const { wallet } = useWallet();
-  const { stxAddress } = useAccount();
   const [amount, setAmount] = useState<string>('');
   const [error, setError] = useState<string>('');
+  const { doContractCall } = useConnect();
 
   const handleAmountChange = (e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -322,12 +322,11 @@ const WrappingSection = ({ data }: Props) => {
     validateAmount(formattedAmount);
   }
 
-  const { openContractCall } = useOpenContractCall();
-
   const handleWrap = () => {
     if (!error && amount && stxAddress) {
       const amountIn = Number(amount) * Math.pow(10, 6)
-      openContractCall({
+      doContractCall({
+        network: network,
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'charisma-token',
         functionName: "wrap",
@@ -346,7 +345,7 @@ const WrappingSection = ({ data }: Props) => {
       if (!charismaClaims.hasFreeClaim && !charismaClaims.hasClaimed) {
         postConditions.push(Pc.principal(stxAddress).willSendEq(100000000).ustx())
       }
-      openContractCall({
+      doContractCall({
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'red-pill-nft',
         functionName: "claim",

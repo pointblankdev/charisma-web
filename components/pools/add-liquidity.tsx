@@ -1,9 +1,7 @@
 import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import numeral from 'numeral';
-import { contractPrincipalCV, uintCV } from 'micro-stacks/clarity';
-import { Pc, PostConditionMode } from "@stacks/transactions";
-import { useOpenContractCall } from '@micro-stacks/react';
+import { contractPrincipalCV, Pc, PostConditionMode, uintCV } from "@stacks/transactions";
 import { Button } from '@components/ui/button';
 import {
     DialogContent,
@@ -14,9 +12,11 @@ import {
 } from '@components/ui/dialog';
 import { Label } from '@components/ui/label';
 import { Slider } from "@components/ui/slider";
-import { useAccount } from '@micro-stacks/react';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { PoolInfo, TokenInfo } from 'pages/pools';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAdd: boolean, onClose: () => void }) => {
     const [sliderValue, setSliderValue] = useState(0);
@@ -26,8 +26,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     const [selectedLpAmount, setSelectedLpAmount] = useState(0);
     const [limitingToken, setLimitingToken] = useState<'token0' | 'token1' | null>(null);
     const [animate, setAnimate] = useState(false);
-    const { openContractCall } = useOpenContractCall();
-    const { stxAddress } = useAccount();
+    const { doContractCall } = useConnect();
+    const { stxAddress } = useGlobalState();
     const { getBalanceByKey, balances, getKeyByContractAddress, wallet } = useWallet();
 
     const calculateUsdValue = (amount: string, price: number) => {
@@ -132,7 +132,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
             postConditions.push(Pc.principal(stxAddress).willSendLte(amount1BigInt).ustx() as any);
         }
 
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "univ2-router",
             functionName: "add-liquidity",
@@ -156,7 +157,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 console.log('Transaction cancelled');
             }
         });
-    }, [pool, amount0, amount1, stxAddress, openContractCall, onClose]);
+    }, [pool, amount0, amount1, stxAddress, doContractCall, onClose]);
 
     const handleRemoveLiquidity = useCallback(() => {
         if (!pool || !stxAddress) return;
@@ -183,7 +184,8 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 : Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(1).ustx() as any,
         ];
 
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "univ2-router",
             functionName: "remove-liquidity",
@@ -206,7 +208,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                 console.log('Transaction cancelled');
             }
         });
-    }, [pool, stxAddress, getLpTokenBalance, sliderValue, amount0, amount1, openContractCall, onClose]);
+    }, [pool, stxAddress, getLpTokenBalance, sliderValue, amount0, amount1, doContractCall, onClose]);
 
 
     const calculateUserPoolShare = useCallback(() => {

@@ -1,19 +1,20 @@
 import React, { useState } from 'react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import { Pc, PostConditionMode } from "@stacks/transactions";
 import Image from 'next/image';
 import redPill from '@public/sip9/pills/red-pill.gif';
 import bluePill from '@public/sip9/pills/blue-pill.gif';
 import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
 import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 const RecoveryClaim = () => {
     const { charismaClaims } = useGlobalState();
     const { wallet } = useWallet();
-    const { stxAddress } = useAccount();
-    const { openContractCall } = useOpenContractCall();
+    const { stxAddress } = useGlobalState();
+    const { doContractCall } = useConnect();
 
     function makeChoice(choice: boolean) {
         if (stxAddress) {
@@ -21,7 +22,8 @@ const RecoveryClaim = () => {
             if (!charismaClaims.hasFreeClaim && !charismaClaims.hasClaimed) {
                 postConditions.push(Pc.principal(stxAddress).willSendEq(100000000).ustx())
             }
-            openContractCall({
+            doContractCall({
+                network: network,
                 contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
                 contractName: choice ? 'red-pill-nft' : 'blue-pill-nft',
                 functionName: "claim",

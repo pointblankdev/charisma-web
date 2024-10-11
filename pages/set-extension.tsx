@@ -3,12 +3,12 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
-import { PostConditionMode } from "@stacks/transactions";
+import { boolCV, contractPrincipalCV, PostConditionMode } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 
 export default function SetExtensionPage() {
@@ -38,16 +38,17 @@ export default function SetExtensionPage() {
 
 const SetExtension = () => {
 
-    const { openContractCall } = useOpenContractCall();
+    const { doContractCall } = useConnect();
 
     const [contractAddress, setContractAddress] = useState('');
 
     function setExtension() {
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
             contractName: 'dungeon-master',
             functionName: "set-extension",
-            functionArgs: [contractPrincipalCV(contractAddress), boolCV(true)],
+            functionArgs: [contractPrincipalCV(contractAddress.split('.')[0], contractAddress.split('.')[1]), boolCV(true)],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
         });

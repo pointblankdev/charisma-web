@@ -3,12 +3,12 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
-import { PostConditionMode } from "@stacks/transactions";
+import { PostConditionMode, standardPrincipalCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useOpenContractCall } from '@micro-stacks/react';
-import { uintCV, standardPrincipalCV } from 'micro-stacks/clarity';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 
 export default function TransferPage() {
@@ -38,13 +38,14 @@ export default function TransferPage() {
 
 const Transfer = () => {
 
-    const { openContractCall } = useOpenContractCall();
+    const { doContractCall } = useConnect();
 
     const [sender, setSender] = useState('');
     const [recipient, setRecipient] = useState('');
 
     function transfer() {
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
             contractName: 'dungeon-master',
             functionName: "dmg-transfer",

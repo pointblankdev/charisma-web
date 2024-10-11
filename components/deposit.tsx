@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { useConnect } from "@stacks/connect-react";
 import { StacksMainnet } from "@stacks/network";
 import {
@@ -7,10 +7,9 @@ import {
   PostConditionMode,
   uintCV,
 } from "@stacks/transactions";
-import ConnectWallet from "./stacks-session/connect";
 import { Button } from "@components/ui/button";
 import millify from "millify";
-import { useAccount } from "@micro-stacks/react";
+import { useGlobalState } from "@lib/hooks/global-state-context";
 
 const Deposit = ({
   amount,
@@ -26,7 +25,7 @@ const Deposit = ({
   tokenTicker: string
 }) => {
   const { doContractCall } = useConnect();
-  const { stxAddress } = useAccount();
+  const { stxAddress } = useGlobalState()
 
   function deposit() {
     doContractCall({
@@ -38,7 +37,7 @@ const Deposit = ({
       functionArgs: [uintCV(amount * 1000000)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: [
-        Pc.principal(stxAddress as string).willSendEq(amount * 1000000).ft(contractPrincipal, contractToken),
+        Pc.principal(stxAddress).willSendEq(amount * 1000000).ft(contractPrincipal, contractToken),
       ],
       onFinish: (data) => {
         console.log("onFinish:", data);

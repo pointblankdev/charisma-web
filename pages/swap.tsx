@@ -3,12 +3,10 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { SetStateAction, ChangeEvent, useMemo, useState, useEffect, useCallback, useRef } from 'react';
-import { callReadOnlyFunction, cvToJSON, hexToCV, listCV, Pc, PostConditionMode, principalCV, tupleCV, uintCV } from "@stacks/transactions";
+import { callReadOnlyFunction, contractPrincipalCV, cvToJSON, hexToCV, listCV, Pc, PostConditionMode, principalCV, tupleCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useAccount, useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
 import redPill from '@public/sip9/pills/red-pill-floating.gif';
 import redPillNft from '@public/sip9/pills/red-pill-nft.gif';
 import bluePillNft from '@public/sip9/pills/blue-pill-nft.gif';
@@ -29,6 +27,9 @@ import { ChevronDown, ArrowUpDown } from 'lucide-react';
 import velarApi from '@lib/velar-api';
 import { GetStaticProps } from 'next';
 import cmc from '@lib/cmc-api';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 type TokenInfo = {
   symbol: string;
@@ -247,8 +248,8 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
   const [swapPath, setSwapPath] = useState<TokenInfo[]>([]);
   const [isMultiHop, setIsMultiHop] = useState(false);
 
-  const { openContractCall } = useOpenContractCall();
-  const { stxAddress } = useAccount();
+  const { doContractCall } = useConnect();
+  const { stxAddress } = useGlobalState();
 
   const hasHighExperience = experienceBalance >= 4000;
 
@@ -580,13 +581,13 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
     // Add post-condition for the initial token transfer from the user
     if (fromToken.tokenName) {
       postConditions.push(
-        Pc.principal(stxAddress as string)
+        Pc.principal(stxAddress)
           .willSendEq(amountInMicroTokens)
           .ft(fromToken.contractAddress as any, fromToken.tokenName)
       );
     } else {
       postConditions.push(
-        Pc.principal(stxAddress as string)
+        Pc.principal(stxAddress)
           .willSendEq(amountInMicroTokens)
           .ustx()
       );
@@ -605,7 +606,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
           );
           // "In" condition for the next hop
           postConditions.push(
-            Pc.principal(stxAddress as string)
+            Pc.principal(stxAddress)
               .willSendGte(1)
               .ft(intermediateToken.contractAddress as any, intermediateToken.tokenName)
           );
@@ -617,7 +618,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
               .ustx()
           );
           postConditions.push(
-            Pc.principal(stxAddress as string)
+            Pc.principal(stxAddress)
               .willSendGte(1)
               .ustx()
           );
@@ -640,7 +641,8 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
       );
     }
 
-    openContractCall({
+    doContractCall({
+      network: network,
       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
       contractName,
       functionName,
@@ -648,7 +650,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
       postConditionMode: PostConditionMode.Deny,
       postConditions,
     });
-  }, [fromAmount, estimatedAmountOut, fromToken, toToken, stxAddress, openContractCall, calculateMinimumAmountOut, currentPool, isMultiHop, swapPath]);
+  }, [fromAmount, estimatedAmountOut, fromToken, toToken, stxAddress, doContractCall, calculateMinimumAmountOut, currentPool, isMultiHop, swapPath]);
 
   const findBestSwapPath = useCallback(() => {
     const findPath = (start: TokenInfo, end: TokenInfo, maxHops = 5): TokenInfo[] | null => {

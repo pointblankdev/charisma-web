@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
-import { useOpenContractCall } from '@micro-stacks/react';
-import { useAccount } from '@micro-stacks/react';
 import { callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import Image from 'next/image';
 import numeral from 'numeral';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 const TokenRedemptions = ({ data }: any) => {
 
-    const { openContractCall } = useOpenContractCall();
-    const { stxAddress } = useAccount();
+    const { doContractCall } = useConnect();
+    const { stxAddress } = useGlobalState();
     const { wallet } = useWallet();
 
     const [claimA, setClaimA] = useState(0);
@@ -25,7 +26,8 @@ const TokenRedemptions = ({ data }: any) => {
     const [hasClaimedC, setHasClaimedC] = useState(false);
 
     function claimLpIndex(method: string) {
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: 'lp-index-recovery',
             functionName: method,
@@ -39,6 +41,7 @@ const TokenRedemptions = ({ data }: any) => {
         if (stxAddress) {
             // Add new contract calls for lp-index-recovery
             callReadOnlyFunction({
+                network: network,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
                 contractName: 'lp-index-recovery',
                 functionName: 'has-claimed-a',
@@ -51,6 +54,7 @@ const TokenRedemptions = ({ data }: any) => {
             }).catch(console.error)
 
             callReadOnlyFunction({
+                network: network,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
                 contractName: 'lp-index-recovery',
                 functionName: 'has-claimed-b',
@@ -62,6 +66,7 @@ const TokenRedemptions = ({ data }: any) => {
             }).catch(console.error)
 
             callReadOnlyFunction({
+                network: network,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
                 contractName: 'lp-index-recovery',
                 functionName: 'has-claimed-c',
@@ -77,7 +82,8 @@ const TokenRedemptions = ({ data }: any) => {
 
     function depositWelsh(amount: number) {
         if (stxAddress) {
-            openContractCall({
+            doContractCall({
+                network: network,
                 contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
                 contractName: 'redemption-vault-v0',
                 functionName: "deposit-welsh",
@@ -92,7 +98,8 @@ const TokenRedemptions = ({ data }: any) => {
 
     function depositRoo(amount: number) {
         if (stxAddress) {
-            openContractCall({
+            doContractCall({
+                network: network,
                 contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
                 contractName: 'redemption-vault-v0',
                 functionName: "deposit-roo",
@@ -107,7 +114,8 @@ const TokenRedemptions = ({ data }: any) => {
 
     function redeemWelsh(amount: number) {
         if (stxAddress) {
-            openContractCall({
+            doContractCall({
+                network: network,
                 contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
                 contractName: 'redemption-vault-v0',
                 functionName: "redeem-welsh",
@@ -123,7 +131,8 @@ const TokenRedemptions = ({ data }: any) => {
 
     function redeemRoo(amount: number) {
         if (stxAddress) {
-            openContractCall({
+            doContractCall({
+                network: network,
                 contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
                 contractName: 'redemption-vault-v0',
                 functionName: "redeem-roo",
@@ -138,7 +147,8 @@ const TokenRedemptions = ({ data }: any) => {
     }
 
     function claim(method: string) {
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: 'cha-recovery',
             functionName: method,
@@ -151,6 +161,7 @@ const TokenRedemptions = ({ data }: any) => {
     useEffect(() => {
         if (stxAddress) {
             callReadOnlyFunction({
+                network: network,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
                 contractName: 'cha-recovery',
                 functionName: 'get-claim-amount-a',
@@ -162,6 +173,7 @@ const TokenRedemptions = ({ data }: any) => {
                 setClaimA(Number(response?.value?.value))
             }).catch(console.error)
             callReadOnlyFunction({
+                network: network,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
                 contractName: 'cha-recovery',
                 functionName: 'get-claim-amount-b',
@@ -173,6 +185,7 @@ const TokenRedemptions = ({ data }: any) => {
                 setClaimB(Number(response?.value?.value))
             }).catch(console.error)
             callReadOnlyFunction({
+                network: network,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
                 contractName: 'cha-recovery',
                 functionName: 'get-claim-amount-c',
@@ -184,6 +197,7 @@ const TokenRedemptions = ({ data }: any) => {
                 setClaimC(Number(response?.value?.value))
             }).catch(console.error)
             callReadOnlyFunction({
+                network: network,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
                 contractName: 'cha-recovery',
                 functionName: 'get-claim-amount-d',
@@ -196,6 +210,7 @@ const TokenRedemptions = ({ data }: any) => {
             }).catch(console.error)
 
             callReadOnlyFunction({
+                network: network,
                 contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
                 contractName: 'cha-recovery',
                 functionName: 'get-all-claims',

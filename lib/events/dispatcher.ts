@@ -1,9 +1,6 @@
-import { clarigen } from "@lib/clarigen/client";
-import { contractFactory } from '@clarigen/core';
 import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, saveSwapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setPlayerPill, setPlayerTokens, setVoteData, trackBurnEvent, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
 import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
-import { contracts } from "@lib/clarigen/types";
 import Logger from "@lib/logger";
 
 const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
@@ -58,31 +55,6 @@ export const handleContractEvent = async (event: any, builder: any) => {
             // save the balance in kv storage
             await addPlayer(event.data.recipient)
             await setPlayerTokens(contractId, event.data.recipient, balance)
-        }
-
-        if (event.data.asset_identifier.split('::')[0] === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience") {
-            symbol = '✨'
-
-            const experienceAmount = await getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', event.data.recipient)
-            await updateExperienceLeaderboard(experienceAmount, event.data.recipient)
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} experience.`
-            });
-
-        }
-
-        else if (event.data.asset_identifier.split('::')[0] === "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token") {
-            symbol = '💰'
-
-            await incrementRewardLeaderboard('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma', event.data.amount, event.data.recipient);
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: `${event.data.recipient} gained ${event.data.amount / Math.pow(10, 6)} Charisma tokens.`
-            });
-
         }
 
         else {
@@ -142,135 +114,8 @@ export const handleContractEvent = async (event: any, builder: any) => {
 
         const contractId = event.data.asset_class_identifier.split('::')[0]
 
-        // contract ids
-        const kraqenLottoContractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.kraqen-lotto';
-        const spellScrollsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt';
-        const pixelRozarContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar';
-        const predictTrempContractId = 'SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.tremp-election-2024';
-        const bitcoinPepeWlContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.bitcoin-pepe-whitelist-ticket';
-        const memobotsContractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse';
-        const jumpingPupperzContractId = 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz';
 
-        if (contractId === kraqenLottoContractId) {
-            symbol = '🐙'
-
-            const kraqenLottoContract = contractFactory(contracts.kraqenLotto, kraqenLottoContractId);
-            const tokensMinted = await clarigen.roOk(kraqenLottoContract.getLastTokenId());
-            const nftMetadata = await getNftCollectionMetadata(kraqenLottoContractId)
-            nftMetadata.properties.minted = Number(tokensMinted)
-            await setNftCollectionMetadata(kraqenLottoContractId, nftMetadata)
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else if (contractId === spellScrollsContractId) {
-            symbol = '📜'
-
-            // workaround for the spell scrolls contract key missmatch
-            const spellScrollsDbKey = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls'
-            const spellScrollsContract = contractFactory(contracts.kraqenLotto, spellScrollsContractId);
-            const tokensMinted = await clarigen.roOk(spellScrollsContract.getLastTokenId());
-            const nftMetadata = await getNftCollectionMetadata(spellScrollsDbKey)
-            nftMetadata.properties.minted = Number(tokensMinted)
-            await setNftCollectionMetadata(spellScrollsDbKey, nftMetadata)
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else if (contractId === pixelRozarContractId) {
-            symbol = '💩'
-
-            const pixelRozarContract = contractFactory(contracts.kraqenLotto, pixelRozarContractId);
-            const tokensMinted = await clarigen.roOk(pixelRozarContract.getLastTokenId());
-            const nftMetadata = await getNftCollectionMetadata(pixelRozarContractId)
-            nftMetadata.properties.minted = Number(tokensMinted)
-            await setNftCollectionMetadata(pixelRozarContractId, nftMetadata)
-
-            builder.setThumbnail({ url: 'https://charisma.rocks/quests/pixel-rozar/pixel-rozar.png' })
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else if (contractId === predictTrempContractId) {
-            symbol = '🇺🇸'
-
-            const predictTrempContract = contractFactory(contracts.kraqenLotto, predictTrempContractId);
-            const tokensMinted = await clarigen.roOk(predictTrempContract.getLastTokenId());
-            const nftMetadata = await getNftCollectionMetadata(predictTrempContractId)
-            nftMetadata.properties.minted = Number(tokensMinted)
-            await setNftCollectionMetadata(predictTrempContractId, nftMetadata)
-
-            builder.setThumbnail({ url: 'https://mlw1rgyfhipx.i.optimole.com/w:auto/h:auto/q:75/ig:avif/https://trempstx.com/wp-content/uploads/2024/07/IMG_20240729_233240_884.jpg' })
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else if (contractId === bitcoinPepeWlContractId) {
-            symbol = '🐸'
-
-            const bitcoinPepeWlContract = contractFactory(contracts.kraqenLotto, bitcoinPepeWlContractId);
-            const tokensMinted = await clarigen.roOk(bitcoinPepeWlContract.getLastTokenId());
-            const nftMetadata = await getNftCollectionMetadata(bitcoinPepeWlContractId)
-            nftMetadata.properties.minted = Number(tokensMinted)
-            await setNftCollectionMetadata(bitcoinPepeWlContractId, nftMetadata)
-
-            builder.setThumbnail({ url: 'https://pbs.twimg.com/media/GMzd_1vXkAEIHdp?format=jpg&name=medium' })
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else if (contractId === memobotsContractId) {
-            symbol = '🤖'
-
-            const memobotsContract = contractFactory(contracts.kraqenLotto, memobotsContractId);
-            const tokensMinted = await clarigen.roOk(memobotsContract.getLastTokenId());
-            const nftMetadata = await getNftCollectionMetadata(memobotsContractId)
-            nftMetadata.properties.minted = Number(tokensMinted)
-            await setNftCollectionMetadata(memobotsContractId, nftMetadata)
-
-            builder.setThumbnail({ url: 'https://charisma.rocks/quests/memobots/hidden-memobot.png' })
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else if (contractId === jumpingPupperzContractId) {
-            symbol = '🐕'
-
-            const jumpingPupperzContract = contractFactory(contracts.kraqenLotto, jumpingPupperzContractId);
-            const tokensMinted = await clarigen.roOk(jumpingPupperzContract.getLastTokenId());
-            const nftMetadata = await getNftCollectionMetadata(jumpingPupperzContractId)
-            nftMetadata.properties.minted = Number(tokensMinted)
-            await setNftCollectionMetadata(jumpingPupperzContractId, nftMetadata)
-
-            builder.setThumbnail({ url: 'https://charisma.rocks/_next/image?url=https%3A%2F%2Fvinzomniacstudios.mypinata.cloud%2Fipfs%2FQmXXVN1H15o5aSaMwQ9SssHkBFX5CzLRBzSSTJ8fYoh37t&w=300&q=75' })
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else if (contractId === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft" || contractId === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blue-pill-nft") {
+        if (contractId === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft" || contractId === "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blue-pill-nft") {
             symbol = '💊'
 
             console.log(symbol)

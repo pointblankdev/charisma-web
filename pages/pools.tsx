@@ -7,9 +7,7 @@ import Image from 'next/image';
 import { useCallback, useEffect, useState } from 'react';
 import { ArrowUpDown, Minus, Plus, RefreshCw, Scale, ShoppingCart } from 'lucide-react';
 import numeral from 'numeral';
-import { contractPrincipalCV, boolCV } from 'micro-stacks/clarity';
 import { callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
-import { useOpenContractCall } from '@micro-stacks/react';
 import velarApi from '@lib/velar-api';
 import { Button } from '@components/ui/button';
 import {
@@ -24,7 +22,6 @@ import {
 import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
 import { Slider } from "@components/ui/slider";
-import { useAccount } from '@micro-stacks/react';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import cmc from '@lib/cmc-api';
 import RebalanceDialog from '@components/pools/rebalance-dialog';

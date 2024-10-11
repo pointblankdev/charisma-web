@@ -3,12 +3,12 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
-import { PostConditionMode } from "@stacks/transactions";
+import { contractPrincipalCV, PostConditionMode, standardPrincipalCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, standardPrincipalCV } from 'micro-stacks/clarity';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 
 export default function ExecuteProposalPage() {
@@ -38,16 +38,17 @@ export default function ExecuteProposalPage() {
 
 const SetExtension = () => {
 
-    const { openContractCall } = useOpenContractCall();
+    const { doContractCall } = useConnect();
 
     const [contractAddress, setContractAddress] = useState('');
 
     function execute() {
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
             contractName: 'dungeon-master',
             functionName: "execute",
-            functionArgs: [contractPrincipalCV(contractAddress), standardPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
+            functionArgs: [contractPrincipalCV(contractAddress.split('.')[0], contractAddress.split('.')[1]), standardPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
         });

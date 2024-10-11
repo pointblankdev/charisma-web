@@ -3,14 +3,15 @@ import { usePersistedState } from './use-persisted-state';
 import { getClaimableAmount, getLandAmount, getLastLandId, getStoredEnergy, getTxsFromMempool } from '@lib/stacks-api';
 import { getLandDataById, getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient, TransactionEventsResponse } from '@stacks/blockchain-api-client';
-import { useAccount } from '@micro-stacks/react';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
+import { userSession } from '@components/stacks-session/connect';
 
 const socketUrl = "https://api.mainnet.hiro.so";
 const sc = new StacksApiSocketClient({ url: socketUrl });
 
 interface GlobalState {
+    stxAddress: string;
     lands: any;
     setLands: (lands: any) => void;
     block: any;
@@ -47,7 +48,7 @@ const isWithinLast6Hours = (timestamp: string) => {
 const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const { stxAddress } = useAccount()
+    const [stxAddress, setStxAddress] = usePersistedState('address', '')
     const [lands, setLands] = usePersistedState('lands', {});
     const [block, setBlock] = usePersistedState('block', {});
     const [tapped, setTapped] = usePersistedState('tapped', {});
@@ -71,6 +72,12 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     interface LandState {
         [key: string]: LandData;
     }
+
+    useEffect(() => {
+        if (userSession?.isUserSignedIn()) {
+            setStxAddress(userSession.loadUserData().profile.stxAddress.mainnet);
+        }
+    }, [setStxAddress])
 
     // Function to update energy of a specific token in the lands state
     const updateTokenEnergy = (landId: string, energy: number) => {
@@ -200,6 +207,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
     return (
         <GlobalStateContext.Provider value={{
+            stxAddress,
             lands,
             setLands,
             block,

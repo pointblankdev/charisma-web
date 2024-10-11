@@ -8,13 +8,13 @@ import {
 } from '@components/ui/dialog';
 import { Button } from '@components/ui/button';
 import { Slider } from '@components/ui/slider';
-import { useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, uintCV } from 'micro-stacks/clarity';
-import { Pc, PostConditionMode } from "@stacks/transactions";
-import { useAccount } from '@micro-stacks/react';
+import { contractPrincipalCV, Pc, PostConditionMode, uintCV } from "@stacks/transactions";
 import numeral from 'numeral';
 import { PoolInfo } from 'pages/pools';
 import useWallet from '@lib/hooks/wallet-balance-provider';
+import { useConnect } from '@stacks/connect-react';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { network } from '@components/stacks-session/connect';
 
 type RebalanceDialogProps = {
     pool: PoolInfo | null;
@@ -26,8 +26,8 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
     const [isLoading, setIsLoading] = useState(false);
     const [sliderValue, setSliderValue] = useState(90);
     const [exceedsBalance, setExceedsBalance] = useState(false);
-    const { openContractCall } = useOpenContractCall();
-    const { stxAddress } = useAccount();
+    const { doContractCall } = useConnect();
+    const { stxAddress } = useGlobalState();
     const { getBalanceByKey, balances, getKeyByContractAddress } = useWallet();
 
     const calculateTrade = useCallback(() => {
@@ -133,7 +133,8 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
                 .ft(tokenOut.contractAddress as any, tokenOut.tokenId as string) as any,
         ];
 
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "univ2-path2",
             functionName: "do-swap",
@@ -155,7 +156,7 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
                 setIsLoading(false);
             },
         });
-    }, [pool, stxAddress, trade, sliderValue, openContractCall, onClose]);
+    }, [pool, stxAddress, trade, sliderValue, doContractCall, onClose]);
 
     if (!pool || !trade) return null;
 

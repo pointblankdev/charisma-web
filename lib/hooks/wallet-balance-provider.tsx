@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { getAccountBalance } from '@lib/stacks-api';
 import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
-import { useAccount } from '@micro-stacks/react';
 import { createContext, useContext } from 'react';
+import { useGlobalState } from './global-state-context';
 
 export type Wallet = {
   experience: { balance: number, amount: number }
@@ -22,7 +22,7 @@ export type WalletBalancesContextType = {
 export const WalletBalancesContext = createContext<WalletBalancesContextType | null>(null);
 
 export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const { stxAddress } = useAccount()
+  const { stxAddress } = useGlobalState()
 
   const [balances, setBalances] = useState<AddressBalanceResponse>({
     stx: {}, fungible_tokens: {}, non_fungible_tokens: {}, token_offering_locked: {}

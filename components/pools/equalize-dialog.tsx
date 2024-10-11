@@ -7,12 +7,12 @@ import {
     DialogTitle,
 } from '@components/ui/dialog';
 import { Button } from '@components/ui/button';
-import { useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, uintCV } from 'micro-stacks/clarity';
-import { Pc, PostConditionMode } from "@stacks/transactions";
-import { useAccount } from '@micro-stacks/react';
+import { contractPrincipalCV, Pc, PostConditionMode, uintCV } from "@stacks/transactions";
 import numeral from 'numeral';
 import { PoolInfo } from 'pages/pools';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 type EqualizeDialogProps = {
     pool: PoolInfo | null;
@@ -21,8 +21,8 @@ type EqualizeDialogProps = {
 
 const EqualizeDialog: React.FC<EqualizeDialogProps> = ({ pool, onClose }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const { openContractCall } = useOpenContractCall();
-    const { stxAddress } = useAccount();
+    const { doContractCall } = useConnect();
+    const { stxAddress } = useGlobalState();
 
     const calculateEqualizeTrade = useCallback(() => {
         if (!pool) return null;
@@ -74,7 +74,8 @@ const EqualizeDialog: React.FC<EqualizeDialogProps> = ({ pool, onClose }) => {
                 .ft(buyToken.contractAddress as any, buyToken.tokenId as string) as any,
         ];
 
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "univ2-path2",
             functionName: "do-swap",
@@ -96,7 +97,7 @@ const EqualizeDialog: React.FC<EqualizeDialogProps> = ({ pool, onClose }) => {
                 setIsLoading(false);
             },
         });
-    }, [pool, stxAddress, trade, openContractCall, onClose]);
+    }, [pool, stxAddress, trade, doContractCall, onClose]);
 
     if (!pool || !trade) return null;
 

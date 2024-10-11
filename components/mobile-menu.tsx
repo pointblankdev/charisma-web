@@ -10,20 +10,20 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
-import { useAccount, useAuth } from '@micro-stacks/react';
+import { getUserData, getUserSession } from '@stacks/connect-react';
 
 const mobileNav = [...NAVIGATION]
 
 
 function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof useDialog>[0]) {
-  const { isSignedIn, signOut, openAuthRequest } = useAuth();
+  console.log(getUserSession())
 
   const router = useRouter();
   const activeRoute = router.asPath;
 
   const handleConnect = async () => {
-    if (isSignedIn) await signOut();
-    else await openAuthRequest();
+    // if (isSignedIn) await signOut();
+    // else await openAuthRequest();
   }
 
   const ref = useRef<HTMLElement | null>(null);
@@ -57,7 +57,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
             </svg>
           </button>
 
-          {isSignedIn && mobileNav.map(({ name, route }) => (
+          {/* {isSignedIn && mobileNav.map(({ name, route }) => (
             <Link key={name} href={route}
               className={cn(styles['nav-item'], {
                 [styles['nav-active']]: activeRoute.startsWith(route)
@@ -66,7 +66,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
               {name}
             </Link>
           ))}
-          {isSignedIn ? <Link href='/' className={cn(styles['nav-item'])} onClick={() => signOut()}>Sign out</Link> : <Link href='/token' className={cn(styles['nav-item'])} onClick={() => handleConnect()}>Connect</Link>}
+          {isSignedIn ? <Link href='/' className={cn(styles['nav-item'])} onClick={() => signOut()}>Sign out</Link> : <Link href='/token' className={cn(styles['nav-item'])} onClick={() => handleConnect()}>Connect</Link>} */}
         </nav>
       </FocusScope>
     </div >

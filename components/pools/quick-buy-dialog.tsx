@@ -7,12 +7,12 @@ import {
     DialogTitle,
 } from '@components/ui/dialog';
 import { Button } from '@components/ui/button';
-import { useOpenContractCall } from '@micro-stacks/react';
-import { contractPrincipalCV, uintCV } from 'micro-stacks/clarity';
-import { Pc, PostConditionMode } from "@stacks/transactions";
-import { useAccount } from '@micro-stacks/react';
+import { contractPrincipalCV, Pc, PostConditionMode, uintCV } from "@stacks/transactions";
 import numeral from 'numeral';
 import { PoolInfo } from 'pages/pools';
+import { useConnect } from '@stacks/connect-react';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { network } from '@components/stacks-session/connect';
 
 type QuickBuyDialogProps = {
     pool: PoolInfo | null;
@@ -21,8 +21,8 @@ type QuickBuyDialogProps = {
 
 const QuickBuyDialog: React.FC<QuickBuyDialogProps> = ({ pool, onClose }) => {
     const [isLoading, setIsLoading] = useState(false);
-    const { openContractCall } = useOpenContractCall();
-    const { stxAddress } = useAccount();
+    const { doContractCall } = useConnect();
+    const { stxAddress } = useGlobalState();
 
     const calculateExpectedChaAmount = (stxAmount: number, pool: PoolInfo) => {
         const stxReserve = pool.reserves.token0 / 10 ** pool.token0.decimals;
@@ -51,7 +51,8 @@ const QuickBuyDialog: React.FC<QuickBuyDialogProps> = ({ pool, onClose }) => {
                 .ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any,
         ];
 
-        openContractCall({
+        doContractCall({
+            network: network,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "univ2-path2",
             functionName: "do-swap",
@@ -73,7 +74,7 @@ const QuickBuyDialog: React.FC<QuickBuyDialogProps> = ({ pool, onClose }) => {
                 setIsLoading(false);
             },
         });
-    }, [pool, stxAddress, openContractCall, onClose]);
+    }, [pool, stxAddress, doContractCall, onClose]);
 
     if (!pool) return null;
 

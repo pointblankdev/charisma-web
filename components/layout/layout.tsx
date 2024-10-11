@@ -9,12 +9,12 @@ import MobileMenu from '../mobile-menu';
 import Footer from './footer';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
-import ConnectWallet from '../stacks-session/connect';
+import ConnectWallet, { userSession } from '@components/stacks-session/connect';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import dmgLogo from '@public/dmg-logo.png';
 import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
 import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
-import { useAccount } from '@micro-stacks/react';
+import { useGlobalState } from '@lib/hooks/global-state-context';
 
 type Props = {
   children: React.ReactNode;
@@ -26,10 +26,9 @@ type Props = {
 export default function Layout({ children, className, hideNav, layoutStyles }: Props) {
   const router = useRouter();
   const activeRoute = router.asPath;
+  const { stxAddress } = useGlobalState();
 
   const { wallet } = useWallet();
-  const { stxAddress } = useAccount();
-
   const [navigationTabs, setNavigationTabs] = useState([] as any[]);
 
   useEffect(() => {

@@ -5,13 +5,14 @@ import { useState } from 'react';
 import { Pc, PostConditionMode } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import Layout from '@components/layout/layout';
-import { useAccount, useOpenContractCall } from '@micro-stacks/react';
 import Image from 'next/image';
 import stxLogo from '@public/stx-logo.png';
 import redPillNft from '@public/sip9/pills/red-pill-nft.gif';
 import bluePillNft from '@public/sip9/pills/blue-pill-nft.gif';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { callReadOnlyFunction, cvToValue } from '@stacks/transactions';
+import { useConnect } from '@stacks/connect-react';
+import { network } from '@components/stacks-session/connect';
 
 export async function getStaticProps() {
   const redPillPrice = await callReadOnlyFunction({
@@ -50,9 +51,8 @@ export default function ShopPage({ redPillPrice, bluePillPrice }: ShopPageProps)
     description: "The Charisma Shop",
   };
 
-  const { charismaClaims } = useGlobalState();
-  const { stxAddress } = useAccount();
-  const { openContractCall } = useOpenContractCall();
+  const { charismaClaims, stxAddress } = useGlobalState();
+  const { doContractCall } = useConnect();
 
   function makeChoice(choice: boolean) {
     if (stxAddress) {
@@ -61,7 +61,8 @@ export default function ShopPage({ redPillPrice, bluePillPrice }: ShopPageProps)
         const price = choice ? redPillPrice : bluePillPrice;
         postConditions.push(Pc.principal(stxAddress).willSendEq(price).ustx())
       }
-      openContractCall({
+      doContractCall({
+        network: network,
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
         contractName: choice ? 'red-pill-nft' : 'blue-pill-nft',
         functionName: "claim",
