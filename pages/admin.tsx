@@ -111,7 +111,7 @@ export default function AdminDashboard({ poolStats }: AdminDashboardProps) {
                                     <div className="absolute top-4 right-4 text-sm font-semibold text-green-500">
                                         ${numeral(pool.totalUSD).format('0,0.00')}
                                     </div>
-                                    <h3 className="text-lg font-semibold mb-2">{pool.name}</h3>
+                                    <h3 className="text-lg font-semibold mb-2">{pool.id}: {pool.name}</h3>
                                     <p>Fees Collected:</p>
                                     <p>Token 0: {numeral(pool.feesCollected.token0 / 1e6).format('0,0.000000')}</p>
                                     <p>Token 1: {numeral(pool.feesCollected.token1 / 1e6).format('0,0.000000')}</p>
