@@ -22,6 +22,8 @@ import bluePill from '@public/sip9/pills/blue-pill-floating.gif';
 import { createChart, ColorType, UTCTimestamp, LineStyle, CrosshairMode } from 'lightweight-charts';
 import { getNameFromAddress, getTokenBalance } from '@lib/stacks-api';
 import PricesService from '@lib/prices-service';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
+import { InfoIcon } from 'lucide-react';
 
 
 interface PlayerData {
@@ -41,11 +43,24 @@ interface PlayerData {
     lpTokenBalances: Record<string, number>;
 }
 
+interface SwapEvent {
+    timestamp: number;
+    type: 'swap';
+    amountIn: number;
+    amountOut: number;
+    tokenIn: string;
+    tokenOut: string;
+    poolId: number;
+    poolSymbol: string;
+    user: string;
+}
+
 interface TokenEvent {
     timestamp: number;
-    type: 'transfer' | 'mint' | 'burn';
+    type: 'transfer' | 'mint' | 'burn' | 'swap';
     token: string;
     amount: number;
+    swapDetails?: SwapEvent;
 }
 
 interface PlayerProfileProps {
@@ -54,6 +69,7 @@ interface PlayerProfileProps {
     tokenPrices: any;
     lpTokenPrices: any;
     portfolioValue: number;
+    governanceValue: number;
 }
 
 export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async (context) => {
@@ -231,9 +247,9 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
     ];
 
     let portfolioValue = 0;
+    const governanceValue = playerData.governanceTokens / 10 ** 6 * tokenPrices['CHA'];
     // Calculate TVL for main tokens
     portfolioValue += (playerData.chaTokens / 10 ** 6) * tokenPrices.CHA;
-    portfolioValue += (playerData.governanceTokens / 10 ** 6) * tokenPrices.CHA;
     portfolioValue += (playerData.iouWELSH / 10 ** 6) * tokenPrices.WELSH;
     portfolioValue += (playerData.iouROO / 10 ** 6) * tokenPrices['$ROO'];
     portfolioValue += (playerData.synSTX / 10 ** 6) * tokenPrices.STX;
@@ -250,11 +266,12 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
             tokenPrices,
             lpTokenPrices,
             portfolioValue,
+            governanceValue
         },
     };
 };
 
-export default function PlayerProfile({ playerData, tokenEvents, portfolioValue }: PlayerProfileProps) {
+export default function PlayerProfile({ playerData, tokenEvents, portfolioValue, governanceValue }: PlayerProfileProps) {
     const [selectedToken, setSelectedToken] = useState('all');
 
     const filteredEvents = selectedToken === 'all'
@@ -271,7 +288,7 @@ export default function PlayerProfile({ playerData, tokenEvents, portfolioValue 
             <SkipNavContent />
             <Layout>
                 <div className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
-                    <HeroSection playerData={playerData} portfolioValue={portfolioValue} />
+                    <HeroSection playerData={playerData} portfolioValue={portfolioValue} governanceValue={governanceValue} />
                     <StatsSection playerData={playerData} />
                     <LPTokensSection lpTokenBalances={playerData.lpTokenBalances} />
                     <BurnedTokensSection playerData={playerData} />
@@ -287,7 +304,7 @@ export default function PlayerProfile({ playerData, tokenEvents, portfolioValue 
     );
 }
 
-const HeroSection = ({ playerData, portfolioValue }: { playerData: PlayerData; portfolioValue: number }) => {
+const HeroSection = ({ playerData, portfolioValue, governanceValue }: { playerData: PlayerData; portfolioValue: number; governanceValue: number }) => {
     const pillImage = playerData.pilled === 'RED' ? redPill : playerData.pilled === 'BLUE' ? bluePill : '';
 
     return (
@@ -301,6 +318,21 @@ const HeroSection = ({ playerData, portfolioValue }: { playerData: PlayerData; p
                 <div className='absolute top-4 right-4 sm:top-8 sm:right-8 text-right'>
                     <div className='text-sm text-secondary/80'>Total Portfolio Value</div>
                     <div className='text-2xl sm:text-4xl font-bold'>${numeral(portfolioValue).format('0,0.00')}</div>
+                    <TooltipProvider>
+                        <Tooltip>
+                            <TooltipTrigger>
+                                <div className='flex justify-end items-center mt-1 min-w-24'>
+                                    <span className='text-sm font-medium text-secondary/80'>${numeral(governanceValue).format('0,0.00')}</span>
+                                    <InfoIcon className="w-3 h-3 ml-1 mr-0.5 text-secondary/80" />
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p className="max-w-xs text-sm">
+                                    This value represents the DMG token balances at their post-wrap valuation using current CHA prices.
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
                 <div className='flex flex-col items-center justify-center w-full px-4 text-lg text-center -translate-y-16 sm:text-md sm:text-start sm:items-start sm:justify-start sm:px-0'>
                     <div className='flex items-baseline justify-center w-full text-center sm:justify-start mt-10 sm:mt-0'>
