@@ -10,7 +10,7 @@ import Layout from '@components/layout/layout';
 import { openContractCall } from '@stacks/connect';
 import { network } from '@components/stacks-session/connect';
 
-export default function Univ2CoreDashboard() {
+export default function AdminDashboard() {
     const meta = {
         title: 'Charisma | Admin Dashboard',
         description: META_DESCRIPTION,
@@ -21,7 +21,7 @@ export default function Univ2CoreDashboard() {
             <SkipNavContent />
             <Layout>
                 <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-4xl">
-                    <h1 className="text-3xl font-bold mb-6">Uniswap V2 Core Dashboard</h1>
+                    <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                         <CreatePool />
                         <UpdateSwapFee />
