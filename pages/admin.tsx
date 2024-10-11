@@ -9,6 +9,8 @@ import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
 import { openContractCall } from '@stacks/connect';
 import { network } from '@components/stacks-session/connect';
+import dmgLogo from '@public/dmg-logo.gif';
+import Image from 'next/image';
 
 export default function AdminDashboard() {
     const meta = {
@@ -20,27 +22,68 @@ export default function AdminDashboard() {
         <Page meta={meta} fullViewport>
             <SkipNavContent />
             <Layout>
-                <div className="m-2 sm:container sm:mx-auto sm:py-10">
-                    <h1 className="text-3xl font-bold mb-6">Admin Dashboard</h1>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        <CreatePool />
-                        <UpdateSwapFee />
-                        <UpdateProtocolFee />
-                        <UpdateShareFee />
-                        <Mint />
-                        <Burn />
-                        <Swap />
-                        <Collect />
-                    </div>
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-                        <SetBlocksPerTx />
-                        <SetMaxLiquidityFlow />
-                    </div>
+                <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-6xl">
+                    <HeroSection />
+                    <DexSection />
+                    <TokenSection />
                 </div>
             </Layout>
         </Page>
     );
 }
+
+const HeroSection = () => {
+    return (
+        <div className='flex flex-col items-center overflow-hidden'>
+            <div className='flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
+                <div className='flex-col items-center hidden w-full space-y-4 sm:w-64 sm:flex'>
+                    <Image src={dmgLogo} alt='Charisma Protocol' width={300} height={300} className='transition-all -translate-x-12 -translate-y-20 scale-[1.5]' />
+                </div>
+                <div className='flex flex-col items-center justify-center w-full px-4 text-lg text-center -translate-y-16 sm:text-md sm:text-start sm:items-start sm:justify-start sm:px-0'>
+                    <div className='flex items-baseline justify-center w-full text-center sm:justify-start'>
+                        <div className='py-4 text-6xl sm:py-0'>Admin Dashboard</div>
+                    </div>
+                    <div className='mt-4 text-lg grow text-secondary/80'>Manage Charisma DEX and Token settings</div>
+                    <div className='mt-8 text-md text-secondary/80'>
+                        Use these controls to adjust various parameters of the Charisma ecosystem.
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+};
+
+const DexSection = () => {
+    return (
+        <div>
+            <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>Charisma DEX</div>
+            <div className='w-full pb-8 text-center text-md text-muted/90'>Manage DEX settings and operations</div>
+            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+                <CreatePool />
+                <UpdateSwapFee />
+                <UpdateProtocolFee />
+                <UpdateShareFee />
+                <Mint />
+                <Burn />
+                <Swap />
+                <Collect />
+            </div>
+        </div>
+    );
+};
+
+const TokenSection = () => {
+    return (
+        <div className="mt-20 mb-12">
+            <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Charisma Token</div>
+            <div className='w-full pb-8 text-center text-md text-muted/90'>Adjust Charisma Token parameters</div>
+            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+                <SetBlocksPerTx />
+                <SetMaxLiquidityFlow />
+            </div>
+        </div>
+    );
+};
 
 const CreatePool = () => {
     const [token0, setToken0] = useState('');
