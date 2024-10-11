@@ -3,7 +3,7 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
-import { PostConditionMode, standardPrincipalCV, uintCV } from "@stacks/transactions";
+import { noneCV, optionalCVOf, PostConditionMode, standardPrincipalCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
@@ -45,7 +45,7 @@ const Transfer = () => {
             contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
             contractName: 'dungeon-master',
             functionName: "dmg-transfer",
-            functionArgs: [uintCV(1), standardPrincipalCV(sender), standardPrincipalCV(recipient)],
+            functionArgs: [uintCV(1), standardPrincipalCV(sender), standardPrincipalCV(recipient), optionalCVOf(noneCV())],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
         }, (window as any).AsignaProvider);
