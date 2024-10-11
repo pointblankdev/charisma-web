@@ -53,6 +53,7 @@ interface PlayerProfileProps {
     tokenEvents: TokenEvent[];
     tokenPrices: any;
     lpTokenPrices: any;
+    portfolioValue: number;
 }
 
 export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async (context) => {
@@ -115,17 +116,82 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
     // Fetch token prices using PricesService
     const tokenPrices = await PricesService.getAllTokenPrices();
 
+    // Define pool information (you might want to move this to a separate configuration file)
+    const poolsData = [
+        {
+            id: 1,
+            token0: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin', decimals: 6, price: tokenPrices['WELSH'] },
+            token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', tokenId: 'synthetic-welsh', decimals: 6, price: tokenPrices['WELSH'] },
+            volume24h: 0,
+            price: tokenPrices['WELSH'],
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh',
+        },
+        {
+            id: 2,
+            token0: { symbol: '$ROO', name: 'Roo', image: '/roo-logo.png', contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', tokenId: 'kangaroo', decimals: 6, price: tokenPrices['$ROO'] },
+            token1: { symbol: 'iouROO', name: 'Synthetic Roo', image: '/roo-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', tokenId: 'synthetic-roo', decimals: 6, price: tokenPrices['$ROO'] },
+            volume24h: 0,
+            price: tokenPrices['WELSH'],
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-iouroo',
+        },
+        {
+            id: 3,
+            token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6, price: tokenPrices['CHA'] },
+            token1: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin', decimals: 6, price: tokenPrices['WELSH'] },
+            volume24h: 0,
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh',
+        },
+        {
+            id: 4,
+            token0: { symbol: 'STX', name: 'Stacks', image: '/stx-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx', decimals: 6, price: tokenPrices['STX'] },
+            token1: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6, price: tokenPrices['CHA'] },
+            volume24h: 0,
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha',
+        },
+        {
+            id: 5,
+            token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6, price: tokenPrices['CHA'] },
+            token1: { symbol: 'iouWELSH', name: 'Synthetic Welsh', image: '/welsh-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', tokenId: 'synthetic-welsh', decimals: 6, price: tokenPrices['WELSH'] },
+            volume24h: 0,
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-iouwelsh',
+        },
+        {
+            id: 6,
+            token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6, price: tokenPrices['CHA'] },
+            token1: { symbol: 'ORDI', name: 'Ordi', image: '/ordi-logo.png', contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi', tokenId: 'brc20-ordi', decimals: 8, price: tokenPrices['ORDI'] },
+            volume24h: 0,
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-ordi',
+        },
+        {
+            id: 7,
+            token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6, price: tokenPrices['CHA'] },
+            token1: { symbol: '$ROO', name: 'Roo', image: '/roo-logo.png', contractAddress: 'SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo', tokenId: 'kangaroo', decimals: 6, price: tokenPrices['$ROO'] },
+            volume24h: 0,
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-roo',
+        },
+        {
+            id: 8,
+            token0: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin', decimals: 6, price: tokenPrices['WELSH'] },
+            token1: { symbol: 'DOG', name: 'DOG-GO-TO-THE-MOON', image: '/sip10/dogLogo.webp', contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog', tokenId: 'runes-dog', decimals: 8, price: tokenPrices['DOG'] },
+            volume24h: 0,
+            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
+        },
+    ];
+
     // Calculate LP token prices
-    const lpTokenPrices: any = {
-        'WELSH-iouWELSH': (tokenPrices['WELSH'] + tokenPrices['iouWELSH']) / 2,
-        'ROO-iouROO': (tokenPrices['$ROO'] + tokenPrices['iouROO']) / 2,
-        'CHA-WELSH': (tokenPrices['CHA'] + tokenPrices['WELSH']) / 2,
-        'STX-CHA': (tokenPrices['STX'] + tokenPrices['CHA']) / 2,
-        'CHA-iouWELSH': (tokenPrices['CHA'] + tokenPrices['iouWELSH']) / 2,
-        'CHA-ORDI': (tokenPrices['CHA'] + tokenPrices['ORDI']) / 2,
-        'CHA-ROO': (tokenPrices['CHA'] + tokenPrices['$ROO']) / 2,
-        'WELSH-DOG': (tokenPrices['WELSH'] + (tokenPrices['DOG'] || 0)) / 2, // Assuming DOG price might not be available
-    };
+    const lpTokenPrices: any = {};
+    for (const pool of poolsData) {
+        const tokenBalance = await getTokenBalance(pool.contractAddress, address);
+
+        const lpTokenPrice = await PricesService.getLpTokenPrice(
+            pool.id,
+            pool.token0,
+            pool.token1,
+            tokenBalance
+        );
+
+        lpTokenPrices[`${pool.token0.symbol}-${pool.token1.symbol}`] = lpTokenPrice;
+    }
 
     const playerData: PlayerData = {
         stxAddress: address,
@@ -164,6 +230,18 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
         // Add transfer and mint events here when available
     ];
 
+    let portfolioValue = 0;
+    // Calculate TVL for main tokens
+    portfolioValue += (playerData.chaTokens / 10 ** 6) * tokenPrices.CHA;
+    portfolioValue += (playerData.governanceTokens / 10 ** 6) * tokenPrices.CHA;
+    portfolioValue += (playerData.iouWELSH / 10 ** 6) * tokenPrices.WELSH;
+    portfolioValue += (playerData.iouROO / 10 ** 6) * tokenPrices['$ROO'];
+    portfolioValue += (playerData.synSTX / 10 ** 6) * tokenPrices.STX;
+    // Calculate TVL for LP tokens
+    Object.entries(playerData.lpTokenBalances).forEach(([poolName, balance]) => {
+        portfolioValue += (balance * (lpTokenPrices[poolName] || 0));
+    });
+
 
     return {
         props: {
@@ -171,11 +249,12 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
             tokenEvents,
             tokenPrices,
             lpTokenPrices,
+            portfolioValue,
         },
     };
 };
 
-export default function PlayerProfile({ playerData, tokenEvents, tokenPrices, lpTokenPrices }: PlayerProfileProps) {
+export default function PlayerProfile({ playerData, tokenEvents, portfolioValue }: PlayerProfileProps) {
     const [selectedToken, setSelectedToken] = useState('all');
 
     const filteredEvents = selectedToken === 'all'
@@ -192,7 +271,7 @@ export default function PlayerProfile({ playerData, tokenEvents, tokenPrices, lp
             <SkipNavContent />
             <Layout>
                 <div className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
-                    <HeroSection playerData={playerData} tokenPrices={tokenPrices} lpTokenPrices={lpTokenPrices} />
+                    <HeroSection playerData={playerData} portfolioValue={portfolioValue} />
                     <StatsSection playerData={playerData} />
                     <LPTokensSection lpTokenBalances={playerData.lpTokenBalances} />
                     <BurnedTokensSection playerData={playerData} />
@@ -208,26 +287,8 @@ export default function PlayerProfile({ playerData, tokenEvents, tokenPrices, lp
     );
 }
 
-const HeroSection = ({ playerData, tokenPrices, lpTokenPrices }: { playerData: PlayerData; tokenPrices: any; lpTokenPrices: any }) => {
+const HeroSection = ({ playerData, portfolioValue }: { playerData: PlayerData; portfolioValue: number }) => {
     const pillImage = playerData.pilled === 'RED' ? redPill : playerData.pilled === 'BLUE' ? bluePill : '';
-
-    const totalTVL = useMemo(() => {
-        let tvl = 0;
-
-        // Calculate TVL for main tokens
-        tvl += (playerData.chaTokens / 10 ** 6) * tokenPrices.CHA;
-        tvl += (playerData.governanceTokens / 10 ** 6) * tokenPrices.CHA;
-        tvl += (playerData.iouWELSH / 10 ** 6) * tokenPrices.WELSH;
-        tvl += (playerData.iouROO / 10 ** 6) * tokenPrices['$ROO'];
-        tvl += (playerData.synSTX / 10 ** 6) * tokenPrices.STX;
-
-        // Calculate TVL for LP tokens
-        // Object.entries(playerData.lpTokenBalances).forEach(([poolName, balance]) => {
-        //     tvl += (balance / 10 ** 6) * (lpTokenPrices[poolName] || 0);
-        // });
-
-        return tvl;
-    }, [playerData, tokenPrices, lpTokenPrices]);
 
     return (
         <div className='flex flex-col items-center overflow-hidden'>
@@ -239,7 +300,7 @@ const HeroSection = ({ playerData, tokenPrices, lpTokenPrices }: { playerData: P
                 {/* TVL Display */}
                 <div className='absolute top-4 right-4 sm:top-8 sm:right-8 text-right'>
                     <div className='text-sm text-secondary/80'>Total Portfolio Value</div>
-                    <div className='text-2xl sm:text-4xl font-bold'><span>${numeral(totalTVL).format('0,0.00')}</span><span className='text-lg'>+ LP</span></div>
+                    <div className='text-2xl sm:text-4xl font-bold'>${numeral(portfolioValue).format('0,0.00')}</div>
                 </div>
                 <div className='flex flex-col items-center justify-center w-full px-4 text-lg text-center -translate-y-16 sm:text-md sm:text-start sm:items-start sm:justify-start sm:px-0'>
                     <div className='flex items-baseline justify-center w-full text-center sm:justify-start mt-10 sm:mt-0'>

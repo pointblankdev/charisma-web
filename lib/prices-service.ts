@@ -4,6 +4,16 @@ import { callReadOnlyFunction, principalCV } from "@stacks/transactions";
 import velarApi from "./velar-api";
 import cmc from "./cmc-api";
 
+export type TokenInfo = {
+  symbol: string;
+  name: string;
+  image: string;
+  contractAddress: string;
+  price?: number;
+  tokenId?: string
+  decimals: number;
+};
+
 class PricesService {
   private static async getPoolReserves(poolId: number, token0Address: string, token1Address: string): Promise<{ token0: number; token1: number }> {
     try {
@@ -58,15 +68,43 @@ class PricesService {
 
     const chaPrice = await this.calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price);
 
+    // Convert all velar prices to numbers
+    const convertedVelarPrices = Object.keys(velarPrices).reduce((acc: { [key: string]: number }, key: string) => {
+      acc[key] = Number(velarPrices[key]);
+      return acc;
+    }, {});
+
     return {
-      ...velarPrices,
+      ...convertedVelarPrices,
       'CHA': chaPrice,
       'STX': cmcPriceData.data['STX'].quote.USD.price,
       'ORDI': cmcPriceData.data['ORDI'].quote.USD.price,
       'WELSH': cmcPriceData.data['WELSH'].quote.USD.price,
       'iouWELSH': cmcPriceData.data['WELSH'].quote.USD.price,
-      'iouROO': velarPrices['$ROO'], // Assuming $ROO price is in velarPrices
+      'iouROO': convertedVelarPrices['$ROO'], // Assuming $ROO price is in velarPrices
     };
+  }
+
+  public static async getLpTokenPrice(
+    poolId: number,
+    token0: TokenInfo,
+    token1: TokenInfo,
+    totalLpSupply: number
+  ): Promise<number> {
+    try {
+      const reserves = await this.getPoolReserves(poolId, token0.contractAddress, token1.contractAddress);
+
+      // Calculate the total value of the pool
+      const totalValue = (reserves.token0 / (10 ** token0.decimals) * (token0.price || 0)) + (reserves.token1 / (10 ** token1.decimals) * (token1.price || 0));
+
+      // Calculate the price per LP token
+      const lpTokenPrice = totalValue / (totalLpSupply || 1);
+
+      return lpTokenPrice;
+    } catch (error) {
+      console.error("Error calculating LP token price:", error);
+      return 0;
+    }
   }
 }
 
