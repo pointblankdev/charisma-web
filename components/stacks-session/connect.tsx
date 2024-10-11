@@ -16,7 +16,7 @@ export const appDetails = {
 
 export const network = new StacksMainnet()
 
-function authenticate() {
+export function authenticate() {
   showConnect({
     appDetails,
     onFinish: () => {
@@ -26,11 +26,11 @@ function authenticate() {
   });
 }
 
-function disconnect() {
+export function disconnect() {
   userSession.signUserOut("/");
 }
 
-function toggleSession() {
+export function toggleSession() {
   if (userSession.isUserSignedIn()) {
     disconnect();
   } else {

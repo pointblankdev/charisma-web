@@ -37,6 +37,10 @@ export const NAVIGATION = [
     name: 'Recover',
     route: '/recovery'
   },
+  {
+    name: 'Players',
+    route: '/players'
+  },
 ];
 
 export type TicketGenerationState = 'default' | 'loading';

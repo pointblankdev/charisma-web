@@ -10,27 +10,18 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
-import { getUserData, getUserSession } from '@stacks/connect-react';
+import { toggleSession, userSession } from './stacks-session/connect';
 
 const mobileNav = [...NAVIGATION]
 
 
 function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof useDialog>[0]) {
-  console.log(getUserSession())
-
   const router = useRouter();
   const activeRoute = router.asPath;
-
-  const handleConnect = async () => {
-    // if (isSignedIn) await signOut();
-    // else await openAuthRequest();
-  }
-
   const ref = useRef<HTMLElement | null>(null);
   const { modalProps } = useModal();
   const { overlayProps } = useOverlay(props, ref);
   const { dialogProps } = useDialog(props, ref);
-
   usePreventScroll();
 
   return (
@@ -57,7 +48,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
             </svg>
           </button>
 
-          {/* {isSignedIn && mobileNav.map(({ name, route }) => (
+          {userSession.isUserSignedIn() && mobileNav.map(({ name, route }) => (
             <Link key={name} href={route}
               className={cn(styles['nav-item'], {
                 [styles['nav-active']]: activeRoute.startsWith(route)
@@ -66,7 +57,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
               {name}
             </Link>
           ))}
-          {isSignedIn ? <Link href='/' className={cn(styles['nav-item'])} onClick={() => signOut()}>Sign out</Link> : <Link href='/token' className={cn(styles['nav-item'])} onClick={() => handleConnect()}>Connect</Link>} */}
+          {userSession.isUserSignedIn() ? <Link href='/' className={cn(styles['nav-item'])} onClick={toggleSession}>Sign out</Link> : <Link href='/token' className={cn(styles['nav-item'])} onClick={toggleSession}>Connect</Link>}
         </nav>
       </FocusScope>
     </div >
