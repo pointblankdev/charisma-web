@@ -3,7 +3,7 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
-import { uintCV, contractPrincipalCV, tupleCV, PostConditionMode } from "@stacks/transactions";
+import { uintCV, contractPrincipalCV, tupleCV, PostConditionMode, callReadOnlyFunction } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
@@ -11,8 +11,86 @@ import { openContractCall } from '@stacks/connect';
 import { network } from '@components/stacks-session/connect';
 import dmgLogo from '@public/dmg-logo.gif';
 import Image from 'next/image';
+import { GetStaticProps } from 'next';
+import numeral from 'numeral';
+import PricesService from '@lib/prices-service';
 
-export default function AdminDashboard() {
+interface PoolStats {
+    id: number;
+    name: string;
+    feesCollected: {
+        token0: number;
+        token1: number;
+    };
+    totalUSD: number;
+}
+
+
+interface AdminDashboardProps {
+    poolStats: PoolStats[];
+}
+
+export const getStaticProps: GetStaticProps<AdminDashboardProps> = async () => {
+    const pools = [
+        { id: 1, name: 'WELSH-iouWELSH', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh', token0: 'WELSH', token1: 'iouWELSH' },
+        { id: 2, name: 'ROO-iouROO', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-iouroo', token0: '$ROO', token1: 'iouROO' },
+        { id: 3, name: 'CHA-WELSH', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh', token0: 'CHA', token1: 'WELSH' },
+        { id: 4, name: 'STX-CHA', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha', token0: 'STX', token1: 'CHA' },
+        { id: 5, name: 'CHA-iouWELSH', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-iouwelsh', token0: 'CHA', token1: 'iouWELSH' },
+        { id: 6, name: 'CHA-ORDI', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-ordi', token0: 'CHA', token1: 'ORDI' },
+        { id: 7, name: 'CHA-ROO', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-roo', token0: 'CHA', token1: '$ROO' },
+        { id: 8, name: 'WELSH-DOG', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog', token0: 'WELSH', token1: 'DOG' },
+    ];
+
+    const decimals: any = {
+        STX: 6,
+        WELSH: 6,
+        $ROO: 6,
+        CHA: 6,
+        DOG: 8,
+        ORDI: 8,
+        iouWELSH: 6,
+        iouROO: 6,
+    }
+
+    const tokenPrices = await PricesService.getAllTokenPrices();
+
+    const poolStats = await Promise.all(pools.map(async (pool) => {
+        const result: any = await callReadOnlyFunction({
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: "univ2-core",
+            functionName: "do-get-revenue",
+            functionArgs: [uintCV(pool.id)],
+            senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        });
+
+        const feesCollected = {
+            token0: Number(result.data.token0.value),
+            token1: Number(result.data.token1.value),
+        };
+
+        const token0USD = (feesCollected.token0 / 10 ** decimals[pool.token0]) * tokenPrices[pool.token0];
+        const token1USD = (feesCollected.token1 / 10 ** decimals[pool.token1]) * tokenPrices[pool.token1];
+        const totalUSD = token0USD + token1USD;
+
+        return {
+            id: pool.id,
+            name: pool.name,
+            feesCollected,
+            totalUSD,
+        };
+    }));
+
+
+    return {
+        props: {
+            poolStats,
+        },
+        revalidate: 600, // Revalidate every 60 seconds
+    };
+};
+
+export default function AdminDashboard({ poolStats }: AdminDashboardProps) {
     const meta = {
         title: 'Charisma | Admin Dashboard',
         description: META_DESCRIPTION,
@@ -24,6 +102,23 @@ export default function AdminDashboard() {
             <Layout>
                 <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-6xl">
                     <HeroSection />
+                    <div className="mb-12">
+                        <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>Swap Fees</div>
+                        <div className='w-full pb-8 text-center text-md text-muted/90'>View protocol fees collected by each pool</div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                            {poolStats.map((pool) => (
+                                <Card key={pool.id} className="p-4 bg-[var(--sidebar)] border border-[var(--accents-7)] relative">
+                                    <div className="absolute top-4 right-4 text-sm font-semibold text-green-500">
+                                        ${numeral(pool.totalUSD).format('0,0.00')}
+                                    </div>
+                                    <h3 className="text-lg font-semibold mb-2">{pool.name}</h3>
+                                    <p>Fees Collected:</p>
+                                    <p>Token 0: {numeral(pool.feesCollected.token0 / 1e6).format('0,0.000000')}</p>
+                                    <p>Token 1: {numeral(pool.feesCollected.token1 / 1e6).format('0,0.000000')}</p>
+                                </Card>
+                            ))}
+                        </div>
+                    </div>
                     <DexSection />
                     <TokenSection />
                 </div>
@@ -35,7 +130,7 @@ export default function AdminDashboard() {
 const HeroSection = () => {
     return (
         <div className='flex flex-col items-center overflow-hidden'>
-            <div className='flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[10vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
+            <div className='flex w-full pt-24 pb-8 px-8 sm:p-24 sm:pb-0 my-[6vh] bg-[var(--sidebar)] border border-[var(--accents-7)] rounded-lg sm:rounded-lg mt-12'>
                 <div className='flex-col items-center hidden w-full space-y-4 sm:w-64 sm:flex'>
                     <Image src={dmgLogo} alt='Charisma Protocol' width={300} height={300} className='transition-all -translate-x-12 -translate-y-20 scale-[1.5]' />
                 </div>
@@ -113,7 +208,7 @@ const CreatePool = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Create Pool</h2>
                 <p className="text-sm mb-4">Creates a new liquidity pool for two tokens with specified fee structures.</p>
@@ -151,7 +246,7 @@ const UpdateSwapFee = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Update Swap Fee</h2>
                 <p className="text-sm mb-4">Modifies the swap fee for a specific liquidity pool.</p>
@@ -185,7 +280,7 @@ const UpdateProtocolFee = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Update Protocol Fee</h2>
                 <p className="text-sm mb-4">Changes the protocol fee for a specific liquidity pool.</p>
@@ -219,7 +314,7 @@ const UpdateShareFee = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Update Share Fee</h2>
                 <p className="text-sm mb-4">Adjusts the share fee for a specific liquidity pool.</p>
@@ -261,7 +356,7 @@ const Mint = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Mint</h2>
                 <p className="text-sm mb-4">Adds liquidity to a pool and mints LP tokens in return.</p>
@@ -305,7 +400,7 @@ const Burn = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Burn</h2>
                 <p className="text-sm mb-4">Removes liquidity from a pool by burning LP tokens.</p>
@@ -350,7 +445,7 @@ const Swap = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Swap</h2>
                 <p className="text-sm mb-4">Executes a token swap in a specific liquidity pool.</p>
@@ -390,7 +485,7 @@ const Collect = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Collect</h2>
                 <p className="text-sm mb-4">Collects accumulated protocol fees from a specific liquidity pool. Only callable by the protocol fee recipient.</p>
@@ -423,7 +518,7 @@ const SetBlocksPerTx = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Set Blocks Per Transaction</h2>
                 <p className="text-sm mb-4">Sets the number of blocks that must pass between transactions. Min: 1, Max: 100,000.</p>
@@ -461,7 +556,7 @@ const SetMaxLiquidityFlow = () => {
     }
 
     return (
-        <Card className='p-4 flex flex-col h-full'>
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
                 <h2 className="text-xl font-bold mb-2">Set Max Liquidity Flow</h2>
                 <p className="text-sm mb-4">Sets the maximum amount of tokens that can be wrapped or unwrapped in a single transaction. Min: 1, Max: 1,000.</p>

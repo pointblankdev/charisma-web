@@ -320,6 +320,16 @@ const PoolsInterface = ({ data, wallet }: any) => {
       const poolChaPrice = (otherToken.price * otherAmount) / chaAmount;
       return (poolChaPrice / data.tokenPrices['CHA']) * 100;
     }
+
+    // For WELSH-iouWELSH and ROO-iouROO pools
+    if ((pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
+      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')) {
+      const token0Reserve = pool.reserves.token0 / 10 ** pool.token0.decimals;
+      const token1Reserve = pool.reserves.token1 / 10 ** pool.token1.decimals;
+      const priceRatio = token0Reserve / token1Reserve;
+      return priceRatio * 100; // Convert to percentage
+    }
+
     return null;
   };
 
@@ -327,7 +337,14 @@ const PoolsInterface = ({ data, wallet }: any) => {
     // !(pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA') || wallet.experience.balance >= 4000
   );
 
-  const getAlignmentColor = (alignment: number) => {
+  const getAlignmentColor = (alignment: number, isEqualizePool: boolean) => {
+    if (isEqualizePool) {
+      // For equalize pools, 100% is perfect alignment
+      const deviation = Math.abs(100 - alignment);
+      const hue = Math.max(0, Math.min(120, 120 * (1 - deviation / 10))); // 10% deviation gives red
+      return `hsl(${hue}, 100%, 40%, 90%)`;
+    }
+    // For other pools, use the existing logic
     const hue = Math.max(0, Math.min(120, 120 * (1 - Math.abs(alignment - 100) / 15)));
     return `hsl(${hue}, 100%, 40%, 90%)`;
   };
@@ -391,12 +408,9 @@ const PoolsInterface = ({ data, wallet }: any) => {
       (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
       (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
     ) {
-      const token0Reserve = pool.reserves.token0 / 10 ** pool.token0.decimals;
-      const token1Reserve = pool.reserves.token1 / 10 ** pool.token1.decimals;
-      const priceRatio = token0Reserve / token1Reserve;
-
-      // Check if the price ratio is outside the 90-110% range
-      return priceRatio < 0.95 || priceRatio > 1;
+      const alignment = calculatePriceAlignment(pool);
+      // Check if the alignment is outside the 95-105% range
+      return alignment !== null && (alignment < 95 || alignment > 105);
     }
     return false;
   };
@@ -415,8 +429,13 @@ const PoolsInterface = ({ data, wallet }: any) => {
     return pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA';
   };
 
+  const isEqualizePool = (pool: PoolInfo) => {
+    return (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
+      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO');
+  };
+
   const needsRebalance = (pool: PoolInfo, alignment: number | null) => {
-    if (isStxChaPool(pool)) {
+    if (isStxChaPool(pool) || isEqualizePool(pool)) {
       return false;
     }
     return alignment !== null && Math.abs(alignment - 100) > 1; // 1% threshold
@@ -457,14 +476,16 @@ const PoolsInterface = ({ data, wallet }: any) => {
                   const poolNeedsRebalance = needsRebalance(pool, priceAlignment);
                   const canEqualizePool = canEqualize(pool);
                   const isStxCha = isStxChaPool(pool);
+                  const isEqualizePool = (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
+                    (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO');
 
                   const PriceAlignment = ({ pool }: any) => {
                     const alignment = calculatePriceAlignment(pool);
                     if (alignment !== null) {
-                      const color = getAlignmentColor(alignment);
+                      const color = getAlignmentColor(alignment, isEqualizePool);
                       return (
                         <span style={{ color }}>
-                          {alignment.toPrecision(3)}%
+                          <div className='leading-none'>{alignment.toPrecision(4)}%</div>
                         </span>
                       );
                     }

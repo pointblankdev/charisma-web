@@ -64,7 +64,7 @@ class PricesService {
 
   public static async getAllTokenPrices(): Promise<{ [key: string]: number }> {
     const velarPrices = await this.getVelarTokenPrices();
-    const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH'] });
+    const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH', 'DOG'] });
 
     const chaPrice = await this.calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price);
 
@@ -79,6 +79,7 @@ class PricesService {
       'CHA': chaPrice,
       'STX': cmcPriceData.data['STX'].quote.USD.price,
       'ORDI': cmcPriceData.data['ORDI'].quote.USD.price,
+      'DOG': cmcPriceData.data['DOG'].quote.USD.price,
       'WELSH': cmcPriceData.data['WELSH'].quote.USD.price,
       'iouWELSH': cmcPriceData.data['WELSH'].quote.USD.price,
       'iouROO': convertedVelarPrices['$ROO'], // Assuming $ROO price is in velarPrices
