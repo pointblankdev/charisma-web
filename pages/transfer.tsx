@@ -7,8 +7,8 @@ import { PostConditionMode, standardPrincipalCV, uintCV } from "@stacks/transact
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
+import { openContractCall } from '@stacks/connect';
 
 
 export default function TransferPage() {
@@ -22,7 +22,6 @@ export default function TransferPage() {
             <SkipNavContent />
             <Layout>
                 <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-2xl">
-
                     <Card className='p-0 overflow-hidden bg-black text-primary-foreground border-accent-foreground rounded-xl'>
                         <div className='m-2'>
                             <div className='space-y-1'>
@@ -37,14 +36,11 @@ export default function TransferPage() {
 }
 
 const Transfer = () => {
-
-    const { doContractCall } = useConnect();
-
     const [sender, setSender] = useState('');
     const [recipient, setRecipient] = useState('');
 
     function transfer() {
-        doContractCall({
+        openContractCall({
             network: network,
             contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
             contractName: 'dungeon-master',
@@ -52,7 +48,7 @@ const Transfer = () => {
             functionArgs: [uintCV(1), standardPrincipalCV(sender), standardPrincipalCV(recipient)],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
-        });
+        }, (window as any).AsignaProvider);
     }
 
     return (

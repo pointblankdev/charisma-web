@@ -7,7 +7,7 @@ import { boolCV, contractPrincipalCV, PostConditionMode } from "@stacks/transact
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import { useConnect } from '@stacks/connect-react';
+import { openContractCall } from '@stacks/connect';
 import { network } from '@components/stacks-session/connect';
 
 
@@ -37,13 +37,10 @@ export default function SetExtensionPage() {
 }
 
 const SetExtension = () => {
-
-    const { doContractCall } = useConnect();
-
     const [contractAddress, setContractAddress] = useState('');
 
     function setExtension() {
-        doContractCall({
+        openContractCall({
             network: network,
             contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
             contractName: 'dungeon-master',
@@ -51,7 +48,7 @@ const SetExtension = () => {
             functionArgs: [contractPrincipalCV(contractAddress.split('.')[0], contractAddress.split('.')[1]), boolCV(true)],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
-        });
+        }, (window as any).AsignaProvider);
     }
 
     return (
