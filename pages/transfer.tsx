@@ -40,14 +40,15 @@ const Transfer = () => {
 
     const { openContractCall } = useOpenContractCall();
 
+    const [sender, setSender] = useState('');
     const [recipient, setRecipient] = useState('');
 
     function transfer() {
         openContractCall({
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: 'lands',
-            functionName: "transfer",
-            functionArgs: [uintCV(1), uintCV(45000000), standardPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'), standardPrincipalCV(recipient)],
+            contractAddress: "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ",
+            contractName: 'dungeon-master',
+            functionName: "dmg-transfer",
+            functionArgs: [uintCV(1), standardPrincipalCV(sender), standardPrincipalCV(recipient)],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
         });
@@ -55,6 +56,7 @@ const Transfer = () => {
 
     return (
         <>
+            <Input onChange={e => setSender(e.target.value)} className='w-full' placeholder='Sender' />
             <Input onChange={e => setRecipient(e.target.value)} className='w-full' placeholder='Recipient' />
             <Button className='text-md w-full hover:bg-[#ffffffee] hover:text-primary' onClick={transfer}>Transfer</Button>
         </>
