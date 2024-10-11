@@ -68,6 +68,7 @@ const CreatePool = () => {
     return (
         <Card className='p-4'>
             <h2 className="text-xl font-bold mb-4">Create Pool</h2>
+            <p className="text-sm mb-4">Creates a new liquidity pool for two tokens with specified fee structures.</p>
             <Input className='mb-2' placeholder='Token0' onChange={e => setToken0(e.target.value)} />
             <Input className='mb-2' placeholder='Token1' onChange={e => setToken1(e.target.value)} />
             <Input className='mb-2' placeholder='LP Token' onChange={e => setLpToken(e.target.value)} />
@@ -101,6 +102,7 @@ const UpdateSwapFee = () => {
     return (
         <Card className='p-4'>
             <h2 className="text-xl font-bold mb-4">Update Swap Fee</h2>
+            <p className="text-sm mb-4">Modifies the swap fee for a specific liquidity pool.</p>
             <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
             <Input className='mb-2' placeholder='New Fee (e.g. 995/1000)' onChange={e => setFee(e.target.value)} />
             <Button onClick={updateSwapFee}>Update Swap Fee</Button>
@@ -130,6 +132,7 @@ const UpdateProtocolFee = () => {
     return (
         <Card className='p-4'>
             <h2 className="text-xl font-bold mb-4">Update Protocol Fee</h2>
+            <p className="text-sm mb-4">Changes the protocol fee for a specific liquidity pool.</p>
             <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
             <Input className='mb-2' placeholder='New Fee (e.g. 500/1000)' onChange={e => setFee(e.target.value)} />
             <Button onClick={updateProtocolFee}>Update Protocol Fee</Button>
@@ -159,6 +162,7 @@ const UpdateShareFee = () => {
     return (
         <Card className='p-4'>
             <h2 className="text-xl font-bold mb-4">Update Share Fee</h2>
+            <p className="text-sm mb-4">Adjusts the share fee for a specific liquidity pool.</p>
             <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
             <Input className='mb-2' placeholder='New Fee (e.g. 0/1000)' onChange={e => setFee(e.target.value)} />
             <Button onClick={updateShareFee}>Update Share Fee</Button>
@@ -196,6 +200,7 @@ const Mint = () => {
     return (
         <Card className='p-4'>
             <h2 className="text-xl font-bold mb-4">Mint</h2>
+            <p className="text-sm mb-4">Adds liquidity to a pool and mints LP tokens in return.</p>
             <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
             <Input className='mb-2' placeholder='Token0' onChange={e => setToken0(e.target.value)} />
             <Input className='mb-2' placeholder='Token1' onChange={e => setToken1(e.target.value)} />
@@ -235,6 +240,7 @@ const Burn = () => {
     return (
         <Card className='p-4'>
             <h2 className="text-xl font-bold mb-4">Burn</h2>
+            <p className="text-sm mb-4">Removes liquidity from a pool by burning LP tokens.</p>
             <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
             <Input className='mb-2' placeholder='Token0' onChange={e => setToken0(e.target.value)} />
             <Input className='mb-2' placeholder='Token1' onChange={e => setToken1(e.target.value)} />
@@ -275,6 +281,7 @@ const Swap = () => {
     return (
         <Card className='p-4'>
             <h2 className="text-xl font-bold mb-4">Swap</h2>
+            <p className="text-sm mb-4">Executes a token swap in a specific liquidity pool.</p>
             <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
             <Input className='mb-2' placeholder='Token In' onChange={e => setTokenIn(e.target.value)} />
             <Input className='mb-2' placeholder='Token Out' onChange={e => setTokenOut(e.target.value)} />
@@ -310,6 +317,7 @@ const Collect = () => {
     return (
         <Card className='p-4'>
             <h2 className="text-xl font-bold mb-4">Collect</h2>
+            <p className="text-sm mb-4">Collects accumulated protocol fees from a specific liquidity pool. Only callable by the protocol fee recipient.</p>
             <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
             <Input className='mb-2' placeholder='Token0' onChange={e => setToken0(e.target.value)} />
             <Input className='mb-2' placeholder='Token1' onChange={e => setToken1(e.target.value)} />
