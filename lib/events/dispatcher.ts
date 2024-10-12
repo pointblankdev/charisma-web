@@ -41,7 +41,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         if (trackedContracts.includes(contractId)) {
             symbol = '💸'
 
-            // track redemptions burned, timestamp, and by whom
+            // track transfer events, timestamp, and by whom
             await trackTransferEvent(event.data)
 
             builder.addField({
@@ -72,7 +72,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         if (trackedContracts.includes(contractId)) {
             symbol = '💰'
 
-            // track redemptions burned, timestamp, and by whom
+            // track mint events, timestamp, and by whom
             await trackMintEvent(event.data)
 
             builder.addField({
@@ -106,7 +106,7 @@ export const handleContractEvent = async (event: any, builder: any) => {
         if (trackedContracts.includes(contractId)) {
             symbol = '🔥'
 
-            // track redemptions burned, timestamp, and by whom
+            // track burn events, timestamp, and by whom
             await trackBurnEvent(event.data)
 
             builder.addField({

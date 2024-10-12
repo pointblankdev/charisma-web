@@ -84,7 +84,6 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
     const iouROOBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', address);
     const synSTXBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', address);
 
-
     // Fetch LP token balances
     const lpTokenBalances = await Promise.all([
         getTokenBalance('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh', address),
@@ -237,11 +236,23 @@ export const getServerSideProps: GetServerSideProps<PlayerProfileProps> = async 
 
     // Combine all token events into a single array
     const tokenEvents: TokenEvent[] = [
+        ...eventData.mints.map((mint: any) => ({
+            timestamp: mint.timestamp,
+            type: 'mint' as const,
+            token: mint.asset_identifier.split('::')[1],
+            amount: parseInt(mint.amount, 10),
+        })),
         ...eventData.burns.map((burn: any) => ({
             timestamp: burn.timestamp,
             type: 'burn' as const,
             token: burn.asset_identifier.split('::')[1],
             amount: parseInt(burn.amount, 10),
+        })),
+        ...eventData.transfers.map((transfer: any) => ({
+            timestamp: transfer.timestamp,
+            type: 'transfer' as const,
+            token: transfer.asset_identifier.split('::')[1],
+            amount: parseInt(transfer.amount, 10),
         })),
         // Add transfer and mint events here when available
     ];
@@ -293,7 +304,6 @@ export default function PlayerProfile({ playerData, tokenEvents, portfolioValue,
                     <LPTokensSection lpTokenBalances={playerData.lpTokenBalances} />
                     <BurnedTokensSection playerData={playerData} />
                     <TokenEventsSection
-                        playerData={playerData}
                         tokenEvents={filteredEvents}
                         selectedToken={selectedToken}
                         setSelectedToken={setSelectedToken}
@@ -315,13 +325,13 @@ const HeroSection = ({ playerData, portfolioValue, governanceValue }: { playerDa
                     <Image src={pillImage} alt='Charisma Pilled' width={300} height={300} className='transition-all -translate-x-12 -translate-y-20 cursor-pointer scale-[2]' />
                 </div>
                 {/* TVL Display */}
-                <div className='absolute top-4 right-4 sm:top-8 sm:right-8 text-right'>
+                <div className='absolute text-right top-4 right-4 sm:top-8 sm:right-8'>
                     <div className='text-sm text-secondary/80'>Total Portfolio Value</div>
-                    <div className='text-2xl sm:text-4xl font-bold'>${numeral(portfolioValue).format('0,0.00')}</div>
+                    <div className='text-2xl font-bold sm:text-4xl'>${numeral(portfolioValue).format('0,0.00')}</div>
                     <TooltipProvider>
                         <Tooltip>
                             <TooltipTrigger>
-                                <div className='flex justify-end items-center mt-1 min-w-24'>
+                                <div className='flex items-center justify-end mt-1 min-w-24'>
                                     <span className='text-sm font-medium text-secondary/80'>${numeral(governanceValue).format('0,0.00')}</span>
                                     <InfoIcon className="w-3 h-3 ml-1 mr-0.5 text-secondary/80" />
                                 </div>
@@ -335,7 +345,7 @@ const HeroSection = ({ playerData, portfolioValue, governanceValue }: { playerDa
                     </TooltipProvider>
                 </div>
                 <div className='flex flex-col items-center justify-center w-full px-4 text-lg text-center -translate-y-16 sm:text-md sm:text-start sm:items-start sm:justify-start sm:px-0'>
-                    <div className='flex items-baseline justify-center w-full text-center sm:justify-start mt-10 sm:mt-0'>
+                    <div className='flex items-baseline justify-center w-full mt-10 text-center sm:justify-start sm:mt-0'>
                         <div className='py-4 text-6xl sm:py-0'>{playerData.bnsName || 'Player Profile'}</div>
                     </div>
                     <div className='mt-4 text-base grow text-secondary/80'>{playerData.stxAddress}</div>
@@ -466,8 +476,8 @@ const LpStatCard = ({ title, value, icons }: { title: string, value: number, ico
             <div className='flex items-center space-x-2'>
                 <div className='text-4xl font-semibold'>{displayValue}</div>
                 <div className="relative w-12 h-8">
-                    <Image src={icons[0]} alt={title.split('-')[0]} width={32} height={32} className='absolute left-0 top-0 rounded-full z-10' />
-                    <Image src={icons[1]} alt={title.split('-')[1]} width={32} height={32} className='absolute left-6 top-0 rounded-full z-20' />
+                    <Image src={icons[0]} alt={title.split('-')[0]} width={32} height={32} className='absolute top-0 left-0 z-10 rounded-full' />
+                    <Image src={icons[1]} alt={title.split('-')[1]} width={32} height={32} className='absolute top-0 z-20 rounded-full left-6' />
                 </div>
             </div>
             <div className='text-center text-muted/80'>{title}</div>
@@ -476,12 +486,10 @@ const LpStatCard = ({ title, value, icons }: { title: string, value: number, ico
 };
 
 const TokenEventsSection = ({
-    playerData,
     tokenEvents,
     selectedToken,
     setSelectedToken
 }: {
-    playerData: PlayerData,
     tokenEvents: TokenEvent[],
     selectedToken: string,
     setSelectedToken: (token: string) => void
@@ -570,7 +578,7 @@ const TokenEventsSection = ({
             const volumeData = sortedEvents.map(event => ({
                 time: event.timestamp / 1000 as UTCTimestamp,
                 value: event.amount / 10 ** 6,
-                color: event.type === 'burn' ? 'rgba(255, 82, 82, 0.8)' : 'rgba(0, 150, 136, 0.8)',
+                color: event.type === 'burn' ? '#c1121f' : event.type === 'mint' ? '#FFD70069' : '#00000042',
             }));
 
             lineSeries.setData(lineData);
@@ -624,33 +632,33 @@ const TokenEventsSection = ({
     const averageAmount = totalAmount / totalEvents;
 
     return (
-        <div className='mt-20 mb-12 max-w-full'>
+        <div className='max-w-full mt-20 mb-12'>
             <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Token Events</div>
             <div className='w-full pb-8 text-center text-md text-muted/90'>History of token transfers, mints, and burns.</div>
-            <div className='grid grid-cols-1 lg:grid-cols-4 gap-4'>
+            <div className='grid grid-cols-1 gap-4 lg:grid-cols-4'>
                 <Card className='p-0 bg-[var(--sidebar)] border border-[var(--accents-7)]'>
                     <CardHeader className='p-4'>
                         <CardTitle className="text-xl font-bold">Event Summary</CardTitle>
                     </CardHeader>
                     <CardContent className='p-4 min-w-64'>
                         <div className='space-y-4'>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <span className="text-muted-foreground">Total Events:</span>
                                 <span className="text-base">{totalEvents}</span>
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <span className="text-muted-foreground">Total Amount:</span>
                                 <span className="text-base">{numeral(totalAmount).format('0a')}</span>
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <span className="text-muted-foreground">Burn Events:</span>
                                 <span className="text-base">{burnEvents}</span>
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <span className="text-muted-foreground">Largest Event:</span>
                                 <span className="text-base">{numeral(largestEvent).format('0a')}</span>
                             </div>
-                            <div className="flex justify-between items-center">
+                            <div className="flex items-center justify-between">
                                 <span className="text-muted-foreground">Average Amount:</span>
                                 <span className="text-base">{numeral(averageAmount).format('0a')}</span>
                             </div>
@@ -673,11 +681,11 @@ const TokenEventsSection = ({
                         <Tabs defaultValue="all" className="mb-6">
                             <TabsList className='contents'>
                                 <TabsTrigger value="all" onClick={() => setSelectedToken('all')}>All Tokens</TabsTrigger>
-                                <TabsTrigger value="charisma" onClick={() => setSelectedToken('charisma')}>CHA</TabsTrigger>
-                                <TabsTrigger value="governance" onClick={() => setSelectedToken('governance')}>Governance</TabsTrigger>
-                                <TabsTrigger value="iouWELSH" onClick={() => setSelectedToken('iouWELSH')}>iouWELSH</TabsTrigger>
-                                <TabsTrigger value="iouROO" onClick={() => setSelectedToken('iouROO')}>iouROO</TabsTrigger>
-                                <TabsTrigger value="synSTX" onClick={() => setSelectedToken('synSTX')}>synSTX</TabsTrigger>
+                                <TabsTrigger disabled value="charisma" onClick={() => setSelectedToken('charisma')}>CHA</TabsTrigger>
+                                <TabsTrigger disabled value="governance" onClick={() => setSelectedToken('governance')}>Governance</TabsTrigger>
+                                <TabsTrigger disabled value="iouWELSH" onClick={() => setSelectedToken('iouWELSH')}>iouWELSH</TabsTrigger>
+                                <TabsTrigger disabled value="iouROO" onClick={() => setSelectedToken('iouROO')}>iouROO</TabsTrigger>
+                                <TabsTrigger disabled value="synSTX" onClick={() => setSelectedToken('synSTX')}>synSTX</TabsTrigger>
                             </TabsList>
                         </Tabs>
 

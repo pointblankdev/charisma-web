@@ -14,7 +14,7 @@ import Layout from '@components/layout/layout';
 import Page from '@components/page';
 import numeral from "numeral";
 import { ArrowUpDown, User } from 'lucide-react';
-import { getPlayerEventData, getPlayerPill, getPlayers, getPlayerTokens } from '@lib/db-providers/kv';
+import { getPlayerPill, getPlayers, getPlayerTokens } from '@lib/db-providers/kv';
 import Link from 'next/link';
 import redPill from '@public/sip9/pills/red-pill-floating.gif';
 import bluePill from '@public/sip9/pills/blue-pill-floating.gif';
@@ -30,10 +30,6 @@ interface Player {
     iouWELSH: number;
     iouROO: number;
     synSTX: number;
-    burnedGovernanceTokens: number;
-    burnedIouWELSH: number;
-    burnedIouROO: number;
-    burnedSynSTX: number;
     pill: 'RED' | 'BLUE';
 }
 
@@ -44,60 +40,32 @@ interface PlayersPageProps {
 export const getStaticProps: GetStaticProps<PlayersPageProps> = async () => {
     const playerAddresses = await getPlayers();
     const players: Player[] = await Promise.all(playerAddresses.map(async (address: string) => {
-        const governanceTokens = await getPlayerTokens('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', address);
-        const experience = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address);
-        const chaBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', address);
-        const iouWELSHBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', address);
-        const iouROOBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', address);
-        const synSTXBalance = await getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', address);
-
-        // Fetch burn data
-        const burnData = await getPlayerEventData(address);
-
-        // Calculate total burned tokens
-        const burnedGovernanceTokens = burnData.burns.reduce((total: number, burn: any) => {
-            if (burn.asset_identifier === 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma') {
-                return total + parseInt(burn.amount, 10);
-            }
-            return total;
-        }, 0);
-
-        const burnedIouWELSH = burnData.burns.reduce((total: number, burn: any) => {
-            if (burn.asset_identifier === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh') {
-                return total + parseInt(burn.amount, 10);
-            }
-            return total;
-        }, 0);
-
-        const burnedIouROO = burnData.burns.reduce((total: number, burn: any) => {
-            if (burn.asset_identifier === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo') {
-                return total + parseInt(burn.amount, 10);
-            }
-            return total;
-        }, 0);
-
-        const burnedSynSTX = burnData.burns.reduce((total: number, burn: any) => {
-            if (burn.asset_identifier === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx::synthetic-stx') {
-                return total + parseInt(burn.amount, 10);
-            }
-            return total;
-        }, 0);
-
-        // Fetch pill data using getPlayerPill
-        const pill = await getPlayerPill(address);
+        const [
+            experience,
+            chaBalance,
+            governanceBalance,
+            iouWELSHBalance,
+            iouROOBalance,
+            synSTXBalance,
+            pill
+        ] = await Promise.all([
+            getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address),
+            getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', address),
+            getPlayerTokens('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', address),
+            getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', address),
+            getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', address),
+            getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', address),
+            getPlayerPill(address)
+        ]);
 
         return {
             stxAddress: address,
             experience,
             chaTokens: chaBalance,
-            governanceTokens,
+            governanceTokens: governanceBalance,
             iouWELSH: iouWELSHBalance,
             iouROO: iouROOBalance,
             synSTX: synSTXBalance,
-            burnedGovernanceTokens,
-            burnedIouWELSH,
-            burnedIouROO,
-            burnedSynSTX,
             pill
         };
     }));
@@ -184,8 +152,8 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('stxAddress')}>
                                                 STX Address {sortBy === 'stxAddress' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
-                                            <TableHead className="py-2">
-                                                Pilled
+                                            <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('pill')}>
+                                                Pilled {sortBy === 'pill' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('experience')}>
                                                 Experience {sortBy === 'experience' && <ArrowUpDown className="inline ml-1" size={16} />}
@@ -205,18 +173,6 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('synSTX')}>
                                                 synSTX {sortBy === 'synSTX' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
-                                            <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('burnedGovernanceTokens')}>
-                                                Burned Governance {sortBy === 'burnedGovernanceTokens' && <ArrowUpDown className="inline ml-1" size={16} />}
-                                            </TableHead>
-                                            <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('burnedIouWELSH')}>
-                                                Burned iouWELSH {sortBy === 'burnedIouWELSH' && <ArrowUpDown className="inline ml-1" size={16} />}
-                                            </TableHead>
-                                            <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('burnedIouROO')}>
-                                                Burned iouROO {sortBy === 'burnedIouROO' && <ArrowUpDown className="inline ml-1" size={16} />}
-                                            </TableHead>
-                                            <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('burnedSynSTX')}>
-                                                Burned synSTX {sortBy === 'burnedSynSTX' && <ArrowUpDown className="inline ml-1" size={16} />}
-                                            </TableHead>
                                             <TableHead className="py-2">
                                                 Actions
                                             </TableHead>
@@ -235,10 +191,6 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                                 <TableCell className="py-4 text-white">{numeral(player.iouWELSH / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.iouROO / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.synSTX / 10 ** 6).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.burnedGovernanceTokens / 10 ** 6).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.burnedIouWELSH / 10 ** 6).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.burnedIouROO / 10 ** 6).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.burnedSynSTX / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">
                                                     <Link href={`/players/${player.stxAddress}`} passHref>
                                                         <Button size="sm" variant="outline">
@@ -253,7 +205,7 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                 </Table>
                             </div>
 
-                            <div className="flex justify-between items-center px-4 mt-4 sm:px-0 text-xs text-muted-foreground">
+                            <div className="flex items-center justify-between px-4 mt-4 text-xs sm:px-0 text-muted-foreground">
                                 <Button
                                     variant="ghost"
                                     onClick={() => handlePageChange(currentPage - 1)}

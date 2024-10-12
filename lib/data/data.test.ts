@@ -76,7 +76,7 @@ describe('player data', () => {
     console.log(_.sortBy(balances, 'balance').reverse())
   }, 200000)
 
-  it('should get all burn data for a player', async () => {
+  it('should get all token event data for a player', async () => {
     const data = await getPlayerEventData('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS')
     console.log(data)
   }, 200000)
