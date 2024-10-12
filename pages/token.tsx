@@ -93,9 +93,9 @@ async function calculateChaPrice(stxPrice: number): Promise<number> {
   return chaPrice;
 }
 
-const isWithinLast6Hours = (timestamp: string) => {
-  const sixHoursAgo = new Date(Date.now() - 2 * 60 * 60 * 1000);
-  return new Date(timestamp) > sixHoursAgo;
+const isWithinLastHour = (timestamp: string) => {
+  const oneHourAgo = new Date(Date.now() - 60 * 60 * 1000);
+  return new Date(timestamp) > oneHourAgo;
 };
 
 function formatRelativeTime(dateString: string): string {
@@ -147,7 +147,7 @@ export default function TokenPage({ data }: Props) {
   }, [data.transactions, setWrapTransactions])
 
   const hasEnoughExperience = wallet.experience.balance >= 100;
-  const recentTransactions = wrapTransactions.filter(tx => isWithinLast6Hours(tx.receipt_time_iso));
+  const recentTransactions = wrapTransactions.filter(tx => isWithinLastHour(tx.receipt_time_iso));
 
   return (
     <Page meta={meta} fullViewport>
@@ -225,7 +225,7 @@ const StatsSection = ({ data }: Props) => {
   useEffect(() => {
     // find the highest bid
     const newHighestBid = data.transactions
-      .filter(tx => isWithinLast6Hours(tx.receipt_time_iso))
+      .filter(tx => isWithinLastHour(tx.receipt_time_iso))
       .reduce((acc, tx) => {
         if (tx.contract_call.function_name === 'wrap') {
           const amount = Number(tx.fee_rate)
