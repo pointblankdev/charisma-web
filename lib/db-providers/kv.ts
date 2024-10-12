@@ -338,13 +338,13 @@ export async function getPlayerPill(player: string): Promise<any> {
 }
 
 export async function setPlayerPill(player: string, pill: string): Promise<any> {
-  return await kv.set(`player:${player}:pill`, pill);
+  return await kv.set(`player:${player}:pill`, pill) || false;
 }
 
 // player tokens
 
 export async function getPlayerTokens(contractAddress: string, player: string): Promise<any> {
-  return await kv.get(`player:${player}tokens:${contractAddress}`);
+  return await kv.get(`player:${player}tokens:${contractAddress}`) || 0;
 }
 
 export async function setPlayerTokens(contractAddress: string, player: string, amount: number): Promise<any> {

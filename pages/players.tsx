@@ -44,17 +44,17 @@ export const getStaticProps: GetStaticProps<PlayersPageProps> = async () => {
             experience,
             chaBalance,
             governanceBalance,
-            iouWELSHBalance,
-            iouROOBalance,
-            synSTXBalance,
+            // iouWELSHBalance,
+            // iouROOBalance,
+            // synSTXBalance,
             pill
         ] = await Promise.all([
             getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience', address),
             getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', address),
             getPlayerTokens('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', address),
-            getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', address),
-            getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', address),
-            getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', address),
+            // getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', address),
+            // getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', address),
+            // getPlayerTokens('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', address),
             getPlayerPill(address)
         ]);
 
@@ -63,9 +63,9 @@ export const getStaticProps: GetStaticProps<PlayersPageProps> = async () => {
             experience,
             chaTokens: chaBalance,
             governanceTokens: governanceBalance,
-            iouWELSH: iouWELSHBalance,
-            iouROO: iouROOBalance,
-            synSTX: synSTXBalance,
+            // iouWELSH: iouWELSHBalance,
+            // iouROO: iouROOBalance,
+            // synSTX: synSTXBalance,
             pill
         };
     }));
@@ -131,7 +131,7 @@ export default function PlayersPage({ players }: PlayersPageProps) {
     return (
         <Page meta={meta}>
             <Layout>
-                <div className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
+                <div className="sm:w-full sm:mx-auto sm:pb-10">
                     <div className="mt-6">
                         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
                             <div className="flex items-center justify-between px-4 mb-4 sm:px-0">
@@ -152,8 +152,8 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('stxAddress')}>
                                                 STX Address {sortBy === 'stxAddress' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
-                                            <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('pill')}>
-                                                Pilled {sortBy === 'pill' && <ArrowUpDown className="inline ml-1" size={16} />}
+                                            <TableHead className="py-2">
+                                                Pilled
                                             </TableHead>
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('experience')}>
                                                 Experience {sortBy === 'experience' && <ArrowUpDown className="inline ml-1" size={16} />}
@@ -164,7 +164,7 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('chaTokens')}>
                                                 CHA Tokens {sortBy === 'chaTokens' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
-                                            <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('iouWELSH')}>
+                                            {/* <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('iouWELSH')}>
                                                 iouWELSH {sortBy === 'iouWELSH' && <ArrowUpDown className="inline ml-1" size={16} />}
                                             </TableHead>
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('iouROO')}>
@@ -172,7 +172,7 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                             </TableHead>
                                             <TableHead className="py-2 cursor-pointer" onClick={() => handleSort('synSTX')}>
                                                 synSTX {sortBy === 'synSTX' && <ArrowUpDown className="inline ml-1" size={16} />}
-                                            </TableHead>
+                                            </TableHead> */}
                                             <TableHead className="py-2">
                                                 Actions
                                             </TableHead>
@@ -188,9 +188,9 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                                 <TableCell className="py-4 text-white">{numeral(player.experience / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.governanceTokens / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.chaTokens / 10 ** 6).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.iouWELSH / 10 ** 6).format('0,0')}</TableCell>
+                                                {/* <TableCell className="py-4 text-white">{numeral(player.iouWELSH / 10 ** 6).format('0,0')}</TableCell>
                                                 <TableCell className="py-4 text-white">{numeral(player.iouROO / 10 ** 6).format('0,0')}</TableCell>
-                                                <TableCell className="py-4 text-white">{numeral(player.synSTX / 10 ** 6).format('0,0')}</TableCell>
+                                                <TableCell className="py-4 text-white">{numeral(player.synSTX / 10 ** 6).format('0,0')}</TableCell> */}
                                                 <TableCell className="py-4 text-white">
                                                     <Link href={`/players/${player.stxAddress}`} passHref>
                                                         <Button size="sm" variant="outline">
