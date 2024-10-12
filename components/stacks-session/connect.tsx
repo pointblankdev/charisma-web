@@ -4,6 +4,8 @@ import { cn } from '@lib/utils';
 import { Button } from "@components/ui/button";
 import { StacksMainnet } from "@stacks/network";
 import { useGlobalState } from "@lib/hooks/global-state-context";
+import * as Sentry from "@sentry/browser";
+import { getNameFromAddress } from "@lib/stacks-api";
 
 export const appConfig = new AppConfig(["store_write", "publish_data"]);
 
@@ -19,8 +21,18 @@ export const network = new StacksMainnet()
 export function authenticate() {
   showConnect({
     appDetails,
-    onFinish: () => {
+    onFinish: async (e) => {
       window.location.pathname = '/token';
+      const userData = e.userSession.loadUserData()
+      const address = userData.profile.stxAddress.mainnet
+      const bns = await getNameFromAddress(address)
+      const user = {
+        id: address,
+        username: bns.names[0],
+        ip_address: '{{auto}}',
+        email: userData.email
+      }
+      Sentry.setUser(user);
     },
     userSession,
   });
@@ -28,6 +40,7 @@ export function authenticate() {
 
 export function disconnect() {
   userSession.signUserOut("/");
+  Sentry.setUser(null);
 }
 
 export function toggleSession() {
