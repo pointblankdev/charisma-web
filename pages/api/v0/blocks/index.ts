@@ -22,7 +22,7 @@ export default async function getBlocks(
       code = 501;
       response = new Object({
         code: 'method_unknown',
-        message: 'This endpoint only responds to GET and POST'
+        message: 'This endpoint only responds to GET'
       });
     }
   } catch (error: any) {

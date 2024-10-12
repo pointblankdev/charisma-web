@@ -19,7 +19,6 @@ export default async function cacheLatestBlock(
         const { results } = await blocksApi.getBlocks({ limit: 1 })
         await cacheGlobalState(`blocks:latest`, results[0])
         response = results[0]
-
     } catch (error: any) {
         console.error(error.message);
     }

@@ -7,19 +7,7 @@ module.exports = {
       'cdn.discordapp.com'
     ],
     imageSizes: [24, 64, 300],
-    remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: 'www.datocms-assets.com',
-        port: '',
-        pathname: '/**'
-      },
-      // TODO: REMOVE THIS
-      {
-        protocol: 'https',
-        hostname: '**'
-      }
-    ]
+    remotePatterns: []
   },
   webpack5: true,
   webpack: config => {
@@ -29,6 +17,11 @@ module.exports = {
   },
   async redirects() {
     return [
+      {
+        source: '/faucet',
+        destination: '/token',
+        permanent: true
+      },
       {
         source: '/apps',
         destination: '/creatures',
