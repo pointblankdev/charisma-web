@@ -1,9 +1,8 @@
-import { addCachedProposal, addPlayer, getMob, getNftCollectionMetadata, getVoteData, incrementRewardLeaderboard, isPlayer, saveSwapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setPlayerPill, setPlayerTokens, setVoteData, trackBurnEvent, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { addCachedProposal, addPlayer, getMob, getVoteData, isPlayer, saveSwapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setPlayerPill, setPlayerTokens, setVoteData, trackBurnEvent, trackMintEvent, trackTransferEvent, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
-import { Webhook, EmbedBuilder } from '@tycrek/discord-hookr';
+import { EmbedBuilder } from '@tycrek/discord-hookr';
 import Logger from "@lib/logger";
 
-const generalChatHook = new Webhook('https://discord.com/api/webhooks/1274508457759866952/qYd6kfj7Zc_AKtUIH08Z-ejfj5B4FlUrbirkZoXm0TOgNa_YjEksotxIU7nMBPKm_b7G');
 
 const trackedContracts = [
     "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token",
@@ -39,6 +38,19 @@ export const handleContractEvent = async (event: any, builder: any) => {
             await setPlayerTokens(contractId, event.data.recipient, balance)
         }
 
+        if (trackedContracts.includes(contractId)) {
+            symbol = '💸'
+
+            // track redemptions burned, timestamp, and by whom
+            await trackTransferEvent(event.data)
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+
+        }
+
         builder.addField({
             name: `${symbol} ${event.type}`,
             value: JSON.stringify(event.data).slice(0, 300)
@@ -55,6 +67,19 @@ export const handleContractEvent = async (event: any, builder: any) => {
             // save the balance in kv storage
             await addPlayer(event.data.recipient)
             await setPlayerTokens(contractId, event.data.recipient, balance)
+        }
+
+        if (trackedContracts.includes(contractId)) {
+            symbol = '💰'
+
+            // track redemptions burned, timestamp, and by whom
+            await trackMintEvent(event.data)
+
+            builder.addField({
+                name: `${symbol} ${event.type}`,
+                value: JSON.stringify(event.data).slice(0, 300)
+            });
+
         }
 
         else {
