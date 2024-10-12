@@ -179,7 +179,7 @@ export default function PlayersPage({ players }: PlayersPageProps) {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {pageData.map((player, index) => (
+                                        {filteredPlayers.map((player, index) => (
                                             <TableRow key={index} className="border-t border-gray-700/50">
                                                 <TableCell className="py-4 font-medium text-white">{player.stxAddress}</TableCell>
                                                 <TableCell className="py-4 text-white">
