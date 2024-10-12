@@ -28,6 +28,8 @@ import { getTxsFromMempool } from '@lib/stacks-api';
 import _, { set } from 'lodash';
 import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
+import InfoIcon from '@components/icons/icon-info';
 
 type Transaction = {
   anchor_mode: "any";
@@ -389,7 +391,21 @@ const WrappingSection = ({ data }: Props) => {
             Total Value
           </div>
           <div className='mt-2 font-bold text-center'>
-            {numeral(wallet.charisma.balance * data.chaPrice).format('$0,0.00')}
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger className='cursor-default'>
+                  <div className='flex items-center justify-center'>
+                    <span className='font-bold text-center'>${numeral(wallet.charisma.balance * data.chaPrice).format('0,0.00')}</span>
+                    <InfoIcon className="w-4 h-4 ml-1 mt-0.5" />
+                  </div>
+                </TooltipTrigger>
+                <TooltipContent>
+                  <p className="max-w-xs text-sm">
+                    This value represents your DMG token balances at their post-wrap valuation using current CHA prices.
+                  </p>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           </div>
         </div>
         <div className='w-full'>
