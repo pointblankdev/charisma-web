@@ -46,6 +46,7 @@
     "@radix-ui/react-tooltip": "^1.0.6",
     "@reach/skip-nav": "0.12.1",
     "@scure/btc-signer": "^1.1.0",
+    "@sentry/nextjs": "^8",
     "@stacks/blockchain-api-client": "^7.10.0",
     "@stacks/common": "^6.5.5",
     "@stacks/connect": "latest",
