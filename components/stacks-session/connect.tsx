@@ -13,7 +13,7 @@ export const userSession = new UserSession({ appConfig });
 
 export const appDetails = {
   name: "Charisma",
-  icon: "https://charisma.rocks/dmg-logo.png",
+  icon: "https://charisma.rocks/dmg-logo.gif",
 };
 
 export const network = new StacksMainnet()
