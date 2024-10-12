@@ -272,7 +272,7 @@ const StatsSection = ({ data }: Props) => {
         {isUnlocked ? (
           <div className={`flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]`}>
             <div className='text-4xl font-semibold'>${profitMargin}</div>
-            <div className='text-center text-muted/80'>Net Profit</div>
+            <div className='text-center text-muted/80'>Value Unlocked</div>
           </div>
         ) : (
           <div className='flex flex-col items-center justify-center p-4 space-y-2 rounded-lg text-md bg-[var(--sidebar)] border border-[var(--accents-7)]'>
