@@ -3,16 +3,6 @@ import { getTokenBalance } from "@lib/stacks-api";
 import { EmbedBuilder } from '@tycrek/discord-hookr';
 import Logger from "@lib/logger";
 
-
-const trackedContracts = [
-    "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token",
-    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience",
-    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
-    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh",
-    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo",
-    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx",
-]
-
 export const handleContractEvent = async (event: any, builder: any) => {
 
     let symbol = '❓';
@@ -29,27 +19,15 @@ export const handleContractEvent = async (event: any, builder: any) => {
     else if (event.type === 'FTTransferEvent') {
         symbol = '➡️'
 
+        // track transfer events, timestamp, and by whom
+        await trackTransferEvent(event.data)
+
         const contractId = event.data.asset_identifier.split('::')[0]
-        if (trackedContracts.includes(contractId)) {
-            // get the user's token balance
-            const balance = await getTokenBalance(contractId, event.data.recipient)
-            // save the balance in kv storage
-            await addPlayer(event.data.recipient)
-            await setPlayerTokens(contractId, event.data.recipient, balance)
-        }
-
-        if (trackedContracts.includes(contractId)) {
-            symbol = '💸'
-
-            // track transfer events, timestamp, and by whom
-            await trackTransferEvent(event.data)
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
+        // get the user's token balance
+        const balance = await getTokenBalance(contractId, event.data.recipient)
+        // save the balance in kv storage
+        await addPlayer(event.data.recipient)
+        await setPlayerTokens(contractId, event.data.recipient, balance)
 
         builder.addField({
             name: `${symbol} ${event.type}`,
@@ -60,69 +38,40 @@ export const handleContractEvent = async (event: any, builder: any) => {
     else if (event.type === 'FTMintEvent') {
         symbol = '🔺'
 
+        // track mint events, timestamp, and by whom
+        await trackMintEvent(event.data)
+
         const contractId = event.data.asset_identifier.split('::')[0]
-        if (trackedContracts.includes(contractId)) {
-            // get the user's token balance
-            const balance = await getTokenBalance(contractId, event.data.recipient)
-            // save the balance in kv storage
-            await addPlayer(event.data.recipient)
-            await setPlayerTokens(contractId, event.data.recipient, balance)
-        }
+        // get the user's token balance
+        const balance = await getTokenBalance(contractId, event.data.recipient)
+        // save the balance in kv storage
+        await addPlayer(event.data.recipient)
+        await setPlayerTokens(contractId, event.data.recipient, balance)
 
-        if (trackedContracts.includes(contractId)) {
-            symbol = '💰'
-
-            // track mint events, timestamp, and by whom
-            await trackMintEvent(event.data)
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else {
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-        }
+        builder.addField({
+            name: `${symbol} ${event.type}`,
+            value: JSON.stringify(event.data).slice(0, 300)
+        });
     }
+
 
     else if (event.type === 'FTBurnEvent') {
         symbol = '🔻'
 
+        // track burn events, timestamp, and by whom
+        await trackBurnEvent(event.data)
+
         const contractId = event.data.asset_identifier.split('::')[0]
-        if (trackedContracts.includes(contractId)) {
-            // get the user's token balance
-            const balance = await getTokenBalance(contractId, event.data.sender)
-            // save the balance in kv storage
-            await addPlayer(event.data.sender)
-            await setPlayerTokens(contractId, event.data.sender, balance)
-        }
+        // get the user's token balance
+        const balance = await getTokenBalance(contractId, event.data.sender)
+        // save the balance in kv storage
+        await addPlayer(event.data.sender)
+        await setPlayerTokens(contractId, event.data.sender, balance)
 
-        if (trackedContracts.includes(contractId)) {
-            symbol = '🔥'
-
-            // track burn events, timestamp, and by whom
-            await trackBurnEvent(event.data)
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-
-        }
-
-        else {
-
-            builder.addField({
-                name: `${symbol} ${event.type}`,
-                value: JSON.stringify(event.data).slice(0, 300)
-            });
-        }
+        builder.addField({
+            name: `${symbol} ${event.type}`,
+            value: JSON.stringify(event.data).slice(0, 300)
+        });
     }
 
     else if (event.type === 'NFTTransferEvent') {
