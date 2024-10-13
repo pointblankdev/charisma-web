@@ -453,8 +453,9 @@ const WrappingSection = ({ data }: Props) => {
                   </div>
                 </div>
               </div>
-              <Button onClick={handleWrap} className='w-full mb-5' disabled={!!error || !amount}>
-                Wrap
+              {/* <Button onClick={handleWrap} className='w-full mb-5' disabled={!!error || !amount}> */}
+              <Button onClick={handleWrap} className='w-full mb-5' disabled={true}>
+                Launching Wrapping Pool Soon...
               </Button>
             </div>
           ) : (
