@@ -18,9 +18,14 @@ module.exports = {
   async redirects() {
     return [
       {
+        source: '/token',
+        destination: '/swap',
+        permanent: false
+      },
+      {
         source: '/faucet',
-        destination: '/token',
-        permanent: true
+        destination: '/swap',
+        permanent: false
       },
       {
         source: '/apps',
