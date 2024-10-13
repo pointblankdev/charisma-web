@@ -394,9 +394,9 @@ export async function trackBurnEvent(event: any) {
 }
 
 export async function getPlayerEventData(player: string): Promise<any> {
-  const transfers = await kv.zrange(`player:${player}:transfers`, 0, 999999, { rev: true });
-  const mints = await kv.zrange(`player:${player}:mints`, 0, 999999, { rev: true });
-  const burns = await kv.zrange(`player:${player}:burns`, 0, 999999, { rev: true });
+  const transfers = await kv.zrange(`player:${player}:transfers`, 0, 999, { rev: true });
+  const mints = await kv.zrange(`player:${player}:mints`, 0, 999, { rev: true });
+  const burns = await kv.zrange(`player:${player}:burns`, 0, 999, { rev: true });
 
   return {
     player: player,
@@ -474,7 +474,7 @@ export async function saveSwapEvent(event: any) {
 
 export async function getPoolData(poolId: string): Promise<PoolData> {
 
-  const swaps = await kv.zrange(`pool:${poolId}:swaps`, 0, 999999, { rev: true });
+  const swaps = await kv.zrange(`pool:${poolId}:swaps`, 0, 999, { rev: true });
   const meta: any = await kv.hgetall(`pool:${poolId}:meta`);
 
   return {
