@@ -134,14 +134,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog',
       decimals: 8
     },
-    {
-      symbol: 'UPDOG',
-      name: 'Up Dog',
-      image: updogLogo,
-      tokenName: 'lp-token',
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
-      decimals: 6
-    },
+    // {
+    //   symbol: 'UPDOG',
+    //   name: 'Up Dog',
+    //   image: updogLogo,
+    //   tokenName: 'lp-token',
+    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
+    //   decimals: 6
+    // },
     // {
     //   symbol: 'synSTX',
     //   name: 'Synthetic STX',
@@ -210,12 +210,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       token1: tokens.find(token => token.symbol === 'DOG') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
-    {
-      id: 9,
-      token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
-      token1: tokens.find(token => token.symbol === 'UPDOG') as TokenInfo,
-      swapFee: { num: 995, den: 1000 }, // 0.5% fee
-    },
+    // {
+    //   id: 9,
+    //   token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
+    //   token1: tokens.find(token => token.symbol === 'UPDOG') as TokenInfo,
+    //   swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    // },
     // {
     //   id: 10,
     //   token0: tokens.find(token => token.symbol === 'STX') as TokenInfo,

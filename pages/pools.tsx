@@ -174,13 +174,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
     },
-    {
-      id: 9,
-      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6 },
-      token1: { symbol: 'UPDOG', name: 'Updog', image: '/sip10/up-dog/logo.gif', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog', tokenId: 'lp-token', decimals: 6 },
-      volume24h: 0,
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-updog',
-    },
+    // {
+    //   id: 9,
+    //   token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6 },
+    //   token1: { symbol: 'UPDOG', name: 'Updog', image: '/sip10/up-dog/logo.gif', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog', tokenId: 'lp-token', decimals: 6 },
+    //   volume24h: 0,
+    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-updog',
+    // },
     // {
     //   id: 10,
     //   token0: { symbol: 'STX', name: 'Stacks', image: '/stx-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx', decimals: 6 },
