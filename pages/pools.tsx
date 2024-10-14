@@ -253,7 +253,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         tokenPrices
       }
     },
-    revalidate: 6000
+    revalidate: 600
   };
 };
 
