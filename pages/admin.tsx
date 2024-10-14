@@ -203,7 +203,7 @@ const CreatePool = () => {
                 tupleCV({ num: uintCV(parseInt(protocolFee.split('/')[0])), den: uintCV(parseInt(protocolFee.split('/')[1])) }),
                 tupleCV({ num: uintCV(parseInt(shareFee.split('/')[0])), den: uintCV(parseInt(shareFee.split('/')[1])) }),
             ],
-            postConditionMode: PostConditionMode.Allow,
+            postConditionMode: PostConditionMode.Deny,
             postConditions: [],
         }, (window as any).AsignaProvider);
     }
@@ -241,7 +241,7 @@ const UpdateSwapFee = () => {
                 uintCV(parseInt(poolId)),
                 tupleCV({ num: uintCV(parseInt(fee.split('/')[0])), den: uintCV(parseInt(fee.split('/')[1])) }),
             ],
-            postConditionMode: PostConditionMode.Allow,
+            postConditionMode: PostConditionMode.Deny,
             postConditions: [],
         }, (window as any).AsignaProvider);
     }
@@ -275,7 +275,7 @@ const UpdateProtocolFee = () => {
                 uintCV(parseInt(poolId)),
                 tupleCV({ num: uintCV(parseInt(fee.split('/')[0])), den: uintCV(parseInt(fee.split('/')[1])) }),
             ],
-            postConditionMode: PostConditionMode.Allow,
+            postConditionMode: PostConditionMode.Deny,
             postConditions: [],
         }, (window as any).AsignaProvider);
     }
@@ -309,7 +309,7 @@ const UpdateShareFee = () => {
                 uintCV(parseInt(poolId)),
                 tupleCV({ num: uintCV(parseInt(fee.split('/')[0])), den: uintCV(parseInt(fee.split('/')[1])) }),
             ],
-            postConditionMode: PostConditionMode.Allow,
+            postConditionMode: PostConditionMode.Deny,
             postConditions: [],
         }, (window as any).AsignaProvider);
     }
