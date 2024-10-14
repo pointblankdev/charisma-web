@@ -236,7 +236,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         pools,
       }
     },
-    revalidate: 600
+    revalidate: 60
   };
 };
 

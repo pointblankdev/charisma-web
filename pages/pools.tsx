@@ -193,7 +193,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         tokenPrices
       }
     },
-    revalidate: 600
+    revalidate: 60
   };
 };
 
@@ -459,7 +459,10 @@ const PoolsInterface = ({ data, wallet }: any) => {
                         <div className="flex items-center">
                           <Image src={pool.token0.image} alt={pool.token0.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                           <Image src={pool.token1.image} alt={pool.token1.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                          <span className="text-white">{pool.token0.symbol}-{pool.token1.symbol}</span>
+                          <div className='leading-none'>
+                            <div className="text-white">{pool.token0.symbol}-{pool.token1.symbol}</div>
+                            <div className='ml-1 text-sm text-muted-foreground'>{pool.id === 8 ? ' (UPDOG)' : ''}</div>
+                          </div>
                         </div>
                       </td>
                       <td className="py-4 text-white min-w-48">

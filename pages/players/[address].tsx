@@ -14,6 +14,7 @@ import stxLogo from '@public/stx-logo.png';
 import welshLogo from '@public/welsh-logo.png';
 import rooLogo from '@public/roo-logo.png';
 import dogLogo from '@public/sip10/dogLogo.jpg';
+import updogLogo from '@public/sip10/up-dog/logo.gif';
 import ordiLogo from '@public/ordi-logo.png';
 import synStxLogo from '@public/sip10/synthetic-stx/logo.png';
 import experienceLogo from '@public/experience.png';
@@ -376,9 +377,20 @@ const StatsSection = ({ playerData }: { playerData: PlayerData }) => {
 };
 
 const LPTokensSection = ({ lpTokenBalances }: { lpTokenBalances: Record<string, number> }) => {
-    const getTokenIcons = (poolName: string) => {
+    const getTokenInfo = (poolName: string) => {
         const [token1, token2] = poolName.split('-');
-        return [
+
+        // Check for hybrid/derivative tokens
+        if (poolName === 'WELSH-DOG') {
+            return {
+                name: 'UPDOG',
+                icons: [updogLogo], // Assuming you have an updog logo
+                isHybrid: true
+            };
+        }
+
+        // For regular LP tokens
+        const icons = [
             token1 === 'STX' ? stxLogo :
                 token1 === 'CHA' ? charismaSquare :
                     token1 === 'WELSH' ? welshLogo :
@@ -396,6 +408,12 @@ const LPTokensSection = ({ lpTokenBalances }: { lpTokenBalances: Record<string, 
                                     token2 === 'ORDI' ? ordiLogo :
                                         token2 === 'DOG' && dogLogo,
         ];
+
+        return {
+            name: poolName,
+            icons: icons,
+            isHybrid: false
+        };
     };
 
     return (
@@ -403,14 +421,18 @@ const LPTokensSection = ({ lpTokenBalances }: { lpTokenBalances: Record<string, 
             <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>LP Tokens</div>
             <div className='w-full pb-8 text-center text-md text-muted/90'>Overview of player's liquidity pool tokens.</div>
             <div className='grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-4'>
-                {Object.entries(lpTokenBalances).map(([poolName, balance]) => (
-                    <LpStatCard
-                        key={poolName}
-                        title={poolName}
-                        value={balance}
-                        icons={getTokenIcons(poolName) as any}
-                    />
-                ))}
+                {Object.entries(lpTokenBalances).map(([poolName, balance]) => {
+                    const { name, icons, isHybrid } = getTokenInfo(poolName);
+                    return (
+                        <LpStatCard
+                            key={poolName}
+                            title={name}
+                            value={balance}
+                            icons={icons as any}
+                            isHybrid={isHybrid}
+                        />
+                    );
+                })}
             </div>
         </div>
     );
@@ -457,7 +479,7 @@ const StatCard = ({ title, value, icon }: { title: string, value: number, icon: 
 };
 
 
-const LpStatCard = ({ title, value, icons }: { title: string, value: number, icons: [any, any] }) => {
+const LpStatCard = ({ title, value, icons, isHybrid }: { title: string, value: number, icons: any[], isHybrid: boolean }) => {
     const [useFormat, setUseFormat] = useState(true);
 
     const toggleFormat = () => {
@@ -475,12 +497,20 @@ const LpStatCard = ({ title, value, icons }: { title: string, value: number, ico
         >
             <div className='flex items-center space-x-2'>
                 <div className='text-4xl font-semibold'>{displayValue}</div>
-                <div className="relative w-12 h-8">
-                    <Image src={icons[0]} alt={title.split('-')[0]} width={32} height={32} className='absolute top-0 left-0 z-10 rounded-full' />
-                    <Image src={icons[1]} alt={title.split('-')[1]} width={32} height={32} className='absolute top-0 z-20 rounded-full left-6' />
+                <div className={`relative ${isHybrid ? 'w-8 h-8' : 'w-12 h-8'}`}>
+                    {isHybrid ? (
+                        <Image src={icons[0]} alt={title} width={32} height={32} className='rounded-full' />
+                    ) : (
+                        <>
+                            <Image src={icons[0]} alt={title.split('-')[0]} width={32} height={32} className='absolute top-0 left-0 z-10 rounded-full' />
+                            <Image src={icons[1]} alt={title.split('-')[1]} width={32} height={32} className='absolute top-0 z-20 rounded-full left-6' />
+                        </>
+                    )}
                 </div>
             </div>
-            <div className='text-center text-muted/80'>{title}</div>
+            <div className='text-center text-muted/80'>
+                {title}
+            </div>
         </div>
     );
 };
