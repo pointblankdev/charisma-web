@@ -162,7 +162,7 @@ const DexSection = () => {
                 <Burn />
                 <Swap />
                 <Collect />
-                <SetOwner />
+                {/* <SetOwner /> */}
             </div>
         </div>
     );
@@ -515,7 +515,7 @@ const SetOwner = () => {
             ],
             postConditionMode: PostConditionMode.Deny,
             postConditions: [],
-        }, (window as any).AsignaProvider);
+        });
     }
 
     return (
