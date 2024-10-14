@@ -852,7 +852,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                           >
                             <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                             <span className={isDisabled ? 'text-gray-500' : 'text-white'}>
-                              {token.symbol}{token.symbol === 'STX' ? ' ✨' : token.symbol === 'UPDOG' ? ' 🧪' : ''}
+                              {token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}
                             </span>
                           </button>
                         );
