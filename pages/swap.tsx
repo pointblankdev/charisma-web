@@ -15,9 +15,7 @@ import updogLogo from '@public/sip10/up-dog/logo.gif';
 import syntheticStxLogo from '@public/sip10/synthetic-stx/logo.png';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { ChevronDown, ArrowUpDown } from 'lucide-react';
-import velarApi from '@lib/velar-api';
 import { GetStaticProps } from 'next';
-import cmc from '@lib/cmc-api';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
@@ -43,15 +41,13 @@ type Props = {
   data: {
     chaPerStx: number;
     prices: any;
-    cmcPriceData: any;
     tokens: TokenInfo[];
     pools: PoolInfo[];
   };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const velarPriceData = await velarApi.tokens('all');
-  const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH', 'DOG'] })
+  const prices = await PricesService.getAllTokenPrices()
 
   const result: any = await callReadOnlyFunction({
     contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -134,14 +130,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog',
       decimals: 8
     },
-    // {
-    //   symbol: 'UPDOG',
-    //   name: 'Up Dog',
-    //   image: updogLogo,
-    //   tokenName: 'lp-token',
-    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
-    //   decimals: 6
-    // },
+    {
+      symbol: 'UPDOG',
+      name: 'Updog',
+      image: updogLogo,
+      tokenName: 'lp-token',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
+      decimals: 6
+    },
     // {
     //   symbol: 'synSTX',
     //   name: 'Synthetic STX',
@@ -210,12 +206,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       token1: tokens.find(token => token.symbol === 'DOG') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
-    // {
-    //   id: 9,
-    //   token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
-    //   token1: tokens.find(token => token.symbol === 'UPDOG') as TokenInfo,
-    //   swapFee: { num: 995, den: 1000 }, // 0.5% fee
-    // },
+    {
+      id: 9,
+      token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'UPDOG') as TokenInfo,
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
     // {
     //   id: 10,
     //   token0: tokens.find(token => token.symbol === 'STX') as TokenInfo,
@@ -235,8 +231,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     props: {
       data: {
         chaPerStx,
-        prices: velarPriceData,
-        cmcPriceData,
+        prices,
         tokens,
         pools,
       }
@@ -494,30 +489,9 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
 
   const getPrice = useMemo(() => {
     return (symbol: any) => {
-      switch (symbol) {
-        case 'STX':
-          return data.cmcPriceData.data['STX'].quote.USD.price;
-        case 'CHA':
-          const stxPrice = data.prices.find((token: any) => token.symbol === 'STX').price;
-          const price = stxPrice / data.chaPerStx
-          return price || 0.30;
-        case 'WELSH':
-          return data.cmcPriceData.data['WELSH'].quote.USD.price;
-        case 'ROO':
-          return data.prices.find((token: any) => token.symbol === '$ROO').price;
-        case 'iouWELSH':
-          return data.cmcPriceData.data['WELSH'].quote.USD.price;
-        case 'iouROO':
-          return data.prices.find((token: any) => token.symbol === '$ROO').price;
-        case 'ORDI':
-          return data.cmcPriceData.data['ORDI'].quote.USD.price;
-        case 'DOG':
-          return data.cmcPriceData.data['DOG'].quote.USD.price;
-        default:
-          return 0;
-      }
+      return data.prices[symbol] || 0;
     };
-  }, [data.cmcPriceData.data, data.prices, data.chaPerStx]);
+  }, [data.prices]);
 
   const handleSwap = () => {
     setFromToken(toToken);
@@ -874,11 +848,11 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                             className={`flex items-center w-full px-4 py-2 text-left ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'}`}
                             onClick={() => !isDisabled && selectToken(token, false)}
                             disabled={isDisabled}
-                            title={token.symbol === 'STX' ? 'STX is available as a swap destination for users with over 4000 experience.' : ''}
+                            title={token.symbol === 'STX' ? 'STX is available as a swap destination for users with over 4000 experience.' : token.symbol === 'UPDOG' ? 'Updog is a hybrid token, combining equal parts DOG and WELSH by value. It appreciates over time by accumulating a portion of the fees generated from WELSH-DOG swaps.' : ''}
                           >
                             <Image src={token.image} alt={token.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
                             <span className={isDisabled ? 'text-gray-500' : 'text-white'}>
-                              {token.symbol}{token.symbol === 'STX' ? ' ✨' : ''}
+                              {token.symbol}{token.symbol === 'STX' ? ' ✨' : token.symbol === 'UPDOG' ? ' 🧪' : ''}
                             </span>
                           </button>
                         );

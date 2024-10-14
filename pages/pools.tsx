@@ -32,6 +32,7 @@ import Link from 'next/link';
 import { getPoolData } from '@lib/db-providers/kv';
 import { motion } from 'framer-motion';
 import { getTotalSupply } from '@lib/stacks-api';
+import PricesService from '@lib/prices-service';
 
 export type TokenInfo = {
   symbol: string;
@@ -66,54 +67,6 @@ type Props = {
     tokenPrices: { [key: string]: number };
   };
 };
-
-async function getPoolReserves(poolId: number, token0Address: string, token1Address: string): Promise<{ token0: number; token1: number }> {
-  try {
-    const result: any = await callReadOnlyFunction({
-      contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-      contractName: "univ2-core",
-      functionName: "lookup-pool",
-      functionArgs: [
-        principalCV(token0Address),
-        principalCV(token1Address)
-      ],
-      senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-    });
-
-    if (result.value) {
-      const poolInfo = result.value.data.pool;
-      const reserve0 = Number(poolInfo.data.reserve0.value);
-      const reserve1 = Number(poolInfo.data.reserve1.value);
-      return { token0: reserve0, token1: reserve1 };
-    } else {
-      console.error("Pool not found");
-      return { token0: 0, token1: 0 };
-    }
-  } catch (error) {
-    console.error("Error fetching reserves:", error);
-    return { token0: 0, token1: 0 };
-  }
-}
-
-async function getTokenPrices(): Promise<{ [key: string]: number }> {
-  const prices = await velarApi.tokens('all');
-  return prices.reduce((acc: { [key: string]: number }, token: any) => {
-    acc[token.symbol] = token.price;
-    return acc;
-  }, {});
-}
-
-async function calculateChaPrice(stxPrice: number): Promise<number> {
-  const stxChaReserves = await getPoolReserves(
-    4,
-    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx",
-    "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token"
-  );
-
-  // Calculate CHA price based on STX-CHA pool reserves
-  const chaPrice = (stxPrice * stxChaReserves.token0) / stxChaReserves.token1;
-  return chaPrice || 0.30;
-}
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // Define pools
@@ -174,13 +127,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
     },
-    // {
-    //   id: 9,
-    //   token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6 },
-    //   token1: { symbol: 'UPDOG', name: 'Updog', image: '/sip10/up-dog/logo.gif', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog', tokenId: 'lp-token', decimals: 6 },
-    //   volume24h: 0,
-    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-updog',
-    // },
+    {
+      id: 9,
+      token0: { symbol: 'CHA', name: 'Charisma', image: '/charisma-logo-square.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', tokenId: 'charisma', decimals: 6 },
+      token1: { symbol: 'UPDOG', name: 'Updog', image: '/sip10/up-dog/logo.gif', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog', tokenId: 'lp-token', decimals: 6 },
+      volume24h: 0,
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-updog',
+    },
     // {
     //   id: 10,
     //   token0: { symbol: 'STX', name: 'Stacks', image: '/stx-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx', decimals: 6 },
@@ -198,26 +151,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   ];
 
   // Fetch token prices
-  const tokenPrices = await getTokenPrices();
-  const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH', 'DOG'] })
-
-  // Calculate CHA price
-  const chaPrice = await calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price);
-  tokenPrices['CHA'] = chaPrice;
-
-  // Calculate IOU prices
-  tokenPrices['iouWELSH'] = cmcPriceData.data['WELSH'].quote.USD.price;
-  tokenPrices['iouROO'] = tokenPrices['$ROO'];
-
-  tokenPrices['ORDI'] = cmcPriceData.data['ORDI'].quote.USD.price
-  tokenPrices['DOG'] = cmcPriceData.data['DOG'].quote.USD.price
+  const tokenPrices = await PricesService.getAllTokenPrices();
 
   // Fetch reserves and calculate TVL for each pool
   const pools: PoolInfo[] = await Promise.all(poolsData.map(async (pool) => {
     // lookup total supply of LP tokens
     const totalLpSupply = await getTotalSupply(pool.contractAddress);
 
-    const reserves = await getPoolReserves(pool.id, pool.token0.contractAddress, pool.token1.contractAddress);
+    const reserves = await PricesService.getPoolReserves(pool.id);
 
     const token0Price = tokenPrices[pool.token0.symbol] || 0;
     const token1Price = tokenPrices[pool.token1.symbol] || 0;
@@ -244,7 +185,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       totalLpSupply
     };
   }));
-
 
   return {
     props: {
@@ -523,9 +463,9 @@ const PoolsInterface = ({ data, wallet }: any) => {
                         </div>
                       </td>
                       <td className="py-4 text-white min-w-48">
-                        {numeral(pool.reserves.token0 / 10 ** pool.token0.decimals).format('0,0.00')} {pool.token0.symbol}
+                        {numeral(pool.reserves.token0 / 10 ** pool.token0.decimals).format('0,0')} {pool.token0.symbol}
                         <br />
-                        {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format('0,0.00')} {pool.token1.symbol}
+                        {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format('0,0')} {pool.token1.symbol}
                       </td>
                       <td className="py-4 text-white min-w-24">${numeral(pool.tvl).format('0,0.00')}</td>
                       <td className="py-4 text-white min-w-64">
