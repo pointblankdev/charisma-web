@@ -1,28 +1,19 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import { META_DESCRIPTION } from '@lib/constants';
-import { Card } from '@components/ui/card';
 import { SetStateAction, ChangeEvent, useMemo, useState, useEffect, useCallback, useRef } from 'react';
 import { callReadOnlyFunction, contractPrincipalCV, cvToJSON, hexToCV, listCV, Pc, PostConditionMode, principalCV, tupleCV, uintCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
-import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-import redPill from '@public/sip9/pills/red-pill-floating.gif';
-import redPillNft from '@public/sip9/pills/red-pill-nft.gif';
-import bluePillNft from '@public/sip9/pills/blue-pill-nft.gif';
-import bluePill from '@public/sip9/pills/blue-pill.gif';
-import charismaFloating from '@public/sip9/pills/cha-floating.gif';
-import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import Image, { StaticImageData } from 'next/image';
-import charisma from '@public/charisma.png';
 import stxLogo from '@public/stx-logo.png';
 import welshLogo from '@public/welsh-logo.png';
 import chaLogo from '@public/charisma-logo-square.png';
 import rooLogo from '@public/roo-logo.png';
 import ordiLogo from '@public/ordi-logo.png';
 import dogLogo from '@public/sip10/dogLogo.webp';
+import updogLogo from '@public/sip10/up-dog/logo.gif';
+import syntheticStxLogo from '@public/sip10/synthetic-stx/logo.png';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import numeral from 'numeral';
 import { ChevronDown, ArrowUpDown } from 'lucide-react';
 import velarApi from '@lib/velar-api';
 import { GetStaticProps } from 'next';
@@ -30,6 +21,7 @@ import cmc from '@lib/cmc-api';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
+import PricesService from '@lib/prices-service';
 
 type TokenInfo = {
   symbol: string;
@@ -142,6 +134,30 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog',
       decimals: 8
     },
+    {
+      symbol: 'UPDOG',
+      name: 'Up Dog',
+      image: updogLogo,
+      tokenName: 'lp-token',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
+      decimals: 6
+    },
+    // {
+    //   symbol: 'synSTX',
+    //   name: 'Synthetic STX',
+    //   image: syntheticStxLogo,
+    //   tokenName: 'synthetic-stx',
+    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx',
+    //   decimals: 6
+    // },
+    // {
+    //   symbol: 'gWELSH',
+    //   name: 'Generational Welsh',
+    //   image: welshLogo,
+    //   tokenName: 'lp-token',
+    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.generational-welsh',
+    //   decimals: 6
+    // },
   ];
 
   // Define pools
@@ -166,8 +182,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     },
     {
       id: 4,
-      token0: tokens[0], // wSTX
-      token1: tokens[1], // CHA
+      token0: tokens.find(token => token.symbol === 'STX') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
     {
@@ -194,6 +210,24 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       token1: tokens.find(token => token.symbol === 'DOG') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
+    {
+      id: 9,
+      token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'UPDOG') as TokenInfo,
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
+    // {
+    //   id: 10,
+    //   token0: tokens.find(token => token.symbol === 'STX') as TokenInfo,
+    //   token1: tokens.find(token => token.symbol === 'synSTX') as TokenInfo,
+    //   swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    // },
+    // {
+    //   id: 11,
+    //   token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
+    //   token1: tokens.find(token => token.symbol === 'gWELSH') as TokenInfo,
+    //   swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    // },
     // Add other pools here
   ];
 
@@ -207,7 +241,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         pools,
       }
     },
-    revalidate: 60
+    revalidate: 6000
   };
 };
 
@@ -429,6 +463,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
   const iouRoo = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo');
   const ordi = getBalanceByKey('SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi::brc20-ordi');
   const dog = getBalanceByKey('SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog::runes-dog');
+  const updog = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog::lp-token');
 
   const getBalance = useMemo(() => {
     return (symbol: any) => {
@@ -449,11 +484,13 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
           return ordi || 0;
         case 'DOG':
           return dog || 0;
+        case 'UPDOG':
+          return updog || 0;
         default:
           return 0;
       }
     };
-  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi, dog]);
+  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi, dog, updog]);
 
   const getPrice = useMemo(() => {
     return (symbol: any) => {
@@ -760,7 +797,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                     <ChevronDown className="text-gray-400" size={16} />
                   </button>
                   {showFromTokens && (
-                    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
+                    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-72 grid grid-cols-2">
                       {availableTokens.map((token) => (
                         <button
                           key={token.symbol}
@@ -828,7 +865,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                     <ChevronDown className="text-gray-400" size={16} />
                   </button>
                   {showToTokens && (
-                    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-36">
+                    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-72 grid grid-cols-2">
                       {availableTokens.map((token) => {
                         const isDisabled = !isTokenPairValid(fromToken, token) || (token.symbol === 'STX' && !hasHighExperience);
                         return (
