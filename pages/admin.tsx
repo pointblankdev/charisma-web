@@ -3,7 +3,7 @@ import Page from '@components/page';
 import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
-import { uintCV, contractPrincipalCV, tupleCV, PostConditionMode, callReadOnlyFunction } from "@stacks/transactions";
+import { uintCV, contractPrincipalCV, tupleCV, PostConditionMode, callReadOnlyFunction, standardPrincipalCV } from "@stacks/transactions";
 import { Button } from "@components/ui/button";
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
@@ -105,13 +105,13 @@ export default function AdminDashboard({ poolStats }: AdminDashboardProps) {
                     <div className="mb-12">
                         <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>Swap Fees</div>
                         <div className='w-full pb-8 text-center text-md text-muted/90'>View protocol fees collected by each pool</div>
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                        <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                             {poolStats.map((pool) => (
                                 <Card key={pool.id} className="p-4 bg-[var(--sidebar)] border border-[var(--accents-7)] relative">
-                                    <div className="absolute top-4 right-4 text-sm font-semibold text-green-500">
+                                    <div className="absolute text-sm font-semibold text-green-500 top-4 right-4">
                                         ${numeral(pool.totalUSD).format('0,0.00')}
                                     </div>
-                                    <h3 className="text-lg font-semibold mb-2">{pool.id}: {pool.name}</h3>
+                                    <h3 className="mb-2 text-lg font-semibold">{pool.id}: {pool.name}</h3>
                                     <p>Fees Collected:</p>
                                     <p>Token 0: {numeral(pool.feesCollected.token0 / 1e6).format('0,0.000000')}</p>
                                     <p>Token 1: {numeral(pool.feesCollected.token1 / 1e6).format('0,0.000000')}</p>
@@ -153,7 +153,7 @@ const DexSection = () => {
         <div>
             <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>Charisma DEX</div>
             <div className='w-full pb-8 text-center text-md text-muted/90'>Manage DEX settings and operations</div>
-            <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4'>
+            <div className='grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-2'>
                 <CreatePool />
                 <UpdateSwapFee />
                 <UpdateProtocolFee />
@@ -162,6 +162,7 @@ const DexSection = () => {
                 <Burn />
                 <Swap />
                 <Collect />
+                <SetOwner />
             </div>
         </div>
     );
@@ -172,7 +173,7 @@ const TokenSection = () => {
         <div className="mt-20 mb-12">
             <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Charisma Token</div>
             <div className='w-full pb-8 text-center text-md text-muted/90'>Adjust Charisma Token parameters</div>
-            <div className='grid grid-cols-1 md:grid-cols-2 gap-6'>
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
                 <SetBlocksPerTx />
                 <SetMaxLiquidityFlow />
             </div>
@@ -210,8 +211,8 @@ const CreatePool = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Create Pool</h2>
-                <p className="text-sm mb-4">Creates a new liquidity pool for two tokens with specified fee structures.</p>
+                <h2 className="mb-2 text-xl font-bold">Create Pool</h2>
+                <p className="mb-4 text-sm">Creates a new liquidity pool for two tokens with specified fee structures.</p>
                 <Input className='mb-2' placeholder='Token0' onChange={e => setToken0(e.target.value)} />
                 <Input className='mb-2' placeholder='Token1' onChange={e => setToken1(e.target.value)} />
                 <Input className='mb-2' placeholder='LP Token' onChange={e => setLpToken(e.target.value)} />
@@ -219,7 +220,7 @@ const CreatePool = () => {
                 <Input className='mb-2' placeholder='Protocol Fee (e.g. 500/1000)' onChange={e => setProtocolFee(e.target.value)} />
                 <Input className='mb-2' placeholder='Share Fee (e.g. 0/1000)' onChange={e => setShareFee(e.target.value)} />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={create}>Create Pool</Button>
             </div>
         </Card>
@@ -248,12 +249,12 @@ const UpdateSwapFee = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Update Swap Fee</h2>
-                <p className="text-sm mb-4">Modifies the swap fee for a specific liquidity pool.</p>
+                <h2 className="mb-2 text-xl font-bold">Update Swap Fee</h2>
+                <p className="mb-4 text-sm">Modifies the swap fee for a specific liquidity pool.</p>
                 <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
                 <Input className='mb-2' placeholder='New Fee (e.g. 995/1000)' onChange={e => setFee(e.target.value)} />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={updateSwapFee}>Update Swap Fee</Button>
             </div>
         </Card>
@@ -282,12 +283,12 @@ const UpdateProtocolFee = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Update Protocol Fee</h2>
-                <p className="text-sm mb-4">Changes the protocol fee for a specific liquidity pool.</p>
+                <h2 className="mb-2 text-xl font-bold">Update Protocol Fee</h2>
+                <p className="mb-4 text-sm">Changes the protocol fee for a specific liquidity pool.</p>
                 <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
                 <Input className='mb-2' placeholder='New Fee (e.g. 500/1000)' onChange={e => setFee(e.target.value)} />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={updateProtocolFee}>Update Protocol Fee</Button>
             </div>
         </Card>
@@ -316,12 +317,12 @@ const UpdateShareFee = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Update Share Fee</h2>
-                <p className="text-sm mb-4">Adjusts the share fee for a specific liquidity pool.</p>
+                <h2 className="mb-2 text-xl font-bold">Update Share Fee</h2>
+                <p className="mb-4 text-sm">Adjusts the share fee for a specific liquidity pool.</p>
                 <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
                 <Input className='mb-2' placeholder='New Fee (e.g. 0/1000)' onChange={e => setFee(e.target.value)} />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={updateShareFee}>Update Share Fee</Button>
             </div>
         </Card>
@@ -358,8 +359,8 @@ const Mint = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Mint</h2>
-                <p className="text-sm mb-4">Adds liquidity to a pool and mints LP tokens in return.</p>
+                <h2 className="mb-2 text-xl font-bold">Mint</h2>
+                <p className="mb-4 text-sm">Adds liquidity to a pool and mints LP tokens in return.</p>
                 <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
                 <Input className='mb-2' placeholder='Token0' onChange={e => setToken0(e.target.value)} />
                 <Input className='mb-2' placeholder='Token1' onChange={e => setToken1(e.target.value)} />
@@ -367,7 +368,7 @@ const Mint = () => {
                 <Input className='mb-2' placeholder='Amount0' onChange={e => setAmt0(e.target.value)} />
                 <Input className='mb-2' placeholder='Amount1' onChange={e => setAmt1(e.target.value)} />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={mint}>Mint</Button>
             </div>
         </Card>
@@ -402,15 +403,15 @@ const Burn = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Burn</h2>
-                <p className="text-sm mb-4">Removes liquidity from a pool by burning LP tokens.</p>
+                <h2 className="mb-2 text-xl font-bold">Burn</h2>
+                <p className="mb-4 text-sm">Removes liquidity from a pool by burning LP tokens.</p>
                 <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
                 <Input className='mb-2' placeholder='Token0' onChange={e => setToken0(e.target.value)} />
                 <Input className='mb-2' placeholder='Token1' onChange={e => setToken1(e.target.value)} />
                 <Input className='mb-2' placeholder='LP Token' onChange={e => setLpToken(e.target.value)} />
                 <Input className='mb-2' placeholder='Liquidity' onChange={e => setLiquidity(e.target.value)} />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={burn}>Burn</Button>
             </div>
         </Card>
@@ -447,8 +448,8 @@ const Swap = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Swap</h2>
-                <p className="text-sm mb-4">Executes a token swap in a specific liquidity pool.</p>
+                <h2 className="mb-2 text-xl font-bold">Swap</h2>
+                <p className="mb-4 text-sm">Executes a token swap in a specific liquidity pool.</p>
                 <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
                 <Input className='mb-2' placeholder='Token In' onChange={e => setTokenIn(e.target.value)} />
                 <Input className='mb-2' placeholder='Token Out' onChange={e => setTokenOut(e.target.value)} />
@@ -456,7 +457,7 @@ const Swap = () => {
                 <Input className='mb-2' placeholder='Amount In' onChange={e => setAmtIn(e.target.value)} />
                 <Input className='mb-2' placeholder='Amount Out' onChange={e => setAmtOut(e.target.value)} />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={swap}>Swap</Button>
             </div>
         </Card>
@@ -487,14 +488,45 @@ const Collect = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Collect</h2>
-                <p className="text-sm mb-4">Collects accumulated protocol fees from a specific liquidity pool. Only callable by the protocol fee recipient.</p>
+                <h2 className="mb-2 text-xl font-bold">Collect</h2>
+                <p className="mb-4 text-sm">Collects accumulated protocol fees from a specific liquidity pool. Only callable by the protocol fee recipient.</p>
                 <Input className='mb-2' placeholder='Pool ID' onChange={e => setPoolId(e.target.value)} />
                 <Input className='mb-2' placeholder='Token0' onChange={e => setToken0(e.target.value)} />
                 <Input className='mb-2' placeholder='Token1' onChange={e => setToken1(e.target.value)} />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={collect}>Collect</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetOwner = () => {
+    const [newOwner, setNewOwner] = useState('');
+
+    function collect() {
+        openContractCall({
+            network: network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: 'univ2-core',
+            functionName: "set-owner",
+            functionArgs: [
+                standardPrincipalCV(newOwner),
+            ],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        }, (window as any).AsignaProvider);
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Set Owner</h2>
+                <p className="mb-4 text-sm">Sets a new authorized owner for the DEX, granting access to its administrative functions.</p>
+                <Input className='mb-2' placeholder='New DEX Owner' onChange={e => setNewOwner(e.target.value)} />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={collect}>Set Owner</Button>
             </div>
         </Card>
     );
@@ -520,8 +552,8 @@ const SetBlocksPerTx = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Set Blocks Per Transaction</h2>
-                <p className="text-sm mb-4">Sets the number of blocks that must pass between transactions. Min: 1, Max: 100,000.</p>
+                <h2 className="mb-2 text-xl font-bold">Set Blocks Per Transaction</h2>
+                <p className="mb-4 text-sm">Sets the number of blocks that must pass between transactions. Min: 1, Max: 100,000.</p>
                 <Input
                     className='mb-2'
                     type="number"
@@ -531,7 +563,7 @@ const SetBlocksPerTx = () => {
                     onChange={e => setNewBlocksPerTx(e.target.value)}
                 />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={setBlocksPerTx}>Set Blocks Per Tx</Button>
             </div>
         </Card>
@@ -558,8 +590,8 @@ const SetMaxLiquidityFlow = () => {
     return (
         <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
             <div>
-                <h2 className="text-xl font-bold mb-2">Set Max Liquidity Flow</h2>
-                <p className="text-sm mb-4">Sets the maximum amount of tokens that can be wrapped or unwrapped in a single transaction. Min: 1, Max: 1,000.</p>
+                <h2 className="mb-2 text-xl font-bold">Set Max Liquidity Flow</h2>
+                <p className="mb-4 text-sm">Sets the maximum amount of tokens that can be wrapped or unwrapped in a single transaction. Min: 1, Max: 1,000.</p>
                 <Input
                     className='mb-2'
                     type="number"
@@ -569,7 +601,7 @@ const SetMaxLiquidityFlow = () => {
                     onChange={e => setNewMaxLiquidityFlow(e.target.value)}
                 />
             </div>
-            <div className="mt-auto flex justify-end">
+            <div className="flex justify-end mt-auto">
                 <Button onClick={setMaxLiquidityFlow}>Set Max Liquidity Flow</Button>
             </div>
         </Card>
