@@ -9,7 +9,7 @@
 ;; metadata variables
 (define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/sip10/wstx-synstx/metadata.json"))
 (define-data-var token-name (string-ascii 32) "wSTX-synSTX")
-(define-data-var token-symbol (string-ascii 10) "wSTX-synSTX")
+(define-data-var token-symbol (string-ascii 10) "vSTX")
 (define-data-var token-decimals uint u6)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

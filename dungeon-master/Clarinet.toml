@@ -137,6 +137,10 @@ depends_on = []
 path = "contracts/wstx-scha.clar"
 depends_on = []
 
+[contracts.wstx-synstx]
+path = "contracts/wstx-synstx.clar"
+depends_on = []
+
 [contracts.fix-ious]
 path = "contracts/fix-ious.clar"
 depends_on = []

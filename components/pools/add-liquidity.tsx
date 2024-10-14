@@ -225,7 +225,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
     const userPoolShare = calculateUserPoolShare();
 
     return (
-        <DialogContent className="sm:max-w-lg">
+        <DialogContent className="sm:max-w-xl">
             <DialogHeader>
                 <DialogTitle>{isAdd ? 'Add Liquidity' : 'Remove Liquidity'}</DialogTitle>
                 <DialogDescription>
@@ -255,7 +255,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose }: { pool: PoolInfo | null, isAd
                         max={100}
                         step={0.1}  // Increased precision
                     />
-                    <div className="text-right text-sm text-gray-500">{sliderValue.toFixed(2)}%</div>
+                    <div className="text-sm text-right text-gray-500">{sliderValue.toFixed(2)}%</div>
                 </div>
                 <div className="grid items-center grid-cols-4 gap-4">
                     <div className="flex justify-end">

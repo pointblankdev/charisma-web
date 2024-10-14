@@ -99,6 +99,7 @@ class PricesService {
       'CHA': chaPrice,
       'STX': cmcPriceData.data['STX'].quote.USD.price,
       'wSTX': cmcPriceData.data['STX'].quote.USD.price,
+      'synSTX': cmcPriceData.data['STX'].quote.USD.price,
       'ORDI': cmcPriceData.data['ORDI'].quote.USD.price,
       'DOG': cmcPriceData.data['DOG'].quote.USD.price,
       'WELSH': cmcPriceData.data['WELSH'].quote.USD.price,

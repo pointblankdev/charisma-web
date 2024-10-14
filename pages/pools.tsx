@@ -134,13 +134,13 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       volume24h: 0,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-updog',
     },
-    // {
-    //   id: 10,
-    //   token0: { symbol: 'STX', name: 'Stacks', image: '/stx-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx', decimals: 6 },
-    //   token1: { symbol: 'synSTX', name: 'Synthetic STX', image: '/sip10/synthetic-stx/logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', tokenId: 'lp-token', decimals: 6 },
-    //   volume24h: 0,
-    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
-    // },
+    {
+      id: 10,
+      token0: { symbol: 'STX', name: 'Stacks', image: '/stx-logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx', decimals: 6 },
+      token1: { symbol: 'synSTX', name: 'Synthetic STX', image: '/sip10/synthetic-stx/logo.png', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx', tokenId: 'synthetic-stx', decimals: 6 },
+      volume24h: 0,
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-synstx',
+    },
     // {
     //   id: 11,
     //   token0: { symbol: 'WELSH', name: 'Welsh', image: '/welsh-logo.png', contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token', tokenId: 'welshcorgicoin', decimals: 6 },
@@ -370,8 +370,8 @@ const PoolsInterface = ({ data, wallet }: any) => {
       (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
     ) {
       const alignment = calculatePriceAlignment(pool);
-      // Check if the alignment is outside the 95-105% range
-      return alignment !== null && (alignment < 95 || alignment > 105);
+      // Check if the alignment is outside the 98-102% range
+      return alignment !== null && (alignment < 98 || alignment > 102);
     }
     return false;
   };
