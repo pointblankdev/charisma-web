@@ -138,16 +138,16 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
       decimals: 6
     },
+    {
+      symbol: 'synSTX',
+      name: 'Synthetic STX',
+      image: syntheticStxLogo,
+      tokenName: 'synthetic-stx',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx',
+      decimals: 6
+    },
     // {
-    //   symbol: 'synSTX',
-    //   name: 'Synthetic STX',
-    //   image: syntheticStxLogo,
-    //   tokenName: 'synthetic-stx',
-    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx',
-    //   decimals: 6
-    // },
-    // {
-    //   symbol: 'gWELSH',
+    //   symbol: 'genWELSH',
     //   name: 'Generational Welsh',
     //   image: welshLogo,
     //   tokenName: 'lp-token',
@@ -212,12 +212,12 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       token1: tokens.find(token => token.symbol === 'UPDOG') as TokenInfo,
       swapFee: { num: 995, den: 1000 }, // 0.5% fee
     },
-    // {
-    //   id: 10,
-    //   token0: tokens.find(token => token.symbol === 'STX') as TokenInfo,
-    //   token1: tokens.find(token => token.symbol === 'synSTX') as TokenInfo,
-    //   swapFee: { num: 995, den: 1000 }, // 0.5% fee
-    // },
+    {
+      id: 10,
+      token0: tokens.find(token => token.symbol === 'STX') as TokenInfo,
+      token1: tokens.find(token => token.symbol === 'synSTX') as TokenInfo,
+      swapFee: { num: 995, den: 1000 }, // 0.5% fee
+    },
     // {
     //   id: 11,
     //   token0: tokens.find(token => token.symbol === 'CHA') as TokenInfo,
@@ -459,6 +459,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
   const ordi = getBalanceByKey('SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi::brc20-ordi');
   const dog = getBalanceByKey('SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog::runes-dog');
   const updog = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog::lp-token');
+  const synStx = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx::synthetic-stx');
 
   const getBalance = useMemo(() => {
     return (symbol: any) => {
@@ -480,7 +481,9 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
         case 'DOG':
           return dog || 0;
         case 'UPDOG':
-          return updog || 0;
+          return dog || 0;
+        case 'synSTX':
+          return synStx || 0;
         default:
           return 0;
       }
