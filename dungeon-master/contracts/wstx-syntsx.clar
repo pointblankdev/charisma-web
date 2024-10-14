@@ -1,4 +1,4 @@
-;; CHA-UPDOG lp token
+;; wSTX-synSTX lp token
 
 (impl-trait .dao-traits-v4.sip010-ft-trait)
 (impl-trait .dao-traits-v4.ft-plus-trait)
@@ -7,9 +7,9 @@
 (define-fungible-token lp-token)
 
 ;; metadata variables
-(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/sip10/cha-updog/metadata.json"))
-(define-data-var token-name (string-ascii 32) "CHA-UPDOG")
-(define-data-var token-symbol (string-ascii 10) "CHA-UPDOG")
+(define-data-var token-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/sip10/wstx-synstx/metadata.json"))
+(define-data-var token-name (string-ascii 32) "wSTX-synSTX")
+(define-data-var token-symbol (string-ascii 10) "wSTX-synSTX")
 (define-data-var token-decimals uint u6)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
