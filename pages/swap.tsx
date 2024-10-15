@@ -481,14 +481,14 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
         case 'DOG':
           return dog || 0;
         case 'UPDOG':
-          return dog || 0;
+          return updog || 0;
         case 'synSTX':
           return synStx || 0;
         default:
           return 0;
       }
     };
-  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi, dog, updog]);
+  }, [stx, cha, welsh, roo, iouWelsh, iouRoo, ordi, dog, updog, synStx]);
 
   const getPrice = useMemo(() => {
     return (symbol: any) => {
