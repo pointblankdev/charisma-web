@@ -280,7 +280,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
 
-  const hasHighExperience = experienceBalance >= 4000;
+  const hasHighExperience = experienceBalance >= 40000;
 
   // Remove STX filtering from availableTokens
   const availableTokens = data.tokens;
@@ -548,7 +548,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
       }
     } else {
       // Only allow selecting STX as 'to' token if user has high experience
-      if (token.symbol !== 'STX' || hasHighExperience) {
+      if (token.symbol !== 'STX' || hasHighExperience || fromToken.symbol === 'synSTX') {
         setToToken(token);
         setShowToTokens(false);
       }
@@ -687,7 +687,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
 
           if (nextToken && !visited.has(nextToken.symbol)) {
             // Check if the path is allowed for low experience users
-            if (!hasHighExperience && nextToken.symbol === 'STX') continue;
+            if (!hasHighExperience && nextToken.symbol === 'STX' && fromToken.symbol !== 'synSTX') continue;
             const newPath = [...path, nextToken];
             const newVisited = new Set(visited).add(nextToken.symbol);
             queue.push({ path: newPath, visited: newVisited });
@@ -844,7 +844,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
                   {showToTokens && (
                     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-72 grid grid-cols-2">
                       {availableTokens.map((token) => {
-                        const isDisabled = !isTokenPairValid(fromToken, token) || (token.symbol === 'STX' && !hasHighExperience);
+                        const isDisabled = !isTokenPairValid(fromToken, token) || (token.symbol === 'STX' && !hasHighExperience && fromToken.symbol !== 'synSTX');
                         return (
                           <button
                             key={token.symbol}
