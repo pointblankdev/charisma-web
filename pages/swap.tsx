@@ -280,7 +280,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
 
-  const hasHighExperience = experienceBalance >= 40000;
+  const hasHighExperience = experienceBalance >= 4000;
 
   // Remove STX filtering from availableTokens
   const availableTokens = data.tokens;
