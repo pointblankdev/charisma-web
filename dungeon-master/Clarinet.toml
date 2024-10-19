@@ -14,36 +14,8 @@ depends_on = []
 path = "contracts/dme000-governance-token.clar"
 depends_on = []
 
-[contracts.liquid-staked-charisma]
-path = "contracts/liquid-staked-charisma.clar"
-depends_on = []
-
 [contracts.experience]
 path = "contracts/experience.clar"
-depends_on = []
-
-[contracts.lands]
-path = "contracts/lands.clar"
-depends_on = []
-
-[contracts.energy-storage]
-path = "contracts/energy-storage.clar"
-depends_on = []
-
-[contracts.token-gate-v0]
-path = "contracts/token-gate-v0.clar"
-depends_on = []
-
-[contracts.edk-v0]
-path = "contracts/edk-v0.clar"
-depends_on = []
-
-[contracts.land-helper-v3]
-path = "contracts/land-helper-v3.clar"
-depends_on = []
-
-[contracts.kraqen-lotto]
-path = "contracts/kraqen-lotto.clar"
 depends_on = []
 
 [contracts.odins-raven]
@@ -62,22 +34,6 @@ depends_on = []
 path = "contracts/giga-pepe-v2.clar"
 depends_on = []
 
-[contracts.gbab-v0]
-path = "contracts/gbab-v0.clar"
-depends_on = []
-
-[contracts.recovery-claim-test]
-path = "contracts/recovery-claim-test.clar"
-depends_on = []
-
-[contracts.energy-airdrop]
-path = "contracts/energy-airdrop.clar"
-depends_on = []
-
-[contracts.cha-reset]
-path = "contracts/cha-reset.clar"
-depends_on = []
-
 [contracts.charisma-claims]
 path = "contracts/charisma-claims.clar"
 depends_on = []
@@ -94,73 +50,50 @@ depends_on = []
 path = "contracts/charisma-token.clar"
 depends_on = []
 
-[contracts.synthetic-welsh]
-path = "contracts/synthetic-welsh.clar"
-
-[contracts.synthetic-roo]
-path = "contracts/synthetic-roo.clar"
+[contracts.energy]
+path = "contracts/energy.clar"
 depends_on = []
 
-[contracts.cha-recovery]
-path = "contracts/cha-recovery.clar"
+[contracts.meme-engine-manager]
+path = "contracts/meme-engine-manager.clar"
 depends_on = []
 
-[contracts.redemptions-vault]
-path = "contracts/redemptions-vault.clar"
+[contracts.raven-resistance]
+path = "contracts/raven-resistance.clar"
 depends_on = []
 
-[contracts.univ2-share-fee-to]
-path = "contracts/univ2-share-fee-to.clar"
+[contracts.dungeon-keeper]
+path = "contracts/dungeon-keeper.clar"
 depends_on = []
 
-[contracts.univ2-core]
-path = "contracts/univ2-core.clar"
+[contracts.arcana]
+path = "contracts/arcana.clar"
 depends_on = []
 
-[contracts.univ2-library]
-path = "contracts/univ2-library.clar"
+[contracts.aura]
+path = "contracts/aura.clar"
 depends_on = []
 
-[contracts.univ2-router]
-path = "contracts/univ2-router.clar"
+[contracts.meme-engine]
+path = "contracts/meme-engine.clar"
 depends_on = []
 
-[contracts.welsh-iouwelsh]
-path = "contracts/welsh-iouwelsh.clar"
+[contracts.energy-overload]
+path = "contracts/energy-overload.clar"
 depends_on = []
 
-[contracts.lp-recovery-calc]
-path = "contracts/lp-recovery-calc.clar"
-depends_on = []
-
-[contracts.wstx-scha]
-path = "contracts/wstx-scha.clar"
-depends_on = []
-
-[contracts.wstx-synstx]
-path = "contracts/wstx-synstx.clar"
-depends_on = []
-
-[contracts.fix-ious]
-path = "contracts/fix-ious.clar"
-depends_on = []
-
-[contracts.lp-batch-checker]
-path = "contracts/lp-batch-checker.clar"
-depends_on = []
-
-[contracts.all-lp-calculator]
-path = "contracts/all-lp-calculator.clar"
-depends_on = []
-
-[contracts.hodl]
-path = "contracts/hodl.clar"
+[contracts.dungeon-crawler]
+path = "contracts/dungeon-crawler.clar"
 depends_on = []
 
 
 # traits
 [contracts.dao-traits-v4]
 path = "contracts/dao-traits-v4.clar"
+depends_on = []
+
+[contracts.dao-traits-v5]
+path = "contracts/dao-traits-v5.clar"
 depends_on = []
 
 [repl.analysis]
