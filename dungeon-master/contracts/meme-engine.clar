@@ -22,7 +22,7 @@
 ;; - get-balance: Retrieves token balance at specific blocks, handling historical data.
 ;;
 ;; Integration with Charisma Protocol:
-;; - Implements the engine-trait defined in dao-traits-v5.
+;; - Implements the engine-trait defined in dao-traits-v6.
 ;; - Utilizes the Meme Engine Manager for shared parameters and sample point generation.
 ;; - Interacts with token-specific contracts (e.g., .charisma-token) for balance checks.
 ;; - Calls Arcana and Aura contracts for dynamic multipliers.
@@ -37,7 +37,7 @@
 ;; diverse applications in DeFi, GameFi, and beyond.
 
 ;; Traits
-(impl-trait .dao-traits-v5.engine-trait)
+(impl-trait .dao-traits-v6.engine-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))

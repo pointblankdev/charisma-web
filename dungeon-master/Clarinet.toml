@@ -46,18 +46,6 @@ depends_on = []
 path = "contracts/energy.clar"
 depends_on = []
 
-[contracts.meme-engine-manager]
-path = "contracts/meme-engine-manager.clar"
-depends_on = []
-
-[contracts.raven-resistance]
-path = "contracts/raven-resistance.clar"
-depends_on = []
-
-[contracts.dungeon-keeper]
-path = "contracts/dungeon-keeper.clar"
-depends_on = []
-
 [contracts.arcana]
 path = "contracts/arcana.clar"
 depends_on = []
@@ -66,16 +54,40 @@ depends_on = []
 path = "contracts/aura.clar"
 depends_on = []
 
-[contracts.meme-engine]
-path = "contracts/meme-engine.clar"
+[contracts.meme-engine-manager]
+path = "contracts/meme-engine-manager.clar"
+depends_on = []
+
+[contracts.raven-resistance]
+path = "contracts/raven-resistance.clar"
 depends_on = []
 
 [contracts.energy-overload]
 path = "contracts/energy-overload.clar"
 depends_on = []
 
+[contracts.meme-engine]
+path = "contracts/meme-engine.clar"
+depends_on = []
+
+[contracts.dungeon-keeper]
+path = "contracts/dungeon-keeper.clar"
+depends_on = []
+
 [contracts.dungeon-crawler]
 path = "contracts/dungeon-crawler.clar"
+depends_on = []
+
+[contracts.charisma-randomizer]
+path = "contracts/charisma-randomizer.clar"
+depends_on = []
+
+[contracts.test-interaction-1]
+path = "contracts/interactions/test-interaction-1.clar"
+depends_on = []
+
+[contracts.keepers-challenge]
+path = "contracts/interactions/keepers-challenge.clar"
 depends_on = []
 
 
@@ -84,8 +96,8 @@ depends_on = []
 path = "contracts/dao-traits-v4.clar"
 depends_on = []
 
-[contracts.dao-traits-v5]
-path = "contracts/dao-traits-v5.clar"
+[contracts.dao-traits-v6]
+path = "contracts/dao-traits-v6.clar"
 depends_on = []
 
 [repl.analysis]

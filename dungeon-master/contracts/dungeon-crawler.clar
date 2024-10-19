@@ -43,8 +43,8 @@
 ;; approach to stake-less participation, dynamic reward mechanisms, and now includes
 ;; additional incentives through Charisma token wrapping.
 
-(use-trait interaction-trait .dao-traits-v5.interaction-trait)
-(use-trait engine-trait .dao-traits-v5.engine-trait)
+(use-trait interaction-trait .dao-traits-v6.interaction-trait)
+(use-trait engine-trait .dao-traits-v6.engine-trait)
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))

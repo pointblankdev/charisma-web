@@ -16,6 +16,7 @@
 ;; - Contract Ownership: Multi-owner structure for enhanced security and governance.
 ;; - Verified Interactions: Whitelist of approved interaction contracts.
 ;; - Enabled Engines: List of authorized meme engines.
+;; - Enabled Clients: List of authorized clients.
 ;; - Protocol Parameters: Configurable settings for burn percentages and rewards.
 ;; - Frozen States: Ability to pause listings, interactions, and unlistings.
 ;;
@@ -41,6 +42,7 @@
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
 (define-constant ERR_TOKEN_TRANSFER_FAILED (err u501))
+(define-constant ERR_EXCEED_MAX_LIMIT (err u502))
 
 ;; Configuration
 (define-data-var minimum-burn-percentage uint u100)
@@ -49,16 +51,24 @@
 (define-data-var interactions-frozen bool false)
 (define-data-var unlistings-frozen bool false)
 
+;; Maximum limits for token operations
+(define-data-var max-exp-mint uint u1000000000)  ;; 1000 Experience
+(define-data-var max-exp-burn uint u1000000000)  ;; 1000 Experience
+(define-data-var max-energy-mint uint u1000000000)  ;; 1000 Energy
+(define-data-var max-energy-burn uint u1000000000)  ;; 1000 Energy
+(define-data-var max-dmg-transfer uint u1000000000)  ;; 1000 DMG
+
 ;; Maps
 (define-map verified-interactions principal bool)
 (define-map enabled-engines principal bool)
+(define-map enabled-clients principal bool)
 (define-map contract-owners principal bool)
 
 ;; Constants
 (define-constant FEE-SCALE u1000000)
 
 ;; Authorization checks
-(define-private (is-contract-owner)
+(define-read-only (is-contract-owner)
   (default-to false (map-get? contract-owners contract-caller))
 )
 
@@ -70,6 +80,9 @@
 
 ;; Initialize the enabled engines map
 (map-set enabled-engines .meme-engine-cha true)
+
+;; Initialize the enabled clients map
+(map-set enabled-engines .dungeon-crawler true)
 
 ;; Admin functions
 
@@ -129,6 +142,20 @@
   )
 )
 
+(define-public (add-client (client principal))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (map-set enabled-clients client true))
+  )
+)
+
+(define-public (remove-client (client principal))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (map-delete enabled-clients client))
+  )
+)
+
 (define-public (set-frozen-state (listings bool) (interactions bool) (unlistings bool))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
@@ -139,29 +166,81 @@
   )
 )
 
+(define-public (set-max-exp-mint (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-exp-mint new-max))
+  )
+)
+
+(define-public (set-max-exp-burn (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-exp-burn new-max))
+  )
+)
+
+(define-public (set-max-energy-mint (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-energy-mint new-max))
+  )
+)
+
+(define-public (set-max-energy-burn (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-energy-burn new-max))
+  )
+)
+
+(define-public (set-max-dmg-transfer (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-dmg-transfer new-max))
+  )
+)
+
 ;; Public functions for token operations
 
 (define-public (mint-exp (recipient principal) (amount uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (asserts! (<= amount (var-get max-exp-mint)) ERR_EXCEED_MAX_LIMIT)
     (contract-call? .experience mint amount recipient)
+  )
+)
+
+(define-public (burn-exp (burner principal) (amount uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (asserts! (<= amount (var-get max-exp-burn)) ERR_EXCEED_MAX_LIMIT)
+    (contract-call? .experience burn amount burner)
+  )
+)
+
+(define-public (mint-energy (recipient principal) (amount uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (asserts! (<= amount (var-get max-energy-mint)) ERR_EXCEED_MAX_LIMIT)
+    (contract-call? .energy mint amount recipient)
   )
 )
 
 (define-public (burn-energy (burner principal) (amount uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (asserts! (<= amount (var-get max-energy-burn)) ERR_EXCEED_MAX_LIMIT)
     (contract-call? .energy burn amount burner)
   )
 )
 
 (define-public (transfer-dmg (sender principal) (recipient principal) (amount uint))
-  (begin
+  (let
+    ((reduced-amount (apply-raven-reduction amount sender)))
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (let
-      ((reduced-amount (apply-raven-reduction amount sender)))
-      (contract-call? .dme000-governance-token transfer reduced-amount sender recipient none)
-    )
+    (asserts! (<= reduced-amount (var-get max-dmg-transfer)) ERR_EXCEED_MAX_LIMIT)
+    (contract-call? .dme000-governance-token transfer reduced-amount sender recipient none)
   )
 )
 
@@ -186,6 +265,10 @@
 
 (define-read-only (is-enabled-engine (engine principal))
   (default-to false (map-get? enabled-engines engine))
+)
+
+(define-read-only (is-enabled-client (client principal))
+  (default-to false (map-get? enabled-clients client))
 )
 
 (define-read-only (get-minimum-burn-percentage)

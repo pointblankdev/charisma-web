@@ -5,7 +5,7 @@
 ;; such as Memobot ownership. The energy preservation amount is configurable and
 ;; stacks with multiple Memobots.
 
-(use-trait sip10-trait .dao-traits-v5.sip010-ft-trait)
+(use-trait sip10-trait .dao-traits-v6.sip010-ft-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))

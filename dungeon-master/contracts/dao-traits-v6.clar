@@ -75,7 +75,7 @@
   (
     (get-interaction-uri () (response (optional (string-utf8 256)) uint))
     (get-actions () (response (list 8 (string-ascii 32)) uint))
-    (execute ((string-ascii 32)) (response bool bool))
+    (execute ((string-ascii 32)) (response bool uint))
   )
 )
 
