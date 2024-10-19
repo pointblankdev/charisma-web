@@ -11,17 +11,19 @@
 ;; 3. Energy Generation: Interfaces with meme engines to generate energy based on user actions.
 ;; 4. Reward Distribution: Manages the minting of experience tokens and payment of royalties.
 ;; 5. Token Operations: Coordinates burning of energy tokens and transfer of DMG tokens.
+;; 6. Charisma Token Wrapping: Attempts to wrap Charisma tokens as an additional reward mechanism.
 ;;
 ;; Core Components:
 ;; - Listed Interactions: Maintains a map of all listed interaction contracts and their parameters.
 ;; - Tap-Interact Mechanism: Allows users to generate energy through meme engines while interacting.
 ;; - Verification System: Checks interaction validity and applies appropriate reward logic.
+;; - Success-based Rewards: Only distributes rewards for verified and successful interactions.
 ;;
 ;; Integration with Charisma Ecosystem:
 ;; - Dungeon Keeper: Relies on for authorization, parameter checks, and token operations.
 ;; - Meme Engines: Interfaces with for energy generation during tap-interact actions.
 ;; - Energy Overload: Manages energy overflow after interactions.
-;; - Token Contracts: Coordinates with Experience, Energy, and DMG token contracts via Dungeon Keeper.
+;; - Token Contracts: Coordinates with Experience, Energy, DMG, and Charisma token contracts.
 ;;
 ;; Key Functions:
 ;; - list-interaction: Allows users to list new interaction contracts.
@@ -31,18 +33,22 @@
 ;;
 ;; Security Features:
 ;; - Strict checks for interaction listing parameters and authorizations.
+;; - Verification of interactions before applying rewards.
+;; - Success-based reward distribution to ensure fairness.
 ;; - Delegation of sensitive operations to the Dungeon Keeper contract.
 ;;
 ;; This contract is crucial for enabling user engagement with the Charisma protocol,
 ;; providing a seamless interface for interactions while ensuring proper energy generation,
 ;; reward distribution, and ecosystem integrity. It embodies the protocol's innovative
-;; approach to stake-less participation and dynamic reward mechanisms.
+;; approach to stake-less participation, dynamic reward mechanisms, and now includes
+;; additional incentives through Charisma token wrapping.
 
 (use-trait interaction-trait .dao-traits-v5.interaction-trait)
 (use-trait engine-trait .dao-traits-v5.engine-trait)
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
+(define-constant ERR_PROTOCOL_FROZEN (err u403))
 (define-constant ERR_NOT_FOUND (err u404))
 (define-constant ERR_ALREADY_LISTED (err u409))
 (define-constant ERR_INVALID_AMOUNT (err u400))
@@ -66,7 +72,7 @@
 (define-public (list-interaction (interaction <interaction-trait>) (experience-reward uint) (burn-percentage uint) (royalty-percentage uint) (royalty-address principal))
   (let
     ((interaction-principal (contract-of interaction)))
-    (asserts! (not (get listings-frozen (contract-call? .dungeon-keeper get-frozen-state))) (err u403))
+    (asserts! (not (get listings-frozen (contract-call? .dungeon-keeper get-frozen-state))) ERR_PROTOCOL_FROZEN)
     (asserts! (is-none (map-get? listed-interactions interaction-principal)) ERR_ALREADY_LISTED)
     (asserts! (>= burn-percentage (contract-call? .dungeon-keeper get-minimum-burn-percentage)) ERR_INVALID_AMOUNT)
     (asserts! (>= experience-reward (contract-call? .dungeon-keeper get-minimum-experience-reward)) ERR_INVALID_AMOUNT)
@@ -82,7 +88,7 @@
   (let
     ((interaction-principal (contract-of interaction))
      (listing (unwrap! (map-get? listed-interactions interaction-principal) ERR_NOT_FOUND)))
-    (asserts! (not (get unlistings-frozen (contract-call? .dungeon-keeper get-frozen-state))) (err u403))
+    (asserts! (not (get unlistings-frozen (contract-call? .dungeon-keeper get-frozen-state))) ERR_PROTOCOL_FROZEN)
     (asserts! (is-eq (get owner listing) tx-sender) ERR_UNAUTHORIZED)
     
     (ok (map-delete listed-interactions interaction-principal))
@@ -112,24 +118,24 @@
      (royalty-amount (/ (* experience-reward (get royalty-percentage listing)) u10000))
      (royalty-address (get royalty-address listing))
      (is-verified (contract-call? .dungeon-keeper is-verified-interaction interaction-contract))
-     (action-result (match (contract-call? interaction execute action) success success error false)))
-    (asserts! (not (get interactions-frozen (contract-call? .dungeon-keeper get-frozen-state))) (err u403))
-    (print {success: action-result})
-    
+     (is-success (match (contract-call? interaction execute action) success success error false)))
+    (asserts! (not (get interactions-frozen (contract-call? .dungeon-keeper get-frozen-state))) ERR_PROTOCOL_FROZEN)
+    (print {action-success: is-success})
     ;; Burn energy tokens (always burn, regardless of verification)
     (try! (contract-call? .dungeon-keeper burn-energy tx-sender burn-amount))
-    
-    ;; Only mint experience and transfer royalty if the interaction is verified
-    (if is-verified
-      (begin
+    ;; Only mint experience and transfer royalty if the interaction is verified and successful
+    (if (and is-success is-verified)
+      (let
+        ((max-wrap-amount (unwrap-panic (contract-call? .charisma-token get-max-liquidity-flow))))
         ;; Mint experience tokens to the user
         (try! (contract-call? .dungeon-keeper mint-exp tx-sender experience-reward))
-        
         ;; Transfer royalty in DMG tokens (Raven reduction applied)
         (try! (contract-call? .dungeon-keeper transfer-dmg tx-sender royalty-address royalty-amount))
-        (ok action-result)
+        ;; Attempt to win the block reward of wrapping charisma tokens
+        (match (contract-call? .charisma-token wrap max-wrap-amount) success true error false)
+        (ok is-success)
       )
-      (ok action-result)
+      (ok is-success)
     )
   )
 )
