@@ -121,6 +121,7 @@ export default function AdminDashboard({ poolStats }: AdminDashboardProps) {
                     </div>
                     <DexSection />
                     <TokenSection />
+                    <DungeonKeeperSection />
                 </div>
             </Layout>
         </Page>
@@ -603,6 +604,329 @@ const SetMaxLiquidityFlow = () => {
             </div>
             <div className="flex justify-end mt-auto">
                 <Button onClick={setMaxLiquidityFlow}>Set Max Liquidity Flow</Button>
+            </div>
+        </Card>
+    );
+};
+
+const DungeonKeeperSection = () => {
+    return (
+        <div className="mt-20 mb-12">
+            <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>Dungeon Keeper</div>
+            <div className='w-full pb-8 text-center text-md text-muted/90'>Manage Dungeon Keeper settings and operations</div>
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <AddContractOwner />
+                <RemoveContractOwner />
+                <AddVerifiedInteraction />
+                <RemoveVerifiedInteraction />
+                <SetMaxReward />
+                <SetMaxPunish />
+                <SetMaxEnergize />
+                <SetMaxExhaust />
+                <SetMaxTransfer />
+            </div>
+        </div>
+    );
+};
+
+const latestDungeonKeeperContractId = 'dungeon-keeper-rc2';
+
+// Helper function to convert decimal input to micro-units
+const toMicroUnits = (value: string) => {
+    return Math.floor(parseFloat(value) * 1000000);
+};
+
+const AddContractOwner = () => {
+    const [newOwner, setNewOwner] = useState('');
+
+    function addContractOwner() {
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "add-contract-owner",
+            functionArgs: [standardPrincipalCV(newOwner)],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Add Contract Owner</h2>
+                <p className="mb-4 text-sm">Adds a new contract owner to the Dungeon Keeper.</p>
+                <Input className='mb-2' placeholder='New Owner Address' onChange={e => setNewOwner(e.target.value)} />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={addContractOwner}>Add Owner</Button>
+            </div>
+        </Card>
+    );
+};
+
+const RemoveContractOwner = () => {
+    const [ownerToRemove, setOwnerToRemove] = useState('');
+
+    function removeContractOwner() {
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "remove-contract-owner",
+            functionArgs: [standardPrincipalCV(ownerToRemove)],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Remove Contract Owner</h2>
+                <p className="mb-4 text-sm">Removes a contract owner from the Dungeon Keeper.</p>
+                <Input className='mb-2' placeholder='Owner Address to Remove' onChange={e => setOwnerToRemove(e.target.value)} />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={removeContractOwner}>Remove Owner</Button>
+            </div>
+        </Card>
+    );
+};
+
+const AddVerifiedInteraction = () => {
+    const [newInteraction, setNewInteraction] = useState('');
+
+    function addVerifiedInteraction() {
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "add-verified-interaction",
+            functionArgs: [contractPrincipalCV(newInteraction.split('.')[0], newInteraction.split('.')[1])],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Add Verified Interaction</h2>
+                <p className="mb-4 text-sm">Adds a new verified interaction to the Dungeon Keeper.</p>
+                <Input className='mb-2' placeholder='New Interaction Contract' onChange={e => setNewInteraction(e.target.value)} />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={addVerifiedInteraction}>Add Interaction</Button>
+            </div>
+        </Card>
+    );
+};
+
+const RemoveVerifiedInteraction = () => {
+    const [interactionToRemove, setInteractionToRemove] = useState('');
+
+    function removeVerifiedInteraction() {
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "remove-verified-interaction",
+            functionArgs: [contractPrincipalCV(interactionToRemove.split('.')[0], interactionToRemove.split('.')[1])],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Remove Verified Interaction</h2>
+                <p className="mb-4 text-sm">Removes a verified interaction from the Dungeon Keeper.</p>
+                <Input className='mb-2' placeholder='Interaction Contract to Remove' onChange={e => setInteractionToRemove(e.target.value)} />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={removeVerifiedInteraction}>Remove Interaction</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetMaxReward = () => {
+    const [newMaxReward, setNewMaxReward] = useState('');
+
+    function setMaxReward() {
+        const microUnits = toMicroUnits(newMaxReward);
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "set-max-reward",
+            functionArgs: [uintCV(microUnits)],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Set Max Reward</h2>
+                <p className="mb-4 text-sm">Sets the maximum reward amount for Experience tokens (in EXP).</p>
+                <Input
+                    className='mb-2'
+                    type="number"
+                    step="0.000001"
+                    placeholder='New Max Reward (EXP)'
+                    onChange={e => setNewMaxReward(e.target.value)}
+                />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={setMaxReward}>Set Max Reward</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetMaxPunish = () => {
+    const [newMaxPunish, setNewMaxPunish] = useState('');
+
+    function setMaxPunish() {
+        const microUnits = toMicroUnits(newMaxPunish);
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "set-max-punish",
+            functionArgs: [uintCV(microUnits)],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Set Max Punish</h2>
+                <p className="mb-4 text-sm">Sets the maximum amount of Experience tokens that can be burned (in EXP).</p>
+                <Input
+                    className='mb-2'
+                    type="number"
+                    step="0.000001"
+                    placeholder='New Max Punish (EXP)'
+                    onChange={e => setNewMaxPunish(e.target.value)}
+                />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={setMaxPunish}>Set Max Punish</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetMaxEnergize = () => {
+    const [newMaxEnergize, setNewMaxEnergize] = useState('');
+
+    function setMaxEnergize() {
+        const microUnits = toMicroUnits(newMaxEnergize);
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "set-max-energize",
+            functionArgs: [uintCV(microUnits)],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Set Max Energize</h2>
+                <p className="mb-4 text-sm">Sets the maximum amount of Energy tokens that can be minted (in Energy).</p>
+                <Input
+                    className='mb-2'
+                    type="number"
+                    step="0.000001"
+                    placeholder='New Max Energize (Energy)'
+                    onChange={e => setNewMaxEnergize(e.target.value)}
+                />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={setMaxEnergize}>Set Max Energize</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetMaxExhaust = () => {
+    const [newMaxExhaust, setNewMaxExhaust] = useState('');
+
+    function setMaxExhaust() {
+        const microUnits = toMicroUnits(newMaxExhaust);
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "set-max-exhaust",
+            functionArgs: [uintCV(microUnits)],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Set Max Exhaust</h2>
+                <p className="mb-4 text-sm">Sets the maximum amount of Energy tokens that can be burned (in Energy).</p>
+                <Input
+                    className='mb-2'
+                    type="number"
+                    step="0.000001"
+                    placeholder='New Max Exhaust (Energy)'
+                    onChange={e => setNewMaxExhaust(e.target.value)}
+                />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={setMaxExhaust}>Set Max Exhaust</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetMaxTransfer = () => {
+    const [newMaxTransfer, setNewMaxTransfer] = useState('');
+
+    function setMaxTransfer() {
+        const microUnits = toMicroUnits(newMaxTransfer);
+        openContractCall({
+            network,
+            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            contractName: latestDungeonKeeperContractId,
+            functionName: "set-max-transfer",
+            functionArgs: [uintCV(microUnits)],
+            postConditionMode: PostConditionMode.Deny,
+            postConditions: [],
+        });
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Set Max Transfer</h2>
+                <p className="mb-4 text-sm">Sets the maximum amount of DMG tokens that can be transferred (in DMG).</p>
+                <Input
+                    className='mb-2'
+                    type="number"
+                    step="0.000001"
+                    placeholder='New Max Transfer (DMG)'
+                    onChange={e => setNewMaxTransfer(e.target.value)}
+                />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={setMaxTransfer}>Set Max Transfer</Button>
             </div>
         </Card>
     );
