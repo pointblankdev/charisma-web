@@ -7,62 +7,62 @@
 ;;
 ;; Key Responsibilities:
 ;; 1. Authorization Management: Controls contract ownership and access rights.
-;; 2. Protocol Parameter Management: Sets and updates key protocol parameters.
-;; 3. Interaction Verification: Manages the list of verified interactions and enabled engines.
-;; 4. Token Operations: Handles minting, burning, and transfers of protocol tokens.
-;; 5. Security Controls: Implements freezing mechanisms for various protocol actions.
+;; 2. Interaction Verification: Manages the list of verified interactions.
+;; 3. Token Operations: Handles minting, burning, and transfers of protocol tokens.
+;; 4. Security Controls: Implements limits and verification checks for various protocol actions.
+;; 5. Energy Capacity Management: Applies maximum capacity to energy generation.
 ;;
 ;; Core Components:
 ;; - Contract Ownership: Multi-owner structure for enhanced security and governance.
 ;; - Verified Interactions: Whitelist of approved interaction contracts.
-;; - Enabled Engines: List of authorized meme engines.
-;; - Enabled Clients: List of authorized clients.
-;; - Protocol Parameters: Configurable settings for burn percentages and rewards.
-;; - Frozen States: Ability to pause listings, interactions, and unlistings.
+;; - Token Integration: Manages operations for Experience, Energy, and DMG tokens.
+;; - Operation Limits: Configurable maximum limits for token operations.
+;; - Raven Resistance Integration: Applies burn reductions in token transfers.
 ;;
-;; Token Integration:
-;; - Experience: Minting rewards for protocol participation.
-;; - Energy: Burning mechanism for protocol actions.
-;; - DMG: Transfer functionality between principals.
+;; Key Functions:
+;; - Admin Functions: Add/remove contract owners, manage verified interactions, set operation limits.
+;; - Token Operations: 
+;;   - reward: Mint Experience tokens (max 1000 Experience).
+;;   - punish: Burn Experience tokens (max 100 Experience).
+;;   - energize: Mint Energy tokens with capacity limit (max 1000 Energy).
+;;   - exhaust: Burn Energy tokens (max 100 Energy).
+;;   - transfer: Transfer DMG tokens with Raven Resistance reduction (max 100 DMG).
 ;;
 ;; Security Features:
 ;; - Multi-owner structure to prevent single points of failure.
 ;; - Strict access controls on all admin functions.
-;; - Flexible freezing mechanisms to respond to potential issues.
+;; - Verification checks for interaction contracts.
+;; - Maximum limits on token operations to prevent abuse.
+;; - Energy capacity limit applied through integration with energy-capacity contract.
 ;;
 ;; Integration with Charisma Ecosystem:
-;; - Works in conjunction with meme engines to manage energy generation.
-;; - Interacts with token contracts (Experience, Energy, DMG) for reward and burn mechanics.
-;; - Utilizes Raven Resistance for burn reductions in token transfers.
+;; - Verifies and manages interaction contracts within the protocol.
+;; - Interacts with token contracts (Experience, Energy, DMG) for core operations.
+;; - Utilizes Raven Resistance for burn reductions in DMG transfers.
+;; - Applies energy capacity limits using the energy-capacity contract.
 ;;
 ;; This contract is crucial for maintaining the security, flexibility, and proper functioning
-;; of the Charisma protocol. It provides the necessary controls and integrations to support
-;; the protocol's innovative approach to stake-less energy generation and ecosystem governance.
+;; of the Charisma protocol. By centralizing critical operations and access controls, it ensures
+;; that only verified interactions can perform sensitive operations, maintaining the integrity
+;; of the entire ecosystem. The Dungeon Keeper's role is essential in supporting the protocol's
+;; innovative approach to stake-less participation and dynamic reward mechanisms within a
+;; secure and controlled environment.
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
-(define-constant ERR_TOKEN_TRANSFER_FAILED (err u501))
-(define-constant ERR_EXCEED_MAX_LIMIT (err u502))
-
-;; Configuration
-(define-data-var minimum-burn-percentage uint u100)
-(define-data-var minimum-experience-reward uint u1000000)
-(define-data-var listings-frozen bool false)
-(define-data-var interactions-frozen bool false)
-(define-data-var unlistings-frozen bool false)
+(define-constant ERR_UNVERIFIED (err u403))
+(define-constant ERR_EXCEEDS_LIMIT (err u405))
 
 ;; Maximum limits for token operations
-(define-data-var max-exp-mint uint u1000000000)  ;; 1000 Experience
-(define-data-var max-exp-burn uint u1000000000)  ;; 1000 Experience
-(define-data-var max-energy-mint uint u1000000000)  ;; 1000 Energy
-(define-data-var max-energy-burn uint u1000000000)  ;; 1000 Energy
-(define-data-var max-dmg-transfer uint u1000000000)  ;; 1000 DMG
+(define-data-var max-reward uint u1000000000)  ;; 1000 Experience
+(define-data-var max-punish uint u100000000)  ;; 100 Experience
+(define-data-var max-energize uint u10000000000)  ;; 10000 Energy
+(define-data-var max-exhaust uint u10000000000)  ;; 10000 Energy
+(define-data-var max-transfer uint u100000000)  ;; 100 DMG
 
 ;; Maps
-(define-map verified-interactions principal bool)
-(define-map enabled-engines principal bool)
-(define-map enabled-clients principal bool)
 (define-map contract-owners principal bool)
+(define-map verified-interactions principal bool)
 
 ;; Constants
 (define-constant FEE-SCALE u1000000)
@@ -76,13 +76,8 @@
 (map-set contract-owners tx-sender true)
 
 ;; Initialize the verified interactions map
-(map-set verified-interactions .test-interaction-1 true)
-
-;; Initialize the enabled engines map
-(map-set enabled-engines .meme-engine-cha true)
-
-;; Initialize the enabled clients map
-(map-set enabled-engines .dungeon-crawler true)
+(map-set verified-interactions .dungeon-crawler true)
+(map-set verified-interactions .keepers-challenge true)
 
 ;; Admin functions
 
@@ -100,20 +95,6 @@
   )
 )
 
-(define-public (set-minimum-burn-percentage (percentage uint))
-  (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set minimum-burn-percentage percentage))
-  )
-)
-
-(define-public (set-minimum-experience-reward (amount uint))
-  (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set minimum-experience-reward amount))
-  )
-)
-
 (define-public (add-verified-interaction (interaction principal))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
@@ -128,119 +109,82 @@
   )
 )
 
-(define-public (add-engine (engine principal))
+(define-public (set-max-reward (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (map-set enabled-engines engine true))
+    (ok (var-set max-reward new-max))
   )
 )
 
-(define-public (remove-engine (engine principal))
+(define-public (set-max-punish (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (map-delete enabled-engines engine))
+    (ok (var-set max-punish new-max))
   )
 )
 
-(define-public (add-client (client principal))
+(define-public (set-max-energize (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (map-set enabled-clients client true))
+    (ok (var-set max-energize new-max))
   )
 )
 
-(define-public (remove-client (client principal))
+(define-public (set-max-exhaust (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (map-delete enabled-clients client))
+    (ok (var-set max-exhaust new-max))
   )
 )
 
-(define-public (set-frozen-state (listings bool) (interactions bool) (unlistings bool))
+(define-public (set-max-transfer (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (var-set listings-frozen listings)
-    (var-set interactions-frozen interactions)
-    (var-set unlistings-frozen unlistings)
-    (ok true)
-  )
-)
-
-(define-public (set-max-exp-mint (new-max uint))
-  (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-exp-mint new-max))
-  )
-)
-
-(define-public (set-max-exp-burn (new-max uint))
-  (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-exp-burn new-max))
-  )
-)
-
-(define-public (set-max-energy-mint (new-max uint))
-  (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-energy-mint new-max))
-  )
-)
-
-(define-public (set-max-energy-burn (new-max uint))
-  (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-energy-burn new-max))
-  )
-)
-
-(define-public (set-max-dmg-transfer (new-max uint))
-  (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-dmg-transfer new-max))
+    (ok (var-set max-transfer new-max))
   )
 )
 
 ;; Public functions for token operations
 
-(define-public (mint-exp (recipient principal) (amount uint))
+(define-public (reward (amount uint) (target principal))
   (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (asserts! (<= amount (var-get max-exp-mint)) ERR_EXCEED_MAX_LIMIT)
-    (contract-call? .experience mint amount recipient)
+    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= amount (var-get max-reward)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .experience mint amount target)
   )
 )
 
-(define-public (burn-exp (burner principal) (amount uint))
+(define-public (punish (amount uint) (target principal))
   (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (asserts! (<= amount (var-get max-exp-burn)) ERR_EXCEED_MAX_LIMIT)
-    (contract-call? .experience burn amount burner)
+    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= amount (var-get max-punish)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .experience burn amount target)
   )
 )
 
-(define-public (mint-energy (recipient principal) (amount uint))
-  (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (asserts! (<= amount (var-get max-energy-mint)) ERR_EXCEED_MAX_LIMIT)
-    (contract-call? .energy mint amount recipient)
+(define-public (energize (amount uint) (target principal))
+  (let
+    ((capped-amount (apply-max-capacity amount)))
+    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= capped-amount (var-get max-energize)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .energy mint capped-amount target)
   )
 )
 
-(define-public (burn-energy (burner principal) (amount uint))
+(define-public (exhaust (amount uint) (target principal))
   (begin
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (asserts! (<= amount (var-get max-energy-burn)) ERR_EXCEED_MAX_LIMIT)
-    (contract-call? .energy burn amount burner)
+    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= amount (var-get max-exhaust)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .energy burn amount target)
   )
 )
 
-(define-public (transfer-dmg (sender principal) (recipient principal) (amount uint))
+(define-public (transfer (amount uint) (sender principal) (target principal))
   (let
     ((reduced-amount (apply-raven-reduction amount sender)))
-    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (asserts! (<= reduced-amount (var-get max-dmg-transfer)) ERR_EXCEED_MAX_LIMIT)
-    (contract-call? .dme000-governance-token transfer reduced-amount sender recipient none)
+    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= reduced-amount (var-get max-transfer)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token transfer reduced-amount sender target none)
   )
 )
 
@@ -253,38 +197,14 @@
   )
 )
 
-;; Read-only functions
-
-(define-read-only (get-verified-interaction (interaction principal))
-  (map-get? verified-interactions interaction)
+(define-private (apply-max-capacity (energy uint))
+  (contract-call? .energy-capacity apply-max-capacity energy)
 )
+
+;; Read-only functions
 
 (define-read-only (is-verified-interaction (interaction principal))
   (default-to false (map-get? verified-interactions interaction))
-)
-
-(define-read-only (is-enabled-engine (engine principal))
-  (default-to false (map-get? enabled-engines engine))
-)
-
-(define-read-only (is-enabled-client (client principal))
-  (default-to false (map-get? enabled-clients client))
-)
-
-(define-read-only (get-minimum-burn-percentage)
-  (var-get minimum-burn-percentage)
-)
-
-(define-read-only (get-minimum-experience-reward)
-  (var-get minimum-experience-reward)
-)
-
-(define-read-only (get-frozen-state)
-  {
-    listings-frozen: (var-get listings-frozen),
-    interactions-frozen: (var-get interactions-frozen),
-    unlistings-frozen: (var-get unlistings-frozen)
-  }
 )
 
 (define-read-only (is-owner (address principal))

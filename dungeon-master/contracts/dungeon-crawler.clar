@@ -1,147 +1,72 @@
 ;; Dungeon Crawler Contract
 ;;
 ;; This contract serves as the primary interface for user interactions within the Charisma protocol.
-;; It manages the listing, unlisting, and execution of interactions, as well as coordinating
-;; with meme engines for energy generation. The Dungeon Crawler acts as a central hub,
-;; orchestrating the flow of actions, rewards, and token operations in the ecosystem.
+;; It acts as a central hub for executing actions across various interaction contracts, enabling
+;; users to engage with multiple protocol components in a single transaction.
 ;;
 ;; Key Responsibilities:
-;; 1. Interaction Management: Handles listing and unlisting of interaction contracts.
-;; 2. Action Execution: Coordinates the execution of actions on listed interactions.
-;; 3. Energy Generation: Interfaces with meme engines to generate energy based on user actions.
-;; 4. Reward Distribution: Manages the minting of experience tokens and payment of royalties.
-;; 5. Token Operations: Coordinates burning of energy tokens and transfer of DMG tokens.
-;; 6. Charisma Token Wrapping: Attempts to wrap Charisma tokens as an additional reward mechanism.
+;; 1. Action Execution: Coordinates the execution of actions on interaction contracts.
+;; 2. Multi-Interaction Support: Allows users to execute up to eight different interactions in one transaction.
+;; 3. Error Handling: Implements a "best-effort" approach, attempting all interactions even if some fail.
 ;;
 ;; Core Components:
-;; - Listed Interactions: Maintains a map of all listed interaction contracts and their parameters.
-;; - Tap-Interact Mechanism: Allows users to generate energy through meme engines while interacting.
-;; - Verification System: Checks interaction validity and applies appropriate reward logic.
-;; - Success-based Rewards: Only distributes rewards for verified and successful interactions.
+;; - Interaction Execution: Provides functions to execute single or multiple interactions.
+;; - Error Clobbering: Continues execution of subsequent interactions even if earlier ones fail.
 ;;
 ;; Integration with Charisma Ecosystem:
-;; - Dungeon Keeper: Relies on for authorization, parameter checks, and token operations.
-;; - Meme Engines: Interfaces with for energy generation during tap-interact actions.
-;; - Energy Overload: Manages energy overflow after interactions.
-;; - Token Contracts: Coordinates with Experience, Energy, DMG, and Charisma token contracts.
+;; - Interaction Contracts: Executes actions on various protocol components through standardized interfaces.
+;; - Dungeon Keeper: Relies on for interaction verification and privileged operations (indirectly through interactions).
+;; - Token Contracts: Interacts with Experience, Energy, DMG, and Charisma token contracts indirectly through verified interactions.
 ;;
 ;; Key Functions:
-;; - list-interaction: Allows users to list new interaction contracts.
-;; - unlist-interaction: Permits owners to remove their listed interactions.
-;; - tap-interact: Executes an action while generating energy through a meme engine.
-;; - interact: Performs an action on a listed interaction, managing rewards and token operations.
+;; - interact: Executes a single interaction with the specified action.
+;; - explore: Executes up to eight different interactions in a single transaction.
 ;;
 ;; Security Features:
-;; - Strict checks for interaction listing parameters and authorizations.
-;; - Verification of interactions before applying rewards.
-;; - Success-based reward distribution to ensure fairness.
-;; - Delegation of sensitive operations to the Dungeon Keeper contract.
+;; - Interaction Isolation: Each interaction is executed independently, preventing cascading failures.
+;; - Non-Privileged Execution: The Dungeon Crawler itself does not perform sensitive operations, relying on properly verified interaction contracts.
 ;;
-;; This contract is crucial for enabling user engagement with the Charisma protocol,
-;; providing a seamless interface for interactions while ensuring proper energy generation,
-;; reward distribution, and ecosystem integrity. It embodies the protocol's innovative
-;; approach to stake-less participation, dynamic reward mechanisms, and now includes
-;; additional incentives through Charisma token wrapping.
+;; Error Handling Philosophy:
+;; The Dungeon Crawler implements a "best-effort" approach to interaction execution:
+;; - In single interactions, errors are propagated to the caller for handling.
+;; - In multi-interaction calls, the contract attempts to execute all provided interactions, regardless of individual failures.
+;; - This approach ensures maximum utility from each transaction while isolating failures.
+;;
+;; This contract is crucial for enabling flexible and robust user engagement with the Charisma protocol.
+;; It provides a streamlined interface for executing complex sequences of interactions while maintaining
+;; system integrity. The architecture supports the protocol's innovative approach to multi-faceted
+;; blockchain interactions, allowing for complex operations to be performed in a single transaction.
 
 (use-trait interaction-trait .dao-traits-v6.interaction-trait)
-(use-trait engine-trait .dao-traits-v6.engine-trait)
-
-;; Error codes
-(define-constant ERR_UNAUTHORIZED (err u401))
-(define-constant ERR_PROTOCOL_FROZEN (err u403))
-(define-constant ERR_NOT_FOUND (err u404))
-(define-constant ERR_ALREADY_LISTED (err u409))
-(define-constant ERR_INVALID_AMOUNT (err u400))
-(define-constant ERR_INTERACTION_FAILED (err u500))
-(define-constant ERR_TOKEN_OPERATION_FAILED (err u501))
-(define-constant ERR_INVALID_ENGINE (err u502))
-
-;; Maps
-(define-map listed-interactions
-  principal
-  {owner: principal, experience-reward: uint, burn-percentage: uint, royalty-percentage: uint, royalty-address: principal}
-)
-
-;; Initialize the listed-interactions map
-(map-set listed-interactions .test-interaction-1 
-  {owner: tx-sender, experience-reward: u1000000, burn-percentage: u100, royalty-percentage: u100, royalty-address: tx-sender}
-)
-
-;; Public functions
-
-(define-public (list-interaction (interaction <interaction-trait>) (experience-reward uint) (burn-percentage uint) (royalty-percentage uint) (royalty-address principal))
-  (let
-    ((interaction-principal (contract-of interaction)))
-    (asserts! (not (get listings-frozen (contract-call? .dungeon-keeper get-frozen-state))) ERR_PROTOCOL_FROZEN)
-    (asserts! (is-none (map-get? listed-interactions interaction-principal)) ERR_ALREADY_LISTED)
-    (asserts! (>= burn-percentage (contract-call? .dungeon-keeper get-minimum-burn-percentage)) ERR_INVALID_AMOUNT)
-    (asserts! (>= experience-reward (contract-call? .dungeon-keeper get-minimum-experience-reward)) ERR_INVALID_AMOUNT)
-    
-    (ok (map-set listed-interactions 
-      interaction-principal
-      {owner: tx-sender, experience-reward: experience-reward, burn-percentage: burn-percentage, royalty-percentage: royalty-percentage, royalty-address: royalty-address}
-    ))
-  )
-)
-
-(define-public (unlist-interaction (interaction <interaction-trait>))
-  (let
-    ((interaction-principal (contract-of interaction))
-     (listing (unwrap! (map-get? listed-interactions interaction-principal) ERR_NOT_FOUND)))
-    (asserts! (not (get unlistings-frozen (contract-call? .dungeon-keeper get-frozen-state))) ERR_PROTOCOL_FROZEN)
-    (asserts! (is-eq (get owner listing) tx-sender) ERR_UNAUTHORIZED)
-    
-    (ok (map-delete listed-interactions interaction-principal))
-  )
-)
-
-(define-public (tap-interact (engine <engine-trait>) (interaction <interaction-trait>) (action (string-ascii 32)))
-  (let
-    ((engine-contract (contract-of engine))
-     (interaction-contract (contract-of interaction))
-     (tapped-out (unwrap! (contract-call? engine tap) ERR_INVALID_ENGINE))
-     (action-result (unwrap! (interact interaction action) ERR_INTERACTION_FAILED)))
-    (asserts! (contract-call? .dungeon-keeper is-enabled-engine engine-contract) ERR_INVALID_ENGINE)
-    (asserts! (is-some (map-get? listed-interactions interaction-contract)) ERR_NOT_FOUND)
-    (try! (contract-call? .energy-overload handle-overflow))
-    (print tapped-out)
-    (ok action-result)
-  )
-)
 
 (define-public (interact (interaction <interaction-trait>) (action (string-ascii 32)))
-  (let
-    ((interaction-contract (contract-of interaction))
-     (listing (unwrap! (map-get? listed-interactions interaction-contract) ERR_NOT_FOUND))
-     (experience-reward (get experience-reward listing))
-     (burn-amount (/ (* experience-reward (get burn-percentage listing)) u10000))
-     (royalty-amount (/ (* experience-reward (get royalty-percentage listing)) u10000))
-     (royalty-address (get royalty-address listing))
-     (is-verified (contract-call? .dungeon-keeper is-verified-interaction interaction-contract))
-     (is-success (match (contract-call? interaction execute action) success success error false)))
-    (asserts! (not (get interactions-frozen (contract-call? .dungeon-keeper get-frozen-state))) ERR_PROTOCOL_FROZEN)
-    (print {action-success: is-success})
-    ;; Burn energy tokens (always burn, regardless of verification)
-    (try! (contract-call? .dungeon-keeper burn-energy tx-sender burn-amount))
-    ;; Only mint experience and transfer royalty if the interaction is verified and successful
-    (if (and is-success is-verified)
-      (let
-        ((max-wrap-amount (unwrap-panic (contract-call? .charisma-token get-max-liquidity-flow))))
-        ;; Mint experience tokens to the user
-        (try! (contract-call? .dungeon-keeper mint-exp tx-sender experience-reward))
-        ;; Transfer royalty in DMG tokens (Raven reduction applied)
-        (try! (contract-call? .dungeon-keeper transfer-dmg tx-sender royalty-address royalty-amount))
-        ;; Attempt to win the block reward of wrapping charisma tokens
-        (match (contract-call? .charisma-token wrap max-wrap-amount) success true error false)
-        (ok is-success)
-      )
-      (ok is-success)
-    )
-  )
-)
+  (contract-call? interaction execute action))
 
-;; Read-only functions
-
-(define-read-only (get-listing (interaction principal))
-  (map-get? listed-interactions interaction)
-)
+(define-public (explore
+  (interaction-1 (optional <interaction-trait>)) (action-1 (optional (string-ascii 32)))
+  (interaction-2 (optional <interaction-trait>)) (action-2 (optional (string-ascii 32)))
+  (interaction-3 (optional <interaction-trait>)) (action-3 (optional (string-ascii 32)))
+  (interaction-4 (optional <interaction-trait>)) (action-4 (optional (string-ascii 32)))
+  (interaction-5 (optional <interaction-trait>)) (action-5 (optional (string-ascii 32)))
+  (interaction-6 (optional <interaction-trait>)) (action-6 (optional (string-ascii 32)))
+  (interaction-7 (optional <interaction-trait>)) (action-7 (optional (string-ascii 32)))
+  (interaction-8 (optional <interaction-trait>)) (action-8 (optional (string-ascii 32))))
+  (let (
+    (response-1 (and (is-some action-1) (match (interact (unwrap-panic interaction-1) (unwrap-panic action-1)) success success error false)))
+    (response-2 (and (is-some action-2) (match (interact (unwrap-panic interaction-2) (unwrap-panic action-2)) success success error false)))
+    (response-3 (and (is-some action-3) (match (interact (unwrap-panic interaction-3) (unwrap-panic action-3)) success success error false)))
+    (response-4 (and (is-some action-4) (match (interact (unwrap-panic interaction-4) (unwrap-panic action-4)) success success error false)))
+    (response-5 (and (is-some action-5) (match (interact (unwrap-panic interaction-5) (unwrap-panic action-5)) success success error false)))
+    (response-6 (and (is-some action-6) (match (interact (unwrap-panic interaction-6) (unwrap-panic action-6)) success success error false)))
+    (response-7 (and (is-some action-7) (match (interact (unwrap-panic interaction-7) (unwrap-panic action-7)) success success error false)))
+    (response-8 (and (is-some action-8) (match (interact (unwrap-panic interaction-8) (unwrap-panic action-8)) success success error false))))
+    (print {
+      response-1: response-1,
+      response-2: response-2,
+      response-3: response-3,
+      response-4: response-4,
+      response-5: response-5,
+      response-6: response-6,
+      response-7: response-7,
+      response-8: response-8
+    }) (ok true)))

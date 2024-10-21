@@ -1,50 +1,60 @@
 ;; Charisma Meme Engine
 ;;
-;; This contract implements the core energy generation mechanism of the Charisma protocol.
-;; It calculates energy output based on users' token balance history, utilizing integral
-;; calculus for accurate and fair representation of token holding over time. The contract
-;; incorporates dynamic multipliers to adjust energy generation based on token-specific
-;; factors and protocol incentives.
+;; This contract implements the core energy generation mechanism of the Charisma protocol
+;; as an interaction-compatible component. It calculates energy output based on users' 
+;; token balance history, utilizing integral calculus for accurate and fair representation 
+;; of token holding over time. The contract incorporates dynamic multipliers to adjust 
+;; energy generation based on token-specific factors and protocol incentives.
 ;;
 ;; Key Components:
-;; 1. Balance Integral Calculation: Uses trapezoidal rule to approximate the integral
+;; 1. Interaction Trait Implementation: Allows the engine to be used within the 
+;;    interaction-based system of the Charisma protocol.
+;; 2. Balance Integral Calculation: Uses trapezoidal rule to approximate the integral
 ;;    of user's token balance over time, providing a time-weighted measure of token holding.
-;; 2. Dynamic Sample Point Generation: Adapts the number of sample points based on the
+;; 3. Dynamic Sample Point Generation: Adapts the number of sample points based on the
 ;;    time period, managed by the Meme Engine Manager for consistency across all engines.
-;; 3. Energy Output Calculation: Combines balance integral with quality and incentive
+;; 4. Energy Output Calculation: Combines balance integral with quality and incentive
 ;;    scores, normalized by circulating supply.
-;; 4. Interaction with Charisma Ecosystem: Integrates with Arcana for quality scores,
-;;    Aura for incentive scores, and the Energy contract for minting.
+;; 5. Interaction with Charisma Ecosystem: Integrates with Arcana for quality scores,
+;;    Aura for incentive scores, and the Dungeon Keeper for energy minting.
 ;;
 ;; Core Functions:
-;; - tap: Main entry point for users to generate energy based on their token holding.
+;; - execute: Main entry point for interaction-based energy generation.
+;; - tap: Calculates and requests energy generation based on token holding.
 ;; - calculate-balance-integral: Computes the balance integral using appropriate sample points.
 ;; - get-balance: Retrieves token balance at specific blocks, handling historical data.
 ;;
 ;; Integration with Charisma Protocol:
-;; - Implements the engine-trait defined in dao-traits-v6.
+;; - Implements the interaction-trait defined in dao-traits-v6.
 ;; - Utilizes the Meme Engine Manager for shared parameters and sample point generation.
 ;; - Interacts with token-specific contracts (e.g., .charisma-token) for balance checks.
 ;; - Calls Arcana and Aura contracts for dynamic multipliers.
+;; - Requests energy minting through the Dungeon Keeper contract.
 ;;
 ;; Security and Efficiency:
 ;; - Non-custodial: Users retain control of their tokens while participating.
 ;; - Retroactive Calculation: Fairly rewards users based on historical holding patterns.
 ;; - Scalable: Can be adapted for various tokens in the Charisma ecosystem.
+;; - Interaction-based: Allows for seamless integration with the broader Charisma exploration system.
 ;;
 ;; This contract is a crucial component of the Charisma protocol, enabling
 ;; a novel approach to "stake-less staking" and forming the foundation for
-;; diverse applications in DeFi, GameFi, and beyond.
+;; diverse applications in DeFi, GameFi, and beyond. Its interaction-compatible
+;; design allows for flexible integration within the Charisma ecosystem,
+;; potentially allowing users to include energy generation as part of their
+;; exploration activities.
 
 ;; Traits
-(impl-trait .dao-traits-v6.engine-trait)
+(impl-trait .dao-traits-v6.interaction-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
-(define-constant ERR_INVALID_CLIENT (err u403))
+(define-constant ERR_INVALID_ACTION (err u405))
+(define-constant CONTRACT_OWNER tx-sender)
 
 ;; Data Variables
 (define-data-var first-start-block uint block-height)
+(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/explore/engines/cha"))
 
 ;; Maps
 (define-map last-tap-block principal uint)
@@ -218,10 +228,6 @@
     )
 )
 
-(define-read-only (get-last-tap-block (address principal))
-    (default-to (var-get first-start-block) (map-get? last-tap-block address))
-)
-
 (define-private (calculate-balance-integral (address principal) (start-block uint) (end-block uint))
     (let
         (
@@ -229,14 +235,14 @@
             (thresholds (unwrap-panic (contract-call? .meme-engine-manager get-thresholds)))
         )
         (if (>= block-difference (get threshold-39-point thresholds))
-            (ok (calculate-balance-integral-39 address start-block end-block))
+            (calculate-balance-integral-39 address start-block end-block)
             (if (>= block-difference (get threshold-19-point thresholds))
-                (ok (calculate-balance-integral-19 address start-block end-block))
+                (calculate-balance-integral-19 address start-block end-block)
                 (if (>= block-difference (get threshold-9-point thresholds))
-                    (ok (calculate-balance-integral-9 address start-block end-block))
+                    (calculate-balance-integral-9 address start-block end-block)
                     (if (>= block-difference (get threshold-5-point thresholds))
-                        (ok (calculate-balance-integral-5 address start-block end-block))
-                        (ok (calculate-balance-integral-2 address start-block end-block))
+                        (calculate-balance-integral-5 address start-block end-block)
+                        (calculate-balance-integral-2 address start-block end-block)
                     )
                 )
             )
@@ -244,29 +250,55 @@
     )
 )
 
-(define-public (tap)
+;; Read-only functions
+
+(define-read-only (get-interaction-uri)
+  (ok (var-get contract-uri))
+)
+
+(define-read-only (get-actions)
+  (ok (list "TAP"))
+)
+
+(define-read-only (get-last-tap-block (address principal))
+    (default-to (var-get first-start-block) (map-get? last-tap-block address))
+)
+
+;; Public functions
+
+(define-public (execute (action (string-ascii 32)))
+  (if (is-eq action "TAP")
+      (tap)
+      ERR_INVALID_ACTION
+  )
+)
+
+(define-private (tap)
   (let
     (
       (end-block block-height)
       (start-block (get-last-tap-block tx-sender))
-      (balance-integral (unwrap-panic (calculate-balance-integral tx-sender start-block end-block)))
+      (balance-integral (calculate-balance-integral tx-sender start-block end-block))
       (quality-score (contract-call? .arcana get-quality-score .charisma-token))
       (incentive-score (contract-call? .aura get-incentive-score .charisma-token))
       (circulating-supply (contract-call? .arcana get-circulating-supply .charisma-token))
-      (energy-output (/ (* (* balance-integral quality-score) incentive-score) circulating-supply))
+      (potential-energy (/ (* (* balance-integral quality-score) incentive-score) circulating-supply))
+      (tapped-out { tapper: tx-sender, end-block: end-block, start-block: start-block, 
+        balance-integral: balance-integral, quality-score: quality-score, incentive-score: incentive-score,
+        circulating-supply: circulating-supply, potential-energy: potential-energy
+      })
     )
-    (asserts! (contract-call? .meme-engine-manager is-enabled-client contract-caller) ERR_INVALID_CLIENT)
     (map-set last-tap-block tx-sender end-block)
-    (try! (contract-call? .energy mint energy-output tx-sender))
-    (ok {
-      tapper: tx-sender,
-      end-block: end-block, 
-      start-block: start-block, 
-      balance-integral: balance-integral, 
-      quality-score: quality-score, 
-      incentive-score: incentive-score,
-      circulating-supply: circulating-supply, 
-      energy-output: energy-output
-    })
+    (print tapped-out)
+    (contract-call? .dungeon-keeper energize potential-energy tx-sender)
+  )
+)
+
+;; Admin functions
+
+(define-public (set-contract-uri (new-uri (optional (string-utf8 256))))
+  (begin
+    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
+    (ok (var-set contract-uri new-uri))
   )
 )

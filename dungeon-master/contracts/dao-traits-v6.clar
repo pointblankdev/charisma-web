@@ -78,20 +78,3 @@
     (execute ((string-ascii 32)) (response bool uint))
   )
 )
-
-(define-trait engine-trait
-  (
-    (tap () (response 
-      {
-        tapper: principal,
-        end-block: uint,
-        start-block: uint,
-        balance-integral: uint,
-        quality-score: uint,
-        incentive-score: uint,
-        circulating-supply: uint,
-        energy-output: uint
-      }
-      uint))
-  )
-)

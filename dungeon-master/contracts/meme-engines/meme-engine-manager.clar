@@ -4,38 +4,38 @@
 ;; and manage multiple meme engines. It provides centralized control over shared
 ;; parameters and functionality used by all meme engines in the ecosystem.
 ;;
-;; Key Functions:
+;; Key Responsibilities:
 ;; 1. Threshold Management: Maintains and updates thresholds for balance integral calculations.
 ;; 2. Sample Point Generation: Provides functions to generate sample points for energy calculations.
-;; 3. Client Management: Manages a list of authorized meme engines.
+;; 3. Authorization Control: Ensures only authorized entities can modify critical parameters.
 ;;
-;; Meme Engines in Charisma:
-;; Meme engines calculate energy output based on users' token balance history using
-;; integral calculus. Each engine typically corresponds to a specific token or asset.
-;; This manager ensures consistency and efficiency across all engines by:
-;; - Providing centralized calculation parameters (thresholds)
-;; - Offering shared sample point generation functionality
-;; - Managing authorization of meme engines
+;; Core Components:
+;; - Thresholds: Configurable parameters that determine the number of sample points for calculations.
+;; - Sample Point Generation: Functions for 2, 5, 9, 19, and 39-point calculations.
+;; - Authorization: Utilizes Dungeon Master contract for access control.
 ;;
-;; Key Components:
-;; - Thresholds: Determine the number of sample points for balance integral calculations
-;; - Sample Point Generation: Functions for 2, 5, 9, 19, and 39-point calculations
-;; - Client Management: Authorizes meme engines to interact with the Charisma ecosystem
+;; Key Functions:
+;; - Threshold Management: set-threshold-X-point functions to update thresholds.
+;; - Sample Point Generation: generate-sample-points-X functions for various calculation resolutions.
+;; - Threshold Retrieval: get-thresholds function to retrieve current threshold values.
+;;
+;; Security Features:
+;; - Authorization checks using Dungeon Master contract.
+;; - Validation of threshold values to maintain logical consistency.
+;;
+;; Integration with Charisma Ecosystem:
+;; - Works in conjunction with meme engines to provide consistent calculation parameters.
+;; - Interacts with Dungeon Master for authorization checks.
 ;;
 ;; Usage in Charisma:
-;; 1. Meme Engine Initialization: New engines are registered with this contract
-;; 2. Energy Calculation: Engines call this contract to verify authorization, retrieve
-;;    thresholds, and generate sample points
-;; 3. Protocol Governance: Allows updates to thresholds and client authorizations
+;; 1. Threshold Updates: Authorized entities can adjust calculation thresholds as needed.
+;; 2. Meme Engine Calculations: Engines use this contract to generate sample points for energy calculations.
+;; 3. Protocol Governance: Allows centralized management of key parameters affecting all meme engines.
 ;;
-;; Security and Efficiency:
-;; - Ensures consistent application of parameters across all meme engines
-;; - Reduces gas costs by centralizing parameter storage
-;; - Simplifies governance of the meme engine ecosystem
-;;
-;; This contract is crucial for the scalable and efficient operation of Charisma's
-;; energy generation mechanism, providing the necessary infrastructure for managing
-;; multiple meme engines within the broader ecosystem.
+;; This contract is crucial for maintaining consistency and efficiency across all meme engines
+;; in the Charisma protocol. By centralizing threshold management and sample point generation,
+;; it ensures that all engines operate under the same parameters, simplifying governance and
+;; reducing the potential for discrepancies in energy calculations across different engines.
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -47,25 +47,10 @@
 (define-data-var threshold-19-point uint u500)
 (define-data-var threshold-39-point uint u10000)
 
-;; Maps
-(define-map enabled-clients principal bool)
-
 ;; Authorization control
 (define-private (is-authorized)
     (or (is-eq tx-sender .dungeon-master) 
         (contract-call? .dungeon-master is-extension contract-caller))
-)
-
-;; Functions to manage enabled clients
-(define-public (set-enabled-client (client-contract principal) (enabled bool))
-  (begin
-    (asserts! (is-authorized) ERR_UNAUTHORIZED)
-    (ok (map-set enabled-clients client-contract enabled))
-  )
-)
-
-(define-read-only (is-enabled-client (client-contract principal))
-  (default-to false (map-get? enabled-clients client-contract))
 )
 
 ;; Functions to update thresholds

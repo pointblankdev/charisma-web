@@ -55,19 +55,19 @@ path = "contracts/aura.clar"
 depends_on = []
 
 [contracts.meme-engine-manager]
-path = "contracts/meme-engine-manager.clar"
+path = "contracts/meme-engines/meme-engine-manager.clar"
 depends_on = []
 
 [contracts.raven-resistance]
 path = "contracts/raven-resistance.clar"
 depends_on = []
 
-[contracts.energy-overload]
-path = "contracts/energy-overload.clar"
+[contracts.energy-capacity]
+path = "contracts/energy-capacity.clar"
 depends_on = []
 
 [contracts.meme-engine]
-path = "contracts/meme-engine.clar"
+path = "contracts/meme-engines/meme-engine.clar"
 depends_on = []
 
 [contracts.dungeon-keeper]
@@ -89,6 +89,15 @@ depends_on = []
 [contracts.keepers-challenge]
 path = "contracts/interactions/keepers-challenge.clar"
 depends_on = []
+
+[contracts.charisma-mine]
+path = "contracts/interactions/charisma-mine.clar"
+depends_on = []
+
+[contracts.hot-potato]
+path = "contracts/interactions/hot-potato.clar"
+depends_on = []
+
 
 
 # traits

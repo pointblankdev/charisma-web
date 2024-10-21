@@ -51,17 +51,15 @@
 (define-constant ERR_INSUFFICIENT_ENERGY (err u403))
 (define-constant ERR_INSUFFICIENT_EXP (err u404))
 (define-constant ERR_COOLDOWN_ACTIVE (err u405))
-(define-constant ERR_INVALID_CALLER (err u406))
-(define-constant ERR_INVALID_CLIENT (err u407))
-(define-constant CONTRACT_OWNER tx-sender)
 
 ;; Configuration
-(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/explore/keepers-challenge"))
-(define-data-var base-dmg-reward uint u1000000) ;; 1 DMG (6 decimals)
+(define-data-var contract-owner principal tx-sender)
+(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://keepers-challenge.charisma.rocks"))
+(define-data-var base-dmg-reward uint u10000000) ;; 10 DMG
 (define-data-var energy-cost-petition uint u500000) ;; 0.5 Energy
 (define-data-var energy-cost-challenge uint u2000000) ;; 2 Energy
 (define-data-var energy-cost-heist uint u5000000) ;; 5 Energy
-(define-data-var exp-boost-factor uint u10) ;; 1% boost per 1000 EXP
+(define-data-var exp-boost-factor uint u1) ;; 1 uEXP = 0.1% boost
 (define-data-var challenge-cooldown uint u10) ;; 10 blocks
 
 ;; Data Maps
@@ -78,13 +76,10 @@
   (ok (list "PETITION" "CHALLENGE" "HEIST"))
 )
 
-(define-private (min (a uint) (b uint)) (if (<= a b) a b))
-
 ;; Public functions
 
 (define-public (execute (action (string-ascii 32)))
   (begin
-    (asserts! (contract-call? .dungeon-keeper is-enabled-client contract-caller) ERR_INVALID_CLIENT)
     (if (is-eq action "PETITION")
       (petition)
       (if (is-eq action "CHALLENGE")
@@ -101,9 +96,9 @@
       (base-reward (/ (var-get base-dmg-reward) u2)) ;; Half of base reward
     )
     (asserts! (>= user-energy energy-to-spend) ERR_INSUFFICIENT_ENERGY)
-    (try! (contract-call? .dungeon-keeper burn-energy tx-sender energy-to-spend))
-    (try! (contract-call? .dungeon-keeper mint-exp tx-sender u500000)) ;; 0.5 EXP
-    (try! (contract-call? .dungeon-keeper transfer-dmg CONTRACT_OWNER tx-sender base-reward))
+    (try! (contract-call? .dungeon-keeper exhaust energy-to-spend tx-sender))
+    (try! (contract-call? .dungeon-keeper reward u500000 tx-sender)) ;; 0.5 EXP
+    (try! (contract-call? .dungeon-keeper transfer base-reward (var-get contract-owner) tx-sender))
     (ok true)
   )
 )
@@ -124,8 +119,8 @@
     (asserts! (>= user-exp u1000000) ERR_INSUFFICIENT_EXP) ;; Require at least 1 EXP
     (asserts! (> block-height (+ last-challenge-block (var-get challenge-cooldown))) ERR_COOLDOWN_ACTIVE)
     
-    (try! (contract-call? .dungeon-keeper burn-energy tx-sender energy-to-spend))
-    (try! (contract-call? .dungeon-keeper mint-exp tx-sender u2000000)) ;; 2 EXP
+    (try! (contract-call? .dungeon-keeper exhaust energy-to-spend tx-sender))
+    (try! (contract-call? .dungeon-keeper reward u2000000 tx-sender)) ;; 2 EXP
     
     (if (< (- block-height last-challenge-block) (* (var-get challenge-cooldown) u2))
       (map-set user-challenge-streak tx-sender (+ current-streak u1))
@@ -137,7 +132,7 @@
         (streak-bonus (min u5 current-streak)) ;; Max 5x bonus
         (final-reward (* boosted-reward (+ u1 streak-bonus)))
       )
-      (try! (contract-call? .dungeon-keeper transfer-dmg CONTRACT_OWNER tx-sender final-reward))
+      (try! (contract-call? .dungeon-keeper transfer final-reward (var-get contract-owner) tx-sender))
       (map-set user-last-challenge tx-sender block-height)
       (ok true)
     )
@@ -159,17 +154,17 @@
     (asserts! (>= user-energy energy-to-spend) ERR_INSUFFICIENT_ENERGY)
     (asserts! (>= user-exp u5000000) ERR_INSUFFICIENT_EXP) ;; Require at least 5 EXP
     
-    (try! (contract-call? .dungeon-keeper burn-energy tx-sender energy-to-spend))
+    (try! (contract-call? .dungeon-keeper exhaust energy-to-spend tx-sender))
     
     (if (< success-rate u50) ;; 50% chance of success
       (begin
-        (try! (contract-call? .dungeon-keeper burn-exp tx-sender u1000000)) ;; Burn 1 EXP on failure
-        (try! (contract-call? .dungeon-keeper transfer-dmg tx-sender CONTRACT_OWNER boosted-reward))
+        (try! (contract-call? .dungeon-keeper exhaust u1000000 tx-sender)) ;; Burn 1 EXP on failure
+        (try! (contract-call? .dungeon-keeper transfer boosted-reward tx-sender (var-get contract-owner)))
         (ok false)
       )
       (begin
-        (try! (contract-call? .dungeon-keeper mint-exp tx-sender u5000000)) ;; 5 EXP on success
-        (try! (contract-call? .dungeon-keeper transfer-dmg CONTRACT_OWNER tx-sender boosted-reward))
+        (try! (contract-call? .dungeon-keeper reward u5000000 tx-sender)) ;; 5 EXP on success
+        (try! (contract-call? .dungeon-keeper transfer boosted-reward (var-get contract-owner) tx-sender))
         (ok true)
       )
     )
@@ -180,21 +175,21 @@
 
 (define-public (set-contract-uri (new-uri (optional (string-utf8 256))))
   (begin
-    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
+    (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (ok (var-set contract-uri new-uri))
   )
 )
 
 (define-public (set-base-dmg-reward (new-reward uint))
   (begin
-    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
+    (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (ok (var-set base-dmg-reward new-reward))
   )
 )
 
 (define-public (set-energy-costs (new-petition uint) (new-challenge uint) (new-heist uint))
   (begin
-    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
+    (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (var-set energy-cost-petition new-petition)
     (var-set energy-cost-challenge new-challenge)
     (var-set energy-cost-heist new-heist)
@@ -204,14 +199,18 @@
 
 (define-public (set-exp-boost-factor (new-factor uint))
   (begin
-    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
+    (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (ok (var-set exp-boost-factor new-factor))
   )
 )
 
 (define-public (set-challenge-cooldown (new-cooldown uint))
   (begin
-    (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
+    (asserts! (is-eq tx-sender (var-get contract-owner)) ERR_UNAUTHORIZED)
     (ok (var-set challenge-cooldown new-cooldown))
   )
 )
+
+;; Private functions
+
+(define-private (min (a uint) (b uint)) (if (<= a b) a b))
