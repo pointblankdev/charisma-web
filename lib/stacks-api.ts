@@ -13,6 +13,7 @@ import {
   broadcastTransaction,
   callReadOnlyFunction,
   cvToHex,
+  cvToValue,
   hexToCV,
   makeContractCall,
   makeSTXTokenTransfer,
@@ -1307,7 +1308,30 @@ export async function getBalancesAtBlock() {
       ]
     }
   });
-  // const result = hexToCV((response as any).result);
   console.log(response)
   return response;
+}
+
+export async function getInteractionUri(contractAddress: string, contractName: string) {
+  try {
+    const response: any = await scApi.callReadOnlyFunction({
+      contractAddress,
+      contractName,
+      functionName: 'get-interaction-uri',
+      readOnlyFunctionArgs: {
+        sender: contractAddress,
+        arguments: []
+      }
+    });
+
+    if (response.okay && response.result) {
+      const cv = hexToCV(response.result);
+      const value = cvToValue(cv).value;
+      return value.value ? value.value : null;
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching interaction URI:', error);
+    return null;
+  }
 }
