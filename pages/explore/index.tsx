@@ -89,7 +89,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
 export default function ExplorePage({ interactionData }: ExplorePageProps) {
   const metadata = {
     title: "Explore Charisma",
-    description: "Explore and interact with Charisma protocol interactions.",
+    description: "Discover and interact with Charisma protocol.",
   }
 
   const renderInteractionSection = (title: string, description: string, interactions: Interaction[], recent = false) => (
