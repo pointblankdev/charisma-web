@@ -59,10 +59,10 @@ const INTERACTIONS = [
     address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     name: 'fate-randomizer-rc1'
   },
-  // { 
-  //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-  //   name: 'hot-potato-rc1'
-  // },
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    name: 'the-troll-toll-rc1'
+  },
   {
     address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     name: 'fatigue-rc3'
@@ -70,6 +70,10 @@ const INTERACTIONS = [
   {
     address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     name: 'meme-engine-cha-rc4'
+  },
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    name: 'charismatic-corgi-rc1'
   }
 ];
 

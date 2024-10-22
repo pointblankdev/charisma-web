@@ -126,8 +126,8 @@ depends_on = []
 path = "contracts/interactions/charisma-mine.clar"
 depends_on = []
 
-[contracts.hot-potato]
-path = "contracts/interactions/hot-potato.clar"
+[contracts.the-troll-toll]
+path = "contracts/interactions/the-troll-toll.clar"
 depends_on = []
 
 [contracts.charismatic-corgi]
