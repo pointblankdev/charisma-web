@@ -4,13 +4,13 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import Layout from '@components/layout/layout';
 import { Button } from '@components/ui/button';
-import { Separator } from '@components/ui/separator';
 import Image from 'next/image';
 import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { API_URL, SITE_URL } from '@lib/constants';
 import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
 import { interactionIds } from 'pages/api/v0/interactions';
+import { ExternalLink } from 'lucide-react';
 
 interface InteractionMetadata {
     url: string;
@@ -31,7 +31,7 @@ interface InteractionDetailProps {
 export const getStaticPaths: GetStaticPaths = () => {
     return {
         paths: interactionIds.map(id => ({
-            params: { interaction: id }
+            params: { interaction: id.split('.')[1] }
         })),
         fallback: false
     };
@@ -62,13 +62,10 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
     const { interact } = useDungeonCrawler();
     const { stxAddress } = useGlobalState();
     const [isLoading, setIsLoading] = useState(false);
-    const [selectedAction, setSelectedAction] = useState(metadata.actions[0]); // Default to first action
+    const [selectedAction, setSelectedAction] = useState(undefined);
 
     const handleExecute = async () => {
-        if (!stxAddress || !selectedAction) {
-            return;
-        }
-
+        if (!stxAddress || !selectedAction) return;
         setIsLoading(true);
         try {
             await interact(metadata.contract, selectedAction);
@@ -79,30 +76,123 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
         }
     };
 
+    const ContractLink = () => (
+        <a
+            href={`https://explorer.hiro.so/txid/${metadata.contract}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group inline-flex items-center space-x-1 text-gray-50/90 hover:text-gray-50 transition-colors"
+        >
+            <span className="break-all text-sm">{metadata.contract}</span>
+            <ExternalLink size={14} className="opacity-90 group-hover:opacity-100 transition-opacity text-gray-50/90 group-hover:text-gray-50" />
+        </a>
+    );
+
+    const InteractionPanel = () => (
+        <div className="max-w-screen-sm sm:mx-auto sm:px-4">
+            <div className="mt-6">
+                <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
+                    <div className="mb-2 space-y-8">
+                        <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
+                            <div className="space-y-2 text-center mb-4">
+                                <h1 className="text-2xl font-semibold tracking-tight">
+                                    Execute Interaction
+                                </h1>
+                                <p className="text-sm text-muted-foreground">
+                                    Select an action to perform
+                                </p>
+                            </div>
+                            <ToggleGroup
+                                type="single"
+                                value={selectedAction}
+                                onValueChange={(value: any) => value && setSelectedAction(value)}
+                                className="flex flex-wrap gap-2 justify-start"
+                            >
+                                {metadata.actions.map((action) => (
+                                    <ToggleGroupItem
+                                        key={action}
+                                        value={action}
+                                        aria-label={`Select ${action} action`}
+                                        className="px-3 py-2 text-sm bg-[var(--sidebar)] border border-primary/30 text-white hover:bg-accent-foreground"
+                                    >
+                                        {action}
+                                    </ToggleGroupItem>
+                                ))}
+                            </ToggleGroup>
+                        </div>
+
+                        {/* Contract Info Section */}
+                        <div className="p-4">
+                            <div className="flex items-center justify-between mb-0 leading-0">
+                                <span className="text-gray-400">Contract Address</span>
+                            </div>
+                            <ContractLink />
+
+                            {!stxAddress && (
+                                <div className="p-4 rounded-lg border border-primary/30 bg-[var(--sidebar)]">
+                                    <p className="text-sm text-yellow-200">
+                                        Connect your wallet to execute interactions
+                                    </p>
+                                </div>
+                            )}
+
+                            {/* Execute Button */}
+                            <Button
+                                onClick={handleExecute}
+                                disabled={isLoading || !stxAddress || !selectedAction}
+                                className="w-full px-4 py-3 my-4 font-bold rounded-lg"
+                            >
+                                {isLoading ? 'Executing...' : 'Execute Action'}
+                            </Button>
+
+                            <p className="text-center text-sm text-gray-400">
+                                Make sure you have sufficient energy before executing interactions.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    );
+
     return (
         <Page
-            meta={{
-                title: `${metadata.name} Interaction`,
-                description: metadata.description
-            }}
+            meta={{ title: `${metadata.name} Interaction`, description: metadata.description }}
             fullViewport
         >
             <SkipNavContent />
             <Layout>
-                <div className="container relative hidden h-[calc(100vh-112px)] flex-col items-center justify-center md:grid lg:max-w-none lg:grid-cols-2 lg:px-0">
+                {/* Mobile View */}
+                <div className="container relative flex md:hidden h-[calc(100vh-112px)] items-center justify-center">
+                    <div className="absolute inset-0 z-0">
+                        <div className="absolute inset-0 z-10 bg-zinc-900/70" />
+                        <Image
+                            src={metadata.image}
+                            alt={metadata.name}
+                            fill
+                            className="object-cover"
+                            priority
+                        />
+                    </div>
+                    <div className="relative z-20 w-full">
+                        <InteractionPanel />
+                    </div>
+                </div>
+
+                {/* Desktop View */}
+                <div className="container relative hidden md:grid h-[calc(100vh-112px)] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
                     {/* Left Panel - Image and Description */}
-                    <div className="relative lg:block h-full"> {/* Changed to relative positioning and full height */}
+                    <div className="relative lg:block h-full">
                         <div className="absolute inset-0 z-10 bg-zinc-900/50" />
-                        <div className="relative h-full"> {/* Added wrapper div for image */}
+                        <div className="relative h-full">
                             <Image
-                                src={metadata.image.replace(SITE_URL, '')}
+                                src={metadata.image}
                                 alt={metadata.name}
                                 fill
                                 className="object-cover"
                                 priority
                             />
                         </div>
-                        {/* Overlay Content */}
                         <div className="absolute inset-0 z-20 flex flex-col justify-between p-10 text-white">
                             <div className="flex items-center text-lg font-medium">
                                 <span className="text-3xl">{metadata.name}</span>
@@ -118,85 +208,9 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                         </div>
                     </div>
 
-                    {/* Right Panel - Interaction Controls */}
-                    <div className="relative flex h-full lg:w-full z-10"> {/* Added relative and h-full */}
-                        <div className="flex w-full items-center justify-center">
-                            <div className="mx-auto w-full max-w-xl space-y-6 px-4">
-                                <div className="space-y-2 text-center">
-                                    <h1 className="text-2xl font-semibold tracking-tight">
-                                        Interact with {metadata.name}
-                                    </h1>
-                                    <p className="text-sm text-muted-foreground">
-                                        Select an action to execute.
-                                    </p>
-                                </div>
-
-                                <div className="grid gap-6">
-                                    {/* Main Execute Button */}
-                                    <Button
-                                        onClick={handleExecute}
-                                        disabled={isLoading || !stxAddress || !selectedAction}
-                                        className="w-fit justify-self-center"
-                                        size="lg"
-                                    >
-                                        {isLoading ? 'Executing...' : 'Execute Action'}
-                                    </Button>
-
-                                    {/* Action Toggle Group */}
-                                    <div className="rounded-lg border p-4 bg-[var(--sidebar)] border-[var(--accents-7)]">
-                                        <h3 className="text-sm font-medium mb-3">Select Action</h3>
-                                        <ToggleGroup
-                                            type="single"
-                                            value={selectedAction}
-                                            onValueChange={(value: any) => value && setSelectedAction(value)}
-                                            className="flex flex-wrap gap-2 justify-start"
-                                        >
-                                            {metadata.actions.map((action) => (
-                                                <ToggleGroupItem
-                                                    key={action}
-                                                    value={action}
-                                                    aria-label={`Select ${action} action`}
-                                                    className="px-3 py-2 text-sm"
-                                                >
-                                                    {action}
-                                                </ToggleGroupItem>
-                                            ))}
-                                        </ToggleGroup>
-                                    </div>
-
-                                    <div className="relative">
-                                        <div className="absolute inset-0 flex items-center">
-                                            <Separator className="w-full" />
-                                        </div>
-                                        <div className="relative flex justify-center text-xs uppercase">
-                                            <span className="bg-background px-2 text-muted-foreground">
-                                                Contract Details
-                                            </span>
-                                        </div>
-                                    </div>
-
-                                    {/* Contract Info */}
-                                    <div className="rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] p-4">
-                                        <h3 className="text-sm font-medium">Contract Address</h3>
-                                        <p className="mt-1 break-all text-sm text-muted-foreground">
-                                            {metadata.contract}
-                                        </p>
-                                    </div>
-
-                                    {!stxAddress && (
-                                        <div className="rounded-lg border border-yellow-200 bg-yellow-50 p-4 dark:border-yellow-900/50 dark:bg-yellow-900/20">
-                                            <p className="text-sm text-yellow-600 dark:text-yellow-200">
-                                                Connect your wallet to execute interactions
-                                            </p>
-                                        </div>
-                                    )}
-
-                                    <p className="px-2 text-center text-sm text-muted-foreground">
-                                        Make sure you have sufficient energy before executing interactions.
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                    {/* Right Panel - Interaction Interface */}
+                    <div className="w-full h-full flex items-center justify-center">
+                        <InteractionPanel />
                     </div>
                 </div>
             </Layout>

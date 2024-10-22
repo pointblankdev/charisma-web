@@ -7,7 +7,7 @@ import Page from "@components/page"
 import { SkipNavContent } from "@reach/skip-nav"
 import Layout from "@components/layout/layout"
 import { GetStaticProps } from "next"
-import { getInteractionUri } from "@lib/stacks-api"
+import { getInteractionUri, InteractionMetadata } from "@lib/stacks-api"
 import { cn } from "@lib/utils"
 import {
   ContextMenu,
@@ -18,8 +18,9 @@ import {
 } from "@components/ui/context-menu"
 import { useRouter } from "next/navigation"
 import { useDungeonCrawler } from "@lib/hooks/use-dungeon-crawler"
-import { SITE_URL } from "@lib/constants"
+import { API_URL, SITE_URL } from "@lib/constants"
 import React, { useState } from "react"
+import { interactionIds } from "pages/api/v0/interactions"
 
 export type Collection = (typeof collections)[number]
 
@@ -50,41 +51,21 @@ export interface Interaction {
   actions: string[];
 }
 
-const INTERACTIONS = [
-  {
-    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    name: 'charisma-mine-rc2'
-  },
-  {
-    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    name: 'fate-randomizer-rc1'
-  },
-  {
-    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    name: 'the-troll-toll-rc1'
-  },
-  {
-    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    name: 'fatigue-rc3'
-  },
-  {
-    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    name: 'meme-engine-cha-rc4'
-  },
-  {
-    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    name: 'charismatic-corgi-rc1'
-  }
-];
-
 interface ExplorePageProps {
   interactionData: Interaction[];
 }
 
 export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   const interactionData = (await Promise.all(
-    INTERACTIONS.map(async (interaction) => {
-      const metadata = await getInteractionUri(interaction.address, interaction.name);
+    interactionIds.map(async (interaction) => {
+      // will need this for community-made interactions
+      // const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
+
+      // shortcut to fetch metadata since im not supporting any community-made interactions yet
+      const res = await fetch(`${API_URL}/api/v0/interactions/${interaction.split('.')[1]}`);
+      const metadata: InteractionMetadata = await res.json();
+
+      console.log(metadata)
 
       if (!metadata) return null;
 

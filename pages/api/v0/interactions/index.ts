@@ -8,12 +8,12 @@ type ErrorResponse = {
 };
 
 export const interactionIds = [
-    'fatigue',
-    'charisma-mine',
-    'the-troll-toll',
-    'fate-randomizer',
-    'charismatic-corgi',
-    'meme-engine-cha'
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue',
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine',
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-troll-toll',
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fate-randomizer',
+    // 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi',
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha'
 ]
 
 export default function InteractionsAPI(
