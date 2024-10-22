@@ -18,6 +18,34 @@ depends_on = []
 path = "contracts/experience.clar"
 depends_on = []
 
+[contracts.univ2-share-fee-to]
+path = "contracts/univ2-share-fee-to.clar"
+depends_on = []
+
+[contracts.univ2-core]
+path = "contracts/univ2-core.clar"
+depends_on = []
+
+[contracts.univ2-library]
+path = "contracts/univ2-library.clar"
+depends_on = []
+
+[contracts.univ2-router]
+path = "contracts/univ2-router.clar"
+depends_on = []
+
+[contracts.univ2-path2]
+path = "contracts/univ2-path2.clar"
+depends_on = []
+
+[contracts.wstx]
+path = "contracts/wstx.clar"
+depends_on = []
+
+[contracts.welshcorgicoin-token]
+path = "contracts/welshcorgicoin-token.clar"
+depends_on = []
+
 [contracts.odins-raven]
 path = "contracts/odins-raven.clar"
 depends_on = []
@@ -100,6 +128,10 @@ depends_on = []
 
 [contracts.hot-potato]
 path = "contracts/interactions/hot-potato.clar"
+depends_on = []
+
+[contracts.welsh-arbitrage]
+path = "contracts/interactions/welsh-arbitrage.clar"
 depends_on = []
 
 [contracts.dungeon-crawler]
