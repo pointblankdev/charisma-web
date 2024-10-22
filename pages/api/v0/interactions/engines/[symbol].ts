@@ -12,6 +12,7 @@ export default function MemeEngineAPI(
     res: NextApiResponse<any | ErrorResponse>
 ) {
     const symbol = req.query.symbol as string;
+    console.log(symbol);
     return res.status(200).json({
         url: `https://charisma.rocks/interactions/meme-engine-${symbol}`,
         image: `https://charisma.rocks/interactions/meme-engine-${symbol}.png`,

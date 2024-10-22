@@ -101,7 +101,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
     props: {
       interactionData,
     },
-    revalidate: 6, // Revalidate every 10 minutes
+    revalidate: 60, // Revalidate every 10 minutes
   };
 };
 
