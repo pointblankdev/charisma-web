@@ -98,28 +98,28 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
 
   // Curated list of explorations
   const explorations: Exploration[] = [
-    {
-      name: "Energy Arbitrage",
-      description: "Generate energy from holding CHA tokens and profit from market inefficiencies.",
-      cover: "/explorations/energy-arbitrage.png",
-      steps: [
-        {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
-          action: "TAP",
-          description: "Generate energy from your CHA holdings"
-        },
-        {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc1",
-          action: "FORWARD",
-          description: "Arbitrage swap forward yielding WELSH and CHA tokens"
-        },
-        {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc1",
-          action: "BACKWARD",
-          description: "Arbitrage swap backwards yielding WELSH and CHA tokens"
-        },
-      ]
-    },
+    // {
+    //   name: "Energy Arbitrage",
+    //   description: "Generate energy from holding CHA tokens and profit from market inefficiencies.",
+    //   cover: "/explorations/energy-arbitrage.png",
+    //   steps: [
+    //     {
+    //       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
+    //       action: "TAP",
+    //       description: "Generate energy from your CHA holdings"
+    //     },
+    //     {
+    //       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
+    //       action: "FORWARD",
+    //       description: "Arbitrage swap forward yielding WELSH and CHA tokens"
+    //     },
+    //     {
+    //       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
+    //       action: "BACKWARD",
+    //       description: "Arbitrage swap backwards yielding WELSH and CHA tokens"
+    //     },
+    //   ]
+    // },
     {
       name: "Charismatic Flow",
       description: "Collect energy from held CHA tokens and then attempt to wrap additional Charisma tokens.",
