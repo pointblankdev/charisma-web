@@ -8,7 +8,7 @@ import { Separator } from '@components/ui/separator';
 import Image from 'next/image';
 import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
 import { useGlobalState } from '@lib/hooks/global-state-context';
-import { API_URL } from '@lib/constants';
+import { API_URL, SITE_URL } from '@lib/constants';
 import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
 
 interface InteractionMetadata {
@@ -97,7 +97,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                         <div className="absolute inset-0 z-10 bg-zinc-900/50" />
                         <div className="relative h-full"> {/* Added wrapper div for image */}
                             <Image
-                                src={metadata.image}
+                                src={metadata.image.replace(SITE_URL, '')}
                                 alt={metadata.name}
                                 fill
                                 className="object-cover"

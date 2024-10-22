@@ -19,6 +19,7 @@ import {
 import { useRouter } from "next/navigation"
 import { useDungeonCrawler } from "@lib/hooks/use-dungeon-crawler"
 import { SITE_URL } from "@lib/constants"
+import { useState } from "react"
 
 export type Collection = (typeof collections)[number]
 
@@ -46,6 +47,7 @@ export interface Interaction {
   category: InteractionCategory;
   description: string;
   contract: string;
+  actions: string[];
 }
 
 const INTERACTIONS = [
@@ -89,7 +91,8 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
         type: "interaction" as const,
         category: metadata.category as InteractionCategory,
         description: metadata.description,
-        uri: metadata.url
+        uri: metadata.url,
+        actions: metadata.actions || [],
       };
     })
   )).filter((item): item is Interaction => item !== null);
@@ -182,37 +185,33 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
           />
         </div>
         <div className="hidden md:block">
-          <div className="border-t">
-            <div className="">
-              <div className="grid lg:grid-cols-5">
-                <Sidebar collections={collections} className="hidden lg:block" />
-                <div className="col-span-3 lg:col-span-4 lg:border-l">
-                  <div className="h-full px-4 py-6 lg:px-8">
-                    <Tabs defaultValue="all" className="h-full space-y-6">
-                      <div className="flex items-center space-between">
-                        <TabsList>
-                          <TabsTrigger value="all">All</TabsTrigger>
-                          <TabsTrigger value="utility">Utility</TabsTrigger>
-                          <TabsTrigger value="rewards">Rewards</TabsTrigger>
-                          <TabsTrigger value="engines">Engines</TabsTrigger>
-                        </TabsList>
-                      </div>
-                      {Object.values(INTERACTION_CATEGORIES).map((category) => (
-                        <TabsContent
-                          key={category.toLowerCase()}
-                          value={category.toLowerCase()}
-                          className="p-0 border-none outline-none"
-                        >
-                          {renderInteractionSection(
-                            category,
-                            getCategoryDescription(category),
-                            getInteractionsByCategory(category)
-                          )}
-                        </TabsContent>
-                      ))}
-                    </Tabs>
+          <div className="grid lg:grid-cols-5">
+            <Sidebar collections={collections} className="hidden lg:block" />
+            <div className="col-span-3 lg:col-span-4 lg:border-l">
+              <div className="h-full px-4 py-6 lg:px-8">
+                <Tabs defaultValue="all" className="h-full space-y-6">
+                  <div className="flex items-center space-between">
+                    <TabsList>
+                      <TabsTrigger value="all">All</TabsTrigger>
+                      <TabsTrigger value="utility">Utility</TabsTrigger>
+                      <TabsTrigger value="rewards">Rewards</TabsTrigger>
+                      <TabsTrigger value="engines">Engines</TabsTrigger>
+                    </TabsList>
                   </div>
-                </div>
+                  {Object.values(INTERACTION_CATEGORIES).map((category) => (
+                    <TabsContent
+                      key={category.toLowerCase()}
+                      value={category.toLowerCase()}
+                      className="p-0 border-none outline-none"
+                    >
+                      {renderInteractionSection(
+                        category,
+                        getCategoryDescription(category),
+                        getInteractionsByCategory(category)
+                      )}
+                    </TabsContent>
+                  ))}
+                </Tabs>
               </div>
             </div>
           </div>
@@ -238,7 +237,8 @@ function InteractionArtwork({
   ...props
 }: InteractionArtworkProps) {
   const router = useRouter();
-  const { explore } = useDungeonCrawler();
+  const { interact } = useDungeonCrawler();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleInteractionClick = () => {
     if (interaction.uri) {
@@ -248,8 +248,15 @@ function InteractionArtwork({
     }
   };
 
-  const handleExploreClick = () => {
-    explore(interaction.contract, 'BURN');
+  const handleExploreClick = async (action: string) => {
+    setIsLoading(true);
+    try {
+      await interact(interaction.contract, action);
+    } catch (error) {
+      console.error('Failed to explore interaction:', error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -261,7 +268,7 @@ function InteractionArtwork({
             onClick={handleInteractionClick}
           >
             <Image
-              src={interaction.cover}
+              src={interaction.cover.replace(SITE_URL, '')}
               alt={interaction.name}
               width={width}
               height={height}
@@ -273,10 +280,32 @@ function InteractionArtwork({
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-40">
-          <ContextMenuItem onClick={handleExploreClick}>Explore Interaction</ContextMenuItem>
-          <ContextMenuItem>View Details</ContextMenuItem>
+          <ContextMenuItem
+            onClick={handleInteractionClick}
+            className="cursor-pointer"
+          >
+            View Details
+          </ContextMenuItem>
           <ContextMenuSeparator />
-          <ContextMenuItem>Share</ContextMenuItem>
+          {interaction.actions?.map((action) => (
+            <ContextMenuItem
+              key={action}
+              onClick={() => handleExploreClick(action)}
+              disabled={isLoading}
+              className="cursor-pointer"
+            >
+              {isLoading ? 'Exploring...' : `Execute ${action.toLowerCase()}`}
+            </ContextMenuItem>
+          ))}
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            onClick={() => {
+              navigator.clipboard.writeText(interaction.contract);
+            }}
+            className="cursor-pointer"
+          >
+            Copy Contract ID
+          </ContextMenuItem>
         </ContextMenuContent>
       </ContextMenu>
       <div className="space-y-1 text-sm">
@@ -289,7 +318,7 @@ function InteractionArtwork({
         </p>
       </div>
     </div>
-  )
+  );
 }
 
 function InteractionEmptyPlaceholder() {
@@ -343,7 +372,7 @@ function Sidebar({ className, collections }: SidebarProps) {
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2">
                 <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z" />
               </svg>
-              Popular Interactions
+              Popular
             </Button>
           </div>
         </div>
