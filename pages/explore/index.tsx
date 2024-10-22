@@ -217,7 +217,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
             <Sidebar collections={collections} className="hidden lg:block" />
             <div className="col-span-3 lg:col-span-4 lg:border-l overflow-hidden sm:overflow-visible">
               <div className="h-full pl-0 py-6 lg:pl-8">
-                <Tabs defaultValue="all" className="sm:h-[50vh] space-y-6">
+                <Tabs defaultValue="all" className="sm:h-fit space-y-6">
                   <div className="flex items-center space-between">
                     <TabsList className="mx-4">
                       <TabsTrigger value="all">All Interactions</TabsTrigger>
