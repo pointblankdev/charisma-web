@@ -10,7 +10,7 @@ import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { API_URL, SITE_URL } from '@lib/constants';
 import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
-import { interactionIds, interactionSlugs } from 'pages/api/v0/interactions';
+import { interactionIds } from 'pages/api/v0/interactions';
 import { ExternalLink } from 'lucide-react';
 import { getInteractionUri } from '@lib/stacks-api';
 
