@@ -50,8 +50,7 @@
 ;; Authorization control
 (define-private (is-authorized)
     (or (is-eq tx-sender .dungeon-master) 
-        (contract-call? .dungeon-master is-extension contract-caller))
-)
+        (contract-call? .dungeon-master is-extension contract-caller)))
 
 ;; Functions to update thresholds
 
@@ -59,33 +58,25 @@
   (begin
     (asserts! (is-authorized) ERR_UNAUTHORIZED)
     (asserts! (< new-threshold (var-get threshold-9-point)) ERR_INVALID_THRESHOLD)
-    (ok (var-set threshold-5-point new-threshold))
-  )
-)
+    (ok (var-set threshold-5-point new-threshold))))
 
 (define-public (set-threshold-9-point (new-threshold uint))
   (begin
     (asserts! (is-authorized) ERR_UNAUTHORIZED)
     (asserts! (and (> new-threshold (var-get threshold-5-point)) (< new-threshold (var-get threshold-19-point))) ERR_INVALID_THRESHOLD)
-    (ok (var-set threshold-9-point new-threshold))
-  )
-)
+    (ok (var-set threshold-9-point new-threshold))))
 
 (define-public (set-threshold-19-point (new-threshold uint))
   (begin
     (asserts! (is-authorized) ERR_UNAUTHORIZED)
     (asserts! (and (> new-threshold (var-get threshold-9-point)) (< new-threshold (var-get threshold-39-point))) ERR_INVALID_THRESHOLD)
-    (ok (var-set threshold-19-point new-threshold))
-  )
-)
+    (ok (var-set threshold-19-point new-threshold))))
 
 (define-public (set-threshold-39-point (new-threshold uint))
   (begin
     (asserts! (is-authorized) ERR_UNAUTHORIZED)
     (asserts! (> new-threshold (var-get threshold-19-point)) ERR_INVALID_THRESHOLD)
-    (ok (var-set threshold-39-point new-threshold))
-  )
-)
+    (ok (var-set threshold-39-point new-threshold))))
 
 ;; Read-only functions to get current thresholds
 (define-read-only (get-thresholds)
@@ -94,15 +85,11 @@
     threshold-9-point: (var-get threshold-9-point),
     threshold-19-point: (var-get threshold-19-point),
     threshold-39-point: (var-get threshold-39-point)
-  })
-)
+  }))
 
 ;; Generate sample points for 39-point balance integral calculation
 (define-read-only (generate-sample-points-39 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (block-step (/ (- end-block start-block) u38))
-        )
+    (let ((block-step (/ (- end-block start-block) u38)))
         (list
             { address: address, block: start-block }
             { address: address, block: (+ start-block (* block-step u1)) }
@@ -142,17 +129,11 @@
             { address: address, block: (+ start-block (* block-step u35)) }
             { address: address, block: (+ start-block (* block-step u36)) }
             { address: address, block: (+ start-block (* block-step u37)) }
-            { address: address, block: end-block }
-        )
-    )
-)
+            { address: address, block: end-block })))
 
 ;; Generate sample points for 19-point balance integral calculation
 (define-read-only (generate-sample-points-19 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (block-step (/ (- end-block start-block) u18))
-        )
+    (let ((block-step (/ (- end-block start-block) u18)))
         (list
             { address: address, block: start-block }
             { address: address, block: (+ start-block (* block-step u1)) }
@@ -172,17 +153,11 @@
             { address: address, block: (+ start-block (* block-step u15)) }
             { address: address, block: (+ start-block (* block-step u16)) }
             { address: address, block: (+ start-block (* block-step u17)) }
-            { address: address, block: end-block }
-        )
-    )
-)
+            { address: address, block: end-block })))
 
 ;; Generate sample points for 9-point balance integral calculation
 (define-read-only (generate-sample-points-9 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (block-step (/ (- end-block start-block) u8))
-        )
+    (let ((block-step (/ (- end-block start-block) u8)))
         (list
             { address: address, block: start-block }
             { address: address, block: (+ start-block block-step) }
@@ -192,36 +167,21 @@
             { address: address, block: (+ start-block (* block-step u5)) }
             { address: address, block: (+ start-block (* block-step u6)) }
             { address: address, block: (+ start-block (* block-step u7)) }
-            { address: address, block: end-block }
-        )
-    )
-)
+            { address: address, block: end-block })))
 
 ;; Generate sample points for 5-point balance integral calculation
 (define-read-only (generate-sample-points-5 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (block-step (/ (- end-block start-block) u4))
-        )
+    (let ((block-step (/ (- end-block start-block) u4)))
         (list
             { address: address, block: start-block }
             { address: address, block: (+ start-block block-step) }
             { address: address, block: (+ start-block (* block-step u2)) }
             { address: address, block: (+ start-block (* block-step u3)) }
-            { address: address, block: end-block }
-        )
-    )
-)
+            { address: address, block: end-block })))
 
 ;; Generate sample points for 2-point balance integral calculation
 (define-read-only (generate-sample-points-2 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (block-step (/ (- end-block start-block) u1))
-        )
+    (let ((block-step (/ (- end-block start-block) u1)))
         (list
             { address: address, block: start-block }
-            { address: address, block: end-block }
-        )
-    )
-)
+            { address: address, block: end-block })))

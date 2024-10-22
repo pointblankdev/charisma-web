@@ -239,12 +239,12 @@
 
 (define-private (handle-tap-success (sender principal) (energy uint) (integral uint))
   (begin
-    (print "The adventurer's tokens resonate with the dungeon, generating pure energy from their autism.")
+    (print "The tokens resonate with powerful energy, enriched by their holder's profound autism.")
     (ok "ENERGY_GENERATED")))
 
 (define-private (handle-tap-insufficient-balance (sender principal))
   (begin
-    (print "The adventurer's tokens are too weak to generate meaningful energy.")
+    (print "The tokens are too weak to generate any meaningful energy.")
     (ok "ENERGY_NOT_GENERATED")))
 
 (define-private (handle-tap-limit-exceeded (sender principal))
