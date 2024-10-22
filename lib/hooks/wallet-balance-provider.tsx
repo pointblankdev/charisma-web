@@ -28,13 +28,13 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
     stx: {}, fungible_tokens: {}, non_fungible_tokens: {}, token_offering_locked: {}
   } as AddressBalanceResponse);
 
-  // useEffect(() => {
-  //   if (stxAddress) {
-  //     getAccountBalance(stxAddress).then((balances) => {
-  //       setBalances(balances);
-  //     });
-  //   }
-  // }, [stxAddress]);
+  useEffect(() => {
+    if (stxAddress) {
+      getAccountBalance(stxAddress).then((balances) => {
+        setBalances(balances);
+      });
+    }
+  }, [stxAddress]);
 
   const getKeyByContractAddress = (contractAddress: string) => {
     const tokensArray = Object.keys(balances?.fungible_tokens || {});
