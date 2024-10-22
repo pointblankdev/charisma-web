@@ -256,10 +256,10 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
                   <div className="flex items-center justify-between mx-4">
                     <div className="space-y-1">
                       <h2 className="text-2xl font-semibold tracking-tight">
-                        Recommended Strategies
+                        Recommended
                       </h2>
                       <p className="text-sm text-muted-foreground">
-                        Curated sequences of interactions for optimal results
+                        Curated sequences of interactions for optimal profitability
                       </p>
                     </div>
                   </div>
