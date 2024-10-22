@@ -205,10 +205,10 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
               <InteractionArtwork
                 key={interaction.name}
                 interaction={interaction}
-                className={recent ? "w-[150px]" : "w-[250px]"}
+                className={recent ? "w-[250px]" : "w-[350px]"}
                 aspectRatio="square"
-                width={recent ? 150 : 250}
-                height={recent ? 150 : 250}
+                width={recent ? 250 : 350}
+                height={recent ? 250 : 350}
               />
             ))}
           </div>
@@ -271,7 +271,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
                           <ExplorationArtwork
                             key={index}
                             exploration={exploration}
-                            className="w-[150px]"
+                            className="w-[250px]"
                           />
                         ))}
                       </div>
@@ -423,8 +423,8 @@ interface ExplorationArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
 
 function ExplorationArtwork({
   exploration,
-  width = 150,
-  height = 150,
+  width = 250,
+  height = 250,
   className,
   ...props
 }: ExplorationArtworkProps) {
