@@ -15,7 +15,7 @@ export default function InteractionAPI(
         url: 'https://charisma.rocks/interactions/fatigue',
         image: 'https://charisma.rocks/interactions/fatigue.png',
         name: 'Fatigue',
-        description: 'With energy anything is possible- and without it nothing is.',
+        description: 'Without energy- nothing is possible.',
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc3',
         category: 'Utility',
     });

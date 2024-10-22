@@ -18,6 +18,7 @@ import {
   ContextMenuTrigger,
 } from "@components/ui/context-menu"
 import { useRouter } from "next/navigation"
+import { useDungeonCrawler } from "@lib/hooks/use-dungeon-crawler"
 
 export type Collection = (typeof collections)[number]
 
@@ -30,8 +31,8 @@ export const collections = [
 // Add interaction categories
 const INTERACTION_CATEGORIES = {
   UTILITY: "Utility",
-  REWARD: "Reward",
-  ENGINE: "Engine",
+  REWARD: "Rewards",
+  ENGINE: "Engines",
   ALL: "All"
 } as const;
 
@@ -97,7 +98,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
     props: {
       interactionData,
     },
-    revalidate: 600, // Revalidate every 10 minutes
+    revalidate: 60, // Revalidate every 10 minutes
   };
 };
 
@@ -192,8 +193,8 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
                         <TabsList>
                           <TabsTrigger value="all">All</TabsTrigger>
                           <TabsTrigger value="utility">Utility</TabsTrigger>
-                          <TabsTrigger value="reward">Rewards</TabsTrigger>
-                          <TabsTrigger value="meme-engine">Engines</TabsTrigger>
+                          <TabsTrigger value="rewards">Rewards</TabsTrigger>
+                          <TabsTrigger value="engines">Engines</TabsTrigger>
                         </TabsList>
                       </div>
                       {Object.values(INTERACTION_CATEGORIES).map((category) => (
@@ -237,6 +238,7 @@ function InteractionArtwork({
   ...props
 }: InteractionArtworkProps) {
   const router = useRouter();
+  const { explore } = useDungeonCrawler();
 
   const handleInteractionClick = () => {
     if (interaction.uri) {
@@ -244,6 +246,10 @@ function InteractionArtwork({
     } else {
       console.error('No URI available for this interaction');
     }
+  };
+
+  const handleExploreClick = () => {
+    explore(interaction.contract, 'BURN');
   };
 
   return (
@@ -267,7 +273,7 @@ function InteractionArtwork({
           </div>
         </ContextMenuTrigger>
         <ContextMenuContent className="w-40">
-          <ContextMenuItem onClick={handleInteractionClick}>Explore Interaction</ContextMenuItem>
+          <ContextMenuItem onClick={handleExploreClick}>Explore Interaction</ContextMenuItem>
           <ContextMenuItem>View Details</ContextMenuItem>
           <ContextMenuSeparator />
           <ContextMenuItem>Share</ContextMenuItem>
@@ -276,7 +282,7 @@ function InteractionArtwork({
       <div className="space-y-1 text-sm">
         <h3 className="font-medium leading-none">{interaction.name}</h3>
         <p className="text-xs text-muted-foreground">
-          {interaction.contract.slice(0, 4)}...{interaction.contract.slice(-4)}
+          {interaction.contract.split('.')[0].slice(0, 4)}...{interaction.contract.split('.')[0].slice(-4)}.{interaction.contract.split('.')[1]}
         </p>
         <p className="text-xs text-muted-foreground line-clamp-2">
           {interaction.description}

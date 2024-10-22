@@ -1345,7 +1345,6 @@ export async function getInteractionUri(contractAddress: string, contractName: s
         const metadataResponse = await fetch(value.value);
         const metadata: InteractionMetadata = await metadataResponse.json();
 
-        console.log(metadata)
         return metadata;
       } catch (error) {
         console.error('Error fetching interaction metadata:', error);
