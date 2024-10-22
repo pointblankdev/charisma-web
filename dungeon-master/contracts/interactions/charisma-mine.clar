@@ -41,19 +41,15 @@
 
 (define-private (mint-action (sender principal))
   (let ((fatigue-response (unwrap-panic (contract-call? .fatigue execute "BURN"))))
-    (if (is-eq fatigue-response "ENERGY_BURNED")
-      (mint-attempt sender)
-      (if (is-eq fatigue-response "ENERGY_NOT_BURNED")
-        (handle-insufficient-energy sender)
-        (handle-fatigue-error sender)))))
+    (if (is-eq fatigue-response "ENERGY_BURNED") (mint-attempt sender)
+    (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
+    (handle-fatigue-error sender)))))
 
 (define-private (burn-action (sender principal))
   (let ((fatigue-response (unwrap-panic (contract-call? .fatigue execute "BURN"))))
-    (if (is-eq fatigue-response "ENERGY_BURNED")
-      (burn-attempt sender)
-      (if (is-eq fatigue-response "ENERGY_NOT_BURNED")
-        (handle-insufficient-energy sender)
-        (handle-fatigue-error sender)))))
+    (if (is-eq fatigue-response "ENERGY_BURNED") (burn-attempt sender)
+    (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
+    (handle-fatigue-error sender)))))
 
 ;; Token Operation Handlers
 
@@ -62,18 +58,18 @@
     (match (contract-call? .charisma-token wrap amount)
       success (handle-mint-success sender amount)
       error (if (is-eq error u401) (handle-mint-locked sender)
-             (if (is-eq error u403) (handle-mint-unprepared sender)
-              (if (is-eq error u405) (handle-mint-invalid sender)
-                (handle-mint-unknown-error sender)))))))
+            (if (is-eq error u403) (handle-mint-unprepared sender)
+            (if (is-eq error u405) (handle-mint-invalid sender)
+            (handle-mint-unknown-error sender)))))))
 
 (define-private (burn-attempt (sender principal))
   (let ((amount (unwrap-panic (contract-call? .charisma-token get-max-liquidity-flow))))
     (match (contract-call? .charisma-token unwrap amount)
       success (handle-burn-success sender amount)
-      error (if (is-eq error u401) (handle-burn-locked sender)
-             (if (is-eq error u403) (handle-burn-unprepared sender)
+      error   (if (is-eq error u401) (handle-burn-locked sender)
+              (if (is-eq error u403) (handle-burn-unprepared sender)
               (if (is-eq error u405) (handle-burn-invalid sender)
-                (handle-burn-unknown-error sender)))))))
+              (handle-burn-unknown-error sender)))))))
 
 ;; Energy Cost Handlers
 
@@ -111,12 +107,12 @@
 
 (define-private (handle-mint-unprepared (sender principal))
   (begin
-    (print "The adventurer has not been red-pilled yet, and does not understand the nature of their own reality.")
+    (print "The adventurer hasn't been red-pilled and was unable to mint Charisma tokens.")
     (ok "NOT_RED_PILLED")))
 
 (define-private (handle-burn-unprepared (sender principal))
   (begin
-    (print "The adventurer has not been red-pilled yet, and does not understand the nature of their own reality.")
+    (print "The adventurer hasn't been red-pilled and was unable to mint Charisma tokens.")
     (ok "NOT_RED_PILLED")))
 
 (define-private (handle-mint-invalid (sender principal))
@@ -144,5 +140,4 @@
 (define-public (set-contract-uri (new-uri (optional (string-utf8 256))))
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
-    (ok (var-set contract-uri new-uri)))
-)
+    (ok (var-set contract-uri new-uri))))

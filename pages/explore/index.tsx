@@ -49,10 +49,10 @@ export interface Interaction {
 }
 
 const INTERACTIONS = [
-  // { 
-  //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-  //   name: 'charisma-mine-rc1'
-  // },
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    name: 'charisma-mine-rc2'
+  },
   // { 
   //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
   //   name: 'keepers-challenge-rc3'
