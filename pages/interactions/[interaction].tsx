@@ -10,6 +10,7 @@ import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { API_URL, SITE_URL } from '@lib/constants';
 import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
+import { interactionIds } from 'pages/api/v0/interactions';
 
 interface InteractionMetadata {
     url: string;
@@ -28,9 +29,6 @@ interface InteractionDetailProps {
 
 // Updated getStaticPaths and getStaticProps
 export const getStaticPaths: GetStaticPaths = () => {
-    // You might want to fetch this from an API or central config
-    const interactionIds = ['fatigue', 'charisma-mine', 'hot-potato', 'fate-randomizer'];
-
     return {
         paths: interactionIds.map(id => ({
             params: { interaction: id }
