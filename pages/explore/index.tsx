@@ -1,5 +1,4 @@
 import Image from "next/image"
-import { PlusCircledIcon } from "@radix-ui/react-icons"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs"
 import { Button } from "@components/ui/button"
 import { Separator } from "@components/ui/separator"

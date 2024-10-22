@@ -125,7 +125,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                     {/* Right Panel - Interaction Controls */}
                     <div className="relative flex h-full lg:w-full z-10"> {/* Added relative and h-full */}
                         <div className="flex w-full items-center justify-center bg-black"> {/* Removed padding, made full height */}
-                            <div className="mx-auto w-full max-w-lg space-y-6 px-4"> {/* Moved padding here */}
+                            <div className="mx-auto w-full max-w-xl space-y-6 px-4"> {/* Moved padding here */}
                                 <div className="space-y-2 text-center">
                                     <h1 className="text-2xl font-semibold tracking-tight">
                                         Execute Interaction

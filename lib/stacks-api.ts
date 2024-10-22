@@ -1340,6 +1340,8 @@ export async function getInteractionUri(contractAddress: string, contractName: s
 
       if (!value.value) return null;
 
+      console.log('Interaction URI:', value.value);
+
       // Fetch the JSON metadata from the URI
       try {
         const metadataResponse = await fetch(value.value);
