@@ -122,7 +122,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
 
                     {/* Right Panel - Interaction Controls */}
                     <div className="relative flex h-full lg:w-full z-10"> {/* Added relative and h-full */}
-                        <div className="flex w-full items-center justify-center bg-black">
+                        <div className="flex w-full items-center justify-center">
                             <div className="mx-auto w-full max-w-xl space-y-6 px-4">
                                 <div className="space-y-2 text-center">
                                     <h1 className="text-2xl font-semibold tracking-tight">
@@ -145,7 +145,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                     </Button>
 
                                     {/* Action Toggle Group */}
-                                    <div className="rounded-lg border p-4">
+                                    <div className="rounded-lg border p-4 bg-[var(--sidebar)] border-[var(--accents-7)]">
                                         <h3 className="text-sm font-medium mb-3">Select Action</h3>
                                         <ToggleGroup
                                             type="single"
@@ -178,7 +178,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                     </div>
 
                                     {/* Contract Info */}
-                                    <div className="rounded-lg border p-4">
+                                    <div className="rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] p-4">
                                         <h3 className="text-sm font-medium">Contract Address</h3>
                                         <p className="mt-1 break-all text-sm text-muted-foreground">
                                             {metadata.contract}
