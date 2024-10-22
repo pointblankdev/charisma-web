@@ -115,7 +115,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
         },
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
-          action: "BACKWARD",
+          action: "REVERSE",
           description: "Arbitrage swap backwards yielding WELSH and CHA tokens"
         },
       ]
