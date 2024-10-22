@@ -37,7 +37,7 @@
 ;; system integrity. The architecture supports the protocol's innovative approach to multi-faceted
 ;; blockchain interactions, allowing for complex operations to be performed in a single transaction.
 
-(use-trait interaction-trait .dao-traits-v6.interaction-trait)
+(use-trait interaction-trait .dao-traits-v7.interaction-trait)
 
 (define-public (interact (interaction <interaction-trait>) (action (string-ascii 32)))
   (contract-call? interaction execute action))
@@ -52,21 +52,23 @@
   (interaction-7 (optional <interaction-trait>)) (action-7 (optional (string-ascii 32)))
   (interaction-8 (optional <interaction-trait>)) (action-8 (optional (string-ascii 32))))
   (let (
-    (response-1 (and (is-some action-1) (match (interact (unwrap-panic interaction-1) (unwrap-panic action-1)) success success error false)))
-    (response-2 (and (is-some action-2) (match (interact (unwrap-panic interaction-2) (unwrap-panic action-2)) success success error false)))
-    (response-3 (and (is-some action-3) (match (interact (unwrap-panic interaction-3) (unwrap-panic action-3)) success success error false)))
-    (response-4 (and (is-some action-4) (match (interact (unwrap-panic interaction-4) (unwrap-panic action-4)) success success error false)))
-    (response-5 (and (is-some action-5) (match (interact (unwrap-panic interaction-5) (unwrap-panic action-5)) success success error false)))
-    (response-6 (and (is-some action-6) (match (interact (unwrap-panic interaction-6) (unwrap-panic action-6)) success success error false)))
-    (response-7 (and (is-some action-7) (match (interact (unwrap-panic interaction-7) (unwrap-panic action-7)) success success error false)))
-    (response-8 (and (is-some action-8) (match (interact (unwrap-panic interaction-8) (unwrap-panic action-8)) success success error false))))
-    (print {
-      response-1: response-1,
-      response-2: response-2,
-      response-3: response-3,
-      response-4: response-4,
-      response-5: response-5,
-      response-6: response-6,
-      response-7: response-7,
-      response-8: response-8
-    }) (ok true)))
+    (response-1 (if (is-some action-1) (unwrap-panic (interact (unwrap-panic interaction-1) (unwrap-panic action-1))) ""))
+    (response-2 (if (is-some action-2) (unwrap-panic (interact (unwrap-panic interaction-2) (unwrap-panic action-2))) ""))
+    (response-3 (if (is-some action-3) (unwrap-panic (interact (unwrap-panic interaction-3) (unwrap-panic action-3))) ""))
+    (response-4 (if (is-some action-4) (unwrap-panic (interact (unwrap-panic interaction-4) (unwrap-panic action-4))) ""))
+    (response-5 (if (is-some action-5) (unwrap-panic (interact (unwrap-panic interaction-5) (unwrap-panic action-5))) ""))
+    (response-6 (if (is-some action-6) (unwrap-panic (interact (unwrap-panic interaction-6) (unwrap-panic action-6))) ""))
+    (response-7 (if (is-some action-7) (unwrap-panic (interact (unwrap-panic interaction-7) (unwrap-panic action-7))) ""))
+    (response-8 (if (is-some action-8) (unwrap-panic (interact (unwrap-panic interaction-8) (unwrap-panic action-8))) ""))
+    (output {
+      i1: interaction-1, r1: response-1,
+      i2: interaction-2, r2: response-2,
+      i3: interaction-3, r3: response-3,
+      i4: interaction-4, r4: response-4,
+      i5: interaction-5, r5: response-5,
+      i6: interaction-6, r6: response-6,
+      i7: interaction-7, r7: response-7,
+      i8: interaction-8, r8: response-8
+    }))
+    (print output)
+    (ok output)))

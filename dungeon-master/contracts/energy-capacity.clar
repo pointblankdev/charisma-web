@@ -35,7 +35,7 @@
 ;; across the ecosystem. It provides a flexible and upgradable system for energy capacity
 ;; management, allowing for future adjustments to the protocol's economic model.
 
-(use-trait sip10-trait .dao-traits-v6.sip010-ft-trait)
+(use-trait sip10-trait .dao-traits-v7.sip010-ft-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))

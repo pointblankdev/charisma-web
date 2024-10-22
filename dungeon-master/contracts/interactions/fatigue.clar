@@ -17,67 +17,77 @@
 ;; When executed, this contract will burn the set amount of energy from the user who interacts with it.
 
 ;; Implement the interaction-trait
-(impl-trait .dao-traits-v6.interaction-trait)
+(impl-trait .dao-traits-v7.interaction-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
-(define-constant ERR_INVALID_ACTION (err u402))
-(define-constant ERR_INSUFFICIENT_ENERGY (err u403))
 (define-constant CONTRACT_OWNER tx-sender)
 
 ;; Data Variables
-(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/explore/fatigue"))
-(define-data-var energy-burn-amount uint u10000000) ;; Default to 10 energy (10,000,000 micro-energy)
+(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/v0/interactions/fatigue"))
+(define-data-var energy-burn-amount uint u10000000) ;; Default to 10 energy (10,000,000)
 
 ;; Read-only functions
 
 (define-read-only (get-interaction-uri)
-  (ok (var-get contract-uri))
-)
-
-(define-read-only (get-actions)
-  (ok (list "BURN"))
-)
+  (ok (var-get contract-uri)))
 
 (define-read-only (get-energy-burn-amount)
-  (ok (var-get energy-burn-amount))
-)
+  (ok (var-get energy-burn-amount)))
 
 ;; Public functions
 
 (define-public (execute (action (string-ascii 32)))
   (let ((sender tx-sender))
-    (if (is-eq action "BURN")
-      (burn-energy-action sender)
-      ERR_INVALID_ACTION
-    )
-  )
-)
+    (if (is-eq action "BURN") (burn-energy-action sender)
+        (err "INVALID_ACTION"))))
 
-;; Private functions
+;; Fatigue Action Handler
 
 (define-private (burn-energy-action (sender principal))
-  (let (
-    (burn-amount (var-get energy-burn-amount))
-    (user-energy (unwrap! (contract-call? .energy get-balance sender) (err u500)))
-  )
-    (asserts! (>= user-energy burn-amount) ERR_INSUFFICIENT_ENERGY)
-    (contract-call? .dungeon-keeper exhaust burn-amount sender)
-  )
-)
+  (let ((amount (var-get energy-burn-amount)))
+    (match (contract-call? .dungeon-keeper exhaust amount sender)
+      success (handle-fatigue-success sender amount)
+      error   (if (is-eq error u1) (handle-insufficient-energy sender amount)
+              (if (is-eq error u405) (handle-fatigue-limit-exceeded sender amount)
+              (if (is-eq error u403) (handle-fatigue-unverified sender amount)
+              (handle-fatigue-unknown-error sender amount)))))))
+
+;; Fatigue Contract Response Handlers
+
+(define-private (handle-fatigue-success (sender principal) (amount uint))
+  (begin
+    (print "A wave of exhaustion washes over the adventurer.")
+    (ok "ENERGY_BURNED")))
+
+(define-private (handle-insufficient-energy (sender principal) (amount uint))
+  (begin
+    (print "The weary adventurer doesn't have enough energy left.")
+    (ok "ENERGY_NOT_BURNED")))
+
+(define-private (handle-fatigue-limit-exceeded (sender principal) (amount uint))
+  (begin
+    (print "The dungeon's appetite for energy has been exceeded for now.")
+    (ok "ENERGY_NOT_BURNED")))
+
+(define-private (handle-fatigue-unverified (sender principal) (amount uint))
+  (begin
+    (print "The dungeon does not recognize this interaction.")
+    (ok "ENERGY_NOT_BURNED")))
+
+(define-private (handle-fatigue-unknown-error (sender principal) (amount uint))
+  (begin
+    (print "The dungeon's energy drain mechanism malfunctions in an unexpected way.")
+    (ok "ENERGY_NOT_BURNED")))
 
 ;; Admin functions
 
 (define-public (set-contract-uri (new-uri (optional (string-utf8 256))))
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
-    (ok (var-set contract-uri new-uri))
-  )
-)
+    (ok (var-set contract-uri new-uri))))
 
 (define-public (set-energy-burn-amount (new-amount uint))
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
-    (ok (var-set energy-burn-amount new-amount))
-  )
-)
+    (ok (var-set energy-burn-amount new-amount))))

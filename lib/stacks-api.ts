@@ -1312,8 +1312,18 @@ export async function getBalancesAtBlock() {
   return response;
 }
 
-export async function getInteractionUri(contractAddress: string, contractName: string) {
+export interface InteractionMetadata {
+  url: string;
+  image: string;
+  name: string;
+  description: string;
+  contract: string;
+  category: string;
+}
+
+export async function getInteractionUri(contractAddress: string, contractName: string): Promise<InteractionMetadata | null> {
   try {
+    // First get the URI from the contract
     const response: any = await scApi.callReadOnlyFunction({
       contractAddress,
       contractName,
@@ -1327,7 +1337,20 @@ export async function getInteractionUri(contractAddress: string, contractName: s
     if (response.okay && response.result) {
       const cv = hexToCV(response.result);
       const value = cvToValue(cv).value;
-      return value.value ? value.value : null;
+
+      if (!value.value) return null;
+
+      // Fetch the JSON metadata from the URI
+      try {
+        const metadataResponse = await fetch(value.value);
+        const metadata: InteractionMetadata = await metadataResponse.json();
+
+        console.log(metadata)
+        return metadata;
+      } catch (error) {
+        console.error('Error fetching interaction metadata:', error);
+        return null;
+      }
     }
     return null;
   } catch (error) {

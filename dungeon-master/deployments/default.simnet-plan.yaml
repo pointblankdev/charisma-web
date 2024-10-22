@@ -39,7 +39,6 @@ genesis:
     - pox
     - pox-2
     - pox-3
-    - pox-4
     - lockup
     - costs-2
     - costs-3
@@ -48,10 +47,12 @@ genesis:
 plan:
   batches:
     - id: 0
-      transactions: []
-      epoch: "2.05"
-    - id: 1
       transactions:
+        - emulated-contract-publish:
+            contract-name: arcana
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/arcana.clar
+            clarity-version: 1
         - emulated-contract-publish:
             contract-name: dao-traits-v4
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
@@ -63,14 +64,34 @@ plan:
             path: contracts/dungeon-master.clar
             clarity-version: 1
         - emulated-contract-publish:
+            contract-name: aura
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/aura.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: charisma-claims
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/charisma-claims.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: blue-pill-nft
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/blue-pill-nft.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: dao-traits-v7
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/dao-traits-v7.clar
+            clarity-version: 1
+        - emulated-contract-publish:
             contract-name: dme000-governance-token
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/dme000-governance-token.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: energy-storage
+            contract-name: energy
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/energy-storage.clar
+            path: contracts/energy.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: memobots-guardians-of-the-gigaverse
@@ -78,14 +99,9 @@ plan:
             path: contracts/memobots-guardians-of-the-gigaverse.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: edk-v0
+            contract-name: energy-capacity
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/edk-v0.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: energy-airdrop
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/energy-airdrop.clar
+            path: contracts/energy-capacity.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: experience
@@ -93,46 +109,63 @@ plan:
             path: contracts/experience.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: giga-pepe-v2
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/giga-pepe-v2.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: kraqen-lotto
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/kraqen-lotto.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: lands
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/lands.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: liquid-staked-charisma
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/liquid-staked-charisma.clar
-            clarity-version: 1
-        - emulated-contract-publish:
             contract-name: odins-raven
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/odins-raven.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: land-helper-v3
+            contract-name: raven-resistance
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/land-helper-v3.clar
+            path: contracts/raven-resistance.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: memobots-helper
+            contract-name: dungeon-keeper
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/memobots-helper.clar
+            path: contracts/dungeon-keeper.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: token-gate-v0
+            contract-name: fatigue
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/token-gate-v0.clar
+            path: contracts/interactions/fatigue.clar
             clarity-version: 1
-      epoch: "2.1"
-    - id: 2
-      transactions: []
-      epoch: "2.1"
+        - emulated-contract-publish:
+            contract-name: charisma-randomizer
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/charisma-randomizer.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: randomizer
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/interactions/randomizer.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: challenge
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/interactions/challenge.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: red-pill-nft
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/red-pill-nft.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: charisma-token
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/charisma-token.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: meme-engine-manager
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/meme-engines/meme-engine-manager.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: meme-engine
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/meme-engines/meme-engine.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: petition
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/interactions/petition.clar
+            clarity-version: 1
+      epoch: "2.05"

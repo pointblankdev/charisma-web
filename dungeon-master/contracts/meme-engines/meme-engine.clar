@@ -25,7 +25,7 @@
 ;; - get-balance: Retrieves token balance at specific blocks, handling historical data.
 ;;
 ;; Integration with Charisma Protocol:
-;; - Implements the interaction-trait defined in dao-traits-v6.
+;; - Implements the interaction-trait defined in dao-traits-v7.
 ;; - Utilizes the Meme Engine Manager for shared parameters and sample point generation.
 ;; - Interacts with token-specific contracts (e.g., .charisma-token) for balance checks.
 ;; - Calls Arcana and Aura contracts for dynamic multipliers.
@@ -45,16 +45,15 @@
 ;; exploration activities.
 
 ;; Traits
-(impl-trait .dao-traits-v6.interaction-trait)
+(impl-trait .dao-traits-v7.interaction-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
-(define-constant ERR_INVALID_ACTION (err u405))
 (define-constant CONTRACT_OWNER tx-sender)
 
 ;; Data Variables
 (define-data-var first-start-block uint block-height)
-(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/explore/engines/cha"))
+(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/v0/interactions/engines/cha"))
 
 ;; Maps
 (define-map last-tap-block principal uint)
@@ -256,10 +255,6 @@
   (ok (var-get contract-uri))
 )
 
-(define-read-only (get-actions)
-  (ok (list "TAP"))
-)
-
 (define-read-only (get-last-tap-block (address principal))
     (default-to (var-get first-start-block) (map-get? last-tap-block address))
 )
@@ -267,31 +262,63 @@
 ;; Public functions
 
 (define-public (execute (action (string-ascii 32)))
-  (if (is-eq action "TAP")
-      (tap)
-      ERR_INVALID_ACTION
-  )
+  (if (is-eq action "TAP") (tap-action tx-sender)
+    (err "INVALID_ACTION"))
 )
 
-(define-private (tap)
+;; Meme Engine Action Handler
+
+(define-private (tap-action (sender principal))
   (let
     (
       (end-block block-height)
-      (start-block (get-last-tap-block tx-sender))
-      (balance-integral (calculate-balance-integral tx-sender start-block end-block))
+      (start-block (get-last-tap-block sender))
+      (balance-integral (calculate-balance-integral sender start-block end-block))
       (quality-score (contract-call? .arcana get-quality-score .charisma-token))
       (incentive-score (contract-call? .aura get-incentive-score .charisma-token))
       (circulating-supply (contract-call? .arcana get-circulating-supply .charisma-token))
       (potential-energy (/ (* (* balance-integral quality-score) incentive-score) circulating-supply))
-      (tapped-out { tapper: tx-sender, end-block: end-block, start-block: start-block, 
-        balance-integral: balance-integral, quality-score: quality-score, incentive-score: incentive-score,
-        circulating-supply: circulating-supply, potential-energy: potential-energy
-      })
     )
-    (map-set last-tap-block tx-sender end-block)
-    (print tapped-out)
-    (contract-call? .dungeon-keeper energize potential-energy tx-sender)
+    (map-set last-tap-block sender end-block)
+    (match (contract-call? .dungeon-keeper energize potential-energy sender)
+      success (handle-tap-success sender potential-energy balance-integral)
+      error   (if (is-eq error u1) (handle-tap-insufficient-balance sender)
+              (if (is-eq error u405) (handle-tap-limit-exceeded sender)
+              (if (is-eq error u403) (handle-tap-unverified sender)
+              (handle-tap-unknown-error sender)))))
   )
+)
+
+;; Meme Engine Response Handlers
+
+(define-private (handle-tap-success (sender principal) (energy uint) (integral uint))
+  (begin
+    (print "The adventurer's tokens resonate with the dungeon, generating pure energy from their loyalty.")
+    (ok "ENERGY_GENERATED"))
+)
+
+(define-private (handle-tap-insufficient-balance (sender principal))
+  (begin
+    (print "The adventurer's tokens are too weak to generate meaningful energy.")
+    (ok "ENERGY_NOT_GENERATED"))
+)
+
+(define-private (handle-tap-limit-exceeded (sender principal))
+  (begin
+    (print "The dungeon's energy capacity has been reached, unable to process more token resonance.")
+    (ok "ENERGY_NOT_GENERATED"))
+)
+
+(define-private (handle-tap-unverified (sender principal))
+  (begin
+    (print "This energy generation attempt lacks proper verification from the dungeon.")
+    (ok "ENERGY_NOT_GENERATED"))
+)
+
+(define-private (handle-tap-unknown-error (sender principal))
+  (begin
+    (print "An unknown disturbance prevents the tokens from generating energy.")
+    (ok "ENERGY_NOT_GENERATED"))
 )
 
 ;; Admin functions
@@ -299,6 +326,5 @@
 (define-public (set-contract-uri (new-uri (optional (string-utf8 256))))
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
-    (ok (var-set contract-uri new-uri))
-  )
+    (ok (var-set contract-uri new-uri)))
 )

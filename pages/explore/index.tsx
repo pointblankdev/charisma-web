@@ -27,20 +27,47 @@ export const collections = [
   "Interactions",
 ]
 
+// Add interaction categories
+const INTERACTION_CATEGORIES = {
+  UTILITY: "Utility",
+  REWARD: "Reward",
+  ENGINE: "Engine",
+  ALL: "All"
+} as const;
+
+type InteractionCategory = typeof INTERACTION_CATEGORIES[keyof typeof INTERACTION_CATEGORIES];
+
 export interface Interaction {
   name: string;
-  artist: string;
   cover: string;
   type: "interaction";
-  uri: string | null;
+  uri: string;
+  category: InteractionCategory;
+  description: string;
+  contract: string;
 }
 
 const INTERACTIONS = [
-  { address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', name: 'charisma-mine-rc1' },
-  { address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', name: 'keepers-challenge-rc3' },
-  { address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', name: 'hot-potato-rc1' },
-  { address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', name: 'fatigue-rc1' },
-  // Add more interactions here
+  // { 
+  //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+  //   name: 'charisma-mine-rc1'
+  // },
+  // { 
+  //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+  //   name: 'keepers-challenge-rc3'
+  // },
+  // { 
+  //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+  //   name: 'hot-potato-rc1'
+  // },
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    name: 'fatigue-rc3'
+  },
+  // { 
+  //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+  //   name: 'charisma-engine-rc1'
+  // }
 ];
 
 interface ExplorePageProps {
@@ -48,35 +75,23 @@ interface ExplorePageProps {
 }
 
 export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
-  const interactionData = await Promise.all(
+  const interactionData = (await Promise.all(
     INTERACTIONS.map(async (interaction) => {
-      const uri = await getInteractionUri(interaction.address, interaction.name);
-      let cover;
-      switch (interaction.name) {
-        case 'keepers-challenge-rc3':
-          cover = "/interactions/keepers-challenge-1.png";
-          break;
-        case 'charisma-mine-rc1':
-          cover = "/interactions/charisma-mine.png";
-          break;
-        case 'hot-potato-rc1':
-          cover = "/interactions/hot-potato.png";
-          break;
-        case 'fatigue-rc1':
-          cover = "/interactions/fatigue.png";
-          break;
-        default:
-          break;
-      }
+      const metadata = await getInteractionUri(interaction.address, interaction.name);
+
+      if (!metadata) return null;
+
       return {
-        name: interaction.name,
-        artist: interaction.address,
-        cover: cover || "/dmg-logo.gif",
+        name: metadata.name,
+        contract: metadata.contract,
+        cover: metadata.image,
         type: "interaction" as const,
-        uri: uri
+        category: metadata.category as InteractionCategory,
+        description: metadata.description,
+        uri: metadata.url
       };
     })
-  );
+  )).filter((item): item is Interaction => item !== null);
 
   return {
     props: {
@@ -91,6 +106,26 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
     title: "Explore Charisma",
     description: "Discover and interact with Charisma protocol.",
   }
+
+  const getInteractionsByCategory = (category: InteractionCategory) => {
+    return category === INTERACTION_CATEGORIES.ALL
+      ? interactionData
+      : interactionData.filter(interaction => interaction.category === category);
+  };
+
+  const getCategoryDescription = (category: InteractionCategory) => {
+    switch (category) {
+      case INTERACTION_CATEGORIES.UTILITY:
+        return "Core mechanisms that power other interactions in the dungeon.";
+      case INTERACTION_CATEGORIES.REWARD:
+        return "Interactions that offer rewards for brave adventurers.";
+      case INTERACTION_CATEGORIES.ENGINE:
+        return "Special engines that generate energy from token holdings.";
+      default:
+        return "Discover and interact with the Charisma protocol.";
+    }
+  };
+
 
   const renderInteractionSection = (title: string, description: string, interactions: Interaction[], recent = false) => (
     <>
@@ -155,21 +190,25 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
                     <Tabs defaultValue="all" className="h-full space-y-6">
                       <div className="flex items-center space-between">
                         <TabsList>
-                          <TabsTrigger value="all" className="relative">
-                            All
-                          </TabsTrigger>
+                          <TabsTrigger value="all">All</TabsTrigger>
+                          <TabsTrigger value="utility">Utility</TabsTrigger>
+                          <TabsTrigger value="reward">Rewards</TabsTrigger>
+                          <TabsTrigger value="meme-engine">Engines</TabsTrigger>
                         </TabsList>
                       </div>
-                      <TabsContent
-                        value="all"
-                        className="p-0 border-none outline-none"
-                      >
-                        {renderInteractionSection(
-                          "Explore Charisma",
-                          "Discover and interact with the Charisma protocol.",
-                          interactionData
-                        )}
-                      </TabsContent>
+                      {Object.values(INTERACTION_CATEGORIES).map((category) => (
+                        <TabsContent
+                          key={category.toLowerCase()}
+                          value={category.toLowerCase()}
+                          className="p-0 border-none outline-none"
+                        >
+                          {renderInteractionSection(
+                            category,
+                            getCategoryDescription(category),
+                            getInteractionsByCategory(category)
+                          )}
+                        </TabsContent>
+                      ))}
                     </Tabs>
                   </div>
                 </div>
@@ -236,8 +275,11 @@ function InteractionArtwork({
       </ContextMenu>
       <div className="space-y-1 text-sm">
         <h3 className="font-medium leading-none">{interaction.name}</h3>
-        <p className="text-muted-foreground">
-          {interaction.artist.slice(0, 4)}...{interaction.artist.slice(-4)}
+        <p className="text-xs text-muted-foreground">
+          {interaction.contract.slice(0, 4)}...{interaction.contract.slice(-4)}
+        </p>
+        <p className="text-xs text-muted-foreground line-clamp-2">
+          {interaction.description}
         </p>
       </div>
     </div>
