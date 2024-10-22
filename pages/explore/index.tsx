@@ -55,6 +55,26 @@ interface ExplorePageProps {
   interactionData: Interaction[];
 }
 
+// Add new interfaces for explorations
+interface ExplorationStep {
+  contractAddress: string; // contract address
+  action: string;
+  description: string;
+}
+
+interface Exploration {
+  name: string;
+  description: string;
+  cover: string;
+  steps: ExplorationStep[];
+}
+
+// Update props interface
+interface ExplorePageProps {
+  interactionData: Interaction[];
+  explorations: Exploration[];
+}
+
 export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   const interactionData = (await Promise.all(
     interactionIds.map(async (interaction) => {
@@ -80,15 +100,65 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
     })
   )).filter((item): item is Interaction => item !== null);
 
+  // Curated list of explorations
+  const explorations: Exploration[] = [
+    {
+      name: "Energy Arbitrage",
+      description: "Generate energy and profit from market inefficiencies. (Example)",
+      cover: "/explorations/energy-arbitrage.png",
+      steps: [
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha',
+          action: "TAP",
+          description: "Generate energy from your CHA holdings"
+        },
+        {
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
+          action: "FORWARD",
+          description: "Use energy to execute profitable arbitrage"
+        },
+        // {
+        //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine",
+        //   action: "MINT",
+        //   description: "Mint additional Charisma tokens"
+        // }
+      ]
+    },
+    {
+      name: "Welsh Abundance",
+      description: "Farm WELSH tokens using optimal energy generation. (Example)",
+      cover: "/explorations/welsh-farming.png",
+      steps: [
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha',
+          action: "TAP",
+          description: "Generate base energy"
+        },
+        {
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
+          action: "REVERSE",
+          description: "Compound WELSH rewards with reverse arbitrage"
+        },
+        // {
+        //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine",
+        //   action: "MINT",
+        //   description: "Mint additional Charisma tokens"
+        // }
+      ]
+    },
+    // Add more curated explorations...
+  ];
+
   return {
     props: {
       interactionData,
+      explorations,
     },
     revalidate: 60, // Revalidate every 10 minutes
   };
 };
 
-export default function ExplorePage({ interactionData }: ExplorePageProps) {
+export default function ExplorePage({ interactionData, explorations }: ExplorePageProps) {
   const metadata = {
     title: "Explore Charisma",
     description: "Discover and interact with Charisma protocol.",
@@ -185,10 +255,10 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
                   <div className="flex items-center justify-between mx-4">
                     <div className="space-y-1">
                       <h2 className="text-2xl font-semibold tracking-tight">
-                        Recommended for You
+                        Recommended Strategies
                       </h2>
                       <p className="text-sm text-muted-foreground">
-                        Interactions picked just for you based on your activity
+                        Curated sequences of interactions for optimal results
                       </p>
                     </div>
                   </div>
@@ -196,15 +266,11 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
                   <div className="relative">
                     <ScrollArea>
                       <div className="flex pb-4 space-x-4 mx-4">
-                        {/* Take a subset of interactions for recommendations */}
-                        {interactionData.slice(0, 6).map((interaction) => (
-                          <InteractionArtwork
-                            key={interaction.name}
-                            interaction={interaction}
+                        {explorations.map((exploration, index) => (
+                          <ExplorationArtwork
+                            key={index}
+                            exploration={exploration}
                             className="w-[150px]"
-                            aspectRatio="square"
-                            width={150}
-                            height={150}
                           />
                         ))}
                       </div>
@@ -345,6 +411,136 @@ function InteractionEmptyPlaceholder() {
       </div>
     </div>
   )
+}
+
+// Add ExplorationArtwork component
+interface ExplorationArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
+  exploration: Exploration;
+  width?: number;
+  height?: number;
+}
+
+function ExplorationArtwork({
+  exploration,
+  width = 150,
+  height = 150,
+  className,
+  ...props
+}: ExplorationArtworkProps) {
+  const { explore } = useDungeonCrawler();
+  const [isExecuting, setIsExecuting] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
+
+  // const executeStep = async (step: ExplorationStep) => {
+  //   setIsExecuting(true);
+  //   try {
+  //     return await explore(
+  //       step.interaction,
+  //       step.action
+  //     );
+  //   } catch (error) {
+  //     console.error('Failed to execute step:', error);
+  //     throw error;
+  //   }
+  // };
+
+  const executeExploration = async () => {
+    setIsExecuting(true);
+    try {
+      await explore({ interactions: exploration.steps })
+    } catch (error) {
+      console.error('Failed to execute exploration sequence:', error);
+    } finally {
+      setIsExecuting(false);
+      setCurrentStep(0);
+    }
+  };
+
+  const getStepStatus = (index: number) => {
+    if (!isExecuting) return 'pending';
+    if (index < currentStep) return 'completed';
+    if (index === currentStep) return 'executing';
+    return 'pending';
+  };
+
+  return (
+    <div className={cn("space-y-3", className)} {...props}>
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <div className="overflow-hidden rounded-md cursor-pointer group">
+            <Image
+              src={exploration.cover}
+              alt={exploration.name}
+              width={width}
+              height={height}
+              className="h-auto w-auto object-cover transition-all opacity-90 group-hover:opacity-100 aspect-square"
+            />
+          </div>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-96">
+          <div className="px-2 py-1.5">
+            <h3 className="font-semibold">{exploration.name}</h3>
+            <p className="text-xs text-muted-foreground">{exploration.description}</p>
+          </div>
+          <ContextMenuSeparator />
+          {exploration.steps.map((step, index) => (
+            <ContextMenuItem
+              key={index}
+              disabled={isExecuting}
+              // onClick={() => executeStep(step)}
+              className="text-xs"
+            >
+              <div className="flex items-center justify-between w-full">
+                <span>
+                  {index + 1}. {step.description}
+                </span>
+                {getStepStatus(index) === 'completed' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-green-500">
+                    <path d="M20 6L9 17l-5-5" />
+                  </svg>
+                )}
+                {getStepStatus(index) === 'executing' && (
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="animate-spin">
+                    <path d="M21 12a9 9 0 11-6.219-8.56" />
+                  </svg>
+                )}
+              </div>
+            </ContextMenuItem>
+          ))}
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            onClick={executeExploration}
+            disabled={isExecuting}
+            className="cursor-pointer"
+          >
+            <div className="flex items-center justify-between w-full">
+              <span>Execute All Steps</span>
+              {isExecuting && (
+                <span className="text-xs text-muted-foreground">
+                  Step {currentStep + 1} of {exploration.steps.length}
+                </span>
+              )}
+            </div>
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <div className="space-y-1 text-sm">
+        <h3 className="font-medium leading-none">{exploration.name}</h3>
+        <p className="text-xs text-muted-foreground line-clamp-2">
+          {exploration.description}
+        </p>
+        <div className="flex items-center space-x-1 text-xs text-muted-foreground">
+          <span>{exploration.steps.length} steps</span>
+          {isExecuting && (
+            <>
+              <span>•</span>
+              <span>Executing {currentStep + 1}/{exploration.steps.length}</span>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
 }
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {

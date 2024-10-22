@@ -12,8 +12,17 @@ import { useGlobalState } from './global-state-context';
 
 const network = new StacksMainnet();
 
+interface Interaction {
+    contractAddress: string;
+    action: string;
+}
+
+interface ExploreParams {
+    interactions: Interaction[];
+}
+
 interface DungeonCrawlerHook {
-    explore: (interaction: string, action: string) => Promise<void>;
+    explore: (params: ExploreParams) => Promise<void>;
     interact: (interaction: string, action: string) => Promise<void>;
 }
 
@@ -43,19 +52,21 @@ export function useDungeonCrawler(
         });
     }, [contractAddress, contractName, stxAddress]);
 
-    const explore = useCallback(async (interaction: string, action: string) => {
+    const explore = useCallback(async ({ interactions }: ExploreParams) => {
         if (!stxAddress) return;
 
-        const functionArgs = [
-            optionalCVOf(contractPrincipalCV(interaction.split('.')[0], interaction.split('.')[1])), optionalCVOf(stringAsciiCV(action)),
-            noneCV(), noneCV(),
-            noneCV(), noneCV(),
-            noneCV(), noneCV(),
-            noneCV(), noneCV(),
-            noneCV(), noneCV(),
-            noneCV(), noneCV(),
-            noneCV(), noneCV(),
-        ];
+        const functionArgs = interactions.slice(0, 8).reduce((args, { contractAddress, action }) => {
+            const [principal, name] = contractAddress.split('.');
+            console.log(principal, name);
+            args.push(optionalCVOf(contractPrincipalCV(principal, name)));
+            args.push(optionalCVOf(stringAsciiCV(action)));
+            return args;
+        }, [] as any[]);
+
+        // Fill remaining slots with noneCV if less than 8 interactions are provided
+        while (functionArgs.length < 16) {
+            functionArgs.push(noneCV());
+        }
 
         await openContractCall({
             network,
