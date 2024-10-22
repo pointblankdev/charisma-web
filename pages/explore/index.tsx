@@ -78,12 +78,8 @@ interface ExplorePageProps {
 export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   const interactionData = (await Promise.all(
     interactionIds.map(async (interaction) => {
-      // will need this for community-made interactions
-      // const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
 
-      // shortcut to fetch metadata since im not supporting any community-made interactions yet
-      const res = await fetch(`${API_URL}/api/v0/interactions/${interaction.split('.')[1]}`);
-      const metadata: InteractionMetadata = await res.json();
+      const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
 
       if (!metadata) return null;
 
@@ -108,7 +104,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       cover: "/explorations/energy-arbitrage.png",
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
           action: "TAP",
           description: "Generate energy from your CHA holdings"
         },
@@ -130,7 +126,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       cover: "/explorations/welsh-farming.png",
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
           action: "TAP",
           description: "Generate base energy"
         },
