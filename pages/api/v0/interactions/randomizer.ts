@@ -17,6 +17,7 @@ export default function InteractionAPI(
         name: "Fate Randomizer",
         description: "Each roll shapes the fate of adventurers.",
         contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.randomizer-rc1",
-        category: "Utility"
+        category: "Utility",
+        actions: ["CF", "D4", "D6", "D8", "D10", "D12", "D20", "D100"]
     });
 }

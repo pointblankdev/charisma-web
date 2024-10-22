@@ -7,7 +7,7 @@ type ErrorResponse = {
     };
 };
 
-export default function HotPotatoAPI(
+export default function InteractionAPI(
     req: NextApiRequest,
     res: NextApiResponse<any | ErrorResponse>
 ) {
@@ -18,5 +18,6 @@ export default function HotPotatoAPI(
         description: 'Pass the burning potato to prove your worth.',
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hot-potato-rc2',
         category: 'Utility',
+        actions: ['PASS']
     });
 }

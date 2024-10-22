@@ -18,5 +18,6 @@ export default function InteractionAPI(
         description: 'To the red-pilled, go the spoils.',
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc2',
         category: 'Rewards',
+        actions: ['MINT', 'BURN']
     });
 }

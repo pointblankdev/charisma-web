@@ -17,6 +17,7 @@ interface InteractionMetadata {
     description: string;
     contract: string;
     category: string;
+    actions: string[];
 }
 
 interface InteractionDetailProps {
@@ -123,9 +124,9 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                     </div>
 
                     {/* Right Panel - Interaction Controls */}
-                    <div className="relative flex h-full lg:w-full z-10"> {/* Added relative and h-full */}
-                        <div className="flex w-full items-center justify-center bg-black"> {/* Removed padding, made full height */}
-                            <div className="mx-auto w-full max-w-xl space-y-6 px-4"> {/* Moved padding here */}
+                    <div className="relative flex h-full lg:w-1/2 z-10">
+                        <div className="flex w-full items-center justify-center bg-black">
+                            <div className="mx-auto w-full max-w-sm space-y-6 px-4">
                                 <div className="space-y-2 text-center">
                                     <h1 className="text-2xl font-semibold tracking-tight">
                                         Execute Interaction
@@ -136,14 +137,19 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                 </div>
 
                                 <div className="grid gap-6">
-                                    {/* Primary Action */}
-                                    <Button
-                                        onClick={() => handleExecute('BURN')}
-                                        disabled={isLoading || !stxAddress}
-                                        className="w-full"
-                                    >
-                                        {isLoading ? 'Executing...' : 'Execute Primary Action'}
-                                    </Button>
+                                    {/* Actions */}
+                                    <div className="grid gap-2">
+                                        {metadata.actions.map((action) => (
+                                            <Button
+                                                key={action}
+                                                onClick={() => handleExecute(action)}
+                                                disabled={isLoading || !stxAddress}
+                                                className="w-full"
+                                            >
+                                                {isLoading ? 'Executing...' : `Execute ${action}`}
+                                            </Button>
+                                        ))}
+                                    </div>
 
                                     <div className="relative">
                                         <div className="absolute inset-0 flex items-center">
@@ -157,11 +163,27 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                     </div>
 
                                     {/* Contract Info */}
-                                    <div className="rounded-lg border p-4">
-                                        <h3 className="text-sm font-medium">Contract Address</h3>
-                                        <p className="mt-1 break-all text-sm text-muted-foreground">
-                                            {metadata.contract}
-                                        </p>
+                                    <div className="space-y-4">
+                                        <div className="rounded-lg border p-4">
+                                            <h3 className="text-sm font-medium">Contract Address</h3>
+                                            <p className="mt-1 break-all text-sm text-muted-foreground">
+                                                {metadata.contract}
+                                            </p>
+                                        </div>
+
+                                        <div className="rounded-lg border p-4">
+                                            <h3 className="text-sm font-medium">Available Actions</h3>
+                                            <div className="mt-1 flex flex-wrap gap-2">
+                                                {metadata.actions.map((action) => (
+                                                    <span
+                                                        key={action}
+                                                        className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400"
+                                                    >
+                                                        {action}
+                                                    </span>
+                                                ))}
+                                            </div>
+                                        </div>
                                     </div>
 
                                     {!stxAddress && (
