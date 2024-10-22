@@ -109,7 +109,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           description: "Generate energy from your CHA holdings"
         },
         {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc1",
           action: "FORWARD",
           description: "Use energy to execute profitable arbitrage"
         },
@@ -131,7 +131,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           description: "Generate base energy"
         },
         {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc1",
           action: "REVERSE",
           description: "Compound WELSH rewards with reverse arbitrage"
         },
