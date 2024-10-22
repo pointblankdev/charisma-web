@@ -100,7 +100,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   const explorations: Exploration[] = [
     {
       name: "Energy Arbitrage",
-      description: "Generate energy and profit from market inefficiencies. (Example)",
+      description: "Generate energy from holding CHA tokens and profit from market inefficiencies.",
       cover: "/explorations/energy-arbitrage.png",
       steps: [
         {
@@ -111,13 +111,13 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc1",
           action: "FORWARD",
-          description: "Use energy to execute profitable arbitrage"
+          description: "Arbitrage swap forward yielding WELSH and CHA tokens"
         },
-        // {
-        //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine",
-        //   action: "MINT",
-        //   description: "Mint additional Charisma tokens"
-        // }
+        {
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc1",
+          action: "BACKWARD",
+          description: "Arbitrage swap backwards yielding WELSH and CHA tokens"
+        },
       ]
     },
     {
@@ -130,16 +130,11 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           action: "TAP",
           description: "Generate base energy"
         },
-        {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc1",
-          action: "REVERSE",
-          description: "Compound WELSH rewards with reverse arbitrage"
-        },
-        {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-troll-toll-rc1",
-          action: "PAY",
-          description: "Py the troll toll to mint CHA tokens",
-        },
+        // {
+        //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-troll-toll-rc1",
+        //   action: "PAY",
+        //   description: "Py the troll toll to mint CHA tokens",
+        // },
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3",
           action: "MINT",
@@ -468,7 +463,9 @@ function ExplorationArtwork({
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
-          <div className="overflow-hidden rounded-md cursor-pointer group">
+          <div className="overflow-hidden rounded-md cursor-pointer group"
+            onClick={executeExploration}
+          >
             <Image
               src={exploration.cover}
               alt={exploration.name}
