@@ -10,8 +10,9 @@ import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { API_URL, SITE_URL } from '@lib/constants';
 import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
-import { interactionSlugs } from 'pages/api/v0/interactions';
+import { interactionIds, interactionSlugs } from 'pages/api/v0/interactions';
 import { ExternalLink } from 'lucide-react';
+import { getInteractionUri } from '@lib/stacks-api';
 
 interface InteractionMetadata {
     url: string;
@@ -31,20 +32,19 @@ interface InteractionDetailProps {
 // Updated getStaticPaths and getStaticProps
 export const getStaticPaths: GetStaticPaths = () => {
     return {
-        paths: interactionSlugs.map(id => ({
+        paths: interactionIds.map(id => ({
             params: { interaction: id }
         })),
         fallback: false
     };
 };
 
-export const getStaticProps: GetStaticProps<InteractionDetailProps> = async ({ params }) => {
-    const interactionSlug = params?.interaction as string;
+export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
+    const interaction = params?.interaction as string;
 
     try {
-        // Fetch interaction metadata from your API
-        const res = await fetch(`${API_URL}/api/v0/interactions/${interactionSlug}`);
-        const metadata: InteractionMetadata = await res.json();
+        const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
+        console.log(metadata)
 
         return {
             props: {

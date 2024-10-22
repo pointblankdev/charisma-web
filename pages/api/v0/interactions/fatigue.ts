@@ -12,7 +12,7 @@ export default function InteractionAPI(
     res: NextApiResponse<any | ErrorResponse>
 ) {
     return res.status(200).json({
-        url: 'https://charisma.rocks/interactions/fatigue',
+        url: 'https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc3',
         image: 'https://charisma.rocks/interactions/fatigue.png',
         name: 'Fatigue',
         description: 'Without energy- nothing is possible.',

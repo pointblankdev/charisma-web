@@ -12,7 +12,7 @@ export default function MemeEngineAPI(
     res: NextApiResponse<any | ErrorResponse>
 ) {
     return res.status(200).json({
-        url: `https://charisma.rocks/interactions/meme-engine-cha`,
+        url: `https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4`,
         image: `https://charisma.rocks/interactions/engines/cha.png`,
         name: `Meme Engine (CHA)`,
         description: 'Generate energy by holding Charisma tokens.',
