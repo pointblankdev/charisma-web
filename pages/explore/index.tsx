@@ -121,20 +121,15 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       ]
     },
     {
-      name: "Welsh Abundance",
-      description: "Collect energy, arbitrage WELSH, and mint CHA tokens.",
-      cover: "/explorations/welsh-farming.png",
+      name: "Charismatic Flow",
+      description: "Collect energy from held CHA tokens and then attempt to wrap additional Charisma tokens.",
+      cover: "/explorations/charismatic-flow.png",
       steps: [
         {
           contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
           action: "TAP",
           description: "Generate base energy"
         },
-        // {
-        //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-troll-toll-rc1",
-        //   action: "PAY",
-        //   description: "Py the troll toll to mint CHA tokens",
-        // },
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3",
           action: "MINT",
