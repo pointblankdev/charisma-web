@@ -19,7 +19,7 @@ import {
 import { useRouter } from "next/navigation"
 import { useDungeonCrawler } from "@lib/hooks/use-dungeon-crawler"
 import { SITE_URL } from "@lib/constants"
-import { useState } from "react"
+import React, { useState } from "react"
 
 export type Collection = (typeof collections)[number]
 
@@ -67,10 +67,10 @@ const INTERACTIONS = [
     address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     name: 'fatigue-rc3'
   },
-  // { 
-  //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-  //   name: 'charisma-engine-rc1'
-  // }
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    name: 'meme-engine-cha-rc4'
+  }
 ];
 
 interface ExplorePageProps {
@@ -87,11 +87,11 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       return {
         name: metadata.name,
         contract: metadata.contract,
-        cover: metadata.image,
+        cover: metadata.image.replace(SITE_URL, ''),
         type: "interaction" as const,
         category: metadata.category as InteractionCategory,
         description: metadata.description,
-        uri: metadata.url,
+        uri: metadata.url.replace(SITE_URL, ''),
         actions: metadata.actions || [],
       };
     })
@@ -242,7 +242,7 @@ function InteractionArtwork({
 
   const handleInteractionClick = () => {
     if (interaction.uri) {
-      router.push(interaction.uri.replace(SITE_URL, ''));
+      router.push(interaction.uri);
     } else {
       console.error('No URI available for this interaction');
     }
@@ -268,7 +268,7 @@ function InteractionArtwork({
             onClick={handleInteractionClick}
           >
             <Image
-              src={interaction.cover.replace(SITE_URL, '')}
+              src={interaction.cover}
               alt={interaction.name}
               width={width}
               height={height}
