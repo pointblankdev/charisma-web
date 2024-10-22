@@ -21,10 +21,6 @@ const VERCEL_URL = process.env.NEXT_PUBLIC_VERCEL_URL;
 export const API_URL = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:3000';
 
 export const NAVIGATION = [
-  // {
-  //   name: 'Wrap',
-  //   route: '/token'
-  // },
   {
     name: 'Swap',
     route: '/swap'
@@ -34,8 +30,8 @@ export const NAVIGATION = [
     route: '/pools'
   },
   {
-    name: 'Players',
-    route: '/players'
+    name: 'Explore',
+    route: '/explore'
   },
   {
     name: 'Recovery',
