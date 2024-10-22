@@ -17,12 +17,12 @@ export const interactionIds = [
 ]
 
 export const interactionSlugs = [
-    'fatigue',
+    'meme-engine-cha',
     'charisma-mine',
-    'the-troll-toll',
     'fate-randomizer',
     'charismatic-corgi',
-    'meme-engine-cha'
+    'fatigue',
+    'the-troll-toll',
 ]
 
 export default function InteractionsAPI(

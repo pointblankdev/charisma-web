@@ -81,6 +81,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
 
       const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
 
+      console.log(metadata);
       if (!metadata) return null;
 
       return {
