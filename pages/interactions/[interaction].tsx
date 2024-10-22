@@ -147,7 +147,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                             </Button>
 
                             <p className="text-center text-sm text-gray-400">
-                                Make sure you have sufficient energy before executing interactions.
+                                Always DYOR and carefully review smart contracts before executing any transactions.
                             </p>
                         </div>
                     </div>
