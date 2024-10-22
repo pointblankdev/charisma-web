@@ -122,7 +122,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
     },
     {
       name: "Welsh Abundance",
-      description: "Farm WELSH tokens using optimal energy generation. (Example)",
+      description: "Collect energy, arbitrage WELSH, and mint CHA tokens.",
       cover: "/explorations/welsh-farming.png",
       steps: [
         {
@@ -135,11 +135,16 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           action: "REVERSE",
           description: "Compound WELSH rewards with reverse arbitrage"
         },
-        // {
-        //   contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine",
-        //   action: "MINT",
-        //   description: "Mint additional Charisma tokens"
-        // }
+        {
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-troll-toll-rc1",
+          action: "PAY",
+          description: "Py the troll toll to mint CHA tokens",
+        },
+        {
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3",
+          action: "MINT",
+          description: "Mint additional Charisma tokens"
+        }
       ]
     },
     // Add more curated explorations...
