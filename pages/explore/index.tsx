@@ -65,8 +65,6 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       const res = await fetch(`${API_URL}/api/v0/interactions/${interaction.split('.')[1]}`);
       const metadata: InteractionMetadata = await res.json();
 
-      console.log(metadata)
-
       if (!metadata) return null;
 
       return {
@@ -117,11 +115,11 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
 
 
   const renderInteractionSection = (title: string, description: string, interactions: Interaction[], recent = false) => (
-    <>
-      <div className="flex items-center justify-between">
+    <div className="">
+      <div className="flex items-center justify-between mx-4">
         <div className="space-y-1">
           <h2 className="text-2xl font-semibold tracking-tight">
-            {title}
+            {title === 'All' ? 'All Interactions' : title}
           </h2>
           <p className="text-sm text-muted-foreground">
             {description}
@@ -130,8 +128,8 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
       </div>
       <Separator className="my-4" />
       <div className="relative">
-        <ScrollArea>
-          <div className="flex pb-4 space-x-4">
+        <ScrollArea className="">
+          <div className="flex pb-4 space-x-4 mx-4">
             {interactions.map((interaction) => (
               <InteractionArtwork
                 key={interaction.name}
@@ -146,38 +144,22 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
           <ScrollBar orientation="horizontal" />
         </ScrollArea>
       </div>
-    </>
+    </div>
   );
 
   return (
     <Page meta={metadata} fullViewport>
       <SkipNavContent />
       <Layout>
-        <div className="md:hidden">
-          <Image
-            src="/examples/nft-marketplace-light.png"
-            width={1280}
-            height={1114}
-            alt="Charisma Interactions"
-            className="block dark:hidden"
-          />
-          <Image
-            src="/examples/nft-marketplace-dark.png"
-            width={1280}
-            height={1114}
-            alt="Charisma Interactions"
-            className="hidden dark:block"
-          />
-        </div>
-        <div className="hidden md:block">
+        <div className="block">
           <div className="grid lg:grid-cols-5">
             <Sidebar collections={collections} className="hidden lg:block" />
-            <div className="col-span-3 lg:col-span-4 lg:border-l">
-              <div className="h-full px-4 py-6 lg:px-8">
+            <div className="col-span-3 lg:col-span-4 lg:border-l overflow-hidden">
+              <div className="h-full pl-0 py-6 lg:pl-8">
                 <Tabs defaultValue="all" className="h-full space-y-6">
                   <div className="flex items-center space-between">
-                    <TabsList>
-                      <TabsTrigger value="all">All</TabsTrigger>
+                    <TabsList className="mx-4">
+                      <TabsTrigger value="all">All interactions</TabsTrigger>
                       <TabsTrigger value="utility">Utility</TabsTrigger>
                       <TabsTrigger value="rewards">Rewards</TabsTrigger>
                       <TabsTrigger value="engines">Engines</TabsTrigger>
@@ -344,8 +326,8 @@ function Sidebar({ className, collections }: SidebarProps) {
           <h2 className="px-4 mb-2 text-lg font-semibold tracking-tight">
             Explore
           </h2>
-          <div className="space-y-1">
-            <Button variant="outline" className="justify-start w-full">
+          <div className="space-y-1 flex flex-col">
+            <Button variant="ghost" className="justify-start">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="2" y1="12" x2="22" y2="12" />
@@ -353,7 +335,7 @@ function Sidebar({ className, collections }: SidebarProps) {
               </svg>
               Discover
             </Button>
-            <Button disabled variant="ghost" className="justify-start w-full">
+            <Button disabled variant="ghost" className="justify-start">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2">
                 <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z" />
               </svg>
