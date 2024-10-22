@@ -9,6 +9,7 @@ import Image from 'next/image';
 import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { API_URL } from '@lib/constants';
+import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
 
 interface InteractionMetadata {
     url: string;
@@ -28,8 +29,8 @@ interface InteractionDetailProps {
 // Updated getStaticPaths and getStaticProps
 export const getStaticPaths: GetStaticPaths = () => {
     // You might want to fetch this from an API or central config
-    const interactionIds = ['fatigue', 'charisma-mine', 'hot-potato', 'keepers-challenge', 'randomizer'];
-    console.log(interactionIds)
+    const interactionIds = ['fatigue', 'charisma-mine', 'hot-potato', 'fate-randomizer'];
+
     return {
         paths: interactionIds.map(id => ({
             params: { interaction: id }
@@ -45,8 +46,6 @@ export const getStaticProps: GetStaticProps<InteractionDetailProps> = async ({ p
         // Fetch interaction metadata from your API
         const res = await fetch(`${API_URL}/api/v0/interactions/${interactionId}`);
         const metadata: InteractionMetadata = await res.json();
-
-        console.log(metadata)
 
         return {
             props: {
@@ -64,19 +63,17 @@ export const getStaticProps: GetStaticProps<InteractionDetailProps> = async ({ p
 export default function InteractionDetailPage({ metadata }: InteractionDetailProps) {
     const { interact } = useDungeonCrawler();
     const { stxAddress } = useGlobalState();
-
-
     const [isLoading, setIsLoading] = useState(false);
+    const [selectedAction, setSelectedAction] = useState(metadata.actions[0]); // Default to first action
 
-    const handleExecute = async (action: string) => {
-        if (!stxAddress) {
-            // Handle not connected state
+    const handleExecute = async () => {
+        if (!stxAddress || !selectedAction) {
             return;
         }
 
         setIsLoading(true);
         try {
-            await interact(metadata.contract, action);
+            await interact(metadata.contract, selectedAction);
         } catch (error) {
             console.error('Failed to execute interaction:', error);
         } finally {
@@ -124,31 +121,49 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                     </div>
 
                     {/* Right Panel - Interaction Controls */}
-                    <div className="relative flex h-full lg:w-1/2 z-10">
+                    <div className="relative flex h-full lg:w-full z-10"> {/* Added relative and h-full */}
                         <div className="flex w-full items-center justify-center bg-black">
-                            <div className="mx-auto w-full max-w-sm space-y-6 px-4">
+                            <div className="mx-auto w-full max-w-xl space-y-6 px-4">
                                 <div className="space-y-2 text-center">
                                     <h1 className="text-2xl font-semibold tracking-tight">
-                                        Execute Interaction
+                                        Interact with {metadata.name}
                                     </h1>
                                     <p className="text-sm text-muted-foreground">
-                                        Select an action to perform
+                                        Select an action to execute.
                                     </p>
                                 </div>
 
                                 <div className="grid gap-6">
-                                    {/* Actions */}
-                                    <div className="grid gap-2">
-                                        {metadata.actions.map((action) => (
-                                            <Button
-                                                key={action}
-                                                onClick={() => handleExecute(action)}
-                                                disabled={isLoading || !stxAddress}
-                                                className="w-full"
-                                            >
-                                                {isLoading ? 'Executing...' : `Execute ${action}`}
-                                            </Button>
-                                        ))}
+                                    {/* Main Execute Button */}
+                                    <Button
+                                        onClick={handleExecute}
+                                        disabled={isLoading || !stxAddress || !selectedAction}
+                                        className="w-fit justify-self-center"
+                                        size="lg"
+                                    >
+                                        {isLoading ? 'Executing...' : 'Execute Action'}
+                                    </Button>
+
+                                    {/* Action Toggle Group */}
+                                    <div className="rounded-lg border p-4">
+                                        <h3 className="text-sm font-medium mb-3">Select Action</h3>
+                                        <ToggleGroup
+                                            type="single"
+                                            value={selectedAction}
+                                            onValueChange={(value: any) => value && setSelectedAction(value)}
+                                            className="flex flex-wrap gap-2 justify-start"
+                                        >
+                                            {metadata.actions.map((action) => (
+                                                <ToggleGroupItem
+                                                    key={action}
+                                                    value={action}
+                                                    aria-label={`Select ${action} action`}
+                                                    className="px-3 py-2 text-sm"
+                                                >
+                                                    {action}
+                                                </ToggleGroupItem>
+                                            ))}
+                                        </ToggleGroup>
                                     </div>
 
                                     <div className="relative">
@@ -163,27 +178,11 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                     </div>
 
                                     {/* Contract Info */}
-                                    <div className="space-y-4">
-                                        <div className="rounded-lg border p-4">
-                                            <h3 className="text-sm font-medium">Contract Address</h3>
-                                            <p className="mt-1 break-all text-sm text-muted-foreground">
-                                                {metadata.contract}
-                                            </p>
-                                        </div>
-
-                                        <div className="rounded-lg border p-4">
-                                            <h3 className="text-sm font-medium">Available Actions</h3>
-                                            <div className="mt-1 flex flex-wrap gap-2">
-                                                {metadata.actions.map((action) => (
-                                                    <span
-                                                        key={action}
-                                                        className="inline-flex items-center rounded-md bg-slate-100 px-2 py-1 text-xs font-medium text-slate-600 dark:bg-slate-800 dark:text-slate-400"
-                                                    >
-                                                        {action}
-                                                    </span>
-                                                ))}
-                                            </div>
-                                        </div>
+                                    <div className="rounded-lg border p-4">
+                                        <h3 className="text-sm font-medium">Contract Address</h3>
+                                        <p className="mt-1 break-all text-sm text-muted-foreground">
+                                            {metadata.contract}
+                                        </p>
                                     </div>
 
                                     {!stxAddress && (
@@ -193,11 +192,11 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                             </p>
                                         </div>
                                     )}
-                                </div>
 
-                                <p className="px-2 text-center text-sm text-muted-foreground">
-                                    Make sure you have sufficient energy before executing interactions.
-                                </p>
+                                    <p className="px-2 text-center text-sm text-muted-foreground">
+                                        Make sure you have sufficient energy before executing interactions.
+                                    </p>
+                                </div>
                             </div>
                         </div>
                     </div>

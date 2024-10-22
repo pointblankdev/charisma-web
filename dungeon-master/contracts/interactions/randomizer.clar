@@ -1,4 +1,4 @@
-;; Interaction Randomizer Contract
+;; Fate Randomizer Interaction Contract
 ;;
 ;; This contract provides a narrative interface for rolling classic D&D dice types
 ;; and flipping coins using the dungeon's VRF-based randomizer. Each roll generates 
@@ -27,13 +27,13 @@
 (define-constant CONTRACT_OWNER tx-sender)
 
 ;; Data Variables
-(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/v0/interactions/randomizer"))
+(define-data-var contract-uri (optional (string-utf8 256)) 
+  (some u"https://charisma.rocks/api/v0/interactions/fate-randomizer"))
 
 ;; Read-only functions
 
 (define-read-only (get-interaction-uri)
-  (ok (var-get contract-uri))
-)
+  (ok (var-get contract-uri)))
 
 ;; Public functions
 
@@ -47,50 +47,41 @@
     (if (is-eq action "D12") (roll-d12-action sender)
     (if (is-eq action "D20") (roll-d20-action sender)
     (if (is-eq action "D100") (roll-d100-action sender)
-    (err "INVALID_ACTION"))))))))))
-)
+    (err "INVALID_ACTION")))))))))))
 
 ;; Random Actions
 
 (define-private (coin-flip-action (sender principal))
   (let ((result (unwrap-panic (contract-call? .charisma-randomizer roll-die u2))))
-    (handle-coin-flip result))
-)
+    (handle-coin-flip result)))
 
 (define-private (roll-d4-action (sender principal))
   (let ((result (unwrap-panic (contract-call? .charisma-randomizer roll-die u4))))
-    (handle-d4-roll result))
-)
+    (handle-d4-roll result)))
 
 (define-private (roll-d6-action (sender principal))
   (let ((result (unwrap-panic (contract-call? .charisma-randomizer roll-die u6))))
-    (handle-d6-roll result))
-)
+    (handle-d6-roll result)))
 
 (define-private (roll-d8-action (sender principal))
   (let ((result (unwrap-panic (contract-call? .charisma-randomizer roll-die u8))))
-    (handle-d8-roll result))
-)
+    (handle-d8-roll result)))
 
 (define-private (roll-d10-action (sender principal))
   (let ((result (unwrap-panic (contract-call? .charisma-randomizer roll-die u10))))
-    (handle-d10-roll result))
-)
+    (handle-d10-roll result)))
 
 (define-private (roll-d12-action (sender principal))
   (let ((result (unwrap-panic (contract-call? .charisma-randomizer roll-die u12))))
-    (handle-d12-roll result))
-)
+    (handle-d12-roll result)))
 
 (define-private (roll-d20-action (sender principal))
   (let ((result (unwrap-panic (contract-call? .charisma-randomizer roll-die u20))))
-    (handle-d20-roll result))
-)
+    (handle-d20-roll result)))
 
 (define-private (roll-d100-action (sender principal))
   (let ((result (unwrap-panic (contract-call? .charisma-randomizer roll-die u100))))
-    (handle-d100-roll result))
-)
+    (handle-d100-roll result)))
 
 ;; Response Handlers
 
@@ -98,8 +89,7 @@
   (begin
     (print  (if (is-eq result u1) "The silver coin spins through the air and lands on heads."
             "The coin flips end over end, coming to rest on tails."))
-    (ok (if (is-eq result u1) "HEADS" "TAILS")))
-)
+    (ok (if (is-eq result u1) "HEADS" "TAILS"))))
 
 (define-private (handle-d4-roll (result uint))
   (begin
@@ -107,36 +97,31 @@
             (if (is-eq result u2) "The four-sided die spins and settles on two."
             (if (is-eq result u3) "The tetrahedral die rolls to three."
             "The d4 comes to rest showing four."))))
-    (ok (uint-to-ascii result)))
-)
+    (ok (uint-to-ascii result))))
 
 (define-private (handle-d6-roll (result uint))
   (begin
     (print  (if (>= result u5) "The cube bounces and shows a high number."
             "The six-sided die tumbles to a low number."))
-    (ok (uint-to-ascii result)))
-)
+    (ok (uint-to-ascii result))))
 
 (define-private (handle-d8-roll (result uint))
   (begin
     (print  (if (>= result u5) "The octahedron spins to a high face."
             "The eight-sided die settles on a low number."))
-    (ok (uint-to-ascii result)))
-)
+    (ok (uint-to-ascii result))))
 
 (define-private (handle-d10-roll (result uint))
   (begin
     (print  (if (>= result u6) "The ten-sided die lands on a high number."
             "The die lands revealing a low number."))
-    (ok (uint-to-ascii result)))
-)
+    (ok (uint-to-ascii result))))
 
 (define-private (handle-d12-roll (result uint))
   (begin
     (print  (if (>= result u7) "The dodecahedron tumbles to a high number."
             "The twelve-sided die settles on a low face."))
-    (ok (uint-to-ascii result)))
-)
+    (ok (uint-to-ascii result))))
 
 (define-private (handle-d20-roll (result uint))
   (begin
@@ -145,8 +130,7 @@
             (if (>= result u15) "The twenty-sided die shows a heroic number."
             (if (>= result u10) "The d20 settles on a modest result."
             "The twenty-sided die tumbles to a challenging number.")))))
-    (ok (uint-to-ascii result)))
-)
+    (ok (uint-to-ascii result))))
 
 (define-private (handle-d100-roll (result uint))
   (begin
@@ -155,14 +139,12 @@
             (if (>= result u90) "The percentile dice settle on a remarkable number."
             (if (>= result u50) "The percentile dice tumble to an above average result."
             "The percentile dice reveal a low percentage.")))))
-    (ok (uint-to-ascii result)))
-)
+    (ok (uint-to-ascii result))))
 
 (define-private (handle-roll-error)
   (begin
     (print "The die refuses to roll properly.")
-    (ok "ROLL_FAILED"))
-)
+    (ok "ROLL_FAILED")))
 
 ;; Utility functions
 
@@ -178,8 +160,7 @@
           "71" "72" "73" "74" "75" "76" "77" "78" "79" "80"
           "81" "82" "83" "84" "85" "86" "87" "88" "89" "90"
           "91" "92" "93" "94" "95" "96" "97" "98" "99" "100")
-    (- number u1)))
-)
+    (- number u1))))
 
 (define-read-only (ascii-to-uint (ascii-number (string-ascii 3)))
   (default-to u0 
@@ -193,14 +174,11 @@
           "71" "72" "73" "74" "75" "76" "77" "78" "79" "80"
           "81" "82" "83" "84" "85" "86" "87" "88" "89" "90"
           "91" "92" "93" "94" "95" "96" "97" "98" "99" "100")
-      ascii-number)
-  )
-)
+      ascii-number)))
 
 ;; Admin functions
 
 (define-public (set-contract-uri (new-uri (optional (string-utf8 256))))
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
-    (ok (var-set contract-uri new-uri)))
-)
+    (ok (var-set contract-uri new-uri))))
