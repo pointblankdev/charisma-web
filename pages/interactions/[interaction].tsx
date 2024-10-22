@@ -4,12 +4,13 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import Layout from '@components/layout/layout';
 import { Button } from '@components/ui/button';
+import { Separator } from '@components/ui/separator';
 import Image from 'next/image';
 import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { API_URL, SITE_URL } from '@lib/constants';
 import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
-import { interactionIds } from 'pages/api/v0/interactions';
+import { interactionSlugs } from 'pages/api/v0/interactions';
 import { ExternalLink } from 'lucide-react';
 
 interface InteractionMetadata {
@@ -30,19 +31,19 @@ interface InteractionDetailProps {
 // Updated getStaticPaths and getStaticProps
 export const getStaticPaths: GetStaticPaths = () => {
     return {
-        paths: interactionIds.map(id => ({
-            params: { interaction: id.split('.')[1] }
+        paths: interactionSlugs.map(id => ({
+            params: { interaction: id }
         })),
         fallback: false
     };
 };
 
 export const getStaticProps: GetStaticProps<InteractionDetailProps> = async ({ params }) => {
-    const interactionId = params?.interaction as string;
+    const interactionSlug = params?.interaction as string;
 
     try {
         // Fetch interaction metadata from your API
-        const res = await fetch(`${API_URL}/api/v0/interactions/${interactionId}`);
+        const res = await fetch(`${API_URL}/api/v0/interactions/${interactionSlug}`);
         const metadata: InteractionMetadata = await res.json();
 
         return {
