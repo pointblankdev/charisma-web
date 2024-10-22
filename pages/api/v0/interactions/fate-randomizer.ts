@@ -12,11 +12,11 @@ export default function InteractionAPI(
     res: NextApiResponse<any | ErrorResponse>
 ) {
     return res.status(200).json({
-        url: "https://charisma.rocks/interactions/randomizer",
-        image: "https://charisma.rocks/interactions/randomizer.png",
+        url: "https://charisma.rocks/interactions/fate-randomizer",
+        image: "https://charisma.rocks/interactions/fate-randomizer.png",
         name: "Fate Randomizer",
         description: "Each roll shapes the fate of adventurers.",
-        contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.randomizer-rc1",
+        contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fate-randomizer-rc1",
         category: "Utility",
         actions: ["CF", "D4", "D6", "D8", "D10", "D12", "D20", "D100"]
     });

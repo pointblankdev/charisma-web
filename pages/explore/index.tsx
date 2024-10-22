@@ -53,10 +53,10 @@ const INTERACTIONS = [
     address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     name: 'charisma-mine-rc2'
   },
-  // { 
-  //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-  //   name: 'keepers-challenge-rc3'
-  // },
+  {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    name: 'fate-randomizer-rc1'
+  },
   // { 
   //   address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
   //   name: 'hot-potato-rc1'
@@ -98,7 +98,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
     props: {
       interactionData,
     },
-    revalidate: 60, // Revalidate every 10 minutes
+    revalidate: 6, // Revalidate every 10 minutes
   };
 };
 
