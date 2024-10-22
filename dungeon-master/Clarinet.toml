@@ -130,8 +130,8 @@ depends_on = []
 path = "contracts/interactions/hot-potato.clar"
 depends_on = []
 
-[contracts.welsh-arbitrage]
-path = "contracts/interactions/welsh-arbitrage.clar"
+[contracts.charismatic-corgi]
+path = "contracts/interactions/charismatic-corgi.clar"
 depends_on = []
 
 [contracts.dungeon-crawler]

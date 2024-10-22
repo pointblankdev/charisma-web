@@ -53,7 +53,8 @@
 
 ;; Data Variables
 (define-data-var first-start-block uint block-height)
-(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/v0/interactions/engines/cha"))
+(define-data-var contract-uri (optional (string-utf8 256)) 
+    (some u"https://charisma.rocks/api/v0/interactions/engines/cha"))
 
 ;; Maps
 (define-map last-tap-block principal uint)
@@ -61,17 +62,11 @@
 ;; Hold-to-Earn functions
 
 (define-private (get-balance (data { address: principal, block: uint }))
-    (let
-        ((target-block (get block data)))
+    (let ((target-block (get block data)))
         (if (< target-block block-height)
-            (let
-                ((block-hash (unwrap-panic (get-block-info? id-header-hash target-block))))
-                (at-block block-hash (unwrap-panic (contract-call? .charisma-token get-balance (get address data))))
-            )
-            (unwrap-panic (contract-call? .charisma-token get-balance (get address data)))
-        )
-    )
-)
+            (let ((block-hash (unwrap-panic (get-block-info? id-header-hash target-block))))
+                (at-block block-hash (unwrap-panic (contract-call? .charisma-token get-balance (get address data)))))
+                (unwrap-panic (contract-call? .charisma-token get-balance (get address data))))))
 
 (define-private (calculate-trapezoid-areas-39 (balances (list 39 uint)) (dx uint))
     (list
@@ -112,9 +107,7 @@
         (/ (* (+ (unwrap-panic (element-at balances u34)) (unwrap-panic (element-at balances u35))) dx) u2)
         (/ (* (+ (unwrap-panic (element-at balances u35)) (unwrap-panic (element-at balances u36))) dx) u2)
         (/ (* (+ (unwrap-panic (element-at balances u36)) (unwrap-panic (element-at balances u37))) dx) u2)
-        (/ (* (+ (unwrap-panic (element-at balances u37)) (unwrap-panic (element-at balances u38))) dx) u2)
-    )
-)
+        (/ (* (+ (unwrap-panic (element-at balances u37)) (unwrap-panic (element-at balances u38))) dx) u2)))
 
 (define-private (calculate-trapezoid-areas-19 (balances (list 19 uint)) (dx uint))
     (list
@@ -135,9 +128,7 @@
         (/ (* (+ (unwrap-panic (element-at balances u14)) (unwrap-panic (element-at balances u15))) dx) u2)
         (/ (* (+ (unwrap-panic (element-at balances u15)) (unwrap-panic (element-at balances u16))) dx) u2)
         (/ (* (+ (unwrap-panic (element-at balances u16)) (unwrap-panic (element-at balances u17))) dx) u2)
-        (/ (* (+ (unwrap-panic (element-at balances u17)) (unwrap-panic (element-at balances u18))) dx) u2)
-    )
-)
+        (/ (* (+ (unwrap-panic (element-at balances u17)) (unwrap-panic (element-at balances u18))) dx) u2)))
 
 (define-private (calculate-trapezoid-areas-9 (balances (list 9 uint)) (dx uint))
     (list
@@ -148,183 +139,132 @@
         (/ (* (+ (unwrap-panic (element-at balances u4)) (unwrap-panic (element-at balances u5))) dx) u2)
         (/ (* (+ (unwrap-panic (element-at balances u5)) (unwrap-panic (element-at balances u6))) dx) u2)
         (/ (* (+ (unwrap-panic (element-at balances u6)) (unwrap-panic (element-at balances u7))) dx) u2)
-        (/ (* (+ (unwrap-panic (element-at balances u7)) (unwrap-panic (element-at balances u8))) dx) u2)
-    )
-)
+        (/ (* (+ (unwrap-panic (element-at balances u7)) (unwrap-panic (element-at balances u8))) dx) u2)))
 
 (define-private (calculate-trapezoid-areas-5 (balances (list 5 uint)) (dx uint))
     (list
         (/ (* (+ (unwrap-panic (element-at balances u0)) (unwrap-panic (element-at balances u1))) dx) u2)
         (/ (* (+ (unwrap-panic (element-at balances u1)) (unwrap-panic (element-at balances u2))) dx) u2)
         (/ (* (+ (unwrap-panic (element-at balances u2)) (unwrap-panic (element-at balances u3))) dx) u2)
-        (/ (* (+ (unwrap-panic (element-at balances u3)) (unwrap-panic (element-at balances u4))) dx) u2)
-    )
-)
+        (/ (* (+ (unwrap-panic (element-at balances u3)) (unwrap-panic (element-at balances u4))) dx) u2)))
 
 (define-private (calculate-trapezoid-areas-2 (balances (list 2 uint)) (dx uint))
     (list
-        (/ (* (+ (unwrap-panic (element-at balances u0)) (unwrap-panic (element-at balances u1))) dx) u2)
-    )
-)
+        (/ (* (+ (unwrap-panic (element-at balances u0)) (unwrap-panic (element-at balances u1))) dx) u2)))
 
 (define-private (calculate-balance-integral-39 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (sample-points (contract-call? .meme-engine-manager generate-sample-points-39 address start-block end-block))
-            (balances (map get-balance sample-points))
-            (dx (/ (- end-block start-block) u38))
-            (areas (calculate-trapezoid-areas-39 balances dx))
-        )
-        (fold + areas u0)
-    )
-)
+    (let (
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-39 address start-block end-block))
+        (balances (map get-balance sample-points))
+        (dx (/ (- end-block start-block) u38))
+        (areas (calculate-trapezoid-areas-39 balances dx)))
+        (fold + areas u0)))
 
 (define-private (calculate-balance-integral-19 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (sample-points (contract-call? .meme-engine-manager generate-sample-points-19 address start-block end-block))
-            (balances (map get-balance sample-points))
-            (dx (/ (- end-block start-block) u18))
-            (areas (calculate-trapezoid-areas-19 balances dx))
-        )
-        (fold + areas u0)
-    )
-)
+    (let (
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-19 address start-block end-block))
+        (balances (map get-balance sample-points))
+        (dx (/ (- end-block start-block) u18))
+        (areas (calculate-trapezoid-areas-19 balances dx)))
+        (fold + areas u0)))
 
 (define-private (calculate-balance-integral-9 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (sample-points (contract-call? .meme-engine-manager generate-sample-points-9 address start-block end-block))
-            (balances (map get-balance sample-points))
-            (dx (/ (- end-block start-block) u8))
-            (areas (calculate-trapezoid-areas-9 balances dx))
-        )
-        (fold + areas u0)
-    )
-)
+    (let (
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-9 address start-block end-block))
+        (balances (map get-balance sample-points))
+        (dx (/ (- end-block start-block) u8))
+        (areas (calculate-trapezoid-areas-9 balances dx)))
+        (fold + areas u0)))
 
 (define-private (calculate-balance-integral-5 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (sample-points (contract-call? .meme-engine-manager generate-sample-points-5 address start-block end-block))
-            (balances (map get-balance sample-points))
-            (dx (/ (- end-block start-block) u4))
-            (areas (calculate-trapezoid-areas-5 balances dx))
-        )
-        (fold + areas u0)
-    )
-)
+    (let (
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-5 address start-block end-block))
+        (balances (map get-balance sample-points))
+        (dx (/ (- end-block start-block) u4))
+        (areas (calculate-trapezoid-areas-5 balances dx)))
+        (fold + areas u0)))
 
 (define-private (calculate-balance-integral-2 (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (sample-points (contract-call? .meme-engine-manager generate-sample-points-2 address start-block end-block))
-            (balances (map get-balance sample-points))
-            (dx (/ (- end-block start-block) u1))
-            (areas (calculate-trapezoid-areas-2 balances dx))
-        )
-        (fold + areas u0)
-    )
-)
+    (let (
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-2 address start-block end-block))
+        (balances (map get-balance sample-points))
+        (dx (/ (- end-block start-block) u1))
+        (areas (calculate-trapezoid-areas-2 balances dx)))
+        (fold + areas u0)))
 
 (define-private (calculate-balance-integral (address principal) (start-block uint) (end-block uint))
-    (let
-        (
-            (block-difference (- end-block start-block))
-            (thresholds (unwrap-panic (contract-call? .meme-engine-manager get-thresholds)))
-        )
-        (if (>= block-difference (get threshold-39-point thresholds))
-            (calculate-balance-integral-39 address start-block end-block)
-            (if (>= block-difference (get threshold-19-point thresholds))
-                (calculate-balance-integral-19 address start-block end-block)
-                (if (>= block-difference (get threshold-9-point thresholds))
-                    (calculate-balance-integral-9 address start-block end-block)
-                    (if (>= block-difference (get threshold-5-point thresholds))
-                        (calculate-balance-integral-5 address start-block end-block)
-                        (calculate-balance-integral-2 address start-block end-block)
-                    )
-                )
-            )
-        )
-    )
-)
+    (let (
+        (block-difference (- end-block start-block))
+        (thresholds (unwrap-panic (contract-call? .meme-engine-manager get-thresholds))))
+        (if (>= block-difference (get threshold-39-point thresholds)) (calculate-balance-integral-39 address start-block end-block)
+        (if (>= block-difference (get threshold-19-point thresholds)) (calculate-balance-integral-19 address start-block end-block)
+        (if (>= block-difference (get threshold-9-point thresholds)) (calculate-balance-integral-9 address start-block end-block)
+        (if (>= block-difference (get threshold-5-point thresholds)) (calculate-balance-integral-5 address start-block end-block)
+        (calculate-balance-integral-2 address start-block end-block)))))))
 
 ;; Read-only functions
 
 (define-read-only (get-interaction-uri)
-  (ok (var-get contract-uri))
-)
+  (ok (var-get contract-uri)))
 
 (define-read-only (get-last-tap-block (address principal))
-    (default-to (var-get first-start-block) (map-get? last-tap-block address))
-)
+    (default-to (var-get first-start-block) (map-get? last-tap-block address)))
 
 ;; Public functions
 
 (define-public (execute (action (string-ascii 32)))
   (if (is-eq action "TAP") (tap-action tx-sender)
-    (err "INVALID_ACTION"))
-)
+    (err "INVALID_ACTION")))
 
 ;; Meme Engine Action Handler
 
 (define-private (tap-action (sender principal))
-  (let
-    (
-      (end-block block-height)
-      (start-block (get-last-tap-block sender))
-      (balance-integral (calculate-balance-integral sender start-block end-block))
-      (quality-score (contract-call? .arcana get-quality-score .charisma-token))
-      (incentive-score (contract-call? .aura get-incentive-score .charisma-token))
-      (circulating-supply (contract-call? .arcana get-circulating-supply .charisma-token))
-      (potential-energy (/ (* (* balance-integral quality-score) incentive-score) circulating-supply))
-    )
+  (let (
+    (end-block block-height)
+    (start-block (get-last-tap-block sender))
+    (balance-integral (calculate-balance-integral sender start-block end-block))
+    (quality-score (contract-call? .arcana get-quality-score .charisma-token))
+    (incentive-score (contract-call? .aura get-incentive-score .charisma-token))
+    (circulating-supply (contract-call? .arcana get-circulating-supply .charisma-token))
+    (potential-energy (/ (* (* balance-integral quality-score) incentive-score) circulating-supply)))
     (map-set last-tap-block sender end-block)
     (match (contract-call? .dungeon-keeper energize potential-energy sender)
       success (handle-tap-success sender potential-energy balance-integral)
       error   (if (is-eq error u1) (handle-tap-insufficient-balance sender)
               (if (is-eq error u405) (handle-tap-limit-exceeded sender)
               (if (is-eq error u403) (handle-tap-unverified sender)
-              (handle-tap-unknown-error sender)))))
-  )
-)
+              (handle-tap-unknown-error sender)))))))
 
 ;; Meme Engine Response Handlers
 
 (define-private (handle-tap-success (sender principal) (energy uint) (integral uint))
   (begin
-    (print "The adventurer's tokens resonate with the dungeon, generating pure energy from their loyalty.")
-    (ok "ENERGY_GENERATED"))
-)
+    (print "The adventurer's tokens resonate with the dungeon, generating pure energy from their autism.")
+    (ok "ENERGY_GENERATED")))
 
 (define-private (handle-tap-insufficient-balance (sender principal))
   (begin
     (print "The adventurer's tokens are too weak to generate meaningful energy.")
-    (ok "ENERGY_NOT_GENERATED"))
-)
+    (ok "ENERGY_NOT_GENERATED")))
 
 (define-private (handle-tap-limit-exceeded (sender principal))
   (begin
     (print "The dungeon's energy capacity has been reached, unable to process more token resonance.")
-    (ok "ENERGY_NOT_GENERATED"))
-)
+    (ok "ENERGY_NOT_GENERATED")))
 
 (define-private (handle-tap-unverified (sender principal))
   (begin
     (print "This energy generation attempt lacks proper verification from the dungeon.")
-    (ok "ENERGY_NOT_GENERATED"))
-)
+    (ok "ENERGY_NOT_GENERATED")))
 
 (define-private (handle-tap-unknown-error (sender principal))
   (begin
     (print "An unknown disturbance prevents the tokens from generating energy.")
-    (ok "ENERGY_NOT_GENERATED"))
-)
+    (ok "ENERGY_NOT_GENERATED")))
 
 ;; Admin functions
 
 (define-public (set-contract-uri (new-uri (optional (string-utf8 256))))
   (begin
     (asserts! (is-eq tx-sender CONTRACT_OWNER) ERR_UNAUTHORIZED)
-    (ok (var-set contract-uri new-uri)))
-)
+    (ok (var-set contract-uri new-uri))))
