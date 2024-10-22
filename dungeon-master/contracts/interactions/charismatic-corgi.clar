@@ -11,31 +11,6 @@
 ;; 3. Profit Tracking: Maintains a record of successful arbitrage profits per user
 ;; 4. Auto-reinvestment: Automatically converts 1 STX to CHA after successful trades
 ;; 5. Configurable Input: Allows admin adjustment of trade amounts up to 100 CHA
-;;
-;; Actions:
-;; - FORWARD: Attempts CHA -> STX -> WELSH -> CHA arbitrage path
-;; - REVERSE: Attempts CHA -> WELSH -> STX -> CHA arbitrage path
-;;
-;; Responses:
-;; - "ARBITRAGE_COMPLETE": Successfully executed profitable arbitrage
-;; - "NO_PROFIT_OPPORTUNITY": Trade would not result in profit
-;; - "NOT_ENOUGH_ENERGY": Insufficient energy to attempt arbitrage
-;; - "INVALID_ACTION": Unrecognized action provided
-;;
-;; Integration with Charisma Protocol:
-;; - Requires energy expenditure through Fatigue interaction
-;; - Interacts with Charisma DEX for token swaps
-;; - Tracks profits in protocol token (CHA)
-;;
-;; Security Features:
-;; - Limits maximum trade size to 100 CHA
-;; - Admin-only configuration functions
-;; - Built-in profit tracking per user
-;;
-;; Usage:
-;; This interaction allows adventurers to attempt arbitrage by discovering and exploiting
-;; price differences in the dungeon's mysterious marketplace. Each attempt requires energy
-;; and automatically reinvests successful arbitrage profits back into CHA tokens.
 
 (impl-trait .dao-traits-v7.interaction-trait)
 
@@ -43,6 +18,7 @@
 (define-constant CONTRACT_OWNER tx-sender)
 (define-constant ERR_UNAUTHORIZED (err u401))
 (define-constant ERR_EXCEEDS_LIMIT (err u405))
+(define-constant ERR_SWAP_FAILED (err u500))
 
 ;; Data Variables
 (define-data-var contract-uri (optional (string-utf8 256)) 
@@ -73,36 +49,51 @@
 (define-private (try-forward-path (sender principal))
     (begin
         (if (is-eq (unwrap-panic (contract-call? .fatigue execute "BURN")) "ENERGY_BURNED")
-            (match (contract-call? .univ2-path2 swap-4 (var-get amount-in) (var-get amount-in) .charisma-token .wstx .welshcorgicoin-token .charisma-token .univ2-share-fee-to)
-                success (begin
-                            (print "The adventurer successfully arbitraged the mysterious marketplace!")
-                            (update-profit (var-get amount-in))
-                            (match (contract-call? .univ2-path2 do-swap u1000000 .wstx .charisma-token .univ2-share-fee-to)
-                                s (print "With the profits, the adventurer swapped 1 STX to CHA.")
-                                e (print "Swapping 1 STX to CHA after the successful arbitrage failed."))
-                            (ok "ARBITRAGE_COMPLETE"))
-                error   (begin
-                            (print "The arbitrage attempt yielded no profit in these market conditions.")
-                            (ok "NO_PROFIT_OPPORTUNITY")))
+            (let (
+                ;; First swap: CHA -> STX
+                (swap1 (unwrap! (contract-call? .univ2-path2 do-swap (var-get amount-in) .charisma-token .wstx .univ2-share-fee-to) (ok "NO_PROFIT_OPPORTUNITY")))
+                ;; Second swap: STX -> WELSH
+                (swap2 (unwrap! (contract-call? .univ2-path2 do-swap (get amt-out swap1) .wstx .welshcorgicoin-token .univ2-share-fee-to) (ok "NO_PROFIT_OPPORTUNITY")))
+                ;; Third swap: WELSH -> CHA
+                (swap3 (unwrap! (contract-call? .univ2-path2 do-swap (get amt-out swap2) .welshcorgicoin-token .charisma-token .univ2-share-fee-to) (ok "NO_PROFIT_OPPORTUNITY")))
+            )
+            (if (> (get amt-out swap3) (var-get amount-in))
+                (begin
+                    (print "The adventurer successfully arbitraged the mysterious marketplace!")
+                    (update-profit (var-get amount-in))
+                    (match (contract-call? .univ2-path2 do-swap u1000000 .wstx .charisma-token .univ2-share-fee-to)
+                        s (print "With the profits, the adventurer swapped 1 STX to CHA.")
+                        e (print "Swapping 1 STX to CHA after the successful arbitrage failed."))
+                    (ok "ARBITRAGE_COMPLETE"))
+                (begin
+                    (print "The arbitrage attempt yielded no profit in these market conditions.")
+                    (ok "NO_PROFIT_OPPORTUNITY"))))
             (ok "NOT_ENOUGH_ENERGY"))))
 
 ;; Reverse Path (CHA -> WELSH -> STX -> CHA)
 (define-private (try-reverse-path (sender principal))
     (begin
         (if (is-eq (unwrap-panic (contract-call? .fatigue execute "BURN")) "ENERGY_BURNED")
-            (match (contract-call? .univ2-path2 swap-4 (var-get amount-in) (var-get amount-in) .charisma-token .welshcorgicoin-token .wstx .charisma-token .univ2-share-fee-to)
-                success (begin
-                            (print "The adventurer successfully arbitraged the mysterious marketplace!")
-                            (update-profit (var-get amount-in))
-                            (match (contract-call? .univ2-path2 do-swap u1000000 .wstx .charisma-token .univ2-share-fee-to)
-                                s (print "With the profits, the adventurer swapped 1 STX to CHA.")
-                                e (print "Swapping 1 STX to CHA after the successful arbitrage failed."))
-                            (ok "ARBITRAGE_COMPLETE"))
-                error   (begin
-                            (print "The arbitrage attempt yielded no profit in these market conditions.")
-                            (ok "NO_PROFIT_OPPORTUNITY")))
+            (let (
+                ;; First swap: CHA -> WELSH
+                (swap1 (unwrap! (contract-call? .univ2-path2 do-swap (var-get amount-in) .charisma-token .welshcorgicoin-token .univ2-share-fee-to) (ok "NO_PROFIT_OPPORTUNITY")))
+                ;; Second swap: WELSH -> STX
+                (swap2 (unwrap! (contract-call? .univ2-path2 do-swap (get amt-out swap1) .welshcorgicoin-token .wstx .univ2-share-fee-to) (ok "NO_PROFIT_OPPORTUNITY")))
+                ;; Third swap: STX -> CHA
+                (swap3 (unwrap! (contract-call? .univ2-path2 do-swap (get amt-out swap2) .wstx .charisma-token .univ2-share-fee-to) (ok "NO_PROFIT_OPPORTUNITY")))
+            )
+            (if (> (get amt-out swap3) (var-get amount-in))
+                (begin
+                    (print "The adventurer successfully arbitraged the mysterious marketplace!")
+                    (update-profit (var-get amount-in))
+                    (match (contract-call? .univ2-path2 do-swap u1000000 .wstx .charisma-token .univ2-share-fee-to)
+                        s (print "With the profits, the adventurer swapped 1 STX to CHA.")
+                        e (print "Swapping 1 STX to CHA after the successful arbitrage failed."))
+                    (ok "ARBITRAGE_COMPLETE"))
+                (begin
+                    (print "The arbitrage attempt yielded no profit in these market conditions.")
+                    (ok "NO_PROFIT_OPPORTUNITY"))))
             (ok "NOT_ENOUGH_ENERGY"))))
-       
 
 ;; Admin Functions
 (define-public (set-contract-uri (new-uri (optional (string-utf8 256))))

@@ -154,15 +154,15 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
         <div className="block">
           <div className="grid lg:grid-cols-5">
             <Sidebar collections={collections} className="hidden lg:block" />
-            <div className="col-span-3 lg:col-span-4 lg:border-l overflow-hidden">
+            <div className="col-span-3 lg:col-span-4 lg:border-l overflow-hidden sm:overflow-visible">
               <div className="h-full pl-0 py-6 lg:pl-8">
-                <Tabs defaultValue="all" className="h-full space-y-6">
+                <Tabs defaultValue="all" className="sm:h-[50vh] space-y-6">
                   <div className="flex items-center space-between">
                     <TabsList className="mx-4">
-                      <TabsTrigger value="all">All interactions</TabsTrigger>
-                      <TabsTrigger value="utility">Utility</TabsTrigger>
+                      <TabsTrigger value="all">All Interactions</TabsTrigger>
                       <TabsTrigger value="rewards">Rewards</TabsTrigger>
                       <TabsTrigger value="engines">Engines</TabsTrigger>
+                      <TabsTrigger value="utility">Utility</TabsTrigger>
                     </TabsList>
                   </div>
                   {Object.values(INTERACTION_CATEGORIES).map((category) => (
@@ -179,13 +179,46 @@ export default function ExplorePage({ interactionData }: ExplorePageProps) {
                     </TabsContent>
                   ))}
                 </Tabs>
+
+                {/* Add Recommended Section */}
+                <div className="mt-8">
+                  <div className="flex items-center justify-between mx-4">
+                    <div className="space-y-1">
+                      <h2 className="text-2xl font-semibold tracking-tight">
+                        Recommended for You
+                      </h2>
+                      <p className="text-sm text-muted-foreground">
+                        Interactions picked just for you based on your activity
+                      </p>
+                    </div>
+                  </div>
+                  <Separator className="my-4" />
+                  <div className="relative">
+                    <ScrollArea>
+                      <div className="flex pb-4 space-x-4 mx-4">
+                        {/* Take a subset of interactions for recommendations */}
+                        {interactionData.slice(0, 6).map((interaction) => (
+                          <InteractionArtwork
+                            key={interaction.name}
+                            interaction={interaction}
+                            className="w-[150px]"
+                            aspectRatio="square"
+                            width={150}
+                            height={150}
+                          />
+                        ))}
+                      </div>
+                      <ScrollBar orientation="horizontal" />
+                    </ScrollArea>
+                  </div>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </Layout>
     </Page>
-  )
+  );
 }
 
 interface InteractionArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
