@@ -16,6 +16,7 @@ export default function MemeEngineAPI(
         image: `https://charisma.rocks/interactions/engines/cha.png`,
         name: `Meme Engine (CHA)`,
         subtitle: 'Generate energy by holding Charisma tokens.',
+        description: [],
         contract: `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4`,
         category: 'Engines',
         actions: ['TAP']

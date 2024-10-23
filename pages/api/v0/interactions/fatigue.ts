@@ -15,7 +15,8 @@ export default function InteractionAPI(
         url: 'https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc3',
         image: 'https://charisma.rocks/interactions/fatigue.png',
         name: 'Fatigue',
-        description: 'Without energy- nothing is possible.',
+        subtitle: 'Without energy- nothing is possible.',
+        description: [],
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc3',
         category: 'Utility',
         actions: ['BURN']
