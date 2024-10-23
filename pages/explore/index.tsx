@@ -109,12 +109,12 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           description: "Generate energy from your CHA holdings"
         },
         {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
           action: "FORWARD",
           description: "Arbitrage swap forward yielding WELSH and CHA tokens"
         },
         {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc2",
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
           action: "REVERSE",
           description: "Arbitrage swap backwards yielding WELSH and CHA tokens"
         },
