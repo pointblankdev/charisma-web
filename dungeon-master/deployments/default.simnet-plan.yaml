@@ -134,14 +134,9 @@ plan:
             path: contracts/charisma-randomizer.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: randomizer
+            contract-name: fate-randomizer
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/interactions/randomizer.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: challenge
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/interactions/challenge.clar
+            path: contracts/interactions/fate-randomizer.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: red-pill-nft
@@ -164,8 +159,8 @@ plan:
             path: contracts/meme-engines/meme-engine.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: petition
+            contract-name: keepers-petition
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/interactions/petition.clar
+            path: contracts/interactions/keepers-petition.clar
             clarity-version: 1
       epoch: "2.05"

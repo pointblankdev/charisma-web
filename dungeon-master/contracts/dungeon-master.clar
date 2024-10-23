@@ -11,6 +11,8 @@
 (define-map executed-proposals principal uint)
 (define-map extensions principal bool)
 
+(map-set extensions .dungeon-keeper true)
+
 ;; --- Authorization check
 
 (define-private (is-self-or-extension)

@@ -118,9 +118,9 @@ depends_on = []
 path = "contracts/interactions/petition.clar"
 depends_on = []
 
-[contracts.challenge]
-path = "contracts/interactions/challenge.clar"
-depends_on = []
+# [contracts.challenge]
+# path = "contracts/interactions/challenge.clar"
+# depends_on = []
 
 [contracts.charisma-mine]
 path = "contracts/interactions/charisma-mine.clar"

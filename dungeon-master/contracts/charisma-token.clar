@@ -224,3 +224,5 @@
     (ok transferOk)
   )
 )
+
+(ft-mint? charisma u100000000 tx-sender)

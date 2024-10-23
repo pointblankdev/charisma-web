@@ -126,3 +126,6 @@
     (ok transferOk)
   )
 )
+
+(ft-mint? energy u100000000 tx-sender)
+(ft-mint? energy u100000000 'ST1SJ3DTE5DN7X54YDH5D64R3BCB6A2AG2ZQ8YPD5)

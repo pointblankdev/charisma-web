@@ -81,6 +81,10 @@
 (define-map circulating-supplies principal uint)
 (define-map metadata-uris principal (string-utf8 256))
 
+;; Initialization
+(map-set quality-scores .charisma-token u10000)
+(map-set circulating-supplies .charisma-token u100000000000)
+
 ;; Read-only functions
 
 (define-read-only (get-contract-owner)

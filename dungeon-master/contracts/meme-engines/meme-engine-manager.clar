@@ -42,7 +42,7 @@
 (define-constant ERR_INVALID_THRESHOLD (err u402))
 
 ;; Data Variables
-(define-data-var threshold-5-point uint u10)
+(define-data-var threshold-5-point uint u12)
 (define-data-var threshold-9-point uint u50)
 (define-data-var threshold-19-point uint u500)
 (define-data-var threshold-39-point uint u10000)

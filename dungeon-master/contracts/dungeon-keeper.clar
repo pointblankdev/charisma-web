@@ -1,52 +1,57 @@
 ;; Dungeon Keeper Contract
 ;;
-;; This contract serves as the central management and security hub for the Charisma protocol.
+;; This contract serves as the central authority and security hub for the Charisma protocol.
 ;; It controls critical parameters, authorizes interactions, and manages token operations
-;; across the ecosystem. The Dungeon Keeper acts as a gatekeeper, ensuring the integrity
-;; and security of the Charisma protocol's core functions.
+;; across both GameFi and DeFi aspects of the ecosystem. The Dungeon Keeper acts as a
+;; gatekeeper, ensuring the integrity and security of all protocol operations.
 ;;
 ;; Key Responsibilities:
-;; 1. Authorization Management: Controls contract ownership and access rights.
-;; 2. Interaction Verification: Manages the list of verified interactions.
-;; 3. Token Operations: Handles minting, burning, and transfers of protocol tokens.
-;; 4. Security Controls: Implements limits and verification checks for various protocol actions.
-;; 5. Energy Capacity Management: Applies maximum capacity to energy generation.
+;; 1. Authorization Management: Controls contract ownership and verified interaction list
+;; 2. Token Operations: Manages all protocol token operations with strict limits:
+;;    - Experience: Mint (max 1000) and burn (max 100)
+;;    - Energy: Mint and burn (max 10000 each)
+;;    - Governance: Transfer, burn, lock, and unlock (max 100 each)
+;; 3. Security Controls: Applies Raven Resistance burn reductions and energy capacity limits
+;; 4. Multi-owner Architecture: Distributes control for enhanced security
 ;;
-;; Core Components:
-;; - Contract Ownership: Multi-owner structure for enhanced security and governance.
-;; - Verified Interactions: Whitelist of approved interaction contracts.
-;; - Token Integration: Manages operations for Experience, Energy, and DMG tokens.
-;; - Operation Limits: Configurable maximum limits for token operations.
-;; - Raven Resistance Integration: Applies burn reductions in token transfers.
+;; Core Functions:
+;; Experience Operations:
+;; - reward: Mint Experience tokens (max 1000)
+;; - punish: Burn Experience tokens (max 100)
 ;;
-;; Key Functions:
-;; - Admin Functions: Add/remove contract owners, manage verified interactions, set operation limits.
-;; - Token Operations: 
-;;   - reward: Mint Experience tokens (max 1000 Experience).
-;;   - punish: Burn Experience tokens (max 100 Experience).
-;;   - energize: Mint Energy tokens with capacity limit (max 1000 Energy).
-;;   - exhaust: Burn Energy tokens (max 100 Energy).
-;;   - transfer: Transfer DMG tokens with Raven Resistance reduction (max 100 DMG).
+;; Energy Operations:
+;; - energize: Mint Energy tokens with capacity limit (max 10000)
+;; - exhaust: Burn Energy tokens (max 10000)
+;;
+;; Governance Token Operations:
+;; - transfer: Move DMG with Raven Resistance reduction (max 100)
+;; - burn: Burn DMG with Raven Resistance reduction (max 100)
+;; - lock: Lock DMG tokens (max 100)
+;; - unlock: Unlock DMG tokens (max 100)
+;;
+;; Administrative Functions:
+;; - Contract Owner Management: Add/remove owners
+;; - Interaction Verification: Add/remove verified interactions
+;; - Limit Configuration: Set maximum amounts for all operations
 ;;
 ;; Security Features:
-;; - Multi-owner structure to prevent single points of failure.
-;; - Strict access controls on all admin functions.
-;; - Verification checks for interaction contracts.
-;; - Maximum limits on token operations to prevent abuse.
-;; - Energy capacity limit applied through integration with energy-capacity contract.
+;; - Multi-owner structure prevents single points of failure
+;; - Verified interaction whitelist
+;; - Maximum limits on all token operations
+;; - Raven Resistance integration for burn reduction
+;; - Energy capacity limit application
 ;;
-;; Integration with Charisma Ecosystem:
-;; - Verifies and manages interaction contracts within the protocol.
-;; - Interacts with token contracts (Experience, Energy, DMG) for core operations.
-;; - Utilizes Raven Resistance for burn reductions in DMG transfers.
-;; - Applies energy capacity limits using the energy-capacity contract.
+;; Integration Points:
+;; - Experience Token (.experience)
+;; - Energy Token (.energy)
+;; - Governance Token (.dme000-governance-token)
+;; - Raven Resistance (.raven-resistance)
+;; - Energy Capacity (.energy-capacity)
 ;;
-;; This contract is crucial for maintaining the security, flexibility, and proper functioning
-;; of the Charisma protocol. By centralizing critical operations and access controls, it ensures
-;; that only verified interactions can perform sensitive operations, maintaining the integrity
-;; of the entire ecosystem. The Dungeon Keeper's role is essential in supporting the protocol's
-;; innovative approach to stake-less participation and dynamic reward mechanisms within a
-;; secure and controlled environment.
+;; This contract is essential for maintaining the balance between dynamic GameFi mechanics
+;; and secure DeFi operations. By centralizing and limiting all token operations, it ensures
+;; that gameplay features can safely interact with valuable token systems while maintaining
+;; strict security controls and economic stability.
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -59,13 +64,16 @@
 (define-data-var max-energize uint u10000000000)  ;; 10000 Energy
 (define-data-var max-exhaust uint u10000000000)  ;; 10000 Energy
 (define-data-var max-transfer uint u100000000)  ;; 100 DMG
+(define-data-var max-burn uint u100000000)  ;; 100 DMG
+(define-data-var max-lock uint u100000000)  ;; 100 DMG
+(define-data-var max-unlock uint u100000000)  ;; 100 DMG
 
 ;; Maps
 (define-map contract-owners principal bool)
 (define-map verified-interactions principal bool)
 
-;; Constants
-(define-constant FEE-SCALE u1000000)
+;; Initialize the verified interactions map
+(map-set verified-interactions .meme-engine true)
 
 ;; Authorization checks
 (define-read-only (is-contract-owner)
@@ -76,73 +84,76 @@
 (map-set contract-owners tx-sender true)
 
 ;; Initialize the verified interactions map
-(map-set verified-interactions .dungeon-crawler true)
-(map-set verified-interactions .keepers-challenge true)
+(map-set verified-interactions .meme-engine-cha true)
+(map-set verified-interactions .meme-engine-iou-welsh true)
+(map-set verified-interactions .meme-engine-iou-roo true)
+(map-set verified-interactions .fatigue true)
+(map-set verified-interactions .charisma-mine true)
+(map-set verified-interactions .the-troll-toll true)
+(map-set verified-interactions .charismatic-corgi true)
+(map-set verified-interactions .keepers-petition true)
 
 ;; Admin functions
 
 (define-public (add-contract-owner (new-owner principal))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (map-set contract-owners new-owner true))
-  )
-)
+    (ok (map-set contract-owners new-owner true))))
 
 (define-public (remove-contract-owner (owner principal))
   (begin
     (asserts! (and (is-contract-owner) (not (is-eq tx-sender owner))) ERR_UNAUTHORIZED)
-    (ok (map-delete contract-owners owner))
-  )
-)
+    (ok (map-delete contract-owners owner))))
 
 (define-public (add-verified-interaction (interaction principal))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (map-set verified-interactions interaction true))
-  )
-)
+    (ok (map-set verified-interactions interaction true))))
 
 (define-public (remove-verified-interaction (interaction principal))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (map-delete verified-interactions interaction))
-  )
-)
+    (ok (map-delete verified-interactions interaction))))
 
 (define-public (set-max-reward (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-reward new-max))
-  )
-)
+    (ok (var-set max-reward new-max))))
 
 (define-public (set-max-punish (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-punish new-max))
-  )
-)
+    (ok (var-set max-punish new-max))))
 
 (define-public (set-max-energize (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-energize new-max))
-  )
-)
+    (ok (var-set max-energize new-max))))
 
 (define-public (set-max-exhaust (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-exhaust new-max))
-  )
-)
+    (ok (var-set max-exhaust new-max))))
 
 (define-public (set-max-transfer (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
-    (ok (var-set max-transfer new-max))
-  )
-)
+    (ok (var-set max-transfer new-max))))
+
+(define-public (set-max-burn (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-burn new-max))))
+
+(define-public (set-max-lock (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-lock new-max))))
+
+(define-public (set-max-unlock (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-unlock new-max))))
 
 ;; Public functions for token operations
 
@@ -150,63 +161,63 @@
   (begin
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
     (asserts! (<= amount (var-get max-reward)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .experience mint amount target)
-  )
-)
+    (contract-call? .experience mint amount target)))
 
 (define-public (punish (amount uint) (target principal))
   (begin
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
     (asserts! (<= amount (var-get max-punish)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .experience burn amount target)
-  )
-)
+    (contract-call? .experience burn amount target)))
 
 (define-public (energize (amount uint) (target principal))
-  (let
-    ((capped-amount (apply-max-capacity amount)))
+  (let ((capped-amount (apply-max-capacity amount)))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
     (asserts! (<= capped-amount (var-get max-energize)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .energy mint capped-amount target)
-  )
-)
+    (contract-call? .energy mint capped-amount target)))
 
 (define-public (exhaust (amount uint) (target principal))
   (begin
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
     (asserts! (<= amount (var-get max-exhaust)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .energy burn amount target)
-  )
-)
+    (contract-call? .energy burn amount target)))
 
 (define-public (transfer (amount uint) (sender principal) (target principal))
-  (let
-    ((reduced-amount (apply-raven-reduction amount sender)))
+  (let ((reduced-amount (apply-raven-reduction amount sender)))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
     (asserts! (<= reduced-amount (var-get max-transfer)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .dme000-governance-token transfer reduced-amount sender target none)
-  )
-)
+    (contract-call? .dme000-governance-token dmg-transfer reduced-amount sender target)))
+
+(define-public (burn (amount uint) (sender principal) (target principal))
+  (let ((reduced-amount (apply-raven-reduction amount sender)))
+    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= reduced-amount (var-get max-burn)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token dmg-burn reduced-amount target)))
+
+(define-public (lock (amount uint) (target principal))
+  (begin
+    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= amount (var-get max-lock)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token dmg-lock amount target)))
+
+(define-public (unlock (amount uint) (target principal))
+  (begin
+    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= amount (var-get max-unlock)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token dmg-unlock amount target)))
 
 ;; Private functions
 
 (define-private (apply-raven-reduction (amount uint) (user principal))
-  (let
-    ((reduction (contract-call? .raven-resistance get-burn-reduction user)))
-    (- amount (/ (* amount reduction) FEE-SCALE))
-  )
-)
+  (let ((reduction (contract-call? .raven-resistance get-burn-reduction user)))
+    (- amount (/ (* amount reduction) u1000000))))
 
 (define-private (apply-max-capacity (energy uint))
-  (contract-call? .energy-capacity apply-max-capacity energy)
-)
+  (contract-call? .energy-capacity apply-max-capacity energy))
 
 ;; Read-only functions
 
 (define-read-only (is-verified-interaction (interaction principal))
-  (default-to false (map-get? verified-interactions interaction))
-)
+  (default-to false (map-get? verified-interactions interaction)))
 
 (define-read-only (is-owner (address principal))
-  (default-to false (map-get? contract-owners address))
-)
+  (default-to false (map-get? contract-owners address)))

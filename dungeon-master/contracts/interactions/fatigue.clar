@@ -51,7 +51,8 @@
       error   (if (is-eq error u1) (handle-insufficient-energy sender amount)
               (if (is-eq error u405) (handle-fatigue-limit-exceeded sender amount)
               (if (is-eq error u403) (handle-fatigue-unverified sender amount)
-              (handle-fatigue-unknown-error sender amount)))))))
+              ;; (if (is-eq error u401) (handle-unverified sender amount)
+              (handle-fatigue-unknown-error error)))))))
 
 ;; Fatigue Contract Response Handlers
 
@@ -75,8 +76,9 @@
     (print "The dungeon does not recognize this interaction.")
     (ok "ENERGY_NOT_BURNED")))
 
-(define-private (handle-fatigue-unknown-error (sender principal) (amount uint))
+(define-private (handle-fatigue-unknown-error (error uint))
   (begin
+    (print error)
     (print "The dungeon's energy drain mechanism malfunctions in an unexpected way.")
     (ok "ENERGY_NOT_BURNED")))
 

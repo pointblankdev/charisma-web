@@ -63,7 +63,7 @@
   (let ((fatigue-response (unwrap-panic (contract-call? .fatigue execute "BURN"))))
     (if (is-eq fatigue-response "ENERGY_BURNED") (handle-petition-attempt sender)
     (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
-    (handle-unknown-error sender)))))
+    (handle-unknown-error u1)))))
 
 ;; Response Handlers
 
@@ -73,16 +73,17 @@
       success (begin 
               (print "The Dungeon Keeper acknowledges your humble petition and grants you a small reward.")
               (ok "PETITION_SUCCEEDED"))
-      error   (handle-unknown-error sender))))
+      error   (handle-unknown-error error))))
 
 (define-private (handle-insufficient-energy (sender principal))
   (begin
     (print "You lack the energy required to petition the Dungeon Keeper.")
     (ok "PETITION_FAILED")))
 
-(define-private (handle-unknown-error (sender principal))
+(define-private (handle-unknown-error (error uint))
   (begin
-    (print "The Dungeon Keeper is unable to process your petition.")
+    (print error)
+    (print "You can't request a petition from yourself, foolish mortal.")
     (ok "PETITION_ERROR")))
 
 ;; Admin functions
