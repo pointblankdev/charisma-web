@@ -21,6 +21,19 @@ import { useDungeonCrawler } from "@lib/hooks/use-dungeon-crawler"
 import { API_URL, SITE_URL } from "@lib/constants"
 import React, { useState } from "react"
 import { interactionIds } from "pages/api/v0/interactions"
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@components/ui/dialog";
+import { Input } from "@components/ui/input";
+import { Label } from "@components/ui/label";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
+import { ChevronDown, UserPlus, Users, Bot } from "lucide-react"; // Import icons
 
 export type Collection = (typeof collections)[number]
 
@@ -46,7 +59,8 @@ export interface Interaction {
   type: "interaction";
   uri: string;
   category: InteractionCategory;
-  description: string;
+  subtitle: string;
+  description: string[];
   contract: string;
   actions: string[];
 }
@@ -89,6 +103,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
         cover: metadata.image.replace(SITE_URL, ''),
         type: "interaction" as const,
         category: metadata.category as InteractionCategory,
+        subtitle: metadata.subtitle,
         description: metadata.description,
         uri: metadata.url.replace(SITE_URL, ''),
         actions: metadata.actions || [],
@@ -540,10 +555,44 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   collections: Collection[]
 }
 
+interface Character {
+  id: string;
+  name: string;
+  schedule: string;
+  lastRun?: Date;
+  status: 'active' | 'inactive';
+}
+
 function Sidebar({ className, collections }: SidebarProps) {
+  const [isOpen, setIsOpen] = useState(false);
+  const [characters, setCharacters] = useState<Character[]>([]);
+
+  const handleCreateCharacter = async (data: {
+    name: string;
+    schedule: string;
+    interactions: string[];
+  }) => {
+    try {
+      const response = await fetch('/api/characters', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+
+      if (!response.ok) throw new Error('Failed to create character');
+
+      const newCharacter = await response.json();
+      setCharacters([...characters, newCharacter]);
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error creating character:', error);
+    }
+  };
+
   return (
     <div className={cn("pb-12", className)}>
       <div className="py-4 space-y-4">
+        {/* Existing Explore section */}
         <div className="px-3 py-2">
           <h2 className="px-4 mb-2 text-lg font-semibold tracking-tight">
             Explore
@@ -557,14 +606,106 @@ function Sidebar({ className, collections }: SidebarProps) {
               </svg>
               Discover
             </Button>
-            <Button disabled variant="ghost" className="justify-start">
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2">
-                <path d="M8.5 14.5A2.5 2.5 0 0011 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 11-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 002.5 2.5z" />
-              </svg>
-              Popular
-            </Button>
           </div>
         </div>
+
+        {/* New Characters section */}
+        <div className="px-3 py-2">
+          <div className="flex items-center px-4 mb-2 space-x-2">
+            <h2 className="text-lg font-semibold tracking-tight flex items-center">
+              <Users className="w-4 h-4 mr-2" />
+              Characters
+            </h2>
+            <div className="text-muted-foreground text-sm">(Trading Bots)</div>
+          </div>
+          <div className="space-y-1">
+            <Dialog open={isOpen} onOpenChange={setIsOpen}>
+              <DialogTrigger asChild>
+                <Button variant="ghost" className="w-full justify-start">
+                  <UserPlus className="w-4 h-4 mr-2" />
+                  Create Character
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Create New Character</DialogTitle>
+                  <DialogDescription>
+                    Create an automated character to run interactions on your behalf.
+                  </DialogDescription>
+                </DialogHeader>
+                <form onSubmit={(e) => {
+                  e.preventDefault();
+                  const formData = new FormData(e.currentTarget);
+                  handleCreateCharacter({
+                    name: formData.get('name') as string,
+                    schedule: formData.get('schedule') as string,
+                    interactions: (formData.get('interactions') as string).split(','),
+                  });
+                }}>
+                  <div className="grid gap-4 py-4">
+                    <div className="grid gap-2">
+                      <Label htmlFor="name">Character Name</Label>
+                      <Input id="name" name="name" placeholder="Enter character name" />
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="schedule">Schedule</Label>
+                      <Select name="schedule">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select schedule" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="hourly">Every Hour</SelectItem>
+                          <SelectItem value="daily">Daily</SelectItem>
+                          <SelectItem value="weekly">Weekly</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                    <div className="grid gap-2">
+                      <Label htmlFor="interactions">Select Interactions</Label>
+                      <Select name="interactions">
+                        <SelectTrigger>
+                          <SelectValue placeholder="Choose interactions" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {/* We'll need to populate this with actual interactions */}
+                          <SelectItem value="charisma-mine">Charisma Mine</SelectItem>
+                          <SelectItem value="keepers-challenge">Keeper's Challenge</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </div>
+                  <DialogFooter>
+                    <Button type="submit">Create Character</Button>
+                  </DialogFooter>
+                </form>
+              </DialogContent>
+            </Dialog>
+
+            {/* List existing characters */}
+            <ScrollArea className="h-fit">
+              {characters.map((character) => (
+                <Button
+                  key={character.id}
+                  variant="ghost"
+                  className="w-full justify-between"
+                >
+                  <div className="flex items-center">
+                    <Bot className="w-4 h-4 mr-2" />
+                    {character.name}
+                  </div>
+                  <span className={cn(
+                    "px-2 py-1 rounded-full text-xs",
+                    character.status === 'active' ? "bg-green-500/20 text-green-500" : "bg-red-500/20 text-red-500"
+                  )}>
+                    {character.status}
+                  </span>
+                </Button>
+              ))}
+            </ScrollArea>
+          </div>
+        </div>
+
+        {/* Existing Crates section */}
         <div className="py-2">
           <h2 className="relative text-lg font-semibold tracking-tight px-7">
             Crates
@@ -591,7 +732,7 @@ function Sidebar({ className, collections }: SidebarProps) {
         </div>
       </div>
     </div>
-  )
+  );
 }
 
 export { InteractionArtwork, InteractionEmptyPlaceholder, Sidebar };

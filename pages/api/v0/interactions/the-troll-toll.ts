@@ -15,7 +15,7 @@ export default function InteractionAPI(
         url: 'https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-troll-toll-rc1',
         image: '/interactions/the-troll-toll.png',
         name: 'The Troll Toll',
-        description: 'You gotta pay the troll toll.',
+        subtitle: 'You gotta pay the troll toll.',
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-troll-toll-rc1',
         category: 'Utility',
         actions: ['PAY']

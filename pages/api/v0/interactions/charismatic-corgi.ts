@@ -15,7 +15,7 @@ export default function InteractionAPI(
         url: "https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
         image: "https://charisma.rocks/interactions/charismatic-corgi.png",
         name: "Charismatic Corgi",
-        description: "Arbitrage swap yielding WELSH and CHA tokens.",
+        subtitle: "Arbitrage swap yielding WELSH and CHA tokens.",
         contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
         category: "Rewards",
         actions: ["FORWARD", "REVERSE"]

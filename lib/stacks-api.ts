@@ -1316,7 +1316,8 @@ export interface InteractionMetadata {
   url: string;
   image: string;
   name: string;
-  description: string;
+  subtitle: string;
+  description: string[];
   contract: string;
   category: string;
   actions: string[];

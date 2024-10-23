@@ -13,12 +13,14 @@ import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
 import { interactionIds } from 'pages/api/v0/interactions';
 import { ExternalLink } from 'lucide-react';
 import { getInteractionUri } from '@lib/stacks-api';
+import { ScrollArea } from '@components/ui/scroll-area';
 
 interface InteractionMetadata {
     url: string;
     image: string;
     name: string;
-    description: string;
+    subtitle: string;  // Original short description
+    description: string[];  // New detailed description paragraphs
     contract: string;
     category: string;
     actions: string[];
@@ -157,8 +159,9 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
     );
 
     return (
+
         <Page
-            meta={{ title: `${metadata.name} Interaction`, description: metadata.description }}
+            meta={{ title: `${metadata.name} Interaction`, description: metadata.subtitle }}
             fullViewport
         >
             <SkipNavContent />
@@ -195,12 +198,26 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                             />
                         </div>
                         <div className="absolute inset-0 z-20 flex flex-col justify-between p-10 text-white">
-                            <div className="flex items-center text-lg font-medium">
-                                <span className="text-3xl">{metadata.name}</span>
+                            <div className="space-y-6">
+                                <div className="flex items-center text-lg font-medium">
+                                    <span className="text-3xl">{metadata.name}</span>
+                                </div>
+
+                                {/* Description Section */}
+                                <ScrollArea className="h-[300px] pr-4">
+                                    <div className="space-y-4">
+                                        {metadata.description.map?.((paragraph, index) => (
+                                            <p key={index} className="text-base text-gray-200 leading-relaxed">
+                                                {paragraph}
+                                            </p>
+                                        ))}
+                                    </div>
+                                </ScrollArea>
                             </div>
+
                             <div className="space-y-4">
                                 <blockquote className="space-y-2">
-                                    <p className="text-lg">{metadata.description}</p>
+                                    <p className="text-lg">{metadata.subtitle}</p>
                                     <footer className="text-sm opacity-90">
                                         Category: {metadata.category}
                                     </footer>

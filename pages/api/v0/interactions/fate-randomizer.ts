@@ -15,7 +15,7 @@ export default function InteractionAPI(
         url: "https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fate-randomizer-rc1",
         image: "https://charisma.rocks/interactions/fate-randomizer.png",
         name: "Fate Randomizer",
-        description: "Each roll shapes the fate of adventurers.",
+        subtitle: "Each roll shapes the fate of adventurers.",
         contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fate-randomizer-rc1",
         category: "Utility",
         actions: ["CF", "D4", "D6", "D8", "D10", "D12", "D20", "D100"]
