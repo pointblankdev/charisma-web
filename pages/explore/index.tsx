@@ -103,8 +103,8 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
         cover: metadata.image.replace(SITE_URL, ''),
         type: "interaction" as const,
         category: metadata.category as InteractionCategory,
-        subtitle: metadata.subtitle,
-        description: metadata.description,
+        subtitle: metadata?.subtitle,
+        description: metadata?.description,
         uri: metadata.url.replace(SITE_URL, ''),
         actions: metadata.actions || [],
       };
