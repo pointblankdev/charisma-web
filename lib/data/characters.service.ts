@@ -62,7 +62,7 @@ export class CharacterTransactionService {
         // Prepare and execute the transaction
         const txOptions = {
             contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-            contractName: 'dungeon-crawler-rc5',
+            contractName: 'dungeon-crawler-rc7',
             functionName: 'interact',
             functionArgs: [
                 contractPrincipalCV(interaction.split('.')[0], interaction.split('.')[1]),
