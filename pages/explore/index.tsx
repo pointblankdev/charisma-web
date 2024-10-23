@@ -633,7 +633,7 @@ function Sidebar({ className, collections }: SidebarProps) {
           <div className="space-y-1">
             <Dialog open={isOpen} onOpenChange={setIsOpen}>
               <DialogTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start">
+                <Button variant="ghost" className="w-full justify-start" disabled>
                   <UserPlus className="w-4 h-4 mr-2" />
                   Create Character
                 </Button>
