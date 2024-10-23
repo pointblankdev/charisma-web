@@ -19,7 +19,7 @@ import {
 import { useRouter } from "next/navigation"
 import { useDungeonCrawler } from "@lib/hooks/use-dungeon-crawler"
 import { API_URL, SITE_URL } from "@lib/constants"
-import React, { useState } from "react"
+import React, { useEffect, useState } from "react"
 import { interactionIds } from "pages/api/v0/interactions"
 import {
   Dialog,
@@ -30,10 +30,10 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@components/ui/dialog";
-import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 import { ChevronDown, UserPlus, Users, Bot } from "lucide-react"; // Import icons
+import { useGlobalState } from "@lib/hooks/global-state-context"
 
 export type Collection = (typeof collections)[number]
 
@@ -567,39 +567,73 @@ interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
   collections: Collection[]
 }
 
+// Update Character interface
 interface Character {
-  id: string;
-  name: string;
+  ownerAddress: string;
+  characterAddress: string;
   schedule: string;
-  lastRun?: Date;
-  status: 'active' | 'inactive';
+  interactions: string[];
+  created: number;
+  lastRun?: number;
+  active: boolean;
 }
 
 function Sidebar({ className, collections }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
+  const [isLoading, setIsLoading] = useState(true);
+  const { stxAddress } = useGlobalState();
+
+  // Fetch characters when component mounts or stxAddress changes
+  useEffect(() => {
+    const fetchCharacters = async () => {
+      if (!stxAddress) return;
+
+      try {
+        setIsLoading(true);
+        const response = await fetch(`/api/v0/characters?address=${stxAddress}`);
+        if (!response.ok) throw new Error('Failed to fetch characters');
+
+        const data = await response.json();
+        setCharacters(data);
+      } catch (error) {
+        console.error('Error fetching characters:', error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchCharacters();
+  }, [stxAddress]);
 
   const handleCreateCharacter = async (data: {
-    name: string;
+    ownerAddress: string;
     schedule: string;
     interactions: string[];
   }) => {
     try {
-      const response = await fetch('/api/characters', {
+      const response = await fetch('/api/v0/characters', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
 
-      if (!response.ok) throw new Error('Failed to create character');
+      if (!response.ok) {
+        setIsOpen(false);
+        throw new Error('Failed to create character');
+      }
+
 
       const newCharacter = await response.json();
-      setCharacters([...characters, newCharacter]);
+      setCharacters(prev => [...prev, newCharacter]);
       setIsOpen(false);
     } catch (error) {
       console.error('Error creating character:', error);
     }
   };
+
+  const formatAddress = (address: string) =>
+    `${address.slice(0, 4)}...${address.slice(-4)}`;
 
   return (
     <div className={cn("pb-12", className)}>
@@ -621,98 +655,117 @@ function Sidebar({ className, collections }: SidebarProps) {
           </div>
         </div>
 
-        {/* New Characters section */}
+        {/* Characters section */}
         <div className="px-3 py-2">
           <div className="flex items-center px-4 mb-2 space-x-2">
             <h2 className="text-lg font-semibold tracking-tight flex items-center">
-              <Users className="w-4 h-4 mr-2" />
-              Characters
+              Your Team
             </h2>
-            <div className="text-muted-foreground text-sm">(Trading Bots)</div>
+            <div className="text-muted-foreground text-sm">(Experimental)</div>
           </div>
           <div className="space-y-1">
-            <Dialog open={isOpen} onOpenChange={setIsOpen}>
-              <DialogTrigger asChild>
-                <Button variant="ghost" className="w-full justify-start" disabled>
-                  <UserPlus className="w-4 h-4 mr-2" />
-                  Create Character
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Create New Character</DialogTitle>
-                  <DialogDescription>
-                    Create an automated character to run interactions on your behalf.
-                  </DialogDescription>
-                </DialogHeader>
-                <form onSubmit={(e) => {
-                  e.preventDefault();
-                  const formData = new FormData(e.currentTarget);
-                  handleCreateCharacter({
-                    name: formData.get('name') as string,
-                    schedule: formData.get('schedule') as string,
-                    interactions: (formData.get('interactions') as string).split(','),
-                  });
-                }}>
-                  <div className="grid gap-4 py-4">
-                    <div className="grid gap-2">
-                      <Label htmlFor="name">Character Name</Label>
-                      <Input id="name" name="name" placeholder="Enter character name" />
+            {stxAddress && characters.length < 1 && (
+              <Dialog open={isOpen} onOpenChange={setIsOpen}>
+                <DialogTrigger asChild>
+                  <Button variant="ghost" className="w-full justify-start">
+                    <UserPlus className="w-4 h-4 mr-2" />
+                    Create New Trading Bot
+                  </Button>
+                </DialogTrigger>
+                <DialogContent>
+                  <DialogHeader>
+                    <DialogTitle>Create New Character</DialogTitle>
+                    <DialogDescription>
+                      Create an automated character to run interactions on your behalf.
+                    </DialogDescription>
+                  </DialogHeader>
+                  <form onSubmit={(e) => {
+                    e.preventDefault();
+                    const formData = new FormData(e.currentTarget);
+                    handleCreateCharacter({
+                      ownerAddress: stxAddress,
+                      schedule: formData.get('schedule') as string,
+                      interactions: (formData.get('interactions') as string).split(','),
+                    });
+                  }}>
+                    <div className="grid gap-4 py-4">
+                      <div className="grid gap-2">
+                        <Label htmlFor="schedule">Schedule</Label>
+                        <Select name="schedule">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select schedule" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="hourly">Every Hour</SelectItem>
+                            <SelectItem value="daily">Daily</SelectItem>
+                            <SelectItem value="weekly">Weekly</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <div className="grid gap-2">
+                        <Label htmlFor="interactions">Select Interactions</Label>
+                        <Select name="interactions">
+                          <SelectTrigger>
+                            <SelectValue placeholder="Choose interactions" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {/* We'll need to populate this with actual interactions */}
+                            <SelectItem value="charisma-mine">Charisma Mine</SelectItem>
+                            <SelectItem value="keepers-challenge">Keeper's Challenge</SelectItem>
+                          </SelectContent>
+                        </Select>
+                      </div>
                     </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="schedule">Schedule</Label>
-                      <Select name="schedule">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select schedule" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="hourly">Every Hour</SelectItem>
-                          <SelectItem value="daily">Daily</SelectItem>
-                          <SelectItem value="weekly">Weekly</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="grid gap-2">
-                      <Label htmlFor="interactions">Select Interactions</Label>
-                      <Select name="interactions">
-                        <SelectTrigger>
-                          <SelectValue placeholder="Choose interactions" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {/* We'll need to populate this with actual interactions */}
-                          <SelectItem value="charisma-mine">Charisma Mine</SelectItem>
-                          <SelectItem value="keepers-challenge">Keeper's Challenge</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <DialogFooter>
-                    <Button type="submit">Create Character</Button>
-                  </DialogFooter>
-                </form>
-              </DialogContent>
-            </Dialog>
+                    <DialogFooter>
+                      <Button type="submit">Create Character</Button>
+                    </DialogFooter>
+                  </form>
+                </DialogContent>
+              </Dialog>
+            )}
 
-            {/* List existing characters */}
-            <ScrollArea className="h-fit">
-              {characters.map((character) => (
-                <Button
-                  key={character.id}
-                  variant="ghost"
-                  className="w-full justify-between"
-                >
-                  <div className="flex items-center">
-                    <Bot className="w-4 h-4 mr-2" />
-                    {character.name}
+            {/* Characters list */}
+            <ScrollArea className="h-[200px]">
+              {isLoading ? (
+                <div className="flex items-center justify-center h-full">
+                  <svg className="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  </svg>
+                </div>
+              ) : characters.length === 0 ? (
+                <div className="text-center text-sm text-muted-foreground p-4">
+                  No characters created yet
+                </div>
+              ) : (
+                characters.map((character) => (
+                  <div
+                    key={character.characterAddress}
+                    className="flex items-center justify-between p-2 hover:bg-accent-foreground rounded-md group"
+                  >
+                    <div className="flex items-center space-x-2">
+                      <Bot className="w-4 h-4" />
+                      <div className="space-y-1">
+                        <div className="text-sm font-medium">
+                          {formatAddress(character.characterAddress)}
+                        </div>
+                        <div className="text-xs text-muted-foreground">
+                          {character.schedule} • {character.interactions.length} interactions
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <div className={cn(
+                        "px-2 py-1 rounded-full text-xs",
+                        character.active ? "bg-green-500/20 text-green-500" : "bg-red-500/20 text-red-500"
+                      )}>
+                        {character.active ? 'Active' : 'Inactive'}
+                      </div>
+                      {/* <ArchiveCharacterDialog character={character as any} onArchive={() => { }} /> */}
+                    </div>
                   </div>
-                  <span className={cn(
-                    "px-2 py-1 rounded-full text-xs",
-                    character.status === 'active' ? "bg-green-500/20 text-green-500" : "bg-red-500/20 text-red-500"
-                  )}>
-                    {character.status}
-                  </span>
-                </Button>
-              ))}
+                ))
+              )}
             </ScrollArea>
           </div>
         </div>

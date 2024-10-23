@@ -1,8 +1,7 @@
-import { AnchorMode, boolCV, broadcastTransaction, callReadOnlyFunction, cvToJSON, makeContractCall, principalCV, TransactionVersion, uintCV } from "@stacks/transactions";
+import { callReadOnlyFunction, cvToJSON, principalCV, TransactionVersion, uintCV } from "@stacks/transactions";
 import { StacksMainnet } from "@stacks/network";
 import { generateSecretKey, generateWallet, getStxAddress } from "@stacks/wallet-sdk";
 import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountAssets, getAccountBalance, getAllCharismaWallets, getTxsFromMempool, getCreaturePower, getDeployedIndexes, getFeeEstimate, getGuestlist, getNameFromAddress, getNftURI, getProposals, getQuestRewards, getTitleBeltHolder, getTokenBalance, getTokenURI, getTotalInPool, getVelarSwapAmountOut, getWooTitleBeltContractEvents, hasPercentageBalance, setQuestComplete, getLandBalance, getLandId, getNftOwner, getStoredEnergy, getLastLandId, getTransferFunction, getBalancesAtBlock, getAvailableRedemptions } from "./stacks-api";
-import { get } from "lodash";
 import { writeFileSync } from "fs";
 import { tryResetEpochs } from "./try-reset-epochs";
 

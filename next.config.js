@@ -9,7 +9,6 @@ module.exports = {
     imageSizes: [24, 64, 300],
     remotePatterns: []
   },
-  webpack5: true,
   webpack: config => {
     config.resolve.fallback = { fs: false };
 
