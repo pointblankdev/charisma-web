@@ -195,7 +195,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
       case INTERACTION_CATEGORIES.REWARD:
         return "Interactions that offer rewards for brave adventurers.";
       case INTERACTION_CATEGORIES.ENGINE:
-        return "Special engines that generate energy from token holdings.";
+        return "Farm token rewards without giving up custody of your assets.";
       default:
         return "Discover and interact with the Charisma protocol.";
     }
@@ -244,12 +244,12 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
             <Sidebar collections={collections} className="hidden lg:block" />
             <div className="col-span-3 lg:col-span-4 lg:border-l overflow-hidden sm:overflow-visible">
               <div className="h-full pl-0 py-6 lg:pl-8">
-                <Tabs defaultValue="all" className="sm:h-fit space-y-6">
+                <Tabs defaultValue="engines" className="sm:h-fit space-y-6">
                   <div className="flex items-center space-between">
                     <TabsList className="mx-4">
                       <TabsTrigger value="all">All Interactions</TabsTrigger>
-                      <TabsTrigger value="rewards">Rewards</TabsTrigger>
                       <TabsTrigger value="engines">Engines</TabsTrigger>
+                      <TabsTrigger value="rewards">Rewards</TabsTrigger>
                       <TabsTrigger value="utility">Utility</TabsTrigger>
                     </TabsList>
                   </div>
