@@ -84,7 +84,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
             rel="noopener noreferrer"
             className="group inline-flex items-center space-x-1 text-gray-50/90 hover:text-gray-50 transition-colors"
         >
-            <span className="break-all text-sm">{metadata.contract}</span>
+            <span className="break-all text-sm whitespace-nowrap">{metadata.contract}</span>
             <ExternalLink size={14} className="opacity-90 group-hover:opacity-100 transition-opacity text-gray-50/90 group-hover:text-gray-50" />
         </a>
     );
