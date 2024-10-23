@@ -114,7 +114,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   // Curated list of explorations
   const explorations: Exploration[] = [
     {
-      name: "Energized Arbitrage",
+      name: "Energized Arbitrage - Positive Charge",
       description: "Generate energy from holding CHA tokens and profit from market inefficiencies.",
       cover: "/explorations/energy-arbitrage.png",
       steps: [
@@ -127,6 +127,18 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
           action: "FORWARD",
           description: "Arbitrage swap forward yielding WELSH and CHA tokens"
+        },
+      ]
+    },
+    {
+      name: "Energized Arbitrage - Negative Charge",
+      description: "Generate energy from holding CHA tokens and profit from market inefficiencies.",
+      cover: "/explorations/energy-arbitrage.png",
+      steps: [
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
+          action: "TAP",
+          description: "Generate energy from your CHA holdings"
         },
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
