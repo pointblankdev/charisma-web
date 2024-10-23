@@ -659,7 +659,7 @@ function Sidebar({ className, collections }: SidebarProps) {
         <div className="px-3 py-2">
           <div className="flex items-center px-4 mb-2 space-x-2">
             <h2 className="text-lg font-semibold tracking-tight flex items-center">
-              Your Team
+              Trading Bots
             </h2>
             <div className="text-muted-foreground text-sm">(Experimental)</div>
           </div>
@@ -674,9 +674,9 @@ function Sidebar({ className, collections }: SidebarProps) {
                 </DialogTrigger>
                 <DialogContent>
                   <DialogHeader>
-                    <DialogTitle>Create New Character</DialogTitle>
+                    <DialogTitle>Create a Trading Bot</DialogTitle>
                     <DialogDescription>
-                      Create an automated character to run interactions on your behalf.
+                      Create an automated bot to run interactions on your behalf.
                     </DialogDescription>
                   </DialogHeader>
                   <form onSubmit={(e) => {

@@ -52,23 +52,23 @@
   (interaction-7 (optional <interaction-trait>)) (action-7 (optional (string-ascii 32)))
   (interaction-8 (optional <interaction-trait>)) (action-8 (optional (string-ascii 32))))
   (let (
-    (response-1 (if (is-some action-1) (match (interact (unwrap-panic interaction-1) (unwrap-panic action-1)) success success error error) ""))
-    (response-2 (if (is-some action-2) (match (interact (unwrap-panic interaction-2) (unwrap-panic action-2)) success success error error) ""))
-    (response-3 (if (is-some action-3) (match (interact (unwrap-panic interaction-3) (unwrap-panic action-3)) success success error error) ""))
-    (response-4 (if (is-some action-4) (match (interact (unwrap-panic interaction-4) (unwrap-panic action-4)) success success error error) ""))
-    (response-5 (if (is-some action-5) (match (interact (unwrap-panic interaction-5) (unwrap-panic action-5)) success success error error) ""))
-    (response-6 (if (is-some action-6) (match (interact (unwrap-panic interaction-6) (unwrap-panic action-6)) success success error error) ""))
-    (response-7 (if (is-some action-7) (match (interact (unwrap-panic interaction-7) (unwrap-panic action-7)) success success error error) ""))
-    (response-8 (if (is-some action-8) (match (interact (unwrap-panic interaction-8) (unwrap-panic action-8)) success success error error) ""))
+    (response-1 (match interaction-1 i1 (match (interact i1 (match action-1 a1 a1 "")) success success error error) ""))
+    (response-2 (match interaction-2 i2 (match (interact i2 (match action-2 a2 a2 "")) success success error error) ""))
+    (response-3 (match interaction-3 i3 (match (interact i3 (match action-3 a3 a3 "")) success success error error) ""))
+    (response-4 (match interaction-4 i4 (match (interact i4 (match action-4 a4 a4 "")) success success error error) ""))
+    (response-5 (match interaction-5 i5 (match (interact i5 (match action-5 a5 a5 "")) success success error error) ""))
+    (response-6 (match interaction-6 i6 (match (interact i6 (match action-6 a6 a6 "")) success success error error) ""))
+    (response-7 (match interaction-7 i7 (match (interact i7 (match action-7 a7 a7 "")) success success error error) ""))
+    (response-8 (match interaction-8 i8 (match (interact i8 (match action-8 a8 a8 "")) success success error error) ""))
     (output {
-      i1: {i: (unwrap-panic interaction-1), a: (unwrap-panic action-1), r: response-1},
-      i2: {i: (unwrap-panic interaction-2), a: (unwrap-panic action-2), r: response-2},
-      i3: {i: (unwrap-panic interaction-3), a: (unwrap-panic action-3), r: response-3},
-      i4: {i: (unwrap-panic interaction-4), a: (unwrap-panic action-4), r: response-4},
-      i5: {i: (unwrap-panic interaction-5), a: (unwrap-panic action-5), r: response-5},
-      i6: {i: (unwrap-panic interaction-6), a: (unwrap-panic action-6), r: response-6},
-      i7: {i: (unwrap-panic interaction-7), a: (unwrap-panic action-7), r: response-7},
-      i8: {i: (unwrap-panic interaction-8), a: (unwrap-panic action-8), r: response-8},
+      i1: {x: interaction-1, y: action-1, z: response-1},
+      i2: {x: interaction-2, y: action-2, z: response-2},
+      i3: {x: interaction-3, y: action-3, z: response-3},
+      i4: {x: interaction-4, y: action-4, z: response-4},
+      i5: {x: interaction-5, y: action-5, z: response-5},
+      i6: {x: interaction-6, y: action-6, z: response-6},
+      i7: {x: interaction-7, y: action-7, z: response-7},
+      i8: {x: interaction-8, y: action-8, z: response-8},
     }))
     (print output)
     (ok output)))

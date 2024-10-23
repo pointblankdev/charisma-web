@@ -1,4 +1,4 @@
-;; Keeper's Challenge Interaction
+;; Keepers' Challenge Interaction
 ;;
 ;; A medium-risk interaction where players can challenge the Dungeon Keeper
 ;; for a moderate reward. Success is determined by a randomized roll.
@@ -12,7 +12,7 @@
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
 (define-constant CONTRACT_OWNER tx-sender)
-(define-constant DMG_REWARD u40000000) ;; 40 DMG
+(define-constant DMG_REWARD u100000000) ;; 100 DMG
 
 ;; Data Variables
 (define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/v0/interactions/keepers-challenge"))
@@ -43,8 +43,8 @@
 ;; Response Handlers
 
 (define-private (handle-challenge-attempt (sender principal))
-  (let ((roll-response (unwrap-panic (contract-call? .randomizer execute "CF"))))
-    (if (is-eq roll-response "HEADS") (handle-challenge-success sender)
+  (let ((roll-response (unwrap-panic (contract-call? .fate-randomizer execute "D6"))))
+    (if (is-eq roll-response "6") (handle-challenge-success sender)
     (handle-challenge-failure sender)))
 )
 

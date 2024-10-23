@@ -79,14 +79,34 @@ plan:
             path: contracts/blue-pill-nft.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: dao-traits-v7
+            contract-name: charisma-randomizer
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/dao-traits-v7.clar
+            path: contracts/charisma-randomizer.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: dme000-governance-token
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/dme000-governance-token.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: red-pill-nft
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/red-pill-nft.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: charisma-token
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/charisma-token.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: dao-traits-v7
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/dao-traits-v7.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: dungeon-crawler
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/dungeon-crawler.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: energy
@@ -129,26 +149,6 @@ plan:
             path: contracts/interactions/fatigue.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: charisma-randomizer
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/charisma-randomizer.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: fate-randomizer
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/interactions/fate-randomizer.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: red-pill-nft
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/red-pill-nft.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: charisma-token
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/charisma-token.clar
-            clarity-version: 1
-        - emulated-contract-publish:
             contract-name: meme-engine-manager
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/meme-engines/meme-engine-manager.clar
@@ -159,8 +159,41 @@ plan:
             path: contracts/meme-engines/meme-engine.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: keepers-petition
+            contract-name: univ2-core
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/interactions/keepers-petition.clar
+            path: contracts/univ2-core.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: univ2-library
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/univ2-library.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: univ2-router
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/univ2-router.clar
+            clarity-version: 1
+      epoch: "2.05"
+    - id: 1
+      transactions:
+        - emulated-contract-publish:
+            contract-name: univ2-path2
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/univ2-path2.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: univ2-share-fee-to
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/univ2-share-fee-to.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: welshcorgicoin-token
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/welshcorgicoin-token.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: wstx
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/wstx.clar
             clarity-version: 1
       epoch: "2.05"

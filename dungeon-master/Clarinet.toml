@@ -106,33 +106,33 @@ depends_on = []
 path = "contracts/charisma-randomizer.clar"
 depends_on = []
 
-[contracts.fate-randomizer]
-path = "contracts/interactions/fate-randomizer.clar"
-depends_on = []
+# [contracts.fate-randomizer]
+# path = "contracts/interactions/fate-randomizer.clar"
+# depends_on = []
 
 [contracts.fatigue]
 path = "contracts/interactions/fatigue.clar"
 depends_on = []
 
-[contracts.petition]
-path = "contracts/interactions/petition.clar"
-depends_on = []
+# [contracts.petition]
+# path = "contracts/interactions/petition.clar"
+# depends_on = []
 
 # [contracts.challenge]
 # path = "contracts/interactions/challenge.clar"
 # depends_on = []
 
-[contracts.charisma-mine]
-path = "contracts/interactions/charisma-mine.clar"
-depends_on = []
+# [contracts.charisma-mine]
+# path = "contracts/interactions/charisma-mine.clar"
+# depends_on = []
 
-[contracts.the-troll-toll]
-path = "contracts/interactions/the-troll-toll.clar"
-depends_on = []
+# [contracts.the-troll-toll]
+# path = "contracts/interactions/the-troll-toll.clar"
+# depends_on = []
 
-[contracts.charismatic-corgi]
-path = "contracts/interactions/charismatic-corgi.clar"
-depends_on = []
+# [contracts.charismatic-corgi]
+# path = "contracts/interactions/charismatic-corgi.clar"
+# depends_on = []
 
 [contracts.dungeon-crawler]
 path = "contracts/dungeon-crawler.clar"
@@ -150,7 +150,7 @@ depends_on = []
 
 [repl.analysis]
 passes = ["check_checker"]
-check_checker = { trusted_sender = false, trusted_caller = false, callee_filter = false }
+check_checker = { trusted_sender = true, trusted_caller = true, callee_filter = true }
 
 # Check-checker settings:
 # trusted_sender: if true, inputs are trusted after tx_sender has been checked.
