@@ -114,36 +114,29 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   // Curated list of explorations
   const explorations: Exploration[] = [
     {
-      name: "Energized Arbitrage - Positive Charge",
-      description: "Generate energy from holding CHA tokens and profit from market inefficiencies.",
+      name: "Energized Arbitrage",
+      description: "Generate energy from holding synthetic tokens and profit from market inefficiencies.",
       cover: "/explorations/energy-arbitrage.png",
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc1',
           action: "TAP",
-          description: "Generate energy from your CHA holdings"
+          description: "Generate energy from your iouWELSH holdings"
+        },
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc1',
+          action: "TAP",
+          description: "Generate energy from your iouROO holdings"
         },
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
           action: "FORWARD",
-          description: "Arbitrage swap forward yielding WELSH and CHA tokens"
-        },
-      ]
-    },
-    {
-      name: "Energized Arbitrage - Negative Charge",
-      description: "Generate energy from holding CHA tokens and profit from market inefficiencies.",
-      cover: "/explorations/energy-arbitrage.png",
-      steps: [
-        {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
-          action: "TAP",
-          description: "Generate energy from your CHA holdings"
+          description: "Arbitrage swap forward and abort if not profitable"
         },
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
           action: "REVERSE",
-          description: "Arbitrage swap backwards yielding WELSH and CHA tokens"
+          description: "Arbitrage swap reverse and abort if not profitable"
         },
       ]
     },
@@ -156,6 +149,11 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
           action: "TAP",
           description: "Generate base energy"
+        },
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc2',
+          action: "PETITION",
+          description: "Petition the Keepers for additional DMG tokens"
         },
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3",
