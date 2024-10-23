@@ -184,8 +184,8 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                 {/* Desktop View */}
                 <div className="container relative hidden md:grid h-[calc(100vh-112px)] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
                     {/* Left Panel - Image and Description */}
-                    <div className="relative lg:block h-full">
-                        <div className="absolute inset-0 z-10 bg-zinc-900/90" />
+                    <div className="relative lg:block h-full group">
+                        <div className="absolute inset-0 z-10 bg-black/50 group-hover:bg-black/80 transition-all" />
                         <div className="relative h-full">
                             <Image
                                 src={metadata.image}
@@ -205,7 +205,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                 <ScrollArea className="h-fit pr-4">
                                     <div className="space-y-4">
                                         {metadata.description.map?.((paragraph, index) => (
-                                            <p key={index} className="text-md text-gray-200 leading-relaxed max-w-[80ch]">
+                                            <p key={index} className="text-md text-transparent group-hover:text-gray-200 leading-relaxed max-w-[80ch] transition-all duration-300">
                                                 {paragraph}
                                             </p>
                                         ))}
