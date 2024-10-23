@@ -67,7 +67,7 @@
                     (ok "ARBITRAGE_COMPLETE"))
                 (begin
                     (print "The arbitrage attempt yielded no profit in these market conditions.")
-                    (ok "NO_PROFIT_OPPORTUNITY"))))
+                    (err "NO_PROFIT_OPPORTUNITY"))))
             (ok "NOT_ENOUGH_ENERGY"))))
 
 ;; Reverse Path (CHA -> WELSH -> STX -> CHA)
@@ -92,7 +92,7 @@
                     (ok "ARBITRAGE_COMPLETE"))
                 (begin
                     (print "The arbitrage attempt yielded no profit in these market conditions.")
-                    (ok "NO_PROFIT_OPPORTUNITY"))))
+                    (err "NO_PROFIT_OPPORTUNITY"))))
             (ok "NOT_ENOUGH_ENERGY"))))
 
 ;; Admin Functions
