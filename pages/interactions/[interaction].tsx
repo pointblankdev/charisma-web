@@ -43,10 +43,8 @@ export const getStaticPaths: GetStaticPaths = () => {
 
 export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
     const interaction = params?.interaction as string;
-
     try {
         const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
-        console.log(metadata)
 
         return {
             props: {
