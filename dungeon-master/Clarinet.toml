@@ -106,8 +106,8 @@ depends_on = []
 path = "contracts/charisma-randomizer.clar"
 depends_on = []
 
-[contracts.randomizer]
-path = "contracts/interactions/randomizer.clar"
+[contracts.fate-randomizer]
+path = "contracts/interactions/fate-randomizer.clar"
 depends_on = []
 
 [contracts.fatigue]
