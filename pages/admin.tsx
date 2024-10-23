@@ -629,7 +629,7 @@ const DungeonKeeperSection = () => {
     );
 };
 
-const latestDungeonKeeperContractId = 'dungeon-keeper-rc2';
+const latestDungeonKeeperContractId = 'dungeon-keeper-rc3';
 
 // Helper function to convert decimal input to micro-units
 const toMicroUnits = (value: string) => {
