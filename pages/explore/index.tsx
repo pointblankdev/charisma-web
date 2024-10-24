@@ -659,7 +659,7 @@ function Sidebar({ className, collections }: SidebarProps) {
             <h2 className="text-lg font-semibold tracking-tight flex items-center">
               Trading Bots
             </h2>
-            <div className="text-muted-foreground text-sm">(Experimental)</div>
+            <div className="text-muted-foreground text-sm">(Preview: Non-Functional)</div>
           </div>
           <div className="space-y-1">
             {stxAddress && characters.length < 1 && (
