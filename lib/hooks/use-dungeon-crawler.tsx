@@ -27,15 +27,17 @@ interface DungeonCrawlerHook {
     interact: (interaction: any, action: string) => Promise<void>;
 }
 
-function buildPostConditions(postConditions: any[]) {
-    return postConditions?.map(({ principal, contractId, tokenName }: any) => Pc.principal(principal).willSendGte(1).ft(contractId, tokenName)) || [];
-}
-
 export function useDungeonCrawler(
     contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName = 'dungeon-crawler-rc7'
 ): DungeonCrawlerHook {
     const { stxAddress } = useGlobalState();
+
+    function buildPostConditions(postConditions: any[]) {
+        return postConditions?.map(({ principal, contractId, tokenName }: any) => {
+            return Pc.principal(principal.replace('tx-sender', stxAddress)).willSendGte(1).ft(contractId, tokenName);
+        }) || [];
+    }
 
     const interact = useCallback(async (interaction: any, action: string) => {
         if (!stxAddress) return;

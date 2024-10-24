@@ -1,4 +1,4 @@
-import { Pc, PostConditionMode } from '@stacks/transactions';
+import { PostConditionMode } from '@stacks/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -27,7 +27,7 @@ export default function InteractionAPI(
         actions: ["FORWARD", "REVERSE"],
         postConditionMode: PostConditionMode.Allow,
         postConditions: [
-            { principal: 'tx-sender', contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme000-governance-token', tokenName: 'charisma' },
+            // {}
         ]
     });
 }
