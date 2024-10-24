@@ -151,7 +151,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           description: "Generate base energy"
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc3',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc4',
           action: "PETITION",
           description: "Petition the Keepers for additional DMG tokens"
         },
