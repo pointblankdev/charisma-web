@@ -1,3 +1,4 @@
+import { PostConditionMode } from '@stacks/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -24,8 +25,9 @@ export default function InteractionAPI(
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3',
         category: 'Rewards',
         actions: ['MINT', 'BURN'],
+        postConditionMode: PostConditionMode.Deny,
         postConditions: [
-            { principal: 'tx-sender', contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme000-governance-token', tokenName: 'charisma' }
+            { principal: 'tx-sender', contractId: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token', tokenName: 'charisma' }
         ]
     });
 }
