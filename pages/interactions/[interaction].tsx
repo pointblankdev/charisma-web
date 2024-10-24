@@ -1,14 +1,12 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { GetStaticProps, GetStaticPaths } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import Layout from '@components/layout/layout';
 import { Button } from '@components/ui/button';
-import { Separator } from '@components/ui/separator';
 import Image from 'next/image';
 import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
 import { useGlobalState } from '@lib/hooks/global-state-context';
-import { API_URL, SITE_URL } from '@lib/constants';
 import { ToggleGroup, ToggleGroupItem } from '@components/ui/toggle-group';
 import { interactionIds } from 'pages/api/v0/interactions';
 import { ExternalLink } from 'lucide-react';
@@ -69,7 +67,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
         if (!stxAddress || !selectedAction) return;
         setIsLoading(true);
         try {
-            await interact(metadata.contract, selectedAction);
+            await interact(metadata, selectedAction);
         } catch (error) {
             console.error('Failed to execute interaction:', error);
         } finally {
@@ -82,10 +80,10 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
             href={`https://explorer.hiro.so/txid/${metadata.contract}`}
             target="_blank"
             rel="noopener noreferrer"
-            className="group inline-flex items-center space-x-1 text-gray-50/90 hover:text-gray-50 transition-colors"
+            className="inline-flex items-center space-x-1 transition-colors group text-gray-50/90 hover:text-gray-50"
         >
-            <span className="break-all text-sm whitespace-nowrap">{metadata.contract}</span>
-            <ExternalLink size={14} className="opacity-90 group-hover:opacity-100 transition-opacity text-gray-50/90 group-hover:text-gray-50" />
+            <span className="text-sm break-all whitespace-nowrap">{metadata.contract}</span>
+            <ExternalLink size={14} className="transition-opacity opacity-90 group-hover:opacity-100 text-gray-50/90 group-hover:text-gray-50" />
         </a>
     );
 
@@ -95,7 +93,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                 <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
                     <div className="mb-2 space-y-8">
                         <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
-                            <div className="space-y-2 text-center mb-4">
+                            <div className="mb-4 space-y-2 text-center">
                                 <h1 className="text-2xl font-semibold tracking-tight">
                                     Execute Interaction
                                 </h1>
@@ -107,7 +105,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                 type="single"
                                 value={selectedAction}
                                 onValueChange={(value: any) => value && setSelectedAction(value)}
-                                className="flex flex-wrap gap-2 justify-start"
+                                className="flex flex-wrap justify-start gap-2"
                             >
                                 {metadata.actions.map((action) => (
                                     <ToggleGroupItem
@@ -146,7 +144,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                 {isLoading ? 'Executing...' : 'Execute Action'}
                             </Button>
 
-                            <p className="text-center text-sm text-gray-400">
+                            <p className="text-sm text-center text-gray-400">
                                 Always DYOR and carefully review smart contracts before executing any transactions.
                             </p>
                         </div>
@@ -184,8 +182,8 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                 {/* Desktop View */}
                 <div className="container relative hidden md:grid h-[calc(100vh-112px)] flex-col items-center justify-center lg:max-w-none lg:grid-cols-2 lg:px-0">
                     {/* Left Panel - Image and Description */}
-                    <div className="relative lg:block h-full group">
-                        <div className="absolute inset-0 z-10 bg-black/50 group-hover:bg-black/80 transition-all" />
+                    <div className="relative h-full lg:block group">
+                        <div className="absolute inset-0 z-10 transition-all bg-black/50 group-hover:bg-black/80" />
                         <div className="relative h-full">
                             <Image
                                 src={metadata.image}
@@ -202,10 +200,10 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                 </div>
 
                                 {/* Description Section */}
-                                <ScrollArea className="h-fit pr-4">
+                                <ScrollArea className="pr-4 h-fit">
                                     <div className="space-y-4">
                                         {metadata.description.map?.((paragraph, index) => (
-                                            <p key={index} className="text-md text-transparent group-hover:text-gray-200 leading-relaxed max-w-[80ch] transition-all duration-300">
+                                            <p key={index} className="text-md text-transparent group-hover:text-gray-200 leading-normal max-w-[80ch] transition-all duration-300">
                                                 {paragraph}
                                             </p>
                                         ))}
@@ -225,7 +223,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                     </div>
 
                     {/* Right Panel - Interaction Interface */}
-                    <div className="w-full h-full flex items-center justify-center">
+                    <div className="flex items-center justify-center w-full h-full">
                         <InteractionPanel />
                     </div>
                 </div>

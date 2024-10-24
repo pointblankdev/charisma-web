@@ -6,7 +6,8 @@ import {
     stringAsciiCV,
     noneCV,
     PostConditionMode,
-    optionalCVOf
+    optionalCVOf,
+    Pc
 } from '@stacks/transactions';
 import { useGlobalState } from './global-state-context';
 
@@ -23,7 +24,11 @@ interface ExploreParams {
 
 interface DungeonCrawlerHook {
     explore: (params: ExploreParams) => Promise<void>;
-    interact: (interaction: string, action: string) => Promise<void>;
+    interact: (interaction: any, action: string) => Promise<void>;
+}
+
+function buildPostConditions(postConditions: any[]) {
+    return postConditions?.map(({ principal, contractId, tokenName }: any) => Pc.principal(principal).willSendGte(1).ft(contractId, tokenName)) || [];
 }
 
 export function useDungeonCrawler(
@@ -32,10 +37,10 @@ export function useDungeonCrawler(
 ): DungeonCrawlerHook {
     const { stxAddress } = useGlobalState();
 
-    const interact = useCallback(async (interaction: string, action: string) => {
+    const interact = useCallback(async (interaction: any, action: string) => {
         if (!stxAddress) return;
 
-        const [interactionAddress, interactionName] = interaction.split('.');
+        const [interactionAddress, interactionName] = interaction.contract.split('.');
 
         const functionArgs = [
             contractPrincipalCV(interactionAddress, interactionName),
@@ -48,7 +53,8 @@ export function useDungeonCrawler(
             contractName,
             functionName: 'interact',
             functionArgs,
-            postConditionMode: PostConditionMode.Allow,
+            postConditionMode: interaction.postConditionMode,
+            postConditions: buildPostConditions(interaction.postConditions),
         });
     }, [contractAddress, contractName, stxAddress]);
 

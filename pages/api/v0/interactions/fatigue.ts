@@ -23,6 +23,9 @@ export default function InteractionAPI(
         ],
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc4',
         category: 'Utility',
-        actions: ['BURN']
+        actions: ['BURN'],
+        postConditions: [
+            { principal: 'tx-sender', contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.energy', tokenName: 'energy' }
+        ]
     });
 }

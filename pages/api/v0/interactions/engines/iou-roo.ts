@@ -23,6 +23,7 @@ export default function MemeEngineAPI(
         ],
         contract: `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc1`,
         category: 'Hold-to-Earn',
-        actions: ['TAP']
+        actions: ['TAP'],
+        postConditions: []
     });
 }

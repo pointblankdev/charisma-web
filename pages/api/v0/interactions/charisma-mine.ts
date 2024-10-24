@@ -23,6 +23,9 @@ export default function InteractionAPI(
         ],
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3',
         category: 'Rewards',
-        actions: ['MINT', 'BURN']
+        actions: ['MINT', 'BURN'],
+        postConditions: [
+            { principal: 'tx-sender', contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme000-governance-token', tokenName: 'charisma' }
+        ]
     });
 }

@@ -215,7 +215,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
       <Separator className="my-4" />
       <div className="relative">
         <ScrollArea className="">
-          <div className="flex pb-4 space-x-4 mx-4">
+          <div className="flex pb-4 mx-4 space-x-4">
             {interactions.map((interaction) => (
               <InteractionArtwork
                 key={interaction.name}
@@ -240,9 +240,9 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
         <div className="block">
           <div className="grid lg:grid-cols-5">
             <Sidebar collections={collections} className="hidden lg:block" />
-            <div className="col-span-3 lg:col-span-4 lg:border-l overflow-hidden sm:overflow-visible">
-              <div className="h-full pl-0 py-6 lg:pl-8">
-                <Tabs defaultValue="hold-to-earn" className="sm:h-fit space-y-6">
+            <div className="col-span-3 overflow-hidden lg:col-span-4 lg:border-l sm:overflow-visible">
+              <div className="h-full py-6 pl-0 lg:pl-8">
+                <Tabs defaultValue="hold-to-earn" className="space-y-6 sm:h-fit">
                   <div className="flex items-center space-between">
                     <TabsList className="mx-4">
                       <TabsTrigger value="all">All Interactions</TabsTrigger>
@@ -281,7 +281,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
                   <Separator className="my-4" />
                   <div className="relative">
                     <ScrollArea>
-                      <div className="flex pb-4 space-x-4 mx-4">
+                      <div className="flex pb-4 mx-4 space-x-4">
                         {explorations.map((exploration, index) => (
                           <ExplorationArtwork
                             key={index}
@@ -333,7 +333,7 @@ function InteractionArtwork({
   const handleExploreClick = async (action: string) => {
     setIsLoading(true);
     try {
-      await interact(interaction.contract, action);
+      await interact(interaction, action);
     } catch (error) {
       console.error('Failed to explore interaction:', error);
     } finally {
@@ -491,7 +491,7 @@ function ExplorationArtwork({
               alt={exploration.name}
               width={width}
               height={height}
-              className="h-auto w-auto object-cover transition-all opacity-90 group-hover:opacity-100 aspect-square"
+              className="object-cover w-auto h-auto transition-all opacity-90 group-hover:opacity-100 aspect-square"
             />
           </div>
         </ContextMenuTrigger>
@@ -641,7 +641,7 @@ function Sidebar({ className, collections }: SidebarProps) {
           <h2 className="px-4 mb-2 text-lg font-semibold tracking-tight">
             Explore
           </h2>
-          <div className="space-y-1 flex flex-col">
+          <div className="flex flex-col space-y-1">
             <Button variant="ghost" className="justify-start">
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2">
                 <circle cx="12" cy="12" r="10" />
@@ -655,17 +655,19 @@ function Sidebar({ className, collections }: SidebarProps) {
 
         {/* Characters section */}
         <div className="px-3 py-2">
-          <div className="flex items-center px-4 mb-2 space-x-2">
-            <h2 className="text-lg font-semibold tracking-tight flex items-center">
+          <div className="flex flex-col items-start px-4 mb-2">
+            <h2 className="flex items-center text-lg font-semibold tracking-tight">
               Trading Bots
             </h2>
-            <div className="text-muted-foreground text-sm">(Preview: Non-Functional)</div>
+            <div className="text-xs leading-none text-muted-foreground whitespace-nowrap">
+              Preview: Demo Mode
+            </div>
           </div>
           <div className="space-y-1">
             {stxAddress && characters.length < 1 && (
               <Dialog open={isOpen} onOpenChange={setIsOpen}>
                 <DialogTrigger asChild>
-                  <Button variant="ghost" className="w-full justify-start">
+                  <Button variant="ghost" className="justify-start w-full">
                     <UserPlus className="w-4 h-4 mr-2" />
                     Create New Trading Bot
                   </Button>
@@ -726,20 +728,20 @@ function Sidebar({ className, collections }: SidebarProps) {
             <ScrollArea className="h-fit">
               {isLoading ? (
                 <div className="flex items-center justify-center h-full">
-                  <svg className="animate-spin h-5 w-5 text-gray-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="w-5 h-5 text-gray-500 animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
                 </div>
               ) : characters.length === 0 ? (
-                <div className="text-center text-sm text-muted-foreground p-4">
+                <div className="p-4 text-sm text-center text-muted-foreground">
                   No characters created yet
                 </div>
               ) : (
                 characters.map((character) => (
                   <div
                     key={character.characterAddress}
-                    className="flex items-center justify-between p-2 hover:bg-accent-foreground rounded-md group"
+                    className="flex items-center justify-between p-2 rounded-md hover:bg-accent-foreground group"
                   >
                     <div className="flex items-center space-x-2">
                       <Bot className="w-4 h-4" />

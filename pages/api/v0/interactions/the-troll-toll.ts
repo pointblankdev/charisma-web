@@ -23,6 +23,9 @@ export default function InteractionAPI(
         ],
         contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-troll-toll-rc1',
         category: 'Utility',
-        actions: ['PAY']
+        actions: ['PAY'],
+        postConditions: [
+            { principal: 'last-payer', token: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme000-governance-token::charisma' }
+        ]
     });
 }

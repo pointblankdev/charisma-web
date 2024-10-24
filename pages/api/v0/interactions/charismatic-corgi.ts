@@ -1,3 +1,4 @@
+import { Pc, PostConditionMode } from '@stacks/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -23,6 +24,10 @@ export default function InteractionAPI(
         ],
         contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
         category: "Rewards",
-        actions: ["FORWARD", "REVERSE"]
+        actions: ["FORWARD", "REVERSE"],
+        postConditionMode: PostConditionMode.Allow,
+        postConditions: [
+            { principal: 'tx-sender', contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme000-governance-token', tokenName: 'charisma' },
+        ]
     });
 }

@@ -23,6 +23,9 @@ export default function InteractionAPI(
         ],
         contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc3",
         category: "Rewards",
-        actions: ["PETITION"]
+        actions: ["PETITION"],
+        postConditions: [
+            { principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme000-governance-token', tokenName: 'charisma' }
+        ]
     });
 }
