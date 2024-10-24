@@ -119,7 +119,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       cover: "/explorations/energy-arbitrage.png",
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc1',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc2',
           action: "TAP",
           description: "Generate energy from your iouWELSH holdings"
         },
@@ -151,7 +151,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           description: "Generate base energy"
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc2',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc3',
           action: "PETITION",
           description: "Petition the Keepers for additional DMG tokens"
         },

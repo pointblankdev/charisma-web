@@ -1,57 +1,67 @@
 ;; Dungeon Keeper Contract
 ;;
-;; This contract serves as the central authority and security hub for the Charisma protocol.
-;; It controls critical parameters, authorizes interactions, and manages token operations
-;; across both GameFi and DeFi aspects of the ecosystem. The Dungeon Keeper acts as a
-;; gatekeeper, ensuring the integrity and security of all protocol operations.
-;;
-;; Key Responsibilities:
-;; 1. Authorization Management: Controls contract ownership and verified interaction list
-;; 2. Token Operations: Manages all protocol token operations with strict limits:
-;;    - Experience: Mint (max 1000) and burn (max 100)
-;;    - Energy: Mint and burn (max 10000 each)
-;;    - Governance: Transfer, burn, lock, and unlock (max 100 each)
-;; 3. Security Controls: Applies Raven Resistance burn reductions and energy capacity limits
-;; 4. Multi-owner Architecture: Distributes control for enhanced security
+;; The Dungeon Keeper is the central security and orchestration hub of the Charisma protocol,
+;; managing all token operations through a system of verified interactions, multi-owner
+;; authorization, and dynamic modifications via status effects. It ensures that all token
+;; operations follow protocol rules while enabling complex GameFi mechanics.
 ;;
 ;; Core Functions:
-;; Experience Operations:
-;; - reward: Mint Experience tokens (max 1000)
-;; - punish: Burn Experience tokens (max 100)
+;; 
+;; 1. Token Operations
+;;    Experience Token (.experience):
+;;    - reward: Mint up to 1000 XP tokens
+;;    - punish: Burn up to 100 XP tokens
 ;;
-;; Energy Operations:
-;; - energize: Mint Energy tokens with capacity limit (max 10000)
-;; - exhaust: Burn Energy tokens (max 10000)
+;;    Energy Token (.energy):
+;;    - energize: Mint up to 10000 energy
+;;    - exhaust: Burn up to 10000 energy
 ;;
-;; Governance Token Operations:
-;; - transfer: Move DMG with Raven Resistance reduction (max 100)
-;; - burn: Burn DMG with Raven Resistance reduction (max 100)
-;; - lock: Lock DMG tokens (max 100)
-;; - unlock: Unlock DMG tokens (max 100)
+;;    Governance Token (.dme000-governance-token):
+;;    - transfer: Move up to 100 DMG
+;;    - burn: Destroy up to 100 DMG
+;;    - lock/unlock: Lock/unlock up to 100 DMG
 ;;
-;; Administrative Functions:
-;; - Contract Owner Management: Add/remove owners
-;; - Interaction Verification: Add/remove verified interactions
-;; - Limit Configuration: Set maximum amounts for all operations
+;; Operation Flow:
+;; 1. Verified interaction calls token operation
+;; 2. Status effects modify operation parameters
+;; 3. Operation limits are enforced
+;; 4. Token contract executes final operation
 ;;
-;; Security Features:
-;; - Multi-owner structure prevents single points of failure
-;; - Verified interaction whitelist
-;; - Maximum limits on all token operations
-;; - Raven Resistance integration for burn reduction
-;; - Energy capacity limit application
+;; Security Architecture:
+;; 1. Multi-Owner System
+;;    - Distributed control through contract-owners map
+;;    - Owner consensus for critical changes
+;;    - Protection against single point of failure
+;;
+;; 2. Interaction Verification
+;;    - Whitelist of approved interaction contracts
+;;    - Only verified contracts can execute operations
+;;    - Owner-controlled interaction management
+;;
+;; 3. Operation Limits
+;;    - Hard caps on all token operations
+;;    - Configurable maximums per operation type
+;;    - Owner-adjustable limit settings
+;;
+;; 4. Status Effect System
+;;    - Dynamic operation modifications
+;;    - Protocol-wide effect application
+;;    - Extensible modification system
+;;
+;; Default Verified Interactions:
+;; - Meme Engines: .meme-engine-cha, .meme-engine-iou-welsh, .meme-engine-iou-roo
+;; - Core Systems: .fatigue, .charisma-mine
+;; - Gameplay: .the-troll-toll, .charismatic-corgi, .keepers-petition
 ;;
 ;; Integration Points:
-;; - Experience Token (.experience)
-;; - Energy Token (.energy)
-;; - Governance Token (.dme000-governance-token)
-;; - Raven Resistance (.raven-resistance)
-;; - Energy Capacity (.energy-capacity)
+;; - Status Effects (.status-effects): Operation modifications
+;; - Experience Token (.experience): XP management
+;; - Energy Token (.energy): Energy management
+;; - Governance Token (.dme000-governance-token): DMG operations
 ;;
-;; This contract is essential for maintaining the balance between dynamic GameFi mechanics
-;; and secure DeFi operations. By centralizing and limiting all token operations, it ensures
-;; that gameplay features can safely interact with valuable token systems while maintaining
-;; strict security controls and economic stability.
+;; This contract ensures that while gameplay mechanics can be dynamic and complex,
+;; the underlying token operations remain secure and controlled. It acts as the
+;; primary interface between the protocol's DeFi foundation and its GameFi features.
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -158,61 +168,78 @@
 ;; Public functions for token operations
 
 (define-public (reward (amount uint) (target principal))
-  (begin
+  (let ((modified (modify-reward {amount: amount, target: target, caller: contract-caller})))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
-    (asserts! (<= amount (var-get max-reward)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .experience mint amount target)))
+    (asserts! (<= (get amount modified) (var-get max-reward)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .experience mint (get amount modified) (get target modified))))
 
 (define-public (punish (amount uint) (target principal))
-  (begin
+  (let ((modified (modify-punish {amount: amount, target: target, caller: contract-caller})))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
-    (asserts! (<= amount (var-get max-punish)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .experience burn amount target)))
+    (asserts! (<= (get amount modified) (var-get max-punish)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .experience burn (get amount modified) (get target modified))))
 
 (define-public (energize (amount uint) (target principal))
-  (let ((capped-amount (apply-max-capacity amount)))
+  (let ((modified (modify-energize {amount: amount, target: target, caller: contract-caller})))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
-    (asserts! (<= capped-amount (var-get max-energize)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .energy mint capped-amount target)))
+    (asserts! (<= (get amount modified) (var-get max-energize)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .energy mint (get amount modified) (get target modified))))
 
 (define-public (exhaust (amount uint) (target principal))
-  (begin
+  (let ((modified (modify-exhaust {amount: amount, target: target, caller: contract-caller})))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
-    (asserts! (<= amount (var-get max-exhaust)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .energy burn amount target)))
+    (asserts! (<= (get amount modified) (var-get max-exhaust)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .energy burn (get amount modified) (get target modified))))
 
 (define-public (transfer (amount uint) (sender principal) (target principal))
-  (let ((reduced-amount (apply-raven-reduction amount sender)))
+  (let ((modified (modify-transfer {amount: amount, sender: sender, target: target, caller: contract-caller})))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
-    (asserts! (<= reduced-amount (var-get max-transfer)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .dme000-governance-token dmg-transfer reduced-amount sender target)))
+    (asserts! (<= (get amount modified) (var-get max-transfer)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token dmg-transfer (get amount modified) (get sender modified) (get target modified))))
 
-(define-public (burn (amount uint) (sender principal) (target principal))
-  (let ((reduced-amount (apply-raven-reduction amount sender)))
+(define-public (burn (amount uint) (target principal))
+  (let ((modified (modify-burn {amount: amount, target: target, caller: contract-caller})))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
-    (asserts! (<= reduced-amount (var-get max-burn)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .dme000-governance-token dmg-burn reduced-amount target)))
+    (asserts! (<= (get amount modified) (var-get max-burn)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token dmg-burn (get amount modified) (get target modified))))
 
 (define-public (lock (amount uint) (target principal))
-  (begin
+  (let ((modified (modify-lock {amount: amount, target: target, caller: contract-caller})))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
-    (asserts! (<= amount (var-get max-lock)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .dme000-governance-token dmg-lock amount target)))
+    (asserts! (<= (get amount modified) (var-get max-lock)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token dmg-lock (get amount modified) (get target modified))))
 
 (define-public (unlock (amount uint) (target principal))
-  (begin
+  (let ((modified (modify-unlock {amount: amount, target: target, caller: contract-caller})))
     (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
-    (asserts! (<= amount (var-get max-unlock)) ERR_EXCEEDS_LIMIT)
-    (contract-call? .dme000-governance-token dmg-unlock amount target)))
+    (asserts! (<= (get amount modified) (var-get max-unlock)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token dmg-unlock (get amount modified) (get target modified))))
 
 ;; Private functions
 
-(define-private (apply-raven-reduction (amount uint) (user principal))
-  (let ((reduction (contract-call? .raven-resistance get-burn-reduction user)))
-    (- amount (/ (* amount reduction) u1000000))))
+(define-private (modify-reward (ctx {amount: uint, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-reward ctx))
 
-(define-private (apply-max-capacity (energy uint))
-  (contract-call? .energy-capacity apply-max-capacity energy))
+(define-private (modify-punish (ctx {amount: uint, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-punish ctx))
+
+(define-private (modify-energize (ctx {amount: uint, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-energize ctx))
+
+(define-private (modify-exhaust (ctx {amount: uint, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-exhaust ctx))
+
+(define-private (modify-transfer (ctx {amount: uint, sender: principal, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-transfer ctx))
+
+(define-private (modify-burn (ctx {amount: uint, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-burn ctx))
+
+(define-private (modify-lock (ctx {amount: uint, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-lock ctx))
+
+(define-private (modify-unlock (ctx {amount: uint, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-unlock ctx))
 
 ;; Read-only functions
 

@@ -46,6 +46,26 @@ depends_on = []
 path = "contracts/welshcorgicoin-token.clar"
 depends_on = []
 
+[contracts.happy-welsh]
+path = "contracts/happy-welsh.clar"
+depends_on = []
+
+[contracts.weird-welsh]
+path = "contracts/weird-welsh.clar"
+depends_on = []
+
+[contracts.welsh-punk]
+path = "contracts/welsh-punk.clar"
+depends_on = []
+
+[contracts.energetic-welsh]
+path = "contracts/energetic-welsh.clar"
+depends_on = []
+
+[contracts.status-effects]
+path = "contracts/status-effects.clar"
+depends_on = []
+
 [contracts.odins-raven]
 path = "contracts/odins-raven.clar"
 depends_on = []

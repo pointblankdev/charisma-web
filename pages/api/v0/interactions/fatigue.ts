@@ -12,7 +12,7 @@ export default function InteractionAPI(
     res: NextApiResponse<any | ErrorResponse>
 ) {
     return res.status(200).json({
-        url: 'https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc3',
+        url: 'https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc4',
         image: 'https://charisma.rocks/interactions/fatigue.png',
         name: 'Fatigue',
         subtitle: 'Without energy- nothing is possible.',
@@ -21,7 +21,7 @@ export default function InteractionAPI(
             "While the energy burn amount can be adjusted by protocol administrators to balance gameplay mechanics, the fundamental process remains constant - you need sufficient energy to perform actions, and that energy will be consumed upon use. If you lack sufficient energy, the interaction will fail gracefully with a clear message. It's important to note that energy is a separate concept from token balances or staking - it's a gameplay mechanic that adds depth to economic interactions without directly involving asset transfers. Understanding and managing your energy becomes a key strategy for effective participation in the Charisma ecosystem.",
             "Fatigue introduces an essential rate-limiting mechanism to Charisma's GameFi ecosystem through the concept of energy. Unlike traditional DeFi protocols that might use token fees or time-locks to prevent abuse, Charisma implements a more nuanced approach where actions consume energy. This creates a strategic layer where users must carefully consider when and how to spend their limited energy reserves. Energy serves as both a spam prevention mechanism and a core gameplay element, fundamentally shaping how users interact with the protocol.",
         ],
-        contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc3',
+        contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.fatigue-rc4',
         category: 'Utility',
         actions: ['BURN']
     });
