@@ -47,7 +47,7 @@ export const collections = [
 const INTERACTION_CATEGORIES = {
   UTILITY: "Utility",
   REWARD: "Rewards",
-  ENGINE: "Engines",
+  ENGINE: "Hold-to-Earn",
   ALL: "All"
 } as const;
 
@@ -242,11 +242,11 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
             <Sidebar collections={collections} className="hidden lg:block" />
             <div className="col-span-3 lg:col-span-4 lg:border-l overflow-hidden sm:overflow-visible">
               <div className="h-full pl-0 py-6 lg:pl-8">
-                <Tabs defaultValue="engines" className="sm:h-fit space-y-6">
+                <Tabs defaultValue="hold-to-earn" className="sm:h-fit space-y-6">
                   <div className="flex items-center space-between">
                     <TabsList className="mx-4">
                       <TabsTrigger value="all">All Interactions</TabsTrigger>
-                      <TabsTrigger value="engines">Hold-to-Earn Engines</TabsTrigger>
+                      <TabsTrigger value="hold-to-earn">Hold-to-Earn</TabsTrigger>
                       <TabsTrigger value="rewards">Rewards</TabsTrigger>
                       <TabsTrigger value="utility">Utility</TabsTrigger>
                     </TabsList>

@@ -22,7 +22,7 @@ export default function MemeEngineAPI(
             "This engine introduces a revolutionary 'stake-less staking' mechanism that rewards token holders without requiring them to lock up their assets. Unlike traditional staking systems, this engine uses integral calculus to calculate rewards based on your token balance over time- as it remains in your wallet. By considering both the amount of tokens held and the duration of holding, the engine can accurately reward long-term holders while maintaining their financial flexibility - your tokens always remain in your wallet and fully liquid.",
         ],
         contract: `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc1`,
-        category: 'Engines',
+        category: 'Hold-to-Earn',
         actions: ['TAP']
     });
 }
