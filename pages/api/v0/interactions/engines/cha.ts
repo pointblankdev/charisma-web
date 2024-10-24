@@ -14,7 +14,7 @@ export default function MemeEngineAPI(
     return res.status(200).json({
         url: `https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4`,
         image: `https://charisma.rocks/interactions/engines/cha.png`,
-        name: `Meme Engine (CHA)`,
+        name: `Hold-to-Earn Engine (CHA)`,
         subtitle: 'Generate energy by holding Charisma tokens.',
         description: [
             "The Charisma Meme Engine works by tracking your token balance across time. When you execute the TAP action, the contract calculates your average balance since your last tap. The resulting energy generation accurately reflects the average monetary value of your held balances, with more points sampled during longer periods for greater accuracy.",

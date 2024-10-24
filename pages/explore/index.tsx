@@ -246,7 +246,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
                   <div className="flex items-center space-between">
                     <TabsList className="mx-4">
                       <TabsTrigger value="all">All Interactions</TabsTrigger>
-                      <TabsTrigger value="engines">Engines</TabsTrigger>
+                      <TabsTrigger value="engines">Hold-to-Earn Engines</TabsTrigger>
                       <TabsTrigger value="rewards">Rewards</TabsTrigger>
                       <TabsTrigger value="utility">Utility</TabsTrigger>
                     </TabsList>
