@@ -62,34 +62,36 @@
 
 ;; Action Handler
 
-(define-private (petition-action (sender principal))
+(define-private (petition-action (rulebook <rulebook-trait>))
   (begin
-    (match (contract-call? .fatigue execute "BURN")
-      success (if (is-eq success "ENERGY_BURNED") (handle-petition-attempt sender)
-              (if (is-eq success "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
-              (handle-insufficient-energy sender)))
-      errror  (handle-unknown-error error))))
+    (match (contract-call? .fatigue execute rulebook "BURN")
+      success (if (is-eq success "ENERGY_BURNED") (handle-petition-attempt rulebook)
+              (if (is-eq success "ENERGY_NOT_BURNED") (handle-insufficient-energy)
+              (handle-insufficient-energy)))
+      error   (handle-unknown-error))))
 
 ;; Response Handlers
 
-(define-private (handle-petition-attempt (rulebook <rulebook-trait>) (sender principal))
+(define-private (handle-petition-attempt (rulebook <rulebook-trait>))
   (begin
-    (match (contract-call? rulebook transfer (var-get token-amount) (var-get token-principal) sender)
-      success (begin 
-              (print "The Dungeon Keeper acknowledges your humble petition and grants you a small reward.")
-              (ok "PETITION_SUCCEEDED"))
-      error   (handle-unknown-error error))))
+    (match (contract-call? rulebook transfer (var-get token-amount) (var-get token-from) tx-sender)
+      success (let ((op "PETITION_SUCCEEDED"))
+              (print {op: op, sender: tx-sender, 
+                message: "The Dungeon Keeper acknowledges your humble petition and grants you a small reward."})
+              (ok op))
+      error   (handle-unknown-error))))
 
-(define-private (handle-insufficient-energy (sender principal))
-  (begin
-    (print "You lack the energy required to petition the Dungeon Keeper.")
-    (ok "PETITION_FAILED")))
+(define-private (handle-insufficient-energy)
+  (let ((op "PETITION_FAILED"))
+    (print {op: op, sender: tx-sender, 
+      message: "You lack the energy required to petition the Dungeon Keeper."})
+    (ok op)))
 
-(define-private (handle-unknown-error (error uint))
-  (begin
-    (print error)
-    (print "You can't request a petition from yourself, foolish mortal.")
-    (ok "PETITION_ERROR")))
+(define-private (handle-unknown-error)
+  (let ((op "PETITION_FAILED"))
+    (print {op: op, sender: tx-sender, 
+      message: "You can't request a petition from yourself."})
+    (ok op)))
 
 ;; Admin functions
 

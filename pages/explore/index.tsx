@@ -94,7 +94,7 @@ interface ExplorePageProps {
 
 export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
   const interactionData = (await Promise.all(
-    interactionIds.map(async (interaction) => {
+    interactionIds.map(async (interaction: string) => {
 
       const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
 

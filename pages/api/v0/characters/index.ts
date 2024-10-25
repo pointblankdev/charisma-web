@@ -5,14 +5,19 @@ import {
     generateSecretKey,
     getStxAddress,
     generateNewAccount,
+    restoreWalletAccounts
 } from '@stacks/wallet-sdk';
 import { z } from 'zod';
 import { TransactionVersion } from '@stacks/transactions';
+import { StacksMainnet } from '@stacks/network';
+import { encryptSeedPhrase, decryptSeedPhrase } from '@lib/data/characters.service';
+
+const network = new StacksMainnet();
 
 // Define schema for Wallet data
 const WalletSchema = z.object({
     ownerAddress: z.string(),
-    secretKey: z.string(),
+    encryptedSeed: z.any(),
     created: z.number(),
     // Store minimal character metadata using account index as key
     characters: z.record(z.number(), z.object({
@@ -34,23 +39,37 @@ async function getOrCreateWallet(ownerAddress: string) {
     const existingWallet = await kv.hgetall(walletKey) as Wallet;
 
     if (existingWallet) {
-        // Just return the existing wallet data
-        return await generateWallet({
-            secretKey: existingWallet.secretKey,
-            password: String(process.env.ENCRYPTION_KEY),
+
+        const decryptedSeed = await decryptSeedPhrase(existingWallet.encryptedSeed)
+
+        const baseWallet = await generateWallet({
+            secretKey: decryptedSeed,
+            password: String(process.env.WALLET_PASSWORD),
         });
+
+        // Restore accounts from Gaia
+        const restoredWallet = await restoreWalletAccounts({
+            wallet: baseWallet,
+            gaiaHubUrl: 'https://hub.blockstack.org',
+            network: network,
+        });
+
+        return restoredWallet
     } else {
+
         // Create new wallet
         const secretKey = generateSecretKey();
         const wallet = await generateWallet({
             secretKey,
-            password: String(process.env.ENCRYPTION_KEY),
+            password: String(process.env.WALLET_PASSWORD),
         });
+
+        const encryptedSeed = await encryptSeedPhrase(secretKey)
 
         // Store minimal wallet info
         const walletData: Wallet = {
             ownerAddress,
-            secretKey,
+            encryptedSeed,
             created: Date.now(),
             characters: {}
         };
@@ -114,29 +133,57 @@ async function handleGetCharacters(
         const walletKey = `${OWNER_WALLET_PREFIX}${address}`;
         const wallet = await kv.hgetall(walletKey) as Wallet;
 
-
         if (!wallet) {
             return res.status(200).json([]);
         }
 
+        let decryptedSeed, encryptedSeed;
+        if ((wallet as any).encryptedSeed) {
+            // Decrypt seed and regenerate wallet
+            decryptedSeed = await decryptSeedPhrase(wallet.encryptedSeed)
+            encryptedSeed = wallet.encryptedSeed
+        } else {
+            decryptedSeed = (wallet as any).secretKey
+            encryptedSeed = await encryptSeedPhrase((wallet as any).secretKey)
+        }
+
         // Regenerate wallet to get addresses
         const regeneratedWallet = await generateWallet({
-            secretKey: wallet.secretKey,
-            password: String(process.env.ENCRYPTION_KEY),
+            secretKey: decryptedSeed,
+            password: String(process.env.WALLET_PASSWORD),
         });
 
+        // Restore accounts from Gaia
+        const restoredWallet = await restoreWalletAccounts({
+            wallet: regeneratedWallet,
+            gaiaHubUrl: 'https://hub.blockstack.org',
+            network: network,
+        });
+
+
         // Map wallet accounts to character data
-        const characters = Object.entries(wallet.characters).map(([index, metadata]) => {
-            const accountIndex = parseInt(index);
+        const characters = restoredWallet.accounts.map((account) => {
             return {
                 characterAddress: getStxAddress({
-                    account: regeneratedWallet.accounts[accountIndex],
+                    account: restoredWallet.accounts[account.index],
                     transactionVersion: TransactionVersion.Mainnet
                 }),
-                ...metadata,
-                walletIndex: accountIndex
+                ...wallet.characters[account.index]
             };
         });
+
+        // Store minimal wallet info
+        const walletData: Wallet = {
+            ownerAddress: address,
+            encryptedSeed,
+            created: Date.now(),
+            characters,
+        };
+
+        // remove up data we don't want to store
+        await kv.hdel(walletKey, 'secretKey', 'accountIndex');
+
+        await kv.hset(walletKey, walletData);
 
         // Filter archived if needed
         const filteredCharacters = includeArchived === 'true'

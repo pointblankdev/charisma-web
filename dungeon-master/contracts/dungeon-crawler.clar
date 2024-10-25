@@ -63,14 +63,14 @@
     (response-7 (match interaction-7 i7 (match (interact rulebook i7 (match action-7 a7 a7 "")) success success error error) ""))
     (response-8 (match interaction-8 i8 (match (interact rulebook i8 (match action-8 a8 a8 "")) success success error error) ""))
     (output {
-      i1: {x: interaction-1, y: action-1, z: response-1},
-      i2: {x: interaction-2, y: action-2, z: response-2},
-      i3: {x: interaction-3, y: action-3, z: response-3},
-      i4: {x: interaction-4, y: action-4, z: response-4},
-      i5: {x: interaction-5, y: action-5, z: response-5},
-      i6: {x: interaction-6, y: action-6, z: response-6},
-      i7: {x: interaction-7, y: action-7, z: response-7},
-      i8: {x: interaction-8, y: action-8, z: response-8},
+      i1: {x: (match interaction-1 i1 (as-contract i1) .none), y: (match action-1 a1 a1 ""), z: response-1},
+      i2: {x: (match interaction-2 i2 (as-contract i2) .none), y: (match action-2 a2 a2 ""), z: response-2},
+      i3: {x: (match interaction-3 i3 (as-contract i3) .none), y: (match action-3 a3 a3 ""), z: response-3},
+      i4: {x: (match interaction-4 i4 (as-contract i4) .none), y: (match action-4 a4 a4 ""), z: response-4},
+      i5: {x: (match interaction-5 i5 (as-contract i5) .none), y: (match action-5 a5 a5 ""), z: response-5},
+      i6: {x: (match interaction-6 i6 (as-contract i6) .none), y: (match action-6 a6 a6 ""), z: response-6},
+      i7: {x: (match interaction-7 i7 (as-contract i7) .none), y: (match action-7 a7 a7 ""), z: response-7},
+      i8: {x: (match interaction-8 i8 (as-contract i8) .none), y: (match action-8 a8 a8 ""), z: response-8},
     }))
     (print output)
     (ok output)))

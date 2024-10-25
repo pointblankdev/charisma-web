@@ -155,7 +155,7 @@
 
 (define-private (calculate-balance-integral-39 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-39 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-39 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u38))
         (areas (calculate-trapezoid-areas-39 balances dx)))
@@ -163,7 +163,7 @@
 
 (define-private (calculate-balance-integral-19 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-19 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-19 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u18))
         (areas (calculate-trapezoid-areas-19 balances dx)))
@@ -171,7 +171,7 @@
 
 (define-private (calculate-balance-integral-9 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-9 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-9 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u8))
         (areas (calculate-trapezoid-areas-9 balances dx)))
@@ -179,7 +179,7 @@
 
 (define-private (calculate-balance-integral-5 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-5 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-5 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u4))
         (areas (calculate-trapezoid-areas-5 balances dx)))
@@ -187,7 +187,7 @@
 
 (define-private (calculate-balance-integral-2 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-2 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager generate-sample-points-2 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u1))
         (areas (calculate-trapezoid-areas-2 balances dx)))
@@ -196,7 +196,7 @@
 (define-private (calculate-balance-integral (address principal) (start-block uint) (end-block uint))
     (let (
         (block-difference (- end-block start-block))
-        (thresholds (unwrap-panic (contract-call? .meme-engine-manager-rc2 get-thresholds))))
+        (thresholds (unwrap-panic (contract-call? .meme-engine-manager get-thresholds))))
         (if (>= block-difference (get threshold-39-point thresholds)) (calculate-balance-integral-39 address start-block end-block)
         (if (>= block-difference (get threshold-19-point thresholds)) (calculate-balance-integral-19 address start-block end-block)
         (if (>= block-difference (get threshold-9-point thresholds)) (calculate-balance-integral-9 address start-block end-block)
@@ -217,7 +217,7 @@
   (if (is-eq action "TAP") (tap-action rulebook)
     (err "INVALID_ACTION")))
 
-;; Meme Engine Action Handler
+;; Engine Action Handler
 
 (define-private (tap-action (rulebook <rulebook-trait>))
   (let (
@@ -237,7 +237,7 @@
               (if (is-eq error u403) (handle-tap-unverified sender)
               (handle-tap-unknown-error sender)))))))
 
-;; Meme Engine Response Handlers
+;; Engine Response Handlers
 
 (define-private (handle-tap-success (sender principal) (energy uint) (integral uint))
   (let ((op "ENERGY_GENERATED"))

@@ -10,6 +10,7 @@ import {
 } from '@stacks/transactions';
 import { StacksMainnet } from '@stacks/network';
 import { decrypt, generateWallet } from '@stacks/wallet-sdk';
+import { decryptMnemonic, encryptMnemonic } from '@stacks/encryption';
 
 const network = new StacksMainnet();
 
@@ -29,128 +30,80 @@ type Character = {
 
 type Wallet = {
     ownerAddress: string;
-    secretKey: string;
+    encryptedSeed: string;
     accountIndex: number;
     created: number;
 };
 
+export type CharacterTransaction = {
+    ownerAddress: string;
+    interaction: string;
+    action: string;
+    rulebook: string; // Contract principal for the rulebook
+    metadata?: Record<string, any>;
+};
+
+export const decryptSeedPhrase = (encryptedSeedB64: string) => {
+    return decryptMnemonic(new Uint8Array(Buffer.from(encryptedSeedB64, 'base64')), String(process.env.ENCRYPTION_KEY))
+}
+
+export const encryptSeedPhrase = async (seedPhrase: string) => {
+    return Buffer.from((await encryptMnemonic(seedPhrase, String(process.env.ENCRYPTION_KEY)))).toString('base64')
+}
+
 export class CharacterTransactionService {
+    async executeTransaction(tx: CharacterTransaction) {
+        const teamKey = `${OWNER_WALLET_PREFIX}${tx.ownerAddress}`;
+        const team = await kv.hgetall(teamKey) as any;
 
-    async executeInteraction(characterAddress: string, interaction: string, action: string) {
-        const characterKey = `${CHARACTERS_PREFIX}${characterAddress}`;
-        const character = await kv.hgetall(characterKey) as Character;
-
-        if (!character) {
+        if (!team) {
             throw new Error('Character not found');
         }
 
-        const walletKey = `${OWNER_WALLET_PREFIX}${character.ownerAddress}`;
+        // Get wallet info
+        const walletKey = `${OWNER_WALLET_PREFIX}${team.ownerAddress}`;
         const walletData = await kv.hgetall(walletKey) as Wallet;
 
         if (!walletData) {
             throw new Error('Wallet not found');
         }
 
-        // Restore wallet and get correct account
+        const secretKey = await decryptSeedPhrase(walletData.encryptedSeed);
         const wallet = await generateWallet({
-            secretKey: walletData.secretKey,
+            secretKey: secretKey,
             password: String(process.env.ENCRYPTION_KEY),
         });
+        const account = wallet.accounts[0];
+        const [rulebookAddress, rulebookName] = tx.rulebook.split('.');
 
-        const account = wallet.accounts[character.walletIndex];
-
-        // Prepare and execute the transaction
         const txOptions = {
-            contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-            contractName: 'dungeon-crawler-rc7',
-            functionName: 'interact',
+            contractAddress: tx.interaction.split('.')[0],
+            contractName: tx.interaction.split('.')[1],
+            functionName: 'execute',
             functionArgs: [
-                contractPrincipalCV(interaction.split('.')[0], interaction.split('.')[1]),
-                stringAsciiCV(action),
-                // Add remaining optionalCV arguments as needed
+                contractPrincipalCV(rulebookAddress, rulebookName),
+                stringAsciiCV(tx.action)
             ],
             senderKey: account.stxPrivateKey,
-            validateWithAbi: true,
+            // validateWithAbi: true,
             network,
             anchorMode: AnchorMode.Any,
             postConditionMode: PostConditionMode.Allow,
         };
 
+
         const transaction = await makeContractCall(txOptions);
         const broadcastResponse = await broadcastTransaction(transaction, network);
 
         // Update last run timestamp
-        await kv.hset(characterKey, { lastRun: Date.now() });
-
+        await kv.hset(teamKey, {
+            lastRun: Date.now(),
+            lastTx: {
+                txid: broadcastResponse.txid,
+                timestamp: Date.now()
+            },
+            lastResponse: JSON.stringify(broadcastResponse),
+        });
         return broadcastResponse;
     }
-
-    async deleteCharacter(characterAddress: string): Promise<{
-        success: boolean;
-        message: string;
-        error?: string;
-    }> {
-        try {
-            const response = await fetch(`/api/v0/characters?characterAddress=${characterAddress}`, {
-                method: 'DELETE',
-            });
-
-            if (!response.ok) {
-                const error = await response.json();
-                throw new Error(error.message || 'Failed to delete character');
-            }
-
-            return {
-                success: true,
-                message: 'Character deleted successfully'
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: 'Failed to delete character',
-                // error: error.message
-            };
-        }
-    }
-
-    async deleteAccount(ownerAddress: string): Promise<{
-        success: boolean;
-        message: string;
-        deletedCharacters?: number;
-        error?: string;
-    }> {
-        try {
-            const response = await fetch(
-                `/api/characters?ownerAddress=${ownerAddress}`,
-                {
-                    method: 'DELETE',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                }
-            );
-
-            if (!response.ok) {
-                throw new Error('Failed to delete account');
-            }
-
-            const data = await response.json();
-            return {
-                success: true,
-                message: 'Account deleted successfully',
-                deletedCharacters: data.deletedCharacters
-            };
-        } catch (error) {
-            return {
-                success: false,
-                message: 'Failed to delete account',
-                // error: error.message
-            };
-        }
-    }
-
-}
-
-export class UpdatedCharacterTransactionService {
-
 }

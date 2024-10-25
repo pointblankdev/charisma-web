@@ -104,9 +104,9 @@ plan:
             path: contracts/dao-traits-v7.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: dungeon-crawler
+            contract-name: dao-traits-v9
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/dungeon-crawler.clar
+            path: contracts/dao-traits-v9.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: energy
@@ -114,19 +114,39 @@ plan:
             path: contracts/energy.clar
             clarity-version: 1
         - emulated-contract-publish:
+            contract-name: experience
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/experience.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: happy-welsh
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/happy-welsh.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: weird-welsh
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/weird-welsh.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: welsh-punk
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/welsh-punk.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: energetic-welsh
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/energetic-welsh.clar
+            clarity-version: 1
+        - emulated-contract-publish:
             contract-name: memobots-guardians-of-the-gigaverse
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/memobots-guardians-of-the-gigaverse.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: energy-capacity
+            contract-name: memobot-capacity
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/energy-capacity.clar
-            clarity-version: 1
-        - emulated-contract-publish:
-            contract-name: experience
-            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/experience.clar
+            path: contracts/memobot-capacity.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: odins-raven
@@ -134,9 +154,14 @@ plan:
             path: contracts/odins-raven.clar
             clarity-version: 1
         - emulated-contract-publish:
-            contract-name: raven-resistance
+            contract-name: raven-wisdom
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
-            path: contracts/raven-resistance.clar
+            path: contracts/raven-wisdom.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: status-effects
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/status-effects.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: dungeon-keeper
@@ -144,9 +169,27 @@ plan:
             path: contracts/dungeon-keeper.clar
             clarity-version: 1
         - emulated-contract-publish:
+            contract-name: registry
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/registry.clar
+            clarity-version: 1
+      epoch: "2.05"
+    - id: 1
+      transactions:
+        - emulated-contract-publish:
+            contract-name: fate-randomizer
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/interactions/fate-randomizer.clar
+            clarity-version: 1
+        - emulated-contract-publish:
             contract-name: fatigue
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/interactions/fatigue.clar
+            clarity-version: 1
+        - emulated-contract-publish:
+            contract-name: keepers-petition
+            emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
+            path: contracts/interactions/keepers-petition.clar
             clarity-version: 1
         - emulated-contract-publish:
             contract-name: meme-engine-manager
@@ -173,9 +216,6 @@ plan:
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM
             path: contracts/univ2-router.clar
             clarity-version: 1
-      epoch: "2.05"
-    - id: 1
-      transactions:
         - emulated-contract-publish:
             contract-name: univ2-path2
             emulated-sender: ST1PQHQKV0RJXZFY1DGX8MNSNYVE3VGZJSRTPGZGM

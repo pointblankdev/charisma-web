@@ -118,6 +118,10 @@ depends_on = []
 path = "contracts/meme-engines/meme-engine.clar"
 depends_on = []
 
+[contracts.registry]
+path = "contracts/registry.clar"
+depends_on = []
+
 [contracts.dungeon-keeper]
 path = "contracts/dungeon-keeper.clar"
 depends_on = []
@@ -126,9 +130,9 @@ depends_on = []
 path = "contracts/charisma-randomizer.clar"
 depends_on = []
 
-# [contracts.fate-randomizer]
-# path = "contracts/interactions/fate-randomizer.clar"
-# depends_on = []
+[contracts.fate-randomizer]
+path = "contracts/interactions/fate-randomizer.clar"
+depends_on = []
 
 [contracts.fatigue]
 path = "contracts/interactions/fatigue.clar"
@@ -138,24 +142,16 @@ depends_on = []
 path = "contracts/interactions/keepers-petition.clar"
 depends_on = []
 
-# [contracts.challenge]
-# path = "contracts/interactions/challenge.clar"
-# depends_on = []
+[contracts.charisma-mine]
+path = "contracts/interactions/charisma-mine.clar"
+depends_on = []
 
-# [contracts.charisma-mine]
-# path = "contracts/interactions/charisma-mine.clar"
-# depends_on = []
+[contracts.the-troll-toll]
+path = "contracts/interactions/the-troll-toll.clar"
+depends_on = []
 
-# [contracts.the-troll-toll]
-# path = "contracts/interactions/the-troll-toll.clar"
-# depends_on = []
-
-# [contracts.charismatic-corgi]
-# path = "contracts/interactions/charismatic-corgi.clar"
-# depends_on = []
-
-[contracts.registry]
-path = "contracts/rulebook-registry.clar"
+[contracts.charismatic-corgi]
+path = "contracts/interactions/charismatic-corgi.clar"
 depends_on = []
 
 [contracts.dungeon-crawler]
@@ -173,7 +169,7 @@ path = "contracts/dao-traits-v7.clar"
 depends_on = []
 
 [contracts.dao-traits-v9]
-path = "contracts/dao-traits-v8.clar"
+path = "contracts/dao-traits-v9.clar"
 depends_on = []
 
 [repl.analysis]
