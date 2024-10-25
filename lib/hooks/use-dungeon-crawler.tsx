@@ -29,7 +29,7 @@ interface DungeonCrawlerHook {
 
 export function useDungeonCrawler(
     contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName = 'dungeon-crawler-rc7'
+    contractName = 'dungeon-crawler-rc8'
 ): DungeonCrawlerHook {
     const { stxAddress } = useGlobalState();
 

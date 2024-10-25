@@ -13,7 +13,7 @@ export default function InteractionAPI(
     res: NextApiResponse<any | ErrorResponse>
 ) {
     return res.status(200).json({
-        url: 'https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3',
+        url: 'https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc4',
         image: 'https://charisma.rocks/interactions/charisma-mine.png',
         name: 'Charisma Mining',
         subtitle: 'Mint Charisma tokens by wrapping governance tokens.',
@@ -22,7 +22,7 @@ export default function InteractionAPI(
             "Two main operations exist: MINT (wraps DMG to CHA) and BURN (unwraps CHA to DMG). Operations require energy and follow liquidity limits. The automated process checks energy and eligibility before execution. Only one wrap per block is allowed, with failed attempts requiring retry in subsequent blocks. Both ecosystems remain interconnected, with achievements in one benefiting the other.",
             "Operation success depends on liquidity flow limits, Red Pill NFT ownership, and block availability. Failed wrapping attempts during high activity still consume energy, so verify conditions before attempting operations."
         ],
-        contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3',
+        contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc4',
         category: 'Rewards',
         actions: ['MINT', 'BURN'],
         postConditionMode: PostConditionMode.Deny,

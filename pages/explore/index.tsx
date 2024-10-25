@@ -132,12 +132,12 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           description: "Generate energy from your iouROO holdings"
         },
         {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
           action: "FORWARD",
           description: "Arbitrage swap forward and abort if not profitable"
         },
         {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc3",
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
           action: "REVERSE",
           description: "Arbitrage swap reverse and abort if not profitable"
         },
@@ -149,7 +149,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       cover: "/explorations/charismatic-flow.png",
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc5',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc6',
           action: "TAP",
           description: "Generate base energy"
         },
@@ -159,7 +159,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           description: "Petition the Keepers for additional DMG tokens"
         },
         {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc3",
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc4",
           action: "MINT",
           description: "Mint additional Charisma tokens"
         }
