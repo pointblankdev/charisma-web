@@ -20,8 +20,8 @@
 ;; - Provides narrative feedback for each roll attempt
 
 ;; Traits
-(impl-trait .dao-traits-v8.interaction-trait)
-(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
+(impl-trait .dao-traits-v9.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -40,7 +40,7 @@
 
 (define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (let ((sender tx-sender))
-    (try! (contract-call? .rulebook-registry authorize rulebook))
+    (try! (contract-call? .registry authorize rulebook))
     (if (is-eq action "CF") (coin-flip-action sender)
     (if (is-eq action "D4") (roll-d4-action sender)
     (if (is-eq action "D6") (roll-d6-action sender)

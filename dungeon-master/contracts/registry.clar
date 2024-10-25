@@ -5,7 +5,7 @@
 ;; allowing for graceful protocol upgrades and emergency circuit breaking if needed.
 
 ;; Traits
-(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
+(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -36,7 +36,8 @@
 ;; Authorization function
 (define-public (authorize (rulebook <rulebook-trait>))
    (match (map-get? rulebook-metadata (contract-of rulebook))
-        metadata (if (get enabled metadata) (ok true) (err "ERR_RULEBOOK_DISABLED"))
+        metadata (if (get enabled metadata) (ok true) 
+            (err "ERR_RULEBOOK_DISABLED"))
         (err "ERR_INVALID_RULEBOOK")))
 
 ;; Public functions

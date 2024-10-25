@@ -17,8 +17,8 @@
 ;; When executed, this contract will burn the set amount of energy from the user who interacts with it.
 
 ;; Traits
-(impl-trait .dao-traits-v8.interaction-trait)
-(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
+(impl-trait .dao-traits-v9.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -41,7 +41,7 @@
 
 (define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (begin
-    (try! (contract-call? .rulebook-registry authorize rulebook))
+    (try! (contract-call? .registry authorize rulebook))
     (if (is-eq action "BURN") (burn-energy-action rulebook)
         (err "INVALID_ACTION"))))
 

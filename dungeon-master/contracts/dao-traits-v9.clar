@@ -86,9 +86,6 @@
 		(burn (uint principal) (response bool uint))
 		(lock (uint principal) (response bool uint))
 		(unlock (uint principal) (response bool uint))
-
-		;; Verification Method
-		(is-verified-interaction (principal) (response bool uint))
 	)
 )
 

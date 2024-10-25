@@ -245,7 +245,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
             <Sidebar collections={collections} className="hidden lg:block" />
             <div className="col-span-3 overflow-hidden lg:col-span-4 lg:border-l sm:overflow-visible">
               <div className="h-full py-6 pl-0 lg:pl-8">
-                <Tabs defaultValue="hold-to-earn" className="space-y-6 sm:h-fit">
+                <Tabs defaultValue="all" className="space-y-6 sm:h-fit">
                   <div className="flex items-center space-between">
                     <TabsList className="mx-4">
                       <TabsTrigger value="all">All Interactions</TabsTrigger>
@@ -253,6 +253,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
                       <TabsTrigger value="rewards">Rewards</TabsTrigger>
                       <TabsTrigger value="utility">Utility</TabsTrigger>
                     </TabsList>
+                    <div className="animate-pulse text-primary">Deploying new Interaction contracts, please standby...</div>
                   </div>
                   {Object.values(INTERACTION_CATEGORIES).map((category) => (
                     <TabsContent

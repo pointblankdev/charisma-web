@@ -63,6 +63,9 @@
 ;; the underlying token operations remain secure and controlled. It acts as the
 ;; primary interface between the protocol's DeFi foundation and its GameFi features.
 
+;; Traits
+(impl-trait .dao-traits-v9.rulebook-trait)
+
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
 (define-constant ERR_UNVERIFIED (err u403))

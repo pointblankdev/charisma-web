@@ -154,7 +154,7 @@ depends_on = []
 path = "contracts/interactions/charismatic-corgi.clar"
 depends_on = []
 
-[contracts.rulebook-registry]
+[contracts.registry]
 path = "contracts/rulebook-registry.clar"
 depends_on = []
 
@@ -172,7 +172,7 @@ depends_on = []
 path = "contracts/dao-traits-v7.clar"
 depends_on = []
 
-[contracts.dao-traits-v8]
+[contracts.dao-traits-v9]
 path = "contracts/dao-traits-v8.clar"
 depends_on = []
 

@@ -45,8 +45,8 @@
 ;; exploration activities.
 
 ;; Traits
-(impl-trait .dao-traits-v8.interaction-trait)
-(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
+(impl-trait .dao-traits-v9.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))

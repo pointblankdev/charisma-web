@@ -37,8 +37,8 @@
 ;; system integrity. The architecture supports the protocol's innovative approach to multi-faceted
 ;; blockchain interactions, allowing for complex operations to be performed in a single transaction.
 
-(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
-(use-trait interaction-trait .dao-traits-v8.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
+(use-trait interaction-trait .dao-traits-v9.interaction-trait)
 
 (define-public (interact (rulebook <rulebook-trait>) (interaction <interaction-trait>) (action (string-ascii 32)))
   (contract-call? interaction execute rulebook action))
