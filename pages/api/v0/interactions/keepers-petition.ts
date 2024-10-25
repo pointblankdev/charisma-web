@@ -13,7 +13,7 @@ export default function InteractionAPI(
     res: NextApiResponse<any | ErrorResponse>
 ) {
     return res.status(200).json({
-        url: "https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc5",
+        url: "https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7",
         image: "https://charisma.rocks/interactions/keepers-petition.png",
         name: "Keepers' Petition",
         subtitle: "Petition the Dungeon Keeper for token rewards.",
@@ -22,7 +22,7 @@ export default function InteractionAPI(
             "While the reward amount and source address are variable by design, Multiple administrators (Keepers) oversee this system to ensure its sustainable operation within the broader Charisma ecosystem. Successful petitions are guaranteed if you meet the energy requirements - there's no randomness or hidden conditions.",
             "The Keepers' Petition introduces a novel mechanism for token distribution in DeFi, moving beyond traditional liquidity mining or staking rewards. The source of tokens can be configured to serve different economic objectives - from simple treasury distributions to complex redistribution mechanisms.",
         ],
-        contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc5",
+        contract: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7",
         category: "Rewards",
         actions: ["PETITION"],
         postConditionMode: PostConditionMode.Deny,

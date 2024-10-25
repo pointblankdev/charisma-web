@@ -122,15 +122,20 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       cover: "/explorations/energy-arbitrage.png",
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc3',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc6',
           action: "TAP",
-          description: "Generate energy from your iouWELSH holdings"
+          description: "Generate base energy"
         },
-        {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc2',
-          action: "TAP",
-          description: "Generate energy from your iouROO holdings"
-        },
+        // {
+        //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc3',
+        //   action: "TAP",
+        //   description: "Generate energy from your iouWELSH holdings"
+        // },
+        // {
+        //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc2',
+        //   action: "TAP",
+        //   description: "Generate energy from your iouROO holdings"
+        // },
         {
           contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
           action: "FORWARD",
@@ -154,7 +159,7 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
           description: "Generate base energy"
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc5',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
           action: "PETITION",
           description: "Petition the Keepers for additional DMG tokens"
         },
