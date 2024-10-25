@@ -45,7 +45,8 @@
 ;; exploration activities.
 
 ;; Traits
-(impl-trait .dao-traits-v7.interaction-trait)
+(impl-trait .dao-traits-v8.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -212,14 +213,15 @@
 
 ;; Public functions
 
-(define-public (execute (action (string-ascii 32)))
-  (if (is-eq action "TAP") (tap-action tx-sender)
+(define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
+  (if (is-eq action "TAP") (tap-action rulebook)
     (err "INVALID_ACTION")))
 
 ;; Meme Engine Action Handler
 
-(define-private (tap-action (sender principal))
+(define-private (tap-action (rulebook <rulebook-trait>))
   (let (
+    (sender tx-sender)
     (end-block block-height)
     (start-block (get-last-tap-block sender))
     (balance-integral (calculate-balance-integral sender start-block end-block))
@@ -228,7 +230,7 @@
     (circulating-supply (contract-call? .arcana get-circulating-supply .charisma-token))
     (potential-energy (/ (* (* balance-integral quality-score) incentive-score) circulating-supply)))
     (map-set last-tap-block sender end-block)
-    (match (contract-call? .dungeon-keeper energize potential-energy sender)
+    (match (contract-call? rulebook energize potential-energy sender)
       success (handle-tap-success sender potential-energy balance-integral)
       error   (if (is-eq error u1) (handle-tap-insufficient-balance sender)
               (if (is-eq error u405) (handle-tap-limit-exceeded sender)
