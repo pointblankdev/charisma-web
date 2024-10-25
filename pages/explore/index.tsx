@@ -253,7 +253,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
                       <TabsTrigger value="rewards">Rewards</TabsTrigger>
                       <TabsTrigger value="utility">Utility</TabsTrigger>
                     </TabsList>
-                    <div className="animate-pulse text-primary">Deploying new Interaction contracts, please standby...</div>
+                    {/* <div className="animate-pulse text-primary">Deploying new Interaction contracts, please standby...</div> */}
                   </div>
                   {Object.values(INTERACTION_CATEGORIES).map((category) => (
                     <TabsContent
