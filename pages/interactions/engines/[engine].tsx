@@ -33,14 +33,14 @@ interface InteractionDetailProps {
 export const getStaticPaths: GetStaticPaths = () => {
     return {
         paths: interactionIds.map(id => ({
-            params: { interaction: id }
+            params: { engine: id }
         })),
         fallback: false
     };
 };
 
 export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
-    const interaction = params?.interaction as string;
+    const interaction = params?.engine as string;
     try {
         const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
 

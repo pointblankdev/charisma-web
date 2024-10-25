@@ -91,6 +91,7 @@
 		(is-verified-interaction (principal) (response bool uint))
 	)
 )
+
 (define-trait interaction-trait
   (
     ;; Execute an action with a specified rulebook

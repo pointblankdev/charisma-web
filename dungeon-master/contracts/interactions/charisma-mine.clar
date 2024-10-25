@@ -1,20 +1,22 @@
 ;; Charisma Mine Interaction
 ;;
-;; Deep within the dungeon lies an ancient mint where adventurers can manifest
-;; mystical Charisma tokens into being. Through complex rituals of magical binding,
-;; tokens can be minted from the dungeon's raw essence or burned back into its depths.
-;; These mystical operations require both energy from the adventurer and governance 
+;; Deep within the dungeon lies an ancient vein where adventurers can harvest
+;; powerful Charisma tokens into being. Through complex extraction and refinement,
+;; tokens can be extracted from the dungeon's raw essence or burned back into its depths.
+;; These arduous operations require both energy from the adventurer and governance 
 ;; tokens as catalysts for the transmutation.
 ;;
 ;; Actions:
-;; - MINT: Channel the dungeon's energy to manifest new Charisma tokens
-;; - BURN: Sacrifice Charisma tokens back to the dungeon's essence
+;; - MINT: Convert governance tokens into Charisma tokens
+;; - BURN: Convert Charisma tokens back into governance tokens
 ;;
 ;; Costs:
 ;; - Energy cost via Fatigue interaction
-;; - Governance tokens as ritual catalysts
+;; - Required tokens for wrapping and unwrapping
 
-(impl-trait .dao-traits-v7.interaction-trait)
+;; Traits
+(impl-trait .dao-traits-v8.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -31,7 +33,7 @@
 
 ;; Public functions
 
-(define-public (execute (action (string-ascii 32)))
+(define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (let ((sender tx-sender))
     (if (is-eq action "MINT") (mint-action sender)
     (if (is-eq action "BURN") (burn-action sender)
@@ -75,19 +77,19 @@
 
 (define-private (handle-insufficient-energy (sender principal))
   (begin
-    (print "The adventurer lacks the energy required to perform the mystical ritual.")
+    (print "The sender lacks the energy required to wrap tokens.")
     (ok "INSUFFICIENT_ENERGY")))
 
 (define-private (handle-fatigue-error (sender principal))
   (begin
-    (print "Strange forces prevent the adventurer from channeling their energy properly.")
+    (print "The senders is too exhausted to wrap tokens.")
     (ok "ENERGY_ERROR")))
 
 ;; Response Handlers
 
 (define-private (handle-mint-success (sender principal) (amount uint))
   (begin
-    (print "Arcane energies surge as new Charisma tokens crystallize from the dungeon's essence!")
+    (print "The sender sucessfully minted new Charisma tokens!")
     (ok "TOKENS_WRAPPED")))
 
 (define-private (handle-burn-success (sender principal) (amount uint))
