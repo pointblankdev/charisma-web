@@ -154,6 +154,10 @@ depends_on = []
 path = "contracts/interactions/charismatic-corgi.clar"
 depends_on = []
 
+[contracts.rulebook-registry]
+path = "contracts/rulebook-registry.clar"
+depends_on = []
+
 [contracts.dungeon-crawler]
 path = "contracts/dungeon-crawler.clar"
 depends_on = []

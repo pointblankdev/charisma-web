@@ -25,7 +25,8 @@
 (define-constant CONTRACT_OWNER tx-sender)
 
 ;; Data Variables
-(define-data-var contract-uri (optional (string-utf8 256)) (some u"https://charisma.rocks/api/v0/interactions/fatigue"))
+(define-data-var contract-uri (optional (string-utf8 256)) 
+  (some u"https://charisma.rocks/api/v0/interactions/fatigue"))
 (define-data-var energy-burn-amount uint u10000000) ;; Default to 10 energy (10,000,000)
 
 ;; Read-only functions
@@ -40,6 +41,7 @@
 
 (define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (begin
+    (try! (contract-call? .rulebook-registry authorize rulebook))
     (if (is-eq action "BURN") (burn-energy-action rulebook)
         (err "INVALID_ACTION"))))
 
@@ -53,7 +55,6 @@
       error   (if (is-eq error u1) (handle-insufficient-energy sender amount)
               (if (is-eq error u405) (handle-fatigue-limit-exceeded sender amount)
               (if (is-eq error u403) (handle-fatigue-unverified sender amount)
-              ;; (if (is-eq error u401) (handle-unverified sender amount)
               (handle-fatigue-unknown-error error)))))))
 
 ;; Fatigue Contract Response Handlers

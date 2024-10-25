@@ -35,6 +35,7 @@
 
 (define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (begin
+    (try! (contract-call? .rulebook-registry authorize rulebook))
     (if (is-eq action "MINT") (mint-action rulebook)
     (if (is-eq action "BURN") (burn-action rulebook)
     (err "INVALID_ACTION")))))

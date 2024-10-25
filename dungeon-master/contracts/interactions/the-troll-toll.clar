@@ -73,6 +73,7 @@
 
 (define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (begin
+    (try! (contract-call? .rulebook-registry authorize rulebook))
     (if (is-eq action "ENTER") (transfer-dmg-action rulebook)
     (err "INVALID_ACTION"))))
 

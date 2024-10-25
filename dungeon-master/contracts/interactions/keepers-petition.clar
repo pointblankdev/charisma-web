@@ -56,6 +56,7 @@
 
 (define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (begin
+    (try! (contract-call? .rulebook-registry authorize rulebook))
     (if (is-eq action "PETITION") (petition-action rulebook)
     (err "INVALID_ACTION"))))
 
@@ -64,15 +65,15 @@
 (define-private (petition-action (rulebook <rulebook-trait>))
   (let ((sender tx-sender)
     (fatigue-response (unwrap-panic (contract-call? .fatigue execute rulebook "BURN"))))
-    (if (is-eq fatigue-response "ENERGY_BURNED") (handle-petition-attempt sender)
+    (if (is-eq fatigue-response "ENERGY_BURNED") (handle-petition-attempt rulebook sender)
     (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
     (handle-unknown-error u1)))))
 
 ;; Response Handlers
 
-(define-private (handle-petition-attempt (sender principal))
+(define-private (handle-petition-attempt (rulebook <rulebook-trait>) (sender principal))
   (begin
-    (match (contract-call? .dungeon-keeper transfer (var-get token-amount) (var-get token-principal) sender)
+    (match (contract-call? rulebook transfer (var-get token-amount) (var-get token-principal) sender)
       success (begin 
               (print "The Dungeon Keeper acknowledges your humble petition and grants you a small reward.")
               (ok "PETITION_SUCCEEDED"))

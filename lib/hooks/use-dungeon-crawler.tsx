@@ -42,7 +42,7 @@ export function useDungeonCrawler(
     const interact = useCallback(async (interaction: any, action: string) => {
         if (!stxAddress) return;
 
-        const [interactionAddress, interactionName] = interaction.contract.split('.');
+        const [interactionAddress, interactionName] = interaction.split('.');
 
         const functionArgs = [
             contractPrincipalCV(interactionAddress, interactionName),

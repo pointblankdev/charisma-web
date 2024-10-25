@@ -203,7 +203,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
                                 <ScrollArea className="pr-4 h-fit">
                                     <div className="space-y-4">
                                         {metadata.description.map?.((paragraph, index) => (
-                                            <p key={index} className="text-md text-transparent group-hover:text-gray-200 leading-normal max-w-[80ch] transition-all duration-300">
+                                            <p key={index} className="text-md text-transparent group-hover:text-gray-200 leading-normal md:leading-relaxed max-w-[80ch] transition-all duration-300">
                                                 {paragraph}
                                             </p>
                                         ))}

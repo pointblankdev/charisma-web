@@ -37,6 +37,7 @@
 ;; Action Execution
 (define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (begin
+    (try! (contract-call? .rulebook-registry authorize rulebook))
     (if (is-eq action "FORWARD") (try-forward-path rulebook)
     (if (is-eq action "REVERSE") (try-reverse-path rulebook)
     (err "INVALID_ACTION")))))
