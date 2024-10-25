@@ -16,8 +16,9 @@
 ;; Usage:
 ;; When executed, this contract will burn the set amount of energy from the user who interacts with it.
 
-;; Implement the interaction-trait
-(impl-trait .dao-traits-v7.interaction-trait)
+;; Traits
+(impl-trait .dao-traits-v8.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -37,16 +38,17 @@
 
 ;; Public functions
 
-(define-public (execute (action (string-ascii 32)))
-  (let ((sender tx-sender))
-    (if (is-eq action "BURN") (burn-energy-action sender)
+(define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
+  (begin
+    (if (is-eq action "BURN") (burn-energy-action rulebook)
         (err "INVALID_ACTION"))))
 
 ;; Fatigue Action Handler
 
-(define-private (burn-energy-action (sender principal))
-  (let ((amount (var-get energy-burn-amount)))
-    (match (contract-call? .dungeon-keeper exhaust amount sender)
+(define-private (burn-energy-action (rulebook <rulebook-trait>))
+  (let ((sender tx-sender) 
+    (amount (var-get energy-burn-amount)))
+    (match (contract-call? rulebook exhaust amount sender)
       success (handle-fatigue-success sender amount)
       error   (if (is-eq error u1) (handle-insufficient-energy sender amount)
               (if (is-eq error u405) (handle-fatigue-limit-exceeded sender amount)
@@ -58,7 +60,7 @@
 
 (define-private (handle-fatigue-success (sender principal) (amount uint))
   (begin
-    (print "A wave of exhaustion washes over the adventurer.")
+    (print "The sender exerts their energy to complete the task.")
     (ok "ENERGY_BURNED")))
 
 (define-private (handle-insufficient-energy (sender principal) (amount uint))

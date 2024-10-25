@@ -19,7 +19,9 @@
 ;; Cost: Fatigue
 ;; Reward: Variable DMG amount
 
-(impl-trait .dao-traits-v7.interaction-trait)
+;; Traits
+(impl-trait .dao-traits-v8.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -52,15 +54,16 @@
 
 ;; Public functions
 
-(define-public (execute (action (string-ascii 32)))
-  (let ((sender tx-sender))
-    (if (is-eq action "PETITION") (petition-action sender)
+(define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
+  (begin
+    (if (is-eq action "PETITION") (petition-action rulebook)
     (err "INVALID_ACTION"))))
 
 ;; Action Handler
 
-(define-private (petition-action (sender principal))
-  (let ((fatigue-response (unwrap-panic (contract-call? .fatigue execute "BURN"))))
+(define-private (petition-action (rulebook <rulebook-trait>))
+  (let ((sender tx-sender)
+    (fatigue-response (unwrap-panic (contract-call? .fatigue execute rulebook "BURN"))))
     (if (is-eq fatigue-response "ENERGY_BURNED") (handle-petition-attempt sender)
     (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
     (handle-unknown-error u1)))))

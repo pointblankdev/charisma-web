@@ -134,9 +134,9 @@ depends_on = []
 path = "contracts/interactions/fatigue.clar"
 depends_on = []
 
-# [contracts.petition]
-# path = "contracts/interactions/petition.clar"
-# depends_on = []
+[contracts.keepers-petition]
+path = "contracts/interactions/keepers-petition.clar"
+depends_on = []
 
 # [contracts.challenge]
 # path = "contracts/interactions/challenge.clar"
@@ -146,13 +146,13 @@ depends_on = []
 path = "contracts/interactions/charisma-mine.clar"
 depends_on = []
 
-# [contracts.the-troll-toll]
-# path = "contracts/interactions/the-troll-toll.clar"
-# depends_on = []
+[contracts.the-troll-toll]
+path = "contracts/interactions/the-troll-toll.clar"
+depends_on = []
 
-# [contracts.charismatic-corgi]
-# path = "contracts/interactions/charismatic-corgi.clar"
-# depends_on = []
+[contracts.charismatic-corgi]
+path = "contracts/interactions/charismatic-corgi.clar"
+depends_on = []
 
 [contracts.dungeon-crawler]
 path = "contracts/dungeon-crawler.clar"

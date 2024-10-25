@@ -19,8 +19,9 @@
 ;; - Uses the dungeon's VRF randomizer for fair and verifiable rolls
 ;; - Provides narrative feedback for each roll attempt
 
-;; Implement the interaction-trait
-(impl-trait .dao-traits-v7.interaction-trait)
+;; Traits
+(impl-trait .dao-traits-v8.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -37,7 +38,7 @@
 
 ;; Public functions
 
-(define-public (execute (action (string-ascii 32)))
+(define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
   (let ((sender tx-sender))
     (if (is-eq action "CF") (coin-flip-action sender)
     (if (is-eq action "D4") (roll-d4-action sender)

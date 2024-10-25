@@ -45,8 +45,9 @@
 ;; the protocol's security and fairness while ensuring proper technical setup for
 ;; all possible token operations during exploration.
 
-;; Implement the interaction-trait
-(impl-trait .dao-traits-v7.interaction-trait)
+;; Traits
+(impl-trait .dao-traits-v8.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -70,18 +71,19 @@
 
 ;; Public functions
 
-(define-public (execute (action (string-ascii 32)))
-  (let ((sender tx-sender))
-    (if (is-eq action "ENTER") (transfer-dmg-action sender)
+(define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
+  (begin
+    (if (is-eq action "ENTER") (transfer-dmg-action rulebook)
     (err "INVALID_ACTION"))))
 
 ;; Action Handler
-(define-private (transfer-dmg-action (sender principal))
-  (let ((last-sender (var-get last-user))
+(define-private (transfer-dmg-action (rulebook <rulebook-trait>))
+  (let ((sender tx-sender)
+    (last-sender (var-get last-user))
     (amount (var-get current-amount)))
     (var-set last-user sender)
     (var-set current-amount (+ amount AMOUNT_INCREMENT))
-    (match (contract-call? .dungeon-keeper transfer amount sender last-sender)
+    (match (contract-call? rulebook transfer amount sender last-sender)
       success (handle-entry-success sender amount)
       error   (handle-transfer-error error))))
 

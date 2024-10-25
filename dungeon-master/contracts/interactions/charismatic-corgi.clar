@@ -12,7 +12,9 @@
 ;; 4. Auto-reinvestment: Automatically converts 1 STX to CHA after successful trades
 ;; 5. Configurable Input: Allows admin adjustment of trade amounts up to 100 CHA
 
-(impl-trait .dao-traits-v7.interaction-trait)
+;; Traits
+(impl-trait .dao-traits-v8.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
 
 ;; Constants
 (define-constant CONTRACT_OWNER tx-sender)
@@ -33,10 +35,10 @@
   (ok (var-get contract-uri)))
 
 ;; Action Execution
-(define-public (execute (action (string-ascii 32)))
-  (let ((sender tx-sender))
-    (if (is-eq action "FORWARD") (try-forward-path sender)
-    (if (is-eq action "REVERSE") (try-reverse-path sender)
+(define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
+  (begin
+    (if (is-eq action "FORWARD") (try-forward-path rulebook)
+    (if (is-eq action "REVERSE") (try-reverse-path rulebook)
     (err "INVALID_ACTION")))))
 
 ;; Profit Tracking
@@ -46,9 +48,9 @@
     (var-set total-profit (+ (var-get total-profit) profit))))
 
 ;; Forward Path (CHA -> STX -> WELSH -> CHA)
-(define-private (try-forward-path (sender principal))
+(define-private (try-forward-path (rulebook <rulebook-trait>))
     (begin
-        (if (is-eq (unwrap-panic (contract-call? .fatigue execute "BURN")) "ENERGY_BURNED")
+        (if (is-eq (unwrap-panic (contract-call? .fatigue execute rulebook "BURN")) "ENERGY_BURNED")
             (let (
                 ;; First swap: CHA -> STX
                 (swap1 (unwrap! (contract-call? .univ2-path2 do-swap (var-get amount-in) .charisma-token .wstx .univ2-share-fee-to) (ok "NO_PROFIT_OPPORTUNITY")))
@@ -59,7 +61,7 @@
             )
             (if (> (get amt-out swap3) (var-get amount-in))
                 (begin
-                    (print "The adventurer successfully arbitraged the mysterious marketplace!")
+                    (print "The sender successfully arbitraged the mysterious marketplace!")
                     (update-profit (var-get amount-in))
                     (match (contract-call? .univ2-path2 do-swap u1000000 .wstx .charisma-token .univ2-share-fee-to)
                         s (print "With the profits, the adventurer swapped 1 STX to CHA.")
@@ -71,9 +73,9 @@
             (ok "NOT_ENOUGH_ENERGY"))))
 
 ;; Reverse Path (CHA -> WELSH -> STX -> CHA)
-(define-private (try-reverse-path (sender principal))
+(define-private (try-reverse-path (rulebook <rulebook-trait>))
     (begin
-        (if (is-eq (unwrap-panic (contract-call? .fatigue execute "BURN")) "ENERGY_BURNED")
+        (if (is-eq (unwrap-panic (contract-call? .fatigue execute rulebook "BURN")) "ENERGY_BURNED")
             (let (
                 ;; First swap: CHA -> WELSH
                 (swap1 (unwrap! (contract-call? .univ2-path2 do-swap (var-get amount-in) .charisma-token .welshcorgicoin-token .univ2-share-fee-to) (ok "NO_PROFIT_OPPORTUNITY")))

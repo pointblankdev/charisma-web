@@ -34,105 +34,105 @@
 ;; Public functions
 
 (define-public (execute (rulebook <rulebook-trait>) (action (string-ascii 32)))
-  (let ((sender tx-sender))
-    (if (is-eq action "MINT") (mint-action sender)
-    (if (is-eq action "BURN") (burn-action sender)
+  (begin
+    (if (is-eq action "MINT") (mint-action rulebook)
+    (if (is-eq action "BURN") (burn-action rulebook)
     (err "INVALID_ACTION")))))
 
 ;; Action Handlers
 
-(define-private (mint-action (sender principal))
-  (let ((fatigue-response (unwrap-panic (contract-call? .fatigue execute "BURN"))))
-    (if (is-eq fatigue-response "ENERGY_BURNED") (mint-attempt sender)
-    (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
-    (handle-fatigue-error sender)))))
+(define-private (mint-action (rulebook <rulebook-trait>))
+  (let ((fatigue-response (unwrap-panic (contract-call? .fatigue execute rulebook "BURN"))))
+    (if (is-eq fatigue-response "ENERGY_BURNED") (mint-attempt)
+    (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy)
+    (handle-fatigue-error)))))
 
-(define-private (burn-action (sender principal))
-  (let ((fatigue-response (unwrap-panic (contract-call? .fatigue execute "BURN"))))
-    (if (is-eq fatigue-response "ENERGY_BURNED") (burn-attempt sender)
-    (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
-    (handle-fatigue-error sender)))))
+(define-private (burn-action (rulebook <rulebook-trait>))
+  (let ((fatigue-response (unwrap-panic (contract-call? .fatigue execute rulebook "BURN"))))
+    (if (is-eq fatigue-response "ENERGY_BURNED") (burn-attempt)
+    (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy)
+    (handle-fatigue-error)))))
 
 ;; Token Operation Handlers
 
-(define-private (mint-attempt (sender principal))
+(define-private (mint-attempt)
   (let ((amount (unwrap-panic (contract-call? .charisma-token get-max-liquidity-flow))))
     (match (contract-call? .charisma-token wrap amount)
-      success (handle-mint-success sender amount)
-      error (if (is-eq error u402) (handle-mint-locked sender)
-            (if (is-eq error u403) (handle-mint-unprepared sender)
-            (if (is-eq error u405) (handle-mint-invalid sender)
-            (handle-mint-unknown-error sender)))))))
+      success (handle-mint-success)
+      error (if (is-eq error u402) (handle-mint-locked)
+            (if (is-eq error u403) (handle-mint-unprepared)
+            (if (is-eq error u405) (handle-mint-invalid)
+            (handle-mint-unknown-error)))))))
 
-(define-private (burn-attempt (sender principal))
+(define-private (burn-attempt)
   (let ((amount (unwrap-panic (contract-call? .charisma-token get-max-liquidity-flow))))
     (match (contract-call? .charisma-token unwrap amount)
-      success (handle-burn-success sender amount)
-      error   (if (is-eq error u402) (handle-burn-locked sender)
-              (if (is-eq error u403) (handle-burn-unprepared sender)
-              (if (is-eq error u405) (handle-burn-invalid sender)
-              (handle-burn-unknown-error sender)))))))
+      success (handle-burn-success)
+      error   (if (is-eq error u402) (handle-burn-locked)
+              (if (is-eq error u403) (handle-burn-unprepared)
+              (if (is-eq error u405) (handle-burn-invalid)
+              (handle-burn-unknown-error)))))))
 
 ;; Energy Cost Handlers
 
-(define-private (handle-insufficient-energy (sender principal))
+(define-private (handle-insufficient-energy)
   (begin
     (print "The sender lacks the energy required to wrap tokens.")
     (ok "INSUFFICIENT_ENERGY")))
 
-(define-private (handle-fatigue-error (sender principal))
+(define-private (handle-fatigue-error)
   (begin
     (print "The senders is too exhausted to wrap tokens.")
     (ok "ENERGY_ERROR")))
 
 ;; Response Handlers
 
-(define-private (handle-mint-success (sender principal) (amount uint))
+(define-private (handle-mint-success)
   (begin
     (print "The sender sucessfully minted new Charisma tokens!")
     (ok "TOKENS_WRAPPED")))
 
-(define-private (handle-burn-success (sender principal) (amount uint))
+(define-private (handle-burn-success)
   (begin
     (print "The Charisma tokens dissolve back into the dungeon's mysterious aether.")
     (ok "TOKENS_UNWRAPPED")))
 
-(define-private (handle-mint-locked (sender principal))
+(define-private (handle-mint-locked)
   (begin
     (print "The dungeon's minting crucible is currently sealed by magical wards.")
     (ok "LIQUIDITY_LOCKED")))
 
-(define-private (handle-burn-locked (sender principal))
+(define-private (handle-burn-locked)
   (begin
     (print "The dungeon's burning altar is currently sealed by magical wards.")
     (ok "LIQUIDITY_LOCKED")))
 
-(define-private (handle-mint-unprepared (sender principal))
+(define-private (handle-mint-unprepared)
   (begin
     (print "The adventurer hasn't been red-pilled and was unable to mint Charisma tokens.")
     (ok "NOT_RED_PILLED")))
 
-(define-private (handle-burn-unprepared (sender principal))
+(define-private (handle-burn-unprepared)
   (begin
     (print "The adventurer hasn't been red-pilled and was unable to mint Charisma tokens.")
     (ok "NOT_RED_PILLED")))
 
-(define-private (handle-mint-invalid (sender principal))
+(define-private (handle-mint-invalid)
   (begin
     (print "The mystical crystallization fails as the arcane formulae go awry.")
     (ok "INVALID_INPUT")))
 
-(define-private (handle-burn-invalid (sender principal))
+(define-private (handle-burn-invalid)
   (begin
     (print "The sacrificial ritual falters as the arcane formulae go awry.")
     (ok "INVALID_INPUT")))
 
-(define-private (handle-mint-unknown-error (sender principal))
+(define-private (handle-mint-unknown-error)
   (begin
     (print "Unknown forces within the dungeon disrupt the minting ritual.")
     (ok "UNKNOWN_ERROR")))
 
-(define-private (handle-burn-unknown-error (sender principal))
+(define-private (handle-burn-unknown-error)
   (begin
     (print "Unknown forces within the dungeon disrupt the burning ritual.")
     (ok "UNKNOWN_ERROR")))

@@ -37,12 +37,14 @@
 ;; system integrity. The architecture supports the protocol's innovative approach to multi-faceted
 ;; blockchain interactions, allowing for complex operations to be performed in a single transaction.
 
-(use-trait interaction-trait .dao-traits-v7.interaction-trait)
+(use-trait rulebook-trait .dao-traits-v8.rulebook-trait)
+(use-trait interaction-trait .dao-traits-v8.interaction-trait)
 
-(define-public (interact (interaction <interaction-trait>) (action (string-ascii 32)))
-  (contract-call? interaction execute action))
+(define-public (interact (rulebook <rulebook-trait>) (interaction <interaction-trait>) (action (string-ascii 32)))
+  (contract-call? interaction execute rulebook action))
 
 (define-public (explore
+  (rulebook <rulebook-trait>)
   (interaction-1 (optional <interaction-trait>)) (action-1 (optional (string-ascii 32)))
   (interaction-2 (optional <interaction-trait>)) (action-2 (optional (string-ascii 32)))
   (interaction-3 (optional <interaction-trait>)) (action-3 (optional (string-ascii 32)))
@@ -52,14 +54,14 @@
   (interaction-7 (optional <interaction-trait>)) (action-7 (optional (string-ascii 32)))
   (interaction-8 (optional <interaction-trait>)) (action-8 (optional (string-ascii 32))))
   (let (
-    (response-1 (match interaction-1 i1 (match (interact i1 (match action-1 a1 a1 "")) success success error error) ""))
-    (response-2 (match interaction-2 i2 (match (interact i2 (match action-2 a2 a2 "")) success success error error) ""))
-    (response-3 (match interaction-3 i3 (match (interact i3 (match action-3 a3 a3 "")) success success error error) ""))
-    (response-4 (match interaction-4 i4 (match (interact i4 (match action-4 a4 a4 "")) success success error error) ""))
-    (response-5 (match interaction-5 i5 (match (interact i5 (match action-5 a5 a5 "")) success success error error) ""))
-    (response-6 (match interaction-6 i6 (match (interact i6 (match action-6 a6 a6 "")) success success error error) ""))
-    (response-7 (match interaction-7 i7 (match (interact i7 (match action-7 a7 a7 "")) success success error error) ""))
-    (response-8 (match interaction-8 i8 (match (interact i8 (match action-8 a8 a8 "")) success success error error) ""))
+    (response-1 (match interaction-1 i1 (match (interact rulebook i1 (match action-1 a1 a1 "")) success success error error) ""))
+    (response-2 (match interaction-2 i2 (match (interact rulebook i2 (match action-2 a2 a2 "")) success success error error) ""))
+    (response-3 (match interaction-3 i3 (match (interact rulebook i3 (match action-3 a3 a3 "")) success success error error) ""))
+    (response-4 (match interaction-4 i4 (match (interact rulebook i4 (match action-4 a4 a4 "")) success success error error) ""))
+    (response-5 (match interaction-5 i5 (match (interact rulebook i5 (match action-5 a5 a5 "")) success success error error) ""))
+    (response-6 (match interaction-6 i6 (match (interact rulebook i6 (match action-6 a6 a6 "")) success success error error) ""))
+    (response-7 (match interaction-7 i7 (match (interact rulebook i7 (match action-7 a7 a7 "")) success success error error) ""))
+    (response-8 (match interaction-8 i8 (match (interact rulebook i8 (match action-8 a8 a8 "")) success success error error) ""))
     (output {
       i1: {x: interaction-1, y: action-1, z: response-1},
       i2: {x: interaction-2, y: action-2, z: response-2},
