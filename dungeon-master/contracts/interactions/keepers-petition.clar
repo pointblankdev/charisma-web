@@ -28,7 +28,7 @@
 
 ;; Data Variables
 (define-data-var token-amount uint u10000000)
-(define-data-var token-principal principal tx-sender)
+(define-data-var token-from principal .charisma-token)
 (define-data-var contract-uri (optional (string-utf8 256)) 
   (some u"https://charisma.rocks/api/v0/interactions/keepers-petition"))
 
@@ -43,8 +43,8 @@
 (define-read-only (get-interaction-uri)
   (ok (var-get contract-uri)))
 
-(define-read-only (get-token-principal)
-  (ok (var-get token-principal)))
+(define-read-only (get-token-from)
+  (ok (var-get token-from)))
 
 (define-read-only (get-token-amount)
   (ok (var-get token-amount)))
@@ -62,12 +62,13 @@
 
 ;; Action Handler
 
-(define-private (petition-action (rulebook <rulebook-trait>))
-  (let ((sender tx-sender)
-    (fatigue-response (unwrap-panic (contract-call? .fatigue execute rulebook "BURN"))))
-    (if (is-eq fatigue-response "ENERGY_BURNED") (handle-petition-attempt rulebook sender)
-    (if (is-eq fatigue-response "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
-    (handle-unknown-error u1)))))
+(define-private (petition-action (sender principal))
+  (begin
+    (match (contract-call? .fatigue execute "BURN")
+      success (if (is-eq success "ENERGY_BURNED") (handle-petition-attempt sender)
+              (if (is-eq success "ENERGY_NOT_BURNED") (handle-insufficient-energy sender)
+              (handle-insufficient-energy sender)))
+      errror  (handle-unknown-error error))))
 
 ;; Response Handlers
 
@@ -97,10 +98,10 @@
     (asserts! (is-contract-owner tx-sender) ERR_UNAUTHORIZED)
     (ok (var-set contract-uri new-uri))))
 
-(define-public (set-token-principal (new-principal principal))
+(define-public (set-token-from (new-principal principal))
   (begin
     (asserts! (is-contract-owner tx-sender) ERR_UNAUTHORIZED)
-    (ok (var-set token-principal new-principal))))
+    (ok (var-set token-from new-principal))))
 
 (define-public (set-token-amount (new-reward uint))
   (begin

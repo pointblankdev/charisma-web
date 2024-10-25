@@ -155,7 +155,7 @@
 
 (define-private (calculate-balance-integral-39 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager generate-sample-points-39 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-39 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u38))
         (areas (calculate-trapezoid-areas-39 balances dx)))
@@ -163,7 +163,7 @@
 
 (define-private (calculate-balance-integral-19 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager generate-sample-points-19 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-19 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u18))
         (areas (calculate-trapezoid-areas-19 balances dx)))
@@ -171,7 +171,7 @@
 
 (define-private (calculate-balance-integral-9 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager generate-sample-points-9 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-9 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u8))
         (areas (calculate-trapezoid-areas-9 balances dx)))
@@ -179,7 +179,7 @@
 
 (define-private (calculate-balance-integral-5 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager generate-sample-points-5 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-5 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u4))
         (areas (calculate-trapezoid-areas-5 balances dx)))
@@ -187,7 +187,7 @@
 
 (define-private (calculate-balance-integral-2 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager generate-sample-points-2 address start-block end-block))
+        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-2 address start-block end-block))
         (balances (map get-balance sample-points))
         (dx (/ (- end-block start-block) u1))
         (areas (calculate-trapezoid-areas-2 balances dx)))
@@ -196,7 +196,7 @@
 (define-private (calculate-balance-integral (address principal) (start-block uint) (end-block uint))
     (let (
         (block-difference (- end-block start-block))
-        (thresholds (unwrap-panic (contract-call? .meme-engine-manager get-thresholds))))
+        (thresholds (unwrap-panic (contract-call? .meme-engine-manager-rc2 get-thresholds))))
         (if (>= block-difference (get threshold-39-point thresholds)) (calculate-balance-integral-39 address start-block end-block)
         (if (>= block-difference (get threshold-19-point thresholds)) (calculate-balance-integral-19 address start-block end-block)
         (if (>= block-difference (get threshold-9-point thresholds)) (calculate-balance-integral-9 address start-block end-block)
@@ -240,30 +240,34 @@
 ;; Meme Engine Response Handlers
 
 (define-private (handle-tap-success (sender principal) (energy uint) (integral uint))
-  (begin
-    (print {sender: sender, energy: energy, integral: integral})
-    (print "The tokens resonate with power, and produce energy for their holder.")
-    (ok "ENERGY_GENERATED")))
+  (let ((op "ENERGY_GENERATED"))
+    (print {op: op, sender: sender, energy: energy, integral: integral, 
+      message: "The tokens resonate with power, and produce energy for their holder."})
+    (ok op)))
 
 (define-private (handle-tap-insufficient-balance (sender principal))
-  (begin
-    (print "The holder's tokens balances are too low to generate any energy.")
-    (ok "ENERGY_NOT_GENERATED")))
+  (let ((op "ENERGY_NOT_GENERATED"))
+    (print {op: op, sender: sender, 
+      message: "The holder's tokens balances are too low to generate any energy."})
+    (ok op)))
 
 (define-private (handle-tap-limit-exceeded (sender principal))
-  (begin
-    (print "Charisma energy capacity exceeded, please contact a protocol administrator.")
-    (ok "ENERGY_NOT_GENERATED")))
+  (let ((op "ENERGY_NOT_GENERATED"))
+    (print {op: op, sender: sender, 
+      message: "Charisma energy capacity exceeded, please contact a protocol administrator."})
+    (ok op)))
 
 (define-private (handle-tap-unverified (sender principal))
-  (begin
-    (print "This contract has not been verified, please contact a protocol administrator.")
-    (ok "ENERGY_NOT_GENERATED")))
+  (let ((op "ENERGY_NOT_GENERATED"))
+    (print {op: op, sender: sender, 
+      message: "This contract has not been verified, please contact a protocol administrator."})
+    (ok op)))
 
 (define-private (handle-tap-unknown-error (sender principal))
-  (begin
-    (print "An unknown disturbance prevents the tokens from generating energy.")
-    (ok "ENERGY_NOT_GENERATED")))
+  (let ((op "ENERGY_NOT_GENERATED"))
+    (print {op: op, sender: sender, 
+      message: "An unknown disturbance prevents the tokens from generating energy."})
+    (ok op)))
 
 ;; Admin functions
 

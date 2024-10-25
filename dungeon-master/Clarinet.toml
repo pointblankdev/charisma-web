@@ -142,17 +142,17 @@ depends_on = []
 # path = "contracts/interactions/challenge.clar"
 # depends_on = []
 
-[contracts.charisma-mine]
-path = "contracts/interactions/charisma-mine.clar"
-depends_on = []
+# [contracts.charisma-mine]
+# path = "contracts/interactions/charisma-mine.clar"
+# depends_on = []
 
-[contracts.the-troll-toll]
-path = "contracts/interactions/the-troll-toll.clar"
-depends_on = []
+# [contracts.the-troll-toll]
+# path = "contracts/interactions/the-troll-toll.clar"
+# depends_on = []
 
-[contracts.charismatic-corgi]
-path = "contracts/interactions/charismatic-corgi.clar"
-depends_on = []
+# [contracts.charismatic-corgi]
+# path = "contracts/interactions/charismatic-corgi.clar"
+# depends_on = []
 
 [contracts.registry]
 path = "contracts/rulebook-registry.clar"
