@@ -34,6 +34,8 @@ import { Label } from "@components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 import { ChevronDown, UserPlus, Users, Bot } from "lucide-react"; // Import icons
 import { useGlobalState } from "@lib/hooks/global-state-context"
+import { Badge } from "@components/ui/badge"
+import numeral from "numeral"
 
 export type Collection = (typeof collections)[number]
 
@@ -60,6 +62,7 @@ export interface Interaction {
   uri: string;
   category: InteractionCategory;
   subtitle: string;
+  apy?: number;
   description: string[];
   contract: string;
   actions: string[];
@@ -119,12 +122,12 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       cover: "/explorations/energy-arbitrage.png",
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc2',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc3',
           action: "TAP",
           description: "Generate energy from your iouWELSH holdings"
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc1',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc2',
           action: "TAP",
           description: "Generate energy from your iouROO holdings"
         },
@@ -146,12 +149,12 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
       cover: "/explorations/charismatic-flow.png",
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc4',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc5',
           action: "TAP",
           description: "Generate base energy"
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc4',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc5',
           action: "PETITION",
           description: "Petition the Keepers for additional DMG tokens"
         },
@@ -345,10 +348,15 @@ function InteractionArtwork({
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
-          <div
-            className="overflow-hidden rounded-md cursor-pointer"
-            onClick={handleInteractionClick}
-          >
+          <div className="overflow-hidden rounded-md cursor-pointer relative" onClick={handleInteractionClick}>
+            {/* APY Badge */}
+            {interaction.apy && (
+              <Badge
+                className="absolute top-2 right-2 z-10 bg-black/75 text-white hover:bg-black/75"
+              >
+                {numeral(interaction.apy).format('0.00a')}% APY
+              </Badge>
+            )}
             <Image
               src={interaction.cover}
               alt={interaction.name}

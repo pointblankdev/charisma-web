@@ -106,12 +106,12 @@ depends_on = []
 path = "contracts/meme-engines/meme-engine-manager.clar"
 depends_on = []
 
-[contracts.raven-resistance]
-path = "contracts/raven-resistance.clar"
+[contracts.raven-wisdom]
+path = "contracts/raven-wisdom.clar"
 depends_on = []
 
-[contracts.energy-capacity]
-path = "contracts/energy-capacity.clar"
+[contracts.memobot-capacity]
+path = "contracts/memobot-capacity.clar"
 depends_on = []
 
 [contracts.meme-engine]
@@ -170,7 +170,7 @@ depends_on = []
 
 [repl.analysis]
 passes = ["check_checker"]
-check_checker = { trusted_sender = true, trusted_caller = true, callee_filter = true }
+check_checker = { trusted_sender = false, trusted_caller = false, callee_filter = false }
 
 # Check-checker settings:
 # trusted_sender: if true, inputs are trusted after tx_sender has been checked.

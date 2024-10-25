@@ -489,3 +489,17 @@ export async function clearSwapData(poolId: string): Promise<void> {
   // clear all items from list
   await kv.del(`pool:${poolId}:swaps`);
 }
+
+// meme engine calibration data
+
+export async function saveTapEvent(event: any) {
+  const sender = event['sender'];
+  const energy = event['energy'];
+  const integral = event['integral'];
+  const timestamp = Date.now();
+
+  const tapEvent = { sender, energy, integral, timestamp };
+
+  // store the tap event in a list
+  await kv.lpush('tap-events', tapEvent);
+}

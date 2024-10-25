@@ -1,4 +1,4 @@
-;; Charisma Meme Engine
+;; Hold-to-Earn Engine
 ;;
 ;; This contract implements the core energy generation mechanism of the Charisma protocol
 ;; as an interaction-compatible component. It calculates energy output based on users' 
@@ -239,22 +239,23 @@
 
 (define-private (handle-tap-success (sender principal) (energy uint) (integral uint))
   (begin
-    (print "The tokens resonate with powerful energy, enriched by their holder's profound autism.")
+    (print {sender: sender, energy: energy, integral: integral})
+    (print "The tokens resonate with power, and produce energy for their holder.")
     (ok "ENERGY_GENERATED")))
 
 (define-private (handle-tap-insufficient-balance (sender principal))
   (begin
-    (print "The tokens are too weak to generate any meaningful energy.")
+    (print "The holder's tokens balances are too low to generate any energy.")
     (ok "ENERGY_NOT_GENERATED")))
 
 (define-private (handle-tap-limit-exceeded (sender principal))
   (begin
-    (print "The dungeon's energy capacity has been reached, unable to process more token resonance.")
+    (print "Charisma energy capacity exceeded, please contact a protocol administrator.")
     (ok "ENERGY_NOT_GENERATED")))
 
 (define-private (handle-tap-unverified (sender principal))
   (begin
-    (print "This energy generation attempt lacks proper verification from the dungeon.")
+    (print "This contract has not been verified, please contact a protocol administrator.")
     (ok "ENERGY_NOT_GENERATED")))
 
 (define-private (handle-tap-unknown-error (sender principal))

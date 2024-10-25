@@ -20,14 +20,14 @@
 ;;    - modify-exhaust: Adjusts energy consumption
 ;;
 ;; 3. DMG Token Modifications:
-;;    - modify-transfer: Applies transfer modifications (e.g., Raven reductions)
+;;    - modify-transfer: Applies transfer modifications (e.g., Raven Wisdom)
 ;;    - modify-burn: Applies burn modifications
 ;;    - modify-lock/unlock: Handles token locking modifications
 ;;
 ;; Integration Points:
 ;; - Energetic Welsh (.energetic-welsh): NFT-based energy generation bonuses
-;; - Raven Resistance (.raven-resistance): Burn reduction calculations
-;; - Energy Capacity (.energy-capacity): Maximum energy limits
+;; - Raven Wisdom (.raven-wisdom): Burn wisdom calculations
+;; - Memobot Capacity (.memobot-capacity): Maximum energy limits
 ;;
 ;; Modification Order:
 ;; The order of modifications is crucial for correct calculation:
@@ -68,7 +68,7 @@
 (define-read-only (modify-energize (ctx {amount: uint, target: principal, caller: principal}))
     (let ((base-amount (get amount ctx))
         (energized-amount (apply-energetic-welsh base-amount (get target ctx) (get caller ctx)))
-        (capacity-amount (apply-max-capacity energized-amount)))
+        (capacity-amount (apply-max-capacity energized-amount (get target ctx))))
         {
             amount: capacity-amount,
             target: (get target ctx)
@@ -76,7 +76,7 @@
 
 (define-read-only (modify-exhaust (ctx {amount: uint, target: principal, caller: principal}))
     (let ((base-amount (get amount ctx))
-        (reduced-amount (apply-raven-reduction base-amount (get target ctx))))
+        (reduced-amount (apply-raven-wisdom base-amount (get target ctx))))
         {
             amount: reduced-amount,
             target: (get target ctx)
@@ -85,7 +85,7 @@
 ;; Effect modification functions for governance tokens
 (define-read-only (modify-transfer (ctx {amount: uint, sender: principal, target: principal, caller: principal}))
     (let ((base-amount (get amount ctx))
-        (reduced-amount (apply-raven-reduction base-amount (get sender ctx))))
+        (reduced-amount (apply-raven-wisdom base-amount (get sender ctx))))
         {
             amount: reduced-amount,
             sender: (get sender ctx),
@@ -94,7 +94,7 @@
 
 (define-read-only (modify-burn (ctx {amount: uint, target: principal, caller: principal}))
     (let ((base-amount (get amount ctx))
-        (reduced-amount (apply-raven-reduction base-amount (get target ctx))))
+        (reduced-amount (apply-raven-wisdom base-amount (get target ctx))))
         {
             amount: reduced-amount,
             target: (get target ctx)
@@ -119,9 +119,8 @@
 (define-private (apply-energetic-welsh (amount uint) (user principal) (caller principal))
   (contract-call? .energetic-welsh apply amount user caller))
 
-(define-private (apply-raven-reduction (amount uint) (user principal))
-  (let ((reduction (contract-call? .raven-resistance get-burn-reduction user)))
-    (- amount (/ (* amount reduction) u1000000))))
+(define-private (apply-raven-wisdom (amount uint) (user principal))
+  (contract-call? .raven-wisdom apply amount user))
 
-(define-private (apply-max-capacity (energy uint))
-  (contract-call? .energy-capacity apply-max-capacity energy))
+(define-private (apply-max-capacity (energy uint) (user principal))
+  (contract-call? .memobot-capacity apply energy user))

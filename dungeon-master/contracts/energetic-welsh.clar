@@ -22,13 +22,13 @@
 ;; Default Supported Engines:
 ;; - Pure Welsh Engines:
 ;;   | .meme-engine-welsh-rc1
-;;   | .meme-engine-iou-welsh-rc2
+;;   | .meme-engine-iou-welsh-rc3
 ;;   | .meme-engine-welsh-iou-welsh-rc2
 ;; - Hybrid Engines:
 ;;   | .meme-engine-cha-iou-welsh-rc2
 ;;   | .meme-engine-cha-welsh-rc1
 ;;   | .meme-engine-cha-updog-rc1
-;;   | .meme-engine-iou-welsh-rc2
+;;   | .meme-engine-iou-welsh-rc3
 ;;
 ;; Admin Capabilities:
 ;; 1. Bonus Configuration:
@@ -78,12 +78,12 @@
 
 ;; Initialize supported engines
 (map-set supported-engines .meme-engine-welsh-rc1 true)
-(map-set supported-engines .meme-engine-iou-welsh-rc2 true)
+(map-set supported-engines .meme-engine-iou-welsh-rc3 true)
 (map-set supported-engines .meme-engine-welsh-iou-welsh-rc2 true)
 (map-set supported-engines .meme-engine-cha-iou-welsh-rc2 true)
 (map-set supported-engines .meme-engine-cha-welsh-rc1 true)
 (map-set supported-engines .meme-engine-cha-updog-rc1 true)
-(map-set supported-engines .meme-engine-iou-welsh-rc2 true)
+(map-set supported-engines .meme-engine-iou-welsh-rc3 true)
 
 ;; Helper function to validate bonus amount
 (define-private (is-valid-bonus (amount uint))
