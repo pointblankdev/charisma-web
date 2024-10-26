@@ -1,7 +1,4 @@
-import id from "date-fns/locale/id/index.js";
-import { addLand, cacheGlobalState, clearLeaderboard, clearRewardsLeaderboard, clearSwapData, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, getPoolData, removeLand, removeNftCollection, saveSwapEvent, setContractMetadata, setHadLandBefore, setLand, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata, setNftMetadata } from "./kv";
-import { Land } from "./kv.types";
-import { kv } from "@vercel/kv";
+import { addLand, clearLeaderboard, clearRewardsLeaderboard, clearSwapData, getContractMetadata, getExperienceLeaderboard, getGlobalState, getLand, getLands, getLandsBalance, getMob, getNftCollectionMetadata, getNftCollections, getNftMetadata, getPoolData, getTapData, removeLand, removeNftCollection, saveSwapEvent, setContractMetadata, setHadLandBefore, setLand, setLandsBalance, setLandWhitelisted, setMob, setNftCollectionMetadata, setNftMetadata } from "./kv";
 
 describe('tokens api', () => {
 
@@ -625,5 +622,15 @@ describe('swap data storage', () => {
         await clearSwapData('5')
         await clearSwapData('6')
         await clearSwapData('7')
+    })
+})
+
+// tap data storage
+
+describe('tap data storage', () => {
+
+    it('should get tap data', async () => {
+        const response = await getTapData()
+        console.log(response)
     })
 })

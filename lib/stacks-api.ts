@@ -1321,6 +1321,7 @@ export interface InteractionMetadata {
   contract: string;
   category: string;
   actions: string[];
+  analytics?: any;
 }
 
 export async function getInteractionUri(contractAddress: string, contractName: string): Promise<InteractionMetadata | null> {
