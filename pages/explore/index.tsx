@@ -36,6 +36,7 @@ import { ChevronDown, UserPlus, Users, Bot } from "lucide-react"; // Import icon
 import { useGlobalState } from "@lib/hooks/global-state-context"
 import { Badge } from "@components/ui/badge"
 import numeral from "numeral"
+import { getEnhancedTapData } from "@lib/data/engines/apy-calculator"
 
 export type Collection = (typeof collections)[number]
 
@@ -62,7 +63,7 @@ export interface Interaction {
   uri: string;
   category: InteractionCategory;
   subtitle: string;
-  apy?: number;
+  analytics: any;
   description: string[];
   contract: string;
   actions: string[];
@@ -97,22 +98,22 @@ export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
     interactionIds.map(async (interaction: string) => {
 
       const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
-
       if (!metadata) return null;
 
       return {
         name: metadata.name,
         contract: metadata.contract,
-        cover: metadata.image.replace(SITE_URL, ''),
+        cover: metadata.image,
         type: "interaction" as const,
         category: metadata.category as InteractionCategory,
+        analytics: metadata.analytics || {},
         subtitle: metadata.subtitle || '',
         description: metadata.description || [],
         uri: metadata.url.replace(SITE_URL, ''),
         actions: metadata.actions || [],
       };
     })
-  )).filter((item): item is Interaction => item !== null);
+  )).filter((item) => item !== null);
 
   // Curated list of explorations
   const explorations: Exploration[] = [
@@ -354,13 +355,13 @@ function InteractionArtwork({
     <div className={cn("space-y-3", className)} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
-          <div className="overflow-hidden rounded-md cursor-pointer relative" onClick={handleInteractionClick}>
+          <div className="relative overflow-hidden rounded-md cursor-pointer" onClick={handleInteractionClick}>
             {/* APY Badge */}
-            {interaction.apy && (
+            {interaction?.analytics.apy && (
               <Badge
-                className="absolute top-2 right-2 z-10 bg-black/75 text-white hover:bg-black/75"
+                className="absolute z-10 text-white top-2 right-2 bg-black/75 hover:bg-black/75"
               >
-                {numeral(interaction.apy).format('0.00a')}% APY
+                {numeral(interaction?.analytics.apy).format('0')}% APY
               </Badge>
             )}
             <Image
