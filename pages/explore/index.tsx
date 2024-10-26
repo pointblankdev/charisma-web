@@ -36,7 +36,6 @@ import { ChevronDown, UserPlus, Users, Bot } from "lucide-react"; // Import icon
 import { useGlobalState } from "@lib/hooks/global-state-context"
 import { Badge } from "@components/ui/badge"
 import numeral from "numeral"
-import { getEnhancedTapData } from "@lib/data/engines/apy-calculator"
 
 export type Collection = (typeof collections)[number]
 
@@ -93,7 +92,7 @@ interface ExplorePageProps {
   explorations: Exploration[];
 }
 
-export const getStaticProps: GetStaticProps<ExplorePageProps> = async () => {
+export const getStaticProps: GetStaticProps<any> = async () => {
   const interactionData = (await Promise.all(
     interactionIds.map(async (interaction: string) => {
 
