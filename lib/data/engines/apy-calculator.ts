@@ -1,3 +1,4 @@
+import { geFatigueEnergyCost, getKeepersPetitionRewardAmount } from "@lib/stacks-api";
 import { kv } from "@vercel/kv";
 
 interface TapEvent {
@@ -178,12 +179,18 @@ export class TapAnalyticsCalculator {
 
 // Example usage with your existing code:
 export async function getEnhancedTapData() {
-  const energyValue = 1; // Set this to your actual energy-to-token conversion rate
+  const energyValue = await getEnergyValue()
   return await TapAnalyticsCalculator.getEnhancedTapData(kv, energyValue);
 }
 
 export async function getUserAnalytics(userAddress: string) {
   const taps: TapEvent[] = await kv.lrange('tap-events', 0, 999);
-  const energyValue = 1; // Set this to your actual energy-to-token conversion rate
+  const energyValue = await getEnergyValue()
   return TapAnalyticsCalculator.calculateUserAnalytics(taps, userAddress, energyValue);
+}
+
+export async function getEnergyValue() {
+  const keepersPetitionTokenAmount = await getKeepersPetitionRewardAmount()
+  const fatigueEnergyCost = await geFatigueEnergyCost()
+  return keepersPetitionTokenAmount / fatigueEnergyCost;
 }

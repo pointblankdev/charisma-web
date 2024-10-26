@@ -1360,3 +1360,31 @@ export async function getInteractionUri(contractAddress: string, contractName: s
     return null;
   }
 }
+
+export const getKeepersPetitionRewardAmount = async () => {
+  const { result }: any = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'keepers-petition-rc7',
+    functionName: 'get-token-amount',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: []
+    }
+  });
+
+  return cvToValue(hexToCV(result)).value;
+}
+
+export const geFatigueEnergyCost = async () => {
+  const { result }: any = await scApi.callReadOnlyFunction({
+    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    contractName: 'fatigue-rc7',
+    functionName: 'get-energy-burn-amount',
+    readOnlyFunctionArgs: {
+      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      arguments: []
+    }
+  });
+
+  return cvToValue(hexToCV(result)).value;
+}

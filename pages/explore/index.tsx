@@ -7,7 +7,7 @@ import Page from "@components/page"
 import { SkipNavContent } from "@reach/skip-nav"
 import Layout from "@components/layout/layout"
 import { GetStaticProps } from "next"
-import { getInteractionUri, InteractionMetadata } from "@lib/stacks-api"
+import { geFatigueEnergyCost, getInteractionUri, getKeepersPetitionRewardAmount, InteractionMetadata } from "@lib/stacks-api"
 import { cn } from "@lib/utils"
 import {
   ContextMenu,
