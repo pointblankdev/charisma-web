@@ -43,9 +43,10 @@ export function useDungeonCrawler(
             }) || [];
         }
 
-        const [interactionAddress, interactionName] = interaction.split('.');
+        const [interactionAddress, interactionName] = interaction.contract.split('.');
 
         const functionArgs = [
+            contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'dungeon-keeper-rc6'),
             contractPrincipalCV(interactionAddress, interactionName),
             stringAsciiCV(action)
         ];
@@ -66,11 +67,10 @@ export function useDungeonCrawler(
 
         const functionArgs = interactions.slice(0, 8).reduce((args, { contractAddress, action }) => {
             const [principal, name] = contractAddress.split('.');
-            console.log(principal, name);
             args.push(optionalCVOf(contractPrincipalCV(principal, name)));
             args.push(optionalCVOf(stringAsciiCV(action)));
             return args;
-        }, [] as any[]);
+        }, [contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'dungeon-keeper-rc6')] as any[]);
 
         // Fill remaining slots with noneCV if less than 8 interactions are provided
         while (functionArgs.length < 16) {
