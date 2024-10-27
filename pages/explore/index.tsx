@@ -244,9 +244,9 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
   const getCategoryDescription = (category: InteractionCategory) => {
     switch (category) {
       case INTERACTION_CATEGORIES.UTILITY:
-        return "Core mechanisms that power other interactions in the dungeon.";
+        return "Core mechanisms that power other interactions in the protocol.";
       case INTERACTION_CATEGORIES.REWARD:
-        return "Interactions that offer rewards for brave adventurers.";
+        return "Interactions that offer rewards at the cost of energy or other requirements.";
       case INTERACTION_CATEGORIES.ENGINE:
         return "Farm token rewards without giving up custody of your assets.";
       default:
