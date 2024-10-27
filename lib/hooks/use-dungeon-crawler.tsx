@@ -24,7 +24,7 @@ interface ExploreParams {
 
 interface DungeonCrawlerHook {
     explore: (params: ExploreParams) => Promise<void>;
-    interact: (interaction: any, action: string) => Promise<void>;
+    interact: (metadata: any, action: string) => Promise<void>;
 }
 
 export function useDungeonCrawler(
@@ -33,9 +33,8 @@ export function useDungeonCrawler(
 ): DungeonCrawlerHook {
     const { stxAddress } = useGlobalState();
 
-    const interact = useCallback(async (interaction: any, action: string) => {
+    const interact = useCallback(async (metadata: any, action: string) => {
         if (!stxAddress) return;
-
 
         function buildPostConditions(postConditions: any[]) {
             return postConditions?.map(({ principal, contractId, tokenName }: any) => {
@@ -43,7 +42,7 @@ export function useDungeonCrawler(
             }) || [];
         }
 
-        const [interactionAddress, interactionName] = interaction.contract.split('.');
+        const [interactionAddress, interactionName] = metadata.contract.split('.');
 
         const functionArgs = [
             contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'dungeon-keeper-rc6'),
@@ -57,8 +56,8 @@ export function useDungeonCrawler(
             contractName,
             functionName: 'interact',
             functionArgs,
-            postConditionMode: interaction.postConditionMode,
-            postConditions: buildPostConditions(interaction.postConditions),
+            postConditionMode: metadata.postConditionMode,
+            postConditions: buildPostConditions(metadata.postConditions),
         });
     }, [contractAddress, contractName, stxAddress]);
 
