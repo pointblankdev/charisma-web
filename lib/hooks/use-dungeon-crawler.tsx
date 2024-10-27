@@ -65,14 +65,13 @@ export function useDungeonCrawler(
     const explore = useCallback(async ({ interactions }: ExploreParams) => {
         if (!stxAddress) return;
 
-        const functionArgs = interactions.slice(0, 7).reduce((args, { contractAddress, action }) => {
+        const functionArgs = interactions.reduce((args, { contractAddress, action }) => {
             const [principal, name] = contractAddress.split('.');
             args.push(optionalCVOf(contractPrincipalCV(principal, name)));
             args.push(optionalCVOf(stringAsciiCV(action)));
             return args;
         }, [contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'dungeon-keeper-rc6')] as any[]);
 
-        console.log(functionArgs)
         // Fill remaining slots with noneCV if less than 8 interactions are provided
         while (functionArgs.length < 17) {
             functionArgs.push(noneCV());
