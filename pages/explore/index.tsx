@@ -117,6 +117,53 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   // Curated list of explorations
   const explorations: Exploration[] = [
     {
+      name: "Breaking Stacks",
+      description: "Break the Stacks blockchain with back-to-back Keepers' Petitions.",
+      cover: "/explorations/breaking-stacks.png",
+      steps: [
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
+          action: "PETITION",
+          description: "Petition the Keepers for additional DMG tokens"
+        },
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
+          action: "PETITION",
+          description: "Petition the Keepers for additional DMG tokens"
+        },
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
+          action: "PETITION",
+          description: "Petition the Keepers for additional DMG tokens"
+        },
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
+          action: "PETITION",
+          description: "Petition the Keepers for additional DMG tokens"
+        },
+        {
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
+          action: "PETITION",
+          description: "Petition the Keepers for additional DMG tokens"
+        },
+        {
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
+          action: "FORWARD",
+          description: "Arbitrage swap forward and abort if not profitable"
+        },
+        {
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
+          action: "REVERSE",
+          description: "Arbitrage swap reverse and abort if not profitable"
+        },
+        {
+          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc4",
+          action: "MINT",
+          description: "Mint additional Charisma tokens"
+        }
+      ]
+    },
+    {
       name: "Energized Arbitrage",
       description: "Generate energy from holding synthetic tokens and profit from market inefficiencies.",
       cover: "/explorations/energy-arbitrage.png",
