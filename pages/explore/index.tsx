@@ -36,6 +36,7 @@ import { ChevronDown, UserPlus, Users, Bot } from "lucide-react"; // Import icon
 import { useGlobalState } from "@lib/hooks/global-state-context"
 import { Badge } from "@components/ui/badge"
 import numeral from "numeral"
+import { getUserEnergyYield } from "@lib/data/engines/energy-yield-calculator"
 
 export type Collection = (typeof collections)[number]
 
@@ -644,26 +645,26 @@ function Sidebar({ className, collections }: SidebarProps) {
   const { stxAddress } = useGlobalState();
 
   // Fetch characters when component mounts or stxAddress changes
-  useEffect(() => {
-    const fetchCharacters = async () => {
-      if (!stxAddress) return;
+  // useEffect(() => {
+  //   const fetchCharacters = async () => {
+  //     if (!stxAddress) return;
 
-      try {
-        setIsLoading(true);
-        const response = await fetch(`/api/v0/characters?address=${stxAddress}`);
-        if (!response.ok) throw new Error('Failed to fetch characters');
+  //     try {
+  //       setIsLoading(true);
+  //       const response = await fetch(`/api/v0/characters?address=${stxAddress}`);
+  //       if (!response.ok) throw new Error('Failed to fetch characters');
 
-        const data = await response.json();
-        setCharacters(data);
-      } catch (error) {
-        console.error('Error fetching characters:', error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
+  //       const data = await response.json();
+  //       setCharacters(data);
+  //     } catch (error) {
+  //       console.error('Error fetching characters:', error);
+  //     } finally {
+  //       setIsLoading(false);
+  //     }
+  //   };
 
-    fetchCharacters();
-  }, [stxAddress]);
+  //   fetchCharacters();
+  // }, [stxAddress]);
 
   const handleCreateCharacter = async (data: {
     ownerAddress: string;
@@ -715,7 +716,7 @@ function Sidebar({ className, collections }: SidebarProps) {
         </div>
 
         {/* Characters section */}
-        <div className="px-3 py-2">
+        {/* <div className="px-3 py-2">
           <div className="flex flex-col items-start px-4 mb-2">
             <h2 className="flex items-center text-lg font-semibold tracking-tight">
               Trading Bots
@@ -770,7 +771,6 @@ function Sidebar({ className, collections }: SidebarProps) {
                             <SelectValue placeholder="Choose interactions" />
                           </SelectTrigger>
                           <SelectContent>
-                            {/* We'll need to populate this with actual interactions */}
                             <SelectItem value="charisma-mine">Charisma Mine</SelectItem>
                             <SelectItem value="keepers-challenge">Keeper's Challenge</SelectItem>
                           </SelectContent>
@@ -785,7 +785,6 @@ function Sidebar({ className, collections }: SidebarProps) {
               </Dialog>
             )}
 
-            {/* Characters list */}
             <ScrollArea className="h-fit">
               {isLoading ? (
                 <div className="flex items-center justify-center h-full">
@@ -822,14 +821,13 @@ function Sidebar({ className, collections }: SidebarProps) {
                       )}>
                         {character.active ? 'Active' : 'Inactive'}
                       </div>
-                      {/* <ArchiveCharacterDialog character={character as any} onArchive={() => { }} /> */}
                     </div>
                   </div>
                 ))
               )}
             </ScrollArea>
           </div>
-        </div>
+        </div> */}
 
         {/* Existing Crates section */}
         <div className="py-2">

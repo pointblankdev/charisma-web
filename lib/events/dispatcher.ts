@@ -181,15 +181,15 @@ export const handleContractEvent = async (event: any, builder: any) => {
         else if (event.data.contract_identifier.includes("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine")) {
             symbol = '⚡'
 
-            if (event.data.value.sender && event.data.value.energy && event.data.value.integral) {
+            if (event.data.value.op === "ENERGY_GENERATED") {
 
                 builder.addField({
-                    name: `${symbol} tap engine`,
+                    name: `${symbol} ${event.data.value.op}`,
                     value: JSON.stringify(event.data.value).slice(0, 1200)
                 });
 
                 try {
-                    await saveTapEvent(event.data.value)
+                    await saveTapEvent(event)
                 } catch (error) {
                     Logger.debug(event.data)
                 }
