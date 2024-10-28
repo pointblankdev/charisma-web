@@ -1,4 +1,4 @@
-import { getEnhancedTapData } from '@lib/data/engines/apy-calculator';
+import { EnergyMetricsService } from '@lib/data/energy/energy-metrics-service';
 import { PostConditionMode } from '@stacks/transactions';
 import { NextApiRequest, NextApiResponse } from 'next';
 
@@ -17,7 +17,7 @@ export default async function MemeEngineAPI(
         url: `https://charisma.rocks/interactions/engines/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc6`,
         image: `https://charisma.rocks/interactions/engines/cha.png`,
         name: `Charisma (CHA)`,
-        analytics: await getEnhancedTapData(),
+        analytics: await EnergyMetricsService.getMetricsByContractId(`SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc6`),
         subtitle: 'Generate energy by holding Charisma tokens.',
         description: [
             "The Charisma Meme Engine works by tracking your token balance across time. When you execute the TAP action, the contract calculates your average balance since your last tap. The resulting energy generation accurately reflects the average monetary value of your held balances, with more points sampled during longer periods for greater accuracy.",

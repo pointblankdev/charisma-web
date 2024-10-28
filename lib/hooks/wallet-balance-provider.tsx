@@ -1,19 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import { getAccountBalance } from '@lib/stacks-api';
-import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
 import { createContext, useContext } from 'react';
 import { useGlobalState } from './global-state-context';
 
 export type Wallet = {
   experience: { balance: number, amount: number }
   charisma: { balance: number, amount: number }
+  governance: { balance: number, amount: number }
   redPilled: boolean
   bluePilled: boolean
 }
 
 export type WalletBalancesContextType = {
-  balances: AddressBalanceResponse;
-  setBalances: React.Dispatch<React.SetStateAction<AddressBalanceResponse>>;
+  balances: any;
+  setBalances: React.Dispatch<React.SetStateAction<any>>;
   getKeyByContractAddress: any;
   getBalanceByKey: any;
   wallet: Wallet;
@@ -24,9 +24,9 @@ export const WalletBalancesContext = createContext<WalletBalancesContextType | n
 export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { stxAddress } = useGlobalState()
 
-  const [balances, setBalances] = useState<AddressBalanceResponse>({
+  const [balances, setBalances] = useState<any>({
     stx: {}, fungible_tokens: {}, non_fungible_tokens: {}, token_offering_locked: {}
-  } as AddressBalanceResponse);
+  } as any);
 
   useEffect(() => {
     if (stxAddress) {
@@ -46,16 +46,18 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
     if (key === 'STX::native') {
       return Number(balances?.stx?.balance || 0);
     }
-    return Number((balances?.fungible_tokens?.[key] as any)?.balance)
+    return Number((balances?.fungible_tokens?.[key])?.balance)
   };
 
   const experience = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience')
-  const charisma = getBalanceByKey('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma')
+  const governance = getBalanceByKey('SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma')
+  const charisma = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token::charisma')
   const redPill: any = balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft::red-pill']
   const bluePill: any = balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blue-pill-nft::blue-pill']
 
   const wallet: Wallet = {
     experience: { amount: experience, balance: experience / Math.pow(10, 6) },
+    governance: { amount: governance, balance: governance / Math.pow(10, 6) },
     charisma: { amount: charisma, balance: charisma / Math.pow(10, 6) },
     redPilled: redPill?.count > 0,
     bluePilled: bluePill?.count > 0

@@ -498,3 +498,8 @@ export async function saveTapEvent(event: any) {
   // store the tap event in a list
   await kv.lpush(`taps`, tapEvent);
 }
+
+export async function getTapData() {
+  const taps = await kv.lrange(`taps`, 0, 999);
+  return taps
+}

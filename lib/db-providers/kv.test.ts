@@ -631,6 +631,6 @@ describe('tap data storage', () => {
 
     it('should get tap data', async () => {
         const response = await getTapData()
-        console.log(response)
+        console.log(JSON.stringify(response, null, 2))
     })
 })

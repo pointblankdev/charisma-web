@@ -36,7 +36,7 @@ import { ChevronDown, UserPlus, Users, Bot } from "lucide-react"; // Import icon
 import { useGlobalState } from "@lib/hooks/global-state-context"
 import { Badge } from "@components/ui/badge"
 import numeral from "numeral"
-import { getUserEnergyYield } from "@lib/data/engines/energy-yield-calculator"
+import useWallet from "@lib/hooks/wallet-balance-provider"
 
 export type Collection = (typeof collections)[number]
 
@@ -379,6 +379,10 @@ function InteractionArtwork({
   const { interact } = useDungeonCrawler();
   const [isLoading, setIsLoading] = useState(false);
 
+  const { wallet } = useWallet()
+
+
+
   const handleInteractionClick = () => {
     if (interaction.uri) {
       router.push(interaction.uri);
@@ -404,11 +408,11 @@ function InteractionArtwork({
         <ContextMenuTrigger>
           <div className="relative overflow-hidden rounded-md cursor-pointer" onClick={handleInteractionClick}>
             {/* APY Badge */}
-            {interaction?.analytics.apy && (
+            {interaction?.analytics.energyPerBlockPerToken && (
               <Badge
                 className="absolute z-10 text-white top-2 right-2 bg-black/75 hover:bg-black/75"
               >
-                {numeral(interaction?.analytics.apy).format('0')}% APY
+                {numeral(interaction?.analytics.energyPerBlockPerToken * wallet.charisma.amount).format('0')} ⚡/block
               </Badge>
             )}
             <Image
