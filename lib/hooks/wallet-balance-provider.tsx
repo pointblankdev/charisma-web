@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getAccountBalance } from '@lib/stacks-api';
+import { AddressBalanceResponse } from '@stacks/blockchain-api-client';
 import { createContext, useContext } from 'react';
 import { useGlobalState } from './global-state-context';
 
@@ -12,8 +13,8 @@ export type Wallet = {
 }
 
 export type WalletBalancesContextType = {
-  balances: any;
-  setBalances: React.Dispatch<React.SetStateAction<any>>;
+  balances: AddressBalanceResponse;
+  setBalances: React.Dispatch<React.SetStateAction<AddressBalanceResponse>>;
   getKeyByContractAddress: any;
   getBalanceByKey: any;
   wallet: Wallet;
@@ -24,9 +25,9 @@ export const WalletBalancesContext = createContext<WalletBalancesContextType | n
 export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { stxAddress } = useGlobalState()
 
-  const [balances, setBalances] = useState<any>({
+  const [balances, setBalances] = useState<AddressBalanceResponse>({
     stx: {}, fungible_tokens: {}, non_fungible_tokens: {}, token_offering_locked: {}
-  } as any);
+  } as AddressBalanceResponse);
 
   useEffect(() => {
     if (stxAddress) {
@@ -46,7 +47,7 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
     if (key === 'STX::native') {
       return Number(balances?.stx?.balance || 0);
     }
-    return Number((balances?.fungible_tokens?.[key])?.balance)
+    return Number((balances?.fungible_tokens?.[key] as any)?.balance)
   };
 
   const experience = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience')

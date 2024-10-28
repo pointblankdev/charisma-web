@@ -298,7 +298,7 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
             <Sidebar collections={collections} className="hidden lg:block" />
             <div className="col-span-3 overflow-hidden lg:col-span-4 lg:border-l sm:overflow-visible">
               <div className="h-full py-6 pl-0 lg:pl-8">
-                <Tabs defaultValue="hold-to-earn" className="space-y-6 sm:h-fit">
+                <Tabs defaultValue="all" className="space-y-6 sm:h-fit">
                   <div className="flex items-center space-between">
                     <TabsList className="mx-4">
                       <TabsTrigger value="all">All Interactions</TabsTrigger>
@@ -378,10 +378,7 @@ function InteractionArtwork({
   const router = useRouter();
   const { interact } = useDungeonCrawler();
   const [isLoading, setIsLoading] = useState(false);
-
   const { wallet } = useWallet()
-
-
 
   const handleInteractionClick = () => {
     if (interaction.uri) {
@@ -409,10 +406,10 @@ function InteractionArtwork({
           <div className="relative overflow-hidden rounded-md cursor-pointer" onClick={handleInteractionClick}>
             {/* APY Badge */}
             {interaction?.analytics.energyPerBlockPerToken && (
-              <Badge
+              <Badge title={`Estimate based on your current balance of ${numeral(wallet.charisma.balance).format('0,0')} tokens`}
                 className="absolute z-10 text-white top-2 right-2 bg-black/75 hover:bg-black/75"
               >
-                {numeral(interaction?.analytics.energyPerBlockPerToken * wallet.charisma.amount).format('0')} ⚡/block
+                {numeral(interaction?.analytics.energyPerBlockPerToken * wallet.charisma.balance).format('0.00')} ⚡/block
               </Badge>
             )}
             <Image
