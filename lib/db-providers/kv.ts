@@ -1,4 +1,3 @@
-import { getEnhancedTapData } from '@lib/data/engines/apy-calculator';
 import {
   getLandBalance,
   getLandContractById,
