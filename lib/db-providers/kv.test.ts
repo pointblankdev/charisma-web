@@ -524,6 +524,26 @@ describe('nfts api', () => {
         }
     }, 400000)
 
+    it('should set nft item metadata (ssfb)', async () => {
+        for (let id = 1; id <= 1000; id++) {
+            const response = await setNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', `${id}`, {
+                "name": `Fire Bolt #${id}`,
+                "image": 'https://charisma.rocks/quests/spell-scroll/fire-bolt-icon.png'
+            })
+            console.log(JSON.stringify(response, null, 2))
+        }
+    }, 400000)
+
+    it('should set nft item metadata (ms)', async () => {
+        for (let id = 1; id <= 20; id++) {
+            const response = await setNftMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks', `${id}`, {
+                "name": `Mooning Shark #${id}`,
+                "image": 'https://charisma.rocks/quests/mooning-shark/mooningshark-icon.jpeg'
+            })
+            console.log(JSON.stringify(response, null, 2))
+        }
+    }, 400000)
+
     // should get nft item
     it('should get nft item metadata (the-red-pill)', async () => {
         const response = await getNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-red-pill', '469')
@@ -531,14 +551,28 @@ describe('nfts api', () => {
     })
 
     // should get nft item
-    it('should get nft item metadata', async () => {
+    it('should get nft item metadata (ssfb)', async () => {
         const response = await getNftMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', '1')
+        console.log(JSON.stringify(response, null, 2))
+    })
+
+    it('should get nft item metadata (ms)', async () => {
+        const response = await getNftMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks', '1')
         console.log(JSON.stringify(response, null, 2))
     })
 
     it('should update nft collection metadata (mooning-sharks)', async () => {
         const data = await getNftCollectionMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks')
         data.properties.minted = 20
+        // await setNftCollectionMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks', data)
+        console.log(JSON.stringify(data, null, 2))
+    })
+
+    it('should update nft collection metadata (ms)', async () => {
+        const data = await getNftCollectionMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks')
+        data.properties.minted = 20
+        data.properties.collection_image = 'https://charisma.rocks/quests/mooning-shark/mooningshark-icon.jpeg'
+        data.properties.items[0].image_url = 'https://charisma.rocks/quests/mooning-shark/mooningshark-icon.jpeg'
         await setNftCollectionMetadata('SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooning-sharks', data)
         console.log(JSON.stringify(data, null, 2))
     })
@@ -547,7 +581,7 @@ describe('nfts api', () => {
         const data = await getNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls')
         data.properties.minted = 32
         // data.properties.items[0].image_url = 'https://charisma.rocks/quests/spell-scroll/fire-bolt-icon.png'
-        await setNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', data)
+        // await setNftCollectionMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls', data)
         console.log(JSON.stringify(data, null, 2))
     })
 

@@ -265,6 +265,22 @@ export const getStaticProps: GetStaticProps<any> = async () => {
         totalListings: 0,
       });
     }
+    // same for spell-scrolls
+    if (!marketplaceCollections.find(c => c.id === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt')) {
+      marketplaceCollections.push({
+        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt',
+        name: 'Spell Scrolls',
+        totalListings: 0,
+      });
+    }
+    // same for jumping-pupperz
+    if (!marketplaceCollections.find(c => c.id === 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz')) {
+      marketplaceCollections.push({
+        id: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz',
+        name: 'Jumping Pupperz',
+        totalListings: 0,
+      });
+    }
 
   } catch (error) {
     console.error('Error fetching marketplace data:', error);
@@ -494,12 +510,12 @@ export default function ExplorePage({ interactionData, explorations, marketplace
                             className="flex items-center gap-2"
                           >
                             {collection.name}
-                            <Badge
+                            {collection.totalListings > 0 ? <Badge
                               variant="secondary"
                               className="ml-1"
                             >
                               {collection.totalListings}
-                            </Badge>
+                            </Badge> : null}
                           </TabsTrigger>
                         ))}
                       </TabsList>
@@ -1282,12 +1298,12 @@ function ListingDialog({ collections }: ListingDialogProps) {
                     <Label>Name:</Label>
                     <span>{metadata.name}</span>
                   </div>
-                  {metadata.description && (
+                  {/* {metadata.description && (
                     <div className="flex items-center gap-2">
                       <Label>Description:</Label>
                       <span className="text-sm text-muted-foreground">{metadata.description}</span>
                     </div>
-                  )}
+                  )} */}
                   {metadata.image && (
                     <div className="mt-2">
                       <img
