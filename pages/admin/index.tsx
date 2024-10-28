@@ -14,6 +14,10 @@ import Image from 'next/image';
 import { GetStaticProps } from 'next';
 import numeral from 'numeral';
 import PricesService from '@lib/prices-service';
+import { PoolsService } from '@lib/data/pools/pools-service';
+import { MarketplaceService } from '@lib/data/marketplace/marketplace-service';
+import { Badge } from '@components/ui/badge';
+import { Coins, FolderOpen, Tags, TrendingUp } from 'lucide-react';
 
 interface PoolStats {
     id: number;
@@ -25,72 +29,88 @@ interface PoolStats {
     totalUSD: number;
 }
 
+interface MarketplaceStats {
+    totalListings: number;
+    totalVolume: number;
+    activeListings: number;
+    collections: {
+        [contractId: string]: {
+            listings: number;
+            volume: number;
+        };
+    };
+}
 
 interface AdminDashboardProps {
     poolStats: PoolStats[];
+    marketplaceStats: MarketplaceStats;
 }
 
 export const getStaticProps: GetStaticProps<AdminDashboardProps> = async () => {
-    const pools = [
-        { id: 1, name: 'WELSH-iouWELSH', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh', token0: 'WELSH', token1: 'iouWELSH' },
-        { id: 2, name: 'ROO-iouROO', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-iouroo', token0: '$ROO', token1: 'iouROO' },
-        { id: 3, name: 'CHA-WELSH', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh', token0: 'CHA', token1: 'WELSH' },
-        { id: 4, name: 'STX-CHA', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha', token0: 'STX', token1: 'CHA' },
-        { id: 5, name: 'CHA-iouWELSH', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-iouwelsh', token0: 'CHA', token1: 'iouWELSH' },
-        { id: 6, name: 'CHA-ORDI', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-ordi', token0: 'CHA', token1: 'ORDI' },
-        { id: 7, name: 'CHA-ROO', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-roo', token0: 'CHA', token1: '$ROO' },
-        { id: 8, name: 'WELSH-DOG', contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog', token0: 'WELSH', token1: 'DOG' },
-    ];
+    try {
+        // Fetch pools and token prices in parallel
+        const [pools, tokenPrices, marketplaceStats] = await Promise.all([
+            PoolsService.getPools(),
+            PricesService.getAllTokenPrices(),
+            MarketplaceService.getStats()
+        ]);
 
-    const decimals: any = {
-        STX: 6,
-        WELSH: 6,
-        $ROO: 6,
-        CHA: 6,
-        DOG: 8,
-        ORDI: 8,
-        iouWELSH: 6,
-        iouROO: 6,
-    }
+        const poolStats = await Promise.all(pools.map(async (pool) => {
+            // Get revenue data from blockchain
+            const result: any = await callReadOnlyFunction({
+                contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+                contractName: "univ2-core",
+                functionName: "do-get-revenue",
+                functionArgs: [uintCV(pool.id)],
+                senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+            });
 
-    const tokenPrices = await PricesService.getAllTokenPrices();
+            const feesCollected = {
+                token0: Number(result.data.token0.value),
+                token1: Number(result.data.token1.value),
+            };
 
-    const poolStats = await Promise.all(pools.map(async (pool) => {
-        const result: any = await callReadOnlyFunction({
-            contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-            contractName: "univ2-core",
-            functionName: "do-get-revenue",
-            functionArgs: [uintCV(pool.id)],
-            senderAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        });
+            // Calculate USD values using token decimals from pool data
+            const token0USD = (feesCollected.token0 / 10 ** pool.token0.decimals) *
+                tokenPrices[pool.token0.symbol];
+            const token1USD = (feesCollected.token1 / 10 ** pool.token1.decimals) *
+                tokenPrices[pool.token1.symbol];
+            const totalUSD = token0USD + token1USD;
 
-        const feesCollected = {
-            token0: Number(result.data.token0.value),
-            token1: Number(result.data.token1.value),
-        };
-
-        const token0USD = (feesCollected.token0 / 10 ** decimals[pool.token0]) * tokenPrices[pool.token0];
-        const token1USD = (feesCollected.token1 / 10 ** decimals[pool.token1]) * tokenPrices[pool.token1];
-        const totalUSD = token0USD + token1USD;
+            return {
+                id: pool.id,
+                name: `${pool.token0.symbol}-${pool.token1.symbol}`,
+                feesCollected,
+                totalUSD,
+            };
+        }));
 
         return {
-            id: pool.id,
-            name: pool.name,
-            feesCollected,
-            totalUSD,
+            props: {
+                poolStats,
+                marketplaceStats,
+            },
+            revalidate: 600, // Revalidate every 10 minutes
         };
-    }));
-
-
-    return {
-        props: {
-            poolStats,
-        },
-        revalidate: 600, // Revalidate every 60 seconds
-    };
+    } catch (error) {
+        console.error('Error fetching data:', error);
+        // Return empty stats rather than failing the build
+        return {
+            props: {
+                poolStats: [],
+                marketplaceStats: {
+                    totalListings: 0,
+                    totalVolume: 0,
+                    activeListings: 0,
+                    collections: {}
+                },
+            },
+            revalidate: 60, // Retry sooner if there was an error
+        };
+    }
 };
 
-export default function AdminDashboard({ poolStats }: AdminDashboardProps) {
+export default function AdminDashboard({ poolStats, marketplaceStats }: AdminDashboardProps) {
     const meta = {
         title: 'Charisma | Admin Dashboard',
         description: META_DESCRIPTION,
@@ -102,6 +122,7 @@ export default function AdminDashboard({ poolStats }: AdminDashboardProps) {
             <Layout>
                 <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-6xl">
                     <HeroSection />
+                    <MarketplaceSection marketplaceStats={marketplaceStats} />
                     <div className="mb-12">
                         <div className='w-full pt-4 text-3xl font-bold text-center uppercase'>Swap Fees</div>
                         <div className='w-full pb-8 text-center text-md text-muted/90'>View protocol fees collected by each pool</div>
@@ -179,6 +200,205 @@ const TokenSection = () => {
                 <SetMaxLiquidityFlow />
             </div>
         </div>
+    );
+};
+
+const MarketplaceSection = ({ marketplaceStats }: { marketplaceStats: MarketplaceStats }) => {
+    return (
+        <div className="mt-20 mb-12">
+            <div className='w-full pt-8 text-3xl font-bold text-center uppercase'>NFT Marketplace</div>
+            <div className='w-full pb-8 text-center text-md text-muted/90'>Manage marketplace settings and operations</div>
+            {/* Stats Cards */}
+            <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2 lg:grid-cols-4">
+                <Card className="p-4 bg-[var(--sidebar)] border border-[var(--accents-7)]">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-muted-foreground">Total Volume</p>
+                            <h3 className="text-2xl font-bold">
+                                {numeral(marketplaceStats.totalVolume / 1_000_000).format('0,0.00')} STX
+                            </h3>
+                        </div>
+                        <div className="p-2 bg-green-500/10 rounded-full">
+                            <Coins className="w-4 h-4 text-green-500" />
+                        </div>
+                    </div>
+                </Card>
+
+                <Card className="p-4 bg-[var(--sidebar)] border border-[var(--accents-7)]">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-muted-foreground">Active Listings</p>
+                            <h3 className="text-2xl font-bold">
+                                {numeral(marketplaceStats.activeListings).format('0,0')}
+                            </h3>
+                        </div>
+                        <div className="p-2 bg-blue-500/10 rounded-full">
+                            <Tags className="w-4 h-4 text-blue-500" />
+                        </div>
+                    </div>
+                </Card>
+
+                <Card className="p-4 bg-[var(--sidebar)] border border-[var(--accents-7)]">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-muted-foreground">Total Collections</p>
+                            <h3 className="text-2xl font-bold">
+                                {Object.keys(marketplaceStats.collections).length}
+                            </h3>
+                        </div>
+                        <div className="p-2 bg-purple-500/10 rounded-full">
+                            <FolderOpen className="w-4 h-4 text-purple-500" />
+                        </div>
+                    </div>
+                </Card>
+
+                <Card className="p-4 bg-[var(--sidebar)] border border-[var(--accents-7)]">
+                    <div className="flex items-center justify-between">
+                        <div>
+                            <p className="text-sm text-muted-foreground">Avg. Price</p>
+                            <h3 className="text-2xl font-bold">
+                                {marketplaceStats.activeListings > 0
+                                    ? numeral((marketplaceStats.totalVolume / marketplaceStats.activeListings) / 1_000_000).format('0,0.00')
+                                    : '0.00'} STX
+                            </h3>
+                        </div>
+                        <div className="p-2 bg-orange-500/10 rounded-full">
+                            <TrendingUp className="w-4 h-4 text-orange-500" />
+                        </div>
+                    </div>
+                </Card>
+            </div>
+
+            {/* Collection Stats */}
+            <div className="grid grid-cols-1 gap-4 mb-8 sm:grid-cols-2 lg:grid-cols-3">
+                {Object.entries(marketplaceStats.collections).map(([contractId, stats]) => (
+                    <Card
+                        key={contractId}
+                        className="p-4 bg-[var(--sidebar)] border border-[var(--accents-7)]"
+                    >
+                        <div className="flex items-center justify-between mb-2">
+                            <h3 className="font-medium">
+                                {contractId.split('.')[1]}
+                            </h3>
+                            <Badge variant="secondary">
+                                {stats.listings} listings
+                            </Badge>
+                        </div>
+                        <div className="flex items-center justify-between text-sm text-muted-foreground">
+                            <span>Volume</span>
+                            <span>{numeral(stats.volume / 1_000_000).format('0,0.00')} STX</span>
+                        </div>
+                    </Card>
+                ))}
+            </div>
+
+            <div className='grid grid-cols-1 gap-6 md:grid-cols-2'>
+                <AddContract />
+                {/* <RemoveContract /> */}
+                <SetRoyalty />
+                {/* <SetMinimumCommission />
+                <SetMinimumListingPrice />
+                <SetListingsFrozen />
+                <SetPurchasesFrozen />
+                <SetUnlistingsFrozen /> */}
+            </div>
+        </div>
+    );
+};
+const AddContract = () => {
+    const [contractId, setContractId] = useState('');
+
+    async function handleAddContract() {
+        try {
+            // First make the contract call
+            await openContractCall({
+                network,
+                contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+                contractName: "marketplace-v5",
+                functionName: "add-contract",
+                functionArgs: [contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1])],
+                postConditionMode: PostConditionMode.Deny,
+                postConditions: []
+            });
+        } catch (error) {
+            console.error('Error adding contract:', error);
+        }
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Add NFT Contract</h2>
+                <p className="mb-4 text-sm">Add a new NFT contract to the marketplace.</p>
+                <Input
+                    className='mb-2'
+                    placeholder='Contract ID (e.g., SP2....odins-raven)'
+                    onChange={e => setContractId(e.target.value)}
+                />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={handleAddContract}>Add Contract</Button>
+            </div>
+        </Card>
+    );
+};
+
+const SetRoyalty = () => {
+    const [contractId, setContractId] = useState('');
+    const [address, setAddress] = useState('');
+    const [percent, setPercent] = useState('');
+
+    async function handleSetRoyalty() {
+        try {
+            const basisPoints = Math.floor(parseFloat(percent) * 100);
+
+            // Make contract call
+            await openContractCall({
+                network,
+                contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+                contractName: "marketplace-v5",
+                functionName: "set-royalty",
+                functionArgs: [
+                    contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1]),
+                    standardPrincipalCV(address),
+                    uintCV(basisPoints)
+                ],
+                postConditionMode: PostConditionMode.Deny,
+                postConditions: []
+            });
+
+        } catch (error) {
+            console.error('Error setting royalty:', error);
+        }
+    }
+
+    return (
+        <Card className='p-4 flex flex-col h-full border-[var(--accents-7)]'>
+            <div>
+                <h2 className="mb-2 text-xl font-bold">Set Royalty</h2>
+                <p className="mb-4 text-sm">Set royalty parameters for an NFT contract.</p>
+                <Input
+                    className='mb-2'
+                    placeholder='Contract ID'
+                    onChange={e => setContractId(e.target.value)}
+                />
+                <Input
+                    className='mb-2'
+                    placeholder='Royalty Address'
+                    onChange={e => setAddress(e.target.value)}
+                />
+                <Input
+                    className='mb-2'
+                    type="number"
+                    step="0.01"
+                    placeholder='Royalty Percentage'
+                    onChange={e => setPercent(e.target.value)}
+                />
+            </div>
+            <div className="flex justify-end mt-auto">
+                <Button onClick={handleSetRoyalty}>Set Royalty</Button>
+            </div>
+        </Card>
     );
 };
 
@@ -931,3 +1151,4 @@ const SetMaxTransfer = () => {
         </Card>
     );
 };
+

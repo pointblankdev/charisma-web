@@ -4,7 +4,8 @@ module.exports = {
       'www.datocms-assets.com',
       'charisma.rocks',
       'raw.githubusercontent.com',
-      'cdn.discordapp.com'
+      'cdn.discordapp.com',
+      'ipfs.io'
     ],
     imageSizes: [24, 64, 300],
     remotePatterns: []
@@ -17,38 +18,8 @@ module.exports = {
   async redirects() {
     return [
       {
-        source: '/token',
-        destination: '/swap',
-        permanent: false
-      },
-      {
-        source: '/faucet',
-        destination: '/swap',
-        permanent: false
-      },
-      {
-        source: '/apps',
-        destination: '/creatures',
-        permanent: true
-      },
-      {
-        source: '/stake',
-        destination: '/stake/welsh',
-        permanent: true
-      },
-      {
-        source: '/stake-roo',
-        destination: '/stake/roo',
-        permanent: true
-      },
-      {
-        source: '/woooooo',
-        destination: '/apps/title-fight',
-        permanent: true
-      },
-      {
-        source: '/lands/json/:path*',
-        destination: '/api/v0/lands/id/:path*',
+        source: '/odins-raven/:path*',
+        destination: '/sip9/odins-raven/:path*',
         permanent: true
       }
     ];

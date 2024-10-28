@@ -18,7 +18,7 @@ import {
 } from "@components/ui/context-menu"
 import { useRouter } from "next/navigation"
 import { useDungeonCrawler } from "@lib/hooks/use-dungeon-crawler"
-import { API_URL, SITE_URL } from "@lib/constants"
+import { API_URL } from "@lib/constants"
 import React, { useEffect, useState } from "react"
 import { interactionIds } from "pages/api/v0/interactions"
 import {
@@ -32,11 +32,16 @@ import {
 } from "@components/ui/dialog";
 import { Label } from "@components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
-import { ChevronDown, UserPlus, Users, Bot } from "lucide-react"; // Import icons
+import { ChevronDown, UserPlus, Users, Bot, Plus } from "lucide-react"; // Import icons
 import { useGlobalState } from "@lib/hooks/global-state-context"
 import { Badge } from "@components/ui/badge"
 import numeral from "numeral"
 import useWallet from "@lib/hooks/wallet-balance-provider"
+import { MarketplaceListing, MarketplaceService } from "@lib/data/marketplace/marketplace-service"
+import { Input } from "@components/ui/input"
+import { openContractCall } from "@stacks/connect"
+import { network } from "@components/stacks-session/connect"
+import { callReadOnlyFunction, contractPrincipalCV, FungibleConditionCode, makeStandardNonFungiblePostCondition, makeStandardSTXPostCondition, NonFungibleConditionCode, PostConditionMode, uintCV } from "@stacks/transactions"
 
 export type Collection = (typeof collections)[number]
 
@@ -87,10 +92,20 @@ interface Exploration {
   steps: ExplorationStep[];
 }
 
+interface MarketplaceCollection {
+  id: string;  // contract ID
+  name: string;
+  description?: string;
+  image?: string;
+  totalListings: number;
+}
+
 // Update props interface
 interface ExplorePageProps {
   interactionData: Interaction[];
   explorations: Exploration[];
+  marketplaceListings: MarketplaceListing[];
+  marketplaceCollections: MarketplaceCollection[];
 }
 
 export const getStaticProps: GetStaticProps<any> = async () => {
@@ -109,7 +124,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
         analytics: metadata.analytics || {},
         subtitle: metadata.subtitle || '',
         description: metadata.description || [],
-        uri: metadata.url.replace(SITE_URL, ''),
+        uri: metadata.url,
         actions: metadata.actions || [],
       };
     })
@@ -221,20 +236,122 @@ export const getStaticProps: GetStaticProps<any> = async () => {
     // Add more curated explorations...
   ];
 
+
+  // Fetch marketplace listings
+  let marketplaceListings: MarketplaceListing[] = [];
+  let marketplaceCollections: MarketplaceCollection[] = [];
+  try {
+    // Fetch both listings and stats
+    const [listings, stats] = await Promise.all([
+      MarketplaceService.getListings(),
+      MarketplaceService.getStats()
+    ]);
+
+    marketplaceListings = listings;
+
+
+    // Transform stats into collections
+    marketplaceCollections = Object.entries(stats.collections).map(([contractId, data]) => ({
+      id: contractId,
+      name: getCollectionName(contractId),
+      totalListings: data.listings,
+    }));
+
+    // if odins-raven is not in collections, add it
+    if (!marketplaceCollections.find(c => c.id === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven')) {
+      marketplaceCollections.push({
+        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
+        name: 'Odin\'s Ravens',
+        totalListings: 0,
+      });
+    }
+
+  } catch (error) {
+    console.error('Error fetching marketplace data:', error);
+  }
+
   return {
     props: {
       interactionData,
       explorations,
+      marketplaceListings,
+      marketplaceCollections,
     },
     revalidate: 60, // Revalidate every 10 minutes
   };
 };
 
-export default function ExplorePage({ interactionData, explorations }: ExplorePageProps) {
+// Helper to get collection name from contract ID
+function getCollectionName(contractId: string): string {
+  const collections: Record<string, string> = {
+    'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk': `Welsh Punk`,
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven': `Odin's Ravens`,
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft': 'Red Pill NFT',
+    // Add more collections as needed
+  };
+
+  return collections[contractId] || contractId.split('.').pop()?.replace(/-/g, ' ') || 'Unknown Collection';
+}
+
+
+export default function ExplorePage({ interactionData, explorations, marketplaceListings, marketplaceCollections }: ExplorePageProps) {
+  const [activeView, setActiveView] = useState<'discover' | 'shop'>('discover');
   const metadata = {
     title: "Explore Charisma",
     description: "Discover and interact with Charisma protocol.",
   }
+
+  const renderMarketplaceSection = (
+    collectionId: string | 'all',
+    listings: MarketplaceListing[]
+  ) => {
+    const collection = collectionId === 'all'
+      ? { name: 'All Collections', description: 'Browse all available NFTs' }
+      : marketplaceCollections.find(c => c.id === collectionId);
+
+    return (
+      <div className="">
+        <div className="flex items-center justify-between mx-4">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-semibold tracking-tight">
+              {collection?.name || 'Unknown Collection'}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {collection?.description || `Browse available ${collection?.name} NFTs`}
+            </p>
+          </div>
+          <div className="text-sm text-muted-foreground">
+            {listings.length} listing{listings.length !== 1 ? 's' : ''}
+          </div>
+        </div>
+        <Separator className="my-4" />
+        <div className="relative">
+          <ScrollArea className="">
+            <div className="flex pb-4 mx-4 space-x-4">
+              <ListingDialog collections={marketplaceCollections} />
+              {listings.length > 0 ? (
+                listings.map((listing) => (
+                  <MarketplaceItemArtwork
+                    key={`${listing.contractId}-${listing.tokenId}`}
+                    listing={listing}
+                    className="w-[250px]"
+                    aspectRatio="square"
+                    width={250}
+                    height={250}
+                  />
+                ))
+              ) : (
+                <div className="flex items-center justify-center w-full py-8 text-sm text-muted-foreground">
+                  No listings available for this collection
+                </div>
+              )}
+            </div>
+            <ScrollBar orientation="horizontal" />
+          </ScrollArea>
+        </div>
+      </div>
+    );
+  };
 
   const getInteractionsByCategory = (category: InteractionCategory) => {
     return category === INTERACTION_CATEGORIES.ALL
@@ -255,6 +372,11 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
     }
   };
 
+  const getListingsByCollection = (collectionId: string | 'all') => {
+    return collectionId === 'all'
+      ? marketplaceListings
+      : marketplaceListings.filter(listing => listing.contractId === collectionId);
+  };
 
   const renderInteractionSection = (title: string, description: string, interactions: Interaction[], recent = false) => (
     <div className="">
@@ -295,62 +417,112 @@ export default function ExplorePage({ interactionData, explorations }: ExplorePa
       <Layout>
         <div className="block">
           <div className="grid lg:grid-cols-5">
-            <Sidebar collections={collections} className="hidden lg:block" />
-            <div className="col-span-3 overflow-hidden lg:col-span-4 lg:border-l sm:overflow-visible">
+            <Sidebar
+              collections={collections}
+              className="hidden lg:block"
+              activeView={activeView}
+              onViewChange={setActiveView}
+            />
+            <div className="col-span-3 overflow-hidden lg:col-span-4 lg:border-l">
               <div className="h-full py-6 pl-0 lg:pl-8">
-                <Tabs defaultValue="all" className="space-y-6 sm:h-fit">
-                  <div className="flex items-center space-between">
-                    <TabsList className="mx-4">
-                      <TabsTrigger value="all">All Interactions</TabsTrigger>
-                      <TabsTrigger value="hold-to-earn">Hold-to-Earn</TabsTrigger>
-                      <TabsTrigger value="rewards">Rewards</TabsTrigger>
-                      <TabsTrigger value="utility">Utility</TabsTrigger>
-                    </TabsList>
-                    {/* <div className="animate-pulse text-primary">Deploying new Interaction contracts, please standby...</div> */}
-                  </div>
-                  {Object.values(INTERACTION_CATEGORIES).map((category) => (
-                    <TabsContent
-                      key={category.toLowerCase()}
-                      value={category.toLowerCase()}
-                      className="p-0 border-none outline-none"
-                    >
-                      {renderInteractionSection(
-                        category,
-                        getCategoryDescription(category),
-                        getInteractionsByCategory(category)
-                      )}
-                    </TabsContent>
-                  ))}
-                </Tabs>
+                {activeView === 'discover' ? (
+                  // Discover View
+                  <div className="space-y-6">
+                    <Tabs defaultValue="all" className="space-y-6">
+                      <TabsList className="mx-4">
+                        <TabsTrigger value="all">All Interactions</TabsTrigger>
+                        <TabsTrigger value="hold-to-earn">Hold-to-Earn</TabsTrigger>
+                        <TabsTrigger value="rewards">Rewards</TabsTrigger>
+                        <TabsTrigger value="utility">Utility</TabsTrigger>
+                      </TabsList>
+                      {Object.values(INTERACTION_CATEGORIES).map((category) => (
+                        <TabsContent
+                          key={category.toLowerCase()}
+                          value={category.toLowerCase()}
+                          className="p-0 border-none outline-none"
+                        >
+                          {renderInteractionSection(
+                            category,
+                            getCategoryDescription(category),
+                            getInteractionsByCategory(category)
+                          )}
+                        </TabsContent>
+                      ))}
+                    </Tabs>
 
-                {/* Add Recommended Section */}
-                <div className="mt-8">
-                  <div className="flex items-center justify-between mx-4">
-                    <div className="space-y-1">
-                      <h2 className="text-2xl font-semibold tracking-tight">
-                        Recommended
-                      </h2>
-                      <p className="text-sm text-muted-foreground">
-                        Curated sequences of interactions for optimal profitability
-                      </p>
+                    {/* Recommended Section */}
+                    <div className="mt-8">
+                      <div className="flex items-center justify-between mx-4">
+                        <div className="space-y-1">
+                          <h2 className="text-2xl font-semibold tracking-tight">
+                            Recommended
+                          </h2>
+                          <p className="text-sm text-muted-foreground">
+                            Curated sequences of interactions for optimal profitability
+                          </p>
+                        </div>
+                      </div>
+                      <Separator className="my-4" />
+                      <div className="relative">
+                        <ScrollArea>
+                          <div className="flex pb-4 mx-4 space-x-4">
+                            {explorations.map((exploration, index) => (
+                              <ExplorationArtwork
+                                key={index}
+                                exploration={exploration}
+                                className="w-[250px]"
+                              />
+                            ))}
+                          </div>
+                          <ScrollBar orientation="horizontal" />
+                        </ScrollArea>
+                      </div>
                     </div>
                   </div>
-                  <Separator className="my-4" />
-                  <div className="relative">
-                    <ScrollArea>
-                      <div className="flex pb-4 mx-4 space-x-4">
-                        {explorations.map((exploration, index) => (
-                          <ExplorationArtwork
-                            key={index}
-                            exploration={exploration}
-                            className="w-[250px]"
-                          />
+                ) : (
+                  // Shop View
+                  <div className="space-y-6">
+                    <Tabs defaultValue="all" className="space-y-6">
+                      <TabsList className="mx-4">
+                        <TabsTrigger value="all">
+                          All Collections
+                        </TabsTrigger>
+                        {marketplaceCollections.map((collection) => (
+                          <TabsTrigger
+                            key={collection.id}
+                            value={collection.id}
+                            className="flex items-center gap-2"
+                          >
+                            {collection.name}
+                            <Badge
+                              variant="secondary"
+                              className="ml-1"
+                            >
+                              {collection.totalListings}
+                            </Badge>
+                          </TabsTrigger>
                         ))}
-                      </div>
-                      <ScrollBar orientation="horizontal" />
-                    </ScrollArea>
+                      </TabsList>
+
+                      <TabsContent value="all" className="border-none">
+                        {renderMarketplaceSection('all', marketplaceListings)}
+                      </TabsContent>
+
+                      {marketplaceCollections.map((collection) => (
+                        <TabsContent
+                          key={collection.id}
+                          value={collection.id}
+                          className="border-none"
+                        >
+                          {renderMarketplaceSection(
+                            collection.id,
+                            getListingsByCollection(collection.id)
+                          )}
+                        </TabsContent>
+                      ))}
+                    </Tabs>
                   </div>
-                </div>
+                )}
               </div>
             </div>
           </div>
@@ -625,7 +797,9 @@ function ExplorationArtwork({
 }
 
 interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
-  collections: Collection[]
+  collections: Collection[];
+  activeView: 'discover' | 'shop';
+  onViewChange: (view: 'discover' | 'shop') => void;
 }
 
 // Update Character interface
@@ -639,7 +813,7 @@ interface Character {
   active: boolean;
 }
 
-function Sidebar({ className, collections }: SidebarProps) {
+function Sidebar({ className, collections, activeView, onViewChange }: SidebarProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [characters, setCharacters] = useState<Character[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -699,19 +873,34 @@ function Sidebar({ className, collections }: SidebarProps) {
   return (
     <div className={cn("pb-12", className)}>
       <div className="py-4 space-y-4">
-        {/* Existing Explore section */}
         <div className="px-3 py-2">
           <h2 className="px-4 mb-2 text-lg font-semibold tracking-tight">
             Explore
           </h2>
           <div className="flex flex-col space-y-1">
-            <Button variant="ghost" className="justify-start">
+            <Button
+              variant={activeView === 'discover' ? "secondary" : "ghost"}
+              className="justify-start"
+              onClick={() => onViewChange('discover')}
+            >
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2">
                 <circle cx="12" cy="12" r="10" />
                 <line x1="2" y1="12" x2="22" y2="12" />
                 <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
               </svg>
-              Discover
+              Interactions
+            </Button>
+            <Button
+              variant={activeView === 'shop' ? "secondary" : "ghost"}
+              className="justify-start"
+              onClick={() => onViewChange('shop')}
+            >
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2">
+                <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z" />
+                <line x1="3" y1="6" x2="21" y2="6" />
+                <path d="M16 10a4 4 0 0 1-8 0" />
+              </svg>
+              Marketplace
             </Button>
           </div>
         </div>
@@ -855,6 +1044,437 @@ function Sidebar({ className, collections }: SidebarProps) {
             </div>
           </ScrollArea>
         </div>
+      </div>
+    </div>
+  );
+}
+
+interface ListingDialogProps {
+  collections: MarketplaceCollection[];
+}
+
+function ListingDialog({ collections }: ListingDialogProps) {
+  const { stxAddress } = useGlobalState();
+  const [isOpen, setIsOpen] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+  const [contractId, setContractId] = useState('');
+  const [tokenId, setTokenId] = useState('');
+  const [price, setPrice] = useState('');
+  const [commission, setCommission] = useState('500'); // Default 5%
+  const [metadata, setMetadata] = useState<{
+    name?: string;
+    description?: string;
+    image?: string;
+  } | null>(null);
+  const [isLoadingMetadata, setIsLoadingMetadata] = useState(false);
+
+  const handleCollectionSelect = (value: string) => {
+    setContractId(value);
+    setMetadata(null);
+    if (tokenId) {
+      fetchNftMetadata();
+    }
+  };
+
+  const fetchNftMetadata = async () => {
+    if (!contractId || !tokenId) return;
+
+    setIsLoadingMetadata(true);
+    try {
+      // First get the token URI
+      const uriResult: any = await callReadOnlyFunction({
+        network,
+        contractAddress: contractId.split('.')[0],
+        contractName: contractId.split('.')[1],
+        functionName: "get-token-uri",
+        functionArgs: [uintCV(parseInt(tokenId))],
+        senderAddress: contractId.split('.')[0],
+      });
+
+      if (!uriResult.value || !uriResult.value.value) {
+        throw new Error('No URI found for token');
+      }
+
+      // Token URI might be ipfs:// or https://
+      let uri = uriResult.value.value.data;
+      if (uri.startsWith('ipfs://')) {
+        uri = uri.replace('ipfs://', 'https://ipfs.io/');
+      }
+
+      const fullUri = uri.replace('https://charisma.rocks', 'http://localhost:3000').replace('{id}', tokenId)
+
+      // Fetch the metadata from the URI
+      const response = await fetch(fullUri, {
+        cache: 'no-store',
+        mode: 'cors',
+        headers: {
+          'Accept': 'application/json',
+        }
+      })
+
+      if (!response.ok) throw new Error('Failed to fetch metadata');
+
+      const nftMetadata = await response.json();
+
+      // Transform IPFS image URL if present
+      if (nftMetadata.image?.startsWith('ipfs://')) {
+        nftMetadata.image = nftMetadata.image.replace('ipfs://', 'https://ipfs.io/');
+      }
+
+      setMetadata(nftMetadata);
+    } catch (error) {
+      console.error('Error fetching NFT metadata:', error);
+      setMetadata(null);
+    } finally {
+      setIsLoadingMetadata(false);
+    }
+  };
+
+
+  // Fetch metadata when contract and token ID are set
+  useEffect(() => {
+    if (contractId && tokenId) {
+      fetchNftMetadata();
+    } else {
+      setMetadata(null);
+    }
+  }, [contractId, tokenId]);
+
+  const handleCreateListing = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsLoading(true);
+
+    try {
+      // First make the contract call
+      await openContractCall({
+        network,
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "marketplace-v5",
+        functionName: "list-asset",
+        functionArgs: [
+          contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1]),
+          uintCV(parseInt(tokenId)),
+          uintCV(parseInt(price) * 1_000_000), // Convert to microSTX
+          uintCV(parseInt(commission))
+        ],
+        postConditionMode: PostConditionMode.Allow,
+        postConditions: [
+          // makeStandardNonFungiblePostCondition(
+          //   stxAddress,
+          //   NonFungibleConditionCode.Sends,
+          //   `${contractId}:`,
+          //   uintCV(tokenId),
+          // )
+        ],
+        onFinish: async () => {
+
+          // Then update the API with metadata
+          const response = await fetch(`${API_URL}/api/v0/marketplace/listings`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              contractId,
+              tokenId: parseInt(tokenId),
+              price: parseInt(price) * 1_000_000,
+              commission: parseInt(commission),
+              metadata,
+              timestamp: Date.now()
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to update API');
+          }
+        }
+      });
+
+      setIsOpen(false);
+    } catch (error) {
+      console.error('Error creating listing:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogTrigger asChild>
+        <Button
+          variant="outline"
+          className="h-[250px] w-[250px] flex-col gap-4"
+        >
+          <Plus className="h-8 w-8" />
+          <span>Create Listing</span>
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Create NFT Listing</DialogTitle>
+          <DialogDescription>
+            List your NFT for sale on the marketplace.
+          </DialogDescription>
+        </DialogHeader>
+        <form onSubmit={handleCreateListing}>
+          <div className="grid gap-4 py-4">
+            <div className="grid gap-2">
+              <Label htmlFor="collection">Collection</Label>
+              <Select
+                onValueChange={handleCollectionSelect}
+                value={contractId}
+              >
+                <SelectTrigger>
+                  <SelectValue placeholder="Select a collection" />
+                </SelectTrigger>
+                <SelectContent>
+                  {collections.map((collection) => (
+                    <SelectItem
+                      key={collection.id}
+                      value={collection.id}
+                      className="flex items-center gap-2"
+                    >
+                      <span>{collection.name}</span>
+                      {collection.totalListings > 0 && (
+                        <Badge
+                          variant="secondary"
+                          className="ml-1"
+                        >
+                          {collection.totalListings} listed
+                        </Badge>
+                      )}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="tokenId">Token ID</Label>
+              <Input
+                id="tokenId"
+                type="number"
+                placeholder="Token ID"
+                onChange={e => setTokenId(e.target.value)}
+                required
+              />
+            </div>
+            <div className="grid gap-2">
+              <Label htmlFor="price">Price (STX)</Label>
+              <Input
+                id="price"
+                type="number"
+                step="0.000001"
+                placeholder="Price in STX"
+                onChange={e => setPrice(e.target.value)}
+                required
+              />
+            </div>
+
+            {isLoadingMetadata ? (
+              <div className="flex items-center justify-center p-4">
+                <svg className="w-5 h-5 text-muted-foreground animate-spin" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+              </div>
+            ) : metadata ? (
+              <div className="p-4 border rounded-lg">
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <Label>Name:</Label>
+                    <span>{metadata.name}</span>
+                  </div>
+                  {metadata.description && (
+                    <div className="flex items-center gap-2">
+                      <Label>Description:</Label>
+                      <span className="text-sm text-muted-foreground">{metadata.description}</span>
+                    </div>
+                  )}
+                  {metadata.image && (
+                    <div className="mt-2">
+                      <img
+                        src={metadata.image}
+                        alt={metadata.name}
+                        className="w-32 h-32 object-cover rounded-lg"
+                      />
+                    </div>
+                  )}
+                </div>
+              </div>
+            ) : contractId && tokenId ? (
+              <div className="p-4 text-sm text-muted-foreground text-center">
+                No metadata found for this NFT
+              </div>
+            ) : null}
+          </div>
+          <DialogFooter>
+            <Button
+              type="submit"
+              disabled={isLoading || !metadata}
+            >
+              {isLoading ? 'Creating...' : 'Create Listing'}
+            </Button>
+          </DialogFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
+
+interface MarketplaceItemArtworkProps extends React.HTMLAttributes<HTMLDivElement> {
+  listing: MarketplaceListing;
+  aspectRatio?: "portrait" | "square";
+  width?: number;
+  height?: number;
+}
+
+function MarketplaceItemArtwork({
+  listing,
+  aspectRatio = "portrait",
+  width,
+  height,
+  className,
+  ...props
+}: MarketplaceItemArtworkProps) {
+  const [isLoading, setIsLoading] = useState(false);
+  const { stxAddress } = useGlobalState();
+  const isOwner = stxAddress === listing.owner;
+
+  const handleUnlist = async () => {
+    setIsLoading(true);
+    try {
+      // First make contract call
+      await openContractCall({
+        network: network,
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "marketplace-v5",
+        functionName: "unlist-asset",
+        functionArgs: [
+          contractPrincipalCV(listing.contractId.split('.')[0], listing.contractId.split('.')[1]),
+          uintCV(listing.tokenId)
+        ],
+        postConditionMode: PostConditionMode.Deny,
+        postConditions: [],
+        onFinish: async (data) => {
+          // Then update API
+          const response = await fetch(`/api/v0/marketplace/listings/${listing.contractId}/${listing.tokenId}`, {
+            method: 'DELETE'
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to update API');
+          }
+        }
+      });
+
+    } catch (error) {
+      console.error('Failed to unlist:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handlePurchase = async () => {
+    setIsLoading(true);
+    try {
+      await openContractCall({
+        network,
+        contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
+        contractName: "marketplace-v5",
+        functionName: "purchase-asset",
+        functionArgs: [
+          contractPrincipalCV(listing.contractId.split('.')[0], listing.contractId.split('.')[1]),
+          uintCV(listing.tokenId)
+        ],
+        postConditionMode: PostConditionMode.Deny, // The contract handles post conditions internally
+        postConditions: [
+          makeStandardSTXPostCondition(
+            stxAddress,
+            FungibleConditionCode.Equal,
+            listing.price
+          )
+        ],
+        onFinish: async (data) => {
+          // Then update API to remove the listing
+          const response = await fetch(`/api/v0/marketplace/listings/${listing.contractId}/${listing.tokenId}`, {
+            method: 'DELETE'
+          });
+
+          if (!response.ok) {
+            throw new Error('Failed to update API');
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Failed to purchase:', error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  return (
+    <div className={cn("space-y-3", className)} {...props}>
+      <ContextMenu>
+        <ContextMenuTrigger>
+          <div className="relative overflow-hidden rounded-md">
+            <Badge
+              className="absolute z-10 text-white top-2 right-2 bg-black/75 hover:bg-black/75"
+            >
+              {numeral(listing.price / 1000000).format('0,0.00')} STX
+            </Badge>
+            <Image
+              src={listing.metadata?.image || '/placeholder.png'}
+              alt={listing.name || `NFT #${listing.tokenId}`}
+              width={width}
+              height={height}
+              onClick={handlePurchase}
+              className={cn(
+                "h-auto w-auto object-cover transition-all hover:scale-105 cursor-pointer opacity-90 hover:opacity-95",
+                aspectRatio === "portrait" ? "aspect-[3/4]" : "aspect-square"
+              )}
+            />
+          </div>
+        </ContextMenuTrigger>
+        <ContextMenuContent className="w-40">
+          {isOwner ? (
+            <ContextMenuItem
+              className="cursor-pointer"
+              onClick={handleUnlist}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Processing...' : 'Unlist'}
+            </ContextMenuItem>
+          ) : (
+            <ContextMenuItem
+              className="cursor-pointer"
+              onClick={handlePurchase}
+              disabled={isLoading}
+            >
+              {isLoading ? 'Processing...' : 'Purchase'}
+            </ContextMenuItem>
+          )}
+          <ContextMenuSeparator />
+          <ContextMenuItem
+            onClick={() => {
+              navigator.clipboard.writeText(listing.contractId);
+            }}
+            className="cursor-pointer"
+          >
+            Copy Contract ID
+          </ContextMenuItem>
+        </ContextMenuContent>
+      </ContextMenu>
+      <div className="space-y-1 text-sm">
+        <h3 className="font-medium leading-none">
+          {listing.name || `NFT #${listing.tokenId}`}
+        </h3>
+        <p className="text-xs text-muted-foreground">
+          {listing.contractId.split('.')[0].slice(0, 4)}...{listing.contractId.split('.')[0].slice(-4)}.
+          {listing.contractId.split('.')[1]}
+        </p>
+        {listing.metadata?.description && (
+          <p className="text-xs text-muted-foreground line-clamp-2">
+            {listing.metadata.description}
+          </p>
+        )}
       </div>
     </div>
   );

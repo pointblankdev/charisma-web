@@ -158,6 +158,10 @@ depends_on = []
 path = "contracts/dungeon-crawler.clar"
 depends_on = []
 
+[contracts.marketplace-v5]
+path = "contracts/marketplace/marketplace-v5.clar"
+depends_on = []
+
 
 # traits
 [contracts.dao-traits-v4]
