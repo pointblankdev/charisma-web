@@ -285,7 +285,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
 function getCollectionName(contractId: string): string {
   const collections: Record<string, string> = {
     'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk': `Welsh Punk`,
-    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven': `Odin's Ravens`,
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven': `Odin's Raven`,
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.red-pill-nft': 'Red Pill NFT',
     // Add more collections as needed
   };
