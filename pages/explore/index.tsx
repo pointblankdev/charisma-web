@@ -179,38 +179,38 @@ export const getStaticProps: GetStaticProps<any> = async () => {
         }
       ]
     },
-    {
-      name: "Energized Arbitrage",
-      description: "Generate energy from holding synthetic tokens and profit from market inefficiencies.",
-      cover: "/explorations/energy-arbitrage.png",
-      steps: [
-        {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc6',
-          action: "TAP",
-          description: "Generate base energy"
-        },
-        // {
-        //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc3',
-        //   action: "TAP",
-        //   description: "Generate energy from your iouWELSH holdings"
-        // },
-        // {
-        //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc2',
-        //   action: "TAP",
-        //   description: "Generate energy from your iouROO holdings"
-        // },
-        {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
-          action: "FORWARD",
-          description: "Arbitrage swap forward and abort if not profitable"
-        },
-        {
-          contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
-          action: "REVERSE",
-          description: "Arbitrage swap reverse and abort if not profitable"
-        },
-      ]
-    },
+    // {
+    //   name: "Energized Arbitrage",
+    //   description: "Generate energy from holding synthetic tokens and profit from market inefficiencies.",
+    //   cover: "/explorations/energy-arbitrage.png",
+    //   steps: [
+    //     {
+    //       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc6',
+    //       action: "TAP",
+    //       description: "Generate base energy"
+    //     },
+    //     // {
+    //     //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-welsh-rc3',
+    //     //   action: "TAP",
+    //     //   description: "Generate energy from your iouWELSH holdings"
+    //     // },
+    //     // {
+    //     //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-iou-roo-rc2',
+    //     //   action: "TAP",
+    //     //   description: "Generate energy from your iouROO holdings"
+    //     // },
+    //     {
+    //       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
+    //       action: "FORWARD",
+    //       description: "Arbitrage swap forward and abort if not profitable"
+    //     },
+    //     {
+    //       contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4",
+    //       action: "REVERSE",
+    //       description: "Arbitrage swap reverse and abort if not profitable"
+    //     },
+    //   ]
+    // },
     {
       name: "Charismatic Flow",
       description: "Collect energy from held CHA tokens and then attempt to wrap additional Charisma tokens.",
@@ -1219,7 +1219,7 @@ function ListingDialog({ collections }: ListingDialogProps) {
           variant="outline"
           className="h-[250px] w-[250px] flex-col gap-4"
         >
-          <Plus className="h-8 w-8" />
+          <Plus className="w-8 h-8" />
           <span>Create Listing</span>
         </Button>
       </DialogTrigger>
@@ -1309,14 +1309,14 @@ function ListingDialog({ collections }: ListingDialogProps) {
                       <img
                         src={metadata.image}
                         alt={metadata.name}
-                        className="w-32 h-32 object-cover rounded-lg"
+                        className="object-cover w-32 h-32 rounded-lg"
                       />
                     </div>
                   )}
                 </div>
               </div>
             ) : contractId && tokenId ? (
-              <div className="p-4 text-sm text-muted-foreground text-center">
+              <div className="p-4 text-sm text-center text-muted-foreground">
                 No metadata found for this NFT
               </div>
             ) : null}
