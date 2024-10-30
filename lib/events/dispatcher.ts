@@ -1,9 +1,11 @@
-import { addCachedProposal, addPlayer, getMob, getVoteData, isPlayer, saveSwapEvent, saveTapEvent, setHadLandBefore, setLandsBalance, setMob, setNftCollectionMetadata, setPlayerPill, setPlayerTokens, setVoteData, trackBurnEvent, trackMintEvent, trackTransferEvent, updateExperienceLeaderboard } from "@lib/db-providers/kv";
+import { addPlayer, saveSwapEvent, saveTapEvent, setPlayerPill, setPlayerTokens, trackBurnEvent, trackMintEvent, trackTransferEvent, updateExperienceLeaderboard } from "@lib/db-providers/kv";
 import { getTokenBalance } from "@lib/stacks-api";
-import { EmbedBuilder } from '@tycrek/discord-hookr';
 import Logger from "@lib/logger";
+import { handleMarketplaceEvent } from "@lib/data/marketplace/marketplace-events";
 
 export const handleContractEvent = async (event: any, builder: any) => {
+    // Add marketplace handler before other handlers
+    builder = await handleMarketplaceEvent(event, builder);
 
     let symbol = '❓';
 
@@ -53,7 +55,6 @@ export const handleContractEvent = async (event: any, builder: any) => {
             value: JSON.stringify(event.data).slice(0, 300)
         });
     }
-
 
     else if (event.type === 'FTBurnEvent') {
         symbol = '🔻'

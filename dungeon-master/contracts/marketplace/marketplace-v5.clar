@@ -103,6 +103,7 @@
           (begin
            (match (transfer-tradable-to-escrow tradables tradable-id)
             success (begin
+                (print {op: "LIST_ASSET", tradables: (contract-of tradables), tradable-id: tradable-id, price: price, commission: commission})
                 (ok true))
             error (begin (print error) (err err-transfer-failed))))
           (err err-duplicate-entry)
@@ -126,6 +127,7 @@
           (match (transfer-tradable-from-escrow tradables tradable-id)
              success (begin
                        (map-delete on-sale {tradables: (contract-of tradables), tradable-id: tradable-id})
+                       (print {op: "UNLIST_ASSET", tradables: (contract-of tradables), tradable-id: tradable-id})
                        (ok true))
              error (begin (print error) (err err-transfer-failed)))
           (err err-not-allowed)
@@ -159,6 +161,7 @@
                   (match (transfer-tradable-from-escrow tradables tradable-id)
                     transfer-success (begin 
                       (map-delete on-sale {tradables: (contract-of tradables), tradable-id: tradable-id})
+                      (print {op: "PURCHASE_ASSET", tradables: (contract-of tradables), tradable-id: tradable-id, price: price, commission: (get commission nft-data), owner: (get owner nft-data), royalty-address: (get royalty-address nft-data), royalty-percent: (get royalty-percent nft-data)})
                       (ok true) ;; sending NFT to buyer succeeded
                     )
                     error (err err-transfer-failed)
@@ -190,6 +193,7 @@
         (match (return-tradable-from-escrow tradables tradable-id)
            success (begin
                      (map-delete on-sale {tradables: (contract-of tradables), tradable-id: tradable-id})
+                     (print {op: "ADMIN_UNLIST_ASSET", tradables: (contract-of tradables), tradable-id: tradable-id})
                      (ok true))
            error (begin (print error) (err err-transfer-failed)))
         (err err-not-allowed)
@@ -201,6 +205,7 @@
 (define-public (set-minimum-commission (commission uint))
   (begin
     (asserts! (is-eq tx-sender contract-owner) (err err-not-allowed))
+    (print {op: "SET_MINIMUM_COMMISSION", commission: commission})
     (ok (var-set minimum-commission commission))
   )
 )
@@ -208,6 +213,7 @@
 (define-public (add-contract (contract principal))
   (begin
     (asserts! (is-eq tx-sender contract-owner) (err err-not-allowed))
+    (print {op: "ADD_CONTRACT", contract: contract})
     (ok (map-set verified-contracts {tradables: contract} {royalty-address: contract-owner, royalty-percent: u0}))
   )
 )
@@ -215,6 +221,7 @@
 (define-public (remove-contract (contract principal))
   (begin
     (asserts! (is-eq tx-sender contract-owner) (err err-not-allowed))
+    (print {op: "REMOVE_CONTRACT", contract: contract})
     (ok (map-delete verified-contracts {tradables: contract}))
   )
 )
@@ -222,6 +229,7 @@
 (define-public (set-royalty (contract principal) (address principal) (percent uint))
   (begin
     (asserts! (is-eq tx-sender contract-owner) (err err-not-allowed))
+    (print {op: "SET_ROYALTY", contract: contract, address: address, percent: percent})
     (ok (map-set verified-contracts {tradables: contract} {royalty-address: address, royalty-percent: percent}))
   )
 )
@@ -229,6 +237,7 @@
 (define-public (set-minimum-listing-price (price uint))
   (begin
     (asserts! (is-eq tx-sender contract-owner) (err err-not-allowed))
+    (print {op: "SET_MINIMUM_LISTING_PRICE", price: price})
     (ok (var-set minimum-listing-price price))
   )
 )
@@ -236,6 +245,7 @@
 (define-public (set-listings-frozen (frozen bool))
   (begin
     (asserts! (is-eq tx-sender contract-owner) (err err-not-allowed))
+    (print {op: "SET_LISTINGS_FROZEN", frozen: frozen})
     (ok (var-set listings-frozen frozen))
   )
 )
@@ -243,6 +253,7 @@
 (define-public (set-unlistings-frozen (frozen bool))
   (begin
     (asserts! (is-eq tx-sender contract-owner) (err err-not-allowed))
+    (print {op: "SET_UNLISTINGS_FROZEN", frozen: frozen})
     (ok (var-set unlistings-frozen frozen))
   )
 )
@@ -250,6 +261,7 @@
 (define-public (set-purchases-frozen (frozen bool))
   (begin
     (asserts! (is-eq tx-sender contract-owner) (err err-not-allowed))
+    (print {op: "SET_PURCHASES_FROZEN", frozen: frozen})
     (ok (var-set purchases-frozen frozen))
   )
 )
