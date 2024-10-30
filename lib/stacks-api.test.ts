@@ -5,13 +5,13 @@ import { checkIfEpochIsEnding, checkQuestComplete, checkQuestLocked, getAccountA
 import { writeFileSync } from "fs";
 import { tryResetEpochs } from "./try-reset-epochs";
 
-const network = new StacksMainnet();
+const network = new StacksMainnet()
 
 describe('Stacks API', () => {
     it('should return a token balance', async () => {
 
         const r: any = await callReadOnlyFunction({
-            network: new StacksMainnet(),
+            network: network,
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "balance-at-block-v2",
             functionName: "get-balance-at-block",
