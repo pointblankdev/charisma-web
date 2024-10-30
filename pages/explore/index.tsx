@@ -1165,7 +1165,7 @@ function ListingDialog({ collections }: ListingDialogProps) {
       await openContractCall({
         network,
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: "marketplace-v5",
+        contractName: "marketplace-v6",
         functionName: "list-asset",
         functionArgs: [
           contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1]),
@@ -1361,7 +1361,7 @@ function MarketplaceItemArtwork({
       await openContractCall({
         network: network,
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: "marketplace-v5",
+        contractName: "marketplace-v6",
         functionName: "unlist-asset",
         functionArgs: [
           contractPrincipalCV(listing.contractId.split('.')[0], listing.contractId.split('.')[1]),
@@ -1394,7 +1394,7 @@ function MarketplaceItemArtwork({
       await openContractCall({
         network,
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-        contractName: "marketplace-v5",
+        contractName: "marketplace-v6",
         functionName: "purchase-asset",
         functionArgs: [
           contractPrincipalCV(listing.contractId.split('.')[0], listing.contractId.split('.')[1]),

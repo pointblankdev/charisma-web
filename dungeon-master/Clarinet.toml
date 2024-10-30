@@ -158,8 +158,8 @@ depends_on = []
 path = "contracts/dungeon-crawler.clar"
 depends_on = []
 
-[contracts.marketplace-v5]
-path = "contracts/marketplace/marketplace-v5.clar"
+[contracts.marketplace-v6]
+path = "contracts/marketplace/marketplace-v6.clar"
 depends_on = []
 
 

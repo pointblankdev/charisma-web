@@ -314,7 +314,7 @@ const AddContract = () => {
             await openContractCall({
                 network,
                 contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-                contractName: "marketplace-v5",
+                contractName: "marketplace-v6",
                 functionName: "add-contract",
                 functionArgs: [contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1])],
                 postConditionMode: PostConditionMode.Deny,
@@ -356,7 +356,7 @@ const SetRoyalty = () => {
             await openContractCall({
                 network,
                 contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
-                contractName: "marketplace-v5",
+                contractName: "marketplace-v6",
                 functionName: "set-royalty",
                 functionArgs: [
                     contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1]),
