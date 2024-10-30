@@ -57,7 +57,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
               {name}
             </Link>
           ))}
-          {userSession.isUserSignedIn() ? <Link href='/' className={cn(styles['nav-item'])} onClick={toggleSession}>Sign out</Link> : <Link href='/token' className={cn(styles['nav-item'])} onClick={toggleSession}>Connect</Link>}
+          {userSession.isUserSignedIn() ? <Link href='/' className={cn(styles['nav-item'])} onClick={toggleSession}>Sign out</Link> : <Link href='/swap' className={cn(styles['nav-item'])} onClick={toggleSession}>Connect</Link>}
         </nav>
       </FocusScope>
     </div >

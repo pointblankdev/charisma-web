@@ -22,7 +22,7 @@ export function authenticate() {
   showConnect({
     appDetails,
     onFinish: async (e) => {
-      window.location.pathname = '/token';
+      window.location.pathname = '/swap';
       const userData = e.userSession.loadUserData()
       const address = userData.profile.stxAddress.mainnet
       const bns = await getNameFromAddress(address)
