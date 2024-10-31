@@ -22,16 +22,20 @@ export function authenticate() {
     appDetails,
     onFinish: async (e) => {
       window.location.pathname = '/swap';
-      const userData = e.userSession.loadUserData()
-      const address = userData.profile.stxAddress.mainnet
-      const bns = await getNameFromAddress(address)
-      const user = {
-        id: address,
-        username: bns.names[0],
-        ip_address: '{{auto}}',
-        email: userData.email
+      try {
+        const userData = e.userSession.loadUserData()
+        const address = userData.profile.stxAddress.mainnet
+        const bns = await getNameFromAddress(address)
+        const user = {
+          id: address,
+          username: bns.names[0],
+          ip_address: '{{auto}}',
+          email: userData.email
+        }
+        Sentry.setUser(user);
+      } catch (error) {
+        console.error(error)
       }
-      Sentry.setUser(user);
     },
     userSession,
   });
