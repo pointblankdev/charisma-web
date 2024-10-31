@@ -2,7 +2,6 @@ import React, { useEffect, useState } from "react";
 import { AppConfig, showConnect, UserSession } from "@stacks/connect-react";
 import { cn } from '@lib/utils';
 import { Button } from "@components/ui/button";
-import { StacksMainnet } from "@stacks/network";
 import { useGlobalState } from "@lib/hooks/global-state-context";
 import * as Sentry from "@sentry/browser";
 import { getNameFromAddress } from "@lib/stacks-api";
@@ -16,7 +15,7 @@ export const appDetails = {
   icon: "https://charisma.rocks/dmg-logo.gif",
 };
 
-export const network = new StacksMainnet()
+export const network = 'mainnet' as any
 
 export function authenticate() {
   showConnect({
