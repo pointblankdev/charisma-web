@@ -305,7 +305,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
   }, [fromToken, toToken, availablePools]);
 
   const fetchReserves = useCallback(async () => {
-    if (!currentPool) return;
+    if (!currentPool || !stxAddress) return;
     try {
       const result: any = await callReadOnlyFunction({
         contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
@@ -315,7 +315,7 @@ const SwapInterface = ({ data, experienceBalance }: { data: Props['data'], exper
           principalCV(currentPool.token0.contractAddress),
           principalCV(currentPool.token1.contractAddress)
         ],
-        senderAddress: stxAddress || '',
+        senderAddress: stxAddress,
       });
       if (result.value) {
         const poolInfo = result.value.data.pool;
