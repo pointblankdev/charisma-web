@@ -1,10 +1,11 @@
-import { callReadOnlyFunction, cvToJSON, principalCV, uintCV } from "@stacks/transactions";
-import { StacksMainnet } from '@stacks/network';
-import { callContractPublicFunction } from "./stacks-api";
+import { network } from '@components/stacks-session/connect';
+import { fetchCallReadOnlyFunction, cvToJSON, principalCV } from '@stacks/transactions';
 
-async function getTransactionsAvailable(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+async function getTransactionsAvailable(
+  senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+) {
+  const response: any = await fetchCallReadOnlyFunction({
+    network: network,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-token',
     functionName: 'get-txs-available',
@@ -15,8 +16,8 @@ async function getTransactionsAvailable(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4
 }
 
 async function getBlocksUntilUnlock(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+  const response: any = await fetchCallReadOnlyFunction({
+    network: network,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-token',
     functionName: 'get-blocks-until-unlock',
@@ -26,9 +27,11 @@ async function getBlocksUntilUnlock(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKG
   return Number(response.value.value);
 }
 
-async function getBlocksPerTransaction(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+async function getBlocksPerTransaction(
+  senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+) {
+  const response: any = await fetchCallReadOnlyFunction({
+    network: network,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-token',
     functionName: 'get-blocks-per-tx',
@@ -38,9 +41,11 @@ async function getBlocksPerTransaction(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4F
   return Number(response.value.value);
 }
 
-async function getTokensPerTransaction(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+async function getTokensPerTransaction(
+  senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+) {
+  const response: any = await fetchCallReadOnlyFunction({
+    network: network,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-token',
     functionName: 'get-max-liquidity-flow',
@@ -51,8 +56,8 @@ async function getTokensPerTransaction(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4F
 }
 
 async function hasFreeClaim(address: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+  const response: any = await fetchCallReadOnlyFunction({
+    network: network,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-claims',
     functionName: 'has-free-claim',
@@ -63,8 +68,8 @@ async function hasFreeClaim(address: string) {
 }
 
 async function hasClaimed(address: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+  const response: any = await fetchCallReadOnlyFunction({
+    network: network,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-claims',
     functionName: 'has-claimed',
@@ -81,4 +86,4 @@ export const CharismaToken = {
   getTokensPerTransaction,
   hasFreeClaim,
   hasClaimed
-}
+};

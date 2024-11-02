@@ -4,26 +4,12 @@ import Page from '@components/page';
 import Layout from '@components/layout/layout';
 import { Card } from '@components/ui/card';
 import Image from 'next/image';
-import { useCallback, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { ArrowUpDown, Minus, Plus, RefreshCw, Scale, ShoppingCart } from 'lucide-react';
 import numeral from 'numeral';
-import { callReadOnlyFunction, cvToJSON, Pc, PostConditionMode, principalCV, uintCV } from "@stacks/transactions";
-import velarApi from '@lib/velar-api';
 import { Button } from '@components/ui/button';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@components/ui/dialog';
-import { Input } from '@components/ui/input';
-import { Label } from '@components/ui/label';
-import { Slider } from "@components/ui/slider";
+import { Dialog } from '@components/ui/dialog';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import cmc from '@lib/cmc-api';
 import RebalanceDialog from '@components/pools/rebalance-dialog';
 import EqualizeDialog from '@components/pools/equalize-dialog';
 import QuickBuyDialog from '@components/pools/quick-buy-dialog';
@@ -41,7 +27,7 @@ export type TokenInfo = {
   image: string;
   contractAddress: string;
   price: number;
-  tokenId?: string
+  tokenId?: string;
   decimals: number;
 };
 
@@ -77,37 +63,44 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   const tokenPrices = await PricesService.getAllTokenPrices();
 
   // Fetch reserves and calculate TVL for each pool
-  const pools: PoolInfo[] = await Promise.all(poolsData.map(async (pool) => {
-    // lookup total supply of LP tokens
-    const totalLpSupply = await getTotalSupply(pool.contractAddress);
+  const pools: PoolInfo[] = await Promise.all(
+    poolsData.map(async pool => {
+      // lookup total supply of LP tokens
+      const totalLpSupply = await getTotalSupply(pool.contractAddress);
 
-    const reserves = await PricesService.getPoolReserves(pool.id);
+      const reserves = await PricesService.getPoolReserves(pool.id);
 
-    const token0Price = tokenPrices[pool.token0.symbol] || 0;
-    const token1Price = tokenPrices[pool.token1.symbol] || 0;
+      const token0Price = tokenPrices[pool.token0.symbol] || 0;
+      const token1Price = tokenPrices[pool.token1.symbol] || 0;
 
-    const tvl = (reserves.token0 / 10 ** pool.token0.decimals * token0Price) + (reserves.token1 / 10 ** pool.token1.decimals * token1Price);
+      const tvl =
+        (reserves.token0 / 10 ** pool.token0.decimals) * token0Price +
+        (reserves.token1 / 10 ** pool.token1.decimals) * token1Price;
 
-    // Fetch swap events for volume calculation
-    const poolData = await getPoolData(pool.id.toString())
+      // Fetch swap events for volume calculation
+      const poolData = await getPoolData(pool.id.toString());
 
-    // calculate all transaction volume 
-    const volume = poolData.swaps.reduce((sum: any, swap: any) => {
-      sum.token0 += swap['token-in'] === swap.pool.token0 ? swap['amt-in'] : swap['amt-out']
-      sum.token1 += swap['token-in'] === swap.pool.token1 ? swap['amt-in'] : swap['amt-out']
-      return sum
-    }, { token0: 0, token1: 0 })
+      // calculate all transaction volume
+      const volume = poolData.swaps.reduce(
+        (sum: any, swap: any) => {
+          sum.token0 += swap['token-in'] === swap.pool.token0 ? swap['amt-in'] : swap['amt-out'];
+          sum.token1 += swap['token-in'] === swap.pool.token1 ? swap['amt-in'] : swap['amt-out'];
+          return sum;
+        },
+        { token0: 0, token1: 0 }
+      );
 
-    return {
-      ...pool,
-      token0: { ...pool.token0, price: token0Price },
-      token1: { ...pool.token1, price: token1Price },
-      reserves,
-      tvl,
-      volume,
-      totalLpSupply
-    };
-  }));
+      return {
+        ...pool,
+        token0: { ...pool.token0, price: token0Price },
+        token1: { ...pool.token1, price: token1Price },
+        reserves,
+        tvl,
+        volume,
+        totalLpSupply
+      };
+    })
+  );
 
   return {
     props: {
@@ -123,8 +116,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 export default function PoolsPage({ data }: Props) {
   const meta = {
     title: 'Charisma | Pools',
-    description: "View and manage liquidity pools on the Charisma DEX",
-    image: 'https://charisma.rocks/pools-screenshot.png',
+    description: 'View and manage liquidity pools on the Charisma DEX',
+    image: 'https://charisma.rocks/pools-screenshot.png'
   };
 
   const { wallet } = useWallet();
@@ -141,34 +134,45 @@ export default function PoolsPage({ data }: Props) {
     <Page meta={meta} fullViewport>
       <SkipNavContent />
       <Layout>
-        {!loading && <motion.div initial="hidden" animate="visible" variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }} className="sm:max-w-[2400px] sm:mx-auto sm:pb-10">
-          {isAuthorized ? (
-            <>
-              <div className='my-2 font-light text-center text-muted-foreground/90'>View and manage liquidity pools on the Charisma DEX</div>
-              <PoolsInterface data={data} wallet={wallet} />
-            </>
-          ) : (
-            <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
-              <Card className="w-full max-w-lg p-6 text-center">
-                <h2 className="mb-4 text-2xl font-bold">Access Restricted</h2>
-                <p className="mb-4">
-                  To view and manage liquidity pools, you need either:
-                </p>
-                <ul className="mb-4 text-left list-disc list-inside">
-                  <li className={wallet.experience.balance >= 1000 ? "text-green-500" : "text-red-500"}>
-                    At least 1000 Experience {wallet.experience.balance >= 1000 ? "✓" : "✗"}
-                  </li>
-                  <li className={wallet.redPilled ? "text-green-500" : "text-red-500"}>
-                    Own the Red Pill NFT {wallet.redPilled ? "✓" : "✗"}
-                  </li>
-                </ul>
-                <p className="text-sm text-muted-foreground">
-                  Continue using Charisma to gain more experience and unlock this feature.
-                </p>
-              </Card>
-            </div>
-          )}
-        </motion.div>}
+        {!loading && (
+          <motion.div
+            initial="hidden"
+            animate="visible"
+            variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
+            className="sm:max-w-[2400px] sm:mx-auto sm:pb-10"
+          >
+            {isAuthorized ? (
+              <>
+                <div className="my-2 font-light text-center text-muted-foreground/90">
+                  View and manage liquidity pools on the Charisma DEX
+                </div>
+                <PoolsInterface data={data} wallet={wallet} />
+              </>
+            ) : (
+              <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
+                <Card className="w-full max-w-lg p-6 text-center">
+                  <h2 className="mb-4 text-2xl font-bold">Access Restricted</h2>
+                  <p className="mb-4">To view and manage liquidity pools, you need either:</p>
+                  <ul className="mb-4 text-left list-disc list-inside">
+                    <li
+                      className={
+                        wallet.experience.balance >= 1000 ? 'text-green-500' : 'text-red-500'
+                      }
+                    >
+                      At least 1000 Experience {wallet.experience.balance >= 1000 ? '✓' : '✗'}
+                    </li>
+                    <li className={wallet.redPilled ? 'text-green-500' : 'text-red-500'}>
+                      Own the Red Pill NFT {wallet.redPilled ? '✓' : '✗'}
+                    </li>
+                  </ul>
+                  <p className="text-sm text-muted-foreground">
+                    Continue using Charisma to gain more experience and unlock this feature.
+                  </p>
+                </Card>
+              </div>
+            )}
+          </motion.div>
+        )}
       </Layout>
     </Page>
   );
@@ -196,7 +200,8 @@ const PoolsInterface = ({ data, wallet }: any) => {
       const chaToken = pool.token0.symbol === 'CHA' ? pool.token0 : pool.token1;
       const otherToken = pool.token0.symbol === 'CHA' ? pool.token1 : pool.token0;
       const chaReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token0 : pool.reserves.token1;
-      const otherReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
+      const otherReserve =
+        pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
 
       const chaAmount = chaReserve / 10 ** chaToken.decimals;
       const otherAmount = otherReserve / 10 ** otherToken.decimals;
@@ -206,8 +211,10 @@ const PoolsInterface = ({ data, wallet }: any) => {
     }
 
     // For WELSH-iouWELSH and ROO-iouROO pools
-    if ((pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
-      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')) {
+    if (
+      (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
+      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
+    ) {
       const token0Reserve = pool.reserves.token0 / 10 ** pool.token0.decimals;
       const token1Reserve = pool.reserves.token1 / 10 ** pool.token1.decimals;
       const priceRatio = token0Reserve / token1Reserve;
@@ -217,7 +224,8 @@ const PoolsInterface = ({ data, wallet }: any) => {
     return null;
   };
 
-  const filteredPools = data.pools.filter((pool: any) => pool && true
+  const filteredPools = data.pools.filter(
+    (pool: any) => pool && true
     // !(pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA') || wallet.experience.balance >= 4000
   );
 
@@ -239,8 +247,16 @@ const PoolsInterface = ({ data, wallet }: any) => {
       const alignmentB = calculatePriceAlignment(b) || 0;
       return sortOrder === 'asc' ? alignmentA - alignmentB : alignmentB - alignmentA;
     }
-    const valueA = sortBy === 'tvl' ? a.tvl : ((a.volume.token0 / (10 ** a.token0.decimals)) * a.token0.price) + ((a.volume.token1 / (10 ** a.token1.decimals)) * a.token1.price);
-    const valueB = sortBy === 'tvl' ? b.tvl : ((b.volume.token0 / (10 ** b.token0.decimals)) * b.token0.price) + ((b.volume.token1 / (10 ** b.token1.decimals)) * b.token1.price);
+    const valueA =
+      sortBy === 'tvl'
+        ? a.tvl
+        : (a.volume.token0 / 10 ** a.token0.decimals) * a.token0.price +
+          (a.volume.token1 / 10 ** a.token1.decimals) * a.token1.price;
+    const valueB =
+      sortBy === 'tvl'
+        ? b.tvl
+        : (b.volume.token0 / 10 ** b.token0.decimals) * b.token0.price +
+          (b.volume.token1 / 10 ** b.token1.decimals) * b.token1.price;
     return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
   });
 
@@ -314,8 +330,10 @@ const PoolsInterface = ({ data, wallet }: any) => {
   };
 
   const isEqualizePool = (pool: PoolInfo) => {
-    return (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
-      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO');
+    return (
+      (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
+      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
+    );
   };
 
   const needsRebalance = (pool: PoolInfo, alignment: number | null) => {
@@ -346,21 +364,29 @@ const PoolsInterface = ({ data, wallet }: any) => {
                     TVL {sortBy === 'tvl' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="py-2 cursor-pointer" onClick={() => handleSort('volume')}>
-                    Trading Volume (Total) {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
+                    Trading Volume (Total){' '}
+                    {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
-                  <th className="items-center hidden py-2 cursor-pointer sm:flex" onClick={() => handleSort('priceAlignment')}>
-                    Price Alignment {sortBy === 'priceAlignment' && <ArrowUpDown className="inline ml-1" size={16} />}
+                  <th
+                    className="items-center hidden py-2 cursor-pointer sm:flex"
+                    onClick={() => handleSort('priceAlignment')}
+                  >
+                    Price Alignment{' '}
+                    {sortBy === 'priceAlignment' && (
+                      <ArrowUpDown className="inline ml-1" size={16} />
+                    )}
                   </th>
                   <th className="py-2 sr-only">Actions</th>
                 </tr>
               </thead>
               <tbody>
-                {sortedPools.map((pool) => {
+                {sortedPools.map(pool => {
                   const priceAlignment = calculatePriceAlignment(pool);
                   const poolNeedsRebalance = needsRebalance(pool, priceAlignment);
                   const canEqualizePool = canEqualize(pool);
                   const isStxCha = isStxChaPool(pool);
-                  const isEqualizePool = (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
+                  const isEqualizePool =
+                    (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
                     (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO');
 
                   const PriceAlignment = ({ pool }: any) => {
@@ -369,39 +395,75 @@ const PoolsInterface = ({ data, wallet }: any) => {
                       const color = getAlignmentColor(alignment, isEqualizePool);
                       return (
                         <span style={{ color }}>
-                          <div className='leading-none'>{alignment.toPrecision(4)}%</div>
+                          <div className="leading-none">{alignment.toPrecision(4)}%</div>
                         </span>
                       );
                     }
                     return <>-</>;
-                  }
+                  };
 
                   return (
                     <tr key={pool.id} className="border-t border-gray-700/50">
                       <td className="py-4 min-w-60">
                         <div className="flex items-center">
-                          <Image src={pool.token0.image} alt={pool.token0.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                          <Image src={pool.token1.image} alt={pool.token1.symbol} width={240} height={240} className="w-6 mr-2 rounded-full" />
-                          <div className='leading-none'>
-                            <div className="text-white">{pool.token0.symbol}-{pool.token1.symbol}</div>
-                            <div className='ml-1 text-sm text-muted-foreground'>{pool.id === 8 ? ' (UPDOG)' : ''}</div>
+                          <Image
+                            src={pool.token0.image}
+                            alt={pool.token0.symbol}
+                            width={240}
+                            height={240}
+                            className="w-6 mr-2 rounded-full"
+                          />
+                          <Image
+                            src={pool.token1.image}
+                            alt={pool.token1.symbol}
+                            width={240}
+                            height={240}
+                            className="w-6 mr-2 rounded-full"
+                          />
+                          <div className="leading-none">
+                            <div className="text-white">
+                              {pool.token0.symbol}-{pool.token1.symbol}
+                            </div>
+                            <div className="ml-1 text-sm text-muted-foreground">
+                              {pool.id === 8 ? ' (UPDOG)' : ''}
+                            </div>
                           </div>
                         </div>
                       </td>
                       <td className="py-4 text-white min-w-48">
-                        {numeral(pool.reserves.token0 / 10 ** pool.token0.decimals).format('0,0')} {pool.token0.symbol}
+                        {numeral(pool.reserves.token0 / 10 ** pool.token0.decimals).format('0,0')}{' '}
+                        {pool.token0.symbol}
                         <br />
-                        {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format('0,0')} {pool.token1.symbol}
+                        {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format(
+                          '0,0'
+                        )}{' '}
+                        {pool.token1.symbol}
                       </td>
-                      <td className="py-4 text-white min-w-24">${numeral(pool.tvl).format('0,0.00')}</td>
+                      <td className="py-4 text-white min-w-24">
+                        ${numeral(pool.tvl).format('0,0.00')}
+                      </td>
                       <td className="py-4 text-white min-w-64">
-                        <div className='flex justify-between'>
-                          <div>{numeral(pool.volume.token0 / 10 ** pool.token0.decimals).format('0,0')} {pool.token0.symbol}</div>
-                          <div>{numeral(pool.volume.token0 / 10 ** pool.token0.decimals * pool.token0.price).format('$0,0.00')}</div>
+                        <div className="flex justify-between">
+                          <div>
+                            {numeral(pool.volume.token0 / 10 ** pool.token0.decimals).format('0,0')}{' '}
+                            {pool.token0.symbol}
+                          </div>
+                          <div>
+                            {numeral(
+                              (pool.volume.token0 / 10 ** pool.token0.decimals) * pool.token0.price
+                            ).format('$0,0.00')}
+                          </div>
                         </div>
-                        <div className='flex justify-between'>
-                          <div>{numeral(pool.volume.token1 / 10 ** pool.token1.decimals).format('0,0')} {pool.token1.symbol}</div>
-                          <div>{numeral(pool.volume.token1 / 10 ** pool.token1.decimals * pool.token1.price).format('$0,0.00')}</div>
+                        <div className="flex justify-between">
+                          <div>
+                            {numeral(pool.volume.token1 / 10 ** pool.token1.decimals).format('0,0')}{' '}
+                            {pool.token1.symbol}
+                          </div>
+                          <div>
+                            {numeral(
+                              (pool.volume.token1 / 10 ** pool.token1.decimals) * pool.token1.price
+                            ).format('$0,0.00')}
+                          </div>
                         </div>
                       </td>
                       <td className="py-4 text-center text-white min-w-24 sm:min-w-36">
@@ -434,18 +496,29 @@ const PoolsInterface = ({ data, wallet }: any) => {
                             </Button>
                           )}
                           {canEqualizePool && (
-                            <Button size="sm" variant="secondary" onClick={() => handleEqualize(pool)}>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleEqualize(pool)}
+                            >
                               <Scale className="w-4 h-4 mr-1" /> Equalize
                             </Button>
                           )}
                           {isStxCha && (
-                            <Button size="sm" variant="secondary" onClick={() => handleQuickBuy(pool)} className='whitespace-nowrap'>
+                            <Button
+                              size="sm"
+                              variant="secondary"
+                              onClick={() => handleQuickBuy(pool)}
+                              className="whitespace-nowrap"
+                            >
                               <ShoppingCart className="w-4 h-4 mr-1" /> Quick Buy
                             </Button>
                           )}
 
                           <Link href={`/pools/${pool.id}`} passHref>
-                            <Button variant="link" className='whitespace-nowrap'>View Chart</Button>
+                            <Button variant="link" className="whitespace-nowrap">
+                              View Chart
+                            </Button>
                           </Link>
                         </div>
                       </td>
@@ -465,23 +538,20 @@ const PoolsInterface = ({ data, wallet }: any) => {
       <Dialog open={isRebalanceDialogOpen} onOpenChange={setIsRebalanceDialogOpen}>
         <RebalanceDialog
           pool={selectedPoolForRebalance}
-          referenceChaPrice={data.pools.find((p: any) => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')?.token1.price || 0}
+          referenceChaPrice={
+            data.pools.find((p: any) => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')
+              ?.token1.price || 0
+          }
           onClose={handleCloseRebalanceDialog}
         />
       </Dialog>
 
       <Dialog open={isEqualizeDialogOpen} onOpenChange={setIsEqualizeDialogOpen}>
-        <EqualizeDialog
-          pool={selectedPoolForEqualize}
-          onClose={handleCloseEqualizeDialog}
-        />
+        <EqualizeDialog pool={selectedPoolForEqualize} onClose={handleCloseEqualizeDialog} />
       </Dialog>
 
       <Dialog open={isQuickBuyDialogOpen} onOpenChange={setIsQuickBuyDialogOpen}>
-        <QuickBuyDialog
-          pool={selectedPoolForQuickBuy}
-          onClose={handleCloseQuickBuyDialog}
-        />
+        <QuickBuyDialog pool={selectedPoolForQuickBuy} onClose={handleCloseQuickBuyDialog} />
       </Dialog>
     </div>
   );

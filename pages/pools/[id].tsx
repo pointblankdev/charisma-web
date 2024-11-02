@@ -5,13 +5,12 @@ import { GetStaticPaths, GetStaticProps } from 'next';
 import Layout from '@components/layout/layout';
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import { startOfDay, parseISO, format } from 'date-fns';
-import { createChart, ColorType, UTCTimestamp, IChartApi, ISeriesApi, LineStyle, CrosshairMode } from 'lightweight-charts';
+import { createChart, ColorType, UTCTimestamp, CrosshairMode } from 'lightweight-charts';
 import { getPoolData } from '@lib/db-providers/kv';
 import { kv } from '@vercel/kv';
-import _, { last } from 'lodash';
+import _ from 'lodash';
 import velarApi from '@lib/velar-api';
-import { callReadOnlyFunction, principalCV } from '@stacks/transactions';
+import { fetchCallReadOnlyFunction, principalCV } from '@stacks/transactions';
 import cmc from '@lib/cmc-api';
 
 
@@ -43,7 +42,7 @@ async function getTokenPrices(): Promise<{ [key: string]: number }> {
 
 async function getPoolReserves(poolId: number, token0Address: string, token1Address: string): Promise<{ token0: number; token1: number }> {
     try {
-        const result: any = await callReadOnlyFunction({
+        const result: any = await fetchCallReadOnlyFunction({
             contractAddress: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS",
             contractName: "univ2-core",
             functionName: "lookup-pool",

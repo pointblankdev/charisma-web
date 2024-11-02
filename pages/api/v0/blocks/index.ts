@@ -12,7 +12,6 @@ export default async function getBlocks(
   req: NextApiRequest,
   res: NextApiResponse<any | ErrorResponse>
 ) {
-
   let response,
     code = 200;
   try {

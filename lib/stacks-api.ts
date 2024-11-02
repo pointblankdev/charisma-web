@@ -1,537 +1,93 @@
-import {
-  AccountsApi,
-  BlocksApi,
-  Configuration,
-  FeesApi,
-  NamesApi,
-  SmartContractsApi,
-  TransactionsApi
-} from '@stacks/blockchain-api-client';
-import {
-  AnchorMode,
-  boolCV,
-  broadcastTransaction,
-  callReadOnlyFunction,
-  cvToHex,
-  cvToValue,
-  hexToCV,
-  makeContractCall,
-  makeSTXTokenTransfer,
-  parseToCV,
-  PostConditionMode,
-  principalCV,
-  uintCV
-} from '@stacks/transactions';
-import { StacksMainnet } from '@stacks/network';
-import { generateWallet } from '@stacks/wallet-sdk';
+import { createClient } from '@stacks/blockchain-api-client';
+import { fetchCallReadOnlyFunction, cvToValue, parseToCV } from '@stacks/transactions';
+import { STACKS_MAINNET } from '@stacks/network';
 import { cvToJSON } from '@stacks/transactions';
-import contractAbi from '../public/indexes/contract-abi.json';
-import { getGlobalState } from './db-providers/kv';
-import Logger from './logger';
 
-const network = new StacksMainnet();
+const network = STACKS_MAINNET;
 
-const apiConfig: Configuration = new Configuration({
-  fetchApi: fetch,
-  // for mainnet, replace `testnet` with `mainnet`
-  basePath: 'https://api.mainnet.hiro.so', // defaults to http://localhost:3999
-  // apiKey: process.env.STACKS_API_KEY,
-  headers: {
-    'x-hiro-api-key': String(process.env.STACKS_API_KEY)
+const client = createClient({
+  baseUrl: 'https://api.mainnet.hiro.so'
+});
+
+client.use({
+  onRequest({ request }) {
+    request.headers.set('x-hiro-api-key', String(process.env.STACKS_API_KEY));
+    return request;
   }
 });
 
-const scApi = new SmartContractsApi(apiConfig);
-const blocksApi = new BlocksApi(apiConfig);
-const txApi = new TransactionsApi(apiConfig);
-const accountsApi = new AccountsApi(apiConfig);
-const namesApi = new NamesApi(apiConfig);
-const feesApi = new FeesApi(apiConfig);
-
-export { scApi, blocksApi, txApi, accountsApi, namesApi, feesApi };
-
-export async function getNameFromAddress(address: string) {
-  const nameInfo = await namesApi.getNamesOwnedByAddress({
-    blockchain: 'stacks',
-    address: address
-  });
-  return nameInfo;
-}
-
-export async function getTokenStats() {
-  const r: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ',
-    contractName: 'dme000-governance-token',
-    functionName: 'get-total-supply',
-    functionArgs: [],
-    senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-  });
-
-  const d: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme005-token-faucet-v0',
-    functionName: 'get-drip-amount',
-    functionArgs: [],
-    senderAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-  });
-  return { totalSupply: Number(r.value.value), dripAmount: Number(d.value.value) };
-}
-
-export async function fetchAllContractTransactions(principal: string) {
-  let offset = 0;
-  const limit = 50;
-  const transactions: any[] = [];
-
-  while (true) {
-    const resp: any = await accountsApi.getAccountTransactions({
-      principal,
-      limit: limit,
-      offset: offset,
-      unanchored: true
-    });
-
-    if (!resp.results || resp.results.length === 0) {
-      break; // exit the loop if there are no more results
-    }
-
-    resp.results.forEach((result: any) => {
-      if (result.contract_call && result.tx_status === 'success') {
-        // only add contract_call transactions
-        const newTx: any = { args: {} };
-        newTx.sender = result.sender_address;
-        newTx.event = result.contract_call.function_name;
-        result.contract_call.function_args.forEach((arg: any) => {
-          let value;
-          if (arg.type === 'uint') {
-            value = Number(arg.repr.slice(1));
-          } else if (arg.type === 'bool') {
-            value = arg.repr === 'true';
-          } else if (arg.type === 'principal') {
-            value = arg.repr.slice(1);
-          } else {
-            // todo: handle other types
-            value = arg.repr;
-          }
-          newTx.args[arg.name] = value;
-        });
-        transactions.push(newTx);
-      }
-    });
-    offset += limit; // increment the offset for the next page
-  }
-
-  return transactions;
-}
-
-export function updateVoteData(proposals: any[], transactions: any[]) {
-  const votes = transactions.filter(tx => tx.event === 'vote');
-
-  votes.forEach(vote => {
-    try {
-      // Find the entry in the proposals array that matches the name
-      const proposal = proposals.find(proposal => proposal.name === vote.args.proposal);
-
-      if (vote.args.for) {
-        proposal.amount += vote.args.amount;
-      } else {
-        proposal.against += vote.args.amount;
-      }
-
-      if (proposal.status !== 'Voting Active' && proposal.status !== 'Pending') {
-        if (proposal.amount > proposal.against) {
-          proposal.status = 'Passed';
-        } else {
-          proposal.status = 'Failed';
-        }
-      }
-    } catch (error) {
-      console.log('Error updating vote data: ', error);
+export async function getNamesFromAddress(address: string) {
+  const response = await client.GET('/v1/addresses/{blockchain}/{address}', {
+    params: {
+      path: { blockchain: 'stacks', address }
     }
   });
-
-  return proposals;
-}
-
-export async function getProposals() {
-  const block = await getGlobalState(`blocks:latest`);
-  const latestBlock = block.height;
-
-  const limit = 50;
-  let offset = 0;
-  const accountsResp: any[] = [];
-
-  while (true) {
-    const resp: any = await accountsApi.getAccountTransactionsWithTransfers({
-      principal: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme002-proposal-submission',
-      limit: limit,
-      offset: offset
-    });
-
-    if (!resp.results || resp.results.length === 0) {
-      break; // exit the loop if there are no more results
-    }
-
-    accountsResp.push(...resp.results);
-    offset += limit; // increment the offset for the next page
-  }
-
-  const proposals: any[] = [];
-
-  for (const r of accountsResp) {
-    // only process successful proposal submissions
-    if (r.tx?.contract_call?.function_name !== 'propose') continue;
-    if (r.tx.tx_status !== 'success') continue;
-
-    try {
-      const args = r.tx.contract_call?.function_args;
-      if (args) {
-        const startBlockHeight = Number(args[1].repr.slice(1));
-        const endBlockHeight = startBlockHeight + 1000; // update 1000 to use the parameter from the contract
-        let status = '';
-        if (latestBlock < startBlockHeight) {
-          status = 'Pending';
-        } else if (latestBlock < endBlockHeight) {
-          status = 'Voting Active';
-        } else {
-          status = 'Voting Ended';
-        }
-
-        const [contractAddress, contractName] = args[0].repr.slice(1).split('.');
-
-        const proposalSourceResp: any = await scApi.getContractSource({
-          contractAddress,
-          contractName
-        });
-
-        const contractPrincipal = `${contractAddress}.${contractName}`;
-        proposals.push({
-          id: args[0].repr.split('.')[1],
-          name: contractPrincipal,
-          source: proposalSourceResp.source,
-          startBlockHeight,
-          endBlockHeight: endBlockHeight,
-          amount: 0,
-          against: 0,
-          status,
-          url: `https://explorer.hiro.so/txid/${contractPrincipal}?chain=mainnet`
-        });
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  }
-  return proposals;
-}
-
-// set quest complete
-export async function setQuestComplete(address: string, questId: number, complete: boolean) {
-  const password = String(process.env.STACKS_ORACLE_PASSWORD);
-  const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY);
-
-  const wallet = await generateWallet({ secretKey, password });
-
-  const account = wallet.accounts[0];
-
-  const txOptions = {
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme007-quest-completion-oracle',
-    functionName: 'set-complete',
-    functionArgs: [principalCV(address), uintCV(questId), boolCV(complete)],
-    senderKey: account.stxPrivateKey,
-    validateWithAbi: true,
-    network,
-    postConditions: [],
-    fee: 250, // set a tx fee if you don't want the builder to estimate
-    anchorMode: AnchorMode.Any
-  };
-
-  const transaction = await makeContractCall(txOptions);
-
-  const broadcastResponse = await broadcastTransaction(transaction, network);
-
-  return broadcastResponse;
-}
-
-export async function getStxQuestRewardsDeposited(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme016-quest-ownership',
-    functionName: 'get-quest-rewards-deposited',
-    functionArgs: [uintCV(questId)],
-    senderAddress: address
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getStxProtocolFeePercentage(address: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme014-stx-rewards',
-    functionName: 'get-fee-percentage',
-    functionArgs: [],
-    senderAddress: address
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getQuestActivationBlock(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme012-quest-activation',
-    functionName: 'get-activation',
-    functionArgs: [uintCV(questId)],
-    senderAddress: address
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getQuestExpirationBlock(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme011-quest-expiration',
-    functionName: 'get-expiration',
-    functionArgs: [uintCV(questId)],
-    senderAddress: address
-  });
-
-  return cvToJSON(response);
-}
-
-// check quest max completions
-export async function getQuestMaxCompletions(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme013-quest-max-completions',
-    functionName: 'get-max-completions',
-    functionArgs: [uintCV(questId)],
-    senderAddress: address
-  });
-
-  return cvToJSON(response);
-}
-
-// check quest STX rewards
-export async function checkQuestStxRewards(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme014-stx-rewards',
-    functionName: 'get-rewards',
-    functionArgs: [uintCV(questId)],
-    senderAddress: address
-  });
-
-  return cvToJSON(response);
-}
-
-// check if quest is complete and unlocked
-export async function checkQuestCompleteAndUnlocked(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme015-quest-reward-helper',
-    functionName: 'is-completed-and-unlocked',
-    functionArgs: [uintCV(questId)],
-    senderAddress: address
-  });
-
-  return cvToJSON(response);
-}
-
-// check if quest is activated and not expired
-export async function checkQuestActivatedAndUnexpired(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme015-quest-reward-helper',
-    functionName: 'is-activated-and-unexpired',
-    functionArgs: [uintCV(questId)],
-    senderAddress: address
-  });
-
-  return cvToJSON(response);
-}
-
-// check if quest is complete
-export async function checkQuestComplete(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme006-quest-completion',
-    functionName: 'is-complete',
-    functionArgs: [principalCV(address), uintCV(questId)],
-    senderAddress: address
-  });
-
-  // console.log(cvToJSON(response))
-
-  return response.value;
-}
-
-export async function checkQuestLocked(address: string, questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme009-charisma-rewards',
-    functionName: 'is-locked',
-    functionArgs: [principalCV(address), uintCV(questId)],
-    senderAddress: address
-  });
-
-  return response.value;
-}
-
-export async function getQuestRewards(questId: number) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme009-charisma-rewards',
-    functionName: 'get-rewards',
-    functionArgs: [uintCV(questId)],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getTitleBeltHolder() {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme023-wooo-title-belt-nft',
-    functionName: 'get-title-holder',
-    functionArgs: [],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getTitleBeltHoldeBalance() {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'dme023-wooo-title-belt-nft',
-    functionName: 'get-title-holder-balance',
-    functionArgs: [],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getAccountAssets(principal: string) {
-  const response: any = await accountsApi.getAccountAssets({
-    principal
-  });
-  return response;
+  return response?.data?.names;
 }
 
 export async function getAccountBalance(principal: string) {
-  const response: any = await accountsApi.getAccountBalance({
-    principal
+  const { data: response } = await client.GET('/extended/v1/address/{principal}/balances', {
+    params: {
+      path: { principal }
+    }
   });
   return response;
 }
 
-export async function getWooTitleBeltContractEvents() {
-  const response = await scApi.getContractEventsById({
-    contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme022-wooo-title-belt-nft'
+export async function getBlocks({ limit = 1 }: { limit?: number } = {}) {
+  const { data: response } = await client.GET('/extended/v2/blocks/', {
+    params: {
+      query: { limit }
+    }
   });
   return response;
-}
-
-export async function getStakedTokenExchangeRate(contract: string) {
-  const [address, name] = contract.split('.');
-
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-exchange-rate',
-    functionArgs: [],
-    senderAddress: address
-  });
-
-  return cvToJSON(response).value;
 }
 
 export async function getTokenBalance(contract: string, user: string) {
   const [address, name] = contract.split('.');
-  const response: any = await scApi.callReadOnlyFunction({
+  const response = await fetchCallReadOnlyFunction({
     contractAddress: address,
     contractName: name,
     functionName: 'get-balance',
-    readOnlyFunctionArgs: {
-      sender: address,
-      arguments: [cvToHex(parseToCV(String(user), 'principal'))]
-    }
+    functionArgs: [parseToCV(String(user), 'principal')],
+    senderAddress: address
   });
 
-  const result = hexToCV(response.result);
-  const cv = cvToJSON(result).value.value;
-  return Number(cv);
-}
-
-export async function getDeployedIndexes() {
-  const response = await scApi.getContractsByTrait({
-    traitAbi: JSON.stringify(contractAbi)
-  });
-  return response.results.map((r: any) => r.contract_id);
+  return Number(cvToValue(response).value);
 }
 
 export async function getTokenURI(contract: string) {
   const [address, name] = contract.split('.');
 
-  const response: any = await scApi.callReadOnlyFunction({
+  const response = await fetchCallReadOnlyFunction({
     contractAddress: address,
     contractName: name,
     functionName: 'get-token-uri',
-    readOnlyFunctionArgs: {
-      sender: address,
-      arguments: []
-    }
+    functionArgs: [],
+    senderAddress: address
   });
 
-  const result = hexToCV(response.result);
-  const cv = cvToJSON(result);
-  const tokenUri = cv.value.value.value;
-  // console.log(tokenUri)
+  const tokenUri = cvToValue(response).value.value;
   const corsProxy = 'https://corsproxy.io/?';
   const res = await fetch(`${corsProxy}${tokenUri}`);
-  const metadata = await res.json();
-  return metadata;
+  return res.json();
 }
 
 export async function getNftURI(contract: string, tokenId: number) {
   try {
     const [address, name] = contract.split('.');
 
-    const response: any = await scApi.callReadOnlyFunction({
+    const response = await fetchCallReadOnlyFunction({
       contractAddress: address,
       contractName: name,
       functionName: 'get-token-uri',
-      readOnlyFunctionArgs: {
-        sender: address,
-        arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))]
-      }
+      functionArgs: [parseToCV(String(tokenId), 'uint128')],
+      senderAddress: address
     });
 
-    const result = hexToCV(response.result);
-    const cv = cvToJSON(result);
-    const url = cv.value.value.value.replace('{id}', tokenId);
-    const metadata = await (await fetch(url)).json();
-    return metadata;
+    const cv = cvToValue(response).value.value;
+    const url = cv.replace('{id}', tokenId);
+    return await (await fetch(url)).json();
   } catch (error) {
     return null;
   }
@@ -540,8 +96,8 @@ export async function getNftURI(contract: string, tokenId: number) {
 export async function getSymbol(contract: string): Promise<string> {
   const [address, name] = contract.split('.');
 
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+  const response = await fetchCallReadOnlyFunction({
+    network: network,
     contractAddress: address,
     contractName: name,
     functionName: 'get-symbol',
@@ -549,14 +105,14 @@ export async function getSymbol(contract: string): Promise<string> {
     senderAddress: address
   });
 
-  return cvToJSON(response).value.value;
+  return cvToValue(response).value.value;
 }
 
 export async function getDecimals(contract: string) {
   const [address, name] = contract.split('.');
 
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+  const response = await fetchCallReadOnlyFunction({
+    network: network,
     contractAddress: address,
     contractName: name,
     functionName: 'get-decimals',
@@ -567,749 +123,41 @@ export async function getDecimals(contract: string) {
   return cvToJSON(response).value.value;
 }
 
-export async function getIsUnlocked(contract: string) {
+export async function getTotalSupply(contract: string) {
   const [address, name] = contract.split('.');
 
-  try {
-    const response: any = await callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: address,
-      contractName: name,
-      functionName: 'is-unlocked',
-      functionArgs: [],
-      senderAddress: address
-    });
-
-    return cvToJSON(response)?.value?.value === true;
-  } catch (error) {
-    return true;
-  }
-}
-
-export async function getBlockCounter(contract: string) {
-  const [address, name] = contract.split('.');
-
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
+  const response = await fetchCallReadOnlyFunction({
     contractAddress: address,
     contractName: name,
-    functionName: 'get-block-counter',
+    functionName: 'get-total-supply',
     functionArgs: [],
     senderAddress: address
   });
 
-  return Number(cvToJSON(response)?.value?.value);
-}
-
-export async function getGuestlist(contract: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'green-room',
-    functionName: 'check-guestlist',
-    functionArgs: [principalCV(contract)],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response)?.value ? true : false;
-}
-
-export async function getBlocksUntilUnlocked(contract: string) {
-  const [address, name] = contract.split('.');
-
-  try {
-    const response: any = await callReadOnlyFunction({
-      network: new StacksMainnet(),
-      contractAddress: address,
-      contractName: name,
-      functionName: 'get-blocks-until-unlock',
-      functionArgs: [],
-      senderAddress: address
-    });
-    return Number(cvToJSON(response)?.value?.value);
-  } catch (error) {
-    return 0;
-  }
-}
-
-export async function getTotalSupply(contract: string) {
-  const [address, name] = contract.split('.');
-
-  const response: any = await scApi.callReadOnlyFunction({
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-total-supply',
-    readOnlyFunctionArgs: {
-      sender: address,
-      arguments: []
-    }
-  });
-
-  const cv = hexToCV(response.result);
-  const json = cvToJSON(cv);
-  return Number(json.value.value);
+  return Number(cvToValue(response).value);
 }
 
 export async function getAvailableRedemptions() {
-  const responseWelsh: any = await scApi.callReadOnlyFunction({
+  const responseWelsh = await fetchCallReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'redemption-vault-v0',
     functionName: 'get-available-welsh',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: []
-    }
+    functionArgs: [],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
   });
-  const cv1 = hexToCV(responseWelsh.result);
-  const json1 = cvToJSON(cv1);
 
-  const responseRoo: any = await scApi.callReadOnlyFunction({
+  const responseRoo = await fetchCallReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'redemption-vault-v0',
     functionName: 'get-available-roo',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: []
-    }
-  });
-  const cv2 = hexToCV(responseRoo.result);
-  const json2 = cvToJSON(cv2);
-
-  return { welsh: Number(json1.value.value), roo: Number(json2.value.value) };
-}
-
-export async function getTotalInPool(contract: string) {
-  const [address, name] = contract.split('.');
-
-  let response: any;
-  if (name === 'liquid-staked-odin') {
-    response = await scApi.callReadOnlyFunction({
-      contractAddress: address,
-      contractName: name,
-      functionName: 'get-total-odin-in-pool',
-      readOnlyFunctionArgs: {
-        sender: address,
-        arguments: []
-      }
-    });
-  } else if (name === 'liquid-staked-roo') {
-    response = await scApi.callReadOnlyFunction({
-      contractAddress: address,
-      contractName: name,
-      functionName: 'get-total-roo-in-pool',
-      readOnlyFunctionArgs: {
-        sender: address,
-        arguments: []
-      }
-    });
-  } else if (name === 'liquid-staked-welsh') {
-    response = await scApi.callReadOnlyFunction({
-      contractAddress: address,
-      contractName: name,
-      functionName: 'get-total-welsh-in-pool',
-      readOnlyFunctionArgs: {
-        sender: address,
-        arguments: []
-      }
-    });
-  } else
-    try {
-      const response = await scApi?.callReadOnlyFunction({
-        contractAddress: address,
-        contractName: name,
-        functionName: 'get-total-in-pool',
-        readOnlyFunctionArgs: {
-          sender: address,
-          arguments: []
-        }
-      });
-
-      // Check if the response and response.result are valid
-      if (!response || !response.result) {
-        return 0; // Exit early since further processing will fail
-      }
-
-      // Now process the response.result with the valueOut function
-      const valueOut = (value: any) => {
-        try {
-          const cv = hexToCV(value.result);
-          const json = cvToJSON(cv);
-          const valueOutResult = json.value?.value || json.value;
-
-          return valueOutResult;
-        } catch (error) {
-          return 0; // Handle error in valueOut
-        }
-      };
-
-      return Number(valueOut(response));
-    } catch (error) {
-      console.error('Error in callReadOnlyFunction:', error);
-      return 0; // Handle error in callReadOnlyFunction
-    }
-}
-
-export async function getFenrirTotalSupply() {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'fenrir-corgi-of-ragnarok',
-    functionName: 'get-total-supply',
     functionArgs: [],
     senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
   });
 
-  return cvToJSON(response);
-}
-
-export async function getWooBalance(contract: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: contract,
-    functionName: 'get-balance',
-    functionArgs: [
-      principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.woo-meme-world-champion')
-    ],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getWooTotalSupply() {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'woo-meme-world-champion',
-    functionName: 'get-total-supply',
-    functionArgs: [],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getAllCharismaWallets() {
-  let offset = 0;
-  const limit = 50;
-  const wallets: any[] = [];
-  const uniqueWallets: Set<string> = new Set();
-
-  while (true) {
-    const resp: any = await accountsApi.getAccountTransactions({
-      principal: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dme005-token-faucet-v0',
-      limit: limit,
-      offset: offset,
-      unanchored: true
-    });
-
-    if (!resp.results || resp.results.length === 0) {
-      break; // exit the loop if there are no more results
-    }
-
-    for (const r of resp.results) {
-      if (!uniqueWallets.has(r.sender_address)) {
-        uniqueWallets.add(r.sender_address);
-        wallets.push(r.sender_address);
-      }
-    }
-
-    offset += limit; // increment the offset for the next page
-  }
-
-  return wallets;
-}
-
-export async function getCraftingRewards(contract: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: contract,
-    functionName: 'get-craft-reward-factor',
-    functionArgs: [],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response);
-}
-
-export async function getIsWhitelisted(contract: string) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'lands',
-    functionName: 'is-whitelisted',
-    functionArgs: [principalCV(contract)],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response).value;
-}
-
-export async function getContractSource({ contractAddress, contractName }: any) {
-  const proposalSourceResp = await scApi.getContractSource({ contractAddress, contractName });
-  return proposalSourceResp;
-}
-
-export async function checkIfEpochIsEnding(contractAddress: string) {
-  const [address, name] = contractAddress.split('.');
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-epoch-info',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: []
-    }
-  });
-  const result = hexToCV((response as any).result);
-  const epochInfo = cvToJSON(result).value.value;
-  console.log('Epoch Info: ', epochInfo);
-  // const mob = await getMob('hogger');
-  // mob.hoggerDefeatBlock = Number(epochInfo['hogger-defeat-block'].value)
-  // mob.canStartNewEpoch = epochInfo['can-start-new-epoch'].value
-  // console.log('Mob: ', mob);
-  return epochInfo;
-}
-
-export async function getTxsFromMempool(contractAddress: string) {
-  let offset = 0;
-  const limit = 50;
-  const transactions: any[] = [];
-
-  while (true) {
-    const resp: any = await txApi.getAddressMempoolTransactions({
-      address: contractAddress,
-      limit: limit,
-      offset: offset
-    });
-
-    if (!resp.results || resp.results.length === 0) {
-      break; // exit the loop if there are no more results
-    }
-
-    resp.results.forEach((result: any) => {
-      transactions.push(result);
-    });
-    offset += limit; // increment the offset for the next page
-  }
-  return transactions;
-}
-
-export async function sendStx({ seedPhrase, password, recipient, amount, fee }: any) {
-  const wallet = await generateWallet({ secretKey: seedPhrase, password });
-  const account = wallet.accounts[0];
-  const transaction = await makeSTXTokenTransfer({
-    recipient,
-    amount,
-    anchorMode: AnchorMode.Any,
-    senderKey: account.stxPrivateKey,
-    fee,
-  })
-  const broadcastResponse = await broadcastTransaction(transaction, network);
-  return broadcastResponse
-}
-
-export async function tryCallContractPublicFunction({
-  seedPhrase,
-  password,
-  publicAddress,
-  contractAddress,
-  functionName,
-  fee,
-  nonce,
-  args
-}: {
-  seedPhrase: string;
-  password: string;
-  publicAddress: string;
-  contractAddress: string;
-  functionName: string;
-  fee?: number;
-  nonce?: number;
-  args?: any[];
-}) {
-  const txsInMempool = await getTxsFromMempool(contractAddress);
-
-  const isInMempool = txsInMempool.some(
-    (tx: any) =>
-      tx.contract_call.function_name === functionName && tx.sender_address === publicAddress
-  );
-
-  if (!isInMempool) {
-    Logger.oracle({ 'is-in-mempool': { contractAddress, functionName, args } });
-
-    const wallet = await generateWallet({ secretKey: seedPhrase, password });
-
-    const account = wallet.accounts[0];
-
-    const txOptions = {
-      contractAddress: contractAddress.split('.')[0],
-      contractName: contractAddress.split('.')[1],
-      functionName: functionName,
-      functionArgs: args || [],
-      senderKey: account.stxPrivateKey,
-      network,
-      postConditionMode: PostConditionMode.Allow
-    } as any;
-
-    if (nonce) {
-      txOptions.nonce = nonce;
-    }
-
-    // set a tx fee if you don't want the builder to estimate
-    if (fee) {
-      txOptions.fee = fee;
-    }
-
-    // console.log(txOptions)
-
-    const transaction = await makeContractCall(txOptions);
-
-    const broadcastResponse = await broadcastTransaction(transaction, network);
-
-    return broadcastResponse;
-  } else {
-    return 'Transaction already in mempool';
-  }
-}
-
-export async function callContractPublicFunction({ address, functionName, fee, nonce, args }: any) {
-  // reset the epoch so that state can be updated
-  const password = String(process.env.STACKS_ORACLE_PASSWORD);
-  const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY);
-
-  const wallet = await generateWallet({ secretKey, password });
-
-  const account = wallet.accounts[0];
-
-  const txOptions = {
-    contractAddress: address.split('.')[0],
-    contractName: address.split('.')[1],
-    functionName: functionName,
-    functionArgs: args || [],
-    senderKey: account.stxPrivateKey,
-    network,
-    postConditionMode: PostConditionMode.Allow
-  } as any;
-
-  if (nonce) {
-    txOptions.nonce = nonce;
-  }
-
-  // set a tx fee if you don't want the builder to estimate
-  if (fee) {
-    txOptions.fee = fee;
-  }
-
-  // console.log(txOptions)
-
-  const transaction = await makeContractCall(txOptions);
-
-  const broadcastResponse = await broadcastTransaction(transaction, network);
-
-  return broadcastResponse;
-}
-
-export async function executeArbitrageStrategy({ address, functionName, fee, nonce, args }: any) {
-  const password = String(process.env.STACKS_ORACLE_PASSWORD);
-  const secretKey = String(process.env.STACKS_ORACLE_SECRET_KEY);
-
-  const wallet = await generateWallet({ secretKey, password });
-
-  const account = wallet.accounts[0];
-
-  const txOptions = {
-    contractAddress: address.split('.')[0],
-    contractName: address.split('.')[1],
-    functionName: functionName,
-    functionArgs: args || [],
-    senderKey: account.stxPrivateKey,
-    network,
-    postConditionMode: PostConditionMode.Allow
-  } as any;
-
-  if (nonce) {
-    txOptions.nonce = nonce;
-  }
-
-  // set a tx fee if you don't want the builder to estimate
-  if (fee) {
-    txOptions.fee = fee;
-  }
-
-  // console.log(txOptions)
-
-  const transaction = await makeContractCall(txOptions);
-
-  const broadcastResponse = await broadcastTransaction(transaction, network);
-
-  return broadcastResponse;
-}
-
-export async function getFeeEstimate(tx: string) {
-  const response = await feesApi.postFeeTransaction({
-    transactionFeeEstimateRequest: {
-      transaction_payload: tx
-    }
-  });
-  return response;
-}
-
-export async function getVelarSwapAmountOut({
-  amountIn,
-  tokenIn,
-  tokenOut
-}: {
-  amountIn: number;
-  tokenIn: string;
-  tokenOut: string;
-}) {
-  const response: any = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1',
-    contractName: 'univ2-path2',
-    functionName: 'amount-out',
-    functionArgs: [uintCV(amountIn), principalCV(tokenIn), principalCV(tokenOut)],
-    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-  });
-
-  return cvToJSON(response).value;
-}
-
-export async function getCreatureCost(
-  creatureId: number,
-  sender = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-) {
-  const response = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'creatures-core',
-    functionName: 'get-creature-cost',
-    functionArgs: [uintCV(creatureId)],
-    senderAddress: sender
-  });
-  return Number(cvToJSON(response).value);
-}
-
-export async function getLandAmount(landId: number, sender: string) {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'lands',
-    functionName: 'get-balance',
-    readOnlyFunctionArgs: {
-      sender: sender,
-      arguments: [
-        cvToHex(parseToCV(String(landId), 'uint128')),
-        cvToHex(parseToCV(sender, 'principal'))
-      ]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return Number(cvToJSON(result).value.value);
-}
-
-export async function getOldCreatureAmount(creatureId: number, sender: string) {
-  const response = await callReadOnlyFunction({
-    network: new StacksMainnet(),
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'creatures',
-    functionName: 'get-balance',
-    functionArgs: [uintCV(creatureId), principalCV(sender)],
-    senderAddress: sender
-  });
-  return Number(cvToJSON(response).value.value);
-}
-
-export async function getCreaturePower(
-  creatureId: number,
-  sender = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ'
-) {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'creatures-core',
-    functionName: 'get-creature-power',
-    readOnlyFunctionArgs: {
-      sender: sender,
-      arguments: [cvToHex(parseToCV(String(creatureId), 'uint128'))]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return Number(cvToJSON(result).value);
-}
-
-export async function getClaimableAmount(landId: number, sender: string) {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'lands',
-    functionName: 'get-untapped-amount',
-    readOnlyFunctionArgs: {
-      sender: sender,
-      arguments: [
-        cvToHex(parseToCV(String(landId), 'uint128')),
-        cvToHex(parseToCV(sender, 'principal'))
-      ]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return Number(cvToJSON(result).value.value);
-}
-
-export async function getStoredEnergy(sender: string) {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'energy-storage',
-    functionName: 'get-stored-energy',
-    readOnlyFunctionArgs: {
-      sender: sender,
-      arguments: [
-        cvToHex(parseToCV(sender, 'principal'))
-      ]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return Number(cvToJSON(result).value);
-}
-
-export async function hasPercentageBalance(contract: string, who: string, factor: number) {
-  const [address, name] = contract.split('.');
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: address,
-    contractName: name,
-    functionName: 'has-percentage-balance',
-    readOnlyFunctionArgs: {
-      sender: who,
-      arguments: [
-        cvToHex(parseToCV(who, 'principal')),
-        cvToHex(parseToCV(String(factor), 'uint128'))
-      ]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return cvToJSON(result).value.value;
-}
-
-export async function getLandBalance(landId: number, sender: string) {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'lands',
-    functionName: 'get-balance',
-    readOnlyFunctionArgs: {
-      sender: sender,
-      arguments: [
-        cvToHex(parseToCV(String(landId), 'uint128')),
-        cvToHex(parseToCV(sender, 'principal'))
-      ]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return Number(cvToJSON(result).value.value);
-}
-
-// get land id from contract address
-export async function getLandId(contractAddress: string) {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'lands',
-    functionName: 'get-land-id',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: [cvToHex(parseToCV(contractAddress, 'principal'))]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return Number(cvToJSON(result).value?.value) || null;
-}
-export async function getLandContractById(id: number | string) {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'lands',
-    functionName: 'get-land-asset-contract',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: [cvToHex(parseToCV(String(id), 'uint128'))]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return String(cvToJSON(result).value.value);
-}
-
-export async function getNftOwner(contractAddress: string, id: number) {
-  const [address, name] = contractAddress.split('.');
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-owner',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: [cvToHex(parseToCV(String(id), 'uint128'))]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return String(cvToJSON(result).value.value.value);
-}
-
-export async function getLastLandId() {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'lands',
-    functionName: 'get-last-land-id',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: [
-      ]
-    }
-  });
-  const result = hexToCV((response as any).result);
-  return Number(cvToJSON(result).value.value);
-}
-
-export async function getTransferFunction(contractAddress: string) {
-  const sourceCode = await getContractSource({ contractAddress: contractAddress.split('.')[0], contractName: contractAddress.split('.')[1] })
-  const code = sourceCode.source
-  // Regex to match the start of the transfer function
-  const transferStartRegex = /\(define-public\s+\(\s*transfer\s/;
-
-  const startMatch = transferStartRegex.exec(code);
-  if (!startMatch) {
-    return "Transfer function not found";
-  }
-
-  const startIndex = startMatch.index;
-  let parenthesesCount = 0;
-  let endIndex = startIndex;
-
-  // Parse through the code, keeping track of parentheses
-  for (let i = startIndex; i < code.length; i++) {
-    if (code[i] === '(') parenthesesCount++;
-    if (code[i] === ')') parenthesesCount--;
-
-    if (parenthesesCount === 0) {
-      endIndex = i + 1;
-      break;
-    }
-  }
-
-  // Extract the function
-  return code.substring(startIndex, endIndex).trim();
-}
-
-export async function getBalancesAtBlock() {
-  const response = await scApi.callReadOnlyFunction({
-    contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName: 'cha-gbab',
-    functionName: 'get-balances-at-block',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: [
-        cvToHex(parseToCV("SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS", 'principal')),
-        cvToHex(parseToCV("166688", 'uint128'))
-      ]
-    }
-  });
-  console.log(response)
-  return response;
+  return {
+    welsh: Number(cvToJSON(responseWelsh).value.value),
+    roo: Number(cvToJSON(responseRoo).value.value)
+  };
 }
 
 export interface InteractionMetadata {
@@ -1324,37 +172,30 @@ export interface InteractionMetadata {
   analytics?: any;
 }
 
-export async function getInteractionUri(contractAddress: string, contractName: string): Promise<InteractionMetadata | null> {
+export async function getInteractionUri(
+  contractAddress: string,
+  contractName: string
+): Promise<InteractionMetadata | null> {
   try {
     // First get the URI from the contract
-    const response: any = await scApi.callReadOnlyFunction({
+    const response = await fetchCallReadOnlyFunction({
       contractAddress,
       contractName,
       functionName: 'get-interaction-uri',
-      readOnlyFunctionArgs: {
-        sender: contractAddress,
-        arguments: []
-      }
+      functionArgs: [],
+      senderAddress: contractAddress
     });
-
-    if (response.okay && response.result) {
-      const cv = hexToCV(response.result);
-      const value = cvToValue(cv).value;
-
-      if (!value.value) return null;
-
-      // Fetch the JSON metadata from the URI
-      try {
-        const metadataResponse = await fetch(value.value);
-        const metadata: InteractionMetadata = await metadataResponse.json();
-
-        return metadata;
-      } catch (error) {
-        console.error('Error fetching interaction metadata:', error);
-        return null;
-      }
+    const value = cvToValue(response).value;
+    if (!value.value) return null;
+    // Fetch the JSON metadata from the URI
+    try {
+      const metadataResponse = await fetch(value.value);
+      const metadata: InteractionMetadata = await metadataResponse.json();
+      return metadata;
+    } catch (error) {
+      console.error('Error fetching interaction metadata:', error);
+      return null;
     }
-    return null;
   } catch (error) {
     console.error('Error fetching interaction URI:', error);
     return null;
@@ -1362,29 +203,25 @@ export async function getInteractionUri(contractAddress: string, contractName: s
 }
 
 export const getKeepersPetitionRewardAmount = async () => {
-  const { result }: any = await scApi.callReadOnlyFunction({
+  const response = await fetchCallReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'keepers-petition-rc7',
     functionName: 'get-token-amount',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: []
-    }
+    functionArgs: [],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
   });
 
-  return cvToValue(hexToCV(result)).value;
-}
+  return cvToValue(response).value;
+};
 
 export const geFatigueEnergyCost = async () => {
-  const { result }: any = await scApi.callReadOnlyFunction({
+  const response = await fetchCallReadOnlyFunction({
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'fatigue-rc7',
     functionName: 'get-energy-burn-amount',
-    readOnlyFunctionArgs: {
-      sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      arguments: []
-    }
+    functionArgs: [],
+    senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
   });
 
-  return cvToValue(hexToCV(result)).value;
-}
+  return cvToValue(response).value;
+};

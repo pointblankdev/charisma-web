@@ -1,48 +1,48 @@
-import React, { useEffect, useState } from "react";
-import { AppConfig, showConnect, UserSession } from "@stacks/connect-react";
+import React, { useEffect, useState } from 'react';
+import { AppConfig, showConnect, UserSession } from '@stacks/connect-react';
 import { cn } from '@lib/utils';
-import { Button } from "@components/ui/button";
-import { useGlobalState } from "@lib/hooks/global-state-context";
-import * as Sentry from "@sentry/browser";
-import { getNameFromAddress } from "@lib/stacks-api";
+import { Button } from '@components/ui/button';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import * as Sentry from '@sentry/browser';
+import { getNamesFromAddress } from '@lib/stacks-api';
 
-export const appConfig = new AppConfig(["store_write", "publish_data"]);
+export const appConfig = new AppConfig(['store_write', 'publish_data']);
 
 export const userSession = new UserSession({ appConfig });
 
 export const appDetails = {
-  name: "Charisma",
-  icon: "https://charisma.rocks/dmg-logo.gif",
+  name: 'Charisma',
+  icon: 'https://charisma.rocks/dmg-logo.gif'
 };
 
-export const network = 'mainnet' as any
+export const network = 'mainnet' as any;
 
 export function authenticate() {
   showConnect({
     appDetails,
-    onFinish: async (e) => {
+    onFinish: async e => {
       window.location.pathname = '/swap';
       try {
-        const userData = e.userSession.loadUserData()
-        const address = userData.profile.stxAddress.mainnet
-        const bns = await getNameFromAddress(address)
+        const userData = e.userSession.loadUserData();
+        const address = userData.profile.stxAddress.mainnet;
+        const bns = await getNamesFromAddress(address);
         const user = {
           id: address,
-          username: bns.names[0],
+          names: bns,
           ip_address: '{{auto}}',
           email: userData.email
-        }
+        };
         Sentry.setUser(user);
       } catch (error) {
-        console.error(error)
+        console.error(error);
       }
     },
-    userSession,
+    userSession
   });
 }
 
 export function disconnect() {
-  userSession.signUserOut("/");
+  userSession.signUserOut('/');
   Sentry.setUser(null);
 }
 
@@ -58,25 +58,24 @@ const ConnectWallet = () => {
   const [mounted, setMounted] = useState(false);
   const { stxAddress } = useGlobalState();
 
-  const shortAddress = `${stxAddress.slice(0, 4)}...${stxAddress.slice(-4)}`
+  const shortAddress = `${stxAddress.slice(0, 4)}...${stxAddress.slice(-4)}`;
 
   useEffect(() => {
-    setMounted(true)
+    setMounted(true);
     try {
-      const userData = userSession.loadUserData()
-      const address = userData.profile.stxAddress.mainnet
-      getNameFromAddress(address)
-        .then((bns) => {
-          const user = {
-            id: address,
-            username: bns.names[0],
-            ip_address: '{{auto}}',
-            email: userData.email
-          }
-          Sentry.setUser(user);
-        })
+      const userData = userSession.loadUserData();
+      const address = userData.profile.stxAddress.mainnet;
+      getNamesFromAddress(address).then(bns => {
+        const user = {
+          id: address,
+          names: bns,
+          ip_address: '{{auto}}',
+          email: userData.email
+        };
+        Sentry.setUser(user);
+      });
     } catch (error) {
-      console.error(error)
+      console.error(error);
     }
   }, []);
 

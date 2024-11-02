@@ -1,109 +1,5 @@
-import {
-  getLandBalance,
-  getLandContractById,
-  getLandId,
-  getNameFromAddress,
-  hasPercentageBalance
-} from '../../lib/stacks-api';
-import { ConfUser } from '@lib/types';
 import { kv } from '@vercel/kv';
 import _ from 'lodash';
-
-export async function getUserById(id: string): Promise<ConfUser> {
-  const { name, username, createdAt } = (await kv.hmget(
-    `id:${id}`,
-    'name',
-    'username',
-    'createdAt'
-  )) as ConfUser;
-  return { name, username, createdAt: createdAt };
-}
-
-export async function createUser(id: string, email: string): Promise<ConfUser> {
-  const ticketNumber = await kv.incr('count');
-  const createdAt = Date.now();
-  await kv.hmset(`id:${id}`, {
-    email: email,
-    ticketNumber: ticketNumber,
-    createdAt: createdAt
-  });
-  // add email to subscribers list
-  await kv.lpush('subscribers', `${id}, ${email}, ${ticketNumber}, ${createdAt}`);
-  return { id, email, ticketNumber, createdAt };
-}
-
-export async function getTicketNumberByUserId(id: string): Promise<string | null> {
-  return await kv.hget(`id:${id}`, 'ticketNumber');
-}
-
-export async function createWallet(data: any, did: string): Promise<string> {
-  const key = `wallet:${did}`;
-
-  await kv
-    .multi()
-    .hmset(key, data)
-    .expire(key, 60 * 10) // 10m TTL
-    .exec();
-  return did;
-}
-
-export async function updateUserWithWallet(
-  id: string,
-  did: string,
-  ticketNumber: number
-): Promise<ConfUser> {
-  const data = (await kv.hgetall(`wallet:${did}`)) as ConfUser;
-  if (!data) {
-    throw new Error('Invalid or expired token');
-  }
-
-  const key = `id:${id}`;
-
-  await kv.multi().hsetnx(key, 'wallet', data).hsetnx(key, 'ticketNumber', ticketNumber).exec();
-
-  return data;
-}
-
-export async function getLands(): Promise<any> {
-  try { // I was getting error when a specific token is searched hence why I added the try catch block
-    const landData = await kv.smembers('lands');
-    if (!landData) {
-      throw new Error(`No data found for land`);
-    }
-    return landData;
-  } catch (error) {
-    console.error('Error fetching land data:', error);
-  }
-
-  // return await kv.smembers('lands');
-}
-
-export async function addLand(ca: string): Promise<any> {
-  return await kv.sadd('lands', ca);
-}
-
-export async function removeLand(ca: string): Promise<any> {
-  return await kv.srem('lands', ca);
-}
-
-export async function getLand(ca: string): Promise<any> {
-  return await kv.get(`land:${ca}`);
-}
-
-export async function getLandById(id: number): Promise<any> {
-  const landContract = await getLandContractById(id);
-  return await getLand(landContract);
-}
-
-export async function setLand(ca: string, data: any): Promise<any> {
-  return await kv.set(`land:${ca}`, data);
-}
-
-export async function setLandWhitelisted(ca: string, whitelisted: boolean): Promise<any> {
-  const land = (await kv.get(`land:${ca}`)) as any;
-  land.whitelisted = whitelisted;
-  return await kv.set(`land:${ca}`, land);
-}
 
 export async function getContractMetadata(ca: string): Promise<any> {
   return await kv.get(`ca:${ca}`);
@@ -119,58 +15,6 @@ export async function getGlobalState(key: string): Promise<any> {
 
 export async function cacheGlobalState(key: string, json: any): Promise<void> {
   await kv.set(`global:${key}`, JSON.stringify(json));
-}
-
-export async function getUserState(user: string, key: string): Promise<any> {
-  return await kv.get(`user:${user}:${key}`);
-}
-
-export async function cacheUserState(user: string, key: string, json: any): Promise<void> {
-  await kv.set(`user:${user}:${key}`, JSON.stringify(json));
-}
-
-// mobs
-
-export async function getQuests(): Promise<any> {
-  return await kv.smembers('mobs');
-}
-
-export async function addQuest(ca: string): Promise<any> {
-  return await kv.sadd('mobs', ca);
-}
-
-export async function removeQuest(ca: string): Promise<any> {
-  return await kv.srem('mobs', ca);
-}
-
-export async function getQuest(ca: string): Promise<any> {
-  return await kv.get(`mob:${ca}`);
-}
-
-export async function setQuest(ca: string, data: any): Promise<any> {
-  return await kv.set(`mob:${ca}`, data);
-}
-
-// mobs
-
-export async function getMobs(): Promise<any> {
-  return await kv.smembers('mobs');
-}
-
-export async function addMob(ca: string): Promise<any> {
-  return await kv.sadd('mobs', ca);
-}
-
-export async function removeMob(ca: string): Promise<any> {
-  return await kv.srem('mobs', ca);
-}
-
-export async function getMob(ca: string): Promise<any> {
-  return await kv.get(`mob:${ca}`);
-}
-
-export async function setMob(ca: string, data: any): Promise<any> {
-  return await kv.set(`mob:${ca}`, data);
 }
 
 // experience
@@ -259,27 +103,6 @@ export async function clearRewardsLeaderboard(token: string) {
   }
 }
 
-// lands
-
-export async function getLandsBalance(contractAddress: string, user: string) {
-  const landId = await getLandId(contractAddress);
-  return (await kv.get(`user:${user}:land:${landId}`)) || 0;
-}
-
-export async function setLandsBalance(landId: number, user: string) {
-  const landBalance = await getLandBalance(landId, user);
-  return await kv.set(`user:${user}:land:${landId}`, landBalance);
-}
-
-export async function hadLandBefore(contractAddress: string, user: string) {
-  const landId = await getLandId(contractAddress);
-  return (await kv.get(`user:${user}:had-land:${landId}`)) || false;
-}
-
-export async function setHadLandBefore(landId: number, user: string) {
-  return await kv.set(`user:${user}:had-land:${landId}`, true);
-}
-
 // nft collection metadata
 
 export async function getNftCollections(): Promise<any> {
@@ -328,7 +151,7 @@ export async function removePlayer(player: string): Promise<any> {
 
 // is player in set
 export async function isPlayer(player: string): Promise<boolean> {
-  return await kv.sismember('players', player) ? true : false;
+  return (await kv.sismember('players', player)) ? true : false;
 }
 
 // player red/blue pilled
@@ -338,59 +161,63 @@ export async function getPlayerPill(player: string): Promise<any> {
 }
 
 export async function setPlayerPill(player: string, pill: string): Promise<any> {
-  return await kv.set(`player:${player}:pill`, pill) || false;
+  return (await kv.set(`player:${player}:pill`, pill)) || false;
 }
 
 // player tokens
 
 export async function getPlayerTokens(contractAddress: string, player: string): Promise<any> {
-  return await kv.get(`player:${player}tokens:${contractAddress}`) || 0;
+  return (await kv.get(`player:${player}tokens:${contractAddress}`)) || 0;
 }
 
-export async function setPlayerTokens(contractAddress: string, player: string, amount: number): Promise<any> {
+export async function setPlayerTokens(
+  contractAddress: string,
+  player: string,
+  amount: number
+): Promise<any> {
   return await kv.set(`player:${player}tokens:${contractAddress}`, amount);
 }
 
 // player transfers
 
 export async function trackTransferEvent(event: any) {
-  const player = event.sender
+  const player = event.sender;
   const timestamp = Date.now();
-  const transferEvent = { timestamp, ...event }
+  const transferEvent = { timestamp, ...event };
 
   // store the swap event in a sorted set
   await kv.zadd(`player:${player}:transfers`, { score: timestamp, member: transferEvent });
 
   // Add player to the list of known players
-  await kv.sadd('players', player)
+  await kv.sadd('players', player);
 }
 
 // player mints
 
 export async function trackMintEvent(event: any) {
-  const player = event.sender
+  const player = event.sender;
   const timestamp = Date.now();
-  const mintEvent = { timestamp, ...event }
+  const mintEvent = { timestamp, ...event };
 
   // store the swap event in a sorted set
   await kv.zadd(`player:${player}:mints`, { score: timestamp, member: mintEvent });
 
   // Add player to the list of known players
-  await kv.sadd('players', player)
+  await kv.sadd('players', player);
 }
 
 // player burns
 
 export async function trackBurnEvent(event: any) {
-  const player = event.sender
+  const player = event.sender;
   const timestamp = Date.now();
-  const burnEvent = { timestamp, ...event }
+  const burnEvent = { timestamp, ...event };
 
   // store the swap event in a sorted set
   await kv.zadd(`player:${player}:burns`, { score: timestamp, member: burnEvent });
 
   // Add player to the list of known players
-  await kv.sadd('players', player)
+  await kv.sadd('players', player);
 }
 
 export async function getPlayerEventData(player: string): Promise<any> {
@@ -402,7 +229,7 @@ export async function getPlayerEventData(player: string): Promise<any> {
     player: player,
     transfers: transfers,
     mints: mints,
-    burns: burns,
+    burns: burns
   };
 }
 
@@ -432,7 +259,7 @@ export async function removeCachedProposal(proposal: string): Promise<any> {
 // { for: 18000000, against: 2000000 }
 
 export async function getVoteData(proposal: string, userAddress: string): Promise<any> {
-  const data = await kv.get(`vote-data:${proposal}:${userAddress}`)
+  const data = await kv.get(`vote-data:${proposal}:${userAddress}`);
   // merge into object of for and against
   const response = _.merge({ for: 0, against: 0 }, data);
   return response;
@@ -455,25 +282,26 @@ export async function saveSwapEvent(event: any) {
   const poolId = event['id'];
   const timestamp = Date.now();
 
-  const swapEvent = { timestamp, ...event }
+  const swapEvent = { timestamp, ...event };
 
   // store the swap event in a sorted set
-  await kv.zadd(`pool:${poolId}:swaps`, { score: swapEvent.pool['block-height'], member: swapEvent });
+  await kv.zadd(`pool:${poolId}:swaps`, {
+    score: swapEvent.pool['block-height'],
+    member: swapEvent
+  });
 
   // Update pool metadata if needed
   await kv.hset(`pool:${poolId}:meta`, {
     symbol: event.pool.symbol,
     token0: event.pool.token0,
-    token1: event.pool.token1,
+    token1: event.pool.token1
   });
 
   // Add pool to the list of known pools
   await kv.sadd('pool:ids', poolId);
-
 }
 
 export async function getPoolData(poolId: string): Promise<PoolData> {
-
   const swaps = await kv.zrange(`pool:${poolId}:swaps`, 0, 999, { rev: true });
   const meta: any = await kv.hgetall(`pool:${poolId}:meta`);
 
@@ -481,7 +309,7 @@ export async function getPoolData(poolId: string): Promise<PoolData> {
     symbol: meta?.symbol,
     token0: meta?.token0,
     token1: meta?.token1,
-    swaps: swaps,
+    swaps: swaps
   };
 }
 
@@ -500,5 +328,5 @@ export async function saveTapEvent(event: any) {
 
 export async function getTapData() {
   const taps = await kv.lrange(`taps`, 0, 999);
-  return taps
+  return taps;
 }
