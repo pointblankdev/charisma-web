@@ -47,7 +47,7 @@ const SetExtension = () => {
         functionArgs: [
           contractPrincipalCV(contractAddress.split('.')[0], contractAddress.split('.')[1]),
           boolCV(false)
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
       },

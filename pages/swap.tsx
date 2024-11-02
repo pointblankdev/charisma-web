@@ -649,7 +649,7 @@ const SwapInterface = ({
 
     const contractName = isMultiHop ? `univ2-path2` : 'univ2-router';
     const functionName = isMultiHop ? `swap-${swapPath.length}` : 'swap-exact-tokens-for-tokens';
-    const functionArgs: any[] = isMultiHop
+    const functionArgs = isMultiHop
       ? [
           uintCV(amountInMicroTokens),
           uintCV(minAmountOutMicroTokens),

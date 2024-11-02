@@ -5,6 +5,7 @@ import { Button } from '@components/ui/button';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import * as Sentry from '@sentry/browser';
 import { getNamesFromAddress } from '@lib/stacks-api';
+import { STACKS_MAINNET } from '@stacks/network';
 
 export const appConfig = new AppConfig(['store_write', 'publish_data']);
 
@@ -15,7 +16,7 @@ export const appDetails = {
   icon: 'https://charisma.rocks/dmg-logo.gif'
 };
 
-export const network = 'mainnet' as any;
+export const network = STACKS_MAINNET;
 
 export function authenticate() {
   showConnect({
