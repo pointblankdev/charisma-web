@@ -1,0 +1,11 @@
+// lib/token-images.ts
+import stx from '@public/stx-logo.png';
+import welsh from '@public/welsh-logo.png';
+import cha from '@public/charisma-logo-square.png';
+import roo from '@public/roo-logo.png';
+import ordi from '@public/ordi-logo.png';
+import dog from '@public/sip10/dogLogo.webp';
+import updog from '@public/sip10/up-dog/logo.gif';
+import synstx from '@public/sip10/synthetic-stx/logo.png';
+
+export { stx, welsh, cha, roo, ordi, dog, updog, synstx };

@@ -1260,26 +1260,7 @@ function ListingDialog({ collections }: ListingDialogProps) {
           //   `${contractId}:`,
           //   uintCV(tokenId),
           // )
-        ],
-        onFinish: async () => {
-          // Then update the API with metadata
-          const response = await fetch(`${API_URL}/api/v0/marketplace/listings`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({
-              contractId,
-              tokenId: parseInt(tokenId),
-              price: parseInt(price) * 1_000_000,
-              commission: parseInt(commission),
-              metadata,
-              timestamp: Date.now()
-            })
-          });
-
-          if (!response.ok) {
-            throw new Error('Failed to update API');
-          }
-        }
+        ]
       });
 
       setIsOpen(false);
@@ -1448,20 +1429,7 @@ function MarketplaceItemArtwork({
           uintCV(listing.tokenId)
         ],
         postConditionMode: PostConditionMode.Deny,
-        postConditions: [],
-        onFinish: async data => {
-          // Then update API
-          const response = await fetch(
-            `/api/v0/marketplace/listings/${listing.contractId}/${listing.tokenId}`,
-            {
-              method: 'DELETE'
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error('Failed to update API');
-          }
-        }
+        postConditions: []
       });
     } catch (error) {
       console.error('Failed to unlist:', error);
@@ -1483,20 +1451,7 @@ function MarketplaceItemArtwork({
           uintCV(listing.tokenId)
         ],
         postConditionMode: PostConditionMode.Deny, // The contract handles post conditions internally
-        postConditions: [Pc.principal(stxAddress).willSendEq(listing.price).ustx()],
-        onFinish: async data => {
-          // Then update API to remove the listing
-          const response = await fetch(
-            `/api/v0/marketplace/listings/${listing.contractId}/${listing.tokenId}`,
-            {
-              method: 'DELETE'
-            }
-          );
-
-          if (!response.ok) {
-            throw new Error('Failed to update API');
-          }
-        }
+        postConditions: [Pc.principal(stxAddress).willSendEq(listing.price).ustx()]
       });
     } catch (error) {
       console.error('Failed to purchase:', error);

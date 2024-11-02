@@ -16,6 +16,7 @@ export type WalletBalancesContextType = {
   setBalances: React.Dispatch<React.SetStateAction<any>>;
   getKeyByContractAddress: any;
   getBalanceByKey: any;
+  getBalance: (contractAddress: string) => any;
   wallet: Wallet;
 };
 
@@ -52,6 +53,8 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
     return Number(balances?.fungible_tokens?.[key]?.balance);
   };
 
+  const getBalance = (ca: string) => getBalanceByKey(getKeyByContractAddress(ca));
+
   const experience = getBalanceByKey(
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience'
   );
@@ -80,7 +83,14 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
 
   return (
     <WalletBalancesContext.Provider
-      value={{ balances, setBalances, getKeyByContractAddress, getBalanceByKey, wallet }}
+      value={{
+        balances,
+        setBalances,
+        getKeyByContractAddress,
+        getBalanceByKey,
+        wallet,
+        getBalance
+      }}
     >
       {children}
     </WalletBalancesContext.Provider>

@@ -51,13 +51,6 @@ class PricesService {
     };
   }
 
-  private static async lookupPool(token0Address: string, token1Address: string): Promise<any> {
-    return this.callContractFunction('lookup-pool', [
-      principalCV(token0Address),
-      principalCV(token1Address)
-    ]);
-  }
-
   private static async calculateChaPrice(stxPrice: number): Promise<number> {
     const stxChaReserves = await this.getPoolReserves(4);
     const chaPrice = (stxPrice * stxChaReserves.token0) / stxChaReserves.token1;
@@ -70,6 +63,13 @@ class PricesService {
       acc[token.symbol] = token.price;
       return acc;
     }, {});
+  }
+
+  public static async lookupPool(token0Address: string, token1Address: string): Promise<any> {
+    return this.callContractFunction('lookup-pool', [
+      principalCV(token0Address),
+      principalCV(token1Address)
+    ]);
   }
 
   public static async getPoolReserves(poolId: number): Promise<{ token0: number; token1: number }> {
