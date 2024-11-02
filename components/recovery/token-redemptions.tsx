@@ -103,7 +103,7 @@ const TokenRedemptions = ({ data }: any) => {
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'redemption-vault-v0',
         functionName: 'deposit-welsh',
-        functionArgs: [uintCV(amount)] as any[],
+        functionArgs: [uintCV(amount)],
         postConditionMode: PostConditionMode.Deny,
         postConditions: [
           Pc.principal(stxAddress)
@@ -124,7 +124,7 @@ const TokenRedemptions = ({ data }: any) => {
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'redemption-vault-v0',
         functionName: 'deposit-roo',
-        functionArgs: [uintCV(amount)] as any[],
+        functionArgs: [uintCV(amount)],
         postConditionMode: PostConditionMode.Deny,
         postConditions: [
           Pc.principal(stxAddress)
@@ -142,7 +142,7 @@ const TokenRedemptions = ({ data }: any) => {
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'redemption-vault-v0',
         functionName: 'redeem-welsh',
-        functionArgs: [uintCV(amount)] as any[],
+        functionArgs: [uintCV(amount)],
         postConditionMode: PostConditionMode.Deny,
         postConditions: [
           Pc.principal(stxAddress)
@@ -169,7 +169,7 @@ const TokenRedemptions = ({ data }: any) => {
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'redemption-vault-v0',
         functionName: 'redeem-roo',
-        functionArgs: [uintCV(amount)] as any[],
+        functionArgs: [uintCV(amount)],
         postConditionMode: PostConditionMode.Deny,
         postConditions: [
           Pc.principal(stxAddress)

@@ -397,7 +397,7 @@ const WrappingSection = ({ data }: Props) => {
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'charisma-token',
         functionName: 'wrap',
-        functionArgs: [uintCV(amountIn)] as any[],
+        functionArgs: [uintCV(amountIn)],
         postConditionMode: PostConditionMode.Deny,
         postConditions: [
           Pc.principal(stxAddress)

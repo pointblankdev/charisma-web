@@ -67,7 +67,7 @@ const QuickBuyDialog: React.FC<QuickBuyDialogProps> = ({ pool, onClose }) => {
           pool.token1.contractAddress.split('.')[1]
         ),
         contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to')
-      ] as any[],
+      ],
       postConditionMode: PostConditionMode.Deny,
       postConditions,
       onFinish: data => {

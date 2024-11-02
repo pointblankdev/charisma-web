@@ -457,7 +457,7 @@ const SwapInterface = ({
                 toToken.contractAddress.split('.')[0],
                 toToken.contractAddress.split('.')[1]
               )
-            ] as any[],
+            ],
             senderAddress: stxAddress
           });
         }

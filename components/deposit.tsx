@@ -35,7 +35,7 @@ const Deposit = ({
         Pc.principal(stxAddress)
           .willSendEq(amount * 1000000)
           .ft(contractPrincipal, contractToken)
-      ] as any[],
+      ],
       onFinish: data => {
         console.log('onFinish:', data);
       },

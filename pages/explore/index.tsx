@@ -1251,7 +1251,7 @@ function ListingDialog({ collections }: ListingDialogProps) {
           uintCV(parseInt(tokenId)),
           uintCV(parseInt(price) * 1_000_000), // Convert to microSTX
           uintCV(parseInt(commission))
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: [
           // makeStandardNonFungiblePostCondition(
@@ -1446,7 +1446,7 @@ function MarketplaceItemArtwork({
         functionArgs: [
           contractPrincipalCV(listing.contractId.split('.')[0], listing.contractId.split('.')[1]),
           uintCV(listing.tokenId)
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Deny,
         postConditions: [],
         onFinish: async data => {
@@ -1481,9 +1481,9 @@ function MarketplaceItemArtwork({
         functionArgs: [
           contractPrincipalCV(listing.contractId.split('.')[0], listing.contractId.split('.')[1]),
           uintCV(listing.tokenId)
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Deny, // The contract handles post conditions internally
-        postConditions: [Pc.principal(stxAddress).willSendEq(listing.price).ustx()] as any[],
+        postConditions: [Pc.principal(stxAddress).willSendEq(listing.price).ustx()],
         onFinish: async data => {
           // Then update API to remove the listing
           const response = await fetch(

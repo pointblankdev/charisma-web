@@ -56,7 +56,7 @@ const Transfer = () => {
           standardPrincipalCV(sender),
           standardPrincipalCV(recipient),
           optionalCVOf(noneCV())
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
       },

@@ -345,9 +345,7 @@ const AddContract = () => {
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'marketplace-v6',
         functionName: 'add-contract',
-        functionArgs: [
-          contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1])
-        ] as any[],
+        functionArgs: [contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1])],
         postConditionMode: PostConditionMode.Deny,
         postConditions: []
       });
@@ -393,7 +391,7 @@ const SetRoyalty = () => {
           contractPrincipalCV(contractId.split('.')[0], contractId.split('.')[1]),
           standardPrincipalCV(address),
           uintCV(basisPoints)
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Deny,
         postConditions: []
       });
@@ -463,7 +461,7 @@ const CreatePool = () => {
             num: uintCV(parseInt(shareFee.split('/')[0])),
             den: uintCV(parseInt(shareFee.split('/')[1]))
           })
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Deny,
         postConditions: []
       },
@@ -521,7 +519,7 @@ const UpdateSwapFee = () => {
             num: uintCV(parseInt(fee.split('/')[0])),
             den: uintCV(parseInt(fee.split('/')[1]))
           })
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Deny,
         postConditions: []
       },
@@ -565,7 +563,7 @@ const UpdateProtocolFee = () => {
             num: uintCV(parseInt(fee.split('/')[0])),
             den: uintCV(parseInt(fee.split('/')[1]))
           })
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Deny,
         postConditions: []
       },
@@ -609,7 +607,7 @@ const UpdateShareFee = () => {
             num: uintCV(parseInt(fee.split('/')[0])),
             den: uintCV(parseInt(fee.split('/')[1]))
           })
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Deny,
         postConditions: []
       },
@@ -658,7 +656,7 @@ const Mint = () => {
           contractPrincipalCV(lpToken.split('.')[0], lpToken.split('.')[1]),
           uintCV(parseInt(amt0)),
           uintCV(parseInt(amt1))
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
       },
@@ -705,7 +703,7 @@ const Burn = () => {
           contractPrincipalCV(token1.split('.')[0], token1.split('.')[1]),
           contractPrincipalCV(lpToken.split('.')[0], lpToken.split('.')[1]),
           uintCV(parseInt(liquidity))
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
       },
@@ -757,7 +755,7 @@ const Swap = () => {
           contractPrincipalCV(shareFee0.split('.')[0], shareFee0.split('.')[1]),
           uintCV(parseInt(amtIn)),
           uintCV(parseInt(amtOut))
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
       },
@@ -812,7 +810,7 @@ const Collect = () => {
           uintCV(parseInt(poolId)),
           contractPrincipalCV(token0.split('.')[0], token0.split('.')[1]),
           contractPrincipalCV(token1.split('.')[0], token1.split('.')[1])
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
       },
@@ -848,7 +846,7 @@ const SetOwner = () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'univ2-core',
       functionName: 'set-owner',
-      functionArgs: [standardPrincipalCV(newOwner)] as any[],
+      functionArgs: [standardPrincipalCV(newOwner)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -884,7 +882,7 @@ const SetBlocksPerTx = () => {
         contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
         contractName: 'charisma-token',
         functionName: 'set-blocks-per-tx',
-        functionArgs: [uintCV(parseInt(newBlocksPerTx))] as any[],
+        functionArgs: [uintCV(parseInt(newBlocksPerTx))],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
       },
@@ -927,7 +925,7 @@ const SetMaxLiquidityFlow = () => {
         functionName: 'set-max-liquidity-flow',
         functionArgs: [
           uintCV(parseInt(newMaxLiquidityFlow) * 1000000) // Convert to microtokens
-        ] as any[],
+        ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
       },
@@ -997,7 +995,7 @@ const AddContractOwner = () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: latestDungeonKeeperContractId,
       functionName: 'add-contract-owner',
-      functionArgs: [standardPrincipalCV(newOwner)] as any[],
+      functionArgs: [standardPrincipalCV(newOwner)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -1030,7 +1028,7 @@ const RemoveContractOwner = () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: latestDungeonKeeperContractId,
       functionName: 'remove-contract-owner',
-      functionArgs: [standardPrincipalCV(ownerToRemove)] as any[],
+      functionArgs: [standardPrincipalCV(ownerToRemove)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -1065,7 +1063,7 @@ const AddVerifiedInteraction = () => {
       functionName: 'add-verified-interaction',
       functionArgs: [
         contractPrincipalCV(newInteraction.split('.')[0], newInteraction.split('.')[1])
-      ] as any[],
+      ],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -1100,7 +1098,7 @@ const RemoveVerifiedInteraction = () => {
       functionName: 'remove-verified-interaction',
       functionArgs: [
         contractPrincipalCV(interactionToRemove.split('.')[0], interactionToRemove.split('.')[1])
-      ] as any[],
+      ],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -1134,7 +1132,7 @@ const SetMaxReward = () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: latestDungeonKeeperContractId,
       functionName: 'set-max-reward',
-      functionArgs: [uintCV(microUnits)] as any[],
+      functionArgs: [uintCV(microUnits)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -1172,7 +1170,7 @@ const SetMaxPunish = () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: latestDungeonKeeperContractId,
       functionName: 'set-max-punish',
-      functionArgs: [uintCV(microUnits)] as any[],
+      functionArgs: [uintCV(microUnits)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -1210,7 +1208,7 @@ const SetMaxEnergize = () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: latestDungeonKeeperContractId,
       functionName: 'set-max-energize',
-      functionArgs: [uintCV(microUnits)] as any[],
+      functionArgs: [uintCV(microUnits)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -1248,7 +1246,7 @@ const SetMaxExhaust = () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: latestDungeonKeeperContractId,
       functionName: 'set-max-exhaust',
-      functionArgs: [uintCV(microUnits)] as any[],
+      functionArgs: [uintCV(microUnits)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });
@@ -1286,7 +1284,7 @@ const SetMaxTransfer = () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: latestDungeonKeeperContractId,
       functionName: 'set-max-transfer',
-      functionArgs: [uintCV(microUnits)] as any[],
+      functionArgs: [uintCV(microUnits)],
       postConditionMode: PostConditionMode.Deny,
       postConditions: []
     });

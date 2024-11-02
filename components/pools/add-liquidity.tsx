@@ -172,7 +172,7 @@ const LiquidityDialog = ({
         uintCV(BigInt(Math.floor(parseFloat(amount1) * 10 ** pool.token1.decimals))),
         uintCV(1),
         uintCV(1)
-      ] as any[],
+      ],
       postConditionMode: PostConditionMode.Deny,
       postConditions,
       onFinish: data => {
@@ -239,7 +239,7 @@ const LiquidityDialog = ({
         uintCV(lpTokensToRemove),
         uintCV(1), // Minimum amount of token0 to receive
         uintCV(1) // Minimum amount of token1 to receive
-      ] as any[],
+      ],
       postConditionMode: PostConditionMode.Deny,
       postConditions,
       onFinish: data => {
