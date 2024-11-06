@@ -15,6 +15,15 @@ import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
+import { GetServerSideProps } from 'next';
+
+export const getServerSideProps: GetServerSideProps<any> = async () => {
+  return {
+    props: {
+      message: 'ok'
+    }
+  };
+};
 
 const TokenRedemptions = ({ data }: any) => {
   const { doContractCall } = useConnect();
@@ -263,11 +272,11 @@ const TokenRedemptions = ({ data }: any) => {
 
   const iouWelsh: any =
     balances?.fungible_tokens?.[
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'
     ];
   const iouRoo: any =
     balances?.fungible_tokens?.[
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo'
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo'
     ];
 
   const formatNumber = (num: number) => numeral(num / Math.pow(10, 6)).format('0,0.00');
