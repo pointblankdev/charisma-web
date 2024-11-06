@@ -1,6 +1,6 @@
 import { getDecimals, getTotalSupply } from '@lib/stacks-api';
 import { kv } from '@vercel/kv';
-import PricesService from '@lib/prices-service';
+import PricesService from '@lib/server/prices/prices-service';
 
 export type KVTokenData = {
   symbol: string;

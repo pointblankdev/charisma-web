@@ -1,6 +1,6 @@
 import { PoolInfo, PoolService } from '@lib/server/pools/pool-service';
 import { TokenService } from '@lib/server/tokens/token-service';
-import PricesService from '@lib/prices-service';
+import PricesService from '@lib/server/prices/prices-service';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {

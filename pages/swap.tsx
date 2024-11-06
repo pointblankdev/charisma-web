@@ -14,7 +14,7 @@ import { GetStaticProps } from 'next';
 import { PoolService } from '@lib/server/pools/pool-service';
 import { TokenService } from '@lib/server/tokens/token-service';
 import { SwapInterface } from '@components/swap/swap-interface';
-import PricesService from '@lib/prices-service';
+import PricesService from '@lib/server/prices/prices-service';
 import { ValuationService } from '@lib/server/valuations/valuation-service';
 
 interface TokenInfo {

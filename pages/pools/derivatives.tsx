@@ -10,26 +10,41 @@ import { motion } from 'framer-motion';
 import { PoolsInterface } from '@components/pools/pools-interface';
 import { PoolInfo, PoolService } from '@lib/server/pools/pool-service';
 import PoolsLayout from '@components/pools/layout';
+import PricesService from '@lib/server/prices/prices-service';
 
 type Props = {
     data: {
         pools: PoolInfo[] | any[];
+        tokenPrices: { [key: string]: number };
     };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-    const [pools] = await Promise.all([
-        PoolService.getDerivativePools(),
-    ]);
-
-    return {
-        props: {
-            data: {
-                pools
-            }
-        },
-        revalidate: 60
-    };
+    try {
+        const [pools, tokenPrices] = await Promise.all([
+            PoolService.getDerivativePools(),
+            PricesService.getAllTokenPrices()
+        ]);
+        return {
+            props: {
+                data: {
+                    pools,
+                    tokenPrices
+                }
+            },
+            revalidate: 60
+        };
+    } catch (error) {
+        return {
+            props: {
+                data: {
+                    pools: [],
+                    tokenPrices: {}
+                }
+            },
+            revalidate: 60
+        };
+    }
 };
 
 export default function DerivativePoolsPage({ data }: Props) {

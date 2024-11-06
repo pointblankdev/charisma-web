@@ -77,6 +77,21 @@ describe('PoolService', () => {
       expect(pools).toHaveLength(poolData.length);
       expect(pools).toEqual(poolData);
     });
+
+    it('should get all pool', async () => {
+      const pools = await PoolService.getAll();
+      console.log(pools)
+    })
+
+    it('should get all spot pools', async () => {
+      const pools = await PoolService.getSpotPools();
+      console.log(pools)
+    })
+
+    it('should get all derivative pools', async () => {
+      const pools = await PoolService.getDerivativePools();
+      console.log(pools)
+    })
   });
 
   describe('Database Seeding', () => {

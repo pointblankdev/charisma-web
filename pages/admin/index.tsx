@@ -20,7 +20,7 @@ import dmgLogo from '@public/dmg-logo.gif';
 import Image from 'next/image';
 import { GetStaticProps } from 'next';
 import numeral from 'numeral';
-import PricesService from '@lib/prices-service';
+import PricesService from '@lib/server/prices/prices-service';
 import { PoolsService } from '@lib/data/pools/pools-service';
 import { MarketplaceService } from '@lib/data/marketplace/marketplace-service';
 import { Badge } from '@components/ui/badge';

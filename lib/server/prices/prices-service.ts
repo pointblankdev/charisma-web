@@ -1,8 +1,8 @@
 import { fetchCallReadOnlyFunction, principalCV, uintCV, cvToValue } from '@stacks/transactions';
-import velarApi from './velar-api';
-import cmc from './cmc-api';
-import { getDecimals, getTotalSupply } from './stacks-api';
-import { PoolService } from './server/pools/pool-service';
+import velarApi from '../../velar-api';
+import cmc from '../../cmc-api';
+import { getDecimals, getTotalSupply } from '../../stacks-api';
+import { PoolService } from '../pools/pool-service';
 
 export type TokenInfo = {
   symbol: string;
