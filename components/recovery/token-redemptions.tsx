@@ -15,15 +15,6 @@ import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
-import { GetServerSideProps } from 'next';
-
-export const getServerSideProps: GetServerSideProps<any> = async () => {
-  return {
-    props: {
-      message: 'ok'
-    }
-  };
-};
 
 const TokenRedemptions = ({ data }: any) => {
   const { doContractCall } = useConnect();

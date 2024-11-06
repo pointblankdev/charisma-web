@@ -1,9 +1,6 @@
 import { createClient } from '@stacks/blockchain-api-client';
 import { fetchCallReadOnlyFunction, cvToValue, parseToCV, hexToCV, cvToHex } from '@stacks/transactions';
-import { STACKS_MAINNET } from '@stacks/network';
 import { cvToJSON } from '@stacks/transactions';
-
-const network = STACKS_MAINNET;
 
 export const client = createClient({
   baseUrl: 'https://api.mainnet.hiro.so'
