@@ -39,7 +39,8 @@ export class PoolService {
         }
       }
     );
-    const pool = cvToValue(hexToCV(response.data.result));
+    const cv = hexToCV(response.data.result)
+    const pool = cvToValue(cv);
     return {
       lpToken: pool.value['lp-token'].value,
       token0: pool.value.token0.value,

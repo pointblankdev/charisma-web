@@ -8,29 +8,24 @@ import { useEffect, useState } from 'react';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { motion } from 'framer-motion';
 import { PoolsInterface } from '@components/pools/pools-interface';
-import { PoolsService } from '@lib/data/pools/pools-service';
 import { PoolInfo, PoolService } from '@lib/server/pools/pool-service';
 import PoolsLayout from '@components/pools/layout';
-import PricesService from '@lib/prices-service';
 
 type Props = {
     data: {
         pools: PoolInfo[] | any[];
-        tokenPrices: { [key: string]: number };
     };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-    const [pools, tokenPrices] = await Promise.all([
+    const [pools] = await Promise.all([
         PoolService.getDerivativePools(),
-        PricesService.getAllTokenPrices()
     ]);
 
     return {
         props: {
             data: {
-                pools,
-                tokenPrices
+                pools
             }
         },
         revalidate: 60

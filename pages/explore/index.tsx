@@ -18,7 +18,6 @@ import {
 } from '@components/ui/context-menu';
 import { useRouter } from 'next/navigation';
 import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
-import { API_URL } from '@lib/constants';
 import React, { useEffect, useState } from 'react';
 import { interactionIds } from 'pages/api/v0/interactions';
 import {

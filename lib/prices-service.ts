@@ -2,6 +2,7 @@ import { fetchCallReadOnlyFunction, principalCV, uintCV, cvToValue } from '@stac
 import velarApi from './velar-api';
 import cmc from './cmc-api';
 import { getDecimals, getTotalSupply } from './stacks-api';
+import { PoolService } from './server/pools/pool-service';
 
 export type TokenInfo = {
   symbol: string;
@@ -14,40 +15,7 @@ export type TokenInfo = {
 };
 
 class PricesService {
-  private static contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
-  private static contractName = 'univ2-core';
   private static tokenPrices: { [key: string]: number } = {};
-
-  private static async callContractFunction(
-    functionName: string,
-    functionArgs: any[]
-  ): Promise<any> {
-    try {
-      const result = await fetchCallReadOnlyFunction({
-        contractAddress: this.contractAddress,
-        contractName: this.contractName,
-        functionName: functionName,
-        functionArgs: functionArgs,
-        senderAddress: this.contractAddress
-      });
-      return cvToValue(result);
-    } catch (error) {
-      console.error(`Error calling contract function ${functionName}:`, error);
-      throw error;
-    }
-  }
-
-  private static async getPool(id: number): Promise<any> {
-    const response = await this.callContractFunction('get-pool', [uintCV(id)]);
-    return {
-      lpToken: response.value['lp-token'].value,
-      token0: response.value.token0.value,
-      token1: response.value.token1.value,
-      reserve0: response.value.reserve0.value,
-      reserve1: response.value.reserve1.value,
-      symbol: response.value.symbol.value
-    };
-  }
 
   private static async calculateChaPrice(stxPrice: number): Promise<number> {
     const stxChaReserves = await this.getPoolReserves(4);
@@ -63,16 +31,9 @@ class PricesService {
     }, {});
   }
 
-  public static async lookupPool(token0Address: string, token1Address: string): Promise<any> {
-    return this.callContractFunction('lookup-pool', [
-      principalCV(token0Address),
-      principalCV(token1Address)
-    ]);
-  }
-
   public static async getPoolReserves(poolId: number): Promise<{ token0: number; token1: number }> {
     try {
-      const poolInfo = await this.getPool(poolId);
+      const poolInfo = await PoolService.getPool(poolId);
       if (poolInfo) {
         const reserve0 = Number(poolInfo.reserve0);
         const reserve1 = Number(poolInfo.reserve1);
@@ -155,7 +116,7 @@ class PricesService {
 
   public static async getLpTokenPriceByPoolId(poolId: number): Promise<number> {
     try {
-      const poolInfo = await this.getPool(poolId);
+      const poolInfo = await PoolService.getPool(poolId);
       if (!poolInfo) {
         throw new Error('Pool not found');
       }

@@ -14,7 +14,7 @@ import RebalanceDialog from './rebalance-dialog';
 type Props = {
   data: {
     pools: PoolInfo[];
-    tokenPrices: { [key: string]: number };
+    // tokenPrices: { [key: string]: number };
   };
   title: string;
 };
@@ -47,7 +47,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
       const otherAmount = otherReserve / 10 ** otherToken.decimals;
 
       const poolChaPrice = (otherToken.price * otherAmount) / chaAmount;
-      return (poolChaPrice / data.tokenPrices['CHA']) * 100;
+      return (poolChaPrice / data.pools.find((p: any) => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')!.token1.price) * 100;
     }
 
     // For WELSH-iouWELSH and ROO-iouROO pools

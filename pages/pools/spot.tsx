@@ -1,4 +1,3 @@
-// pages/pools/spot.tsx
 import { GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
@@ -8,31 +7,24 @@ import { useEffect, useState } from 'react';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { motion } from 'framer-motion';
 import { PoolsInterface } from '@components/pools/pools-interface';
-import { PoolsService } from '@lib/data/pools/pools-service';
-import PricesService from '@lib/prices-service';
-import { getTotalSupply } from '@lib/stacks-api';
 import { PoolInfo, PoolService } from '@lib/server/pools/pool-service';
-import { getPoolData } from '@lib/db-providers/kv';
 import PoolsLayout from '@components/pools/layout';
 
 type Props = {
     data: {
         pools: PoolInfo[];
-        tokenPrices: { [key: string]: number };
     };
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-    const [pools, tokenPrices] = await Promise.all([
+    const [pools] = await Promise.all([
         PoolService.getSpotPools(),
-        PricesService.getAllTokenPrices()
     ]);
 
     return {
         props: {
             data: {
                 pools,
-                tokenPrices
             }
         },
         revalidate: 60
