@@ -1,8 +1,7 @@
-import { cvToValue, fetchCallReadOnlyFunction, principalCV, uintCV } from '@stacks/transactions';
+import { cvToValue, fetchCallReadOnlyFunction, uintCV } from '@stacks/transactions';
 import { kv } from '@vercel/kv';
-import { KVTokenData, TokenInfo, TokenService } from '@lib/server/tokens/token-service';
-import { getTotalSupply } from '@lib/stacks-api';
-import PricesService from '@lib/prices-service';
+import { TokenInfo, TokenService } from '@lib/server/tokens/token-service';
+import { getTokenImage, getTokenName, getTotalSupply } from '@lib/stacks-api';
 
 export type KVPoolData = {
   id: number;
@@ -13,6 +12,9 @@ export type KVPoolData = {
 
 export type PoolInfo = {
   id: number;
+  name: string;
+  symbol: string;
+  image: string;
   token0: TokenInfo;
   token1: TokenInfo;
   reserves: {
@@ -102,6 +104,9 @@ export class PoolService {
 
         return {
           id: pool.id,
+          name: await getTokenName(pool.contractAddress),
+          symbol: poolData.symbol,
+          image: await getTokenImage(pool.contractAddress),
           token0,
           token1,
           reserves,

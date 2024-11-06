@@ -36,7 +36,7 @@
 
 
 ;; Traits
-(use-trait rulebook-trait .charisma-traits-v0.rulebook-trait)
+(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
 (use-trait ft-trait .dao-traits-v4.sip010-ft-trait)
 (use-trait ft-plus-trait .dao-traits-v4.ft-plus-trait)
 (use-trait share-fee-to-trait .dao-traits-v4.share-fee-to-trait)
@@ -49,21 +49,57 @@
 (define-constant MIN_REINVEST_BPS u100)  ;; 1% minimum reinvestment
 (define-constant MAX_REINVEST_BPS u100000)  ;; 1000% maximum reinvestment
 
-;; Variables
+;; Maps and Variables
+(define-map contract-owners principal bool)
 (define-data-var fee-bps uint u1000)      ;; Default 10% fee
 (define-data-var reinvest-bps uint u9000) ;; Default 90% reinvestment
+(define-data-var fee-address principal 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ)
+
+;; Initialize deployer as first owner
+(map-set contract-owners DEPLOYER true)
+
+;; Owner Management Functions
+
+(define-private (is-owner (caller principal))
+    (default-to false (map-get? contract-owners caller)))
+
+;; Add a new owner
+(define-public (add-owner (new-owner principal))
+    (begin
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
+        (ok (map-set contract-owners new-owner true))))
+
+;; Remove an owner
+(define-public (remove-owner (owner principal))
+    (begin
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
+        (asserts! (not (is-eq owner DEPLOYER)) ERR_UNAUTHORIZED)
+        (ok (map-set contract-owners owner false))))
+
+;; Check if an address is an owner
+(define-read-only (check-is-owner (address principal))
+    (ok (is-owner address)))
 
 ;; Admin Functions
-(define-public (set-reinvestment-bps (rulebook <rulebook-trait>) (bps uint))
+
+;; Set fee recipient address
+(define-public (set-fee-address (new-address principal))
     (begin
-        (try! (contract-call? rulebook is-owner tx-sender))
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
+        (ok (var-set fee-address new-address))))
+
+;; Set reinvestment percentage
+(define-public (set-reinvestment-bps (bps uint))
+    (begin
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
         (asserts! (>= bps MIN_REINVEST_BPS) ERR_UNAUTHORIZED)
         (asserts! (<= bps MAX_REINVEST_BPS) ERR_UNAUTHORIZED)
         (ok (var-set reinvest-bps bps))))
 
-(define-public (set-fee-bps (rulebook <rulebook-trait>) (bps uint))
+;; Set fee percentage
+(define-public (set-fee-bps (bps uint))
     (begin
-        (try! (contract-call? rulebook is-owner tx-sender))
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
         (asserts! (>= bps MIN_FEE_BPS) ERR_UNAUTHORIZED)
         (asserts! (<= bps MAX_FEE_BPS) ERR_UNAUTHORIZED)
         (ok (var-set fee-bps bps))))
@@ -75,12 +111,12 @@
 (define-private (calculate-reinvestment (profit uint))
     (/ (* (- profit (calculate-fee profit)) (var-get reinvest-bps)) u10000))
 
-;; Transfer fee to deployer
+;; Transfer fee to fee recipient
 (define-private (pay-deployer-fee (base-token <ft-trait>) (profit uint))
     (contract-call? base-token transfer
         (calculate-fee profit)
         tx-sender
-        DEPLOYER
+        (var-get fee-address)
         none))
 
 ;; Convert profits to CHA
@@ -238,7 +274,8 @@
         min-fee-bps: MIN_FEE_BPS,
         max-fee-bps: MAX_FEE_BPS,
         min-reinvest-bps: MIN_REINVEST_BPS,
-        max-reinvest-bps: MAX_REINVEST_BPS
+        max-reinvest-bps: MAX_REINVEST_BPS,
+        fee-address: (var-get fee-address)
     }))
 
 (define-read-only (calculate-profit-split (profit uint))

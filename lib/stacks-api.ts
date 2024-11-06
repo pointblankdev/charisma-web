@@ -60,6 +60,17 @@ export async function getTokenURI(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2
   return cvToJSON(hexToCV(response.data.result)).value.value.value
 }
 
+export async function getTokenImage(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+  const [address, name] = contract.split('.');
+
+  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [] },
+  });
+  const url = cvToJSON(hexToCV(response.data.result))?.value?.value?.value || 'https://charisma.rocks/charisma.json';
+  return (await (await fetch(url)).json()).image;
+}
+
 export async function getNftURI(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven', tokenId = 1) {
   const [address, name] = contract.split('.');
 
@@ -81,6 +92,17 @@ export async function getSymbol(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0
   });
   return String(cvToValue(hexToCV(response.data.result)).value)
 }
+
+export async function getTokenName(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+  const [address, name] = contract.split('.');
+
+  const path = `/v2/contracts/call-read/${address}/${name}/get-name` as any
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [] },
+  });
+  return String(cvToValue(hexToCV(response.data.result)).value)
+}
+
 
 export async function getDecimals(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
   const [address, name] = contract.split('.');

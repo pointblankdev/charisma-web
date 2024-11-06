@@ -180,7 +180,8 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
             <table className="w-full">
               <thead>
                 <tr className="text-left text-gray-400">
-                  <th className="py-2">Pool</th>
+                  <th className="py-2">Definition</th>
+                  <th className="py-2">Composition</th>
                   <th className="py-2">Reserves</th>
                   <th className="py-2 cursor-pointer" onClick={() => handleSort('tvl')}>
                     TVL {sortBy === 'tvl' && <ArrowUpDown className="inline ml-1" size={16} />}
@@ -220,6 +221,22 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
 
                   return (
                     <tr key={pool.id} className="border-t border-gray-700/50">
+                      <td className="py-4 text-left text-white min-w-36 sm:min-w-48">
+                        <div className="flex items-center">
+                          <Image
+                            src={pool.image}
+                            alt={pool.symbol}
+                            width={240}
+                            height={240}
+                            className="w-6 mr-2 rounded-full"
+                          />
+                          <div className="leading-none">
+                            <div className="text-white">
+                              {pool.name}
+                            </div>
+                          </div>
+                        </div>
+                      </td>
                       <td className="py-4 min-w-60">
                         <div className="flex items-center">
                           <Image
@@ -239,9 +256,6 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                           <div className="leading-none">
                             <div className="text-white">
                               {pool.token0.symbol}-{pool.token1.symbol}
-                            </div>
-                            <div className="ml-1 text-sm text-muted-foreground">
-                              {pool.id === 8 ? ' (UPDOG)' : ''}
                             </div>
                           </div>
                         </div>

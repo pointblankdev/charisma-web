@@ -76,7 +76,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     <>
       <div className={styles.background}>
         {!hideNav && (
-          <header className={cn(styles.header)}>
+          <header className={cn(styles.header, 'h-[42px]')}>
             <div className={styles['header-logos']}>
               <MobileMenu key={router.asPath} />
               <div className={cn(styleUtils['hide-on-mobile'])}>

@@ -1,4 +1,4 @@
-;; WELSH-iouWELSH LP token with configurable metadata
+;; CHA-vWELSH LP token with configurable metadata
 ;;
 ;; A virtual LP token representing a synthetic liquidity position,
 ;; with owner-configurable name and symbol.
@@ -14,10 +14,10 @@
 (define-constant contract (as-contract tx-sender))
 
 ;; Configuration Variables
-(define-data-var token-name (string-ascii 32) "Virtual Welsh")
-(define-data-var token-symbol (string-ascii 10) "vWELSH")
+(define-data-var token-name (string-ascii 32) "Charisma Virtual Welsh")
+(define-data-var token-symbol (string-ascii 10) "cvWELSH")
 (define-data-var token-uri (optional (string-utf8 256)) 
-  (some u"https://charisma.rocks/sip10/virtual-welsh/metadata.json"))
+  (some u"https://charisma.rocks/sip10/charisma-virtual-welsh/metadata.json"))
 (define-data-var token-decimals uint u6)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

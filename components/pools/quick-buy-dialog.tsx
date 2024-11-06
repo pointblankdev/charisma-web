@@ -13,6 +13,7 @@ import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
 import { PoolInfo } from '@lib/server/pools/pool-service';
+import { latestDungeonKeeperContract } from 'pages/admin';
 
 type QuickBuyDialogProps = {
   pool: PoolInfo | null;
@@ -48,15 +49,16 @@ const QuickBuyDialog: React.FC<QuickBuyDialogProps> = ({ pool, onClose }) => {
         .ustx() as any,
       Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
         .willSendGte(minChaAmount)
-        .ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any
+        .ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any,
     ];
 
     doContractCall({
       network: network,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-      contractName: 'univ2-path2',
-      functionName: 'do-swap',
+      contractName: 'powered-swap-v0',
+      functionName: 'do-token-swap',
       functionArgs: [
+        contractPrincipalCV(latestDungeonKeeperContract.split('.')[0], latestDungeonKeeperContract.split('.')[1]),
         uintCV(BigInt(stxAmount * 10 ** pool.token0.decimals)),
         contractPrincipalCV(
           pool.token0.contractAddress.split('.')[0],

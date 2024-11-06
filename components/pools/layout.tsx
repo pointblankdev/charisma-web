@@ -10,7 +10,7 @@ export default function PoolsLayout({ children }: any) {
     return (
         <div className="flex flex-col w-full max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-8">
             {/* Header Section */}
-            <div className="my-2 sm:px-4">
+            <div className="my-2 mt-4 sm:px-4">
                 <h1 className="text-3xl font-bold tracking-tight mb-3">
                     Liquidity Pools
                 </h1>

@@ -35,7 +35,7 @@
 ;; - 10% of supply trade = 10 energy reward
 ;;
 ;; Integration Points:
-;; - Rulebook (.charisma-traits-v0.rulebook-trait)
+;; - Rulebook
 ;;   * Authorization
 ;;   * Energy operations
 ;;   * Interaction verification
@@ -47,21 +47,27 @@
 ;;   * Dynamic base amount calculation
 
 ;; Traits
-(use-trait rulebook-trait .charisma-traits-v0.rulebook-trait)
+
+(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
 (use-trait ft-trait .dao-traits-v4.sip010-ft-trait)
 (use-trait share-fee-to-trait .dao-traits-v4.share-fee-to-trait)
 
 ;; Constants
+(define-constant DEPLOYER tx-sender)
 (define-constant ERR_UNAUTHORIZED (err u401))
 (define-constant ERR_INSUFFICIENT_ENERGY (err u402))
 (define-constant ERR_UNVERIFIED (err u403))
 (define-constant BASE_ENERGY_COST u1) ;; 0.000001 energy per supply ratio
 (define-constant BASE_ENERGY_BOOST u1) ;; 0.000001 energy per supply ratio
 
-;; Token Pair Configuration
+;; Maps
+(define-map contract-owners principal bool)
 (define-map allowed-pairs 
     {token-in: principal, token-out: principal} 
     {factor: uint, enabled: bool})
+
+;; Initialize deployer as first owner
+(map-set contract-owners DEPLOYER true)
 
 ;; Initialize default pairs
 (map-set allowed-pairs 
@@ -70,6 +76,28 @@
 (map-set allowed-pairs 
     {token-in: .charisma-token, token-out: .wstx} 
     {factor: u10000000, enabled: false})
+
+;; Owner Management Functions
+
+(define-private (is-owner (caller principal))
+    (default-to false (map-get? contract-owners caller)))
+
+;; Add a new owner
+(define-public (add-owner (new-owner principal))
+    (begin
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
+        (ok (map-set contract-owners new-owner true))))
+
+;; Remove an owner
+(define-public (remove-owner (owner principal))
+    (begin
+        (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
+        (asserts! (not (is-eq owner DEPLOYER)) ERR_UNAUTHORIZED)
+        (ok (map-set contract-owners owner false))))
+
+;; Check if an address is an owner
+(define-read-only (check-is-owner (address principal))
+    (ok (is-owner address)))
 
 ;; Helper Functions
 
@@ -97,7 +125,7 @@
     (energy-boost uint)
     (enabled bool))
   (begin
-    (unwrap! (contract-call? rulebook is-owner tx-sender) ERR_UNAUTHORIZED)
+    (asserts! (is-owner tx-sender) ERR_UNAUTHORIZED)
     (ok (map-set allowed-pairs 
         {token-in: token-in, token-out: token-out}
         {factor: energy-boost, enabled: enabled}))))
@@ -113,8 +141,6 @@
     (share-fee-to <share-fee-to-trait>))
     (let (
         (pair-config (map-get? allowed-pairs {token-in: (contract-of token-in), token-out: (contract-of token-out)})))
-        ;; Verify interaction is authorized
-        (unwrap! (contract-call? rulebook is-verified-interaction contract-caller) ERR_UNVERIFIED)
         ;; Try the swap first
         (match (contract-call? .univ2-path2 do-swap 
                 amount
