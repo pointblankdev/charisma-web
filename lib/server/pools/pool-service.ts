@@ -1,7 +1,7 @@
-import { cvToValue, fetchCallReadOnlyFunction, uintCV } from '@stacks/transactions';
+import { cvToHex, cvToValue, fetchCallReadOnlyFunction, hexToCV, parseToCV, uintCV } from '@stacks/transactions';
 import { kv } from '@vercel/kv';
 import { TokenInfo, TokenService } from '@lib/server/tokens/token-service';
-import { getTokenImage, getTokenName, getTotalSupply } from '@lib/stacks-api';
+import { client, getTokenImage, getTokenName, getTotalSupply } from '@lib/stacks-api';
 
 export type KVPoolData = {
   id: number;
@@ -29,37 +29,24 @@ export type PoolInfo = {
 export class PoolService {
   private static readonly POOL_KEY = 'pools';
 
-  private static async callContractFunction(
-    functionName: string,
-    functionArgs: any[]
-  ): Promise<any> {
-    const contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
-    const contractName = 'univ2-core';
-
-    try {
-      const result = await fetchCallReadOnlyFunction({
-        contractAddress,
-        contractName,
-        functionName,
-        functionArgs,
-        senderAddress: contractAddress
-      });
-      return cvToValue(result);
-    } catch (error) {
-      console.error(`Error calling contract function ${functionName}:`, error);
-      throw error;
-    }
-  }
-
   public static async getPool(id: number): Promise<any> {
-    const response = await this.callContractFunction('get-pool', [uintCV(id)]);
+    const response = await client.POST(
+      `/v2/contracts/call-read/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS/univ2-core/get-pool` as any,
+      {
+        body: {
+          sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+          arguments: [cvToHex(parseToCV(String(id), 'uint128'))]
+        }
+      }
+    );
+    const pool = cvToValue(hexToCV(response.data.result));
     return {
-      lpToken: response.value['lp-token'].value,
-      token0: response.value.token0.value,
-      token1: response.value.token1.value,
-      reserve0: response.value.reserve0.value,
-      reserve1: response.value.reserve1.value,
-      symbol: response.value.symbol.value
+      lpToken: pool.value['lp-token'].value,
+      token0: pool.value.token0.value,
+      token1: pool.value.token1.value,
+      reserve0: pool.value.reserve0.value,
+      reserve1: pool.value.reserve1.value,
+      symbol: pool.value.symbol.value
     };
   }
 

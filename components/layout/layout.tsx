@@ -92,10 +92,11 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                     if (name === 'Pools') {
                       return (
                         <NavigationMenuItem key={i}>
-                          <NavigationMenuTrigger className='text-md text-secondary-color mx-0'>Pools</NavigationMenuTrigger>
+                          <NavigationMenuTrigger className='text-md text-[var(--secondary-color)] mx-0'>Pools</NavigationMenuTrigger>
                           <NavigationMenuContent>
                             <ul className="grid gap-3 p-4 w-[500px] grid-cols-2 md:w-[700px]">
                               <ListItem
+                                className='text-foreground'
                                 href="/pools/spot"
                                 title="Spot Pools"
                               >
@@ -105,6 +106,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                                 </div>
                               </ListItem>
                               <ListItem
+                                className='text-foreground'
                                 href="/pools/derivatives"
                                 title="Derivative Pools"
                               >
