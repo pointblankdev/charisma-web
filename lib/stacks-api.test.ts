@@ -6,9 +6,12 @@ import {
   getTokenURI,
   getAvailableRedemptions,
   getTotalSupply,
-  getInteractionUri
+  getInteractionUri,
+  client
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
+import { hexToInt } from '@stacks/common';
+import { cvToValue, hexToCV } from '@stacks/transactions';
 
 describe('Stacks API', () => {
   it('should lookup a BNS name given an address', async () => {
@@ -75,3 +78,15 @@ describe('Recovery', () => {
     console.log(response);
   });
 });
+
+
+describe('Read-only contract calls with api token', () => {
+  it('read-only functions should work', async () => {
+    const path = '/v2/contracts/call-read/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS/charisma-token/get-decimals' as any
+    const response = await client.POST(path, {
+      body: { sender: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS", arguments: [] },
+    });
+    return cvToValue(cvToValue(hexToCV(response.data.result)))
+  })
+
+}), 20000;

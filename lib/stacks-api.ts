@@ -1,11 +1,11 @@
 import { createClient } from '@stacks/blockchain-api-client';
-import { fetchCallReadOnlyFunction, cvToValue, parseToCV } from '@stacks/transactions';
+import { fetchCallReadOnlyFunction, cvToValue, parseToCV, hexToCV, cvToHex } from '@stacks/transactions';
 import { STACKS_MAINNET } from '@stacks/network';
 import { cvToJSON } from '@stacks/transactions';
 
 const network = STACKS_MAINNET;
 
-const client = createClient({
+export const client = createClient({
   baseUrl: 'https://api.mainnet.hiro.so'
 });
 
@@ -43,98 +43,66 @@ export async function getBlocks({ limit = 1 }: { limit?: number } = {}) {
   return response;
 }
 
-export async function getTokenBalance(contract: string, user: string) {
-  const [address, name] = contract.split('.');
-  const response = await fetchCallReadOnlyFunction({
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-balance',
-    functionArgs: [parseToCV(String(user), 'principal')],
-    senderAddress: address
-  });
-
-  return Number(cvToValue(response).value);
-}
-
-export async function getTokenURI(contract: string) {
+export async function getTokenBalance(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', user = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') {
   const [address, name] = contract.split('.');
 
-  const response = await fetchCallReadOnlyFunction({
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-token-uri',
-    functionArgs: [],
-    senderAddress: address
+  const path = `/v2/contracts/call-read/${address}/${name}/get-balance` as any
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [cvToHex(parseToCV(String(user), 'principal'))] },
   });
-
-  const tokenUri = cvToValue(response).value.value;
-  const corsProxy = 'https://corsproxy.io/?';
-  const res = await fetch(`${corsProxy}${tokenUri}`);
-  return res.json();
+  return Number(cvToValue(cvToValue(hexToCV(response.data.result))))
 }
 
-export async function getNftURI(contract: string, tokenId: number) {
-  try {
-    const [address, name] = contract.split('.');
-
-    const response = await fetchCallReadOnlyFunction({
-      contractAddress: address,
-      contractName: name,
-      functionName: 'get-token-uri',
-      functionArgs: [parseToCV(String(tokenId), 'uint128')],
-      senderAddress: address
-    });
-
-    const cv = cvToValue(response).value.value;
-    const url = cv.replace('{id}', tokenId);
-    return await (await fetch(url)).json();
-  } catch (error) {
-    return null;
-  }
-}
-
-export async function getSymbol(contract: string): Promise<string> {
+export async function getTokenURI(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
   const [address, name] = contract.split('.');
 
-  const response = await fetchCallReadOnlyFunction({
-    network: network,
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-symbol',
-    functionArgs: [],
-    senderAddress: address
+  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [] },
   });
-
-  return cvToValue(response).value.value;
+  return cvToJSON(hexToCV(response.data.result)).value.value.value
 }
 
-export async function getDecimals(contract: string) {
+export async function getNftURI(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven', tokenId = 1) {
   const [address, name] = contract.split('.');
 
-  const response = await fetchCallReadOnlyFunction({
-    network: network,
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-decimals',
-    functionArgs: [],
-    senderAddress: address
+  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))] },
   });
-
-  return cvToJSON(response).value.value;
+  const cv = cvToJSON(hexToCV(response.data.result))
+  const url = cv.value.value.value.replace('{id}', tokenId);
+  return await (await fetch(url)).json();
 }
 
-export async function getTotalSupply(contract: string) {
+export async function getSymbol(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
   const [address, name] = contract.split('.');
 
-  const response = await fetchCallReadOnlyFunction({
-    contractAddress: address,
-    contractName: name,
-    functionName: 'get-total-supply',
-    functionArgs: [],
-    senderAddress: address
+  const path = `/v2/contracts/call-read/${address}/${name}/get-symbol` as any
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [] },
   });
+  return String(cvToValue(hexToCV(response.data.result)).value)
+}
 
-  return Number(cvToValue(response).value);
+export async function getDecimals(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+  const [address, name] = contract.split('.');
+
+  const path = `/v2/contracts/call-read/${address}/${name}/get-decimals` as any
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [] },
+  });
+  return Number(cvToValue(cvToValue(hexToCV(response.data.result))))
+}
+
+export async function getTotalSupply(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+  const [address, name] = contract.split('.');
+
+  const path = `/v2/contracts/call-read/${address}/${name}/get-total-supply` as any
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [] },
+  });
+  return Number(cvToValue(cvToValue(hexToCV(response.data.result))))
 }
 
 export async function getAvailableRedemptions() {
