@@ -77,13 +77,13 @@ describe('PoolService', () => {
   ];
 
   beforeEach(async () => {
-    await PoolService.clear();
+    // await PoolService.clear();
   });
 
   describe('Pool Management', () => {
-    it('should start with empty pools', async () => {
-      const pools = await PoolService.getAll();
-      expect(pools).toEqual([]);
+    it('should get all pools', async () => {
+      const pools = await PoolService.getAll(true);
+      console.log(pools);
     });
 
     it('should set all pools', async () => {

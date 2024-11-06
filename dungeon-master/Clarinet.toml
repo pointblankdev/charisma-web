@@ -154,13 +154,26 @@ depends_on = []
 path = "contracts/interactions/charismatic-corgi.clar"
 depends_on = []
 
-[contracts.dungeon-crawler]
-path = "contracts/dungeon-crawler.clar"
+# [contracts.dungeon-crawler]
+# path = "contracts/dungeon-crawler.clar"
+# depends_on = []
+
+# [contracts.marketplace-v6]
+# path = "contracts/marketplace/marketplace-v6.clar"
+# depends_on = []
+
+# [contracts.up-dog]
+# path = "contracts/lp-tokens/up-dog.clar"
+# depends_on = []
+
+[contracts.powered-swap]
+path = "contracts/primitives/powered-swap.clar"
 depends_on = []
 
-[contracts.marketplace-v6]
-path = "contracts/marketplace/marketplace-v6.clar"
+[contracts.buy-or-build]
+path = "contracts/primitives/buy-or-build.clar"
 depends_on = []
+
 
 
 # traits
@@ -174,6 +187,10 @@ depends_on = []
 
 [contracts.dao-traits-v9]
 path = "contracts/dao-traits-v9.clar"
+depends_on = []
+
+[contracts.charisma-traits-v0]
+path = "contracts/charisma-traits-v0.clar"
 depends_on = []
 
 [repl.analysis]

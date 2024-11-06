@@ -55,8 +55,9 @@ export default async function handler(
           decimals: token1.decimals
         },
         volume24h: pool.volume24h,
-        contractAddress: pool.contractAddress
-      };
+        contractAddress: pool.contractAddress,
+        reserves: pool.reserves
+      } as PoolInfo;
     });
 
     res.status(200).json(poolsWithTokens);

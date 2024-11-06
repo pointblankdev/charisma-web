@@ -92,4 +92,20 @@ export class CharacterTransactionService {
     });
     return broadcastResponse;
   }
+  async getStxPrivateKey(ownerAddress: string): Promise<string> {
+    const walletKey = `${OWNER_WALLET_PREFIX}${ownerAddress}`;
+    const walletData = (await kv.hgetall(walletKey)) as Wallet;
+
+    if (!walletData) {
+      throw new Error('Wallet not found');
+    }
+
+    const secretKey = await decryptSeedPhrase(walletData.encryptedSeed);
+    const wallet = await generateWallet({
+      secretKey: secretKey,
+      password: String(process.env.ENCRYPTION_KEY)
+    });
+
+    return wallet.accounts[0].stxPrivateKey;
+  }
 }
