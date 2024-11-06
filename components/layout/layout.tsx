@@ -15,6 +15,15 @@ import dmgLogo from '@public/dmg-logo.png';
 import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
 import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import { useGlobalState } from '@lib/hooks/global-state-context';
+import {
+  NavigationMenu,
+  NavigationMenuContent,
+  NavigationMenuItem,
+  NavigationMenuLink,
+  NavigationMenuList,
+  NavigationMenuTrigger
+} from '@components/ui/navigation-menu';
+import { ChartBarIcon, LineChartIcon } from 'lucide-react';
 
 type Props = {
   children: React.ReactNode;
@@ -22,6 +31,32 @@ type Props = {
   hideNav?: boolean;
   layoutStyles?: any;
 };
+
+const ListItem = React.forwardRef<
+  React.ElementRef<"a">,
+  React.ComponentPropsWithoutRef<"a">
+>(({ className, title, children, ...props }, ref) => {
+  return (
+    <li>
+      <NavigationMenuLink asChild>
+        <a
+          ref={ref}
+          className={cn(
+            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
+            className
+          )}
+          {...props}
+        >
+          <div className="text-sm font-medium leading-none">{title}</div>
+          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
+            {children}
+          </p>
+        </a>
+      </NavigationMenuLink>
+    </li>
+  )
+});
+ListItem.displayName = "ListItem";
 
 export default function Layout({ children, className, hideNav, layoutStyles }: Props) {
   const router = useRouter();
@@ -51,15 +86,57 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               </div>
             </div>
             <div className={styles.tabs}>
-              {navigationTabs.map(({ name, route }, i) => (
-                <Link key={i} href={route} className={cn(styles.tab, { [styles['tab-active']]: activeRoute.endsWith(route) })}                >
-                  <div className="relative flex flex-col items-center justify-center">
-                    <div>{name}</div>
-                  </div>
-                </Link>
-              ))}
+              <NavigationMenu>
+                <NavigationMenuList>
+                  {navigationTabs.map(({ name, route }, i) => {
+                    if (name === 'Pools') {
+                      return (
+                        <NavigationMenuItem key={i}>
+                          <NavigationMenuTrigger>Pools</NavigationMenuTrigger>
+                          <NavigationMenuContent>
+                            <ul className="grid gap-3 p-4 w-[500px] grid-cols-2 md:w-[700px]">
+                              <ListItem
+                                href="/pools/spot"
+                                title="Spot Pools"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <ChartBarIcon className="w-4 h-4" />
+                                  <span>Trade and provide liquidity for base token pairs</span>
+                                </div>
+                              </ListItem>
+                              <ListItem
+                                href="/pools/derivatives"
+                                title="Derivative Pools"
+                              >
+                                <div className="flex items-center gap-2">
+                                  <LineChartIcon className="w-4 h-4" />
+                                  <span>Advanced pools featuring swappable liquidity</span>
+                                </div>
+                              </ListItem>
+                            </ul>
+                          </NavigationMenuContent>
+                        </NavigationMenuItem>
+                      );
+                    }
+                    return (
+                      <NavigationMenuItem key={i}>
+                        <Link href={route} legacyBehavior passHref>
+                          <NavigationMenuLink
+                            className={cn(
+                              "px-4 py-2 block",
+                              { [styles['tab-active']]: activeRoute.endsWith(route) }
+                            )}
+                          >
+                            {name}
+                          </NavigationMenuLink>
+                        </Link>
+                      </NavigationMenuItem>
+                    );
+                  })}
+                </NavigationMenuList>
+              </NavigationMenu>
             </div>
-            <div className={cn(styles['header-right'], 'items-center', 'gap-4', 'pr-4', ' whitespace-nowrap', 'sm:relative')}>
+            <div className={cn(styles['header-right'], 'items-center', 'gap-4', 'pr-4', 'whitespace-nowrap', 'sm:relative')}>
               {wallet.redPilled && <Image src={redPillFloating} alt="Red Pill" width="40" height="40" className='cursor-help' title={'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'} />}
               {wallet.bluePilled && <Image src={bluePillFloating} alt="Blue Pill" width="40" height="40" className='cursor-help' title={'The Blue Pill NFT offers your early access to Charisma Recovery token redemptions.'} />}
               <ConnectWallet />

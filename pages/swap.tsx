@@ -11,11 +11,11 @@ import dogLogo from '@public/sip10/dogLogo.webp';
 import updogLogo from '@public/sip10/up-dog/logo.gif';
 import syntheticStxLogo from '@public/sip10/synthetic-stx/logo.png';
 import { GetStaticProps } from 'next';
-import { PriceService } from '@lib/server/prices/price-service';
 import { PoolService } from '@lib/server/pools/pool-service';
 import { TokenService } from '@lib/server/tokens/token-service';
 import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/prices-service';
+import { ValuationService } from '@lib/server/valuations/valuation-service';
 
 interface TokenInfo {
   symbol: string;
@@ -48,7 +48,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     TokenService.getAll(),
     PoolService.getAll(),
     PricesService.getAllTokenPrices(),
-    PriceService.getChaPerStx()
+    ValuationService.getChaPerStx()
   ]);
 
   // Import token images

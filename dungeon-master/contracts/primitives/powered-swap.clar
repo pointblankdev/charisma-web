@@ -1,10 +1,50 @@
-;; Managed Token Swap
+;; Powered Swap
 ;;
-;; Allows users to swap between tokens with energy consequences:
-;; - Allowed pairs grant energy boost
-;; - Non-allowed pairs consume energy
-;; 
-;; Energy costs/rewards scale with swap amount.
+;; This contract provides energy consequences for token swaps 
+;; through a system of encouraged and discouraged pairs.
+;;
+;; When users swap tokens:
+;; - Allowed pairs grant energy tokens (minimum 1)
+;; - Disallowed or unknown pairs consume energy tokens (minimum 1)
+;; - All energy amounts scale linearly with swap size
+;;
+;; Key Features:
+;; 1. Energy Scaling:
+;;    - Base amount: Token's total supply
+;;    - All energy costs/rewards scale proportionally 
+;;    - Minimum impact of 1 energy (never 0)
+;;    - Example: 0.01% of supply trade = 0.0001x energy impact (minimum 1)
+;;
+;; 2. Pair Configuration:
+;;    - Each token pair can be enabled/disabled
+;;    - Custom energy factor per pair
+;;    - Defaults:
+;;      * STX->CHA: Rewards 0.000001 energy per total-supply ratio
+;;      * CHA->STX: Costs 10 energy per total-supply ratio
+;;      * All others: Cost 0.000001 energy per total-supply ratio
+;;
+;; 3. Security:
+;;    - Owner controls pair configuration 
+;;    - Only verified interactions can execute swaps
+;;    - Rulebook integration for energy/auth
+;;
+;; Example Usage:
+;; STX->CHA (default configuration):
+;; - 1% of supply trade = 1 energy reward
+;; - 0.001% of supply trade = 1 energy reward (minimum)
+;; - 10% of supply trade = 10 energy reward
+;;
+;; Integration Points:
+;; - Rulebook (.charisma-traits-v0.rulebook-trait)
+;;   * Authorization
+;;   * Energy operations
+;;   * Interaction verification
+;; - UniV2 (.univ2-path2)
+;;   * Token swaps
+;;   * Fee distribution
+;; - Token Contracts
+;;   * Total supply lookups
+;;   * Dynamic base amount calculation
 
 ;; Traits
 (use-trait rulebook-trait .charisma-traits-v0.rulebook-trait)
@@ -15,20 +55,37 @@
 (define-constant ERR_UNAUTHORIZED (err u401))
 (define-constant ERR_INSUFFICIENT_ENERGY (err u402))
 (define-constant ERR_UNVERIFIED (err u403))
-(define-constant BASE_AMOUNT u1000000) ;; 1 token base amount
-(define-constant BASE_ENERGY_COST u10000000) ;; 10 energy per BASE_AMOUNT
-(define-constant BASE_ENERGY_BOOST u5000000) ;; 5 energy per BASE_AMOUNT
+(define-constant BASE_ENERGY_COST u1) ;; 0.000001 energy per supply ratio
+(define-constant BASE_ENERGY_BOOST u1) ;; 0.000001 energy per supply ratio
 
 ;; Token Pair Configuration
 (define-map allowed-pairs 
     {token-in: principal, token-out: principal} 
     {factor: uint, enabled: bool})
 
+;; Initialize default pairs
+(map-set allowed-pairs 
+    {token-in: .wstx, token-out: .charisma-token} 
+    {factor: u10000000, enabled: true})
+(map-set allowed-pairs 
+    {token-in: .charisma-token, token-out: .wstx} 
+    {factor: u10000000, enabled: false})
+
 ;; Helper Functions
 
-;; Calculate scaled energy based on amount
-(define-private (scale-energy (base-energy uint) (amount uint))
-    (/ (* base-energy amount) BASE_AMOUNT))
+;; Ensure minimum of 10 energy
+(define-private (min-energy (amount uint))
+    (if (> amount u0) amount u1000000))
+
+;; Get token's total supply
+(define-private (get-total-supply (token <ft-trait>))
+    (contract-call? token get-total-supply))
+
+;; Calculate scaled energy based on amount and token supply
+(define-private (scale-energy (factor uint) (amount uint) (token <ft-trait>))
+    (match (get-total-supply token)
+        supply (min-energy (/ (* factor amount) supply))
+        error u1000000)) ;; Fallback to minimum if supply lookup fails
 
 ;; Admin Functions
 
@@ -40,7 +97,7 @@
     (energy-boost uint)
     (enabled bool))
   (begin
-    (try! (contract-call? rulebook is-owner tx-sender))
+    (unwrap! (contract-call? rulebook is-owner tx-sender) ERR_UNAUTHORIZED)
     (ok (map-set allowed-pairs 
         {token-in: token-in, token-out: token-out}
         {factor: energy-boost, enabled: enabled}))))
@@ -57,7 +114,7 @@
     (let (
         (pair-config (map-get? allowed-pairs {token-in: (contract-of token-in), token-out: (contract-of token-out)})))
         ;; Verify interaction is authorized
-        (try! (contract-call? rulebook is-verified-interaction contract-caller))
+        (unwrap! (contract-call? rulebook is-verified-interaction contract-caller) ERR_UNVERIFIED)
         ;; Try the swap first
         (match (contract-call? .univ2-path2 do-swap 
                 amount
@@ -70,19 +127,19 @@
                         (if (get enabled config)
                             ;; Grant scaled energy boost for allowed pair
                             (match (contract-call? rulebook energize 
-                                    (scale-energy (get factor config) amount)
+                                    (scale-energy (get factor config) amount token-in)
                                     tx-sender)
                                 boost-success (ok success)
                                 boost-error (ok success)) ;; Still return swap success even if boost fails
                             ;; Exhaust scaled energy for disabled pair
                             (match (contract-call? rulebook exhaust 
-                                    (scale-energy (get factor config) amount)
+                                    (scale-energy (get factor config) amount token-in)
                                     tx-sender)
                                 exhaust-success (ok success)
                                 exhaust-error ERR_INSUFFICIENT_ENERGY))
                     ;; Exhaust scaled energy for unconfigured pair
                     (match (contract-call? rulebook exhaust 
-                            (scale-energy BASE_ENERGY_COST amount)
+                            (scale-energy BASE_ENERGY_COST amount token-in)
                             tx-sender)
                         exhaust-success (ok success)
                         exhaust-error ERR_INSUFFICIENT_ENERGY))
@@ -94,17 +151,9 @@
 (define-read-only (get-pair-config (token-in principal) (token-out principal))
     (ok (map-get? allowed-pairs {token-in: token-in, token-out: token-out})))
 
-;; Get base energy amounts and scaling factors
+;; Get base energy config
 (define-read-only (get-energy-config)
     (ok {
-        base-amount: BASE_AMOUNT,
         base-energy-cost: BASE_ENERGY_COST,
         base-energy-boost: BASE_ENERGY_BOOST
-    }))
-
-;; Calculate energy amount for a given swap amount
-(define-read-only (calculate-energy-for-amount (amount uint))
-    (ok {
-        energy-cost: (scale-energy BASE_ENERGY_COST amount),
-        energy-boost: (scale-energy BASE_ENERGY_BOOST amount)
     }))

@@ -1,6 +1,6 @@
 import { getDecimals, getTotalSupply } from '@lib/stacks-api';
 import { kv } from '@vercel/kv';
-import { StaticImageData } from 'next/image';
+import PricesService from '@lib/prices-service';
 
 export type KVTokenData = {
   symbol: string;
@@ -10,18 +10,19 @@ export type KVTokenData = {
   decimals: number;
   imagePath: string;
   isLpToken?: boolean;
-  poolId?: number; // For LP tokens
+  poolId?: number;
 };
 
 export type TokenInfo = {
   symbol: string;
   name: string;
-  image: StaticImageData | string;
-  tokenName?: string;
+  image: string;
   contractAddress: string;
+  tokenId: string | null;
   decimals: number;
-  isLpToken?: boolean;
-  poolId?: number;
+  price: number;
+  isLpToken: boolean;
+  poolId?: number | null;
 };
 
 export class TokenService {
@@ -33,6 +34,25 @@ export class TokenService {
 
   static async getAll(): Promise<KVTokenData[]> {
     return (await kv.get<KVTokenData[]>(this.TOKEN_KEY)) || [];
+  }
+
+  static async getAllWithPrices(): Promise<TokenInfo[]> {
+    const [tokens, prices] = await Promise.all([
+      this.getAll(),
+      PricesService.getAllTokenPrices()
+    ]);
+
+    return tokens.map(token => ({
+      symbol: token.symbol,
+      name: token.name,
+      image: token.imagePath,
+      contractAddress: token.contractAddress,
+      tokenId: token.tokenName || null,
+      decimals: token.decimals,
+      price: prices[token.symbol] || 0,
+      isLpToken: token.isLpToken || false,
+      poolId: token.poolId || null
+    }));
   }
 
   static async set(tokens: KVTokenData[]): Promise<void> {

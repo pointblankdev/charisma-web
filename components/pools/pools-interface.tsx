@@ -3,49 +3,24 @@ import { useState } from 'react';
 import { ArrowUpDown, Minus, Plus, RefreshCw, Scale, ShoppingCart } from 'lucide-react';
 import numeral from 'numeral';
 import { Button } from '@components/ui/button';
-import { Dialog } from '@components/ui/dialog';
-import RebalanceDialog from '@components/pools/rebalance-dialog';
-import EqualizeDialog from '@components/pools/equalize-dialog';
-import QuickBuyDialog from '@components/pools/quick-buy-dialog';
-import LiquidityDialog from '@components/pools/add-liquidity';
 import Link from 'next/link';
-
-export type TokenInfo = {
-  symbol: string;
-  name: string;
-  image: string;
-  contractAddress: string;
-  price: number;
-  tokenId?: string;
-  decimals: number;
-};
-
-export type PoolInfo = {
-  id: number;
-  token0: TokenInfo;
-  token1: TokenInfo;
-  reserves: {
-    token0: number;
-    token1: number;
-  };
-  tvl: number;
-  volume: {
-    token0: number;
-    token1: number;
-  };
-  contractAddress: string;
-  totalLpSupply: number;
-};
+import { PoolInfo } from '@lib/server/pools/pool-service';
+import { Dialog } from '@components/ui/dialog';
+import LiquidityDialog from './add-liquidity';
+import EqualizeDialog from './equalize-dialog';
+import QuickBuyDialog from './quick-buy-dialog';
+import RebalanceDialog from './rebalance-dialog';
 
 type Props = {
   data: {
     pools: PoolInfo[];
     tokenPrices: { [key: string]: number };
   };
+  title: string;
 };
 
-export const PoolsInterface = ({ data }: Props) => {
-  const [sortBy, setSortBy] = useState<'tvl' | 'volume' | 'priceAlignment'>('tvl');
+export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
+  const [sortBy, setSortBy] = useState<'tvl' | 'priceAlignment'>('tvl');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('desc');
   const [selectedPool, setSelectedPool] = useState<PoolInfo | null>(null);
   const [isAddLiquidity, setIsAddLiquidity] = useState(false);
@@ -66,8 +41,7 @@ export const PoolsInterface = ({ data }: Props) => {
       const chaToken = pool.token0.symbol === 'CHA' ? pool.token0 : pool.token1;
       const otherToken = pool.token0.symbol === 'CHA' ? pool.token1 : pool.token0;
       const chaReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token0 : pool.reserves.token1;
-      const otherReserve =
-        pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
+      const otherReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
 
       const chaAmount = chaReserve / 10 ** chaToken.decimals;
       const otherAmount = otherReserve / 10 ** otherToken.decimals;
@@ -84,52 +58,34 @@ export const PoolsInterface = ({ data }: Props) => {
       const token0Reserve = pool.reserves.token0 / 10 ** pool.token0.decimals;
       const token1Reserve = pool.reserves.token1 / 10 ** pool.token1.decimals;
       const priceRatio = token0Reserve / token1Reserve;
-      return priceRatio * 100; // Convert to percentage
+      return priceRatio * 100;
     }
 
     return null;
   };
 
-  const filteredPools = data.pools.filter(
-    (pool: any) => pool && true
-    // !(pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA') || wallet.experience.balance >= 4000
-  );
-
   const getAlignmentColor = (alignment: number, isEqualizePool: boolean) => {
     if (isEqualizePool) {
-      // For equalize pools, 100% is perfect alignment
       const deviation = Math.abs(100 - alignment);
-      const hue = Math.max(0, Math.min(120, 120 * (1 - deviation / 10))); // 10% deviation gives red
+      const hue = Math.max(0, Math.min(120, 120 * (1 - deviation / 10)));
       return `hsl(${hue}, 100%, 40%, 90%)`;
     }
-    // For other pools, use the existing logic
     const hue = Math.max(0, Math.min(120, 120 * (1 - Math.abs(alignment - 100) / 15)));
     return `hsl(${hue}, 100%, 40%, 90%)`;
   };
 
-  const sortedPools = [...filteredPools].sort((a, b) => {
+  const sortedPools = [...data.pools].sort((a, b) => {
     if (sortBy === 'priceAlignment') {
       const alignmentA = calculatePriceAlignment(a) || 0;
       const alignmentB = calculatePriceAlignment(b) || 0;
       return sortOrder === 'asc' ? alignmentA - alignmentB : alignmentB - alignmentA;
     }
-    const valueA =
-      sortBy === 'tvl'
-        ? a.tvl
-        : (a.volume.token0 / 10 ** a.token0.decimals) * a.token0.price +
-          (a.volume.token1 / 10 ** a.token1.decimals) * a.token1.price;
-    const valueB =
-      sortBy === 'tvl'
-        ? b.tvl
-        : (b.volume.token0 / 10 ** b.token0.decimals) * b.token0.price +
-          (b.volume.token1 / 10 ** b.token1.decimals) * b.token1.price;
-    return sortOrder === 'asc' ? valueA - valueB : valueB - valueA;
+    return sortOrder === 'asc' ? a.tvl - b.tvl : b.tvl - a.tvl;
   });
 
-  // Calculate total TVL
-  const totalTVL = data.pools.reduce((sum: any, pool: any) => Number(sum) + Number(pool.tvl), 0);
+  const totalTVL = data.pools.reduce((sum, pool) => sum + pool.tvl, 0);
 
-  const handleSort = (newSortBy: 'tvl' | 'volume' | 'priceAlignment') => {
+  const handleSort = (newSortBy: 'tvl' | 'priceAlignment') => {
     if (newSortBy === sortBy) {
       setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
     } else {
@@ -214,7 +170,7 @@ export const PoolsInterface = ({ data }: Props) => {
       <div className="mt-6">
         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
           <div className="flex items-center justify-between px-4 mb-4 sm:px-0">
-            <h1 className="text-2xl font-bold text-white/95">Liquidity Pools</h1>
+            <h1 className="text-2xl font-bold text-white/95">{title}</h1>
             <span className="px-3 text-lg font-light text-white border rounded-full border-primary bg-accent-foreground">
               ${numeral(totalTVL).format('0,0.00')}
             </span>
@@ -229,18 +185,12 @@ export const PoolsInterface = ({ data }: Props) => {
                   <th className="py-2 cursor-pointer" onClick={() => handleSort('tvl')}>
                     TVL {sortBy === 'tvl' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
-                  <th className="py-2 cursor-pointer" onClick={() => handleSort('volume')}>
-                    Trading Volume (Total){' '}
-                    {sortBy === 'volume' && <ArrowUpDown className="inline ml-1" size={16} />}
-                  </th>
                   <th
                     className="items-center hidden py-2 cursor-pointer sm:flex"
                     onClick={() => handleSort('priceAlignment')}
                   >
                     Price Alignment{' '}
-                    {sortBy === 'priceAlignment' && (
-                      <ArrowUpDown className="inline ml-1" size={16} />
-                    )}
+                    {sortBy === 'priceAlignment' && <ArrowUpDown className="inline ml-1" size={16} />}
                   </th>
                   <th className="py-2 sr-only">Actions</th>
                 </tr>
@@ -308,30 +258,6 @@ export const PoolsInterface = ({ data }: Props) => {
                       <td className="py-4 text-white min-w-24">
                         ${numeral(pool.tvl).format('0,0.00')}
                       </td>
-                      <td className="py-4 text-white min-w-64">
-                        <div className="flex justify-between">
-                          <div>
-                            {numeral(pool.volume.token0 / 10 ** pool.token0.decimals).format('0,0')}{' '}
-                            {pool.token0.symbol}
-                          </div>
-                          <div>
-                            {numeral(
-                              (pool.volume.token0 / 10 ** pool.token0.decimals) * pool.token0.price
-                            ).format('$0,0.00')}
-                          </div>
-                        </div>
-                        <div className="flex justify-between">
-                          <div>
-                            {numeral(pool.volume.token1 / 10 ** pool.token1.decimals).format('0,0')}{' '}
-                            {pool.token1.symbol}
-                          </div>
-                          <div>
-                            {numeral(
-                              (pool.volume.token1 / 10 ** pool.token1.decimals) * pool.token1.price
-                            ).format('$0,0.00')}
-                          </div>
-                        </div>
-                      </td>
                       <td className="py-4 text-center text-white min-w-24 sm:min-w-36">
                         <PriceAlignment pool={pool} />
                       </td>
@@ -396,6 +322,7 @@ export const PoolsInterface = ({ data }: Props) => {
           </div>
         </div>
       </div>
+
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <LiquidityDialog pool={selectedPool} isAdd={isAddLiquidity} onClose={handleCloseDialog} />

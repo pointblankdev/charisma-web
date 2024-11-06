@@ -1,5 +1,3 @@
-// lib/services/prices-service.ts
-
 import { fetchCallReadOnlyFunction, principalCV, uintCV, cvToValue } from '@stacks/transactions';
 import velarApi from './velar-api';
 import cmc from './cmc-api';

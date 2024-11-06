@@ -9,10 +9,10 @@ import {
 import { Button } from '@components/ui/button';
 import { contractPrincipalCV, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
 import numeral from 'numeral';
-import { PoolInfo } from 'pages/pools';
 import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
+import { PoolInfo } from '@lib/server/pools/pool-service';
 
 type QuickBuyDialogProps = {
   pool: PoolInfo | null;

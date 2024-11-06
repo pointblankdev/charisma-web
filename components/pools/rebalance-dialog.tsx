@@ -10,11 +10,11 @@ import { Button } from '@components/ui/button';
 import { Slider } from '@components/ui/slider';
 import { contractPrincipalCV, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
 import numeral from 'numeral';
-import { PoolInfo } from 'pages/pools';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
+import { PoolInfo } from '@lib/server/pools/pool-service';
 
 type RebalanceDialogProps = {
   pool: PoolInfo | null;
@@ -129,9 +129,9 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
     const minAmountOut = BigInt(
       Math.floor(
         ((trade.action === 'buy' ? trade.amount : trade.receiveAmount) as any) *
-          (sliderValue / 100) *
-          0.8 *
-          10 ** tokenOut.decimals
+        (sliderValue / 100) *
+        0.8 *
+        10 ** tokenOut.decimals
       )
     ); // 1% slippage
 
@@ -197,7 +197,7 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
           (You will {trade.action === 'buy' ? 'sell' : 'receive'} approximately{' '}
           {numeral(
             (trade.action === 'buy' ? trade.sellAmount : trade.receiveAmount ?? 0) *
-              (sliderValue / 100)
+            (sliderValue / 100)
           ).format('0,0.0000')}{' '}
           {trade.action === 'buy' ? trade.sellToken.symbol : trade.buyToken.symbol})
         </p>

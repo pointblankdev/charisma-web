@@ -13,10 +13,11 @@ import {
 import { Label } from '@components/ui/label';
 import { Slider } from '@components/ui/slider';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import { PoolInfo, TokenInfo } from 'pages/pools';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
+import { PoolInfo } from '@lib/server/pools/pool-service';
+import { TokenInfo } from '@lib/server/tokens/token-service';
 
 const LiquidityDialog = ({
   pool,
@@ -204,20 +205,20 @@ const LiquidityDialog = ({
       // Post condition for receiving token0
       pool.token0.symbol !== 'STX'
         ? (Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-            .willSendGte(1)
-            .ft(pool.token0.contractAddress as any, pool.token0.tokenId as string) as any)
+          .willSendGte(1)
+          .ft(pool.token0.contractAddress as any, pool.token0.tokenId as string) as any)
         : (Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-            .willSendGte(1)
-            .ustx() as any),
+          .willSendGte(1)
+          .ustx() as any),
 
       // Post condition for receiving token1
       pool.token1.symbol !== 'STX'
         ? (Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-            .willSendGte(1)
-            .ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any)
+          .willSendGte(1)
+          .ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any)
         : (Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-            .willSendGte(1)
-            .ustx() as any)
+          .willSendGte(1)
+          .ustx() as any)
     ];
 
     doContractCall({
@@ -348,12 +349,11 @@ const LiquidityDialog = ({
       <DialogFooter className="flex items-center justify-between">
         <span className="text-sm text-gray-500">
           {isAdd
-            ? `Your balance: ${numeral(getTokenBalance(pool.token0)).format('0,0.00')} ${
-                pool.token0.symbol
-              } / ${numeral(getTokenBalance(pool.token1)).format('0,0.00')} ${pool.token1.symbol}`
+            ? `Your balance: ${numeral(getTokenBalance(pool.token0)).format('0,0.00')} ${pool.token0.symbol
+            } / ${numeral(getTokenBalance(pool.token1)).format('0,0.00')} ${pool.token1.symbol}`
             : `Your balance: ${numeral(lpTokenBalance).format('0,0')} → ${numeral(
-                lpTokenBalance - selectedLpAmount
-              ).format('0,0')}`}
+              lpTokenBalance - selectedLpAmount
+            ).format('0,0')}`}
         </span>
         <Button
           type="submit"
