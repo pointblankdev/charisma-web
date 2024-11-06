@@ -230,10 +230,13 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                             height={240}
                             className="w-6 mr-2 rounded-full"
                           />
-                          <div className="leading-none">
+                          <div className="leading-tight">
                             <div className="text-white">
                               {pool.name}
                             </div>
+                            {/* <div className="text-muted-foreground">
+                              {pool.symbol}
+                            </div> */}
                           </div>
                         </div>
                       </td>
