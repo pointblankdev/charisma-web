@@ -18,7 +18,7 @@ import { openContractCall } from '@stacks/connect';
 import { network } from '@components/stacks-session/connect';
 import dmgLogo from '@public/dmg-logo.gif';
 import Image from 'next/image';
-import { GetStaticProps } from 'next';
+import { GetServerSideProps, GetStaticProps } from 'next';
 import numeral from 'numeral';
 import PricesService from '@lib/prices-service';
 import { PoolsService } from '@lib/data/pools/pools-service';
@@ -53,7 +53,7 @@ interface AdminDashboardProps {
   marketplaceStats: MarketplaceStats;
 }
 
-export const getStaticProps: GetStaticProps<AdminDashboardProps> = async () => {
+export const getServerSideProps: GetServerSideProps<AdminDashboardProps> = async () => {
   try {
     // Fetch pools and token prices in parallel
     const [pools, tokenPrices, marketplaceStats] = await Promise.all([
@@ -114,7 +114,7 @@ export const getStaticProps: GetStaticProps<AdminDashboardProps> = async () => {
           collections: {}
         }
       },
-      revalidate: 60 // Retry sooner if there was an error
+      // revalidate: 60 // Retry sooner if there was an error
     };
   }
 };
@@ -289,8 +289,8 @@ const MarketplaceSection = ({ marketplaceStats }: { marketplaceStats: Marketplac
               <h3 className="text-2xl font-bold">
                 {marketplaceStats.activeListings > 0
                   ? numeral(
-                      marketplaceStats.totalVolume / marketplaceStats.activeListings / 1_000_000
-                    ).format('0,0.00')
+                    marketplaceStats.totalVolume / marketplaceStats.activeListings / 1_000_000
+                  ).format('0,0.00')
                   : '0.00'}{' '}
                 STX
               </h3>
