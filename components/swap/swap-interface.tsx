@@ -24,6 +24,7 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
 import { formatBalance, useAvailablePools, useCurrentPool } from '@lib/hooks/dex/pool-operations';
+import { max } from 'lodash';
 
 interface TokenInfo {
   symbol: string;
@@ -84,7 +85,7 @@ export const SwapInterface = ({ data }: { data: Props['data'] }) => {
   const currentPool = useCurrentPool({
     availablePools,
     fromToken: fromToken as any,
-    toToken: toToken as any,
+    toToken: toToken as any
   });
 
   const calculateMinimumAmountOut = useCallback(
@@ -203,7 +204,8 @@ export const SwapInterface = ({ data }: { data: Props['data'] }) => {
   );
 
   const handleUseMax = () => {
-    const maxBalance = getBalance(fromToken.symbol);
+    const maxBalance = getBalance(fromToken.contractAddress);
+    console.log(fromToken, maxBalance);
     setFromAmount(formatBalance(maxBalance, fromToken.decimals));
   };
 
@@ -311,38 +313,38 @@ export const SwapInterface = ({ data }: { data: Props['data'] }) => {
     const functionName = isMultiHop ? `swap-${swapPath.length}` : 'swap-exact-tokens-for-tokens';
     const functionArgs = isMultiHop
       ? [
-        uintCV(amountInMicroTokens),
-        uintCV(minAmountOutMicroTokens),
-        ...swapPath.map(token =>
-          contractPrincipalCV(
-            token.contractAddress.split('.')[0],
-            token.contractAddress.split('.')[1]
-          )
-        ),
-        contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to')
-      ]
+          uintCV(amountInMicroTokens),
+          uintCV(minAmountOutMicroTokens),
+          ...swapPath.map(token =>
+            contractPrincipalCV(
+              token.contractAddress.split('.')[0],
+              token.contractAddress.split('.')[1]
+            )
+          ),
+          contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to')
+        ]
       : [
-        uintCV(currentPool!.id),
-        contractPrincipalCV(
-          currentPool!.token0.contractAddress.split('.')[0],
-          currentPool!.token0.contractAddress.split('.')[1]
-        ),
-        contractPrincipalCV(
-          currentPool!.token1.contractAddress.split('.')[0],
-          currentPool!.token1.contractAddress.split('.')[1]
-        ),
-        contractPrincipalCV(
-          fromToken.contractAddress.split('.')[0],
-          fromToken.contractAddress.split('.')[1]
-        ),
-        contractPrincipalCV(
-          toToken.contractAddress.split('.')[0],
-          toToken.contractAddress.split('.')[1]
-        ),
-        contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to'),
-        uintCV(amountInMicroTokens),
-        uintCV(minAmountOutMicroTokens)
-      ];
+          uintCV(currentPool!.id),
+          contractPrincipalCV(
+            currentPool!.token0.contractAddress.split('.')[0],
+            currentPool!.token0.contractAddress.split('.')[1]
+          ),
+          contractPrincipalCV(
+            currentPool!.token1.contractAddress.split('.')[0],
+            currentPool!.token1.contractAddress.split('.')[1]
+          ),
+          contractPrincipalCV(
+            fromToken.contractAddress.split('.')[0],
+            fromToken.contractAddress.split('.')[1]
+          ),
+          contractPrincipalCV(
+            toToken.contractAddress.split('.')[0],
+            toToken.contractAddress.split('.')[1]
+          ),
+          contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to'),
+          uintCV(amountInMicroTokens),
+          uintCV(minAmountOutMicroTokens)
+        ];
 
     const postConditions: any[] = [];
 
@@ -634,18 +636,19 @@ export const SwapInterface = ({ data }: { data: Props['data'] }) => {
                         return (
                           <button
                             key={token.symbol}
-                            className={`flex items-center w-full px-4 py-2 text-left ${isDisabled
-                              ? 'opacity-50 cursor-not-allowed'
-                              : 'hover:bg-accent-foreground'
-                              }`}
+                            className={`flex items-center w-full px-4 py-2 text-left ${
+                              isDisabled
+                                ? 'opacity-50 cursor-not-allowed'
+                                : 'hover:bg-accent-foreground'
+                            }`}
                             onClick={() => !isDisabled && selectToken(token, false)}
                             disabled={isDisabled}
                             title={
                               token.symbol === 'STX'
                                 ? 'STX is available as a swap destination for users with over 4000 experience.'
                                 : token.symbol === 'UPDOG'
-                                  ? 'Updog is a hybrid token, combining equal parts DOG and WELSH by value. It appreciates over time by accumulating a portion of the fees generated from WELSH-DOG swaps.'
-                                  : ''
+                                ? 'Updog is a hybrid token, combining equal parts DOG and WELSH by value. It appreciates over time by accumulating a portion of the fees generated from WELSH-DOG swaps.'
+                                : ''
                             }
                           >
                             <Image
