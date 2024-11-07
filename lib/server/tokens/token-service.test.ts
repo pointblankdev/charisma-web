@@ -94,6 +94,14 @@ describe('TokenService', () => {
       isLpToken: true,
       poolId: 1
     },
+    {
+      symbol: 'PEPE',
+      name: 'Pepe',
+      tokenName: 'tokensoft-token',
+      contractAddress: 'SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz',
+      decimals: 3,
+      imagePath: '/pepe-logo.png'
+    }
   ];
 
   beforeEach(async () => {
