@@ -225,7 +225,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                   return (
                     <tr key={pool.id} className="border-t border-gray-700/50">
                       <td className="py-4 text-left text-white min-w-36 sm:min-w-48">
-                        <div className="flex items-center">
+                        <div className="flex items-center mr-4">
                           <Image
                             src={pool.image}
                             alt={pool.symbol}
