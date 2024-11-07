@@ -76,12 +76,12 @@ describe('PoolService', () => {
       token1Symbol: 'PEPE',
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-pepe'
     },
-    // {
-    //   id: 13,
-    //   token0Symbol: 'vSTX',
-    //   token1Symbol: 'CHA-WELSH',
-    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.corgi-9000'
-    // }
+    {
+      id: 13,
+      token0Symbol: 'vSTX',
+      token1Symbol: 'chaWELSH',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.corgi-9000'
+    }
   ];
 
   beforeEach(async () => {
