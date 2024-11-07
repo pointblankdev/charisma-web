@@ -643,24 +643,22 @@ const Mint = () => {
   const [amt1, setAmt1] = useState('');
 
   function mint() {
-    openContractCall(
-      {
-        network: network,
-        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-        contractName: 'univ2-core',
-        functionName: 'mint',
-        functionArgs: [
-          uintCV(parseInt(poolId)),
-          contractPrincipalCV(token0.split('.')[0], token0.split('.')[1]),
-          contractPrincipalCV(token1.split('.')[0], token1.split('.')[1]),
-          contractPrincipalCV(lpToken.split('.')[0], lpToken.split('.')[1]),
-          uintCV(parseInt(amt0)),
-          uintCV(parseInt(amt1))
-        ],
-        postConditionMode: PostConditionMode.Allow,
-        postConditions: []
-      }
-    );
+    openContractCall({
+      network: network,
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'univ2-core',
+      functionName: 'mint',
+      functionArgs: [
+        uintCV(parseInt(poolId)),
+        contractPrincipalCV(token0.split('.')[0], token0.split('.')[1]),
+        contractPrincipalCV(token1.split('.')[0], token1.split('.')[1]),
+        contractPrincipalCV(lpToken.split('.')[0], lpToken.split('.')[1]),
+        uintCV(parseInt(amt0)),
+        uintCV(parseInt(amt1))
+      ],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: []
+    });
   }
 
   return (
@@ -690,23 +688,21 @@ const Burn = () => {
   const [liquidity, setLiquidity] = useState('');
 
   function burn() {
-    openContractCall(
-      {
-        network: network,
-        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-        contractName: 'univ2-core',
-        functionName: 'burn',
-        functionArgs: [
-          uintCV(parseInt(poolId)),
-          contractPrincipalCV(token0.split('.')[0], token0.split('.')[1]),
-          contractPrincipalCV(token1.split('.')[0], token1.split('.')[1]),
-          contractPrincipalCV(lpToken.split('.')[0], lpToken.split('.')[1]),
-          uintCV(parseInt(liquidity))
-        ],
-        postConditionMode: PostConditionMode.Allow,
-        postConditions: []
-      }
-    );
+    openContractCall({
+      network: network,
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'univ2-core',
+      functionName: 'burn',
+      functionArgs: [
+        uintCV(parseInt(poolId)),
+        contractPrincipalCV(token0.split('.')[0], token0.split('.')[1]),
+        contractPrincipalCV(token1.split('.')[0], token1.split('.')[1]),
+        contractPrincipalCV(lpToken.split('.')[0], lpToken.split('.')[1]),
+        uintCV(parseInt(liquidity))
+      ],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: []
+    });
   }
 
   return (
@@ -740,24 +736,22 @@ const Swap = () => {
   const [amtOut, setAmtOut] = useState('');
 
   function swap() {
-    openContractCall(
-      {
-        network: network,
-        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-        contractName: 'univ2-core',
-        functionName: 'swap',
-        functionArgs: [
-          uintCV(parseInt(poolId)),
-          contractPrincipalCV(tokenIn.split('.')[0], tokenIn.split('.')[1]),
-          contractPrincipalCV(tokenOut.split('.')[0], tokenOut.split('.')[1]),
-          contractPrincipalCV(shareFee0.split('.')[0], shareFee0.split('.')[1]),
-          uintCV(parseInt(amtIn)),
-          uintCV(parseInt(amtOut))
-        ],
-        postConditionMode: PostConditionMode.Allow,
-        postConditions: []
-      }
-    );
+    openContractCall({
+      network: network,
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'univ2-core',
+      functionName: 'swap',
+      functionArgs: [
+        uintCV(parseInt(poolId)),
+        contractPrincipalCV(tokenIn.split('.')[0], tokenIn.split('.')[1]),
+        contractPrincipalCV(tokenOut.split('.')[0], tokenOut.split('.')[1]),
+        contractPrincipalCV(shareFee0.split('.')[0], shareFee0.split('.')[1]),
+        uintCV(parseInt(amtIn)),
+        uintCV(parseInt(amtOut))
+      ],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: []
+    });
   }
 
   return (
@@ -797,23 +791,6 @@ const Collect = () => {
   const [token1, setToken1] = useState('');
 
   function collect() {
-<<<<<<< Updated upstream
-    openContractCall(
-      {
-        network: network,
-        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-        contractName: 'univ2-core',
-        functionName: 'collect',
-        functionArgs: [
-          uintCV(parseInt(poolId)),
-          contractPrincipalCV(token0.split('.')[0], token0.split('.')[1]),
-          contractPrincipalCV(token1.split('.')[0], token1.split('.')[1])
-        ],
-        postConditionMode: PostConditionMode.Allow,
-        postConditions: []
-      }
-    );
-=======
     openContractCall({
       network: network,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
@@ -827,7 +804,6 @@ const Collect = () => {
       postConditionMode: PostConditionMode.Allow,
       postConditions: []
     });
->>>>>>> Stashed changes
   }
 
   return (
