@@ -36,7 +36,6 @@
 
 
 ;; Traits
-(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
 (use-trait ft-trait .dao-traits-v4.sip010-ft-trait)
 (use-trait ft-plus-trait .dao-traits-v4.ft-plus-trait)
 (use-trait share-fee-to-trait .dao-traits-v4.share-fee-to-trait)
@@ -120,9 +119,8 @@
         none))
 
 ;; Convert profits to CHA
-(define-private (buy-cha (rulebook <rulebook-trait>) (amount uint) (base-token <ft-trait>) (share-fee-to <share-fee-to-trait>))
+(define-private (buy-cha (amount uint) (base-token <ft-trait>) (share-fee-to <share-fee-to-trait>))
   (contract-call? .powered-swap do-token-swap 
-    rulebook
     amount
     base-token
     .charisma-token 
@@ -130,7 +128,6 @@
 
 ;; Forward Path (Buy LP -> Remove Liquidity -> Sell Components)
 (define-public (try-forward-arbitrage 
-    (rulebook <rulebook-trait>)
     (pool-id uint)
     (base-token <ft-trait>)
     (token0 <ft-trait>)
@@ -143,7 +140,6 @@
         ;; Buy LP tokens with base-token
         (buy-lp (unwrap! 
             (contract-call? .powered-swap do-token-swap 
-                rulebook
                 input-amount
                 base-token
                 lp-token-buy
@@ -163,7 +159,6 @@
         ;; Sell token0 for base-token
         (sell-token0 (unwrap! 
             (contract-call? .powered-swap do-token-swap
-                rulebook
                 (get amt0 remove-lp)
                 token0
                 base-token
@@ -173,7 +168,6 @@
         ;; Sell token1 for base-token
         (sell-token1 (unwrap! 
             (contract-call? .powered-swap do-token-swap
-                rulebook
                 (get amt1 remove-lp)
                 token1
                 base-token
@@ -189,7 +183,6 @@
             (unwrap! (pay-deployer-fee base-token profit) (err "ARBITRAGE_FAILED"))
             ;; Convert to CHA (via STX if needed)
             (match (buy-cha 
-                rulebook 
                 (calculate-reinvestment profit)
                 base-token
                 share-fee-to)
@@ -199,7 +192,6 @@
 
 ;; Reverse Path (Buy Components -> Add Liquidity -> Sell LP)
 (define-public (try-reverse-arbitrage 
-    (rulebook <rulebook-trait>)
     (pool-id uint)
     (base-token <ft-trait>)
     (token0 <ft-trait>)
@@ -212,7 +204,6 @@
         ;; Buy token0 with base-token
         (buy-token0 (unwrap! 
             (contract-call? .powered-swap do-token-swap
-                rulebook
                 (/ input-amount u2)
                 base-token
                 token0
@@ -222,7 +213,6 @@
         ;; Buy token1 with base-token
         (buy-token1 (unwrap! 
             (contract-call? .powered-swap do-token-swap
-                rulebook
                 (/ input-amount u2)
                 base-token
                 token1
@@ -243,7 +233,6 @@
         ;; Sell LP tokens for base-token
         (sell-lp (unwrap! 
             (contract-call? .powered-swap do-token-swap
-                rulebook
                 (get liquidity add-lp)
                 lp-token-sell
                 base-token
@@ -258,7 +247,6 @@
             (unwrap! (pay-deployer-fee base-token profit) (err "ARBITRAGE_FAILED"))
             ;; Convert to CHA (via STX if needed)
             (match (buy-cha 
-                rulebook
                 (calculate-reinvestment profit)
                 base-token
                 share-fee-to)
