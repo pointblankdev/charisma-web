@@ -69,19 +69,19 @@ describe('PoolService', () => {
       token0Symbol: 'CHA',
       token1Symbol: 'vWELSH',
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-virtual-welsh'
-    },
-    {
-      id: 12,
-      token0Symbol: 'CHA',
-      token1Symbol: 'PEPE',
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-pepe'
-    },
-    {
-      id: 13,
-      token0Symbol: 'vSTX',
-      token1Symbol: 'CHA-WELSH',
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.corgi-9000'
     }
+    // {
+    //   id: 12,
+    //   token0Symbol: 'CHA',
+    //   token1Symbol: 'PEPE',
+    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-pepe'
+    // },
+    // {
+    //   id: 13,
+    //   token0Symbol: 'vSTX',
+    //   token1Symbol: 'CHA-WELSH',
+    //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.corgi-9000'
+    // }
   ];
 
   beforeEach(async () => {
@@ -98,18 +98,18 @@ describe('PoolService', () => {
 
     it('should get all pool', async () => {
       const pools = await PoolService.getAll();
-      console.log(pools)
-    })
+      console.log(pools);
+    });
 
     it('should get all spot pools', async () => {
       const pools = await PoolService.getSpotPools();
-      console.log(pools)
-    })
+      console.log(pools);
+    });
 
     it('should get all derivative pools', async () => {
       const pools = await PoolService.getDerivativePools();
-      console.log(pools)
-    })
+      console.log(pools);
+    });
   });
 
   describe('Database Seeding', () => {
