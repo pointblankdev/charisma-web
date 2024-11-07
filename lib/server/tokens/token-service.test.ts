@@ -101,6 +101,22 @@ describe('TokenService', () => {
       contractAddress: 'SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz',
       decimals: 3,
       imagePath: '/pepe-logo.png'
+    },
+    {
+      symbol: 'cPEPE',
+      name: 'President Pepe',
+      tokenName: 'lp-token',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe',
+      decimals: 6,
+      imagePath: '/sip10/president-pepe/logo.jpg'
+    },
+    {
+      symbol: 'CORGI9K',
+      name: 'CORGI-9000',
+      tokenName: 'lp-token',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.corgi-9000',
+      decimals: 6,
+      imagePath: '/sip10/corgi-9000/logo.png'
     }
   ];
 
