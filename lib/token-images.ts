@@ -10,5 +10,7 @@ import synstx from '@public/sip10/synthetic-stx/logo.png';
 import pepe from '@public/pepe-logo.png';
 import cpepe from '@public/sip10/president-pepe/logo.jpg';
 import corgi9k from '@public/sip10/corgi-9000/logo.png';
+import chawelsh from '@public/indexes/charismatic-corgi-logo.png';
+import vstx from '@public/sip10/wstx-synstx/logo.png';
 
-export { stx, welsh, cha, roo, ordi, dog, updog, synstx, pepe, cpepe, corgi9k };
+export { stx, welsh, cha, roo, ordi, dog, updog, synstx, pepe, cpepe, corgi9k, chawelsh, vstx };

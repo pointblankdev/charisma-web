@@ -16,7 +16,7 @@ import { TokenService } from '@lib/server/tokens/token-service';
 import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/server/prices/prices-service';
 import { ValuationService } from '@lib/server/valuations/valuation-service';
-import { corgi9k, cpepe, pepe } from '@lib/token-images';
+import { chawelsh, corgi9k, cpepe, pepe, vstx } from '@lib/token-images';
 
 interface TokenInfo {
   symbol: string;
@@ -67,7 +67,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     vWELSH: welshLogo,
     PEPE: pepe,
     cPEPE: cpepe,
-    CORGI9K: corgi9k
+    CORGI9K: corgi9k,
+    vSTX: vstx,
+    chaWELSH: chawelsh
   };
 
   // hack: Convert KVTokenData to TokenInfo (adding images)

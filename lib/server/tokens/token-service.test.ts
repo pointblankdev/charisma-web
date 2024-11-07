@@ -111,6 +111,16 @@ describe('TokenService', () => {
       imagePath: '/sip10/president-pepe/logo.jpg'
     },
     {
+      symbol: 'chaWELSH',
+      name: 'Charismatic Corgi',
+      tokenName: 'lp-token',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh',
+      decimals: 6,
+      imagePath: '/indexes/charismatic-corgi-logo.png',
+      isLpToken: true,
+      poolId: 3
+    },
+    {
       symbol: 'CORGI9K',
       name: 'CORGI-9000',
       tokenName: 'lp-token',
