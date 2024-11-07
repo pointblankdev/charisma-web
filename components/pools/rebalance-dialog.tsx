@@ -129,9 +129,9 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
     const minAmountOut = BigInt(
       Math.floor(
         ((trade.action === 'buy' ? trade.amount : trade.receiveAmount) as any) *
-        (sliderValue / 100) *
-        0.8 *
-        10 ** tokenOut.decimals
+          (sliderValue / 100) *
+          0.8 *
+          10 ** tokenOut.decimals
       )
     ); // 1% slippage
 
@@ -197,7 +197,7 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
           (You will {trade.action === 'buy' ? 'sell' : 'receive'} approximately{' '}
           {numeral(
             (trade.action === 'buy' ? trade.sellAmount : trade.receiveAmount ?? 0) *
-            (sliderValue / 100)
+              (sliderValue / 100)
           ).format('0,0.0000')}{' '}
           {trade.action === 'buy' ? trade.sellToken.symbol : trade.buyToken.symbol})
         </p>

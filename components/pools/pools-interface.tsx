@@ -41,7 +41,8 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
       const chaToken = pool.token0.symbol === 'CHA' ? pool.token0 : pool.token1;
       const otherToken = pool.token0.symbol === 'CHA' ? pool.token1 : pool.token0;
       const chaReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token0 : pool.reserves.token1;
-      const otherReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
+      const otherReserve =
+        pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
 
       const chaAmount = chaReserve / 10 ** chaToken.decimals;
       const otherAmount = otherReserve / 10 ** otherToken.decimals;
@@ -83,7 +84,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
     return sortOrder === 'asc' ? a.tvl - b.tvl : b.tvl - a.tvl;
   });
 
-  const totalTVL = data.pools.reduce((sum, pool) => sum + pool.tvl, 0);
+  const totalTVL = data.pools.reduce((sum, pool) => sum + Number(pool.tvl), 0);
 
   const handleSort = (newSortBy: 'tvl' | 'priceAlignment') => {
     if (newSortBy === sortBy) {
@@ -191,7 +192,9 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                     onClick={() => handleSort('priceAlignment')}
                   >
                     Price Alignment{' '}
-                    {sortBy === 'priceAlignment' && <ArrowUpDown className="inline ml-1" size={16} />}
+                    {sortBy === 'priceAlignment' && (
+                      <ArrowUpDown className="inline ml-1" size={16} />
+                    )}
                   </th>
                   <th className="py-2 sr-only">Actions</th>
                 </tr>
@@ -231,9 +234,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                             className="w-6 mr-2 rounded-full"
                           />
                           <div className="leading-tight">
-                            <div className="text-white">
-                              {pool.name}
-                            </div>
+                            <div className="text-white">{pool.name}</div>
                             {/* <div className="text-muted-foreground">
                               {pool.symbol}
                             </div> */}
@@ -340,7 +341,6 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
         </div>
       </div>
 
-
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <LiquidityDialog pool={selectedPool} isAdd={isAddLiquidity} onClose={handleCloseDialog} />
       </Dialog>
@@ -348,10 +348,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
       <Dialog open={isRebalanceDialogOpen} onOpenChange={setIsRebalanceDialogOpen}>
         <RebalanceDialog
           pool={selectedPoolForRebalance}
-          referenceChaPrice={
-            data.pools.find((p: any) => p.token0.symbol === 'STX' && p.token1.symbol === 'CHA')
-              ?.token1.price || 0
-          }
+          referenceChaPrice={data.tokenPrices['CHA']}
           onClose={handleCloseRebalanceDialog}
         />
       </Dialog>
