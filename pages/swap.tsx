@@ -65,7 +65,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     iouWELSH: welshLogo,
     iouROO: rooLogo,
     vWELSH: welshLogo,
-    cPEPE: cpepe,
+    PEPE: cpepe,
     CORGI9K: corgi9k
   };
 
