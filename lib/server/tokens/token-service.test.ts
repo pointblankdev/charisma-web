@@ -121,6 +121,16 @@ describe('TokenService', () => {
       poolId: 3
     },
     {
+      symbol: 'vSTX',
+      name: 'Virtual STX',
+      tokenName: 'lp-token',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-synstx',
+      decimals: 6,
+      imagePath: '/sip10/wstx-synstx/logo.png',
+      isLpToken: true,
+      poolId: 10
+    },
+    {
       symbol: 'CORGI9K',
       name: 'CORGI-9000',
       tokenName: 'lp-token',
