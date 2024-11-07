@@ -289,8 +289,8 @@ const MarketplaceSection = ({ marketplaceStats }: { marketplaceStats: Marketplac
               <h3 className="text-2xl font-bold">
                 {marketplaceStats.activeListings > 0
                   ? numeral(
-                    marketplaceStats.totalVolume / marketplaceStats.activeListings / 1_000_000
-                  ).format('0,0.00')
+                      marketplaceStats.totalVolume / marketplaceStats.activeListings / 1_000_000
+                    ).format('0,0.00')
                   : '0.00'}{' '}
                 STX
               </h3>
@@ -797,6 +797,7 @@ const Collect = () => {
   const [token1, setToken1] = useState('');
 
   function collect() {
+<<<<<<< Updated upstream
     openContractCall(
       {
         network: network,
@@ -812,6 +813,21 @@ const Collect = () => {
         postConditions: []
       }
     );
+=======
+    openContractCall({
+      network: network,
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      contractName: 'univ2-core',
+      functionName: 'collect',
+      functionArgs: [
+        uintCV(parseInt(poolId)),
+        contractPrincipalCV(token0.split('.')[0], token0.split('.')[1]),
+        contractPrincipalCV(token1.split('.')[0], token1.split('.')[1])
+      ],
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: []
+    });
+>>>>>>> Stashed changes
   }
 
   return (
@@ -976,7 +992,8 @@ const DungeonKeeperSection = () => {
 };
 
 const latestDungeonKeeperContractId = 'dungeon-keeper-rc6';
-export const latestDungeonKeeperContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dungeon-keeper-rc6';
+export const latestDungeonKeeperContract =
+  'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dungeon-keeper-rc6';
 
 // Helper function to convert decimal input to micro-units
 const toMicroUnits = (value: string) => {

@@ -62,7 +62,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     UPDOG: updogLogo,
     synSTX: syntheticStxLogo,
     iouWELSH: welshLogo,
-    iouROO: rooLogo
+    iouROO: rooLogo,
+    vWELSH: welshLogo
   };
 
   // hack: Convert KVTokenData to TokenInfo (adding images)
