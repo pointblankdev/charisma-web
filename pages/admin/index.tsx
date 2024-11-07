@@ -659,8 +659,7 @@ const Mint = () => {
         ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
-      },
-      (window as any).AsignaProvider
+      }
     );
   }
 
@@ -706,8 +705,7 @@ const Burn = () => {
         ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
-      },
-      (window as any).AsignaProvider
+      }
     );
   }
 
@@ -758,8 +756,7 @@ const Swap = () => {
         ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
-      },
-      (window as any).AsignaProvider
+      }
     );
   }
 
@@ -813,8 +810,7 @@ const Collect = () => {
         ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
-      },
-      (window as any).AsignaProvider
+      }
     );
   }
 
