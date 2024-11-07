@@ -51,6 +51,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     ValuationService.getChaPerStx()
   ]);
 
+  console.log(tokens)
+
   // Import token images
   const tokenImages = {
     STX: stxLogo,

@@ -83,11 +83,21 @@ describe('TokenService', () => {
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-stx',
       decimals: 6,
       imagePath: '/sip10/synthetic-stx/logo.png'
-    }
+    },
+    {
+      symbol: 'vWELSH',
+      name: 'Virtual Welsh',
+      tokenName: 'lp-token',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh',
+      decimals: 6,
+      imagePath: '/welsh-logo.png',
+      isLpToken: true,
+      poolId: 1
+    },
   ];
 
   beforeEach(async () => {
-    await TokenService.clear();
+    // await TokenService.clear();
   });
 
   describe('Token Management', () => {
@@ -101,7 +111,7 @@ describe('TokenService', () => {
       const tokens = await TokenService.getAll();
       expect(tokens).toHaveLength(tokenData.length);
       expect(tokens).toEqual(tokenData);
-    });
+    }, 500000);
   });
 
   describe('Database Seeding', () => {

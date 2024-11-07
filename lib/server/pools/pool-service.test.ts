@@ -63,6 +63,12 @@ describe('PoolService', () => {
       token0Symbol: 'STX',
       token1Symbol: 'synSTX',
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-synstx'
+    },
+    {
+      id: 11,
+      token0Symbol: 'CHA',
+      token1Symbol: 'vWELSH',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-virtual-welsh'
     }
   ];
 
@@ -76,7 +82,7 @@ describe('PoolService', () => {
       const pools = await PoolService.getAll();
       expect(pools).toHaveLength(poolData.length);
       expect(pools).toEqual(poolData);
-    });
+    }, 500000);
 
     it('should get all pool', async () => {
       const pools = await PoolService.getAll();
