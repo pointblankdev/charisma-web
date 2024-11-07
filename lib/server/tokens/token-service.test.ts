@@ -106,7 +106,7 @@ describe('TokenService', () => {
       symbol: 'cPEPE',
       name: 'President Pepe',
       tokenName: 'lp-token',
-      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.president-pepe',
+      contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-pepe',
       decimals: 6,
       imagePath: '/sip10/president-pepe/logo.jpg'
     },
