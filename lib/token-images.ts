@@ -7,7 +7,7 @@ import ordi from '@public/ordi-logo.png';
 import dog from '@public/sip10/dogLogo.webp';
 import updog from '@public/sip10/up-dog/logo.gif';
 import synstx from '@public/sip10/synthetic-stx/logo.png';
-import cpepe from '@public/sip10/president-pepe/logo.png';
+import cpepe from '@public/sip10/corgi-9000/logo.png';
 import corgi9k from '@public/sip10/corgi-9000/logo.png';
 
 export { stx, welsh, cha, roo, ordi, dog, updog, synstx, cpepe, corgi9k };
