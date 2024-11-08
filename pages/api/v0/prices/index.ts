@@ -86,6 +86,8 @@ export default async function handler(
       dexClient.getPoolById('4')
     ]);
 
+    console.log('Fetched data:', stxChaPool);
+
     // Calculate CHA price from pool ratio
     const ratio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
 
