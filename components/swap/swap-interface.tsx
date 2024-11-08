@@ -17,39 +17,14 @@ import {
   cvToValue
 } from '@stacks/transactions';
 import { Button } from '@components/ui/button';
-import Image, { StaticImageData } from 'next/image';
+import Image from 'next/image';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { ChevronDown, ArrowUpDown } from 'lucide-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
 import { formatBalance, useAvailablePools, useCurrentPool } from '@lib/hooks/dex/pool-operations';
-import { max } from 'lodash';
-
-interface TokenInfo {
-  symbol: string;
-  name: string;
-  image: StaticImageData;
-  tokenName?: string;
-  contractAddress: string;
-  decimals: number;
-}
-
-interface PoolInfo {
-  id: number;
-  token0: TokenInfo;
-  token1: TokenInfo;
-  swapFee: { num: number; den: number };
-}
-
-type Props = {
-  data: {
-    chaPerStx: number;
-    prices: any;
-    tokens: TokenInfo[];
-    pools: PoolInfo[];
-  };
-};
+import { Props, TokenInfo } from 'pages/swap';
 
 export const SwapInterface = ({ data }: { data: Props['data'] }) => {
   const [fromToken, setFromToken] = useState(data.tokens[0]);

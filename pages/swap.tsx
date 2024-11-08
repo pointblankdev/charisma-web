@@ -11,14 +11,16 @@ import dogLogo from '@public/sip10/dogLogo.webp';
 import updogLogo from '@public/sip10/up-dog/logo.gif';
 import syntheticStxLogo from '@public/sip10/synthetic-stx/logo.png';
 import { GetStaticProps } from 'next';
-import { PoolService } from '@lib/server/pools/pool-service';
 import { TokenService } from '@lib/server/tokens/token-service';
 import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/server/prices/prices-service';
 import { ValuationService } from '@lib/server/valuations/valuation-service';
 import { chawelsh, corgi9k, cpepe, pepe, vstx } from '@lib/token-images';
+import { DexClient } from '@lib/server/pools/pools.client';
 
-interface TokenInfo {
+const poolClient = new DexClient();
+
+export interface TokenInfo {
   symbol: string;
   name: string;
   image: StaticImageData;
@@ -27,14 +29,28 @@ interface TokenInfo {
   decimals: number;
 }
 
-interface PoolInfo {
-  id: number;
-  token0: TokenInfo;
-  token1: TokenInfo;
-  swapFee: { num: number; den: number };
+export interface PoolInfo {
+  id: string;
+  token0: {
+    symbol: string;
+    name: string;
+    image: StaticImageData;
+    tokenName: string;
+    contractAddress: string;
+    decimals: number;
+  };
+  token1: {
+    symbol: string;
+    name: string;
+    image: StaticImageData;
+    tokenName: string;
+    contractAddress: string;
+    decimals: number;
+  };
+  swapFee: any;
 }
 
-type Props = {
+export type Props = {
   data: {
     chaPerStx: number;
     prices: any;
@@ -44,10 +60,11 @@ type Props = {
 };
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
+  const numPools = await poolClient.getNumberOfPools();
   // Get data from services
   const [tokens, pools, prices, chaPerStx] = await Promise.all([
     TokenService.getAll(),
-    PoolService.getAll(),
+    poolClient.getPools([...Array(numPools).keys()].map(i => i.toString())),
     PricesService.getAllTokenPrices(),
     ValuationService.getChaPerStx()
   ]);
@@ -85,8 +102,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   // hack: Convert KVPoolData to PoolInfo
   const poolInfo = pools.map(pool => ({
     id: pool.id,
-    token0: tokenInfo.find(t => t.symbol === pool.token0Symbol)!,
-    token1: tokenInfo.find(t => t.symbol === pool.token1Symbol)!,
+    token0: tokenInfo.find(t => t.contractAddress === pool.token0)!,
+    token1: tokenInfo.find(t => t.contractAddress === pool.token1)!,
     swapFee: { num: 995, den: 1000 } // Standard fee for now
   }));
 

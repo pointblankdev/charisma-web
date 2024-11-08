@@ -1,5 +1,11 @@
 import { createClient } from '@stacks/blockchain-api-client';
-import { fetchCallReadOnlyFunction, cvToValue, parseToCV, hexToCV, cvToHex } from '@stacks/transactions';
+import {
+  fetchCallReadOnlyFunction,
+  cvToValue,
+  parseToCV,
+  hexToCV,
+  cvToHex
+} from '@stacks/transactions';
 import { cvToJSON } from '@stacks/transactions';
 
 export const client = createClient({
@@ -40,88 +46,122 @@ export async function getBlocks({ limit = 1 }: { limit?: number } = {}) {
   return response;
 }
 
-export async function getTokenBalance(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token', user = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') {
+export async function getTokenBalance(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
+  user = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+) {
   const [address, name] = contract.split('.');
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-balance` as any
+  const path = `/v2/contracts/call-read/${address}/${name}/get-balance` as any;
   const response = await client.POST(path, {
-    body: { sender: address, arguments: [cvToHex(parseToCV(String(user), 'principal'))] },
+    body: { sender: address, arguments: [cvToHex(parseToCV(String(user), 'principal'))] }
   });
-  return Number(cvToValue(cvToValue(hexToCV(response.data.result))))
+  return Number(cvToValue(cvToValue(hexToCV(response.data.result))));
 }
 
-export async function getTokenURI(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+export async function getTokenURI(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
   const [address, name] = contract.split('.');
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any
+  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any;
   const response = await client.POST(path, {
-    body: { sender: address, arguments: [] },
+    body: { sender: address, arguments: [] }
   });
-  return cvToJSON(hexToCV(response.data.result)).value.value.value
+  return cvToJSON(hexToCV(response.data.result)).value.value.value;
 }
 
-export async function getTokenImage(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+export async function getTokenMetadata(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
   const [address, name] = contract.split('.');
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any
+  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any;
   const response = await client.POST(path, {
-    body: { sender: address, arguments: [] },
+    body: { sender: address, arguments: [] }
   });
-  const url = cvToJSON(hexToCV(response.data.result))?.value?.value?.value || 'https://charisma.rocks/charisma.json';
+  const url =
+    cvToJSON(hexToCV(response.data.result))?.value?.value?.value ||
+    'https://charisma.rocks/charisma.json';
+  return await (await fetch(url)).json();
+}
+
+export async function getTokenImage(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
+  const [address, name] = contract.split('.');
+
+  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any;
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [] }
+  });
+  const url =
+    cvToJSON(hexToCV(response.data.result))?.value?.value?.value ||
+    'https://charisma.rocks/charisma.json';
   return (await (await fetch(url)).json()).image;
 }
 
-export async function getNftURI(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven', tokenId = 1) {
+export async function getNftURI(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
+  tokenId = 1
+) {
   const [address, name] = contract.split('.');
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any
+  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any;
   const response = await client.POST(path, {
-    body: { sender: address, arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))] },
+    body: { sender: address, arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))] }
   });
-  const cv = cvToJSON(hexToCV(response.data.result))
+  const cv = cvToJSON(hexToCV(response.data.result));
   const url = cv.value.value.value.replace('{id}', tokenId);
   return await (await fetch(url)).json();
 }
 
-export async function getSymbol(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+export async function getSymbol(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
   const [address, name] = contract.split('.');
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-symbol` as any
+  const path = `/v2/contracts/call-read/${address}/${name}/get-symbol` as any;
   const response = await client.POST(path, {
-    body: { sender: address, arguments: [] },
+    body: { sender: address, arguments: [] }
   });
-  return String(cvToValue(hexToCV(response.data.result)).value)
+  return String(cvToValue(hexToCV(response.data.result)).value);
 }
 
-export async function getTokenName(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+export async function getTokenName(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
   const [address, name] = contract.split('.');
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-name` as any
+  const path = `/v2/contracts/call-read/${address}/${name}/get-name` as any;
   const response = await client.POST(path, {
-    body: { sender: address, arguments: [] },
+    body: { sender: address, arguments: [] }
   });
-  return String(cvToValue(hexToCV(response.data.result)).value)
+  return String(cvToValue(hexToCV(response.data.result)).value);
 }
 
-
-export async function getDecimals(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+export async function getDecimals(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
   const [address, name] = contract.split('.');
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-decimals` as any
+  const path = `/v2/contracts/call-read/${address}/${name}/get-decimals` as any;
   const response = await client.POST(path, {
-    body: { sender: address, arguments: [] },
+    body: { sender: address, arguments: [] }
   });
-  return Number(cvToValue(cvToValue(hexToCV(response.data.result))))
+  return Number(cvToValue(cvToValue(hexToCV(response.data.result))));
 }
 
-export async function getTotalSupply(contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token') {
+export async function getTotalSupply(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
   const [address, name] = contract.split('.');
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-total-supply` as any
+  const path = `/v2/contracts/call-read/${address}/${name}/get-total-supply` as any;
   const response = await client.POST(path, {
-    body: { sender: address, arguments: [] },
+    body: { sender: address, arguments: [] }
   });
-  return Number(cvToValue(cvToValue(hexToCV(response.data.result))))
+  return Number(cvToValue(cvToValue(hexToCV(response.data.result))));
 }
 
 export async function getAvailableRedemptions() {

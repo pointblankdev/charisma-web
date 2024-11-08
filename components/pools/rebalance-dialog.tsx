@@ -161,8 +161,8 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
         ),
         contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to')
       ],
-      postConditionMode: PostConditionMode.Deny,
-      postConditions,
+      postConditionMode: PostConditionMode.Allow,
+      // postConditions,
       onFinish: data => {
         console.log('Rebalance transaction successful', data);
         setIsLoading(false);
