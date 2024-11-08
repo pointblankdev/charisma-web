@@ -119,13 +119,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     // Get number of pools
     const numPools = await dexClient.getNumberOfPools();
-    const poolIds = [...Array(numPools + 1).keys()].map(i => i.toString());
+    const poolIds = [...Array(numPools).keys()].map(i => (i + 1).toString());
 
     // Get pools data first
     const pools = await dexClient.getPools(poolIds);
-
-    console.log('WTF');
-    console.log(pools);
 
     // Create a unique set of token principals
     const tokenPrincipals = new Set<string>();
