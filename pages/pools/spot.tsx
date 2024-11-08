@@ -31,6 +31,12 @@ const tokenImages = {
   // ... (rest of image mapping)
 };
 
+const lpTokenContracts = {
+  'STX/synSTX': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-synstx',
+  'CHA/$ROO': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-roo',
+  'CHA/PEPE': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-pepe'
+};
+
 export interface TokenInfo {
   symbol: string;
   name: string;
@@ -193,7 +199,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
             token1: reserve1
           },
           tvl: reserve0 * token0.price + reserve1 * token1.price,
-          contractAddress: pool.id,
+          contractAddress:
+            lpTokenContracts[
+              `${token0.symbol}/${token1.symbol}` as keyof typeof lpTokenContracts
+            ] || '',
           totalLpSupply: Number(pool.totalSupply),
           swapFee: {
             numerator: pool.swapFee.numerator,
