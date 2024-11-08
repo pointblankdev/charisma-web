@@ -71,7 +71,7 @@ export class DexClientError extends Error {
  */
 export class DexClient {
   constructor(
-    private readonly apiUrl = 'https://explore.charisma.rocks/api/v0',
+    private readonly baseUrl = 'https://explore.charisma.rocks/api/v0',
     private readonly fetchOptions: RequestInit = {}
   ) {}
 
@@ -80,7 +80,7 @@ export class DexClient {
    */
   private async call<T = any>(operation: string, params: Record<string, any> = {}): Promise<T> {
     try {
-      const response = await fetch(this.apiUrl, {
+      const response = await fetch(`${this.baseUrl}/exchanges/charisma`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

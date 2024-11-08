@@ -2,6 +2,14 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import Layout from '@components/layout/layout';
 import { StaticImageData } from 'next/image';
+import { GetStaticProps } from 'next';
+import { SwapInterface } from '@components/swap/swap-interface';
+import PricesService from '@lib/server/prices/prices-service';
+import { ValuationService } from '@lib/server/valuations/valuation-service';
+import { DexClient } from '@lib/server/pools/pools.client';
+import { Sip10Client } from '@lib/server/sips/sip10.client';
+
+// Import token images
 import stxLogo from '@public/stx-logo.png';
 import welshLogo from '@public/welsh-logo.png';
 import chaLogo from '@public/charisma-logo-square.png';
@@ -10,15 +18,33 @@ import ordiLogo from '@public/ordi-logo.png';
 import dogLogo from '@public/sip10/dogLogo.webp';
 import updogLogo from '@public/sip10/up-dog/logo.gif';
 import syntheticStxLogo from '@public/sip10/synthetic-stx/logo.png';
-import { GetStaticProps } from 'next';
-import { TokenService } from '@lib/server/tokens/token-service';
-import { SwapInterface } from '@components/swap/swap-interface';
-import PricesService from '@lib/server/prices/prices-service';
-import { ValuationService } from '@lib/server/valuations/valuation-service';
 import { chawelsh, corgi9k, cpepe, pepe, vstx } from '@lib/token-images';
-import { DexClient } from '@lib/server/pools/pools.client';
+import { ContractAuditClient } from '@lib/server/audit/audit.client';
 
+// Initialize clients
 const poolClient = new DexClient();
+const sip10Client = new Sip10Client();
+const auditClient = new ContractAuditClient();
+
+// Token images mapping
+const tokenImages: Record<string, StaticImageData> = {
+  STX: stxLogo,
+  WELSH: welshLogo,
+  CHA: chaLogo,
+  $ROO: rooLogo,
+  ordi: ordiLogo,
+  DOG: dogLogo,
+  UPDOG: updogLogo,
+  synSTX: syntheticStxLogo,
+  iouWELSH: welshLogo,
+  iouROO: rooLogo,
+  vWELSH: welshLogo,
+  PEPE: pepe,
+  cPEPE: cpepe,
+  CORGI9K: corgi9k,
+  vSTX: vstx,
+  chaWELSH: chawelsh
+};
 
 export interface TokenInfo {
   symbol: string;
@@ -31,23 +57,12 @@ export interface TokenInfo {
 
 export interface PoolInfo {
   id: string;
-  token0: {
-    symbol: string;
-    name: string;
-    image: StaticImageData;
-    tokenName: string;
-    contractAddress: string;
-    decimals: number;
+  token0: TokenInfo;
+  token1: TokenInfo;
+  swapFee: {
+    num: number;
+    den: number;
   };
-  token1: {
-    symbol: string;
-    name: string;
-    image: StaticImageData;
-    tokenName: string;
-    contractAddress: string;
-    decimals: number;
-  };
-  swapFee: any;
 }
 
 export type Props = {
@@ -59,65 +74,126 @@ export type Props = {
   };
 };
 
+// Helper to convert contract principal to address and name
+const splitPrincipal = (principal: string) => {
+  const [address, name] = principal.split('.');
+  return { address, name };
+};
+
+// Token identifier cache to avoid redundant audits
+const tokenIdentifierCache: Record<string, string> = {};
+
+/**
+ * Get token identifier from contract audit
+ */
+async function getTokenIdentifier(
+  contractAddress: string,
+  contractName: string
+): Promise<string | undefined> {
+  const contractId = `${contractAddress}.${contractName}`;
+
+  // Check cache first
+  if (tokenIdentifierCache[contractId]) {
+    return tokenIdentifierCache[contractId];
+  }
+
+  try {
+    const audit = await auditClient.auditContract(contractId);
+
+    // Get first fungible token's identifier
+    if (audit.fungibleTokens?.[0]?.tokenIdentifier) {
+      const identifier = audit.fungibleTokens[0].tokenIdentifier;
+      tokenIdentifierCache[contractId] = identifier;
+      return identifier;
+    }
+  } catch (error) {
+    console.error(`Failed to get token identifier for ${contractId}:`, error);
+  }
+
+  return undefined;
+}
+
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const numPools = await poolClient.getNumberOfPools();
-  // Get data from services
-  const [tokens, pools, prices, chaPerStx] = await Promise.all([
-    TokenService.getAll(),
-    poolClient.getPools([...Array(numPools).keys()].map(i => i.toString())),
-    PricesService.getAllTokenPrices(),
-    ValuationService.getChaPerStx()
-  ]);
+  try {
+    // Get number of pools
+    const numPools = await poolClient.getNumberOfPools();
+    const poolIds = [...Array(numPools).keys()].map(i => i.toString());
 
-  // Import token images
-  const tokenImages = {
-    STX: stxLogo,
-    WELSH: welshLogo,
-    CHA: chaLogo,
-    ROO: rooLogo,
-    ORDI: ordiLogo,
-    DOG: dogLogo,
-    UPDOG: updogLogo,
-    synSTX: syntheticStxLogo,
-    iouWELSH: welshLogo,
-    iouROO: rooLogo,
-    vWELSH: welshLogo,
-    PEPE: pepe,
-    cPEPE: cpepe,
-    CORGI9K: corgi9k,
-    vSTX: vstx,
-    chaWELSH: chawelsh
-  };
+    // Get pools data first to identify all tokens
+    const pools = await poolClient.getPools(poolIds);
 
-  // hack: Convert KVTokenData to TokenInfo (adding images)
-  const tokenInfo = tokens.map(token => ({
-    symbol: token.symbol,
-    name: token.name,
-    image: tokenImages[token.symbol as keyof typeof tokenImages],
-    tokenName: token.tokenName || '',
-    contractAddress: token.contractAddress,
-    decimals: token.decimals
-  }));
+    // Create a unique set of token principals
+    const tokenPrincipals = new Set<string>();
+    pools.forEach(pool => {
+      tokenPrincipals.add(pool.token0);
+      tokenPrincipals.add(pool.token1);
+    });
 
-  // hack: Convert KVPoolData to PoolInfo
-  const poolInfo = pools.map(pool => ({
-    id: pool.id,
-    token0: tokenInfo.find(t => t.contractAddress === pool.token0)!,
-    token1: tokenInfo.find(t => t.contractAddress === pool.token1)!,
-    swapFee: { num: 995, den: 1000 } // Standard fee for now
-  }));
+    // Get token info using SIP10 client
+    const tokenQueries = Array.from(tokenPrincipals).map(principal => {
+      const { address, name } = splitPrincipal(principal);
+      return {
+        contractAddress: address,
+        contractName: name
+      };
+    });
 
-  return {
-    props: {
-      data: {
-        chaPerStx,
-        prices,
-        tokens: tokenInfo,
-        pools: poolInfo
+    // Fetch data in parallel
+    const [tokenInfos, prices, chaPerStx, tokenIdentifiers] = await Promise.all([
+      sip10Client.batchGetTokenInfo(tokenQueries),
+      PricesService.getAllTokenPrices(),
+      ValuationService.getChaPerStx(),
+      // Get token identifiers for all tokens
+      Promise.all(
+        tokenQueries.map(async ({ contractAddress, contractName }) =>
+          getTokenIdentifier(contractAddress, contractName)
+        )
+      )
+    ]);
+
+    // Convert token info to TokenInfo format
+    const tokens = tokenInfos.map((info, index) => {
+      const principal = Array.from(tokenPrincipals)[index];
+      const tokenIdentifier = tokenIdentifiers[index];
+
+      info.symbol = info.symbol === 'wSTX' ? 'STX' : info.symbol;
+      info.symbol = info.symbol === 'WELSH-iouWELSH' ? 'vWELSH' : info.symbol;
+      return {
+        symbol: info.symbol,
+        name: info.name,
+        image: tokenImages[info.symbol] || chaLogo, // Default to CHA logo if not found
+        tokenName: tokenIdentifier,
+        contractAddress: principal,
+        decimals: info.decimals
+      };
+    });
+
+    // Convert pool data to PoolInfo format
+    const poolInfo = pools.map(pool => ({
+      id: pool.id,
+      token0: tokens.find(t => t.contractAddress === pool.token0)!,
+      token1: tokens.find(t => t.contractAddress === pool.token1)!,
+      swapFee: {
+        num: pool.swapFee.numerator,
+        den: pool.swapFee.denominator
       }
-    },
-    revalidate: 60
-  };
+    }));
+
+    return {
+      props: {
+        data: {
+          chaPerStx,
+          prices,
+          tokens,
+          pools: poolInfo
+        }
+      },
+      revalidate: 60
+    };
+  } catch (error) {
+    console.error('Error in getStaticProps:', error);
+    throw error; // Let Next.js handle the error
+  }
 };
 
 export default function SwapPage({ data }: Props) {
