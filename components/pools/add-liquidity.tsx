@@ -71,8 +71,8 @@ const LiquidityDialog = ({
       if (isAdd) {
         const balance0 = getTokenBalance(pool.token0);
         const balance1 = getTokenBalance(pool.token1);
-        const reserve0 = pool.reserves.token0 / 10 ** pool.token0.decimals;
-        const reserve1 = pool.reserves.token1 / 10 ** pool.token1.decimals;
+        const reserve0 = pool.reserves.token0;
+        const reserve1 = pool.reserves.token1;
 
         // Calculate the maximum amounts that can be added based on the current pool ratio
         const maxAmount0ByBalance = balance0;
