@@ -117,7 +117,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     // Get number of pools
     const numPools = await poolClient.getNumberOfPools();
-    const poolIds = [...Array(numPools).keys()].map(i => i.toString());
+    const poolIds = [...Array(numPools + 1).keys()].map(i => i.toString());
 
     // Get pools data first to identify all tokens
     const pools = await poolClient.getPools(poolIds);

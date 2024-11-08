@@ -106,7 +106,6 @@ async function getEnhancedTokenInfo(principal: string) {
       audit: audit?.fungibleTokens?.[0]
       // Add any additional data sources here
     };
-    console.log(tokenData);
 
     responseCache.set(cacheKey, tokenData);
     return tokenData;
@@ -120,7 +119,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
     // Get number of pools
     const numPools = await dexClient.getNumberOfPools();
-    const poolIds = [...Array(numPools).keys()].map(i => i.toString());
+    const poolIds = [...Array(numPools + 1).keys()].map(i => i.toString());
 
     // Get pools data first
     const pools = await dexClient.getPools(poolIds);
