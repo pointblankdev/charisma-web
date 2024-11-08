@@ -5,7 +5,10 @@ module.exports = {
       'charisma.rocks',
       'raw.githubusercontent.com',
       'cdn.discordapp.com',
-      'ipfs.io'
+      'ipfs.io',
+      'token-images.alexlab.co',
+      'roo-stx.com',
+      'bafkreifq2bezvmjwfztjt4s3clt7or43kewxtg4ntbqur6axnh5qchkemu.ipfs.nftstorage.link'
     ],
     imageSizes: [24, 64, 300],
     remotePatterns: []

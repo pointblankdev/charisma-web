@@ -1,4 +1,11 @@
-import { cvToHex, cvToValue, fetchCallReadOnlyFunction, hexToCV, parseToCV, uintCV } from '@stacks/transactions';
+import {
+  cvToHex,
+  cvToValue,
+  fetchCallReadOnlyFunction,
+  hexToCV,
+  parseToCV,
+  uintCV
+} from '@stacks/transactions';
 import { kv } from '@vercel/kv';
 import { TokenInfo, TokenService } from '@lib/server/tokens/token-service';
 import { client, getTokenImage, getTokenName, getTotalSupply } from '@lib/stacks-api';
@@ -39,7 +46,7 @@ export class PoolService {
         }
       }
     );
-    const cv = hexToCV(response.data.result)
+    const cv = hexToCV(response.data.result);
     const pool = cvToValue(cv);
     return {
       lpToken: pool.value['lp-token'].value,

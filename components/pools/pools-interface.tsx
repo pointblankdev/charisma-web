@@ -1,15 +1,14 @@
 import Image from 'next/image';
 import { useState } from 'react';
-import { ArrowUpDown, Minus, Plus, RefreshCw, Scale, ShoppingCart } from 'lucide-react';
+import { ArrowUpDown, Minus, Plus, RefreshCw, ShoppingCart } from 'lucide-react';
 import numeral from 'numeral';
 import { Button } from '@components/ui/button';
 import Link from 'next/link';
-import { PoolInfo } from '@lib/server/pools/pool-service';
 import { Dialog } from '@components/ui/dialog';
 import LiquidityDialog from './add-liquidity';
-import EqualizeDialog from './equalize-dialog';
 import QuickBuyDialog from './quick-buy-dialog';
 import RebalanceDialog from './rebalance-dialog';
+import { PoolInfo } from 'pages/pools/spot';
 
 type Props = {
   data: {
@@ -27,8 +26,6 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [isRebalanceDialogOpen, setIsRebalanceDialogOpen] = useState(false);
   const [selectedPoolForRebalance, setSelectedPoolForRebalance] = useState<PoolInfo | null>(null);
-  const [isEqualizeDialogOpen, setIsEqualizeDialogOpen] = useState(false);
-  const [selectedPoolForEqualize, setSelectedPoolForEqualize] = useState<PoolInfo | null>(null);
   const [isQuickBuyDialogOpen, setIsQuickBuyDialogOpen] = useState(false);
   const [selectedPoolForQuickBuy, setSelectedPoolForQuickBuy] = useState<PoolInfo | null>(null);
 
@@ -37,17 +34,20 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
       return 100; // STX-CHA pool is always 100% aligned
     }
 
+    if (pool.token0.isLpToken || pool.token1.isLpToken) {
+      return null; // Skip LP tokens
+    }
+
+    if (!pool.token0.price || !pool.token1.price) {
+      return null; // Skip pools with missing prices
+    }
+
     if (pool.token0.symbol === 'CHA' || pool.token1.symbol === 'CHA') {
-      const chaToken = pool.token0.symbol === 'CHA' ? pool.token0 : pool.token1;
       const otherToken = pool.token0.symbol === 'CHA' ? pool.token1 : pool.token0;
       const chaReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token0 : pool.reserves.token1;
       const otherReserve =
         pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
-
-      const chaAmount = chaReserve / 10 ** chaToken.decimals;
-      const otherAmount = otherReserve / 10 ** otherToken.decimals;
-
-      const poolChaPrice = (otherToken.price * otherAmount) / chaAmount;
+      const poolChaPrice = (otherToken.price * otherReserve) / chaReserve;
       return (poolChaPrice / data.tokenPrices['CHA']) * 100;
     }
 
@@ -56,21 +56,14 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
       (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
       (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
     ) {
-      const token0Reserve = pool.reserves.token0 / 10 ** pool.token0.decimals;
-      const token1Reserve = pool.reserves.token1 / 10 ** pool.token1.decimals;
-      const priceRatio = token0Reserve / token1Reserve;
+      const priceRatio = pool.reserves.token0 / pool.reserves.token1;
       return priceRatio * 100;
     }
 
     return null;
   };
 
-  const getAlignmentColor = (alignment: number, isEqualizePool: boolean) => {
-    if (isEqualizePool) {
-      const deviation = Math.abs(100 - alignment);
-      const hue = Math.max(0, Math.min(120, 120 * (1 - deviation / 10)));
-      return `hsl(${hue}, 100%, 40%, 90%)`;
-    }
+  const getAlignmentColor = (alignment: number) => {
     const hue = Math.max(0, Math.min(120, 120 * (1 - Math.abs(alignment - 100) / 15)));
     return `hsl(${hue}, 100%, 40%, 90%)`;
   };
@@ -116,28 +109,6 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
     setSelectedPoolForRebalance(null);
   };
 
-  const handleEqualize = (pool: PoolInfo) => {
-    setSelectedPoolForEqualize(pool);
-    setIsEqualizeDialogOpen(true);
-  };
-
-  const handleCloseEqualizeDialog = () => {
-    setIsEqualizeDialogOpen(false);
-    setSelectedPoolForEqualize(null);
-  };
-
-  const canEqualize = (pool: PoolInfo) => {
-    if (
-      (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
-      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
-    ) {
-      const alignment = calculatePriceAlignment(pool);
-      // Check if the alignment is outside the 98-102% range
-      return alignment !== null && (alignment < 98 || alignment > 102);
-    }
-    return false;
-  };
-
   const handleQuickBuy = (pool: PoolInfo) => {
     setSelectedPoolForQuickBuy(pool);
     setIsQuickBuyDialogOpen(true);
@@ -152,15 +123,8 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
     return pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA';
   };
 
-  const isEqualizePool = (pool: PoolInfo) => {
-    return (
-      (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
-      (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO')
-    );
-  };
-
   const needsRebalance = (pool: PoolInfo, alignment: number | null) => {
-    if (isStxChaPool(pool) || isEqualizePool(pool)) {
+    if (isStxChaPool(pool) || pool.token0.isLpToken || pool.token1.isLpToken) {
       return false;
     }
     return alignment !== null && Math.abs(alignment - 100) > 1; // 1% threshold
@@ -203,16 +167,12 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                 {sortedPools.map(pool => {
                   const priceAlignment = calculatePriceAlignment(pool);
                   const poolNeedsRebalance = needsRebalance(pool, priceAlignment);
-                  const canEqualizePool = canEqualize(pool);
                   const isStxCha = isStxChaPool(pool);
-                  const isEqualizePool =
-                    (pool.token0.symbol === 'WELSH' && pool.token1.symbol === 'iouWELSH') ||
-                    (pool.token0.symbol === '$ROO' && pool.token1.symbol === 'iouROO');
 
                   const PriceAlignment = ({ pool }: any) => {
                     const alignment = calculatePriceAlignment(pool);
                     if (alignment !== null) {
-                      const color = getAlignmentColor(alignment, isEqualizePool);
+                      const color = getAlignmentColor(alignment);
                       return (
                         <span style={{ color }}>
                           <div className="leading-none">{alignment.toPrecision(4)}%</div>
@@ -265,13 +225,9 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                         </div>
                       </td>
                       <td className="py-4 text-white min-w-48">
-                        {numeral(pool.reserves.token0 / 10 ** pool.token0.decimals).format('0,0')}{' '}
-                        {pool.token0.symbol}
+                        {numeral(pool.reserves.token0).format('0,0')} {pool.token0.symbol}
                         <br />
-                        {numeral(pool.reserves.token1 / 10 ** pool.token1.decimals).format(
-                          '0,0'
-                        )}{' '}
-                        {pool.token1.symbol}
+                        {numeral(pool.reserves.token1).format('0,0')} {pool.token1.symbol}
                       </td>
                       <td className="py-4 text-white min-w-24">
                         ${numeral(pool.tvl).format('0,0.00')}
@@ -303,15 +259,6 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                           {poolNeedsRebalance && (
                             <Button size="sm" onClick={() => handleRebalance(pool)}>
                               <RefreshCw className="w-4 h-4 mr-1" /> Rebalance
-                            </Button>
-                          )}
-                          {canEqualizePool && (
-                            <Button
-                              size="sm"
-                              variant="secondary"
-                              onClick={() => handleEqualize(pool)}
-                            >
-                              <Scale className="w-4 h-4 mr-1" /> Equalize
                             </Button>
                           )}
                           {isStxCha && (
@@ -351,10 +298,6 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
           referenceChaPrice={data.tokenPrices['CHA']}
           onClose={handleCloseRebalanceDialog}
         />
-      </Dialog>
-
-      <Dialog open={isEqualizeDialogOpen} onOpenChange={setIsEqualizeDialogOpen}>
-        <EqualizeDialog pool={selectedPoolForEqualize} onClose={handleCloseEqualizeDialog} />
       </Dialog>
 
       <Dialog open={isQuickBuyDialogOpen} onOpenChange={setIsQuickBuyDialogOpen}>

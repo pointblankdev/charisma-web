@@ -23,7 +23,8 @@ describe('DexClient Integration Tests', () => {
   });
 
   test('getPoolById returns valid pool data', async () => {
-    const pool = await client.getPoolById(TEST_DATA.VALID_POOL_ID);
+    const pool = await client.getPoolById('13');
+    console.log(pool);
     expect(pool).toMatchObject({
       id: expect.any(String),
       token0: expect.any(String),
@@ -55,7 +56,8 @@ describe('DexClient Integration Tests', () => {
   });
 
   test('getPools returns multiple pools', async () => {
-    const pools = await client.getPools([TEST_DATA.VALID_POOL_ID]);
+    const pools = await client.getPools(['13']);
+    console.log(pools);
     expect(Array.isArray(pools)).toBe(true);
     expect(pools.length).toBeGreaterThan(0);
     expect(pools[0]).toMatchObject({

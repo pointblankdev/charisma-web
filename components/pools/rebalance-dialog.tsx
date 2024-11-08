@@ -38,10 +38,10 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
     const chaReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token0 : pool.reserves.token1;
     const otherReserve = pool.token0.symbol === 'CHA' ? pool.reserves.token1 : pool.reserves.token0;
 
-    const chaAmount = chaReserve / 10 ** chaToken.decimals;
-    const otherAmount = otherReserve / 10 ** otherToken.decimals;
+    const chaAmount = chaReserve;
+    const otherAmount = otherReserve;
 
-    const currentPrice = (otherToken.price * otherAmount) / chaAmount;
+    const currentPrice = (otherToken.price * otherReserve) / chaReserve;
     const priceDifference = referenceChaPrice - currentPrice;
 
     if (priceDifference > 0) {
@@ -161,8 +161,8 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
         ),
         contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to')
       ],
-      postConditionMode: PostConditionMode.Allow,
-      // postConditions,
+      postConditionMode: PostConditionMode.Deny,
+      postConditions,
       onFinish: data => {
         console.log('Rebalance transaction successful', data);
         setIsLoading(false);

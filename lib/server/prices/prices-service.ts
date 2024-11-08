@@ -1,8 +1,8 @@
-import { fetchCallReadOnlyFunction, principalCV, uintCV, cvToValue } from '@stacks/transactions';
 import velarApi from '../../velar-api';
 import cmc from '../../cmc-api';
-import { getDecimals, getTotalSupply } from '../../stacks-api';
-import { PoolService } from '../pools/pool-service';
+import { DexClient } from '../pools/pools.client';
+
+const client = new DexClient();
 
 export type TokenInfo = {
   symbol: string;
@@ -17,12 +17,6 @@ export type TokenInfo = {
 class PricesService {
   private static tokenPrices: { [key: string]: number } = {};
 
-  private static async calculateChaPrice(stxPrice: number): Promise<number> {
-    const stxChaReserves = await this.getPoolReserves(4);
-    const chaPrice = (stxPrice * stxChaReserves.token0) / stxChaReserves.token1;
-    return chaPrice || 0.3;
-  }
-
   private static async getVelarTokenPrices(): Promise<{ [key: string]: number }> {
     const prices = await velarApi.tokens('all');
     return prices.reduce((acc: { [key: string]: number }, token: any) => {
@@ -31,28 +25,13 @@ class PricesService {
     }, {});
   }
 
-  public static async getPoolReserves(poolId: number): Promise<{ token0: number; token1: number }> {
-    try {
-      const poolInfo = await PoolService.getPool(poolId);
-      if (poolInfo) {
-        const reserve0 = Number(poolInfo.reserve0);
-        const reserve1 = Number(poolInfo.reserve1);
-        return { token0: reserve0, token1: reserve1 };
-      } else {
-        console.error('Pool not found');
-        return { token0: 0, token1: 0 };
-      }
-    } catch (error) {
-      console.error('Error fetching reserves:', error);
-      return { token0: 0, token1: 0 };
-    }
-  }
-
   public static async updateAllTokenPrices(): Promise<void> {
     const velarPrices = await this.getVelarTokenPrices();
     const cmcPriceData = await cmc.getQuotes({ symbol: ['STX', 'ORDI', 'WELSH', 'DOG'] });
 
-    const chaPrice = await this.calculateChaPrice(cmcPriceData.data['STX'].quote.USD.price);
+    const stxChaPool = await client.getPoolById('4');
+
+    const ratio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
 
     const convertedVelarPrices = Object.keys(velarPrices).reduce(
       (acc: { [key: string]: number }, key: string) => {
@@ -64,11 +43,11 @@ class PricesService {
 
     this.tokenPrices = {
       ...convertedVelarPrices,
-      CHA: chaPrice,
+      CHA: ratio * cmcPriceData.data['STX'].quote.USD.price,
       STX: cmcPriceData.data['STX'].quote.USD.price,
       wSTX: cmcPriceData.data['STX'].quote.USD.price,
       synSTX: cmcPriceData.data['STX'].quote.USD.price,
-      ORDI: cmcPriceData.data['ORDI'].quote.USD.price,
+      ordi: cmcPriceData.data['ORDI'].quote.USD.price,
       DOG: cmcPriceData.data['DOG'].quote.USD.price,
       WELSH: cmcPriceData.data['WELSH'].quote.USD.price,
       iouWELSH: cmcPriceData.data['WELSH'].quote.USD.price,
@@ -77,86 +56,11 @@ class PricesService {
     };
   }
 
-  public static async updateAllLpTokenPrices(): Promise<void> {
-    this.tokenPrices = {
-      ...this.tokenPrices,
-      UPDOG: await this.getLpTokenPriceByPoolId(8)
-    };
-  }
-
   public static async getAllTokenPrices(): Promise<{ [key: string]: number }> {
     if (Object.keys(this.tokenPrices).length === 0) {
       await this.updateAllTokenPrices();
-      await this.updateAllLpTokenPrices();
     }
     return this.tokenPrices;
-  }
-
-  public static async getLpTokenPrice(
-    poolId: number,
-    token0: TokenInfo,
-    token1: TokenInfo,
-    totalLpSupply: number
-  ): Promise<number> {
-    try {
-      const reserves = await this.getPoolReserves(poolId);
-      const prices = await this.getAllTokenPrices();
-
-      const totalValue =
-        (reserves.token0 / 10 ** token0.decimals) * (prices[token0.symbol] || 0) +
-        (reserves.token1 / 10 ** token1.decimals) * (prices[token1.symbol] || 0);
-      const lpTokenPrice = totalValue / (totalLpSupply || 1);
-
-      return lpTokenPrice;
-    } catch (error) {
-      console.error('Error calculating LP token price:', error);
-      return 0;
-    }
-  }
-
-  public static async getLpTokenPriceByPoolId(poolId: number): Promise<number> {
-    try {
-      const poolInfo = await PoolService.getPool(poolId);
-      if (!poolInfo) {
-        throw new Error('Pool not found');
-      }
-
-      const token0Address = poolInfo.token0;
-      const token1Address = poolInfo.token1;
-      const reserves = { token0: Number(poolInfo.reserve0), token1: Number(poolInfo.reserve1) };
-
-      const token0Info: TokenInfo = {
-        symbol: poolInfo.symbol.split('-')[0],
-        name: poolInfo.symbol.split('-')[0],
-        image: '',
-        contractAddress: token0Address,
-        price: this.tokenPrices[poolInfo.symbol.split('-')[0]] || 0,
-        decimals: await getDecimals(token0Address)
-      };
-
-      const token1Info: TokenInfo = {
-        symbol: poolInfo.symbol.split('-')[1],
-        name: poolInfo.symbol.split('-')[1],
-        image: '',
-        contractAddress: token1Address,
-        price: this.tokenPrices[poolInfo.symbol.split('-')[1]] || 0,
-        decimals: await getDecimals(token1Address)
-      };
-
-      const totalLpSupply =
-        (await getTotalSupply(poolInfo.lpToken)) / 10 ** (await getDecimals(poolInfo.lpToken));
-
-      const totalValue =
-        (reserves.token0 / 10 ** token0Info.decimals) * token0Info.price! +
-        (reserves.token1 / 10 ** token1Info.decimals) * token1Info.price!;
-
-      const lpTokenPrice = totalValue / totalLpSupply;
-
-      return lpTokenPrice;
-    } catch (error) {
-      console.error('Error calculating LP token price by poolId:', error);
-      return 0;
-    }
   }
 }
 
