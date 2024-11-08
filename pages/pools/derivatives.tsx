@@ -12,7 +12,7 @@ import PoolsLayout from '@components/pools/layout';
 import { DexClient } from '@lib/server/pools/pools.client';
 import { ContractAuditClient } from '@lib/server/audit/audit.client';
 import { Sip10Client } from '@lib/server/sips/sip10.client';
-import { cha, stx, welsh } from '@lib/token-images';
+import { cha, corgi9k, stx, vstx, welsh } from '@lib/token-images';
 
 // Initialize clients
 const dexClient = new DexClient();
@@ -23,7 +23,9 @@ const auditClient = new ContractAuditClient();
 const tokenImages = {
   STX: stx,
   WELSH: welsh,
-  CHA: cha
+  CHA: cha,
+  vSTX: vstx,
+  CORGI9K: corgi9k
   // ... (rest of image mapping)
 };
 
