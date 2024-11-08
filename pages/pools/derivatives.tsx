@@ -39,6 +39,12 @@ const derivativeNames = {
   // ... (rest of image mapping)
 };
 
+const lpTokenContracts = {
+  'CHA/UPDOG': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
+  'CHA/vWELSH': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh',
+  'vSTX/CHA-WELSH': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.corgi-9000'
+};
+
 export interface TokenInfo {
   symbol: string;
   name: string;
@@ -206,7 +212,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
             token1: reserve1
           },
           tvl: reserve0 * token0.price + reserve1 * token1.price,
-          contractAddress: pool.id,
+          contractAddress: lpTokenContracts[key as keyof typeof lpTokenContracts] || '',
           totalLpSupply: Number(pool.totalSupply),
           swapFee: {
             numerator: pool.swapFee.numerator,
