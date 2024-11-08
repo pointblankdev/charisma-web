@@ -12,7 +12,7 @@ import PoolsLayout from '@components/pools/layout';
 import { DexClient } from '@lib/server/pools/pools.client';
 import { ContractAuditClient } from '@lib/server/audit/audit.client';
 import { Sip10Client } from '@lib/server/sips/sip10.client';
-import { cha, cpepe, roo, stx, vstx, welsh } from '@lib/token-images';
+import { cha, cpepe, roo, stx, updog, vstx, welsh } from '@lib/token-images';
 import { StaticImageData } from 'next/image';
 
 // Initialize clients
@@ -25,9 +25,16 @@ const tokenImages = {
   STX: stx,
   WELSH: welsh,
   CHA: cha,
+  'WELSH/DOG': updog,
   'STX/synSTX': vstx,
   'CHA/$ROO': roo,
   'CHA/PEPE': cpepe
+  // ... (rest of image mapping)
+};
+
+// Token names mapping
+const tokenNames = {
+  'WELSH/DOG': 'Updog'
   // ... (rest of image mapping)
 };
 
@@ -171,7 +178,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       tokenMap.set(principal, {
         symbol,
         name: sip10.name,
-        image: sip10?.metadata?.image || tokenImages[symbol as keyof typeof tokenImages] || cha,
+        image: tokenImages[symbol as keyof typeof tokenImages] || sip10?.metadata?.image || cha,
         contractAddress: principal,
         tokenId: audit?.tokenIdentifier || null,
         decimals: sip10.decimals,
@@ -196,9 +203,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
         return {
           id: Number(pool.id),
-          name: `${token0?.symbol}/${token1?.symbol}`,
+          name:
+            tokenNames[`${token0.symbol}/${token1.symbol}` as keyof typeof tokenNames] ||
+            `${token0?.name} / ${token1?.name}`,
           symbol: `${token0?.symbol}/${token1?.symbol}`,
-          image: token0?.image || '',
+          image:
+            tokenImages[`${token0.symbol}/${token1.symbol}` as keyof typeof tokenImages] ||
+            token0?.image ||
+            '',
           token0,
           token1,
           reserves: {

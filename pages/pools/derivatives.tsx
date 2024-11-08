@@ -198,7 +198,9 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
         const key = `${token0?.symbol}/${token1?.symbol}`;
         const symbol = derivativeSymbols[key as keyof typeof derivativeSymbols] || key;
-        const name = derivativeNames[key as keyof typeof derivativeNames] || symbol;
+        const name =
+          derivativeNames[key as keyof typeof derivativeNames] ||
+          `${token0?.name} / ${token1?.name}`;
         const image = tokenImages[key as keyof typeof tokenImages] || token0?.image || cha;
         return {
           id: Number(pool.id),
