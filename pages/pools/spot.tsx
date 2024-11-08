@@ -106,6 +106,7 @@ async function getEnhancedTokenInfo(principal: string) {
       audit: audit?.fungibleTokens?.[0]
       // Add any additional data sources here
     };
+    console.log(tokenData);
 
     responseCache.set(cacheKey, tokenData);
     return tokenData;

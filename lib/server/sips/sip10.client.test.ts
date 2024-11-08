@@ -5,8 +5,8 @@ describe('SIP10 Integration Tests', () => {
   test('batch get token info', async () => {
     const name = await client.batchGetTokenInfo([
       {
-        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-        contractName: 'charisma-token'
+        contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9',
+        contractName: 'runes-dog'
       }
     ]);
     console.log(name);
