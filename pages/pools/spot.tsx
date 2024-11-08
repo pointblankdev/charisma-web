@@ -13,6 +13,7 @@ import { DexClient } from '@lib/server/pools/pools.client';
 import { ContractAuditClient } from '@lib/server/audit/audit.client';
 import { Sip10Client } from '@lib/server/sips/sip10.client';
 import { cha, stx, welsh } from '@lib/token-images';
+import { StaticImageData } from 'next/image';
 
 // Initialize clients
 const dexClient = new DexClient();
@@ -30,7 +31,7 @@ const tokenImages = {
 export interface TokenInfo {
   symbol: string;
   name: string;
-  image: string;
+  image: string | StaticImageData;
   contractAddress: string;
   tokenId: string | null;
   decimals: number;
@@ -48,7 +49,7 @@ export interface PoolInfo {
   id: number;
   name: string;
   symbol: string;
-  image: string;
+  image: string | StaticImageData;
   token0: TokenInfo;
   token1: TokenInfo;
   reserves: {

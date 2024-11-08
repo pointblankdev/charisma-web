@@ -24,7 +24,7 @@ const LiquidityDialog = ({
   isAdd,
   onClose
 }: {
-  pool: PoolInfo | null;
+  pool: any;
   isAdd: boolean;
   onClose: () => void;
 }) => {
@@ -135,7 +135,7 @@ const LiquidityDialog = ({
       postConditions.push(
         Pc.principal(stxAddress)
           .willSendLte(amount0BigInt)
-          .ft(pool.token0.contractAddress as any, pool.token0.tokenId as string) as any
+          .ft(pool.token0.contractAddress, pool.token0.tokenId as string) as any
       );
     } else {
       const amount0BigInt = BigInt(Math.floor(parseFloat(amount0) * 10 ** pool.token0.decimals));
@@ -146,7 +146,7 @@ const LiquidityDialog = ({
       postConditions.push(
         Pc.principal(stxAddress)
           .willSendLte(amount1BigInt)
-          .ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any
+          .ft(pool.token1.contractAddress, pool.token1.tokenId as string) as any
       );
     } else {
       const amount1BigInt = BigInt(Math.floor(parseFloat(amount1) * 10 ** pool.token1.decimals));
@@ -200,25 +200,25 @@ const LiquidityDialog = ({
       // Post condition for sending LP tokens
       Pc.principal(stxAddress)
         .willSendLte(lpTokensToRemove)
-        .ft(pool.contractAddress as any, 'lp-token') as any,
+        .ft(pool.contractAddress, 'lp-token') as any,
 
       // Post condition for receiving token0
       pool.token0.symbol !== 'STX'
         ? (Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-          .willSendGte(1)
-          .ft(pool.token0.contractAddress as any, pool.token0.tokenId as string) as any)
+            .willSendGte(1)
+            .ft(pool.token0.contractAddress, pool.token0.tokenId as string) as any)
         : (Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-          .willSendGte(1)
-          .ustx() as any),
+            .willSendGte(1)
+            .ustx() as any),
 
       // Post condition for receiving token1
       pool.token1.symbol !== 'STX'
         ? (Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-          .willSendGte(1)
-          .ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any)
+            .willSendGte(1)
+            .ft(pool.token1.contractAddress, pool.token1.tokenId as string) as any)
         : (Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-          .willSendGte(1)
-          .ustx() as any)
+            .willSendGte(1)
+            .ustx() as any)
     ];
 
     doContractCall({
@@ -349,11 +349,12 @@ const LiquidityDialog = ({
       <DialogFooter className="flex items-center justify-between">
         <span className="text-sm text-gray-500">
           {isAdd
-            ? `Your balance: ${numeral(getTokenBalance(pool.token0)).format('0,0.00')} ${pool.token0.symbol
-            } / ${numeral(getTokenBalance(pool.token1)).format('0,0.00')} ${pool.token1.symbol}`
+            ? `Your balance: ${numeral(getTokenBalance(pool.token0)).format('0,0.00')} ${
+                pool.token0.symbol
+              } / ${numeral(getTokenBalance(pool.token1)).format('0,0.00')} ${pool.token1.symbol}`
             : `Your balance: ${numeral(lpTokenBalance).format('0,0')} → ${numeral(
-              lpTokenBalance - selectedLpAmount
-            ).format('0,0')}`}
+                lpTokenBalance - selectedLpAmount
+              ).format('0,0')}`}
         </span>
         <Button
           type="submit"

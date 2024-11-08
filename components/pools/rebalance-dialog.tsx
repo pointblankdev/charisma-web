@@ -14,7 +14,7 @@ import useWallet from '@lib/hooks/wallet-balance-provider';
 import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
-import { PoolInfo } from '@lib/server/pools/pool-service';
+import { PoolInfo } from 'pages/pools/spot';
 
 type RebalanceDialogProps = {
   pool: PoolInfo | null;

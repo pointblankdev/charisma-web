@@ -12,7 +12,8 @@ import PoolsLayout from '@components/pools/layout';
 import { DexClient } from '@lib/server/pools/pools.client';
 import { ContractAuditClient } from '@lib/server/audit/audit.client';
 import { Sip10Client } from '@lib/server/sips/sip10.client';
-import { cha, corgi9k, stx, vstx, welsh } from '@lib/token-images';
+import { cha, chaupdog, corgi9k, stx, vstx, welsh } from '@lib/token-images';
+import { StaticImageData } from 'next/image';
 
 // Initialize clients
 const dexClient = new DexClient();
@@ -21,18 +22,27 @@ const auditClient = new ContractAuditClient();
 
 // Token images mapping
 const tokenImages = {
-  STX: stx,
-  WELSH: welsh,
-  CHA: cha,
-  vSTX: vstx,
-  CORGI9K: corgi9k
+  vWELSH: welsh,
+  'CHA/UPDOG': chaupdog,
+  'vSTX/CHA-WELSH': corgi9k
+  // ... (rest of image mapping)
+};
+
+// Token symbol mapping
+const derivativeSymbols = {
+  'vSTX/CHA-WELSH': 'CORGI9K'
+  // ... (rest of image mapping)
+};
+
+const derivativeNames = {
+  'vSTX/CHA-WELSH': 'CORGI-9000'
   // ... (rest of image mapping)
 };
 
 export interface TokenInfo {
   symbol: string;
   name: string;
-  image: string;
+  image: string | StaticImageData;
   contractAddress: string;
   tokenId: string | null;
   decimals: number;
@@ -50,7 +60,7 @@ export interface PoolInfo {
   id: number;
   name: string;
   symbol: string;
-  image: string;
+  image: string | StaticImageData;
   token0: TokenInfo;
   token1: TokenInfo;
   reserves: {
@@ -162,6 +172,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         decimals: sip10.decimals,
         price: prices[symbol] || 0,
         isLpToken: audit.isLpToken || false,
+        poolId: audit?.poolId || null,
         // Add audit data
         isMintable: audit?.isMintable || false,
         isBurnable: audit?.isBurnable || false,
@@ -179,11 +190,15 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         const reserve0 = Number(pool.reserve0) / Math.pow(10, token0.decimals);
         const reserve1 = Number(pool.reserve1) / Math.pow(10, token1.decimals);
 
+        const key = `${token0?.symbol}/${token1?.symbol}`;
+        const symbol = derivativeSymbols[key as keyof typeof derivativeSymbols] || key;
+        const name = derivativeNames[key as keyof typeof derivativeNames] || symbol;
+        const image = tokenImages[key as keyof typeof tokenImages] || token0?.image || cha;
         return {
           id: Number(pool.id),
-          name: `${token0?.symbol}/${token1?.symbol}`,
-          symbol: `${token0?.symbol}/${token1?.symbol}`,
-          image: token0?.image || '',
+          name,
+          symbol,
+          image,
           token0,
           token1,
           reserves: {
