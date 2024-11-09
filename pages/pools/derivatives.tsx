@@ -177,7 +177,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
         tokenId: audit?.tokenIdentifier || null,
         decimals: sip10.decimals,
         price: prices[symbol] || 0,
-        isLpToken: audit.isLpToken || false,
+        isLpToken: audit?.isLpToken || false,
         poolId: audit?.poolId || null,
         // Add audit data
         isMintable: audit?.isMintable || false,
