@@ -96,7 +96,7 @@ export default function SpotPoolsPage({ data }: Props) {
             className="sm:max-w-[2400px] sm:mx-auto sm:pb-10"
           >
             <PoolsLayout>
-              {isAuthorized ? (
+              {isAuthorized || true ? (
                 <PoolsInterface data={data} title={'Spot Pools'} />
               ) : (
                 <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">

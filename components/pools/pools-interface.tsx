@@ -96,7 +96,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                     <td className="py-4 min-w-32">
                       <PoolComposition pool={pool} />
                     </td>
-                    <td className="py-4 pr-4 space-y-1 text-white min-w-32">
+                    <td className="py-4 pr-4 space-y-1 text-white min-w-48">
                       <PoolReserves pool={pool} tokenPrices={data.tokenPrices} />
                     </td>
                     <td className="py-4 text-white min-w-24">
