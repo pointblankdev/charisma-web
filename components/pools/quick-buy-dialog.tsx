@@ -13,10 +13,9 @@ import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
 import { latestDungeonKeeperContract } from 'pages/admin';
-import { PoolInfo } from 'pages/pools/spot';
 
 type QuickBuyDialogProps = {
-  pool: PoolInfo | null;
+  pool: any | null;
   onClose: () => void;
 };
 
@@ -25,7 +24,7 @@ const QuickBuyDialog: React.FC<QuickBuyDialogProps> = ({ pool, onClose }) => {
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
 
-  const calculateExpectedChaAmount = (stxAmount: number, pool: PoolInfo) => {
+  const calculateExpectedChaAmount = (stxAmount: number, pool: any) => {
     const stxReserve = pool.reserves.token0 / 10 ** pool.token0.decimals;
     const chaReserve = pool.reserves.token1 / 10 ** pool.token1.decimals;
     const k = stxReserve * chaReserve;
@@ -49,7 +48,7 @@ const QuickBuyDialog: React.FC<QuickBuyDialogProps> = ({ pool, onClose }) => {
         .ustx() as any,
       Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
         .willSendGte(minChaAmount)
-        .ft(pool.token1.contractAddress as any, pool.token1.tokenId as string) as any
+        .ft(pool.token1.contractAddress, pool.token1.tokenId as string) as any
     ];
 
     doContractCall({

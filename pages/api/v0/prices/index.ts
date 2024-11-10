@@ -1,8 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
-import velarApi from '@lib/velar-api';
-import cmc from '@lib/cmc-api';
-import { DexClient } from '@lib/server/pools/pools.client';
+import PricesService from '@lib/server/prices/prices-service';
 
 const CACHE_KEY = 'token-prices';
 const CACHE_DURATION = 60; // 1 minute cache
@@ -64,59 +62,49 @@ export default async function handler(
       });
     }
 
-    // Initialize clients
-    const dexClient = new DexClient();
-
-    // Fetch all data in parallel
-    const [velarPrices, cmcPriceData, stxChaPool] = await Promise.all([
-      // Get Velar prices
-      velarApi.tokens('all').then(prices =>
-        prices.reduce((acc: { [key: string]: number }, token: any) => {
-          acc[token.symbol] = token.price;
-          return acc;
-        }, {})
-      ),
-
-      // Get CMC prices
-      cmc.getQuotes({
-        symbol: ['STX', 'ORDI', 'WELSH', 'DOG']
-      }),
-
-      // Get STX/CHA pool data
-      dexClient.getPoolById('4')
-    ]);
-
-    console.log('Fetched data:', stxChaPool);
-
-    // Calculate CHA price from pool ratio
-    const ratio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
-
-    // Convert Velar prices to numbers
-    const convertedVelarPrices = Object.keys(velarPrices).reduce(
-      (acc: { [key: string]: number }, key: string) => {
-        acc[key] = Number(velarPrices[key]);
-        return acc;
+    const tokens: any[] = [
+      {
+        symbol: 'CHA-UPDOG',
+        contractAddress: 'SP3ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-updog',
+        decimals: 6,
+        isLpToken: true,
+        poolId: '9'
       },
-      {}
-    );
+      {
+        symbol: 'UPDOG',
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
+        decimals: 6,
+        isLpToken: true,
+        poolId: '8'
+      },
+      {
+        symbol: 'CHA',
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
+        decimals: 6,
+        isLpToken: false
+      },
+      {
+        symbol: 'WELSH',
+        contractAddress: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
+        decimals: 6,
+        isLpToken: false
+      },
+      {
+        symbol: 'DOG',
+        contractAddress: 'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog',
+        decimals: 8,
+        isLpToken: false
+      }
+    ];
 
-    // Combine all prices
-    const tokenPrices = {
-      ...convertedVelarPrices,
-      CHA: ratio * cmcPriceData.data['STX'].quote.USD.price,
-      STX: cmcPriceData.data['STX'].quote.USD.price,
-      wSTX: cmcPriceData.data['STX'].quote.USD.price,
-      synSTX: cmcPriceData.data['STX'].quote.USD.price,
-      ordi: cmcPriceData.data['ORDI'].quote.USD.price,
-      DOG: cmcPriceData.data['DOG'].quote.USD.price,
-      WELSH: cmcPriceData.data['WELSH'].quote.USD.price,
-      iouWELSH: cmcPriceData.data['WELSH'].quote.USD.price,
-      ROO: convertedVelarPrices['$ROO'],
-      iouROO: convertedVelarPrices['$ROO']
-    };
+    // Initialize token data
+    PricesService.setTokenData(tokens);
+
+    // Get all prices including LP tokens
+    const prices = await PricesService.getAllTokenPrices();
 
     // Cache the results
-    await kv.set(CACHE_KEY, tokenPrices, {
+    await kv.set(CACHE_KEY, prices, {
       ex: CACHE_DURATION
     });
 
@@ -126,7 +114,7 @@ export default async function handler(
     // Return response
     return res.status(200).json({
       success: true,
-      data: tokenPrices,
+      data: prices,
       cached: false
     });
   } catch (error) {

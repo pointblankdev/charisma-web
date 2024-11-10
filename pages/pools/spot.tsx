@@ -7,241 +7,48 @@ import { useEffect, useState } from 'react';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { motion } from 'framer-motion';
 import { PoolsInterface } from '@components/pools/pools-interface';
-import PricesService from '@lib/server/prices/prices-service';
 import PoolsLayout from '@components/pools/layout';
 import { DexClient } from '@lib/server/pools/pools.client';
-import { ContractAuditClient } from '@lib/server/audit/audit.client';
-import { Sip10Client } from '@lib/server/sips/sip10.client';
-import { cha, cpepe, roo, stx, updog, vstx, welsh } from '@lib/token-images';
-import { StaticImageData } from 'next/image';
+import TokenRegistryClient from '@lib/server/registry/registry.client';
+import PricesService from '@lib/server/prices/prices-service';
 
 // Initialize clients
 const dexClient = new DexClient();
-const sip10Client = new Sip10Client();
-const auditClient = new ContractAuditClient();
-
-// Token images mapping
-const tokenImages = {
-  STX: stx,
-  WELSH: welsh,
-  CHA: cha,
-  'WELSH/DOG': updog,
-  'STX/synSTX': vstx,
-  'CHA/$ROO': roo,
-  'CHA/PEPE': cpepe
-  // ... (rest of image mapping)
-};
-
-// Token names mapping
-const tokenNames = {
-  'WELSH/DOG': 'Updog'
-  // ... (rest of image mapping)
-};
-
-const lpTokenContracts = {
-  'WELSH/iouWELSH': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-iouwelsh',
-  'CHA/WELSH': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-welsh',
-  'CHA/iouWELSH': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-iouwelsh',
-  'STX/synSTX': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-synstx',
-  'STX/CHA': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha',
-  'CHA/ordi': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-ordi',
-  '$ROO/iouROO': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.roo-iouroo',
-  'WELSH/DOG': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.up-dog',
-  'CHA/$ROO': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-roo',
-  'CHA/PEPE': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-pepe'
-};
-
-export interface TokenInfo {
-  symbol: string;
-  name: string;
-  image: string | StaticImageData;
-  contractAddress: string;
-  tokenId: string | null;
-  decimals: number;
-  price: number;
-  isLpToken: boolean;
-  poolId?: number | null;
-  // Added fields from audit
-  isMintable?: boolean;
-  isBurnable?: boolean;
-  isTransferable?: boolean;
-  alignment?: number;
-}
-
-export interface PoolInfo {
-  id: number;
-  name: string;
-  symbol: string;
-  image: string | StaticImageData;
-  token0: TokenInfo;
-  token1: TokenInfo;
-  reserves: {
-    token0: number;
-    token1: number;
-  };
-  tvl: number;
-  contractAddress: string;
-  totalLpSupply: number;
-  // Added fields from audit
-  swapFee: {
-    numerator: number;
-    denominator: number;
-  };
-  alignment: number; // Pool's overall alignment based on tokens
-}
+const registryClient = new TokenRegistryClient();
 
 type Props = {
   data: {
-    pools: PoolInfo[];
+    pools: any[];
     tokenPrices: { [key: string]: number };
   };
 };
 
-// Helper to convert contract principal to address and name
-const splitPrincipal = (principal: string) => {
-  const [address, name] = principal.split('.');
-  return { address, name };
-};
-
-// Cache for responses
-const responseCache = new Map<string, any>();
-
-/**
- * Get comprehensive token information using all services
- */
-async function getEnhancedTokenInfo(principal: string) {
-  const cacheKey = `token:${principal}`;
-  if (responseCache.has(cacheKey)) {
-    return responseCache.get(cacheKey);
-  }
-
-  const { address, name } = splitPrincipal(principal);
-
-  try {
-    // Fetch data from all services in parallel
-    const [sip10Info, audit] = await Promise.all([
-      sip10Client.getTokenInfo(address, name),
-      auditClient.auditContract(principal)
-    ]);
-
-    // Combine the data
-    const tokenData = {
-      sip10: sip10Info,
-      audit: audit?.fungibleTokens?.[0]
-      // Add any additional data sources here
-    };
-
-    responseCache.set(cacheKey, tokenData);
-    return tokenData;
-  } catch (error) {
-    console.error(`Error fetching token info for ${principal}:`, error);
-    return null;
-  }
-}
-
 export const getStaticProps: GetStaticProps<Props> = async () => {
   try {
-    // Get number of pools
-    const numPools = await dexClient.getNumberOfPools();
-    const poolIds = [...Array(numPools).keys()].map(i => (i + 1).toString());
-
-    // Get pools data first
-    const pools = await dexClient.getPools(poolIds);
-
-    // Create a unique set of token principals
-    const tokenPrincipals = new Set<string>();
-    pools.forEach(pool => {
-      tokenPrincipals.add(pool.token0);
-      tokenPrincipals.add(pool.token1);
-    });
-
     // Get enhanced token info and prices in parallel
-    const [tokenInfos, prices] = await Promise.all([
-      Promise.all(Array.from(tokenPrincipals).map(principal => getEnhancedTokenInfo(principal))),
+    const [tokenInfo, prices] = await Promise.all([
+      registryClient.listAll(),
       PricesService.getAllTokenPrices()
     ]);
 
-    // Convert combined data to TokenInfo format
-    const tokenMap = new Map<string, TokenInfo>();
-    Array.from(tokenPrincipals).forEach((principal, index) => {
-      const info = tokenInfos[index];
-      if (!info) return;
+    // build pools data
+    const tokenList = tokenInfo.tokens;
+    const lpTokens = tokenList.filter((t: any) => t.lpInfo);
+    const pools = [];
+    for (const lpToken of lpTokens) {
+      const poolData = await dexClient.getPool(lpToken.lpInfo.token0, lpToken.lpInfo.token1);
+      const token0 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token0) || {};
+      const token1 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token1) || {};
+      pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
+    }
 
-      const { sip10, audit } = info;
-      const symbol =
-        sip10.symbol === 'wSTX'
-          ? 'STX'
-          : sip10.symbol === 'WELSH-iouWELSH'
-          ? 'vWELSH'
-          : sip10.symbol;
-
-      tokenMap.set(principal, {
-        symbol,
-        name: sip10.name,
-        image: tokenImages[symbol as keyof typeof tokenImages] || sip10?.metadata?.image || cha,
-        contractAddress: principal,
-        tokenId: audit?.tokenIdentifier || null,
-        decimals: sip10.decimals,
-        price: prices[symbol] || 0,
-        isLpToken: audit?.isLpToken || false,
-        // Add audit data
-        isMintable: audit?.isMintable || false,
-        isBurnable: audit?.isBurnable || false,
-        isTransferable: audit?.isTransferable || false,
-        alignment: info.audit?.arcanaRecommendation?.alignment || 0
-      });
-    });
-
-    // Convert pool data to PoolInfo format with enhanced information
-    const poolInfo = pools
-      .map(pool => {
-        const token0 = tokenMap.get(pool.token0)!;
-        const token1 = tokenMap.get(pool.token1)!;
-
-        const reserve0 = Number(pool.reserve0) / Math.pow(10, token0.decimals);
-        const reserve1 = Number(pool.reserve1) / Math.pow(10, token1.decimals);
-
-        return {
-          id: Number(pool.id),
-          name:
-            tokenNames[`${token0.symbol}/${token1.symbol}` as keyof typeof tokenNames] ||
-            `${token0?.name} / ${token1?.name}`,
-          symbol: `${token0?.symbol}/${token1?.symbol}`,
-          image:
-            tokenImages[`${token0.symbol}/${token1.symbol}` as keyof typeof tokenImages] ||
-            token0?.image ||
-            '',
-          token0,
-          token1,
-          reserves: {
-            token0: reserve0,
-            token1: reserve1
-          },
-          tvl: reserve0 * token0.price + reserve1 * token1.price,
-          contractAddress:
-            lpTokenContracts[
-              `${token0.symbol}/${token1.symbol}` as keyof typeof lpTokenContracts
-            ] || '',
-          totalLpSupply: Number(pool.totalSupply),
-          swapFee: {
-            numerator: pool.swapFee.numerator,
-            denominator: pool.swapFee.denominator
-          },
-          // Calculate pool alignment as average of token alignments
-          alignment:
-            token0?.alignment && token1?.alignment
-              ? Math.round((token0.alignment + token1.alignment) / 2)
-              : 0
-        };
-      })
-      .filter(pool => pool !== null)
-      .filter(pool => !pool.token0.isLpToken && !pool.token1.isLpToken)
-      .sort((a, b) => b.tvl - a.tvl); // Sort by TVL
+    // filter out pools with base tokens that are LP tokens
+    const spotPools = pools.filter((p: any) => !p.token0.lpInfo && !p.token1.lpInfo && p.poolData);
 
     return {
       props: {
         data: {
-          pools: poolInfo,
+          pools: spotPools,
           tokenPrices: prices
         }
       },

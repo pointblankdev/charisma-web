@@ -68,16 +68,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const { toast } = useToast();
 
-  interface LandData {
-    amount: number;
-    energy: number;
-    metadata: any;
-  }
-
-  interface LandState {
-    [key: string]: LandData;
-  }
-
   useEffect(() => {
     if (userSession?.isUserSignedIn()) {
       setStxAddress(userSession.loadUserData().profile.stxAddress.mainnet);
@@ -86,7 +76,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   // Function to update energy of a specific token in the lands state
   const updateTokenEnergy = (landId: string, energy: number) => {
-    setLands((prevLands: LandState) => {
+    setLands((prevLands: any) => {
       const updatedLands = { ...prevLands };
       if (updatedLands[landId]) {
         updatedLands[landId].energy = energy;

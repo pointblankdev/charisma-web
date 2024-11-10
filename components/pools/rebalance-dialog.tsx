@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
 import React, { useState, useCallback, useEffect } from 'react';
 import {
   DialogContent,
@@ -14,10 +15,9 @@ import useWallet from '@lib/hooks/wallet-balance-provider';
 import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
-import { PoolInfo } from 'pages/pools/spot';
 
 type RebalanceDialogProps = {
-  pool: PoolInfo | null;
+  pool: any | null;
   referenceChaPrice: number;
   onClose: () => void;
 };
@@ -138,10 +138,10 @@ const RebalanceDialog: React.FC<RebalanceDialogProps> = ({ pool, referenceChaPri
     const postConditions = [
       Pc.principal(stxAddress)
         .willSendLte(amountIn)
-        .ft(tokenIn.contractAddress as any, tokenIn.tokenId as string) as any,
+        .ft(tokenIn.contractAddress, tokenIn.tokenId as string) as any,
       Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
         .willSendGte(minAmountOut)
-        .ft(tokenOut.contractAddress as any, tokenOut.tokenId as string) as any
+        .ft(tokenOut.contractAddress, tokenOut.tokenId as string) as any
     ];
 
     doContractCall({
