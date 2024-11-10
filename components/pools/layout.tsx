@@ -11,17 +11,34 @@ import {
 import { cn } from '@lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 
-const PoolTooltip = ({ icon: Icon, title, subtitle, description }: any) => (
+const FeeBreakdown = ({ protocolFee, lpYield }: any) => (
+  <div className="pt-3 mt-3 border-t border-border/50">
+    <p className="mb-2 text-xs font-medium">Fee Breakdown</p>
+    <div className="grid grid-cols-2 gap-3">
+      <div>
+        <p className="mb-0 text-xs text-muted-foreground">Protocol Fee</p>
+        <p className="text-sm font-medium">{protocolFee}%</p>
+      </div>
+      <div>
+        <p className="mb-0 text-xs text-muted-foreground">LP Provider Yield</p>
+        <p className="text-sm font-medium">{lpYield}%</p>
+      </div>
+    </div>
+  </div>
+);
+
+const PoolTooltip = ({ icon: Icon, title, subtitle, description, protocolFee, lpYield }: any) => (
   <div className="flex gap-3 p-0.5">
     <div className="mt-1">
       <div className="p-2 rounded-md">
         <Icon className="w-5 h-5" />
       </div>
     </div>
-    <div className="my-2 mb-4 mr-2 space-y-1">
-      <h3 className="font-medium leading-none">{title}</h3>
+    <div className="my-2 mb-4 mr-2">
+      <h3 className="mb-1 font-medium leading-none">{title}</h3>
       <p className="text-xs text-primary">{subtitle}</p>
       <p className="text-sm leading-snug text-muted-foreground">{description}</p>
+      <FeeBreakdown protocolFee={protocolFee} lpYield={lpYield} />
     </div>
   </div>
 );
@@ -60,6 +77,8 @@ export default function PoolsLayout({ children }: any) {
                   title="Community Pools"
                   subtitle="Zero Protocol Fees"
                   description="These pools have zero protocol fees and utilize 100% of the swap fees to compensate LP providers, maximizing returns for liquidity providers."
+                  protocolFee={0}
+                  lpYield={0.3}
                 />
               </TooltipContent>
             </Tooltip>
@@ -84,8 +103,10 @@ export default function PoolsLayout({ children }: any) {
                 <PoolTooltip
                   icon={ArrowRightLeftIcon}
                   title="Spot Pools"
-                  subtitle="Community Managed"
+                  subtitle="Standard Token Pairs"
                   description="These are pools created, managed and funded by the Charisma community, with protocol fees contributing to the development and expansion of the platform."
+                  protocolFee={0.25}
+                  lpYield={0.25}
                 />
               </TooltipContent>
             </Tooltip>
@@ -111,7 +132,9 @@ export default function PoolsLayout({ children }: any) {
                   icon={LayersIcon}
                   title="Derivative Pools"
                   subtitle="Multi-Asset Exposure"
-                  description="These pools feature LP tokens as swappable liquidity which enables traders to get exposure to multiple assets with a single token."
+                  description="These pools feature liquidity provider (LP) tokens as swappable assets. These pools will generally have higher APYs and more stable prices."
+                  protocolFee={0.25}
+                  lpYield={0.25}
                 />
               </TooltipContent>
             </Tooltip>
