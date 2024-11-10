@@ -1,4 +1,3 @@
-
 import { useRef } from 'react';
 import { useRouter } from 'next/router';
 import Link from 'next/link';
@@ -12,8 +11,7 @@ import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
 import { toggleSession, userSession } from './stacks-session/connect';
 
-const mobileNav = [...NAVIGATION]
-
+const mobileNav = [...NAVIGATION];
 
 function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof useDialog>[0]) {
   const router = useRouter();
@@ -48,19 +46,30 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
             </svg>
           </button>
 
-          {userSession.isUserSignedIn() && mobileNav.map(({ name, route }) => (
-            <Link key={name} href={route}
-              className={cn(styles['nav-item'], {
-                [styles['nav-active']]: activeRoute.startsWith(route)
-              })}
-            >
-              {name}
+          {userSession.isUserSignedIn() &&
+            mobileNav.map(({ name, route }) => (
+              <Link
+                key={name}
+                href={route}
+                className={cn(styles['nav-item'], {
+                  [styles['nav-active']]: activeRoute.startsWith(route)
+                })}
+              >
+                {name}
+              </Link>
+            ))}
+          {userSession.isUserSignedIn() ? (
+            <Link href="/" className={cn(styles['nav-item'])} onClick={toggleSession}>
+              Sign out
             </Link>
-          ))}
-          {userSession.isUserSignedIn() ? <Link href='/' className={cn(styles['nav-item'])} onClick={toggleSession}>Sign out</Link> : <Link href='/swap' className={cn(styles['nav-item'])} onClick={toggleSession}>Connect</Link>}
+          ) : (
+            <Link href="/pools" className={cn(styles['nav-item'])} onClick={toggleSession}>
+              Connect
+            </Link>
+          )}
         </nav>
       </FocusScope>
-    </div >
+    </div>
   );
 }
 

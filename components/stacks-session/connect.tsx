@@ -22,7 +22,7 @@ export function authenticate() {
   showConnect({
     appDetails,
     onFinish: async e => {
-      window.location.pathname = '/swap';
+      window.location.pathname = '/pools';
       try {
         const userData = e.userSession.loadUserData();
         const address = userData.profile.stxAddress.mainnet;
