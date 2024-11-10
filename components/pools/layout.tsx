@@ -16,7 +16,7 @@ const FeeBreakdown = ({ protocolFee, lpYield }: any) => (
     <p className="mb-2 text-xs font-medium">Fee Breakdown</p>
     <div className="grid grid-cols-2 gap-3">
       <div>
-        <p className="mb-0 text-xs text-muted-foreground">Protocol Fee</p>
+        <p className="mb-0 text-xs text-muted-foreground">Protocol Swap Fee</p>
         <p className="text-sm font-medium">{protocolFee}%</p>
       </div>
       <div>
@@ -132,7 +132,7 @@ export default function PoolsLayout({ children }: any) {
                   icon={LayersIcon}
                   title="Derivative Pools"
                   subtitle="Multi-Asset Exposure"
-                  description="These pools feature liquidity provider (LP) tokens as swappable assets. These pools will generally have higher APYs and more stable prices."
+                  description="These pools feature liquidity provider (LP) tokens as swappable assets. These pools will generally have higher APYs and less volatile price movement."
                   protocolFee={0.25}
                   lpYield={0.25}
                 />
