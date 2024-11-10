@@ -87,7 +87,7 @@ export const formatPoolTVL = (pool: Pool, tokenPrices: { [key: string]: number }
 };
 
 export const formatReserveAmount = (amount: number, decimals: number) => {
-  return numeral(amount / 10 ** decimals).format('0.00');
+  return numeral(amount / 10 ** decimals).format('0');
 };
 
 export const formatReserveValue = (amount: number, decimals: number, price: number) => {
