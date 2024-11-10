@@ -52,7 +52,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           tokenPrices: prices
         }
       },
-      revalidate: 600
+      revalidate: 60
     };
   } catch (error) {
     console.error('Error in getStaticProps:', error);
