@@ -21,25 +21,6 @@ export const calculateTokenAmounts = (
   balance0: number,
   balance1: number
 ) => {
-  // Debug logging
-  console.log('Calculating token amounts:', {
-    token0: {
-      symbol: pool.token0.metadata.symbol,
-      decimals: pool.token0.metadata.decimals,
-      balance: balance0
-    },
-    token1: {
-      symbol: pool.token1.metadata.symbol,
-      decimals: pool.token1.metadata.decimals,
-      balance: balance1
-    },
-    reserves: {
-      reserve0: pool.poolData.reserve0,
-      reserve1: pool.poolData.reserve1
-    },
-    sliderValue
-  });
-
   // Convert reserves to decimal-adjusted numbers for ratio calculation
   const adjustedReserve0 = pool.poolData.reserve0 / 10 ** pool.token0.metadata.decimals;
   const adjustedReserve1 = pool.poolData.reserve1 / 10 ** pool.token1.metadata.decimals;

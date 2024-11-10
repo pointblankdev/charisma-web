@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { ChevronDown, ArrowUpDown } from 'lucide-react';
+import { ChevronDown, ArrowUpDown, Coins } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import { formatBalance } from '@lib/hooks/dex/pool-operations';
@@ -60,6 +60,7 @@ const TokenList = ({ tokens, onSelect, fromToken, hasHighExperience, pools }: To
             !hasHighExperience &&
             fromToken.metadata.symbol !== 'synSTX'));
 
+      const src = token?.metadata.images?.logo || token?.metadata.image;
       return (
         <button
           key={token.metadata.symbol}
@@ -70,14 +71,16 @@ const TokenList = ({ tokens, onSelect, fromToken, hasHighExperience, pools }: To
           onClick={() => !isDisabled && onSelect(token)}
           disabled={isDisabled}
         >
-          {(token?.metadata.images?.logo || token?.metadata.image) && (
+          {src ? (
             <Image
-              src={token?.metadata.images?.logo || token?.metadata.image}
+              src={src}
               alt={token.metadata.symbol}
               width={240}
               height={240}
               className="w-6 mr-2 rounded-full"
             />
+          ) : (
+            <Coins className="mr-2" />
           )}
           <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate')}>
             {token.metadata.symbol}
