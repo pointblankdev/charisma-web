@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Button } from '@components/ui/button';
-import { Plus, Minus, ShoppingCart } from 'lucide-react';
+import { Plus, Minus, ShoppingCart, Coins } from 'lucide-react';
 import numeral from 'numeral';
 import Link from 'next/link';
 import { Dialog } from '@components/ui/dialog';
@@ -101,13 +101,17 @@ export const isStxChaPool = (pool: Pool) => {
 // Component: Pool Definition Cell
 export const PoolDefinition = ({ pool }: { pool: Pool }) => (
   <div className="flex items-center mr-4">
-    <Image
-      src={pool.metadata?.images?.logo || pool.metadata?.image || '/dmg-logo.gif'}
-      alt={pool.metadata?.symbol || 'Pool Definition'}
-      width={240}
-      height={240}
-      className="w-6 mr-2 rounded-full"
-    />
+    {pool.metadata?.images?.logo || pool.metadata?.image ? (
+      <Image
+        src={pool.metadata?.images?.logo || pool.metadata?.image}
+        alt={pool.token1.metadata.symbol || 'Base Token 0'}
+        width={240}
+        height={240}
+        className="w-6 mr-2 rounded-full"
+      />
+    ) : (
+      <Coins className="mr-2" />
+    )}
     <div className="leading-tight">
       <div className="text-white truncate">{pool.metadata?.name}</div>
       <div className="text-sm text-muted-foreground">{pool.metadata?.symbol}</div>
@@ -120,23 +124,31 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
   <div className="flex items-center mr-4">
     <div className="space-y-1 leading-none">
       <div className="flex items-center">
-        <Image
-          src={pool.token0.metadata.image || '/dmg-logo.gif'}
-          alt={pool.token0.metadata.symbol || 'Base Token 0'}
-          width={240}
-          height={240}
-          className="w-6 mr-2 rounded-full"
-        />
+        {pool.token0.metadata.image ? (
+          <Image
+            src={pool.token0.metadata.image}
+            alt={pool.token0.metadata.symbol || 'Base Token 0'}
+            width={240}
+            height={240}
+            className="w-6 mr-2 rounded-full"
+          />
+        ) : (
+          <Coins className="mr-2" />
+        )}
         {pool.token0.metadata.symbol}
       </div>
       <div className="flex items-center">
-        <Image
-          src={pool.token1.metadata.image || '/dmg-logo.gif'}
-          alt={pool.token1.metadata.symbol || 'Base Token 1'}
-          width={240}
-          height={240}
-          className="w-6 mr-2 rounded-full"
-        />
+        {pool.token1.metadata.image ? (
+          <Image
+            src={pool.token1.metadata.image}
+            alt={pool.token1.metadata.symbol || 'Base Token 0'}
+            width={240}
+            height={240}
+            className="w-6 mr-2 rounded-full"
+          />
+        ) : (
+          <Coins className="mr-2" />
+        )}
         {pool.token1.metadata.symbol}
       </div>
     </div>
