@@ -72,8 +72,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 export default function SpotPoolsPage({ data }: Props) {
   const meta = {
-    title: 'Charisma | Spot Pools',
-    description: 'View and manage spot liquidity pools on the Charisma DEX',
+    title: 'Charisma | Derivative Pools',
+    description: 'View and manage derivative liquidity pools on the Charisma DEX',
     image: 'https://charisma.rocks/pools-screenshot.png'
   };
 
@@ -99,7 +99,7 @@ export default function SpotPoolsPage({ data }: Props) {
           >
             <PoolsLayout>
               {isAuthorized ? (
-                <PoolsInterface data={data} title={'Spot Pools'} />
+                <PoolsInterface data={data} title={'Derivative Pools'} />
               ) : (
                 <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
                   <Card className="w-full max-w-lg p-6 text-center">
