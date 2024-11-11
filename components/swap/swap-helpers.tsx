@@ -182,7 +182,7 @@ export const createSwapTransaction = ({
   }
 
   // Add post-condition for the final token transfer to the user
-  if (toToken.symbol !== 'STX') {
+  if (toToken.metadata.symbol !== 'STX') {
     postConditions.push(
       Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
         .willSendGte(minAmountOutMicroTokens)

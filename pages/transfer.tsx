@@ -56,7 +56,8 @@ const Transfer = () => {
         functionArgs: [
           uintCV(amount),
           standardPrincipalCV(sender),
-          contractPrincipalCV(recipient.split('.')[0], recipient.split('.')[1])
+          standardPrincipalCV(recipient)
+          // contractPrincipalCV(recipient.split('.')[0], recipient.split('.')[1])
           // optionalCVOf(noneCV())
         ],
         postConditionMode: PostConditionMode.Allow,
