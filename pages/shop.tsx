@@ -560,12 +560,57 @@ function ListingDialog() {
     {
       id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
       name: "Odin's Ravens",
-      expectedPrice: '150-200'
+      expectedPrice: '350-500'
     },
     {
       id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt',
       name: 'Spell Scrolls',
-      expectedPrice: '100-150'
+      expectedPrice: '10-20'
+    },
+    {
+      id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar',
+      name: 'Pixel Rozar',
+      expectedPrice: '1-5'
+    },
+    {
+      id: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz',
+      name: 'Jumping Pupperz',
+      expectedPrice: '25-60'
+    },
+    {
+      id: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks',
+      name: 'Mooning Sharks',
+      expectedPrice: '30-40'
+    },
+    {
+      id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh',
+      name: 'Weird Welsh',
+      expectedPrice: '50-200'
+    },
+    {
+      id: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0',
+      name: 'Stacks Invaders',
+      expectedPrice: '75-125'
+    },
+    {
+      id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse',
+      name: 'Memobots: Guardians',
+      expectedPrice: '25-40'
+    },
+    {
+      id: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.bitgear-genesis',
+      name: 'Bitgear Genesis',
+      expectedPrice: '150-300'
+    },
+    {
+      id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters',
+      name: 'Treasure Hunters',
+      expectedPrice: '100-200'
+    },
+    {
+      id: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh',
+      name: 'Happy Welsh',
+      expectedPrice: '150-5000'
     }
   ];
 
@@ -670,7 +715,11 @@ function ListingDialog() {
                 </SelectTrigger>
                 <SelectContent>
                   {SUPPORTED_COLLECTIONS.map(collection => (
-                    <SelectItem key={collection.id} value={collection.id}>
+                    <SelectItem
+                      className="h-8 cursor-pointer hover:bg-accent-foreground/60 text-muted/80 hover:text-muted"
+                      key={collection.id}
+                      value={collection.id}
+                    >
                       {collection.name}
                     </SelectItem>
                   ))}
