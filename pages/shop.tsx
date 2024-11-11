@@ -636,6 +636,11 @@ function ListingDialog() {
       id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-chromie',
       name: 'Cultured Welsh Chromie',
       expectedPrice: '50-100'
+    },
+    {
+      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant',
+      name: 'Cultured Welsh Grant',
+      expectedPrice: '50-100'
     }
   ];
 
