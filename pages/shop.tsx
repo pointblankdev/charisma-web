@@ -750,14 +750,14 @@ function ListingDialog() {
                   <Input
                     type="number"
                     placeholder="Enter token ID"
-                    className="flex-1"
+                    className="min-w-20"
                     value={tokenId}
                     onChange={e => setTokenId(e.target.value)}
                   />
                   <Button
                     type="button"
                     variant="secondary"
-                    className="w-[100px]"
+                    className="min-w-20"
                     onClick={fetchNFTDetails}
                     disabled={!selectedCollection || !tokenId || previewLoading}
                   >
@@ -778,7 +778,7 @@ function ListingDialog() {
                 <div className="grid gap-4">
                   <Label>NFT Preview</Label>
                   <div className="flex items-start gap-4">
-                    <div className="relative w-[240px] h-[240px] rounded-lg overflow-hidden">
+                    <div className="relative w-[300px] h-[300px] rounded-lg overflow-hidden">
                       <Image
                         src={metadata.image}
                         alt={metadata.name}
@@ -788,7 +788,7 @@ function ListingDialog() {
                     </div>
                     <div className="flex-1 space-y-4">
                       <div>
-                        <h3 className="font-semibold">{metadata.name}</h3>
+                        <h3 className="text-lg font-semibold leading-tight">{metadata.name}</h3>
                         <p className="text-sm text-muted-foreground">
                           Recent sales:{' '}
                           {
@@ -802,7 +802,9 @@ function ListingDialog() {
                         <div className="space-y-2 leading-none">
                           {metadata.attributes.map((attr: any, i: number) => (
                             <div key={i} className="flex justify-between text-sm">
-                              <span className="text-muted-foreground">{attr.trait_type}</span>
+                              <span className="text-muted-foreground">
+                                {attr.trait || attr.trait_type}
+                              </span>
                               <span>{attr.value}</span>
                             </div>
                           ))}
