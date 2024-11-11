@@ -7,6 +7,7 @@ import {
   cvToHex
 } from '@stacks/transactions';
 import { cvToJSON } from '@stacks/transactions';
+import { API_URL } from './constants';
 
 export const client = createClient({
   baseUrl: 'https://api.mainnet.hiro.so'
@@ -112,14 +113,33 @@ export async function getNftURI(
       body: { sender: address, arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))] }
     });
     const cv = cvToJSON(hexToCV(response.data.result));
-    const url = cv.value.value.value.replace('{id}', tokenId);
-    const result = await fetch(url, {
-      mode: 'no-cors',
-      redirect: 'follow'
-    });
-    console.log(result);
+    let url = cv.value.value.value.replace('{id}', tokenId);
+
+    // Handle ipfs:// protocol
+    if (url.startsWith('ipfs://')) {
+      // You can choose your preferred IPFS gateway
+      url = url.replace('ipfs://', 'https://ipfs.io/');
+    }
+
+    // Handle direct IPFS gateway URLs
+    const ipfsGateways = [
+      'https://ipfs.io/',
+      'https://gateway.ipfs.io/',
+      'https://cloudflare-ipfs.com/',
+      'https://dweb.link/',
+      'https://ipfs.infura.io/'
+    ];
+
+    // Check if URL is using any known IPFS gateway
+    for (const gateway of ipfsGateways) {
+      if (url.startsWith(gateway)) {
+        const cid = url.replace(gateway, '');
+        url = `https://ipfs.io/${cid}`;
+      }
+    }
+    const result = await fetch(`https://corsproxy.io/?${url}`);
     const out = await result.json();
-    console.log(out);
+    out.image = out.image.replace('ipfs://', 'https://ipfs.io/');
     return out;
   } catch (error) {
     console.error('Fetch error:', error);

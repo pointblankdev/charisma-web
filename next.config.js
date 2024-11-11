@@ -1,6 +1,6 @@
 module.exports = {
   images: {
-    domains: [],
+    domains: ['ipfs'],
     imageSizes: [24, 64, 300],
     remotePatterns: [
       {

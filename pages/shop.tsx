@@ -201,16 +201,16 @@ function ProductDialog({
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent className="flex flex-col w-full p-0 gap-0 md:max-w-6xl h-[90vh] md:h-[85vh]">
+      <DialogContent className="flex flex-col w-full p-0 gap-0 md:max-w-6xl h-[90vh] md:h-[85vh] overflow-hidden">
         {/* Mobile Header - Only shown on small screens */}
-        <DialogHeader className="p-4 md:hidden">
+        <DialogHeader className="z-10 p-4 md:hidden bg-background">
           <DialogTitle>{displayName}</DialogTitle>
           <p className="text-sm text-muted-foreground">{contractName.replace(/-/g, ' ')}</p>
         </DialogHeader>
 
-        <div className="flex flex-col flex-1 overflow-hidden md:flex-row md:h-full">
+        <div className="flex flex-col flex-1 overflow-hidden md:flex-row md:h-full group">
           {/* Image Section */}
-          <div className="relative w-full h-[40vh] md:h-full md:w-3/5 bg-black flex items-center justify-center">
+          <div className="relative w-full h-[25vh] md:h-full md:w-3/5 flex items-center justify-center z-20">
             <Image
               src={imageSrc}
               alt={displayName}
@@ -219,9 +219,18 @@ function ProductDialog({
               height={800}
             />
           </div>
+          <div className="absolute w-full h-[25vh] md:h-full md:w-3/5 bg-black flex items-center justify-cente z-0">
+            <Image
+              src={imageSrc}
+              alt={displayName}
+              className="object-cover h-full max-w-full transition-all duration-1000 blur-3xl group-hover:opacity-20 "
+              width={800}
+              height={800}
+            />
+          </div>
 
           {/* Details Section */}
-          <ScrollArea className="flex-1 md:w-2/5">
+          <ScrollArea className="flex-1 md:w-2/5 bg-background">
             <div className="p-4 space-y-6 md:p-6">
               {/* Desktop Header - Hidden on mobile */}
               <div className="hidden md:block">
@@ -259,7 +268,7 @@ function ProductDialog({
 
               {/* Accordion for mobile, regular sections for desktop */}
               <div className="md:hidden">
-                <Accordion type="single" collapsible className="w-full">
+                <Accordion type="multiple" className="w-full">
                   {/* Description Section */}
                   {isListing && item.metadata.description && (
                     <AccordionItem value="description">
@@ -701,54 +710,55 @@ function ListingDialog() {
         </DialogHeader>
         <form onSubmit={handleCreateListing}>
           <div className="grid gap-4 py-4">
-            <div className="grid gap-2">
-              <Label>Collection</Label>
-              <Select
-                value={selectedCollection}
-                onValueChange={value => {
-                  setSelectedCollection(value);
-                  setShowPreview(false);
-                }}
-              >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select collection" />
-                </SelectTrigger>
-                <SelectContent>
-                  {SUPPORTED_COLLECTIONS.map(collection => (
-                    <SelectItem
-                      className="h-8 cursor-pointer hover:bg-accent-foreground/60 text-muted/80 hover:text-muted"
-                      key={collection.id}
-                      value={collection.id}
-                    >
-                      {collection.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid gap-2">
-              <Label>Token ID</Label>
-              <div className="flex gap-2">
-                <Input
-                  type="number"
-                  placeholder="Enter token ID"
-                  className="flex-1"
-                  value={tokenId}
-                  onChange={e => setTokenId(e.target.value)}
-                />
-                <Button
-                  type="button"
-                  variant="secondary"
-                  className="w-[100px]"
-                  onClick={fetchNFTDetails}
-                  disabled={!selectedCollection || !tokenId || previewLoading}
+            <div className="flex w-full space-x-2">
+              <div className="grid w-full gap-2">
+                <Label>Collection</Label>
+                <Select
+                  value={selectedCollection}
+                  onValueChange={value => {
+                    setSelectedCollection(value);
+                    setShowPreview(false);
+                  }}
                 >
-                  {previewLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Check'}
-                </Button>
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select collection" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {SUPPORTED_COLLECTIONS.map(collection => (
+                      <SelectItem
+                        className="h-8 cursor-pointer hover:bg-accent-foreground/60 text-muted/80 hover:text-muted"
+                        key={collection.id}
+                        value={collection.id}
+                      >
+                        {collection.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="grid gap-2">
+                <Label>Token ID</Label>
+                <div className="flex gap-2">
+                  <Input
+                    type="number"
+                    placeholder="Enter token ID"
+                    className="flex-1"
+                    value={tokenId}
+                    onChange={e => setTokenId(e.target.value)}
+                  />
+                  <Button
+                    type="button"
+                    variant="secondary"
+                    className="w-[100px]"
+                    onClick={fetchNFTDetails}
+                    disabled={!selectedCollection || !tokenId || previewLoading}
+                  >
+                    {previewLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : 'Check'}
+                  </Button>
+                </div>
               </div>
             </div>
-
             {error && (
               <Alert variant="destructive">
                 <AlertDescription>{error}</AlertDescription>
@@ -761,7 +771,7 @@ function ListingDialog() {
                 <div className="grid gap-4">
                   <Label>NFT Preview</Label>
                   <div className="flex items-start gap-4">
-                    <div className="relative w-[200px] h-[200px] rounded-lg overflow-hidden">
+                    <div className="relative w-[240px] h-[240px] rounded-lg overflow-hidden">
                       <Image
                         src={metadata.image}
                         alt={metadata.name}
@@ -782,7 +792,7 @@ function ListingDialog() {
                         </p>
                       </div>
                       {metadata.attributes && (
-                        <div className="space-y-2">
+                        <div className="space-y-2 leading-none">
                           {metadata.attributes.map((attr: any, i: number) => (
                             <div key={i} className="flex justify-between text-sm">
                               <span className="text-muted-foreground">{attr.trait_type}</span>
