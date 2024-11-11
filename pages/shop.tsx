@@ -643,7 +643,7 @@ function ListingDialog() {
       }
       // Fetch metadata
       const metdata = await getNftURI(selectedCollection, tokenId);
-
+      console.log('metadata', metdata);
       setMetadata(metdata);
       setShowPreview(true);
     } catch (error: any) {

@@ -114,7 +114,7 @@ export async function getNftURI(
     const cv = cvToJSON(hexToCV(response.data.result));
     const url = cv.value.value.value.replace('{id}', tokenId);
     const result = await fetch(url);
-    return await result.text();
+    return await result.json();
   } catch (error) {
     console.error('Fetch error:', error);
     throw error;
