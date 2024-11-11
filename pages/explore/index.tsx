@@ -607,7 +607,7 @@ function InteractionArtwork({
     }
   }, [animate, block.height]);
 
-  const lastTapBlock = tappedAt['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7'];
+  const lastTapBlock = tappedAt[interaction.analytics.contractId];
   const blockPeriod = block.height - lastTapBlock;
   const unclaimedEnergy =
     interaction.analytics.energyPerBlockPerToken * wallet.charisma.balance * blockPeriod;
@@ -644,7 +644,7 @@ function InteractionArtwork({
               <Badge
                 title={`Estimate based on your current balance of ${numeral(
                   wallet.charisma.balance
-                ).format('0,0')} tokens`}
+                ).format('0.00')} tokens`}
                 className={cn(
                   'absolute z-20 text-white rounded-b-none rounded-t-xl justify-center w-[96px] text-center place-self-center top-2 right-2 bg-black/75 hover:bg-black/75',
                   unclaimedEnergy !== null && unclaimedEnergy > 0
