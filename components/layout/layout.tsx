@@ -24,6 +24,7 @@ import {
   NavigationMenuTrigger
 } from '@components/ui/navigation-menu';
 import { ChartBarIcon, LineChartIcon } from 'lucide-react';
+import { GlobalDrawer, useGlobalDrawer } from '@components/global/drawer';
 
 type Props = {
   children: React.ReactNode;
@@ -32,36 +33,35 @@ type Props = {
   layoutStyles?: any;
 };
 
-const ListItem = React.forwardRef<
-  React.ElementRef<"a">,
-  React.ComponentPropsWithoutRef<"a">
->(({ className, title, children, ...props }, ref) => {
-  return (
-    <li>
-      <NavigationMenuLink asChild>
-        <a
-          ref={ref}
-          className={cn(
-            "block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground",
-            className
-          )}
-          {...props}
-        >
-          <div className="text-sm font-medium leading-none">{title}</div>
-          <p className="line-clamp-2 text-sm leading-snug text-muted-foreground">
-            {children}
-          </p>
-        </a>
-      </NavigationMenuLink>
-    </li>
-  )
-});
-ListItem.displayName = "ListItem";
+const ListItem = React.forwardRef<React.ElementRef<'a'>, React.ComponentPropsWithoutRef<'a'>>(
+  ({ className, title, children, ...props }, ref) => {
+    return (
+      <li>
+        <NavigationMenuLink asChild>
+          <a
+            ref={ref}
+            className={cn(
+              'block select-none space-y-1 rounded-md p-3 leading-none no-underline outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus:bg-accent focus:text-accent-foreground',
+              className
+            )}
+            {...props}
+          >
+            <div className="text-sm font-medium leading-none">{title}</div>
+            <p className="text-sm leading-snug line-clamp-2 text-muted-foreground">{children}</p>
+          </a>
+        </NavigationMenuLink>
+      </li>
+    );
+  }
+);
+ListItem.displayName = 'ListItem';
 
 export default function Layout({ children, className, hideNav, layoutStyles }: Props) {
   const router = useRouter();
   const activeRoute = router.asPath;
   const { stxAddress } = useGlobalState();
+
+  const drawer = useGlobalDrawer();
 
   const { wallet } = useWallet();
   const [navigationTabs, setNavigationTabs] = useState([] as any[]);
@@ -92,11 +92,15 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                     if (name === 'Pools') {
                       return (
                         <NavigationMenuItem key={i}>
-                          <NavigationMenuTrigger className={cn('text-md text-[var(--secondary-color)] mx-0')}>Pools</NavigationMenuTrigger>
+                          <NavigationMenuTrigger
+                            className={cn('text-md text-[var(--secondary-color)] mx-0')}
+                          >
+                            Pools
+                          </NavigationMenuTrigger>
                           <NavigationMenuContent>
                             <ul className="grid gap-3 p-4 w-[500px] grid-cols-2 md:w-[700px]">
                               <ListItem
-                                className='text-foreground'
+                                className="text-foreground"
                                 href="/pools/spot"
                                 title="Spot Pools"
                               >
@@ -106,7 +110,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                                 </div>
                               </ListItem>
                               <ListItem
-                                className='text-foreground'
+                                className="text-foreground"
                                 href="/pools/derivatives"
                                 title="Derivative Pools"
                               >
@@ -124,10 +128,9 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                       <NavigationMenuItem key={i}>
                         <Link href={route} legacyBehavior passHref>
                           <NavigationMenuLink
-                            className={cn(
-                              "px-4 py-2 block",
-                              { [styles['tab-active']]: activeRoute.endsWith(route) }
-                            )}
+                            className={cn('px-4 py-2 block', {
+                              [styles['tab-active']]: activeRoute.endsWith(route)
+                            })}
                           >
                             {name}
                           </NavigationMenuLink>
@@ -138,9 +141,40 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 </NavigationMenuList>
               </NavigationMenu>
             </div>
-            <div className={cn(styles['header-right'], 'items-center', 'gap-4', 'pr-4', 'whitespace-nowrap', 'sm:relative')}>
-              {wallet.redPilled && <Image src={redPillFloating} alt="Red Pill" width="40" height="40" className='cursor-help' title={'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'} />}
-              {wallet.bluePilled && <Image src={bluePillFloating} alt="Blue Pill" width="40" height="40" className='cursor-help' title={'The Blue Pill NFT offers your early access to Charisma Recovery token redemptions.'} />}
+            <div
+              className={cn(
+                styles['header-right'],
+                'items-center',
+                'gap-4',
+                'pr-4',
+                'whitespace-nowrap',
+                'sm:relative'
+              )}
+            >
+              {wallet.redPilled && (
+                <Image
+                  src={redPillFloating}
+                  alt="Red Pill"
+                  width="40"
+                  height="40"
+                  className="cursor-help"
+                  title={
+                    'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'
+                  }
+                />
+              )}
+              {wallet.bluePilled && (
+                <Image
+                  src={bluePillFloating}
+                  alt="Blue Pill"
+                  width="40"
+                  height="40"
+                  className="cursor-help"
+                  title={
+                    'The Blue Pill NFT offers your early access to Charisma Recovery token redemptions.'
+                  }
+                />
+              )}
               <ConnectWallet />
             </div>
           </header>
@@ -149,6 +183,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />
             <div className={cn(styles.full, className)}>{children}</div>
+            <GlobalDrawer open={drawer.isOpen} onClose={drawer.close} />
           </main>
           <Footer />
         </div>
