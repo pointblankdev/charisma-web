@@ -25,6 +25,9 @@
       "@lib/*": [
         "lib/*"
       ],
+      "@types/*": [
+        "types/*"
+      ],
       "@styles/*": [
         "styles/*"
       ],

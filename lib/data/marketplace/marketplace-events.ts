@@ -2,6 +2,7 @@ import Logger from '@lib/logger';
 import { MarketplaceService, MarketplaceListing } from './marketplace-service';
 import { kv } from '@vercel/kv';
 import { EmbedBuilder } from '@tycrek/discord-hookr/dist/EmbedBuilder';
+import { getNftURI, getTokenMetadata } from '@lib/stacks-api';
 
 // Interface for sale events
 interface SaleEvent {
@@ -57,7 +58,7 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
           commission: data.commission,
           timestamp: Date.now(),
           // Metadata will be populated later via updateListingMetadata
-          metadata: {}
+          metadata: await getNftURI(data.tradables, data['tradable-id'])
         };
 
         await MarketplaceService.createListing(listing);
@@ -66,7 +67,7 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
           name: `${symbol} Asset Listed`,
           value: [
             `Contract: ${data.tradables}`,
-            `ID: ${data.tradable_id}`,
+            `ID: ${data['tradable-id']}`,
             `Price: ${data.price / 1000000} STX`, // Convert microSTX to STX for display
             `Commission: ${data.commission / 100}%` // Convert basis points to percentage
           ].join('\n')
@@ -74,20 +75,23 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
         break;
 
       case 'UNLIST_ASSET':
-        await MarketplaceService.removeListing(data.tradables, data.tradable_id);
+        await MarketplaceService.removeListing(data.tradables, data['tradable-id']);
 
         builder.addField({
           name: `${symbol} Asset Unlisted`,
-          value: `Contract: ${data.tradables}\nID: ${data.tradable_id}`
+          value: `Contract: ${data.tradables}\nID: ${data['tradable-id']}`
         });
         break;
 
       case 'PURCHASE_ASSET':
         // First get the listing details before removal
-        const soldListing = await MarketplaceService.getListing(data.tradables, data.tradable_id);
+        const soldListing = await MarketplaceService.getListing(
+          data.tradables,
+          data['tradable-id']
+        );
 
         // Remove the listing
-        await MarketplaceService.removeListing(data.tradables, data.tradable_id);
+        await MarketplaceService.removeListing(data.tradables, data['tradable-id']);
 
         // Save the sale event
         if (soldListing) {

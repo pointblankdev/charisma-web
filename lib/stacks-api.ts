@@ -105,15 +105,18 @@ export async function getNftURI(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
   tokenId = 1
 ) {
-  const [address, name] = contract.split('.');
-
-  const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any;
-  const response = await client.POST(path, {
-    body: { sender: address, arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))] }
-  });
-  const cv = cvToJSON(hexToCV(response.data.result));
-  const url = cv.value.value.value.replace('{id}', tokenId);
-  return await (await fetch(url)).json();
+  try {
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))] }
+    });
+    const cv = cvToJSON(hexToCV(response.data.result));
+    const url = cv.value.value.value.replace('{id}', tokenId);
+    return await (await fetch(url)).json();
+  } catch (error) {
+    return {};
+  }
 }
 
 export async function getSymbol(
