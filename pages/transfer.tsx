@@ -4,6 +4,7 @@ import { META_DESCRIPTION } from '@lib/constants';
 import { Card } from '@components/ui/card';
 import { useState } from 'react';
 import {
+  contractPrincipalCV,
   noneCV,
   optionalCVOf,
   PostConditionMode,
@@ -43,19 +44,20 @@ export default function TransferPage() {
 const Transfer = () => {
   const [sender, setSender] = useState('');
   const [recipient, setRecipient] = useState('');
+  const [amount, setAmount] = useState('');
 
   function transfer() {
     openContractCall(
       {
         network: network,
         contractAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ',
-        contractName: 'dungeon-master',
+        contractName: 'dme000-governance-token',
         functionName: 'dmg-transfer',
         functionArgs: [
-          uintCV(1),
+          uintCV(amount),
           standardPrincipalCV(sender),
-          standardPrincipalCV(recipient),
-          optionalCVOf(noneCV())
+          contractPrincipalCV(recipient.split('.')[0], recipient.split('.')[1])
+          // optionalCVOf(noneCV())
         ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
@@ -66,6 +68,7 @@ const Transfer = () => {
 
   return (
     <>
+      <Input onChange={e => setAmount(e.target.value)} className="w-full" placeholder="Amount" />
       <Input onChange={e => setSender(e.target.value)} className="w-full" placeholder="Sender" />
       <Input
         onChange={e => setRecipient(e.target.value)}
