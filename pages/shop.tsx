@@ -236,7 +236,7 @@ function ProductDialog({
             <div className="p-4 space-y-6 md:p-6">
               {/* Desktop Header - Hidden on mobile */}
               <div className="hidden md:block">
-                <h2 className="text-2xl font-bold">{displayName}</h2>
+                <h2 className="text-lg font-bold">{displayName}</h2>
                 <p className="text-muted-foreground">{contractName.replace(/-/g, ' ')}</p>
               </div>
 
@@ -245,7 +245,7 @@ function ProductDialog({
                 <div className="flex items-center justify-between gap-4">
                   <div className="flex items-center gap-2">
                     <CircleDollarSign className="w-5 h-5 text-muted-foreground" />
-                    <span className="text-2xl font-bold">{displayPrice} STX</span>
+                    <span className="text-2xl font-semibold">{displayPrice} STX</span>
                   </div>
                   <Button
                     size="lg"
@@ -276,7 +276,7 @@ function ProductDialog({
                     <AccordionItem value="description">
                       <AccordionTrigger>Description</AccordionTrigger>
                       <AccordionContent>
-                        <p className="text-muted-foreground">
+                        <p className="leading-0 text-muted-foreground">
                           {item.metadata.description.description || item.metadata.description}
                         </p>
                       </AccordionContent>
@@ -294,8 +294,10 @@ function ProductDialog({
                               key={idx}
                               className="p-3 text-center transition-colors rounded-lg bg-accent-foreground/10"
                             >
-                              <div className="text-sm text-muted-foreground">{attr.trait_type}</div>
-                              <div className="font-medium">{attr.value}</div>
+                              <div className="text-sm text-muted-foreground">
+                                {attr.trait || attr.trait_type}
+                              </div>
+                              <div className="font-medium">{attr.value || '-'}</div>
                             </div>
                           ))}
                         </div>
@@ -349,7 +351,7 @@ function ProductDialog({
                 {isListing && item.metadata.description && (
                   <div className="space-y-2">
                     <h3 className="text-lg font-semibold">Description</h3>
-                    <p className="text-muted-foreground">
+                    <p className="text-sm text-muted-foreground">
                       {item.metadata.description.description || item.metadata.description}
                     </p>
                   </div>
@@ -365,8 +367,10 @@ function ProductDialog({
                           key={idx}
                           className="p-3 text-center transition-colors rounded-lg bg-accent-foreground/10"
                         >
-                          <div className="text-sm text-muted-foreground">{attr.trait_type}</div>
-                          <div className="font-medium">{attr.value}</div>
+                          <div className="text-sm text-muted-foreground">
+                            {attr.trait || attr.trait_type}
+                          </div>
+                          <div className="font-medium">{attr.value || '-'}</div>
                         </div>
                       ))}
                     </div>
@@ -805,7 +809,7 @@ function ListingDialog() {
                               <span className="text-muted-foreground">
                                 {attr.trait || attr.trait_type}
                               </span>
-                              <span>{attr.value}</span>
+                              <span>{attr.value || '-'}</span>
                             </div>
                           ))}
                         </div>
