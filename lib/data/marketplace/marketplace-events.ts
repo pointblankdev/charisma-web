@@ -1,4 +1,4 @@
-import Logger from "@lib/logger";
+import Logger from '@lib/logger';
 import { MarketplaceService, MarketplaceListing } from './marketplace-service';
 import { kv } from '@vercel/kv';
 import { EmbedBuilder } from '@tycrek/discord-hookr/dist/EmbedBuilder';
@@ -41,7 +41,8 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
   if (event.type !== 'SmartContractEvent') return builder;
 
   // Only handle events from the marketplace contract
-  if (event.data.contract_identifier !== 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.marketplace-v6') return builder;
+  if (event.data.contract_identifier !== 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.marketplace-v6')
+    return builder;
 
   const symbol = '🏪';
   const { op, ...data } = event.data.value;
@@ -51,12 +52,9 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
       case 'LIST_ASSET':
         const listing: MarketplaceListing = {
           contractId: data.tradables,
-          tokenId: data.tradable_id,
+          tokenId: data['tradable-id'],
           price: data.price,
           commission: data.commission,
-          owner: data.sender,
-          royaltyAddress: data.royalty_address,
-          royaltyPercent: data.royalty_percent,
           timestamp: Date.now(),
           // Metadata will be populated later via updateListingMetadata
           metadata: {}
@@ -95,13 +93,13 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
         if (soldListing) {
           const sale: SaleEvent = {
             contractId: data.tradables,
-            tokenId: data.tradable_id,
+            tokenId: data['tradable-id'],
             price: data.price,
             commission: data.commission,
             seller: data.owner,
             buyer: event.data.sender,
-            royaltyAddress: data.royalty_address,
-            royaltyPercent: data.royalty_percent,
+            royaltyAddress: data['royalty-address'],
+            royaltyPercent: data['royalty-percent'],
             timestamp: Date.now(),
             metadata: soldListing.metadata
           };
@@ -113,22 +111,24 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
           name: `${symbol} Asset Sold`,
           value: [
             `Contract: ${data.tradables}`,
-            `ID: ${data.tradable_id}`,
+            `ID: ${data['tradable-id']}`,
             `Price: ${data.price / 1000000} STX`,
             `Commission: ${data.commission / 100}%`,
-            `Royalty: ${data.royalty_percent / 100}%`,
+            `Royalty: ${data['royalty-percent'] / 100}%`,
             soldListing?.name ? `Name: ${soldListing.name}` : '',
             soldListing?.collection ? `Collection: ${soldListing.collection}` : ''
-          ].filter(Boolean).join('\n')
+          ]
+            .filter(Boolean)
+            .join('\n')
         });
         break;
 
       case 'ADMIN_UNLIST_ASSET':
-        await MarketplaceService.removeListing(data.tradables, data.tradable_id);
+        await MarketplaceService.removeListing(data.tradables, data['tradable-id']);
 
         builder.addField({
           name: `${symbol} Admin Unlisted Asset`,
-          value: `Contract: ${data.tradables}\nID: ${data.tradable_id}`
+          value: `Contract: ${data.tradables}\nID: ${data['tradable-id']}`
         });
         break;
 
