@@ -76,7 +76,7 @@ export default function PoolsLayout({ children }: any) {
                   icon={CoinsIcon}
                   title="Community Pools"
                   subtitle="Zero Protocol Fees"
-                  description="These pools have zero protocol fees and utilize 100% of the swap fees to compensate LP providers, maximizing returns for liquidity providers."
+                  description="These pools have zero protocol fees and utilize 100% of the swap fees to compensate LP providers, maximizing returns for the community."
                   protocolFee={0}
                   lpYield={0.3}
                 />
@@ -104,7 +104,7 @@ export default function PoolsLayout({ children }: any) {
                   icon={ArrowRightLeftIcon}
                   title="Spot Pools"
                   subtitle="Standard Token Pairs"
-                  description="These are pools created, managed and funded by the Charisma community, with protocol fees contributing to the development and expansion of the platform."
+                  description="These are pools created, managed and funded by the Charisma team, with protocol fees contributing to the development and expansion of the platform."
                   protocolFee={0.25}
                   lpYield={0.25}
                 />
