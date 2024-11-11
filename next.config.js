@@ -24,7 +24,7 @@ module.exports = {
       {
         source: '/api/v0/nfts/:path*',
         destination: '/api/v1/nfts/:path*',
-        permanent: false
+        permanent: true
       }
     ];
   },
