@@ -631,6 +631,11 @@ function ListingDialog() {
       id: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh',
       name: 'Happy Welsh',
       expectedPrice: '150-5000'
+    },
+    {
+      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-chromie',
+      name: 'Cultured Welsh Chromie',
+      expectedPrice: '50-100'
     }
   ];
 
