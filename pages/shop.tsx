@@ -208,24 +208,26 @@ function ProductDialog({
           <p className="text-sm text-muted-foreground">{contractName.replace(/-/g, ' ')}</p>
         </DialogHeader>
 
-        <div className="flex flex-col flex-1 overflow-hidden md:flex-row md:h-full group">
+        <div className="flex flex-col flex-1 overflow-hidden md:flex-row md:h-full">
           {/* Image Section */}
           <div className="relative w-full h-[25vh] md:h-full md:w-3/5 flex items-center justify-center z-20">
             <Image
               src={imageSrc}
               alt={displayName}
+              quality={100}
               className="object-contain max-w-full max-h-full"
-              width={800}
-              height={800}
+              width={1024}
+              height={1024}
             />
           </div>
           <div className="absolute w-full h-[25vh] md:h-full md:w-3/5 bg-black flex items-center justify-cente z-0">
             <Image
               src={imageSrc}
               alt={displayName}
-              className="object-cover h-full max-w-full transition-all duration-1000 blur-3xl group-hover:opacity-20 "
-              width={800}
-              height={800}
+              quality={10}
+              className="object-cover h-full max-w-full opacity-50 blur-3xl"
+              width={1024}
+              height={1024}
             />
           </div>
 
