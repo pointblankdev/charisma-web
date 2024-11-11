@@ -57,7 +57,6 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
           price: data.price,
           commission: data.commission,
           timestamp: Date.now(),
-          // Metadata will be populated later via updateListingMetadata
           metadata: await getNftURI(data.tradables, data['tradable-id'])
         };
 

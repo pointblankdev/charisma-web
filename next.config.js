@@ -20,6 +20,11 @@ module.exports = {
         source: '/odins-raven/:path*',
         destination: '/sip9/odins-raven/:path*',
         permanent: true
+      },
+      {
+        source: '/api/v0/nfts/:path*',
+        destination: '/api/v0/nfts/:path*',
+        permanent: false
       }
     ];
   },

@@ -103,7 +103,7 @@ export async function getTokenImage(
 
 export async function getNftURI(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
-  tokenId = 1
+  tokenId: string | number = 1
 ) {
   try {
     const [address, name] = contract.split('.');

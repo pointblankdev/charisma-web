@@ -1,12 +1,10 @@
-
 export const SITE_URL = 'https://charisma.rocks';
 export const SITE_ORIGIN = process.env.NEXT_PUBLIC_SITE_ORIGIN || new URL(SITE_URL).origin;
 export const TWITTER_USER_NAME = 'CharismaBTC';
 export const BRAND_NAME = 'Charisma';
 export const SITE_NAME_MULTILINE = ['Charisma'];
 export const SITE_NAME = 'Charisma';
-export const META_DESCRIPTION =
-  'The next-generation DeFi protocol on Stacks.';
+export const META_DESCRIPTION = 'The next-generation DeFi protocol on Stacks.';
 export const FUNNY_QUOTE = `"Spellbinding" — The New York Times`;
 export const DATE = '31 October 2023';
 export const SHORT_DATE = 'Jan 1 - 9:00am PST';
@@ -22,21 +20,25 @@ export const API_URL = VERCEL_URL ? `https://${VERCEL_URL}` : 'http://localhost:
 
 export const NAVIGATION = [
   {
-    name: 'Swap',
+    name: 'Trade',
     route: '/swap'
   },
   {
-    name: 'Pools',
+    name: 'Invest',
     route: '/pools'
   },
   {
-    name: 'Explore',
-    route: '/explore'
+    name: 'Earn',
+    route: '/interactions'
   },
   {
-    name: 'Recovery',
-    route: '/recovery'
+    name: 'Shop',
+    route: '/shop'
   },
+  {
+    name: 'Redeem',
+    route: '/recovery'
+  }
 ];
 
 export type TicketGenerationState = 'default' | 'loading';

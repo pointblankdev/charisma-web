@@ -92,6 +92,7 @@
     "react-icons": "^4.10.1",
     "react-minimal-pie-chart": "^8.4.0",
     "react-resizable": "^3.0.5",
+    "react-resizable-panels": "^2.1.6",
     "react-tsparticles": "^2.11.0",
     "safe-json-stringify": "^1.2.0",
     "sbtc": "^0.1.8",
