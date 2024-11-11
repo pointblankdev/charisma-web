@@ -98,7 +98,7 @@ export async function getTokenImage(
   const url =
     cvToJSON(hexToCV(response.data.result))?.value?.value?.value ||
     'https://charisma.rocks/charisma.json';
-  return (await (await fetch(url)).json()).image;
+  return (await (await fetch(url, { mode: 'no-cors', redirect: 'follow' })).json()).image;
 }
 
 export async function getNftURI(
@@ -113,9 +113,11 @@ export async function getNftURI(
     });
     const cv = cvToJSON(hexToCV(response.data.result));
     const url = cv.value.value.value.replace('{id}', tokenId);
-    return await (await fetch(url)).json();
+    const result = await fetch(url);
+    return await result.text();
   } catch (error) {
-    return {};
+    console.error('Fetch error:', error);
+    throw error;
   }
 }
 
