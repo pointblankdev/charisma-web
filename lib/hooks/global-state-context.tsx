@@ -77,25 +77,30 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   const getLastTapBlock = useCallback(async () => {
     if (stxAddress && block?.height) {
-      const ENGINE = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7';
-      try {
-        const [contractAddress, contractName] = ENGINE.split('.');
-        const result = await fetchCallReadOnlyFunction({
-          network: network,
-          contractAddress,
-          contractName,
-          functionName: 'get-last-tap-block',
-          functionArgs: [principalCV(stxAddress)],
-          senderAddress: stxAddress
-        });
+      const engines = [
+        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7',
+        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-vself-rc1'
+      ];
+      for (const engine of engines) {
+        const [contractAddress, contractName] = engine.split('.');
+        try {
+          const result = await fetchCallReadOnlyFunction({
+            network: network,
+            contractAddress,
+            contractName,
+            functionName: 'get-last-tap-block',
+            functionArgs: [principalCV(stxAddress)],
+            senderAddress: stxAddress
+          });
 
-        const lastBlock = Number(cvToValue(result));
-        setTappedAt((taps: any) => ({
-          ...taps,
-          [ENGINE]: lastBlock
-        }));
-      } catch (error) {
-        console.error('Failed to fetch last tap block:', error);
+          const lastBlock = Number(cvToValue(result));
+          setTappedAt((taps: any) => ({
+            ...taps,
+            [engine]: lastBlock
+          }));
+        } catch (error) {
+          console.error('Failed to fetch last tap block:', error);
+        }
       }
     }
   }, [block?.height]);
