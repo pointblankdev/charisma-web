@@ -290,7 +290,7 @@ function ProductDialog({
                           {item.metadata.attributes.map((attr: any, idx: number) => (
                             <div
                               key={idx}
-                              className="p-3 text-center transition-colors rounded-lg bg-accent/50 hover:bg-accent"
+                              className="p-3 text-center transition-colors rounded-lg bg-accent-foreground/10"
                             >
                               <div className="text-sm text-muted-foreground">{attr.trait_type}</div>
                               <div className="font-medium">{attr.value}</div>
@@ -361,7 +361,7 @@ function ProductDialog({
                       {item.metadata.attributes.map((attr: any, idx: number) => (
                         <div
                           key={idx}
-                          className="p-3 text-center transition-colors rounded-lg bg-accent/50 hover:bg-accent"
+                          className="p-3 text-center transition-colors rounded-lg bg-accent-foreground/10"
                         >
                           <div className="text-sm text-muted-foreground">{attr.trait_type}</div>
                           <div className="font-medium">{attr.value}</div>
