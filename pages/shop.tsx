@@ -599,6 +599,11 @@ function ListingDialog() {
       expectedPrice: '50-200'
     },
     {
+      id: 'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk',
+      name: 'Welsh Punk',
+      expectedPrice: '10-100'
+    },
+    {
       id: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0',
       name: 'Stacks Invaders',
       expectedPrice: '75-125'
