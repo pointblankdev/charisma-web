@@ -94,7 +94,7 @@ export const getStaticProps: GetStaticProps<InteractionsPageProps> = async () =>
         };
       })
     )
-  ).filter(item => item !== null);
+  ).filter(item => item !== null) as any[];
 
   // Curated list of explorations
   const explorations: Exploration[] = [
@@ -168,7 +168,7 @@ export const getStaticProps: GetStaticProps<InteractionsPageProps> = async () =>
         }
       ]
     }
-  ];
+  ] as any[];
 
   return {
     props: {
@@ -443,32 +443,6 @@ function InteractionArtwork({
           {interaction.contract.split('.')[0].slice(-4)}.{interaction.contract.split('.')[1]}
         </p>
         <p className="text-xs text-muted-foreground line-clamp-2">{interaction.description}</p>
-      </div>
-    </div>
-  );
-}
-
-function InteractionEmptyPlaceholder() {
-  return (
-    <div className="flex h-[450px] shrink-0 items-center justify-center rounded-md border border-dashed">
-      <div className="mx-auto flex max-w-[420px] flex-col items-center justify-center text-center">
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          fill="none"
-          stroke="currentColor"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          strokeWidth="2"
-          className="w-10 h-10 text-muted-foreground"
-          viewBox="0 0 24 24"
-        >
-          <path d="M12 5v14M5 12h14" />
-        </svg>
-
-        <h3 className="mt-4 text-lg font-semibold">No Interactions found</h3>
-        <p className="mt-2 mb-4 text-sm text-muted-foreground">
-          No interactions are currently available. Check back later!
-        </p>
       </div>
     </div>
   );
