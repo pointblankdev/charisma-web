@@ -132,7 +132,7 @@ export default function PoolsLayout({ children }: any) {
                   icon={LayersIcon}
                   title="Derivative Pools"
                   subtitle="Multi-Asset Exposure"
-                  description="These pools feature liquidity provider (LP) tokens as swappable assets. These pools will generally have higher APYs and less volatile price movement."
+                  description="These pools feature liquidity provider (LP) tokens as swappable assets. These pools will offer more consistent APYs and lower average price volatility."
                   protocolFee={0.25}
                   lpYield={0.25}
                 />
