@@ -53,7 +53,7 @@
 (define-constant CONTRACT_OWNER tx-sender)
 
 ;; Data Variables
-(define-data-var first-start-block uint block-height)
+(define-data-var first-start-block uint stacks-block-height)
 (define-data-var contract-uri (optional (string-utf8 256)) 
     (some u"https://charisma.rocks/api/v0/interactions/engines/cha"))
 
@@ -64,8 +64,8 @@
 
 (define-private (get-balance (data { address: principal, block: uint }))
     (let ((target-block (get block data)))
-        (if (< target-block block-height)
-            (let ((block-hash (unwrap-panic (get-block-info? id-header-hash target-block))))
+        (if (< target-block stacks-block-height)
+            (let ((block-hash (unwrap-panic (get-stacks-block-info? id-header-hash target-block))))
                 (at-block block-hash (unwrap-panic (contract-call? .charisma-token get-balance (get address data)))))
                 (unwrap-panic (contract-call? .charisma-token get-balance (get address data))))))
 
@@ -222,7 +222,7 @@
 (define-private (tap-action (rulebook <rulebook-trait>))
   (let (
     (sender tx-sender)
-    (end-block block-height)
+    (end-block stacks-block-height)
     (start-block (get-last-tap-block sender))
     (balance-integral (calculate-balance-integral sender start-block end-block))
     (quality-score (contract-call? .arcana get-quality-score .charisma-token))

@@ -64,17 +64,7 @@ const ConnectWallet = () => {
   useEffect(() => {
     setMounted(true);
     try {
-      const userData = userSession.loadUserData();
-      const address = userData.profile.stxAddress.mainnet;
-      getNamesFromAddress(address).then(bns => {
-        const user = {
-          id: address,
-          names: bns,
-          ip_address: '{{auto}}',
-          email: userData.email
-        };
-        Sentry.setUser(user);
-      });
+      userSession.loadUserData();
     } catch (error) {
       console.error(error);
     }

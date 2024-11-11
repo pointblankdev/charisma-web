@@ -18,7 +18,7 @@ import {
 } from '@components/ui/context-menu';
 import { useRouter } from 'next/navigation';
 import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { interactionIds } from 'pages/api/v0/interactions';
 import {
   Dialog,
@@ -51,7 +51,9 @@ import {
   contractPrincipalCV,
   PostConditionMode,
   uintCV,
-  Pc
+  Pc,
+  principalCV,
+  cvToValue
 } from '@stacks/transactions';
 
 export type Collection = typeof collections[number];
@@ -196,7 +198,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
     //   cover: "/explorations/energy-arbitrage.png",
     //   steps: [
     //     {
-    //       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc6',
+    //       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7',
     //       action: "TAP",
     //       description: "Generate base energy"
     //     },
@@ -229,7 +231,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
       cover: '/explorations/charismatic-flow.png',
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc6',
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7',
           action: 'TAP',
           description: 'Generate base energy'
         },
@@ -595,6 +597,20 @@ function InteractionArtwork({
   const { interact } = useDungeonCrawler();
   const [isLoading, setIsLoading] = useState(false);
   const { wallet } = useWallet();
+  const { tappedAt, block } = useGlobalState();
+  const [animate, setAnimate] = useState(false);
+
+  useEffect(() => {
+    if (!animate) {
+      setAnimate(true);
+      setTimeout(() => setAnimate(false), 1000);
+    }
+  }, [animate, block.height]);
+
+  const lastTapBlock = tappedAt['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7'];
+  const blockPeriod = block.height - lastTapBlock;
+  const unclaimedEnergy =
+    interaction.analytics.energyPerBlockPerToken * wallet.charisma.balance * blockPeriod;
 
   const handleInteractionClick = () => {
     if (interaction.uri) {
@@ -616,34 +632,56 @@ function InteractionArtwork({
   };
 
   return (
-    <div className={cn('space-y-3', className)} {...props}>
+    <div className={cn('space-y-3', className, 'transition-all')} {...props}>
       <ContextMenu>
         <ContextMenuTrigger>
           <div
-            className="relative overflow-hidden rounded-md cursor-pointer"
+            className="relative overflow-hidden rounded-md cursor-pointer group"
             onClick={handleInteractionClick}
           >
-            {/* APY Badge */}
+            {/* Energy Generation Rate Badge */}
             {interaction?.analytics.energyPerBlockPerToken && (
               <Badge
                 title={`Estimate based on your current balance of ${numeral(
                   wallet.charisma.balance
                 ).format('0,0')} tokens`}
-                className="absolute z-10 text-white top-2 right-2 bg-black/75 hover:bg-black/75"
+                className={cn(
+                  'absolute z-20 text-white rounded-b-none rounded-t-xl justify-center w-[96px] text-center place-self-center top-2 right-2 bg-black/75 hover:bg-black/75',
+                  unclaimedEnergy !== null && unclaimedEnergy > 0
+                    ? 'rounded-b-none'
+                    : 'rounded-b-xl'
+                )}
               >
-                {numeral(
-                  interaction?.analytics.energyPerBlockPerToken * wallet.charisma.balance
-                ).format('0.00')}{' '}
-                ⚡/block
+                <div>
+                  {numeral(
+                    interaction?.analytics.energyPerBlockPerToken * wallet.charisma.balance
+                  ).format('0.00')}{' '}
+                  ⚡/block
+                </div>
               </Badge>
             )}
+
+            {/* Unclaimed Energy Badge */}
+            {unclaimedEnergy !== null && unclaimedEnergy > 0 && (
+              <Badge
+                title="Unclaimed energy available"
+                className={cn(
+                  'absolute z-10 font-bold px-0 text-white justify-center rounded-t-none  w-[96px] text-center place-self-center rounded-b-xl top-8 right-2 bg-green-600/75 hover:bg-green-600/75'
+                )}
+              >
+                <div className={animate ? 'shake' : ''}>
+                  Claim {numeral(unclaimedEnergy).format('0,0')} ⚡
+                </div>
+              </Badge>
+            )}
+
             <Image
               src={interaction.cover}
               alt={interaction.name}
               width={width}
               height={height}
               className={cn(
-                'h-auto w-auto object-cover transition-all opacity-90 hover:opacity-100',
+                'h-auto w-auto object-cover transition-all group-hover:scale-105',
                 aspectRatio === 'portrait' ? 'aspect-[3/4]' : 'aspect-square'
               )}
             />

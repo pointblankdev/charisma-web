@@ -4,7 +4,8 @@ import { getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
-import { userSession } from '@components/stacks-session/connect';
+import { network, userSession } from '@components/stacks-session/connect';
+import { cvToValue, fetchCallReadOnlyFunction, principalCV } from '@stacks/transactions';
 
 const socketUrl = 'https://api.mainnet.hiro.so';
 const sc = new StacksApiSocketClient({ url: socketUrl });
@@ -49,7 +50,7 @@ const GlobalStateContext = createContext<GlobalState | undefined>(undefined);
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [stxAddress, setStxAddress] = usePersistedState('address', '');
   const [lands, setLands] = usePersistedState('lands', {});
-  const [block, setBlock] = usePersistedState('block', {});
+  const [block, setBlock] = usePersistedState('block', {} as any);
   const [tapped, setTapped] = usePersistedState('tapped', {});
   const [tappedAt, setTappedAt] = usePersistedState('tappedAt', {});
   const [token, setToken] = usePersistedState('token', {});
@@ -74,6 +75,35 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   }, [setStxAddress]);
 
+  const getLastTapBlock = useCallback(async () => {
+    if (stxAddress && block?.height) {
+      const ENGINE = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7';
+      try {
+        const [contractAddress, contractName] = ENGINE.split('.');
+        const result = await fetchCallReadOnlyFunction({
+          network: network,
+          contractAddress,
+          contractName,
+          functionName: 'get-last-tap-block',
+          functionArgs: [principalCV(stxAddress)],
+          senderAddress: stxAddress
+        });
+
+        const lastBlock = Number(cvToValue(result));
+        setTappedAt((taps: any) => ({
+          ...taps,
+          [ENGINE]: lastBlock
+        }));
+      } catch (error) {
+        console.error('Failed to fetch last tap block:', error);
+      }
+    }
+  }, [block?.height]);
+
+  useEffect(() => {
+    getLastTapBlock();
+  }, [stxAddress, getLastTapBlock]);
+
   // Function to update energy of a specific token in the lands state
   const updateTokenEnergy = (landId: string, energy: number) => {
     setLands((prevLands: any) => {
@@ -88,26 +118,15 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
   const getCharismaTokenStats = useCallback(async () => {
     if (stxAddress) {
       try {
-        const transactionsAvailable = await CharismaToken.getTransactionsAvailable();
-        const blocksUntilUnlock = await CharismaToken.getBlocksUntilUnlock();
-        const blocksPerTransaction = await CharismaToken.getBlocksPerTransaction();
-        const tokensPerTransaction = await CharismaToken.getTokensPerTransaction();
         const hasFreeClaim = await CharismaToken.hasFreeClaim(stxAddress);
         const hasClaimed = await CharismaToken.hasClaimed(stxAddress);
-
-        setCharismaTokenStats({
-          transactionsAvailable,
-          blocksUntilUnlock,
-          blocksPerTransaction,
-          tokensPerTransaction
-        });
 
         setCharismaClaims({ hasFreeClaim, hasClaimed });
       } catch (error) {
         console.error('Error fetching Charisma token stats:', error);
       }
     }
-  }, [stxAddress, setCharismaTokenStats, setCharismaClaims]);
+  }, [stxAddress, setCharismaClaims]);
 
   useEffect(() => {
     getCharismaTokenStats();

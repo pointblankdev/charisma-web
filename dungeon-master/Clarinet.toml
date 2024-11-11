@@ -197,6 +197,9 @@ depends_on = []
 path = "contracts/charisma-traits-v0.clar"
 depends_on = []
 
+
+clarity_version = 3
+epoch = 3.0
 [repl.analysis]
 passes = ["check_checker"]
 check_checker = { trusted_sender = false, trusted_caller = false, callee_filter = false }
