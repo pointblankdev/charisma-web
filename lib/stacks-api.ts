@@ -113,7 +113,8 @@ export async function getNftURI(
     });
     const cv = cvToJSON(hexToCV(response.data.result));
     const url = cv.value.value.value.replace('{id}', tokenId);
-    const result = await fetch(`https://corsproxy.io/?${url}`, { mode: 'no-cors' });
+    const result = await fetch(url, { mode: 'no-cors', redirect: 'follow' });
+    console.log(result);
     const out = await result.json();
     console.log(out);
     return out;
