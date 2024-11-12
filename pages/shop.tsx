@@ -641,6 +641,31 @@ function ListingDialog() {
       id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant',
       name: 'Cultured Welsh Grant',
       expectedPrice: '50-100'
+    },
+    {
+      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-memories',
+      name: 'Cultured Welsh Memories',
+      expectedPrice: '50-100'
+    },
+    {
+      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-ribboned',
+      name: 'Cultured Welsh Ribboned',
+      expectedPrice: '50-100'
+    },
+    {
+      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-ringers',
+      name: 'Cultured Welsh Ringers',
+      expectedPrice: '50-100'
+    },
+    {
+      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-beepled',
+      name: 'Cultured Welsh Beepled',
+      expectedPrice: '50-100'
+    },
+    {
+      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-fidenza',
+      name: 'Cultured Welsh Fidenza',
+      expectedPrice: '50-100'
     }
   ];
 
