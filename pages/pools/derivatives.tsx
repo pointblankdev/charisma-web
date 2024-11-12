@@ -44,10 +44,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
     }
 
-    // filter only for pools with base tokens that are LP tokens
-    const derivativePools = pools.filter(
-      (p: any) => (p.token0.lpInfo || p.token1.lpInfo) && p.poolData
-    );
+    const derivativePools = pools
+      // filter only for pools with base tokens that are LP tokens
+      .filter((p: any) => (p.token0.lpInfo || p.token1.lpInfo) && p.poolData)
+      // filter out community pools with zero protocol fee
+      .filter((p: any) => p.poolData.protocolFee.numerator !== 0);
 
     return {
       props: {

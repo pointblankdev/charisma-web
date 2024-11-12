@@ -49,16 +49,14 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
     }
 
-    const spotPools = pools
-      // filter out pools with base tokens that are LP tokens
-      .filter((p: any) => !p.token0.lpInfo && !p.token1.lpInfo && p.poolData)
-      // filter out community pools with zero protocol fee
-      .filter((p: any) => p.poolData.protocolFee.numerator !== 0);
+    const communityPools = pools
+      // filter for community pools with zero protocol fee
+      .filter((p: any) => p.poolData.protocolFee.numerator === 0);
 
     return {
       props: {
         data: {
-          pools: spotPools,
+          pools: communityPools,
           tokenPrices: prices
         }
       },
@@ -78,10 +76,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
   }
 };
 
-export default function SpotPoolsPage({ data }: Props) {
+export default function CommunityPoolsPage({ data }: Props) {
   const meta = {
-    title: 'Charisma | Spot Pools',
-    description: 'View and manage spot liquidity pools on the Charisma DEX',
+    title: 'Charisma | Community Pools',
+    description: 'View and manage community liquidity pools on the Charisma DEX',
     image: 'https://charisma.rocks/pools-screenshot.png'
   };
 
@@ -107,7 +105,7 @@ export default function SpotPoolsPage({ data }: Props) {
           >
             <PoolsLayout>
               {isAuthorized || true ? (
-                <PoolsInterface data={data} title={'Spot Pools'} />
+                <PoolsInterface data={data} title={'Community Pools'} />
               ) : (
                 <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
                   <Card className="w-full max-w-lg p-6 text-center">
