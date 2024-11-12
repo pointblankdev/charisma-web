@@ -18,9 +18,11 @@ export const getStaticProps: GetStaticProps<any> = async () => {
     PricesService.getAllTokenPrices()
   ]);
 
+  const charismaNames = ['Charisma DEX', 'Charisma', 'charisma'];
+
   // build pools data
   const tokenList = tokenInfo.tokens;
-  const lpTokens = tokenList.filter((t: any) => t.lpInfo);
+  const lpTokens = tokenList.filter((t: any) => charismaNames.includes(t.lpInfo?.dex));
   const pools = [];
   for (const lpToken of lpTokens) {
     let poolData = null;
