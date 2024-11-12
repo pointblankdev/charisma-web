@@ -28,7 +28,7 @@ import redPillNft from '@public/sip9/pills/red-pill-nft.gif';
 import bluePillNft from '@public/sip9/pills/blue-pill-nft.gif';
 import { StaticImageData } from 'next/image';
 import { MarketplaceService } from '@lib/data/marketplace/marketplace-service';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import stxLogo from '@public/stx-logo.png';
 import numeral from 'numeral';
@@ -46,7 +46,11 @@ import {
   Loader2,
   Plus,
   Sparkles,
-  TrendingUp
+  TrendingUp,
+  Coins,
+  Cat,
+  PictureInPicture,
+  Box
 } from 'lucide-react';
 import { Separator } from '@components/ui/separator';
 import {
@@ -71,12 +75,23 @@ import { Label } from '@components/ui/label';
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue
 } from '@components/ui/select';
 import { Input } from '@components/ui/input';
 import { getNftURI } from '@lib/stacks-api';
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem
+} from '@components/ui/command';
+import { TypeOf } from 'zod';
+import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover';
 
 function formatTimestamp(timestamp: number): string {
   const date = new Date(timestamp);
@@ -151,6 +166,150 @@ const PRODUCT_LIST: Omit<ShopProduct, 'price' | 'type'>[] = [
     description: 'Take the blue pill and the story ends.'
   }
 ];
+
+// Collections that support the required token traits
+const COLLECTIONS_BY_ARTIST = {
+  'rozar.btc': {
+    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+    collections: [
+      {
+        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
+        name: "Odin's Ravens",
+        expectedPrice: '350-500'
+      },
+      {
+        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt',
+        name: 'Spell Scrolls',
+        expectedPrice: '10-20'
+      },
+      {
+        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar',
+        name: 'Pixel Rozar',
+        expectedPrice: '1-5'
+      },
+      {
+        id: 'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk',
+        name: 'Welsh Punk',
+        expectedPrice: '10-100'
+      },
+      {
+        id: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.bitgear-genesis',
+        name: 'Bitgear Genesis',
+        expectedPrice: '150-300'
+      }
+    ]
+  },
+  GPSC: {
+    address: 'UNKNOWN',
+    collections: [
+      {
+        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse',
+        name: 'Memobots: Guardians',
+        expectedPrice: '60-120'
+      }
+    ]
+  },
+  irmissima: {
+    address: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ',
+    collections: [
+      {
+        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-chromie',
+        name: 'Cultured Welsh: Chromie',
+        expectedPrice: '50-100'
+      },
+      {
+        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant',
+        name: 'Cultured Welsh: Grant',
+        expectedPrice: '50-100'
+      },
+      {
+        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-memories',
+        name: 'Cultured Welsh: Memories',
+        expectedPrice: '50-100'
+      },
+      {
+        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-ribboned',
+        name: 'Cultured Welsh: Ribboned',
+        expectedPrice: '50-100'
+      },
+      {
+        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-ringers',
+        name: 'Cultured Welsh: Ringers',
+        expectedPrice: '50-100'
+      },
+      {
+        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-beepled',
+        name: 'Cultured Welsh: Beepled',
+        expectedPrice: '50-100'
+      },
+      {
+        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-fidenza',
+        name: 'Cultured Welsh: Fidenza',
+        expectedPrice: '50-100'
+      }
+    ]
+  },
+  Vinzo: {
+    address: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ',
+    collections: [
+      {
+        id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh',
+        name: 'Weird Welsh',
+        expectedPrice: '50-200'
+      },
+      {
+        id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters',
+        name: 'Treasure Hunters',
+        expectedPrice: '100-200'
+      },
+      {
+        id: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz',
+        name: 'Jumping Pupperz',
+        expectedPrice: '25-60'
+      }
+    ]
+  },
+  MooningShark: {
+    address: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ',
+    collections: [
+      {
+        id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh',
+        name: 'Weird Welsh',
+        expectedPrice: '50-200'
+      },
+      {
+        id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters',
+        name: 'Treasure Hunters',
+        expectedPrice: '100-200'
+      },
+      {
+        id: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks',
+        name: 'Mooning Sharks',
+        expectedPrice: '30-40'
+      }
+    ]
+  },
+  Jackbinswitch: {
+    address: null,
+    collections: [
+      {
+        id: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0',
+        name: 'Stacks Invaders',
+        expectedPrice: '75-125'
+      }
+    ]
+  },
+  Unknown: {
+    address: null,
+    collections: [
+      {
+        id: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh',
+        name: 'Happy Welsh',
+        expectedPrice: '150-5000'
+      }
+    ]
+  }
+};
 
 // Helper function to fetch product prices
 async function fetchProductPrice(contractAddress: string, contractName: string): Promise<number> {
@@ -559,6 +718,120 @@ function MarketplaceHeader() {
   );
 }
 
+function CollectionSearch({
+  value,
+  onValueChange
+}: {
+  value: string;
+  onValueChange: (value: string) => void;
+}) {
+  const [open, setOpen] = useState(false);
+  const [search, setSearch] = useState('');
+
+  // Get current selection display name
+  const selectedCollection = useMemo(() => {
+    for (const [artist, data] of Object.entries(COLLECTIONS_BY_ARTIST)) {
+      const collection = data.collections.find(c => c.id === value);
+      if (collection) return collection.name;
+    }
+    return '';
+  }, [value]);
+
+  // Filter collections based on search
+  const filteredArtists = useMemo(() => {
+    const searchLower = search.toLowerCase();
+    return Object.entries(COLLECTIONS_BY_ARTIST).reduce((acc, [artistName, data]) => {
+      const filteredCollections = data.collections.filter(
+        collection =>
+          collection.name.toLowerCase().includes(searchLower) ||
+          artistName.toLowerCase().includes(searchLower)
+      );
+
+      if (filteredCollections.length > 0) {
+        acc[artistName as keyof typeof COLLECTIONS_BY_ARTIST] = {
+          ...data,
+          collections: filteredCollections
+        } as any;
+      }
+      return acc;
+    }, {} as typeof COLLECTIONS_BY_ARTIST);
+  }, [search]);
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Label>Collection</Label>
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>
+          <Button
+            variant="outline"
+            role="combobox"
+            aria-expanded={open}
+            className="justify-between w-full"
+          >
+            {selectedCollection || 'Select collection...'}
+            <Box className="w-4 h-4 ml-2 opacity-50 shrink-0" />
+          </Button>
+        </PopoverTrigger>
+        <PopoverContent className="w-full p-0" align="start">
+          <Command className="border-0">
+            <CommandInput
+              placeholder="Search collections..."
+              value={search}
+              onValueChange={setSearch}
+              className="h-9"
+            />
+            <div className="max-h-[300px] overflow-auto">
+              {search.length === 0 && (
+                <p className="py-6 text-sm text-center text-muted-foreground">
+                  Search for a collection to begin...
+                </p>
+              )}
+              {search.length > 0 && Object.keys(filteredArtists).length === 0 && (
+                <CommandEmpty>No collections found.</CommandEmpty>
+              )}
+              {Object.entries(filteredArtists).map(([artistName, data]) => (
+                <CommandGroup key={artistName} heading={artistName} className="px-2">
+                  {data.collections.map(collection => (
+                    <CommandItem
+                      key={collection.id}
+                      onSelect={() => {
+                        onValueChange(collection.id);
+                        setOpen(false);
+                        setSearch('');
+                      }}
+                      value={collection.id}
+                      className="flex items-center gap-2 px-2 py-3 rounded-md cursor-pointer hover:bg-accent"
+                    >
+                      <Box className="flex-shrink-0 w-4 h-4" />
+                      <div className="flex-1 overflow-hidden">
+                        <p className="font-medium truncate">{collection.name}</p>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>{artistName}</span>
+                          {data.address && (
+                            <>
+                              <span>•</span>
+                              <span className="font-mono">
+                                {data.address.slice(0, 4)}...{data.address.slice(-4)}
+                              </span>
+                            </>
+                          )}
+                        </div>
+                      </div>
+                      <div className="text-xs text-muted-foreground whitespace-nowrap">
+                        {collection.expectedPrice} STX
+                      </div>
+                    </CommandItem>
+                  ))}
+                </CommandGroup>
+              ))}
+            </div>
+          </Command>
+        </PopoverContent>
+      </Popover>
+    </div>
+  );
+}
+
 function ListingDialog() {
   const [isLoading, setIsLoading] = useState(false);
   const [previewLoading, setPreviewLoading] = useState(false);
@@ -569,105 +842,6 @@ function ListingDialog() {
   const [price, setPrice] = useState('');
   const [metadata, setMetadata] = useState<any>(null);
   const [error, setError] = useState<string | null>(null);
-
-  // Collections that support the required token traits
-  const SUPPORTED_COLLECTIONS = [
-    {
-      id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
-      name: "Odin's Ravens",
-      expectedPrice: '350-500'
-    },
-    {
-      id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt',
-      name: 'Spell Scrolls',
-      expectedPrice: '10-20'
-    },
-    {
-      id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar',
-      name: 'Pixel Rozar',
-      expectedPrice: '1-5'
-    },
-    {
-      id: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz',
-      name: 'Jumping Pupperz',
-      expectedPrice: '25-60'
-    },
-    {
-      id: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks',
-      name: 'Mooning Sharks',
-      expectedPrice: '30-40'
-    },
-    {
-      id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh',
-      name: 'Weird Welsh',
-      expectedPrice: '50-200'
-    },
-    {
-      id: 'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk',
-      name: 'Welsh Punk',
-      expectedPrice: '10-100'
-    },
-    {
-      id: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0',
-      name: 'Stacks Invaders',
-      expectedPrice: '75-125'
-    },
-    {
-      id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse',
-      name: 'Memobots: Guardians',
-      expectedPrice: '25-40'
-    },
-    {
-      id: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.bitgear-genesis',
-      name: 'Bitgear Genesis',
-      expectedPrice: '150-300'
-    },
-    {
-      id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters',
-      name: 'Treasure Hunters',
-      expectedPrice: '100-200'
-    },
-    {
-      id: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh',
-      name: 'Happy Welsh',
-      expectedPrice: '150-5000'
-    },
-    {
-      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-chromie',
-      name: 'Cultured Welsh Chromie',
-      expectedPrice: '50-100'
-    },
-    {
-      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant',
-      name: 'Cultured Welsh Grant',
-      expectedPrice: '50-100'
-    },
-    {
-      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-memories',
-      name: 'Cultured Welsh Memories',
-      expectedPrice: '50-100'
-    },
-    {
-      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-ribboned',
-      name: 'Cultured Welsh Ribboned',
-      expectedPrice: '50-100'
-    },
-    {
-      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-ringers',
-      name: 'Cultured Welsh Ringers',
-      expectedPrice: '50-100'
-    },
-    {
-      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-beepled',
-      name: 'Cultured Welsh Beepled',
-      expectedPrice: '50-100'
-    },
-    {
-      id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-fidenza',
-      name: 'Cultured Welsh Fidenza',
-      expectedPrice: '50-100'
-    }
-  ];
 
   // Check token ownership and fetch metadata
   const fetchNFTDetails = async () => {
@@ -740,6 +914,8 @@ function ListingDialog() {
     }
   };
 
+  const collectionInfo = useCollectionInfo(selectedCollection);
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -758,29 +934,13 @@ function ListingDialog() {
           <div className="grid gap-4 py-4">
             <div className="flex w-full space-x-2">
               <div className="grid w-full gap-2">
-                <Label>Collection</Label>
-                <Select
+                <CollectionSearch
                   value={selectedCollection}
                   onValueChange={value => {
                     setSelectedCollection(value);
                     setShowPreview(false);
                   }}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select collection" />
-                  </SelectTrigger>
-                  <SelectContent position="item-aligned">
-                    {SUPPORTED_COLLECTIONS.map(collection => (
-                      <SelectItem
-                        className="h-8 cursor-pointer hover:bg-accent-foreground/60 text-muted/80 hover:text-muted"
-                        key={collection.id}
-                        value={collection.id}
-                      >
-                        {collection.name}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
+                />
               </div>
 
               <div className="grid gap-2">
@@ -788,8 +948,8 @@ function ListingDialog() {
                 <div className="flex gap-2">
                   <Input
                     type="number"
-                    placeholder="Enter token ID"
-                    className="min-w-20"
+                    placeholder="ID"
+                    className="w-24"
                     value={tokenId}
                     onChange={e => setTokenId(e.target.value)}
                   />
@@ -826,17 +986,6 @@ function ListingDialog() {
                       />
                     </div>
                     <div className="flex-1 space-y-4">
-                      <div>
-                        <h3 className="text-lg font-semibold leading-tight">{metadata.name}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          Recent sales:{' '}
-                          {
-                            SUPPORTED_COLLECTIONS.find(c => c.id === selectedCollection)
-                              ?.expectedPrice
-                          }{' '}
-                          STX
-                        </p>
-                      </div>
                       {metadata.attributes && (
                         <div className="space-y-2 leading-none">
                           {metadata.attributes.map((attr: any, i: number) => (
@@ -856,8 +1005,7 @@ function ListingDialog() {
                     <Sparkles className="w-4 h-4" />
                     <AlertDescription>
                       Suggestion: Based on recent sales and traits, a listing price of{' '}
-                      {SUPPORTED_COLLECTIONS.find(c => c.id === selectedCollection)?.expectedPrice}{' '}
-                      STX would optimize for quick sale.
+                      {collectionInfo?.expectedPrice} STX would optimize for quick sale.
                     </AlertDescription>
                   </Alert>
 
@@ -892,6 +1040,23 @@ function ListingDialog() {
       </DialogContent>
     </Dialog>
   );
+}
+
+// Helper function to get collection info anywhere in the app
+export function useCollectionInfo(collectionId: string) {
+  return useMemo(() => {
+    for (const [artist, data] of Object.entries(COLLECTIONS_BY_ARTIST)) {
+      const collection = data.collections.find(c => c.id === collectionId);
+      if (collection) {
+        return {
+          ...collection,
+          artist,
+          artistAddress: data.address
+        };
+      }
+    }
+    return null;
+  }, [collectionId]);
 }
 
 // Page Component
