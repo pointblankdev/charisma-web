@@ -53,7 +53,7 @@ const TokenImage = ({ src, alt }: { src?: string; alt: string }) => {
   if (!src) return null;
 
   // Safely handle image urls
-  let imageUrl = src.startsWith('http') ? src : `/dmg-logo.gif`;
+  const imageUrl = src.startsWith('http') ? src : `/dmg-logo.gif`;
 
   return (
     <div className="relative overflow-hidden rounded-lg size-10">
