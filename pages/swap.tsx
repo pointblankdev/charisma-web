@@ -25,10 +25,14 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   const lpTokens = tokenList.filter((t: any) => charismaNames.includes(t.lpInfo?.dex));
   const pools = [];
   for (const lpToken of lpTokens) {
-    const poolData = await dexClient.getPool(lpToken.lpInfo.token0, lpToken.lpInfo.token1);
-    const token0 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token0) || {};
-    const token1 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token1) || {};
-    pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
+    try {
+      const poolData = await dexClient.getPool(lpToken.lpInfo.token0, lpToken.lpInfo.token1);
+      const token0 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token0) || {};
+      const token1 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token1) || {};
+      pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
+    } catch (error) {
+      console.warn(error);
+    }
   }
 
   // filter out specific tokens
