@@ -53,13 +53,19 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
   const handleQuickBuy = (pool: Pool) => {
   };
 
+  const subtitle = title === 'Community Pools' ? 'Zero protocol fees and high APYs to support our incredible memecoin communities' 
+    : title ==='Spot Pools' ? 'Earn high APYs by providing LP in unique meme-to-meme liquidity pools'
+    : title ==='Derivative Pools' ? 'Put your LP tokens to work and earn additional yield with unique LP-to-LP pools': '';
 
   return (
     <div className="sm:mx-auto sm:px-4">
       <div className="mt-6">
         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
           <div className="flex items-center justify-between px-4 mb-4 sm:px-0">
-            <h1 className="text-2xl font-bold text-white/95">{title}</h1>
+            <div>
+              <h1 className="text-2xl font-bold text-white/95">{title}</h1>
+              <div className='text-sm text-muted-foreground'>{subtitle}</div>
+            </div>
             <span className="px-3 text-lg font-light text-white border rounded-full border-primary bg-accent-foreground">
               {formatUSD(totalTVL)}
             </span>
