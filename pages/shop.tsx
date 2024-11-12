@@ -744,7 +744,7 @@ function ListingDialog() {
                   <SelectTrigger>
                     <SelectValue placeholder="Select collection" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent position="item-aligned">
                     {SUPPORTED_COLLECTIONS.map(collection => (
                       <SelectItem
                         className="h-8 cursor-pointer hover:bg-accent-foreground/60 text-muted/80 hover:text-muted"
