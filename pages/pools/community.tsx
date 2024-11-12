@@ -9,8 +9,10 @@ import { motion } from 'framer-motion';
 import { PoolsInterface } from '@components/pools/pools-interface';
 import PoolsLayout from '@components/pools/layout';
 import { DexClient } from '@lib/server/pools/pools.client';
-import TokenRegistryClient from '@lib/server/registry/registry.client';
+import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
+import ConfettiExplosion from 'react-confetti-explosion';
+import { delay } from 'lodash';
 
 // Initialize clients
 const dexClient = new DexClient();
@@ -30,8 +32,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       registryClient.listAll(),
       PricesService.getAllTokenPrices()
     ]);
-
-    const charismaNames = ['Charisma DEX', 'Charisma', 'charisma'];
 
     // build pools data
     const tokenList = tokenInfo.tokens;
@@ -86,14 +86,31 @@ export default function CommunityPoolsPage({ data }: Props) {
   const { wallet } = useWallet();
   const [loading, setLoading] = useState(true);
 
+  const [isExploding1, setIsExploding1] = useState(false);
+  const [isExploding2, setIsExploding2] = useState(false);
+
   useEffect(() => {
     if (wallet) setLoading(false);
+    setIsExploding1(true);
+    delay(() => setIsExploding2(true), 300);
   }, [wallet]);
 
   const isAuthorized = wallet.experience.balance >= 1000 || wallet.redPilled;
 
   return (
     <Page meta={meta} fullViewport>
+      <div className="flex justify-around w-full">
+        {isExploding1 ? (
+          <ConfettiExplosion zIndex={50} particleCount={201} duration={2800} />
+        ) : (
+          <div />
+        )}
+        {isExploding2 ? (
+          <ConfettiExplosion zIndex={50} particleCount={199} duration={2500} />
+        ) : (
+          <div />
+        )}
+      </div>
       <SkipNavContent />
       <Layout>
         {!loading && (

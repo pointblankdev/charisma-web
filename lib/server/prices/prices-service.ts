@@ -1,7 +1,7 @@
 import velarApi from '../../velar-api';
 import cmc from '../../cmc-api';
 import { DexClient } from '../pools/pools.client';
-import TokenRegistryClient from '../registry/registry.client';
+import TokenRegistryClient, { charismaNames } from '../registry/registry.client';
 
 const dexClient = new DexClient();
 const registryClient = new TokenRegistryClient();
@@ -175,8 +175,6 @@ class PricesService {
       ROO: convertedVelarPrices['$ROO'],
       iouROO: convertedVelarPrices['$ROO']
     };
-
-    const charismaNames = ['Charisma DEX', 'Charisma', 'charisma'];
 
     // build pools data
     const { tokens } = await registryClient.listAll();

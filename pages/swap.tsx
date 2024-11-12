@@ -5,7 +5,7 @@ import { GetStaticProps } from 'next';
 import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/server/prices/prices-service';
 import { DexClient } from '@lib/server/pools/pools.client';
-import TokenRegistryClient from '@lib/server/registry/registry.client';
+import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
 
 // Initialize client
 const dexClient = new DexClient();
@@ -17,8 +17,6 @@ export const getStaticProps: GetStaticProps<any> = async () => {
     registryClient.listAll(),
     PricesService.getAllTokenPrices()
   ]);
-
-  const charismaNames = ['Charisma DEX', 'Charisma', 'charisma'];
 
   // build pools data
   const tokenList = tokenInfo.tokens;

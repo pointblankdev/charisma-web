@@ -5,6 +5,7 @@ import { Plus, Minus, ShoppingCart, Coins } from 'lucide-react';
 import numeral from 'numeral';
 import Link from 'next/link';
 import { Dialog } from '@components/ui/dialog';
+import { cn } from '@lib/utils';
 
 export interface Pool {
   contractId: string;
@@ -98,6 +99,10 @@ export const isStxChaPool = (pool: Pool) => {
   return pool.token0.symbol === 'STX' && pool.token1.symbol === 'CHA';
 };
 
+const isCommunityPool = (pool: Pool) => {
+  return pool.metadata.name.includes('Community');
+};
+
 // Component: Pool Definition Cell
 export const PoolDefinition = ({ pool }: { pool: Pool }) => (
   <div className="flex items-center mr-4">
@@ -107,12 +112,12 @@ export const PoolDefinition = ({ pool }: { pool: Pool }) => (
         alt={pool.token1.metadata.symbol || 'Base Token 0'}
         width={240}
         height={240}
-        className="w-6 mr-2 rounded-full"
+        className={cn('w-8 mr-2', isCommunityPool(pool) ? 'rounded-none' : 'rounded-full')}
       />
     ) : (
-      <Coins className="mr-2" />
+      <Coins className="w-8 h-8 mr-2" />
     )}
-    <div className="leading-tight">
+    <div className="leading-none">
       <div className="text-white truncate">{pool.metadata?.name}</div>
       <div className="text-sm text-muted-foreground">{pool.metadata?.symbol}</div>
     </div>
@@ -141,7 +146,7 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
         {pool.token1.metadata.image ? (
           <Image
             src={pool.token1.metadata.image}
-            alt={pool.token1.metadata.symbol || 'Base Token 0'}
+            alt={pool.token1.metadata.symbol || 'Base Token 1'}
             width={240}
             height={240}
             className="w-6 mr-2 rounded-full"

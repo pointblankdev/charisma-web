@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { ArrowUpDown } from 'lucide-react';
 import LiquidityDialog from './liquidity-modal.tsx/add-liquidity';
-import QuickBuyDialog from './quick-buy-dialog';
 import {
   type Pool,
   calculateTotalTVL,
@@ -27,8 +26,6 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
   const [selectedPool, setSelectedPool] = useState<Pool | null>(null);
   const [isAddLiquidity, setIsAddLiquidity] = useState(false);
   const [isDialogOpen, setIsDialogOpen] = useState(false);
-  const [isQuickBuyDialogOpen, setIsQuickBuyDialogOpen] = useState(false);
-  const [selectedPoolForQuickBuy, setSelectedPoolForQuickBuy] = useState<Pool | null>(null);
 
   const totalTVL = calculateTotalTVL(data.pools, data.tokenPrices);
 
@@ -54,14 +51,8 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
   };
 
   const handleQuickBuy = (pool: Pool) => {
-    setSelectedPoolForQuickBuy(pool);
-    setIsQuickBuyDialogOpen(true);
   };
 
-  const handleCloseQuickBuyDialog = () => {
-    setIsQuickBuyDialogOpen(false);
-    setSelectedPoolForQuickBuy(null);
-  };
 
   return (
     <div className="sm:mx-auto sm:px-4">
@@ -78,7 +69,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
             <table className="w-full">
               <thead>
                 <tr className="text-left text-gray-400">
-                  <th className="py-2">Definition</th>
+                  <th className="py-2">Name</th>
                   <th className="py-2">Composition</th>
                   <th className="py-2 text-center">Reserves</th>
                   <th className="py-2 cursor-pointer" onClick={handleSort}>

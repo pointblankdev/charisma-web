@@ -63,13 +63,22 @@ export default function PoolsLayout({ children }: any) {
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
-                <div className="relative flex items-center justify-center gap-2 px-4 py-2 rounded-md cursor-not-allowed opacity-60">
-                  <Users2Icon className="w-4 h-4" />
+                <Link
+                  href="/pools/community"
+                  className={cn(
+                    'relative flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-all',
+                    'hover:bg-accent/50 hover:text-accent-foreground',
+                    currentPath === '/pools/community'
+                      ? 'bg-accent/90 text-accent-foreground shadow-sm'
+                      : 'text-muted-foreground'
+                  )}
+                >
+                  <ChartBarIcon className="w-4 h-4" />
                   <span>Community Pools</span>
                   <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-primary text-primary-foreground text-[10px] font-medium rounded-full">
-                    Soon
+                    New
                   </span>
-                </div>
+                </Link>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="w-[400px] m-2">
                 <PoolTooltip
@@ -78,7 +87,7 @@ export default function PoolsLayout({ children }: any) {
                   subtitle="Zero Protocol Fees"
                   description="These pools have zero protocol fees and utilize 100% of the swap fees to compensate LP providers, maximizing returns for the community."
                   protocolFee={0}
-                  lpYield={0.3}
+                  lpYield={0.2}
                 />
               </TooltipContent>
             </Tooltip>

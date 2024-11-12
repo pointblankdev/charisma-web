@@ -290,51 +290,13 @@ const TokenCard = ({ token }: { token: any }) => {
                         >
                           <div className="grid gap-1 mb-2">
                             <div className="text-sm">{ft.name}</div>
-                            <div className="text-sm text-muted-foreground">
-                              {ft.decimals} decimals
+                            <div className="text-sm">
+                              <span className="mr-1 text-muted-foreground">Asset Identifier: </span>
+                              {ft.tokenIdentifier}
                             </div>
-                          </div>
-                          <div className="flex flex-wrap gap-2">
-                            {ft.isMintable && (
-                              <TokenStatusBadge variant="mintable">Mintable</TokenStatusBadge>
-                            )}
-                            {ft.isTransferable && (
-                              <TokenStatusBadge variant="transferable">
-                                Transferable
-                              </TokenStatusBadge>
-                            )}
-                            {ft.isBurnable && (
-                              <TokenStatusBadge variant="burnable">Burnable</TokenStatusBadge>
-                            )}
-                            {ft.isLpToken && (
-                              <TokenStatusBadge variant="lp">LP Token</TokenStatusBadge>
-                            )}
                           </div>
                         </div>
                       ))}
-                      {token.audit.arcanaRecommendation && (
-                        <div className="p-3 text-sm border rounded-lg text-muted-foreground bg-background/50 border-border/50">
-                          {token.audit.arcanaRecommendation.reasoning}
-                        </div>
-                      )}
-                      {!token.audit.fungibleTokens && token.audit && (
-                        <div className="space-y-2">
-                          <div className="grid grid-cols-4 gap-3">
-                            {Object.entries(token.audit)
-                              .filter(([key]) => !key.includes('image') && key !== 'lastUpdated')
-                              .map(([key, value]) => (
-                                <div key={key} className="text-sm">
-                                  <span className="text-muted-foreground">{key}:</span>
-                                  <div className="mt-0.5 font-mono text-xs truncate">
-                                    {key === 'timestamp'
-                                      ? new Date(Number(value)).toString()
-                                      : String(value)}
-                                  </div>
-                                </div>
-                              ))}
-                          </div>
-                        </div>
-                      )}
                     </div>
                   </div>
                 )}

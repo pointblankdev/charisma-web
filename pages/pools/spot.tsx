@@ -9,7 +9,7 @@ import { motion } from 'framer-motion';
 import { PoolsInterface } from '@components/pools/pools-interface';
 import PoolsLayout from '@components/pools/layout';
 import { DexClient } from '@lib/server/pools/pools.client';
-import TokenRegistryClient from '@lib/server/registry/registry.client';
+import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
 
 // Initialize clients
@@ -30,8 +30,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       registryClient.listAll(),
       PricesService.getAllTokenPrices()
     ]);
-
-    const charismaNames = ['Charisma DEX', 'Charisma', 'charisma'];
 
     // build pools data
     const tokenList = tokenInfo.tokens;

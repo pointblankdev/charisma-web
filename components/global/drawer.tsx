@@ -76,7 +76,7 @@ function InventorySlot({ item, onClick }: { item: NFTItem | null; onClick?: () =
       {item && (
         <div
           className={cn(
-            'absolute inset-0.5 rounded-md overflow-hidden',
+            'absolute inset-0.5 rounded-lg overflow-hidden',
             'duration-100',
             'ring-1 ring-white/10',
             'hover:brightness-110 transition-all',

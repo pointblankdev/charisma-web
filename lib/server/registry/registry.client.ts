@@ -58,6 +58,8 @@ export type LpRegistrationData = {
   poolId: string;
 };
 
+export const charismaNames = ['CHARISMA', 'Charisma DEX', 'Charisma', 'charisma'];
+
 // API Client
 export class TokenRegistryClient {
   constructor(private readonly baseUrl = 'https://explore.charisma.rocks/api/v0') {}
