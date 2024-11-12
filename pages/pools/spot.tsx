@@ -31,9 +31,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       PricesService.getAllTokenPrices()
     ]);
 
+    const charismaNames = ['Charisma DEX', 'Charisma', 'charisma'];
+
     // build pools data
     const tokenList = tokenInfo.tokens;
-    const lpTokens = tokenList.filter((t: any) => t.lpInfo);
+    const lpTokens = tokenList.filter((t: any) => charismaNames.includes(t.lpInfo?.dex));
     const pools = [];
     for (const lpToken of lpTokens) {
       const poolData = await dexClient.getPool(lpToken.lpInfo.token0, lpToken.lpInfo.token1);

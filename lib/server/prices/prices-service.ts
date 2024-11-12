@@ -174,12 +174,13 @@ class PricesService {
       iouWELSH: cmcPriceData.data['WELSH'].quote.USD.price,
       ROO: convertedVelarPrices['$ROO'],
       iouROO: convertedVelarPrices['$ROO']
-      // UPDOG:
     };
+
+    const charismaNames = ['Charisma DEX', 'Charisma', 'charisma'];
 
     // build pools data
     const { tokens } = await registryClient.listAll();
-    const lpTokens = tokens.filter((t: any) => t.lpInfo);
+    const lpTokens = tokens.filter((t: any) => charismaNames.includes(t.lpInfo?.dex));
     const pools = [];
     for (const lpToken of lpTokens) {
       const poolData = await dexClient.getPool(lpToken.lpInfo.token0, lpToken.lpInfo.token1);
