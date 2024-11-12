@@ -43,6 +43,21 @@ export type AuditInfo = {
   fungibleTokens: any[];
 };
 
+// New types for LP registration
+export type LpRegistrationData = {
+  lpContract: string;
+  token0: {
+    contract: string;
+    symbol: string;
+  };
+  token1: {
+    contract: string;
+    symbol: string;
+  };
+  dex: 'CHARISMA' | 'VELAR';
+  poolId: string;
+};
+
 // API Client
 export class TokenRegistryClient {
   constructor(private readonly baseUrl = 'https://explore.charisma.rocks/api/v0') {}
@@ -53,6 +68,7 @@ export class TokenRegistryClient {
       headers: {
         'Content-Type': 'application/json'
       },
+      mode: 'no-cors',
       body: JSON.stringify({
         operation,
         ...params
@@ -68,7 +84,146 @@ export class TokenRegistryClient {
     return data.data;
   }
 
-  // Query Operations
+  // Create Operations
+  async registerToken(contractId: string, metadata?: any): Promise<{ registered: boolean }> {
+    return this.request('registerToken', { contractId, metadata });
+  }
+
+  async registerSymbol(
+    symbol: string,
+    contractId: string,
+    force?: boolean
+  ): Promise<{
+    registered: boolean;
+    conflict: boolean;
+  }> {
+    return this.request('registerSymbol', { symbol, contractId, force });
+  }
+
+  async registerLpToken(
+    contractId: string,
+    lpInfo: LpTokenInfo['info']
+  ): Promise<{
+    contractId: string;
+    lpInfo: LpTokenInfo['info'];
+  }> {
+    return this.request('registerLpToken', { contractId, lpInfo });
+  }
+
+  async registerCompleteLP(
+    data: LpRegistrationData
+  ): Promise<{
+    registrationResults: {
+      contracts: Record<string, boolean>;
+      symbols: Record<string, boolean>;
+      pool: Record<string, boolean>;
+      lpToken: boolean;
+      metadata: Record<string, boolean>;
+    };
+    lpToken: {
+      info: TokenInfo;
+      metadata: any;
+    };
+    baseTokens: {
+      token0: {
+        info: TokenInfo;
+        metadata: any;
+      };
+      token1: {
+        info: TokenInfo;
+        metadata: any;
+      };
+    };
+    pool: {
+      dex: string;
+      id: string;
+    };
+  }> {
+    return this.request('registerCompleteLP', { lpRegistration: data });
+  }
+
+  async addPoolForToken(
+    contractId: string,
+    poolId: string
+  ): Promise<{
+    contractId: string;
+    poolId: string;
+    added: boolean;
+  }> {
+    return this.request('addPoolForToken', { contractId, poolId });
+  }
+
+  // Update Operations
+  async updateMetadata(
+    contractId: string,
+    metadata: any
+  ): Promise<{
+    contractId: string;
+    metadata: any;
+  }> {
+    return this.request('updateMetadata', { contractId, metadata });
+  }
+
+  async refreshMetadata(
+    contractId: string
+  ): Promise<{
+    contractId: string;
+  }> {
+    return this.request('refreshMetadata', { contractId });
+  }
+
+  async updateAudit(
+    contractId: string,
+    audit: AuditInfo
+  ): Promise<{
+    contractId: string;
+    updated: boolean;
+  }> {
+    return this.request('updateAudit', { contractId, audit });
+  }
+
+  async updatePrice(
+    symbol: string,
+    price: number
+  ): Promise<{
+    symbol: string;
+    price: number;
+  }> {
+    return this.request('updatePrice', { symbol, price });
+  }
+
+  // Delete Operations
+  async removeContract(
+    contractId: string
+  ): Promise<{
+    contractId: string;
+    removed: boolean;
+  }> {
+    return this.request('removeContract', { contractId });
+  }
+
+  async unregisterLpToken(
+    contractId: string,
+    lpInfo: LpTokenInfo['info']
+  ): Promise<{
+    contractId: string;
+    unregistered: boolean;
+  }> {
+    return this.request('unregisterLpToken', { contractId, lpInfo });
+  }
+
+  async removePoolForToken(
+    contractId: string,
+    poolId: string
+  ): Promise<{
+    contractId: string;
+    poolId: string;
+    removed: boolean;
+  }> {
+    return this.request('removePoolForToken', { contractId, poolId });
+  }
+
+  // Existing Query Operations
   async getTokenInfo(contractId: string): Promise<TokenInfo> {
     return this.request('getTokenInfo', { contractId });
   }
@@ -81,7 +236,7 @@ export class TokenRegistryClient {
     return this.request('getLpTokens', { contractId });
   }
 
-  // List Operations
+  // Existing List Operations
   async listAll(): Promise<any> {
     return this.request('listAll');
   }
@@ -109,23 +264,11 @@ export class TokenRegistryClient {
   async listPrices(): Promise<Record<string, number>> {
     return this.request('listPrices');
   }
+
+  // Maintenance Operations
+  async cleanup(): Promise<{ cleaned: boolean }> {
+    return this.request('cleanup');
+  }
 }
-
-// Usage example:
-/*
-const registry = new TokenRegistryClient();
-
-// Get token info
-const token = await registry.getTokenInfo('SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.token');
-
-// List all tokens
-const allTokens = await registry.listAll();
-
-// Get token by symbol
-const { contractId } = await registry.resolveSymbol('TOKEN');
-
-// Get all LP tokens
-const lpTokens = await registry.listLpTokens();
-*/
 
 export default TokenRegistryClient;

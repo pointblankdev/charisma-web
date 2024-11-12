@@ -14,6 +14,32 @@ export interface PoolData {
   };
 }
 
+// Add DEX provider configuration
+interface DexConfig {
+  baseUrl: string;
+  defaultHeaders?: Record<string, string>;
+}
+
+export enum DexProvider {
+  CHARISMA = 'CHARISMA',
+  VELAR = 'VELAR'
+}
+
+const DEX_CONFIGS: Record<DexProvider, DexConfig> = {
+  CHARISMA: {
+    baseUrl: 'https://explore.charisma.rocks/api/v0/exchanges/charisma',
+    defaultHeaders: {
+      // Add any Charisma-specific headers here
+    }
+  },
+  VELAR: {
+    baseUrl: 'https://explore.charisma.rocks/api/v0/exchanges/velar',
+    defaultHeaders: {
+      // Add any Velar-specific headers here
+    }
+  }
+};
+
 export interface SwapQuoteData {
   path: string[];
   amountIn: string; // Stringified bigint
@@ -67,30 +93,40 @@ export class DexClientError extends Error {
 }
 
 /**
- * Client class for interacting with DEX API
+ * Client class for interacting with DEX APIs
  */
 export class DexClient {
+  private readonly config: DexConfig;
+
   constructor(
-    private readonly baseUrl = 'https://explore.charisma.rocks/api/v0',
-    private readonly fetchOptions: RequestInit = {}
-  ) {}
+    private readonly provider: DexProvider = DexProvider.CHARISMA,
+    private readonly options: RequestInit = {}
+  ) {
+    const providerConfig = DEX_CONFIGS[provider];
+    if (!providerConfig) {
+      throw new DexClientError(`Invalid DEX provider: ${provider}`);
+    }
+    this.config = providerConfig;
+  }
 
   /**
    * Helper method to make API calls
    */
   private async call<T = any>(operation: string, params: Record<string, any> = {}): Promise<T> {
     try {
-      const response = await fetch(`${this.baseUrl}/exchanges/charisma`, {
+      const response = await fetch(this.config.baseUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          ...this.fetchOptions.headers
+          ...this.config.defaultHeaders,
+          ...this.options.headers
         },
         body: JSON.stringify({
           operation,
+          dex: this.provider,
           ...params
         }),
-        ...this.fetchOptions
+        ...this.options
       });
 
       const data: DexResponse = await response.json();
@@ -106,7 +142,9 @@ export class DexClient {
       return data.data as T;
     } catch (error) {
       if (error instanceof DexClientError) throw error;
-      console.log(error);
+      console.error('DEX API error:', error);
+
+      console.log('Error:', error);
 
       throw new DexClientError(error instanceof Error ? error.message : 'Unknown error occurred');
     }

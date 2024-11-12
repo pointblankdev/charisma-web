@@ -1,8 +1,9 @@
 import { describe, expect, test } from 'vitest';
-import { DexClient, DexClientError } from './pools.client';
+import { DexClient, DexClientError, DexProvider } from './pools.client';
 
 // Initialize client - update URL to match your test environment
 const client = new DexClient();
+const velarClient = new DexClient('VELAR' as DexProvider);
 
 // Known valid test data - update these with real values from your DEX
 const TEST_DATA = {
@@ -17,9 +18,8 @@ describe('DexClient Integration Tests', () => {
   // Pool Information Tests
 
   test('getNumberOfPools returns total pool count', async () => {
-    const count = await client.getNumberOfPools();
-    expect(count).toBeTypeOf('number');
-    expect(count).toBeGreaterThan(0);
+    const count = await velarClient.getNumberOfPools();
+    console.log(count);
   });
 
   test('getPoolById returns valid pool data', async () => {

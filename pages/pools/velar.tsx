@@ -8,12 +8,12 @@ import useWallet from '@lib/hooks/wallet-balance-provider';
 import { motion } from 'framer-motion';
 import { PoolsInterface } from '@components/pools/pools-interface';
 import PoolsLayout from '@components/pools/layout';
-import { DexClient } from '@lib/server/pools/pools.client';
+import { DexClient, DexProvider } from '@lib/server/pools/pools.client';
 import TokenRegistryClient from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
 
 // Initialize clients
-const dexClient = new DexClient();
+const dexClient = new DexClient('VELAR' as DexProvider);
 const registryClient = new TokenRegistryClient();
 
 type Props = {
@@ -31,11 +31,11 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       PricesService.getAllTokenPrices()
     ]);
 
-    const charismaNames = ['Charisma DEX', 'Charisma', 'charisma'];
+    const velarNames = ['VELAR'];
 
     // build pools data
     const tokenList = tokenInfo.tokens;
-    const lpTokens = tokenList.filter((t: any) => charismaNames.includes(t.lpInfo?.dex));
+    const lpTokens = tokenList.filter((t: any) => velarNames.includes(t.lpInfo?.dex));
     const pools = [];
     for (const lpToken of lpTokens) {
       const poolData = await dexClient.getPool(lpToken.lpInfo.token0, lpToken.lpInfo.token1);
@@ -44,15 +44,15 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
     }
 
-    // filter only for pools with base tokens that are LP tokens
-    const derivativePools = pools.filter(
-      (p: any) => (p.token0.lpInfo || p.token1.lpInfo) && p.poolData
-    );
+    console.log(lpTokens);
+
+    // filter out pools with base tokens that are LP tokens
+    const spotPools = pools.filter((p: any) => !p.token0.lpInfo && !p.token1.lpInfo && p.poolData);
 
     return {
       props: {
         data: {
-          pools: derivativePools,
+          pools: spotPools,
           tokenPrices: prices
         }
       },
@@ -74,8 +74,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
 
 export default function SpotPoolsPage({ data }: Props) {
   const meta = {
-    title: 'Charisma | Derivative Pools',
-    description: 'View and manage derivative liquidity pools on the Charisma DEX',
+    title: 'Charisma | Spot Pools',
+    description: 'View and manage spot liquidity pools on the Charisma DEX',
     image: 'https://charisma.rocks/pools-screenshot.png'
   };
 
@@ -101,7 +101,7 @@ export default function SpotPoolsPage({ data }: Props) {
           >
             <PoolsLayout>
               {isAuthorized || true ? (
-                <PoolsInterface data={data} title={'Derivative Pools'} />
+                <PoolsInterface data={data} title={'Spot Pools'} />
               ) : (
                 <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
                   <Card className="w-full max-w-lg p-6 text-center">
