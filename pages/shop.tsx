@@ -1171,7 +1171,7 @@ export default function ShopPage({ products, marketplaceListings }: ShopPageProp
         <div className="m-2 sm:container sm:mx-auto sm:pb-10 md:max-w-6xl">
           <MarketplaceHeader />
 
-          <div className="grid grid-cols-2 gap-2 md:grid-cols-4 lg:grid-cols-6">
+          <div className="grid grid-cols-4 gap-2 md:grid-cols-5 lg:grid-cols-6">
             {allItems.map(item => (
               <ProductCard
                 key={`${item.type}-${item.id}`}
