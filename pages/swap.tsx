@@ -19,7 +19,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   ]);
 
   // build pools data
-  const tokenList = tokenInfo.tokens.filter((t: any) => t.metadata.symbol);
+  const tokenList = tokenInfo.tokens;
   const lpTokens = tokenList.filter((t: any) => t.lpInfo);
   const pools = [];
   for (const lpToken of lpTokens) {
@@ -30,7 +30,9 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   }
 
   // filter out specific tokens
-  const allowedTokens = tokenList.filter((t: any) => t.metadata.symbol !== 'EXP');
+  const allowedTokens = tokenList
+    .filter((t: any) => t.metadata.symbol !== 'EXP')
+    .filter((t: any) => t.metadata.symbol);
 
   return {
     props: {
