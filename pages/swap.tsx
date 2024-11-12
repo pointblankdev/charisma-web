@@ -19,7 +19,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   ]);
 
   // build pools data
-  const tokenList = tokenInfo.tokens; //.filter((t: any) => t.audit?.fungibleTokens?.length > 0);
+  const tokenList = tokenInfo.tokens.filter((t: any) => t.metadata.symbol);
   const lpTokens = tokenList.filter((t: any) => t.lpInfo);
   const pools = [];
   for (const lpToken of lpTokens) {
