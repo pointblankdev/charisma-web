@@ -36,7 +36,13 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   // filter out specific tokens
   const allowedTokens = tokenList
     .filter((t: any) => t.metadata.symbol !== 'EXP')
-    .filter((t: any) => t.metadata.symbol);
+    .filter((t: any) => t.metadata.symbol)
+    .filter(
+      (t: any) =>
+        t.audit?.fungibleTokens?.[0]?.tokenIdentifier ||
+        t.metadata.symbol === 'STX' ||
+        t.metadata.symbol === 'wSTX'
+    );
 
   return {
     props: {
