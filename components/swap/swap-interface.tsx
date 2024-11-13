@@ -51,7 +51,7 @@ interface TokenListProps {
 }
 
 const TokenList = ({ tokens, onSelect, fromToken, hasHighExperience, pools }: TokenListProps) => (
-  <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[40rem] grid grid-cols-4">
+  <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
     {tokens.map(token => {
       const isDisabled =
         fromToken &&
