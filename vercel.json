@@ -2,7 +2,7 @@
     "crons": [
         {
             "path": "/api/v0/blocks/cache",
-            "schedule": "* * * * *"
+            "schedule": "1 * * * *"
         }
     ]
 }
