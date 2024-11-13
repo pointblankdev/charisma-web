@@ -171,6 +171,12 @@ export const createSwapTransaction = ({
             .ft(
               intermediateToken.contractId,
               intermediateToken.audit.fungibleTokens[0].tokenIdentifier
+            ),
+          Pc.principal(stxAddress)
+            .willSendGte(1)
+            .ft(
+              intermediateToken.contractId,
+              intermediateToken.audit.fungibleTokens[0].tokenIdentifier
             )
         );
       } else {
