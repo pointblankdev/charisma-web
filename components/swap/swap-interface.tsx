@@ -8,14 +8,18 @@ import useWallet from '@lib/hooks/wallet-balance-provider';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
 import {
-  calculateEstimatedAmountOut,
   findBestSwapPath,
   createSwapTransaction,
   isValidTokenPair,
   calculateMinimumAmountOut,
-  formatUSD
+  formatUSD,
+  calculateEstimatedAmountOutWithCache
 } from './swap-helpers';
 import { initializeGraph } from './swap-graph';
+import dynamic from 'next/dynamic';
+const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), {
+  ssr: false
+});
 
 interface TokenSelectProps {
   token: any;
@@ -101,6 +105,7 @@ interface TokenInputProps {
   onUseMax?: () => void;
   balance?: number;
   isCalculating?: boolean;
+  duration?: number;
 }
 
 const TokenInput = ({
@@ -111,7 +116,8 @@ const TokenInput = ({
   disabled,
   onUseMax,
   balance,
-  isCalculating
+  isCalculating,
+  duration = 0.05
 }: TokenInputProps) => (
   <>
     <input
@@ -124,14 +130,30 @@ const TokenInput = ({
     />
     <div className="flex items-center justify-between mt-2">
       <span className="text-gray-400">
-        {formatUSD(Number(amount), price)}
-        {token?.metadata.symbol?.startsWith('iou') && (
-          <span
-            className="px-1.5 ml-2 text-sm text-white/50 rounded-full cursor-help bg-accent-foreground pb-0.5"
-            title="Synthetic token price disclaimer"
-          >
-            𝖎
-          </span>
+        {isCalculating ? (
+          'Calculating...'
+        ) : (
+          <div className="flex">
+            <div>$</div>
+            <AnimatedNumbers
+              includeComma
+              transitions={index => ({
+                type: 'tween',
+                duration: index * duration
+              })}
+              animateToNumber={formatUSD(Number(amount), price)}
+            />
+            <div>
+              {token?.metadata.symbol?.startsWith('iou') && (
+                <span
+                  className="px-1.5 ml-2 text-sm text-white/50 rounded-full cursor-help bg-accent-foreground pb-0.5"
+                  title="Synthetic token price disclaimer"
+                >
+                  𝖎
+                </span>
+              )}
+            </div>
+          </div>
         )}
       </span>
       <div>
@@ -252,7 +274,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
 
       setIsCalculating(true);
       try {
-        const estimated = await calculateEstimatedAmountOut(
+        const estimated = await calculateEstimatedAmountOutWithCache(
           amount,
           fromToken,
           toToken,
@@ -390,6 +412,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
                 onChange={handleFromAmountChange}
                 onUseMax={handleUseMax}
                 balance={getBalance(fromToken.contractId)}
+                duration={0.01}
               />
             </div>
 

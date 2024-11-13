@@ -388,5 +388,6 @@ export const calculateMinimumAmountOut = (
 
 export const formatUSD = (amount: number, price: number) => {
   const value = amount * price;
-  return `$${value.toFixed(2)}`;
+  // return `$${value.toFixed(2)}`;
+  return value;
 };
