@@ -19,7 +19,9 @@ import {
   Scroll,
   Plus,
   Unlink,
-  Trash
+  Trash,
+  Pencil,
+  Save
 } from 'lucide-react';
 import { Input } from '@components/ui/input';
 import { Button } from '@components/ui/button';
@@ -48,6 +50,9 @@ import {
   DialogTitle,
   DialogTrigger
 } from '@components/ui/dialog';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@components/ui/tabs';
+import { Label } from '@components/ui/label';
+import { Alert, AlertDescription } from '@components/ui/alert';
 
 const TokenImage = ({ src, alt }: { src?: string; alt: string }) => {
   if (!src) return null;
@@ -122,6 +127,7 @@ const TokenCard = ({ token }: { token: any }) => {
   const [expanded, setExpanded] = useState(false);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [operationType, setOperationType] = useState<string>('');
+  const [open, setOpen] = useState(false);
 
   const imageUrl =
     token.metadata?.image_canonical_uri ||
@@ -160,7 +166,7 @@ const TokenCard = ({ token }: { token: any }) => {
       }
       toast.success('Operation completed successfully');
       // Trigger refresh
-      await fetch('/api/revalidate?path=/debug/tokens');
+      await fetch('/api/revalidate?path=/debug/registry');
       window.location.reload();
     } catch (error) {
       toast.error('Operation failed');
@@ -172,6 +178,7 @@ const TokenCard = ({ token }: { token: any }) => {
 
   return (
     <ContextMenu>
+      <TokenEditorDialog token={token} open={open} onOpenChange={(v: any) => setOpen(v)} />
       <ContextMenuTrigger>
         <Card className="overflow-hidden border-none">
           <div className="p-4 rounded-lg bg-gray-800/90">
@@ -355,12 +362,9 @@ const TokenCard = ({ token }: { token: any }) => {
       </ContextMenuTrigger>
 
       <ContextMenuContent className="w-64">
-        <ContextMenuItem
-          onClick={() => navigator.clipboard.writeText(token.contractId)}
-          className="gap-2"
-        >
-          <Code className="size-4" />
-          Copy Contract ID
+        <ContextMenuItem onClick={() => setOpen(true)} className="gap-2">
+          <Pencil className="size-4" />
+          Edit Token Data
         </ContextMenuItem>
 
         <ContextMenuSeparator />
@@ -431,6 +435,15 @@ const TokenCard = ({ token }: { token: any }) => {
             </ContextMenuSubContent>
           </ContextMenuSub>
         )}
+        <ContextMenuItem
+          onClick={() => navigator.clipboard.writeText(token.contractId)}
+          className="gap-2"
+        >
+          <Code className="size-4" />
+          Copy Contract ID
+        </ContextMenuItem>
+
+        <ContextMenuSeparator />
       </ContextMenuContent>
 
       {/* Confirmation Dialog */}
@@ -551,3 +564,208 @@ export default function TokenRegistryDebug({
     </div>
   );
 }
+
+const TokenEditorDialog = ({ token, open, onOpenChange }: any) => {
+  const [editedData, setEditedData] = useState(null as any);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [metadataError, setMetadataError] = useState('');
+  const [auditError, setAuditError] = useState('');
+
+  useEffect(() => {
+    if (open && token) {
+      setEditedData(token);
+      setMetadataError('');
+      setAuditError('');
+      setError(null);
+    }
+  }, [open, token]);
+
+  const handleSave = async () => {
+    if (metadataError) {
+      toast.error('Please fix metadata JSON errors before saving');
+      return;
+    }
+    if (auditError) {
+      toast.error('Please fix audit JSON errors before saving');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError(null);
+
+      // Update metadata if changed
+      if (editedData.metadata) {
+        await client.updateMetadata(editedData.contractId, editedData.metadata);
+      }
+
+      // Update audit if changed
+      if (editedData.audit) {
+        await client.updateAudit(editedData.contractId, editedData.audit);
+      }
+
+      // Update LP info if changed
+      if (editedData.lpInfo) {
+        await client.registerLpToken(editedData.contractId, editedData.lpInfo);
+      }
+
+      toast.success('Token updated successfully');
+    } catch (err) {
+      setError((err as any).message);
+      toast.error('Failed to save changes');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleMetadataChange = (value: string) => {
+    try {
+      const parsed = JSON.parse(value);
+      setEditedData((prev: any) => ({
+        ...prev,
+        metadata: parsed
+      }));
+      setMetadataError('');
+    } catch (err) {
+      setMetadataError((err as Error).message);
+    }
+  };
+
+  const handleAuditChange = (value: string) => {
+    try {
+      const parsed = JSON.parse(value);
+      setEditedData((prev: any) => ({
+        ...prev,
+        audit: parsed
+      }));
+      setAuditError('');
+    } catch (err) {
+      setAuditError((err as Error).message);
+    }
+  };
+
+  const handleLpInfoChange = (field: string, value: string) => {
+    setEditedData((prev: any) => ({
+      ...prev,
+      lpInfo: {
+        ...prev.lpInfo,
+        [field]: value
+      }
+    }));
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={onOpenChange}>
+      <DialogContent className="max-w-2xl max-h-[99vh] overflow-y-auto">
+        <DialogHeader>
+          <DialogTitle>Edit Token</DialogTitle>
+        </DialogHeader>
+
+        {editedData && (
+          <div className="space-y-6">
+            {/* Contract ID Display */}
+            <div className="flex items-center gap-2 px-3 py-2 font-mono text-sm rounded-md">
+              {editedData.contractId}
+            </div>
+
+            <Tabs defaultValue="metadata" className="w-full">
+              <TabsList>
+                <TabsTrigger value="metadata">Metadata</TabsTrigger>
+                <TabsTrigger value="audit">Audit</TabsTrigger>
+                <TabsTrigger value="lpInfo">LP Info</TabsTrigger>
+              </TabsList>
+
+              <TabsContent value="metadata" className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Token Metadata (JSON)</Label>
+                    {metadataError && (
+                      <span className="text-xs text-destructive">{metadataError}</span>
+                    )}
+                  </div>
+                  <textarea
+                    className={cn(
+                      'w-full h-[400px] p-4 font-mono text-sm rounded-md bg-background border focus:outline-none focus:ring-2 focus:ring-ring',
+                      metadataError && 'border-destructive'
+                    )}
+                    value={JSON.stringify(editedData.metadata || {}, null, 2)}
+                    onChange={e => handleMetadataChange(e.target.value)}
+                    spellCheck={false}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="audit" className="space-y-4">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label>Token Audit (JSON)</Label>
+                    {auditError && <span className="text-xs text-destructive">{auditError}</span>}
+                  </div>
+                  <textarea
+                    className={cn(
+                      'w-full h-[400px] p-4 font-mono text-sm rounded-md bg-background border focus:outline-none focus:ring-2 focus:ring-ring',
+                      auditError && 'border-destructive'
+                    )}
+                    value={JSON.stringify(editedData.audit || {}, null, 2)}
+                    onChange={e => handleAuditChange(e.target.value)}
+                    spellCheck={false}
+                  />
+                </div>
+              </TabsContent>
+
+              <TabsContent value="lpInfo">
+                <div className="space-y-4">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label>DEX</Label>
+                      <Input
+                        value={editedData?.lpInfo?.dex || ''}
+                        onChange={e => handleLpInfoChange('dex', e.target.value)}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Pool ID</Label>
+                      <Input
+                        value={editedData?.lpInfo?.poolId || ''}
+                        onChange={e => handleLpInfoChange('poolId', e.target.value)}
+                      />
+                    </div>
+                    <div className="col-span-2 space-y-2">
+                      <Label>Token 0</Label>
+                      <Input
+                        value={editedData?.lpInfo?.token0 || ''}
+                        onChange={e => handleLpInfoChange('token0', e.target.value)}
+                      />
+                    </div>
+                    <div className="col-span-2 space-y-2">
+                      <Label>Token 1</Label>
+                      <Input
+                        value={editedData?.lpInfo?.token1 || ''}
+                        onChange={e => handleLpInfoChange('token1', e.target.value)}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </TabsContent>
+            </Tabs>
+
+            {error && (
+              <Alert variant="destructive">
+                <AlertCircle className="w-4 h-4" />
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <Button onClick={handleSave} disabled={loading || !!metadataError}>
+                <Save className="w-4 h-4 mr-2" />
+                Save Changes
+              </Button>
+            </div>
+          </div>
+        )}
+      </DialogContent>
+    </Dialog>
+  );
+};

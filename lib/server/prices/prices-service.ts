@@ -172,6 +172,8 @@ class PricesService {
       DOG: cmcPriceData.data['DOG'].quote.USD.price,
       WELSH: cmcPriceData.data['WELSH'].quote.USD.price,
       iouWELSH: cmcPriceData.data['WELSH'].quote.USD.price,
+      vLiSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
+      stSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       ROO: convertedVelarPrices['$ROO'],
       iouROO: convertedVelarPrices['$ROO']
     };

@@ -58,11 +58,11 @@ export interface Pool {
 export const calculatePoolTVL = (pool: Pool, tokenPrices: { [key: string]: number }) => {
   const token0Value =
     (pool.poolData.reserve0 / 10 ** pool.token0.metadata.decimals) *
-    tokenPrices[pool.token0.metadata.symbol];
+      tokenPrices[pool.token0.metadata.symbol] || 0;
 
   const token1Value =
     (pool.poolData.reserve1 / 10 ** pool.token1.metadata.decimals) *
-    tokenPrices[pool.token1.metadata.symbol];
+      tokenPrices[pool.token1.metadata.symbol] || 0;
 
   return token0Value + token1Value;
 };
@@ -208,7 +208,7 @@ export const PoolActions = ({ pool, onLiquidityAction, onQuickBuy }: PoolActions
       </span>
       <button
         type="button"
-        className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+        className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-primary hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
         onClick={() => onLiquidityAction(pool, true)}
       >
         <Plus className="w-4 h-4" />

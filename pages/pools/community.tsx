@@ -91,13 +91,13 @@ export default function CommunityPoolsPage({ data }: Props) {
 
   useEffect(() => {
     if (wallet) setLoading(false);
-    setIsExploding1(true);
-    delay(() => setIsExploding2(true), 300);
   }, [wallet]);
 
   useEffect(() => {
-    delay(() => setIsExploding1(false), 3000);
-    delay(() => setIsExploding2(false), 3000);
+    setIsExploding1(true);
+    delay(() => setIsExploding2(true), 300);
+    delay(() => setIsExploding1(false), 2800);
+    delay(() => setIsExploding2(false), 2800);
   }, []);
 
   const isAuthorized = wallet.experience.balance >= 1000 || wallet.redPilled;

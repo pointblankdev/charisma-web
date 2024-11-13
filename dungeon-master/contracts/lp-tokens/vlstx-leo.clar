@@ -16,7 +16,7 @@
 (define-data-var token-symbol (string-ascii 10) "vlSTX-LEO")
 (define-data-var token-uri (optional (string-utf8 256)) 
   (some u"https://charisma.rocks/sip10/vlstx-leo/metadata.json"))
-(define-data-var token-decimals uint u8)
+(define-data-var token-decimals uint u6)
 
 ;; Rest of implementation remains the same as template
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
