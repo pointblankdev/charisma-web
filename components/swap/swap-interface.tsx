@@ -287,8 +287,14 @@ export const SwapInterface = ({ data }: { data: any }) => {
     handleEstimateAmount(formattedBalance);
   };
 
-  const updateSwapPath = useCallback(() => {
-    const path = findBestSwapPath(fromToken, toToken, data.pools, hasHighExperience);
+  const updateSwapPath = useCallback(async () => {
+    const path = await findBestSwapPath(
+      fromToken,
+      toToken,
+      fromAmount,
+      stxAddress,
+      hasHighExperience
+    );
     if (path) {
       setIsMultiHop(path.length > 2);
       setSwapPath(path);
@@ -296,7 +302,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
       setIsMultiHop(false);
       setSwapPath([]);
     }
-  }, [fromToken, toToken, data.pools, hasHighExperience]);
+  }, [fromToken, toToken, fromAmount, stxAddress, hasHighExperience]);
 
   useEffect(() => {
     updateSwapPath();

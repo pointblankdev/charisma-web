@@ -10,6 +10,80 @@ import { fetchCallReadOnlyFunction } from '@stacks/transactions';
 import { network } from '@components/stacks-session/connect';
 import { getGraph } from './swap-graph';
 
+// Cache key generator
+const getAmountCacheKey = (
+  fromAmount: string,
+  fromToken: any,
+  toToken: any,
+  swapPath: any[]
+): string => {
+  return `${fromAmount}-${fromToken.contractId}-${toToken.contractId}-${swapPath
+    .map(token => token.contractId)
+    .join('-')}`;
+};
+
+// Simple cache implementation
+const amountCache = new Map<string, { amount: string; timestamp: number }>();
+
+// Cache duration in milliseconds (e.g., 30 seconds)
+const CACHE_DURATION = 30 * 1000;
+
+// Export cache clear function for manual cache invalidation if needed
+export const clearAmountCache = () => {
+  amountCache.clear();
+};
+
+// Wrapper for calculateEstimatedAmountOut with caching
+export const calculateEstimatedAmountOutWithCache = async (
+  fromAmount: string,
+  fromToken: any,
+  toToken: any,
+  swapPath: any[],
+  stxAddress: string,
+  isMultiHop: boolean,
+  _currentPool?: any
+): Promise<string> => {
+  const cacheKey = getAmountCacheKey(fromAmount, fromToken, toToken, swapPath);
+  const now = Date.now();
+
+  // Check cache
+  const cached = amountCache.get(cacheKey);
+  if (cached && now - cached.timestamp < CACHE_DURATION) {
+    console.log('Cache hit for amount calculation:', cacheKey);
+    return cached.amount;
+  }
+
+  // Calculate if not in cache or expired
+  const amount = await calculateEstimatedAmountOut(
+    fromAmount,
+    fromToken,
+    toToken,
+    swapPath,
+    stxAddress,
+    isMultiHop,
+    _currentPool
+  );
+
+  // Update cache
+  amountCache.set(cacheKey, {
+    amount,
+    timestamp: now
+  });
+
+  // Clean up old cache entries periodically
+  if (amountCache.size > 100) {
+    // Arbitrary limit
+    const oldestAllowedTimestamp = now - CACHE_DURATION;
+    for (const [key, value] of amountCache.entries()) {
+      if (value.timestamp < oldestAllowedTimestamp) {
+        amountCache.delete(key);
+      }
+    }
+  }
+
+  return amount;
+};
+
 export const calculateEstimatedAmountOut = async (
   fromAmount: string,
   fromToken: any,
@@ -93,13 +167,70 @@ export const calculateEstimatedAmountOut = async (
 };
 
 // Updated helper functions using graph
-export const findBestSwapPath = (
+export const findBestSwapPath = async (
   fromToken: any,
   toToken: any,
-  _pools: any[],
+  fromAmount: string,
+  stxAddress: string,
   hasHighExperience: boolean
-): any[] | null => {
-  return getGraph().findPath(fromToken.contractId, toToken.contractId, hasHighExperience);
+): Promise<any[] | null> => {
+  const graph = getGraph();
+  const paths = graph.findAllPaths(fromToken.contractId, toToken.contractId, hasHighExperience);
+
+  if (paths.length === 0) return null;
+
+  // For single path, return immediately
+  if (paths.length === 1) return paths[0];
+
+  try {
+    // Calculate amounts for all paths
+    const pathAmounts = await Promise.all(
+      paths.map(async path => {
+        try {
+          const amount = await calculateEstimatedAmountOutWithCache(
+            fromAmount,
+            fromToken,
+            toToken,
+            path,
+            stxAddress,
+            path.length > 2 // isMultiHop if path length > 2
+          );
+          return {
+            path,
+            amount: parseFloat(amount)
+          };
+        } catch (error) {
+          console.warn('Error calculating amount for path:', error);
+          return {
+            path,
+            amount: 0
+          };
+        }
+      })
+    );
+
+    // Sort by amount in descending order and filter out failed paths
+    const validPathAmounts = pathAmounts
+      .filter(result => result.amount > 0)
+      .sort((a, b) => b.amount - a.amount);
+
+    // Log path comparison for debugging
+    console.log(
+      'Path comparison:',
+      validPathAmounts.map(result => ({
+        pathLength: result.path.length,
+        symbols: result.path.map((token: any) => token.metadata.symbol),
+        amount: result.amount
+      }))
+    );
+
+    // Return the path with highest output amount, or null if no valid paths
+    return validPathAmounts.length > 0 ? validPathAmounts[0].path : null;
+  } catch (error) {
+    console.error('Error finding best path:', error);
+    // Fallback to shortest path in case of error
+    return paths[0];
+  }
 };
 
 export const isValidTokenPair = (fromToken: any, toToken: any, _pools: any[]): boolean => {

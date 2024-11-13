@@ -107,6 +107,78 @@ export class SwapGraph implements TokenGraph {
     }
   }
 
+  findAllPaths(
+    fromId: string,
+    toId: string,
+    hasHighExperience: boolean,
+    maxLength: number = 4
+  ): any[][] {
+    const startNode = this.nodes.get(fromId);
+    const endNode = this.nodes.get(toId);
+
+    if (!startNode || !endNode) return [];
+
+    const allPaths: any[][] = [];
+
+    interface QueueItem {
+      nodeId: string;
+      path: any[];
+      poolPath: any[];
+      visited: Set<string>;
+    }
+
+    const queue: QueueItem[] = [
+      {
+        nodeId: fromId,
+        path: [startNode.token],
+        poolPath: [],
+        visited: new Set([fromId])
+      }
+    ];
+
+    while (queue.length > 0) {
+      const { nodeId, path, poolPath, visited } = queue.shift()!;
+      const currentNode = this.nodes.get(nodeId)!;
+
+      // Check each connection and its pool data
+      for (const [nextId, { pool, token }] of currentNode.connections) {
+        if (visited.has(nextId)) continue;
+
+        // Check STX restrictions
+        if (
+          !hasHighExperience &&
+          token.metadata?.symbol === 'STX' &&
+          startNode.token.metadata?.symbol !== 'synSTX'
+        ) {
+          continue;
+        }
+
+        const newPath = [...path, token];
+
+        // Found a valid path to destination
+        if (nextId === toId) {
+          allPaths.push(newPath);
+          continue; // Continue searching for other paths
+        }
+
+        // Only continue if path length is within limit
+        if (path.length < maxLength - 1) {
+          queue.push({
+            nodeId: nextId,
+            path: newPath,
+            poolPath: [...poolPath, pool],
+            visited: new Set([...visited, nextId])
+          });
+        }
+      }
+    }
+
+    // Sort paths by length (shortest first)
+    allPaths.sort((a, b) => a.length - b.length);
+
+    return allPaths;
+  }
+
   // Path finding with improved pool data usage
   findPath(fromId: string, toId: string, hasHighExperience: boolean): any[] | null {
     const startNode = this.nodes.get(fromId);
