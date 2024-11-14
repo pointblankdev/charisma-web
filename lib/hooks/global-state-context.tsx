@@ -79,7 +79,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     if (stxAddress && block?.height) {
       const engines = [
         'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7',
-        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-vself-rc1'
+        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-vself-rc2'
       ];
       for (const engine of engines) {
         const [contractAddress, contractName] = engine.split('.');

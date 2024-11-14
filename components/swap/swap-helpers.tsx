@@ -333,6 +333,8 @@ export const createSwapTransaction = ({
     );
   }
 
+  console.log(postConditions);
+
   const contractName = isMultiHop ? 'univ2-path2' : 'univ2-router';
   const functionName = isMultiHop ? `swap-${swapPath.length}` : 'swap-exact-tokens-for-tokens';
 
