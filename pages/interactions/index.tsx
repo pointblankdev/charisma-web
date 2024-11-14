@@ -330,6 +330,7 @@ function InteractionArtwork({
     }
   }, [animate, block.height]);
 
+  console.log(interaction);
   const lastTapBlock = tappedAt[interaction.analytics.contractId];
   const blockPeriod = block.height - lastTapBlock;
   const unclaimedEnergy =

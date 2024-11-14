@@ -20,6 +20,7 @@ export default async function MemeEngineAPI(
     analytics: await EnergyMetricsService.getMetricsByContractId(
       `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-vself-rc2`
     ),
+    tokenContract: `SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.virtual-self`,
     subtitle: 'Generate energy by holding Virtual Self tokens.',
     description: [
       'The Virtual Self Meme Engine works by tracking your token balance across time. When you execute the TAP action, the contract calculates your average balance since your last tap. The resulting energy generation accurately reflects the average monetary value of your held balances, with more points sampled during longer periods for greater accuracy.',
