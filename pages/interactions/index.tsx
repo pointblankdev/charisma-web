@@ -17,12 +17,13 @@ import {
 } from '@components/ui/context-menu';
 import { useRouter } from 'next/navigation';
 import { useDungeonCrawler } from '@lib/hooks/use-dungeon-crawler';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { interactionIds } from 'pages/api/v0/interactions';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { Badge } from '@components/ui/badge';
 import numeral from 'numeral';
 import useWallet from '@lib/hooks/wallet-balance-provider';
+import { delay } from 'lodash';
 
 export type Collection = typeof collections[number];
 
@@ -321,24 +322,30 @@ function InteractionArtwork({
   const router = useRouter();
   const { interact } = useDungeonCrawler();
   const [isLoading, setIsLoading] = useState(false);
-  const { wallet, getBalance } = useWallet();
+  const { getBalance } = useWallet();
   const { tappedAt, block } = useGlobalState();
   const [animate, setAnimate] = useState(false);
+  const previousEnergyRef = useRef(null);
 
-  useEffect(() => {
-    if (!animate) {
-      setAnimate(true);
-      setTimeout(() => setAnimate(false), 1000);
-    }
-  }, [animate, block.height]);
-
-  let tokenBalance, lastTapBlock, blockPeriod, unclaimedEnergy;
+  let tokenBalance, lastTapBlock, blockPeriod, unclaimedEnergy: any;
   if (interaction.tokenContract) {
     tokenBalance = getBalance(interaction.tokenContract);
     lastTapBlock = tappedAt[interaction.analytics.contractId];
     blockPeriod = block.height - lastTapBlock;
     unclaimedEnergy = interaction.analytics.energyPerBlockPerToken * tokenBalance * blockPeriod;
   }
+
+  useEffect(() => {
+    // Only trigger animation when unclaimedEnergy changes value
+    if (previousEnergyRef.current !== null && previousEnergyRef.current !== unclaimedEnergy) {
+      setAnimate(true);
+      const timer = setTimeout(() => {
+        setAnimate(false);
+      }, 200); // Match this to animation duration
+      return () => clearTimeout(timer);
+    }
+    previousEnergyRef.current = unclaimedEnergy;
+  }, [unclaimedEnergy]);
 
   const handleInteractionClick = () => {
     if (interaction.uri) {
@@ -372,9 +379,9 @@ function InteractionArtwork({
               <Badge
                 title={`Estimate based on your current balance of ${numeral(
                   tokenBalance / 10 ** 6
-                ).format('0.00')} tokens`}
+                ).format('0.00')} ${interaction.tokenContract?.split('.')[1]}`}
                 className={cn(
-                  'absolute z-20 text-white rounded-b-none rounded-t-xl justify-center w-[132px] text-center place-self-center top-2 right-2 bg-black/75 hover:bg-black/75',
+                  'absolute z-20 text-white rounded-b-none rounded-t-xl justify-center w-[96px] text-center place-self-center top-2 right-2 bg-black/75 hover:bg-black/75',
                   unclaimedEnergy !== null && unclaimedEnergy > 0
                     ? 'rounded-b-none'
                     : 'rounded-b-xl'
@@ -394,7 +401,7 @@ function InteractionArtwork({
               <Badge
                 title="Unclaimed energy available"
                 className={cn(
-                  'absolute z-10 font-bold px-0 text-white justify-center rounded-t-none  w-[132px] text-center place-self-center rounded-b-xl top-8 right-2 bg-green-600/75 hover:bg-green-600/75'
+                  'absolute z-10 font-bold px-0 text-white justify-center rounded-t-none  w-[96px] text-center place-self-center rounded-b-xl top-8 right-2 bg-green-600/75 hover:bg-green-600/75'
                 )}
               >
                 <div className={animate ? 'shake' : ''}>

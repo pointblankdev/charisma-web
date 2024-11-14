@@ -140,10 +140,10 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => {
     sc.subscribeBlocks(block => {
       setBlock(block as any);
-      toast({
-        title: 'New Block',
-        description: `Stacks block ${block.height} has been mined.`
-      });
+      // toast({
+      //   title: 'New Block',
+      //   description: `Stacks block ${block.height} has been mined.`
+      // });
 
       // Reset highest wrap bid on each new block
       setHighestBid(0);
