@@ -44,15 +44,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
     }
 
-    console.log(lpTokens);
-
-    // filter out pools with base tokens that are LP tokens
-    const spotPools = pools.filter((p: any) => !p.token0.lpInfo && !p.token1.lpInfo && p.poolData);
-
     return {
       props: {
         data: {
-          pools: spotPools,
+          pools: pools,
           tokenPrices: prices
         }
       },

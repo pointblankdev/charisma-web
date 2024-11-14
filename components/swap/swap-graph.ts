@@ -9,6 +9,12 @@ interface TokenGraph {
   addToken: (token: any) => void;
   addPool: (pool: any) => void;
   findPath: (fromId: string, toId: string, hasHighExperience: boolean) => any[] | null;
+  findAllPaths: (
+    fromId: string,
+    toId: string,
+    hasHighExperience: boolean,
+    maxLength: number
+  ) => any[] | null;
   getDirectPool: (fromId: string, toId: string) => any | null;
 }
 

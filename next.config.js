@@ -29,12 +29,14 @@ module.exports = {
   },
   images: {
     dangerouslyAllowSVG: true,
-    domains: ['ipfs'],
     imageSizes: [24, 64, 300],
     remotePatterns: [
       {
         protocol: 'https',
         hostname: '**'
+      },
+      {
+        hostname: 'QmRrx5WSMsqfcoDuAzKgjj1d84s6Ttb6aVifsEfzwDqaBA'
       }
     ]
   },
