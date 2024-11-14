@@ -46,6 +46,7 @@ export interface Interaction {
   category: InteractionCategory;
   subtitle: string;
   analytics: any;
+  tokenContract?: string;
   description: string[];
   contract: string;
   actions: string[];
@@ -87,6 +88,7 @@ export const getStaticProps: GetStaticProps<InteractionsPageProps> = async () =>
           type: 'interaction' as const,
           category: metadata.category as InteractionCategory,
           analytics: metadata.analytics || {},
+          tokenContract: metadata.tokenContract || '',
           subtitle: metadata.subtitle || '',
           description: metadata.description || [],
           uri: metadata.url,
@@ -319,7 +321,7 @@ function InteractionArtwork({
   const router = useRouter();
   const { interact } = useDungeonCrawler();
   const [isLoading, setIsLoading] = useState(false);
-  const { wallet } = useWallet();
+  const { wallet, getBalance } = useWallet();
   const { tappedAt, block } = useGlobalState();
   const [animate, setAnimate] = useState(false);
 
@@ -330,11 +332,13 @@ function InteractionArtwork({
     }
   }, [animate, block.height]);
 
-  console.log(interaction);
-  const lastTapBlock = tappedAt[interaction.analytics.contractId];
-  const blockPeriod = block.height - lastTapBlock;
-  const unclaimedEnergy =
-    interaction.analytics.energyPerBlockPerToken * wallet.charisma.balance * blockPeriod;
+  let tokenBalance, lastTapBlock, blockPeriod, unclaimedEnergy;
+  if (interaction.tokenContract) {
+    tokenBalance = getBalance(interaction.tokenContract);
+    lastTapBlock = tappedAt[interaction.analytics.contractId];
+    blockPeriod = block.height - lastTapBlock;
+    unclaimedEnergy = interaction.analytics.energyPerBlockPerToken * tokenBalance * blockPeriod;
+  }
 
   const handleInteractionClick = () => {
     if (interaction.uri) {
@@ -364,13 +368,13 @@ function InteractionArtwork({
             onClick={handleInteractionClick}
           >
             {/* Energy Generation Rate Badge */}
-            {interaction?.analytics.energyPerBlockPerToken && (
+            {interaction?.analytics.energyPerBlockPerToken && !!unclaimedEnergy && (
               <Badge
                 title={`Estimate based on your current balance of ${numeral(
-                  wallet.charisma.balance
+                  tokenBalance / 10 ** 6
                 ).format('0.00')} tokens`}
                 className={cn(
-                  'absolute z-20 text-white rounded-b-none rounded-t-xl justify-center w-[96px] text-center place-self-center top-2 right-2 bg-black/75 hover:bg-black/75',
+                  'absolute z-20 text-white rounded-b-none rounded-t-xl justify-center w-[132px] text-center place-self-center top-2 right-2 bg-black/75 hover:bg-black/75',
                   unclaimedEnergy !== null && unclaimedEnergy > 0
                     ? 'rounded-b-none'
                     : 'rounded-b-xl'
@@ -378,7 +382,7 @@ function InteractionArtwork({
               >
                 <div>
                   {numeral(
-                    interaction?.analytics.energyPerBlockPerToken * wallet.charisma.balance
+                    (interaction?.analytics.energyPerBlockPerToken * tokenBalance) / 10 ** 6
                   ).format('0.00')}{' '}
                   ⚡/block
                 </div>
@@ -386,15 +390,15 @@ function InteractionArtwork({
             )}
 
             {/* Unclaimed Energy Badge */}
-            {unclaimedEnergy !== null && unclaimedEnergy > 0 && (
+            {!!unclaimedEnergy && unclaimedEnergy > 0 && (
               <Badge
                 title="Unclaimed energy available"
                 className={cn(
-                  'absolute z-10 font-bold px-0 text-white justify-center rounded-t-none  w-[96px] text-center place-self-center rounded-b-xl top-8 right-2 bg-green-600/75 hover:bg-green-600/75'
+                  'absolute z-10 font-bold px-0 text-white justify-center rounded-t-none  w-[132px] text-center place-self-center rounded-b-xl top-8 right-2 bg-green-600/75 hover:bg-green-600/75'
                 )}
               >
                 <div className={animate ? 'shake' : ''}>
-                  Claim {numeral(unclaimedEnergy).format('0,0')} ⚡
+                  Claim {numeral(unclaimedEnergy / 10 ** 6).format('0.00')} ⚡
                 </div>
               </Badge>
             )}

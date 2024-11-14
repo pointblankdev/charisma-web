@@ -228,6 +228,7 @@ export interface InteractionMetadata {
   category: string;
   actions: string[];
   analytics?: any;
+  tokenContract?: string;
 }
 
 export async function getInteractionUri(
