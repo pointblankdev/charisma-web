@@ -892,7 +892,7 @@ function ListingDialog() {
           contractPrincipalCV(selectedCollection.split('.')[0], selectedCollection.split('.')[1]),
           uintCV(parseInt(tokenId)),
           uintCV(parseInt(price) * 1_000_000), // Convert to microSTX
-          uintCV(500) // 5% commission
+          uintCV(250) // 2.5% commission
         ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
