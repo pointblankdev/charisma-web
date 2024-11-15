@@ -16,6 +16,7 @@ export interface MarketplaceListing {
     image?: string;
     description?: string;
     attributes?: Record<string, any>;
+    name?: string;
   };
 }
 
@@ -155,7 +156,7 @@ export class MarketplaceService {
 
     const updatedListing = {
       ...listing,
-      ...metadata,
+      metadata,
       contractId,
       tokenId
     };

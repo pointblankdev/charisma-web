@@ -1,4 +1,6 @@
+import { getNftMetadata } from '@lib/db-providers/kv';
 import { MarketplaceService } from './marketplace-service';
+import { getNftURI } from '@lib/stacks-api';
 
 describe('MarketplaceService', () => {
   test('demonstrates storing and retrieving a listing', async () => {
@@ -33,10 +35,37 @@ describe('MarketplaceService', () => {
     console.log('Collection Listings:', listings);
   });
 
+  test('demonstrates getting treasure hunters collection listings', async () => {
+    const contractId = 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters';
+    const listings = await MarketplaceService.getCollectionListings(contractId);
+    console.log('Collection Listings:', listings);
+  });
+
   test('demonstrates getting welsh-punk collection listings', async () => {
     const contractId = 'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk';
     const listings = await MarketplaceService.getCollectionListings(contractId);
     console.log('Collection Listings:', listings);
+  });
+
+  test('demonstrates getting weird-welsh collection listings', async () => {
+    const contractId = 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh';
+    const listings = await MarketplaceService.getCollectionListings(contractId);
+    console.log('Collection Listings:', listings);
+  });
+
+  test('update metadata for a listing', async () => {
+    const contractId = 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh';
+    const tokenId = 68;
+
+    // lookup nft metdata
+    const metadata = await getNftURI(contractId, tokenId);
+    console.log(metadata);
+    const retrieved = await MarketplaceService.getListing(contractId, tokenId);
+    console.log(retrieved);
+    const ok = await MarketplaceService.updateListingMetadata(contractId, tokenId, metadata);
+    console.log('Updated Listing:', ok);
+    const updated = await MarketplaceService.getListing(contractId, tokenId);
+    console.log(updated);
   });
 
   test('demonstrates getting owner listings', async () => {

@@ -273,16 +273,6 @@ const COLLECTIONS_BY_ARTIST = {
     address: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ',
     collections: [
       {
-        id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh',
-        name: 'Weird Welsh',
-        expectedPrice: '50-200'
-      },
-      {
-        id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters',
-        name: 'Treasure Hunters',
-        expectedPrice: '100-200'
-      },
-      {
         id: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks',
         name: 'Mooning Sharks',
         expectedPrice: '30-40'
@@ -371,7 +361,7 @@ function ProductDialog({
           {/* Image Section */}
           <div className="relative w-full h-[25vh] md:h-full md:w-3/5 flex items-center justify-center z-20">
             <Image
-              src={imageSrc}
+              src={imageSrc || '/dmg-logo.gif'}
               alt={displayName}
               quality={100}
               className="object-contain max-w-full max-h-full"
@@ -381,7 +371,7 @@ function ProductDialog({
           </div>
           <div className="absolute w-full h-[25vh] md:h-full md:w-3/5 bg-black flex items-center justify-cente z-0">
             <Image
-              src={imageSrc}
+              src={imageSrc || '/dmg-logo.gif'}
               alt={displayName}
               quality={10}
               className="object-cover h-full max-w-full opacity-50 blur-3xl"
@@ -606,7 +596,7 @@ export function ProductCard({ item, onAction, className, currentAddress }: Produ
             )}
           >
             <Image
-              src={imageSrc}
+              src={imageSrc || '/dmg-logo.gif'}
               className="object-cover w-full h-full transition-transform duration-200"
               alt={displayName}
               width={300}
