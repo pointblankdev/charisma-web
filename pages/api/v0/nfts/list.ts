@@ -2,7 +2,7 @@
 import { getCollectionSize, getNftOwner } from '@lib/stacks-api';
 import { kv } from '@vercel/kv';
 
-const CACHE_DURATION = 60 * 60 * 24 * 365; // 1 year in seconds
+const CACHE_DURATION = 60 * 60 * 24; // 1 day in seconds
 
 export default async function handler(req: any, res: any) {
   if (req.method !== 'GET') {
@@ -22,7 +22,7 @@ export default async function handler(req: any, res: any) {
 
     // Try to get cached data
     const cachedData = await kv.get(cacheKey);
-    if (cachedData && !contractAddress.endsWith('happy-welsh')) {
+    if (cachedData) {
       return res.status(200).json({
         ...cachedData,
         cached: true
