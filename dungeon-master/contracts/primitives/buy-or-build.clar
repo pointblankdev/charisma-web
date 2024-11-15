@@ -34,7 +34,6 @@
 ;; 1. Deployer receives: 2 USDA (20% fee)
 ;; 2. Arbitrageur receives: 4 USDA and X CHA (50% reinvestment)
 
-
 ;; Traits
 (use-trait ft-trait .dao-traits-v4.sip010-ft-trait)
 (use-trait ft-plus-trait .dao-traits-v4.ft-plus-trait)
@@ -120,7 +119,7 @@
 
 ;; Convert profits to CHA
 (define-private (buy-cha (amount uint) (base-token <ft-trait>) (share-fee-to <share-fee-to-trait>))
-  (contract-call? .powered-swap do-token-swap 
+  (contract-call? .univ2-path2 do-swap 
     amount
     base-token
     .charisma-token 
@@ -139,7 +138,7 @@
     (let (
         ;; Buy LP tokens with base-token
         (buy-lp (unwrap! 
-            (contract-call? .powered-swap do-token-swap 
+            (contract-call? .univ2-path2 do-swap 
                 input-amount
                 base-token
                 lp-token-buy
@@ -158,7 +157,7 @@
 
         ;; Sell token0 for base-token
         (sell-token0 (unwrap! 
-            (contract-call? .powered-swap do-token-swap
+            (contract-call? .univ2-path2 do-swap
                 (get amt0 remove-lp)
                 token0
                 base-token
@@ -167,7 +166,7 @@
 
         ;; Sell token1 for base-token
         (sell-token1 (unwrap! 
-            (contract-call? .powered-swap do-token-swap
+            (contract-call? .univ2-path2 do-swap
                 (get amt1 remove-lp)
                 token1
                 base-token
@@ -203,7 +202,7 @@
     (let (
         ;; Buy token0 with base-token
         (buy-token0 (unwrap! 
-            (contract-call? .powered-swap do-token-swap
+            (contract-call? .univ2-path2 do-swap
                 (/ input-amount u2)
                 base-token
                 token0
@@ -212,7 +211,7 @@
 
         ;; Buy token1 with base-token
         (buy-token1 (unwrap! 
-            (contract-call? .powered-swap do-token-swap
+            (contract-call? .univ2-path2 do-swap
                 (/ input-amount u2)
                 base-token
                 token1
@@ -232,7 +231,7 @@
 
         ;; Sell LP tokens for base-token
         (sell-lp (unwrap! 
-            (contract-call? .powered-swap do-token-swap
+            (contract-call? .univ2-path2 do-swap
                 (get liquidity add-lp)
                 lp-token-sell
                 base-token

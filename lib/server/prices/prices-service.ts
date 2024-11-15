@@ -150,7 +150,20 @@ class PricesService {
 
     // Get STX/CHA ratio
     const stxChaPool = await dexClient.getPoolById('4');
-    const ratio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
+    const stxCharatio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
+
+    // Get WELSH/iouWELSH ratio
+    const welshIouWelshPool = await dexClient.getPoolById('1');
+    const welshIouWelshratio =
+      Number(welshIouWelshPool.reserve0) / Number(welshIouWelshPool.reserve1);
+
+    // Get ROO/iouROO ratio
+    const rooIouRooPool = await dexClient.getPoolById('2');
+    const rooIouRooratio = Number(rooIouRooPool.reserve0) / Number(rooIouRooPool.reserve1);
+
+    // get STX/synSTX ratio
+    const stxSynStxPool = await dexClient.getPoolById('10');
+    const stxSynStxratio = Number(stxSynStxPool.reserve0) / Number(stxSynStxPool.reserve1);
 
     // Convert Velar prices
     const convertedVelarPrices = Object.keys(velarPrices).reduce(
@@ -164,18 +177,18 @@ class PricesService {
     // Set base token prices
     this.tokenPrices = {
       ...convertedVelarPrices,
-      CHA: ratio * cmcPriceData.data['STX'].quote.USD.price,
+      CHA: stxCharatio * cmcPriceData.data['STX'].quote.USD.price,
       STX: cmcPriceData.data['STX'].quote.USD.price,
       wSTX: cmcPriceData.data['STX'].quote.USD.price,
-      synSTX: cmcPriceData.data['STX'].quote.USD.price,
+      synSTX: stxSynStxratio * cmcPriceData.data['STX'].quote.USD.price,
       ordi: cmcPriceData.data['ORDI'].quote.USD.price,
       DOG: cmcPriceData.data['DOG'].quote.USD.price,
       WELSH: cmcPriceData.data['WELSH'].quote.USD.price,
-      iouWELSH: cmcPriceData.data['WELSH'].quote.USD.price,
+      iouWELSH: welshIouWelshratio * cmcPriceData.data['WELSH'].quote.USD.price,
       vLiSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       stSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       ROO: convertedVelarPrices['$ROO'],
-      iouROO: convertedVelarPrices['$ROO']
+      iouROO: rooIouRooratio * convertedVelarPrices['$ROO']
     };
 
     // build pools data
