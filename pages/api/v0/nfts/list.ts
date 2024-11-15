@@ -22,7 +22,7 @@ export default async function handler(req: any, res: any) {
 
     // Try to get cached data
     const cachedData = await kv.get(cacheKey);
-    if (cachedData) {
+    if (cachedData && !contractAddress.endsWith('happy-welsh')) {
       return res.status(200).json({
         ...cachedData,
         cached: true
@@ -43,6 +43,7 @@ export default async function handler(req: any, res: any) {
     for (let tokenId = 1; tokenId <= totalSupply; tokenId++) {
       try {
         const owner = await getNftOwner(contractAddress, tokenId);
+        console.log(`Token ${tokenId} owner:`, owner);
 
         // Check if the current owner matches our user
         if (owner === userAddress) {

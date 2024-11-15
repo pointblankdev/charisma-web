@@ -100,16 +100,16 @@ const COLLECTIONS = [
     name: 'Memobots: Guardians',
     contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse'
   },
-  // {
-  //   id: 'cultured-welsh-chromie',
-  //   name: 'Cultured Welsh: Chromie',
-  //   contract: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-chromie'
-  // },
-  // {
-  //   id: 'cultured-welsh-grant',
-  //   name: 'Cultured Welsh: Grant',
-  //   contract: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant'
-  // },
+  {
+    id: 'cultured-welsh-chromie',
+    name: 'Cultured Welsh: Chromie',
+    contract: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-chromie'
+  },
+  {
+    id: 'cultured-welsh-grant',
+    name: 'Cultured Welsh: Grant',
+    contract: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant'
+  },
   {
     id: 'weird-welsh',
     name: 'Weird Welsh',
@@ -120,26 +120,26 @@ const COLLECTIONS = [
     name: 'Treasure Hunters',
     contract: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters'
   },
-  // {
-  //   id: 'jumping-pupperz',
-  //   name: 'Jumping Pupperz',
-  //   contract: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz'
-  // },
+  {
+    id: 'jumping-pupperz',
+    name: 'Jumping Pupperz',
+    contract: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz'
+  },
   {
     id: 'mooning-sharks',
     name: 'Mooning Sharks',
     contract: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'
-  }
+  },
   // {
   //   id: 'stacks-invaders',
   //   name: 'Stacks Invaders',
   //   contract: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0'
   // },
-  // {
-  //   id: 'happy-welsh',
-  //   name: 'Happy Welsh',
-  //   contract: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh'
-  // }
+  {
+    id: 'happy-welsh',
+    name: 'Happy Welsh',
+    contract: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh'
+  }
 ] as const;
 
 interface DraggableSlotProps {
@@ -393,6 +393,7 @@ function DragOverlayPortal({ children }: { children: React.ReactNode }) {
 }
 
 export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) {
+  const fetchedCollections = React.useRef(new Set<string>());
   const { toast } = useToast();
   // Persist inventory state
   const [inventoryState, setInventoryState] = usePersistedState<any>('inventory-state', {
@@ -421,12 +422,14 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
     async (collection: typeof COLLECTIONS[number]) => {
       if (!userAddress || !open) return;
 
-      // Check if we already have this collection's data
-      if (collectionsData[collection.id]?.length > 0) {
+      // Check if we've already fetched this collection for this user
+      const fetchKey = `${collection.id}-${userAddress}`;
+      if (fetchedCollections.current.has(fetchKey)) {
         return;
       }
 
       setLoadingCollections(prev => new Set([...prev, collection.id]));
+      fetchedCollections.current.add(fetchKey);
 
       try {
         const response = await fetch(
@@ -435,33 +438,31 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
         const data = await response.json();
 
         if (data.ownedTokenIds) {
-          // Fetch metadata for each token
-          const itemsWithMetadata = await Promise.all(
-            data.ownedTokenIds.map(async (tokenId: string) => {
-              const slot = inventoryState.slots[`${collection.id}-${tokenId}`] ?? -1;
+          // Create items first with default images, then update with metadata
+          const items = data.ownedTokenIds.map((tokenId: string) => {
+            const slot = inventoryState.slots[`${collection.id}-${tokenId}`] ?? -1;
+            // Use default image pattern based on collection
+            let defaultImage = '';
+            if (collection.contract.includes('odins-raven')) {
+              defaultImage = `https://charisma.rocks/sip9/odins-raven/img/${tokenId}.gif`;
+            } else if (collection.contract.includes('memobots')) {
+              defaultImage = `https://charisma.rocks/sip9/memobots/${tokenId}.png`;
+            }
 
-              // Fetch metadata using our new API
-              const metadataResponse = await fetch(
-                `${API_URL}/api/v0/nfts/uri?contractAddress=${collection.contract}&tokenId=${tokenId}`
-              );
-              const metadata = await metadataResponse.json();
+            return {
+              id: tokenId,
+              contract: collection.contract,
+              name: `${collection.name} #${tokenId}`,
+              slot,
+              image: defaultImage
+            };
+          });
 
-              return {
-                id: tokenId,
-                contract: collection.contract,
-                name: metadata.name || `${collection.name} #${tokenId}`,
-                slot,
-                image: metadata.image,
-                metadata
-              };
-            })
-          );
-
-          // Assign slots to new items
+          // Assign slots immediately
           let nextSlot = 0;
-          const newItems = itemsWithMetadata.map(item => {
+          const itemsWithSlots = items.map((item: { slot: number }) => {
             if (item.slot === -1) {
-              while (itemsWithMetadata.some(i => i.slot === nextSlot)) {
+              while (items.some((i: { slot: number }) => i.slot === nextSlot)) {
                 nextSlot++;
               }
               item.slot = nextSlot++;
@@ -469,24 +470,57 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
             return item;
           });
 
+          // Update state with initial items
           setCollectionsData(prev => ({
             ...prev,
-            [collection.id]: newItems
+            [collection.id]: itemsWithSlots
           }));
 
+          // Update slot persistence
           setInventoryState((prev: { slots: any }) => ({
             ...prev,
             slots: {
               ...prev.slots,
               ...Object.fromEntries(
-                newItems.map(item => [`${collection.id}-${item.id}`, item.slot])
+                itemsWithSlots.map((item: { id: any; slot: any }) => [
+                  `${collection.id}-${item.id}`,
+                  item.slot
+                ])
               )
             }
           }));
+
+          // Then fetch metadata in the background
+          Promise.all(
+            itemsWithSlots.map(async (item: { id: any; name: any; image: any }) => {
+              try {
+                const metadataResponse = await fetch(
+                  `${API_URL}/api/v0/nfts/uri?contractAddress=${collection.contract}&tokenId=${item.id}`
+                );
+                const metadata = await metadataResponse.json();
+
+                return {
+                  ...item,
+                  name: metadata.name || item.name,
+                  image: metadata.image || item.image,
+                  metadata
+                };
+              } catch (error) {
+                console.error(`Error fetching metadata for token ${item.id}:`, error);
+                return item; // Keep original item on error
+              }
+            })
+          ).then(itemsWithMetadata => {
+            setCollectionsData(prev => ({
+              ...prev,
+              [collection.id]: itemsWithMetadata
+            }));
+          });
         }
       } catch (error) {
         console.error(`Error fetching collection ${collection.name}:`, error);
         toast({ title: `Failed to load ${collection.name}` });
+        fetchedCollections.current.delete(fetchKey);
       } finally {
         setLoadingCollections(prev => {
           const next = new Set(prev);
@@ -495,10 +529,16 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
         });
       }
     },
-    [userAddress, open, inventoryState.slots, setInventoryState, collectionsData]
+    [userAddress, open, setInventoryState, inventoryState.slots, toast]
   );
 
-  // Modified useEffect for fetching
+  // Clear fetched collections when drawer closes or user changes
+  useEffect(() => {
+    if (!open) {
+      fetchedCollections.current.clear();
+    }
+  }, [open, userAddress]);
+
   useEffect(() => {
     if (open && userAddress) {
       COLLECTIONS.forEach(collection => {

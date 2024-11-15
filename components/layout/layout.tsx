@@ -150,6 +150,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'whitespace-nowrap',
                 'sm:relative'
               )}
+              onClick={drawer.open}
             >
               {wallet.redPilled && (
                 <Image
