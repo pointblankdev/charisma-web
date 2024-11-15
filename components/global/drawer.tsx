@@ -130,11 +130,11 @@ const COLLECTIONS = [
     name: 'Mooning Sharks',
     contract: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'
   },
-  // {
-  //   id: 'stacks-invaders',
-  //   name: 'Stacks Invaders',
-  //   contract: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0'
-  // },
+  {
+    id: 'stacks-invaders',
+    name: 'Stacks Invaders',
+    contract: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0'
+  },
   {
     id: 'happy-welsh',
     name: 'Happy Welsh',
