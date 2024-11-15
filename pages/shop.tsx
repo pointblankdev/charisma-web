@@ -482,7 +482,7 @@ function ProductDialog({
                             </div>
                             {item.commission > 0 && (
                               <div className="flex items-center justify-between">
-                                <span className="text-muted-foreground">Creator Royalty</span>
+                                <span className="text-muted-foreground">Platform Commission</span>
                                 <span>{(item.commission / 100).toFixed(1)}%</span>
                               </div>
                             )}
@@ -553,7 +553,7 @@ function ProductDialog({
                         </div>
                         {item.commission > 0 && (
                           <div className="flex items-center justify-between">
-                            <span className="text-muted-foreground">Creator Royalty</span>
+                            <span className="text-muted-foreground">Platform Commission</span>
                             <span>{(item.commission / 100).toFixed(1)}%</span>
                           </div>
                         )}
