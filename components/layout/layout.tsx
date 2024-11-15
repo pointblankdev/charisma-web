@@ -183,7 +183,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />
             <div className={cn(styles.full, className)}>{children}</div>
-            <GlobalDrawer open={drawer.isOpen} onClose={drawer.close} />
+            <GlobalDrawer open={drawer.isOpen} onClose={drawer.close} userAddress={stxAddress} />
           </main>
           <Footer />
         </div>

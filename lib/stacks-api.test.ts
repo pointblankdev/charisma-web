@@ -7,7 +7,9 @@ import {
   getAvailableRedemptions,
   getTotalSupply,
   getInteractionUri,
-  client
+  client,
+  getCollectionSize,
+  getNftOwner
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
@@ -18,6 +20,16 @@ describe('Stacks API', () => {
     const address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
     const names = await getNamesFromAddress(address);
     console.log(names);
+  });
+
+  it('should get collection size', async () => {
+    const size = await getCollectionSize('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven');
+    console.log(size);
+  });
+
+  it('should get nft owner', async () => {
+    const owner = await getNftOwner('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven', 99);
+    console.log(owner);
   });
 
   // should get token uri
@@ -79,14 +91,13 @@ describe('Recovery', () => {
   });
 });
 
-
 describe('Read-only contract calls with api token', () => {
   it('read-only functions should work', async () => {
-    const path = '/v2/contracts/call-read/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS/charisma-token/get-decimals' as any
+    const path = '/v2/contracts/call-read/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS/charisma-token/get-decimals' as any;
     const response = await client.POST(path, {
-      body: { sender: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS", arguments: [] },
+      body: { sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', arguments: [] }
     });
-    return cvToValue(cvToValue(hexToCV(response.data.result)))
-  })
-
-}), 20000;
+    return cvToValue(cvToValue(hexToCV(response.data.result)));
+  });
+}),
+  20000;

@@ -9,6 +9,7 @@ export type Wallet = {
   governance: { balance: number; amount: number };
   redPilled: boolean;
   bluePilled: boolean;
+  ravens: any;
 };
 
 export type WalletBalancesContextType = {
@@ -73,13 +74,16 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
     balances?.non_fungible_tokens?.[
       'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blue-pill-nft::blue-pill'
     ];
+  const ravens: any =
+    balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven::raven'];
 
   const wallet: Wallet = {
     experience: { amount: experience, balance: experience / Math.pow(10, 6) },
     governance: { amount: governance, balance: governance / Math.pow(10, 6) },
     charisma: { amount: charisma, balance: charisma / Math.pow(10, 6) },
     redPilled: redPill?.count > 0,
-    bluePilled: bluePill?.count > 0
+    bluePilled: bluePill?.count > 0,
+    ravens
   };
 
   return (

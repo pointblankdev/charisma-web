@@ -7,7 +7,9 @@ import {
   cvToHex
 } from '@stacks/transactions';
 import { cvToJSON } from '@stacks/transactions';
-import { API_URL } from './constants';
+import { kv } from '@vercel/kv';
+
+const CACHE_DURATION = 60 * 60 * 24 * 7; // 7 days in seconds
 
 export const client = createClient({
   baseUrl: 'https://api.mainnet.hiro.so'
@@ -45,6 +47,86 @@ export async function getBlocks({ limit = 1 }: { limit?: number } = {}) {
     }
   });
   return response;
+}
+
+export async function getCollectionSize(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
+  // Create a unique cache key
+  const cacheKey = `collection-size:${contract}`;
+
+  try {
+    // Try to get from cache first
+    const cachedSize = await kv.get(cacheKey);
+    if (cachedSize !== null) {
+      return Number(cachedSize);
+    }
+
+    // If not in cache, fetch from blockchain
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-last-token-id` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [] }
+    });
+
+    const size = Number(cvToValue(cvToValue(hexToCV(response.data.result))));
+
+    // Cache the result
+    await kv.set(cacheKey, size, {
+      ex: CACHE_DURATION
+    });
+
+    return size;
+  } catch (error) {
+    console.error(`Error fetching collection size for ${contract}:`, error);
+    throw error;
+  }
+}
+
+export async function getNftOwner(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
+  tokenId = 99
+) {
+  // Create a unique cache key
+  const cacheKey = `nft-owner:${contract}:${tokenId}`;
+
+  try {
+    // Try to get from cache first
+    const cachedOwner = await kv.get(cacheKey);
+    if (cachedOwner !== null) {
+      return cachedOwner;
+    }
+
+    // If not in cache, fetch from blockchain
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-owner` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [cvToHex(parseToCV(String(tokenId), 'uint128'))] }
+    });
+
+    const owner = cvToValue(hexToCV(response.data.result)).value.value;
+
+    // Cache the result
+    await kv.set(cacheKey, owner, {
+      ex: CACHE_DURATION
+    });
+
+    return owner;
+  } catch (error) {
+    console.error(`Error fetching owner for ${contract} token ${tokenId}:`, error);
+    throw error;
+  }
+}
+
+// Optional: Add a function to manually invalidate cache if needed
+export async function invalidateNftCache(contract: string, tokenId?: number) {
+  if (tokenId) {
+    // Invalidate specific NFT owner cache
+    await kv.del(`nft-owner:${contract}:${tokenId}`);
+  } else {
+    // Invalidate collection size cache
+    await kv.del(`collection-size:${contract}`);
+  }
 }
 
 export async function getTokenBalance(
@@ -106,7 +188,17 @@ export async function getNftURI(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
   tokenId: string | number = 1
 ) {
+  const CACHE_DURATION_1_YEAR = 60 * 60 * 24 * 365; // 1 year in seconds
+  const cacheKey = `nft-uri:${contract}:${tokenId}`;
+
   try {
+    // Try to get from cache first
+    const cachedData = await kv.get(cacheKey);
+    if (cachedData) {
+      return cachedData;
+    }
+
+    // If not in cache, fetch from blockchain
     const [address, name] = contract.split('.');
     const path = `/v2/contracts/call-read/${address}/${name}/get-token-uri` as any;
     const response = await client.POST(path, {
@@ -117,7 +209,6 @@ export async function getNftURI(
 
     // Handle ipfs:// protocol
     if (url.startsWith('ipfs://')) {
-      // You can choose your preferred IPFS gateway
       url = url.replace('ipfs://', 'https://ipfs.io/');
     }
 
@@ -130,19 +221,25 @@ export async function getNftURI(
       'https://ipfs.infura.io/'
     ];
 
-    // Check if URL is using any known IPFS gateway
     for (const gateway of ipfsGateways) {
       if (url.startsWith(gateway)) {
         const cid = url.replace(gateway, '');
         url = `https://ipfs.io/${cid}`;
       }
     }
-    const result = await fetch(`https://corsproxy.io/?${url}`);
+
+    const result = await fetch(url);
     const out = await result.json();
     out.image = out.image.replace('ipfs://', 'https://ipfs.io/');
+
+    // Cache the result
+    await kv.set(cacheKey, out, {
+      ex: CACHE_DURATION_1_YEAR
+    });
+
     return out;
   } catch (error) {
-    console.error('Fetch error:', error);
+    console.error('Error fetching NFT URI:', error);
     throw error;
   }
 }
