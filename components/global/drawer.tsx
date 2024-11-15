@@ -89,17 +89,17 @@ const COLLECTIONS = [
     id: 'welsh-punk',
     name: 'Welsh Punk',
     contract: 'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk'
-  }
+  },
   // {
   //   id: 'bitgear-genesis',
   //   name: 'Bitgear Genesis',
   //   contract: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.bitgear-genesis'
   // },
-  // {
-  //   id: 'memobots',
-  //   name: 'Memobots: Guardians',
-  //   contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse'
-  // },
+  {
+    id: 'memobots',
+    name: 'Memobots: Guardians',
+    contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse'
+  },
   // {
   //   id: 'cultured-welsh-chromie',
   //   name: 'Cultured Welsh: Chromie',
@@ -110,26 +110,26 @@ const COLLECTIONS = [
   //   name: 'Cultured Welsh: Grant',
   //   contract: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant'
   // },
-  // {
-  //   id: 'weird-welsh',
-  //   name: 'Weird Welsh',
-  //   contract: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh'
-  // },
-  // {
-  //   id: 'treasure-hunters',
-  //   name: 'Treasure Hunters',
-  //   contract: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters'
-  // },
+  {
+    id: 'weird-welsh',
+    name: 'Weird Welsh',
+    contract: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh'
+  },
+  {
+    id: 'treasure-hunters',
+    name: 'Treasure Hunters',
+    contract: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters'
+  },
   // {
   //   id: 'jumping-pupperz',
   //   name: 'Jumping Pupperz',
   //   contract: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz'
   // },
-  // {
-  //   id: 'mooning-sharks',
-  //   name: 'Mooning Sharks',
-  //   contract: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'
-  // },
+  {
+    id: 'mooning-sharks',
+    name: 'Mooning Sharks',
+    contract: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'
+  }
   // {
   //   id: 'stacks-invaders',
   //   name: 'Stacks Invaders',
@@ -619,7 +619,7 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
               >
                 {Array.from({ length: 150 }).map((_, index) => (
                   <DraggableSlot
-                    key={index}
+                    key={`${currentCollection.id}-${index}`}
                     index={index}
                     item={currentInventory.find(item => item.slot === index) || null}
                     isDraggedOver={draggedOverId === index.toString()}
