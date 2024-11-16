@@ -72,7 +72,6 @@ export class CharacterTransactionService {
       functionName: 'execute',
       functionArgs: [contractPrincipalCV(rulebookAddress, rulebookName), stringAsciiCV(tx.action)],
       senderKey: account.stxPrivateKey,
-      // validateWithAbi: true,
       network: network,
       anchorMode: AnchorMode.Any,
       postConditionMode: PostConditionMode.Allow
