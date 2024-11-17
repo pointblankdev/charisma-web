@@ -13,7 +13,7 @@
 
 (define-public (transfer (amount uint) (from principal) (to principal) (memo (optional (buff 34))))
 	(begin
-    (asserts! (is-eq from tx-sender) ERR-UNAUTHORIZED)
+    (asserts! (or (is-eq tx-sender from) (is-eq contract-caller from)) ERR-UNAUTHORIZED)
     (ft-transfer? hooter amount from to)))
 
 (define-public (burn (amount uint))
