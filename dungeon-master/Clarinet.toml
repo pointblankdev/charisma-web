@@ -182,6 +182,10 @@ depends_on = []
 path = "contracts/univ2-rotate.clar"
 depends_on = []
 
+[contracts.hooter-the-owl]
+path = "contracts/hooter-the-owl.clar"
+depends_on = []
+
 
 
 # traits

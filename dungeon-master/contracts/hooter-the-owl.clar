@@ -1,18 +1,28 @@
 ;; Hooter the Owl
 
-(impl-trait 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.sip-010-trait)
-(define-constant TOTAL_SUPPLY u10000000000000000) ;; 10b tokens
-(define-fungible-token hooter TOTAL_SUPPLY)
+;; (impl-trait 'SP3FBR2AGK5H9QBDH3EEN6DF8EK8JY7RX8QJ5SVTE.sip-010-trait-ft-standard.sip-010-trait)
+(define-constant TOTAL-SUPPLY u10000000000000000)
+(define-constant ERR-UNAUTHORIZED (err u403))
+(define-constant deployer tx-sender)
+
+(define-fungible-token hooter TOTAL-SUPPLY)
+(define-data-var token-uri (optional (string-utf8 256)) 
+  (some u"https://charisma.rocks/sip10/hooter/metadata.json"))
 
 ;; --- Fungible Token Traits
 
-(define-public (transfer (amount uint) (sender principal) (recipient principal) (memo (optional (buff 34))))
+(define-public (transfer (amount uint) (from principal) (to principal) (memo (optional (buff 34))))
 	(begin
-		(asserts! (or (is-eq tx-sender sender) (is-eq contract-caller sender)) err-not-token-owner)
-		(ft-transfer? hooter amount sender recipient)))
+    (asserts! (is-eq from tx-sender) ERR-UNAUTHORIZED)
+    (ft-transfer? hooter amount from to)))
 
 (define-public (burn (amount uint))
   (ft-burn? hooter amount tx-sender))
+
+(define-public (set-token-uri (value (string-utf8 256)))
+  (if (is-eq tx-sender deployer) 
+    (ok (var-set token-uri (some value))) 
+    ERR-UNAUTHORIZED))
 
 (define-read-only (get-name) (ok "Hooter the Owl"))
 
@@ -27,7 +37,7 @@
 	(ok (ft-get-supply hooter)))
 
 (define-read-only (get-token-uri)
-	(ok (some u"https://charisma.rocks/sip10/hooter/metadata.json")))
+    (ok (var-get token-uri)))
 
 ;; --- Batch Transfer
 
@@ -46,4 +56,4 @@
 
 ;; --- Initial Mint
 
-(ft-mint? hooter TOTAL_SUPPLY tx-sender)
+(ft-mint? hooter TOTAL-SUPPLY tx-sender)
