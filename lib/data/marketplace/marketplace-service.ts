@@ -57,7 +57,7 @@ export class MarketplaceService {
     const rawListings = await getAllContractEvents(
       'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.marketplace-v6'
     );
-    for (const data of rawListings) {
+    for (const data of rawListings.reverse()) {
       try {
         if (data.op.value === 'LIST_ASSET') {
           const listing: MarketplaceListing = {
@@ -70,6 +70,14 @@ export class MarketplaceService {
           };
           const existingListing = await this.getListing(listing.contractId, listing.tokenId);
           if (!existingListing) await this.createListing(listing);
+        }
+        if (data.op.value === 'PURCHASE_ASSET') {
+          const existingListing = await this.getListing(
+            data.tradables.value,
+            data['tradable-id'].value
+          );
+          if (!existingListing)
+            await this.removeListing(data.tradables.value, data['tradable-id'].value);
         }
       } catch (error) {
         console.error(error, data);
