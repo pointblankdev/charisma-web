@@ -375,6 +375,12 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
   const [activeId, setActiveId] = useState<string | null>(null);
   const [draggedOverId, setDraggedOverId] = useState<string | null>(null);
 
+  // Filter out collections with no NFTs
+  const nonEmptyCollections = COLLECTIONS.filter(collection => {
+    const items = collectionsData[collection.id] || [];
+    return items.length > 0 || loadingCollections.has(collection.id);
+  });
+
   // Get current collection data
   const currentCollection = COLLECTIONS.find(c => c.id === inventoryState.activeTab)!;
   const currentInventory = collectionsData[currentCollection.id] || [];
@@ -592,7 +598,7 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
               className="px-4 pb-2 overflow-x-scroll"
             >
               <TabsList className="bg-white/5">
-                {COLLECTIONS.map(collection => (
+                {nonEmptyCollections.map(collection => (
                   <TabsTrigger
                     key={collection.id}
                     value={collection.id}

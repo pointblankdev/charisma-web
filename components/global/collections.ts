@@ -69,8 +69,18 @@ export const COLLECTIONS = [
     id: 'happy-welsh',
     name: 'Happy Welsh',
     contract: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh'
+  },
+  {
+    id: 'SP2RNHHQDTHGHPEVX83291K4AQZVGWEJ7WCQQDA9R.giga-pepe-v2',
+    name: 'Giga Pepe v2',
+    expectedPrice: '60-120'
+  },
+  {
+    id: 'SP2RNHHQDTHGHPEVX83291K4AQZVGWEJ7WCQQDA9R.tremp-nfts',
+    name: 'Tremp',
+    expectedPrice: '60-120'
   }
-] as const;
+] as any[];
 
 // Collections that support the required token traits
 export const COLLECTIONS_BY_ARTIST = {
@@ -105,11 +115,21 @@ export const COLLECTIONS_BY_ARTIST = {
     ]
   },
   GPSC: {
-    address: 'UNKNOWN',
+    address: 'SP2RNHHQDTHGHPEVX83291K4AQZVGWEJ7WCQQDA9R',
     collections: [
       {
         id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse',
         name: 'Memobots: Guardians',
+        expectedPrice: '60-120'
+      },
+      {
+        id: 'SP2RNHHQDTHGHPEVX83291K4AQZVGWEJ7WCQQDA9R.giga-pepe-v2',
+        name: 'Giga Pepe v2',
+        expectedPrice: '60-120'
+      },
+      {
+        id: 'SP2RNHHQDTHGHPEVX83291K4AQZVGWEJ7WCQQDA9R.tremp-nfts',
+        name: 'Tremp',
         expectedPrice: '60-120'
       }
     ]
