@@ -108,7 +108,7 @@ export async function getNftOwner(
 
     // Cache the result
     await kv.set(cacheKey, owner, {
-      ex: CACHE_DURATION
+      ex: 60 // cache for 60 seconds
     });
 
     return owner;
@@ -381,3 +381,39 @@ export const geFatigueEnergyCost = async () => {
 
   return cvToValue(response).value;
 };
+
+/**
+ * Get all contract events
+ * @param contractId Contract identifier
+ * @param totalLimit Maximum total number of events to fetch
+ */
+export async function getAllContractEvents(contractId: string, totalLimit: number = 5000) {
+  let allEvents: any[] = [];
+  let offset = 0;
+  let hasMore = true;
+  const limitPerRequest = 50;
+
+  while (hasMore && allEvents.length < totalLimit) {
+    const response: any = await client.GET('/extended/v1/contract/{contract_id}/events', {
+      params: {
+        path: { contract_id: contractId },
+        query: {
+          limit: Math.min(limitPerRequest, totalLimit - allEvents.length),
+          offset
+        }
+      }
+    });
+
+    if (response.data.results && response.data.results.length > 0) {
+      allEvents = allEvents.concat(
+        response.data.results.map((e: any) => cvToValue(hexToCV(e.contract_log.value.hex)))
+      );
+      offset += response.data.results.length;
+      hasMore = response.data.results.length === limitPerRequest;
+    } else {
+      hasMore = false;
+    }
+  }
+
+  return allEvents;
+}

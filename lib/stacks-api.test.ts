@@ -9,7 +9,8 @@ import {
   getInteractionUri,
   client,
   getCollectionSize,
-  getNftOwner
+  getNftOwner,
+  getAllContractEvents
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
@@ -20,6 +21,13 @@ describe('Stacks API', () => {
     const address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
     const names = await getNamesFromAddress(address);
     console.log(names);
+  });
+
+  it('should get marketplace contract events', async () => {
+    const events = await getAllContractEvents(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.marketplace-v6'
+    );
+    console.log(events);
   });
 
   it('should get collection size', async () => {

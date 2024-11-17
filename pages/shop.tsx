@@ -92,6 +92,7 @@ import {
 } from '@components/ui/command';
 import { TypeOf } from 'zod';
 import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover';
+import { COLLECTIONS_BY_ARTIST } from '@components/global/collections';
 
 function formatTimestamp(timestamp: number): string {
   const date = new Date(timestamp);
@@ -166,140 +167,6 @@ const PRODUCT_LIST: Omit<ShopProduct, 'price' | 'type'>[] = [
     description: 'Take the blue pill and the story ends.'
   }
 ];
-
-// Collections that support the required token traits
-const COLLECTIONS_BY_ARTIST = {
-  'rozar.btc': {
-    address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    collections: [
-      {
-        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven',
-        name: "Odin's Ravens",
-        expectedPrice: '350-500'
-      },
-      {
-        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt',
-        name: 'Spell Scrolls',
-        expectedPrice: '10-20'
-      },
-      {
-        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar',
-        name: 'Pixel Rozar',
-        expectedPrice: '1-5'
-      },
-      {
-        id: 'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk',
-        name: 'Welsh Punk',
-        expectedPrice: '10-100'
-      },
-      {
-        id: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.bitgear-genesis',
-        name: 'Bitgear Genesis',
-        expectedPrice: '150-300'
-      }
-    ]
-  },
-  GPSC: {
-    address: 'UNKNOWN',
-    collections: [
-      {
-        id: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse',
-        name: 'Memobots: Guardians',
-        expectedPrice: '60-120'
-      }
-    ]
-  },
-  irmissima: {
-    address: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ',
-    collections: [
-      {
-        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-chromie',
-        name: 'Cultured Welsh: Chromie',
-        expectedPrice: '50-100'
-      },
-      {
-        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant',
-        name: 'Cultured Welsh: Grant',
-        expectedPrice: '50-100'
-      },
-      {
-        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-memories',
-        name: 'Cultured Welsh: Memories',
-        expectedPrice: '50-100'
-      },
-      {
-        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-ribboned',
-        name: 'Cultured Welsh: Ribboned',
-        expectedPrice: '50-100'
-      },
-      {
-        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-ringers',
-        name: 'Cultured Welsh: Ringers',
-        expectedPrice: '50-100'
-      },
-      {
-        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-beepled',
-        name: 'Cultured Welsh: Beepled',
-        expectedPrice: '50-100'
-      },
-      {
-        id: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-fidenza',
-        name: 'Cultured Welsh: Fidenza',
-        expectedPrice: '50-100'
-      }
-    ]
-  },
-  Vinzo: {
-    address: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ',
-    collections: [
-      {
-        id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh',
-        name: 'Weird Welsh',
-        expectedPrice: '50-200'
-      },
-      {
-        id: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters',
-        name: 'Treasure Hunters',
-        expectedPrice: '100-200'
-      },
-      {
-        id: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz',
-        name: 'Jumping Pupperz',
-        expectedPrice: '25-60'
-      }
-    ]
-  },
-  MooningShark: {
-    address: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ',
-    collections: [
-      {
-        id: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks',
-        name: 'Mooning Sharks',
-        expectedPrice: '30-40'
-      }
-    ]
-  },
-  Jackbinswitch: {
-    address: null,
-    collections: [
-      {
-        id: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0',
-        name: 'Stacks Invaders',
-        expectedPrice: '75-125'
-      }
-    ]
-  },
-  Unknown: {
-    address: null,
-    collections: [
-      {
-        id: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh',
-        name: 'Happy Welsh',
-        expectedPrice: '150-5000'
-      }
-    ]
-  }
-};
 
 // Helper function to fetch product prices
 async function fetchProductPrice(contractAddress: string, contractName: string): Promise<number> {
@@ -1056,6 +923,9 @@ interface ShopPageProps {
 }
 
 export const getStaticProps: GetStaticProps<ShopPageProps> = async () => {
+  // check for new listings on-chain
+  await MarketplaceService.createListingsFromAPI();
+
   // Fetch prices for all products
   const productsWithPrices = await Promise.all(
     PRODUCT_LIST.map(async product => {

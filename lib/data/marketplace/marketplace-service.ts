@@ -1,3 +1,4 @@
+import { getAllContractEvents, getNftURI } from '@lib/stacks-api';
 import { kv } from '@vercel/kv';
 
 export interface MarketplaceListing {
@@ -50,6 +51,30 @@ export class MarketplaceService {
 
     // Update stats
     await this.updateStatsOnCreate(listing);
+  }
+
+  static async createListingsFromAPI() {
+    const rawListings = await getAllContractEvents(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.marketplace-v6'
+    );
+    for (const data of rawListings) {
+      try {
+        if (data.op.value === 'LIST_ASSET') {
+          const listing: MarketplaceListing = {
+            contractId: data.tradables.value,
+            tokenId: data['tradable-id'].value,
+            price: data.price.value,
+            commission: data.commission.value,
+            timestamp: Date.now(),
+            metadata: await getNftURI(data.tradables.value, data['tradable-id'].value)
+          };
+          const existingListing = await this.getListing(listing.contractId, listing.tokenId);
+          if (!existingListing) await this.createListing(listing);
+        }
+      } catch (error) {
+        console.error(error, data);
+      }
+    }
   }
 
   /**

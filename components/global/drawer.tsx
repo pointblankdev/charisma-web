@@ -43,6 +43,8 @@ import { createPortal } from 'react-dom';
 import { usePersistedState } from '@lib/hooks/use-persisted-state';
 import { Tabs, TabsList, TabsTrigger } from '@components/ui/tabs';
 import { useToast } from '@components/ui/use-toast';
+import { COLLECTIONS } from './collections';
+import ListNFTDialog from './list-nft-dialog';
 
 interface GlobalDrawerProps {
   open: boolean;
@@ -68,87 +70,19 @@ interface CollectionState {
   activeTab: string;
 }
 
-// Define collection metadata
-const COLLECTIONS = [
-  {
-    id: 'odins-raven',
-    name: "Odin's Ravens",
-    contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven'
-  },
-  {
-    id: 'spell-scrolls',
-    name: 'Spell Scrolls',
-    contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.spell-scrolls-fire-bolt'
-  },
-  {
-    id: 'pixel-rozar',
-    name: 'Pixel Rozar',
-    contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.pixel-rozar'
-  },
-  {
-    id: 'welsh-punk',
-    name: 'Welsh Punk',
-    contract: 'SP1C2K603TGWJGKPT2Z3WWHA0ARM66D352385TTWH.welsh-punk'
-  },
-  // {
-  //   id: 'bitgear-genesis',
-  //   name: 'Bitgear Genesis',
-  //   contract: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.bitgear-genesis'
-  // },
-  {
-    id: 'memobots',
-    name: 'Memobots: Guardians',
-    contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse'
-  },
-  {
-    id: 'cultured-welsh-chromie',
-    name: 'Cultured Welsh: Chromie',
-    contract: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-chromie'
-  },
-  {
-    id: 'cultured-welsh-grant',
-    name: 'Cultured Welsh: Grant',
-    contract: 'SPNFDGPASBB91FVB0FCRAZ0XCPSSZ4Y56M2AEWDZ.cultured-welsh-grant'
-  },
-  {
-    id: 'weird-welsh',
-    name: 'Weird Welsh',
-    contract: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh'
-  },
-  {
-    id: 'treasure-hunters',
-    name: 'Treasure Hunters',
-    contract: 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.treasure-hunters'
-  },
-  {
-    id: 'jumping-pupperz',
-    name: 'Jumping Pupperz',
-    contract: 'SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.jumping-pupperz'
-  },
-  {
-    id: 'mooning-sharks',
-    name: 'Mooning Sharks',
-    contract: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.mooningsharks'
-  },
-  {
-    id: 'stacks-invaders',
-    name: 'Stacks Invaders',
-    contract: 'SPV8C2N59MA417HYQNG6372GCV0SEQE01EV4Z1RQ.stacks-invaders-v0'
-  },
-  {
-    id: 'happy-welsh',
-    name: 'Happy Welsh',
-    contract: 'SPJW1XE278YMCEYMXB8ZFGJMH8ZVAAEDP2S2PJYG.happy-welsh'
-  }
-] as const;
-
 interface DraggableSlotProps {
   item: NFTItem | null;
   index: number;
   isDraggedOver: boolean;
 }
 
-function NFTContextMenu({ item, children }: { item: NFTItem; children: React.ReactNode }) {
+interface NFTContextMenuProps {
+  item: NFTItem;
+  children: React.ReactNode;
+  onListNFT: () => void;
+}
+
+function NFTContextMenu({ item, children, onListNFT }: NFTContextMenuProps) {
   const { toast } = useToast();
 
   const handleCopyContract = () => {
@@ -166,13 +100,6 @@ function NFTContextMenu({ item, children }: { item: NFTItem; children: React.Rea
     toast({ title: 'Link copied to clipboard', description: link });
   };
 
-  const handleListNFT = () => {
-    toast({
-      title: 'List NFT',
-      description: `Preparing to list ${item.name}...`
-    });
-  };
-
   const handleCopyImageUrl = () => {
     navigator.clipboard.writeText(item.image);
     toast({ title: 'Image URL copied to clipboard', description: item.image });
@@ -185,9 +112,7 @@ function NFTContextMenu({ item, children }: { item: NFTItem; children: React.Rea
     const twitterUrl = new URL('https://twitter.com/intent/tweet');
     twitterUrl.searchParams.append('text', text);
     twitterUrl.searchParams.append('url', imageUrl);
-    // Optional: Add hashtags
     twitterUrl.searchParams.append('hashtags', 'NFT,Stacks,Bitcoin');
-    // Optional: Tag relevant accounts
     twitterUrl.searchParams.append('via', 'CharismaBTC');
 
     window.open(twitterUrl.toString(), '_blank');
@@ -213,7 +138,7 @@ function NFTContextMenu({ item, children }: { item: NFTItem; children: React.Rea
           Copy Image URL
         </ContextMenuItem>
 
-        <ContextMenuItem className="hover:bg-white/10 focus:bg-white/10" onClick={handleListNFT}>
+        <ContextMenuItem className="hover:bg-white/10 focus:bg-white/10" onClick={onListNFT}>
           <PlusCircle className="w-4 h-4 mr-2 opacity-50" />
           List NFT
         </ContextMenuItem>
@@ -290,21 +215,36 @@ function NFTContextMenu({ item, children }: { item: NFTItem; children: React.Rea
   );
 }
 
+interface DraggableSlotProps {
+  item: NFTItem | null;
+  index: number;
+  isDraggedOver: boolean;
+}
+
 function DraggableSlot({ item, index, isDraggedOver }: DraggableSlotProps) {
-  const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
+  const [isListing, setIsListing] = useState(false);
+  const [showListingDialog, setShowListingDialog] = useState(false);
+
+  // Set up draggable
+  const { attributes, listeners, setNodeRef: setDraggableRef, isDragging } = useDraggable({
     id: index.toString(),
     data: { item }
   });
 
-  const { setNodeRef: setDropRef } = useDroppable({
+  // Set up droppable
+  const { setNodeRef: setDroppableRef } = useDroppable({
     id: index.toString()
   });
 
-  // Combine draggable and droppable refs
+  // Combine refs for both draggable and droppable
   const ref = (node: HTMLDivElement | null) => {
-    setNodeRef(node);
-    setDropRef(node);
+    setDraggableRef(node);
+    setDroppableRef(node);
   };
+
+  const handleListingStart = useCallback(() => {
+    setIsListing(true);
+  }, []);
 
   const slot = (
     <div
@@ -323,7 +263,9 @@ function DraggableSlot({ item, index, isDraggedOver }: DraggableSlotProps) {
         isDragging && 'opacity-30',
         isDraggedOver && 'ring-2 ring-primary',
         // Cursor
-        item ? 'cursor-grab active:cursor-grabbing' : 'cursor-default'
+        item ? 'cursor-grab active:cursor-grabbing' : 'cursor-default',
+        // Disable dragging when listing
+        isListing && 'pointer-events-none'
       )}
     >
       {item && !isDragging && (
@@ -335,7 +277,9 @@ function DraggableSlot({ item, index, isDraggedOver }: DraggableSlotProps) {
             'transition-all duration-150',
             'bg-black/40',
             'group-hover:ring-white/20',
-            'group-hover:brightness-110'
+            'group-hover:brightness-110',
+            // Add grayscale when listing
+            isListing && 'grayscale opacity-50'
           )}
         >
           <Image
@@ -350,12 +294,37 @@ function DraggableSlot({ item, index, isDraggedOver }: DraggableSlotProps) {
             sizes="96px"
           />
           <div className="absolute inset-0 bg-gradient-to-b from-black/10 to-black/30" />
+
+          {/* Show "Listing" indicator when in listing state */}
+          {isListing && (
+            <div className="absolute inset-0 flex items-center justify-center text-xs font-medium text-white bg-black/50">
+              Listing...
+            </div>
+          )}
         </div>
       )}
     </div>
   );
 
-  return item ? <NFTContextMenu item={item}>{slot}</NFTContextMenu> : slot;
+  // Don't wrap in context menu if item is currently being listed
+  if (!item || isListing) {
+    return slot;
+  }
+
+  return (
+    <>
+      <NFTContextMenu item={item} onListNFT={() => setShowListingDialog(true)}>
+        {slot}
+      </NFTContextMenu>
+
+      <ListNFTDialog
+        isOpen={showListingDialog}
+        onClose={() => setShowListingDialog(false)}
+        item={item}
+        onListingStart={handleListingStart}
+      />
+    </>
+  );
 }
 
 function DragOverlayContent({ item }: { item: NFTItem }) {

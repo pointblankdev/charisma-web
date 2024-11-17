@@ -53,6 +53,17 @@ describe('MarketplaceService', () => {
     console.log('Collection Listings:', listings);
   });
 
+  test('create listings from API', async () => {
+    await MarketplaceService.createListingsFromAPI();
+  });
+
+  test('demonstrates getting memobots-guardians-of-the-gigaverse collection listings', async () => {
+    const contractId =
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse';
+    const listings = await MarketplaceService.getCollectionListings(contractId);
+    console.log('Collection Listings:', listings);
+  });
+
   test('update metadata for a listing', async () => {
     const contractId = 'SPKW6PSNQQ5Y8RQ17BWB0X162XW696NQX1868DNJ.weird-welsh';
     const tokenId = 68;

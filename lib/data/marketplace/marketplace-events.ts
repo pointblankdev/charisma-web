@@ -61,6 +61,7 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
         };
 
         await MarketplaceService.createListing(listing);
+        console.log(listing.contractId, listing.tokenId);
 
         builder.addField({
           name: `${symbol} Asset Listed`,
@@ -107,7 +108,8 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
             metadata: soldListing.metadata
           };
 
-          await saveSaleEvent(sale);
+          console.log(sale);
+          // await saveSaleEvent(sale);
         }
 
         builder.addField({
