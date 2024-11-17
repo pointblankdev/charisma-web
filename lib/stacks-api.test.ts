@@ -30,6 +30,13 @@ describe('Stacks API', () => {
     console.log(events);
   });
 
+  it('should get babywelsh contract events', async () => {
+    const events = await getAllContractEvents(
+      'SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4kjvtr37ht'
+    );
+    console.log(events);
+  });
+
   it('should get collection size', async () => {
     const size = await getCollectionSize('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven');
     console.log(size);

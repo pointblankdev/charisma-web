@@ -1,5 +1,5 @@
-;; xSTX Token
-;; vLiSTX-stSTX LP token with configurable metadata
+;; Generational Welsh Token
+;; WELSH-BABYWELSH LP token with configurable metadata
 
 (impl-trait .dao-traits-v4.sip010-ft-trait)
 (impl-trait .dao-traits-v4.ft-plus-trait)
@@ -12,17 +12,17 @@
 (define-constant CONTRACT (as-contract tx-sender))
 
 ;; Configuration Variables
-(define-data-var token-name (string-ascii 32) "xSTX")
-(define-data-var token-symbol (string-ascii 10) "xSTX")
-(define-data-var token-uri (optional (string-utf8 256)) 
-  (some u"https://charisma.rocks/sip10/xstx/metadata.json"))
+(define-data-var token-name (string-ascii 32) "Generational Welsh")
+(define-data-var token-symbol (string-ascii 10) "gWELSH")
 (define-data-var token-decimals uint u6)
+(define-data-var token-uri (optional (string-utf8 256)) 
+  (some u"https://charisma.rocks/sip10/generational-welsh/metadata.json"))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; errors
 (define-constant err-check-owner  (err u1))
 (define-constant err-transfer     (err u2))
-(define-constant err-unauthorized (err u401))
+(define-constant err-unauthorized (err u403))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; ownership
@@ -73,7 +73,7 @@
   (begin
     (asserts! (is-deployer) err-unauthorized)
     (var-set token-uri new-uri)
-    (ok (print {
+    (ok (print { 
       notification: "token-metadata-update", 
       payload: { token-class: "ft", contract-id: CONTRACT }
     }))))
