@@ -37,7 +37,7 @@
 	(ok (ft-get-supply hooter)))
 
 (define-read-only (get-token-uri)
-    (ok (var-get token-uri)))
+  (ok (var-get token-uri)))
 
 ;; --- Batch Transfer
 
@@ -56,4 +56,4 @@
 
 ;; --- Initial Mint
 
-(ft-mint? hooter TOTAL-SUPPLY tx-sender)
+(ft-mint? hooter TOTAL-SUPPLY deployer)
