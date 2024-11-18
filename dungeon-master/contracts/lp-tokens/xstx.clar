@@ -1,5 +1,5 @@
 ;; xSTX Token
-;; vLiSTX-stSTX LP token with configurable metadata
+;; stSTX-vLiSTX LP token with configurable metadata
 
 (impl-trait .dao-traits-v4.sip010-ft-trait)
 (impl-trait .dao-traits-v4.ft-plus-trait)

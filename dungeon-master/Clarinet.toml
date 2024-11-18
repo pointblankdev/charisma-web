@@ -186,6 +186,9 @@ depends_on = []
 path = "contracts/sip10/hooter-the-owl.clar"
 depends_on = []
 
+[contracts.generational-welsh]
+path = "contracts/lp-tokens/generational-welsh.clar"
+depends_on = []
 
 
 # traits
