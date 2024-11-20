@@ -127,7 +127,7 @@ export const createAddLiquidityTransaction = ({
   const postConditions: any[] = [];
 
   // Add post conditions for token0
-  if (pool.token0.symbol !== 'STX') {
+  if (pool.token0.metadata.symbol !== 'STX') {
     const amount0BigInt = BigInt(
       Math.floor(parseFloat(amount0) * 10 ** pool.token0.metadata.decimals)
     );
@@ -147,7 +147,7 @@ export const createAddLiquidityTransaction = ({
   }
 
   // Add post conditions for token1
-  if (pool.token1.symbol !== 'STX') {
+  if (pool.token1.metadata.symbol !== 'STX') {
     const amount1BigInt = BigInt(
       Math.floor(parseFloat(amount1) * 10 ** pool.token1.metadata.decimals)
     );
@@ -208,7 +208,7 @@ export const createRemoveLiquidityTransaction = ({
       .ft(pool.contractId as any, 'lp-token'),
 
     // Token0 post condition
-    pool.token0.symbol !== 'STX'
+    pool.token0.metadata.symbol !== 'STX'
       ? Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
           .willSendGte(1)
           .ft(
@@ -218,7 +218,7 @@ export const createRemoveLiquidityTransaction = ({
       : Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(1).ustx(),
 
     // Token1 post condition
-    pool.token1.symbol !== 'STX'
+    pool.token1.metadata.symbol !== 'STX'
       ? Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
           .willSendGte(1)
           .ft(
