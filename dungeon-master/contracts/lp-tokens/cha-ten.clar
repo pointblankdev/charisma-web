@@ -1,5 +1,4 @@
-;; Chen Token
-;; CHA-TEN LP token with configurable metadata
+;; Charisma LP token
 
 (impl-trait .dao-traits-v4.sip010-ft-trait)
 (impl-trait .dao-traits-v4.ft-plus-trait)
@@ -12,10 +11,10 @@
 (define-constant CONTRACT (as-contract tx-sender))
 
 ;; Configuration Variables
-(define-data-var token-name (string-ascii 32) "Chen")
-(define-data-var token-symbol (string-ascii 10) "CHEN")
+(define-data-var token-name (string-ascii 32) "Charisma x TEN Collab Coin")
+(define-data-var token-symbol (string-ascii 10) "CHA10")
 (define-data-var token-uri (optional (string-utf8 256)) 
-  (some u"https://charisma.rocks/sip10/chen/metadata.json"))
+  (some u"https://charisma.rocks/sip10/cha-ten/metadata.json"))
 (define-data-var token-decimals uint u6)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
