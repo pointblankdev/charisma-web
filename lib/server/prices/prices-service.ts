@@ -174,21 +174,41 @@ class PricesService {
       {}
     );
 
+
+    // Log individual values before assignment
+    const stxPrice = cmcPriceData?.data?.['STX']?.quote?.USD?.price || 0;
+
+    const stxChaPrice = stxCharatio * stxPrice;
+
+    const synStxPrice = stxSynStxratio * stxPrice;
+
+    const ordiPrice = cmcPriceData?.data?.['ORDI']?.quote?.USD?.price || 0;
+
+    const dogPrice = cmcPriceData?.data?.['DOG']?.quote?.USD?.price || 0;
+
+    const welshPrice = cmcPriceData?.data?.['WELSH']?.quote?.USD?.price || 0;
+
+    const iouWelshPrice = welshIouWelshratio * welshPrice;
+
+    const rooPrice = convertedVelarPrices['$ROO'] || 0;
+
+    const iouRooPrice = rooIouRooratio * rooPrice;
+
     // Set base token prices
     this.tokenPrices = {
       ...convertedVelarPrices,
-      CHA: stxCharatio * cmcPriceData.data['STX'].quote.USD.price,
-      STX: cmcPriceData.data['STX'].quote.USD.price,
-      wSTX: cmcPriceData.data['STX'].quote.USD.price,
-      synSTX: stxSynStxratio * cmcPriceData.data['STX'].quote.USD.price,
-      ordi: cmcPriceData.data['ORDI'].quote.USD.price,
-      DOG: cmcPriceData.data['DOG'].quote.USD.price,
-      WELSH: cmcPriceData.data['WELSH'].quote.USD.price,
-      iouWELSH: welshIouWelshratio * cmcPriceData.data['WELSH'].quote.USD.price,
-      vLiSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
-      stSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
-      ROO: convertedVelarPrices['$ROO'],
-      iouROO: rooIouRooratio * convertedVelarPrices['$ROO']
+      CHA: stxChaPrice,
+      STX: stxPrice,
+      wSTX: stxPrice,
+      synSTX: synStxPrice,
+      ordi: ordiPrice,
+      DOG: dogPrice,
+      WELSH: welshPrice,
+      iouWELSH: iouWelshPrice,
+      vLiSTX: stxPrice * 1.1,
+      stSTX: stxPrice * 1.1,
+      ROO: rooPrice,
+      iouROO: iouRooPrice,
     };
 
     // build pools data
