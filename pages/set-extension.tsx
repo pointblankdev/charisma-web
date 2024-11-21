@@ -46,7 +46,7 @@ const SetExtension = () => {
         functionName: 'set-extension',
         functionArgs: [
           contractPrincipalCV(contractAddress.split('.')[0], contractAddress.split('.')[1]),
-          boolCV(false)
+          boolCV(true)
         ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []

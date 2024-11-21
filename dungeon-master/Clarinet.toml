@@ -190,6 +190,15 @@ depends_on = []
 path = "contracts/lp-tokens/generational-welsh.clar"
 depends_on = []
 
+[contracts.arb-protection]
+path = "contracts/arb-protection.clar"
+depends_on = []
+
+[contracts.wstx-ap]
+path = "contracts/wstx-ap.clar"
+depends_on = []
+
+
 
 # traits
 [contracts.dao-traits-v4]
