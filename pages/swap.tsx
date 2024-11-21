@@ -69,10 +69,10 @@ export default function SwapPage({ data }: any) {
       <SkipNavContent />
       <Layout>
         <div className="sm:container sm:mx-auto sm:pb-10 md:max-w-5xl">
-          <div className="my-2 font-light text-center text-muted-foreground/90">
+          <div className="mt-2 font-light text-center text-muted-foreground/90">
             All trading fees go to WELSH & ROO token redemptions
           </div>
-          <div className="my-2 font-light text-center text-primary/90">
+          <div className="mb-2 font-light text-center text-primary/90">
             Note: Two STX tokens are temporarily in the token select, and one will show better swap
             rates.
           </div>
