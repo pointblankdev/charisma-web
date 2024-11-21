@@ -234,7 +234,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
   const { stxAddress } = useGlobalState();
   const { getBalance, wallet } = useWallet();
 
-  const hasHighExperience = wallet.experience.balance >= 4000;
+  const hasHighExperience = wallet.experience.balance >= 1;
 
   // Initialize graph on component mount
   useEffect(() => {
