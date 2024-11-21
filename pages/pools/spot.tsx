@@ -51,9 +51,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       // filter out pools with base tokens that are LP tokens
       .filter((p: any) => !p.token0.lpInfo && !p.token1.lpInfo && p.poolData)
       // filter out community pools with zero protocol fee
-      .filter((p: any) => p.poolData.protocolFee.numerator !== 0)
-      // filter out old stx-cha pool
-      .filter((p: any) => p.contractId !== 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha');
+      .filter((p: any) => p.poolData.protocolFee.numerator !== 0);
 
     return {
       props: {
@@ -92,7 +90,7 @@ export default function SpotPoolsPage({ data }: Props) {
     if (wallet) setLoading(false);
   }, [wallet]);
 
-  const isAuthorized = wallet.experience.balance >= 1000 || wallet.redPilled;
+  const isAuthorized = wallet.experience.balance >= 100 || wallet.redPilled;
 
   return (
     <Page meta={meta} fullViewport>
@@ -116,10 +114,10 @@ export default function SpotPoolsPage({ data }: Props) {
                     <ul className="mb-4 text-left list-disc list-inside">
                       <li
                         className={
-                          wallet.experience.balance >= 1000 ? 'text-green-500' : 'text-red-500'
+                          wallet.experience.balance >= 100 ? 'text-green-500' : 'text-red-500'
                         }
                       >
-                        At least 1000 Experience {wallet.experience.balance >= 1000 ? '✓' : '✗'}
+                        At least 100 Experience {wallet.experience.balance >= 100 ? '✓' : '✗'}
                       </li>
                       <li className={wallet.redPilled ? 'text-green-500' : 'text-red-500'}>
                         Own the Red Pill NFT {wallet.redPilled ? '✓' : '✗'}

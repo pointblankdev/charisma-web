@@ -56,43 +56,45 @@ interface TokenListProps {
 
 const TokenList = ({ tokens, onSelect, fromToken, hasHighExperience, pools }: TokenListProps) => (
   <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
-    {tokens.map(token => {
-      const isDisabled =
-        fromToken &&
-        (!isValidTokenPair(fromToken, token, pools) ||
-          (token.metadata.symbol === 'STX' &&
-            !hasHighExperience &&
-            fromToken.metadata.symbol !== 'synSTX'));
+    {tokens
+      .filter(t => !t.contractId.endsWith('.wstx'))
+      .map(token => {
+        const isDisabled =
+          fromToken &&
+          (!isValidTokenPair(fromToken, token, pools) ||
+            (token.metadata.symbol === 'STX' &&
+              !hasHighExperience &&
+              fromToken.metadata.symbol !== 'synSTX'));
 
-      const src = token?.metadata.images?.logo || token?.metadata.image;
-      return (
-        <button
-          key={token.metadata.symbol}
-          className={cn(
-            'flex items-center w-full px-4 py-2 text-left',
-            isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'
-          )}
-          onClick={() => !isDisabled && onSelect(token)}
-          disabled={isDisabled}
-        >
-          {src ? (
-            <Image
-              src={src}
-              alt={token.metadata.symbol}
-              width={240}
-              height={240}
-              className="w-6 mr-2 rounded-full"
-            />
-          ) : (
-            <Coins className="mr-2" />
-          )}
-          <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate')}>
-            {token.metadata.symbol}
-            {token.metadata.symbol === 'STX' ? ' ✨' : ''}
-          </span>
-        </button>
-      );
-    })}
+        const src = token?.metadata.images?.logo || token?.metadata.image;
+        return (
+          <button
+            key={token.metadata.symbol}
+            className={cn(
+              'flex items-center w-full px-4 py-2 text-left',
+              isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'
+            )}
+            onClick={() => !isDisabled && onSelect(token)}
+            disabled={isDisabled}
+          >
+            {src ? (
+              <Image
+                src={src}
+                alt={token.metadata.symbol}
+                width={240}
+                height={240}
+                className="w-6 mr-2 rounded-full"
+              />
+            ) : (
+              <Coins className="mr-2" />
+            )}
+            <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate')}>
+              {token.metadata.symbol}
+              {token.metadata.symbol === 'STX' ? ' ✨' : ''}
+            </span>
+          </button>
+        );
+      })}
   </div>
 );
 

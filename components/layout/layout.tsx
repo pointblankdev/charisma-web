@@ -23,7 +23,7 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from '@components/ui/navigation-menu';
-import { ChartBarIcon, LineChartIcon } from 'lucide-react';
+import { ChartBarIcon, LineChartIcon, Sparkles } from 'lucide-react';
 import { GlobalDrawer, useGlobalDrawer } from '@components/global/drawer';
 
 type Props = {
@@ -152,6 +152,14 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               )}
               onClick={drawer.open}
             >
+              {wallet.experience.balance > 1 && (
+                <div
+                  className="cursor-help"
+                  title={'You have over 1 EXP and have unlocked all swap routes.'}
+                >
+                  ✨
+                </div>
+              )}
               {wallet.redPilled && (
                 <Image
                   src={redPillFloating}
