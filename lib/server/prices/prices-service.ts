@@ -149,7 +149,7 @@ class PricesService {
     ]);
 
     // Get STX/CHA ratio
-    const stxChaPool = await dexClient.getPoolById('4');
+    const stxChaPool = await dexClient.getPoolById('31');
     const stxCharatio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
 
     // Get WELSH/iouWELSH ratio

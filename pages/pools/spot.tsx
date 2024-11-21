@@ -46,12 +46,15 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       const token1 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token1) || {};
       pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
     }
+    console.log(pools[0]);
 
     const spotPools = pools
       // filter out pools with base tokens that are LP tokens
       .filter((p: any) => !p.token0.lpInfo && !p.token1.lpInfo && p.poolData)
       // filter out community pools with zero protocol fee
-      .filter((p: any) => p.poolData.protocolFee.numerator !== 0);
+      .filter((p: any) => p.poolData.protocolFee.numerator !== 0)
+      // filter out old stx-cha pool
+      .filter((p: any) => p.contractId !== 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha');
 
     return {
       props: {
