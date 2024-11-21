@@ -190,7 +190,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
 
   const getTokenBalance = useCallback(
     (token: Pool['token0'] | Pool['token1']) => {
-      if (token.symbol === 'STX') {
+      if (token.metadata.symbol === 'STX') {
         return Number(balances.stx.balance) / 10 ** token.metadata.decimals;
       }
       return (
