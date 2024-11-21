@@ -165,6 +165,10 @@ class PricesService {
     const stxSynStxPool = await dexClient.getPoolById('10');
     const stxSynStxratio = Number(stxSynStxPool.reserve0) / Number(stxSynStxPool.reserve1);
 
+    // Get STX/SHARK ratio
+    const stxSharkPool = await dexClient.getPoolById('30');
+    const stxSharkRatio = Number(stxSharkPool.reserve0) / Number(stxSharkPool.reserve1);
+
     // Convert Velar prices
     const convertedVelarPrices = Object.keys(velarPrices).reduce(
       (acc: { [key: string]: number }, key: string) => {
@@ -181,6 +185,7 @@ class PricesService {
       STX: cmcPriceData.data['STX'].quote.USD.price,
       wSTX: cmcPriceData.data['STX'].quote.USD.price,
       synSTX: stxSynStxratio * cmcPriceData.data['STX'].quote.USD.price,
+      SHARK: stxSharkRatio * cmcPriceData.data['STX'].quote.USD.price,
       ordi: cmcPriceData.data['ORDI'].quote.USD.price,
       DOG: cmcPriceData.data['DOG'].quote.USD.price,
       WELSH: cmcPriceData.data['WELSH'].quote.USD.price,
