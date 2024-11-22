@@ -187,7 +187,11 @@ interface SwapDetailsProps {
 const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) => (
   <div className="flex justify-between pt-6">
     <div className="text-sm text-gray-400">
-      Swap path: {swapPath.map(token => token.metadata.symbol).join(' → ')}
+      Swap path:{' '}
+      {swapPath
+        .map(token => token.metadata.symbol)
+        .join(' → ')
+        .replace('STX → CHA → STX', 'STX')}
     </div>
     <div className="text-sm text-gray-400">
       Minimum received: {minimumReceived} {toToken?.metadata.symbol}
