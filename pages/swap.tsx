@@ -69,9 +69,6 @@ export default function SwapPage({ data }: any) {
       <SkipNavContent />
       <Layout>
         <div className="sm:container sm:mx-auto sm:pb-10 md:max-w-5xl">
-          <div className="mt-2 font-light text-center text-muted-foreground/90">
-            All trading fees go to WELSH & ROO token redemptions
-          </div>
           <SwapInterface data={data} />
         </div>
       </Layout>

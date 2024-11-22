@@ -17,6 +17,7 @@ import {
 } from './swap-helpers';
 import { initializeGraph } from './swap-graph';
 import dynamic from 'next/dynamic';
+import SimpleSwapInterface from './simple-swap-ui';
 const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), {
   ssr: false
 });
@@ -374,7 +375,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
     setEstimatedAmountOut('0');
   };
 
-  return (
+  return hasHighExperience ? (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4">
       <div className="mt-6">
         <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
@@ -484,5 +485,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
         </div>
       </div>
     </div>
+  ) : (
+    <SimpleSwapInterface data={data} />
   );
 };
