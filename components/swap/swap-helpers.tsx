@@ -281,20 +281,20 @@ export const createSwapTransaction = ({
     parseFloat(minimumAmountOut) * 10 ** toToken.metadata.decimals
   );
 
-  // // Add post-condition for the initial token transfer from the user
-  // if (fromToken.metadata.symbol !== 'STX') {
-  //   postConditions.push(
-  //     Pc.principal(stxAddress)
-  //       .willSendLte(amountInMicroTokens)
-  //       .ft(fromToken.contractId, fromToken.audit.fungibleTokens[0].tokenIdentifier)
-  //   );
-  // } else {
-  //   postConditions.push(Pc.principal(stxAddress).willSendLte(amountInMicroTokens).ustx());
-  // }
+  // Add post-condition for the initial token transfer from the user
+  if (fromToken.metadata.symbol !== 'STX') {
+    postConditions.push(
+      Pc.principal(stxAddress)
+        .willSendGte(1)
+        .ft(fromToken.contractId, fromToken.audit.fungibleTokens[0].tokenIdentifier)
+    );
+  } else {
+    postConditions.push(Pc.principal(stxAddress).willSendGte(1).ustx());
+  }
 
   if (isMultiHop) {
     // Add post-conditions for intermediate hops
-    for (let i = 0; i < swapPath.length - 1; i++) {
+    for (let i = 1; i < swapPath.length - 1; i++) {
       const inToken = swapPath[i];
       const outToken = swapPath[i + 1];
       console.log(inToken);
@@ -322,14 +322,12 @@ export const createSwapTransaction = ({
   if (toToken.metadata.symbol !== 'STX') {
     postConditions.push(
       Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-        .willSendGte(minAmountOutMicroTokens)
+        .willSendGte(1)
         .ft(toToken.contractId, toToken.audit.fungibleTokens[0].tokenIdentifier)
     );
   } else {
     postConditions.push(
-      Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-        .willSendGte(minAmountOutMicroTokens)
-        .ustx()
+      Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(1).ustx()
     );
   }
 
@@ -363,6 +361,8 @@ export const createSwapTransaction = ({
         uintCV(amountInMicroTokens),
         uintCV(minAmountOutMicroTokens)
       ];
+
+  // console.log(uniqueConditions);
 
   return {
     network,
