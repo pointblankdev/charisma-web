@@ -295,7 +295,7 @@ export const createSwapTransaction = ({
     // Add post-conditions for intermediate hops
     for (let i = 1; i < swapPath.length - 1; i++) {
       const intermediateToken = swapPath[i];
-      if (intermediateToken.symbol !== 'STX') {
+      if (intermediateToken.metadata.symbol !== 'STX') {
         postConditions.push(
           Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
             .willSendGte(1)
