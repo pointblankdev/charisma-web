@@ -9,6 +9,7 @@ import {
 import { fetchCallReadOnlyFunction } from '@stacks/transactions';
 import { network } from '@components/stacks-session/connect';
 import { getGraph } from './swap-graph';
+import { uniqBy } from 'lodash';
 
 // Cache key generator
 const getAmountCacheKey = (
@@ -280,41 +281,40 @@ export const createSwapTransaction = ({
     parseFloat(minimumAmountOut) * 10 ** toToken.metadata.decimals
   );
 
-  // Add post-condition for the initial token transfer from the user
-  if (fromToken.metadata.symbol !== 'STX') {
-    postConditions.push(
-      Pc.principal(stxAddress)
-        .willSendLte(amountInMicroTokens)
-        .ft(fromToken.contractId, fromToken.audit.fungibleTokens[0].tokenIdentifier)
-    );
-  } else {
-    postConditions.push(Pc.principal(stxAddress).willSendLte(amountInMicroTokens).ustx());
-  }
+  // // Add post-condition for the initial token transfer from the user
+  // if (fromToken.metadata.symbol !== 'STX') {
+  //   postConditions.push(
+  //     Pc.principal(stxAddress)
+  //       .willSendLte(amountInMicroTokens)
+  //       .ft(fromToken.contractId, fromToken.audit.fungibleTokens[0].tokenIdentifier)
+  //   );
+  // } else {
+  //   postConditions.push(Pc.principal(stxAddress).willSendLte(amountInMicroTokens).ustx());
+  // }
 
   if (isMultiHop) {
     // Add post-conditions for intermediate hops
-    for (let i = 1; i < swapPath.length - 1; i++) {
-      const intermediateToken = swapPath[i];
-      if (intermediateToken.metadata.symbol !== 'STX') {
-        postConditions.push(
-          Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-            .willSendGte(1)
-            .ft(
-              intermediateToken.contractId,
-              intermediateToken.audit.fungibleTokens[0].tokenIdentifier
-            ),
-          Pc.principal(stxAddress)
-            .willSendGte(1)
-            .ft(
-              intermediateToken.contractId,
-              intermediateToken.audit.fungibleTokens[0].tokenIdentifier
-            )
-        );
+    for (let i = 0; i < swapPath.length - 1; i++) {
+      const inToken = swapPath[i];
+      const outToken = swapPath[i + 1];
+      console.log(inToken);
+      console.log(outToken);
+      let inPc = Pc.principal(stxAddress).willSendGte(1);
+      let outPc = Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(
+        1
+      );
+      if (inToken.metadata.symbol !== 'STX') {
+        inPc = inPc.ft(inToken.contractId, inToken.audit.fungibleTokens[0].tokenIdentifier) as any;
+        outPc = outPc.ft(
+          inToken.contractId,
+          inToken.audit.fungibleTokens[0].tokenIdentifier
+        ) as any;
       } else {
-        postConditions.push(
-          Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(1).ustx()
-        );
+        inPc = inPc.ustx() as any;
+        outPc = outPc.ustx() as any;
       }
+      postConditions.push(inPc);
+      postConditions.push(outPc);
     }
   }
 
@@ -332,6 +332,8 @@ export const createSwapTransaction = ({
         .ustx()
     );
   }
+
+  const uniqueConditions = uniqBy(postConditions, JSON.stringify);
 
   const contractName = isMultiHop ? 'univ2-path2' : 'univ2-router';
   const functionName = isMultiHop ? `swap-${swapPath.length}` : 'swap-exact-tokens-for-tokens';
@@ -369,7 +371,7 @@ export const createSwapTransaction = ({
     functionName,
     functionArgs,
     postConditionMode: PostConditionMode.Deny,
-    postConditions,
+    postConditions: uniqueConditions,
     onFinish,
     onCancel
   };
