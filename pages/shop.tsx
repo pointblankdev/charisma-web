@@ -546,7 +546,7 @@ function MarketplaceHeader() {
         </div>
         <div className="flex items-center gap-2">
           <Button onClick={triggerListingHotkey} className="flex space-x-2">
-            <div>Show Inventory</div>
+            <div>View Inventory</div>
             <kbd className="px-2 py-0.5 text-muted/60 flex items-center space-x-1 mb-auto">
               <div>{hotkey}</div>
               <div>i</div>
