@@ -28,7 +28,7 @@ import redPillNft from '@public/sip9/pills/red-pill-nft.gif';
 import bluePillNft from '@public/sip9/pills/blue-pill-nft.gif';
 import { StaticImageData } from 'next/image';
 import { MarketplaceService } from '@lib/data/marketplace/marketplace-service';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import stxLogo from '@public/stx-logo.png';
 import numeral from 'numeral';
@@ -514,6 +514,28 @@ export function ProductCard({ item, onAction, className, currentAddress }: Produ
 }
 
 function MarketplaceHeader() {
+  const [hotkey, setHotkey] = useState('');
+  // Function to trigger Command/Control + i keyboard shortcut
+  const triggerListingHotkey = () => {
+    const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+    const event = new KeyboardEvent('keydown', {
+      key: 'i',
+      code: 'KeyI',
+      metaKey: isMac, // Command key for Mac
+      ctrlKey: !isMac, // Control key for Windows/Linux
+      bubbles: true
+    });
+    document.dispatchEvent(event);
+  };
+
+  const isMac =
+    typeof window !== 'undefined' ? navigator.platform.toUpperCase().indexOf('MAC') >= 0 : false;
+
+  useEffect(() => {
+    if (isMac) setHotkey('⌘');
+    else setHotkey('Ctrl');
+  }, [isMac]);
+
   return (
     <div className="py-6 space-y-6">
       {/* Header Section */}
@@ -522,55 +544,16 @@ function MarketplaceHeader() {
           <h1 className="text-3xl font-bold tracking-tight">Marketplace</h1>
           <p className="text-muted-foreground">Buy and sell NFTs from approved collections</p>
         </div>
-        <ListingDialog />
+        <div className="flex items-center gap-2">
+          <Button onClick={triggerListingHotkey} className="flex space-x-2">
+            <div>Show Inventory</div>
+            <kbd className="px-2 py-0.5 text-muted/60 flex items-center space-x-1 mb-auto">
+              <div>{hotkey}</div>
+              <div>i</div>
+            </kbd>
+          </Button>
+        </div>
       </div>
-
-      {/* Market Insights */}
-      {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Floor Price</CardTitle>
-            <TrendingUp className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">125 STX</div>
-            <p className="text-xs text-muted-foreground">+2.5% from last week</p>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">Total Volume</CardTitle>
-            <LineChart className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">24.5K STX</div>
-            <p className="text-xs text-muted-foreground">152 sales this week</p>
-          </CardContent>
-        </Card>
-        <Card className="col-span-2">
-          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
-            <CardTitle className="text-sm font-medium">
-              <div className="flex items-center gap-2">
-                Market Insights
-                <Brain className="w-4 h-4 text-muted-foreground" />
-              </div>
-            </CardTitle>
-            <Sparkles className="w-4 h-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-1">
-              <p className="text-sm">
-                • Floor price is expected to rise 10-15% in the next 24h based on recent trading
-                patterns
-              </p>
-              <p className="text-sm">
-                • Rare traits "Golden" and "Legendary" are trending in recent sales
-              </p>
-              <p className="text-sm text-muted-foreground">Last updated 5 minutes ago</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div> */}
     </div>
   );
 }

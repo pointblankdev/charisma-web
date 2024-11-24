@@ -587,7 +587,13 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
                   {loadingCollections.size > 0 && <Loader2 className="w-3 h-3 animate-spin" />}
                 </span>
               </div>
-              <span className="text-xs text-white/40">ESC to close</span>
+              <div className="space-x-1">
+                <span className="text-xs text-white/40">Drag to rearrange</span>
+                <span className="text-xs text-white/40">|</span>
+                <span className="text-xs text-white/40">Right-click for commands</span>
+                <span className="text-xs text-white/40">|</span>
+                <span className="text-xs text-white/40">ESC to close</span>
+              </div>
             </div>
 
             <Tabs
