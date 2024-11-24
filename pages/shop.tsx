@@ -50,7 +50,8 @@ import {
   Coins,
   Cat,
   PictureInPicture,
-  Box
+  Box,
+  User
 } from 'lucide-react';
 import { Separator } from '@components/ui/separator';
 import {
@@ -128,6 +129,9 @@ interface MarketplaceListing {
   price: number;
   commission: number;
   timestamp: number;
+  owner: string;
+  block_time: number;
+  block_time_iso: string;
   metadata: {
     sip: number;
     name: string;
@@ -277,9 +281,17 @@ function ProductDialog({
                 {isListing && (
                   <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                     <Clock className="w-4 h-4" />
-                    Listed {formatTimestamp(item.timestamp)}
+                    Listed {formatTimestamp(item.block_time * 1000)}
                   </div>
                 )}
+                <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
+                  <User className="w-4 h-4" />
+                  Owner {item?.owner?.slice(0, 4)}...{item?.owner?.slice(-4)}
+                  <CopyIcon
+                    className="w-3 h-3 cursor-pointer"
+                    onClick={() => navigator.clipboard.writeText(item.owner)}
+                  />
+                </div>
               </div>
 
               <Separator />
@@ -712,7 +724,6 @@ function ListingDialog() {
       }
       // Fetch metadata
       const metdata = await getNftURI(selectedCollection, tokenId);
-      console.log('metadata', metdata);
       setMetadata(metdata);
       setShowPreview(true);
     } catch (error: any) {

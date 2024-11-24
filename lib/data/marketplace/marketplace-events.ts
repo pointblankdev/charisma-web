@@ -1,8 +1,7 @@
 import Logger from '@lib/logger';
-import { MarketplaceService, MarketplaceListing } from './marketplace-service';
+import { MarketplaceService } from './marketplace-service';
 import { kv } from '@vercel/kv';
 import { EmbedBuilder } from '@tycrek/discord-hookr/dist/EmbedBuilder';
-import { getNftURI, getTokenMetadata } from '@lib/stacks-api';
 
 // Interface for sale events
 interface SaleEvent {
@@ -22,22 +21,6 @@ interface SaleEvent {
   };
 }
 
-async function saveSaleEvent(sale: SaleEvent): Promise<void> {
-  const key = `sale:${sale.contractId}:${sale.tokenId}:${sale.timestamp}`;
-  await kv.set(key, sale);
-  await kv.sadd(`sales:${sale.contractId}`, key);
-  await kv.sadd(`seller:${sale.seller}:sales`, key);
-  await kv.sadd(`buyer:${sale.buyer}:purchases`, key);
-
-  // Update collection volume stats
-  const stats = await MarketplaceService.getStats();
-  const collectionStats = stats.collections[sale.contractId] || { listings: 0, volume: 0 };
-  collectionStats.volume += sale.price;
-  stats.collections[sale.contractId] = collectionStats;
-  stats.totalVolume += sale.price;
-  await kv.set('marketplace:stats', stats);
-}
-
 export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) => {
   if (event.type !== 'SmartContractEvent') return builder;
 
@@ -50,81 +33,12 @@ export const handleMarketplaceEvent = async (event: any, builder: EmbedBuilder) 
 
   try {
     switch (op) {
-      case 'LIST_ASSET':
-        const listing: MarketplaceListing = {
-          contractId: data.tradables,
-          tokenId: data['tradable-id'],
-          price: data.price,
-          commission: data.commission,
-          timestamp: Date.now(),
-          metadata: await getNftURI(data.tradables, data['tradable-id'])
-        };
-
-        await MarketplaceService.createListing(listing);
-        console.log(listing.contractId, listing.tokenId);
-
-        builder.addField({
-          name: `${symbol} Asset Listed`,
-          value: [
-            `Contract: ${data.tradables}`,
-            `ID: ${data['tradable-id']}`,
-            `Price: ${data.price / 1000000} STX`, // Convert microSTX to STX for display
-            `Commission: ${data.commission / 100}%` // Convert basis points to percentage
-          ].join('\n')
-        });
-        break;
-
       case 'UNLIST_ASSET':
         await MarketplaceService.removeListing(data.tradables, data['tradable-id']);
 
         builder.addField({
           name: `${symbol} Asset Unlisted`,
           value: `Contract: ${data.tradables}\nID: ${data['tradable-id']}`
-        });
-        break;
-
-      case 'PURCHASE_ASSET':
-        // First get the listing details before removal
-        const soldListing = await MarketplaceService.getListing(
-          data.tradables,
-          data['tradable-id']
-        );
-
-        // Remove the listing
-        await MarketplaceService.removeListing(data.tradables, data['tradable-id']);
-
-        // Save the sale event
-        if (soldListing) {
-          const sale: SaleEvent = {
-            contractId: data.tradables,
-            tokenId: data['tradable-id'],
-            price: data.price,
-            commission: data.commission,
-            seller: data.owner,
-            buyer: event.data.sender,
-            royaltyAddress: data['royalty-address'],
-            royaltyPercent: data['royalty-percent'],
-            timestamp: Date.now(),
-            metadata: soldListing.metadata
-          };
-
-          console.log(sale);
-          // await saveSaleEvent(sale);
-        }
-
-        builder.addField({
-          name: `${symbol} Asset Sold`,
-          value: [
-            `Contract: ${data.tradables}`,
-            `ID: ${data['tradable-id']}`,
-            `Price: ${data.price / 1000000} STX`,
-            `Commission: ${data.commission / 100}%`,
-            `Royalty: ${data['royalty-percent'] / 100}%`,
-            soldListing?.name ? `Name: ${soldListing.name}` : '',
-            soldListing?.collection ? `Collection: ${soldListing.collection}` : ''
-          ]
-            .filter(Boolean)
-            .join('\n')
         });
         break;
 

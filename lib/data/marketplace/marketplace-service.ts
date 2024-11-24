@@ -9,6 +9,8 @@ export interface MarketplaceListing {
   owner?: string; // Owner's STX address
   royaltyAddress?: string; // Royalty recipient address
   royaltyPercent?: number; // Royalty percentage in basis points
+  block_time: number; // When the item was listed
+  block_time_iso: string; // When the item was listed
   timestamp: number; // When the item was listed
   name?: string; // NFT name if available
   collection?: string; // Collection name if available
@@ -65,7 +67,10 @@ export class MarketplaceService {
             tokenId: data['tradable-id'].value,
             price: data.price.value,
             commission: data.commission.value,
+            block_time: data.block_time,
+            block_time_iso: data.block_time_iso,
             timestamp: Date.now(),
+            owner: data.sender_address,
             metadata: await getNftURI(data.tradables.value, data['tradable-id'].value)
           };
           const existingListing = await this.getListing(listing.contractId, listing.tokenId);

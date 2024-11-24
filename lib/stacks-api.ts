@@ -1,4 +1,4 @@
-import { createClient } from '@stacks/blockchain-api-client';
+import { createClient, Transaction } from '@stacks/blockchain-api-client';
 import {
   fetchCallReadOnlyFunction,
   cvToValue,
@@ -382,13 +382,20 @@ export const geFatigueEnergyCost = async () => {
   return cvToValue(response).value;
 };
 
+export async function getTransaction(txid: string) {
+  const response = await client.GET('/extended/v1/tx/{tx_id}', {
+    params: { path: { tx_id: txid } }
+  });
+  return response.data as Transaction;
+}
+
 /**
  * Get all contract events
  * @param contractId Contract identifier
  * @param totalLimit Maximum total number of events to fetch
  */
 export async function getAllContractEvents(contractId: string, totalLimit: number = 5000) {
-  let allEvents: any[] = [];
+  const allEvents: any[] = [];
   let offset = 0;
   let hasMore = true;
   const limitPerRequest = 50;
@@ -404,10 +411,18 @@ export async function getAllContractEvents(contractId: string, totalLimit: numbe
       }
     });
 
-    if (response.data.results && response.data.results.length > 0) {
-      allEvents = allEvents.concat(
-        response.data.results.map((e: any) => cvToValue(hexToCV(e.contract_log.value.hex)))
-      );
+    if (response?.data?.results && response.data.results.length > 0) {
+      for (const event of response.data.results) {
+        const contractEvent = cvToValue(hexToCV(event.contract_log.value.hex));
+        const tx = await getTransaction(event.tx_id);
+        const newContractEvent = {
+          block_time: tx?.block_time,
+          block_time_iso: tx?.block_time_iso,
+          sender_address: tx?.sender_address,
+          ...contractEvent
+        };
+        allEvents.push(newContractEvent);
+      }
       offset += response.data.results.length;
       hasMore = response.data.results.length === limitPerRequest;
     } else {
