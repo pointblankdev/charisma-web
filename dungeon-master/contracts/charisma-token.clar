@@ -1,7 +1,7 @@
 ;; The Charisma Token
 ;; https://charisma.rocks
 
-(impl-trait .dao-traits-v4.sip010-ft-trait)
+(impl-trait .charisma-traits-v1.sip010-ft-trait)
 
 (define-constant err-unauthorized (err u401))
 (define-constant err-liquidity-lock (err u402))

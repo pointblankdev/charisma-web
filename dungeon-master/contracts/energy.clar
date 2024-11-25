@@ -1,6 +1,6 @@
 ;; Energy
 
-(impl-trait .dao-traits-v4.sip010-ft-trait)
+(impl-trait .charisma-traits-v1.sip010-ft-trait)
 
 (define-constant err-unauthorized (err u401))
 (define-constant err-not-token-owner (err u4))

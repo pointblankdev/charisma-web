@@ -6,6 +6,10 @@ authors = []
 telemetry = false
 cache_dir = "./.cache"
 
+[contracts.charisma-traits-v1]
+path = "contracts/traits/charisma-traits-v1.clar"
+depends_on = []
+
 [contracts.dungeon-master]
 path = "contracts/dungeon-master.clar"
 depends_on = []
@@ -18,29 +22,37 @@ depends_on = []
 path = "contracts/experience.clar"
 depends_on = []
 
-[contracts.univ2-share-fee-to]
-path = "contracts/univ2-share-fee-to.clar"
+[contracts.energy]
+path = "contracts/energy.clar"
 depends_on = []
 
-[contracts.univ2-core]
-path = "contracts/univ2-core.clar"
+[contracts.revenue-share]
+path = "contracts/dex/revenue-share.clar"
 depends_on = []
 
-[contracts.univ2-library]
-path = "contracts/univ2-library.clar"
+[contracts.charisma-dex]
+path = "contracts/dex/charisma-dex.clar"
 depends_on = []
 
-[contracts.univ2-router]
-path = "contracts/univ2-router.clar"
+[contracts.aura]
+path = "contracts/aura.clar"
 depends_on = []
 
-[contracts.univ2-path2]
-path = "contracts/univ2-path2.clar"
+[contracts.meme-engine-manager]
+path = "contracts/meme-engines/meme-engine-manager.clar"
 depends_on = []
 
 [contracts.wstx]
 path = "contracts/wstx.clar"
 depends_on = []
+
+[contracts.index]
+path = "contracts/dex/index.clar"
+depends_on = []
+
+# [contracts.charisma-token]
+# path = "contracts/charisma-token.clar"
+# depends_on = []
 
 [contracts.welshcorgicoin-token]
 path = "contracts/welshcorgicoin-token.clar"
@@ -62,101 +74,93 @@ depends_on = []
 path = "contracts/energetic-welsh.clar"
 depends_on = []
 
-[contracts.status-effects]
-path = "contracts/status-effects.clar"
+[contracts.memobots-guardians-of-the-gigaverse]
+path = "contracts/memobots-guardians-of-the-gigaverse.clar"
+depends_on = []
+
+[contracts.power-cells]
+path = "contracts/power-cells.clar"
 depends_on = []
 
 [contracts.odins-raven]
 path = "contracts/odins-raven.clar"
 depends_on = []
 
-[contracts.memobots-guardians-of-the-gigaverse]
-path = "contracts/memobots-guardians-of-the-gigaverse.clar"
-depends_on = []
-
-[contracts.charisma-claims]
-path = "contracts/charisma-claims.clar"
-depends_on = []
-
-[contracts.red-pill-nft]
-path = "contracts/red-pill-nft.clar"
-depends_on = []
-
-[contracts.blue-pill-nft]
-path = "contracts/blue-pill-nft.clar"
-depends_on = []
-
-[contracts.charisma-token]
-path = "contracts/charisma-token.clar"
-depends_on = []
-
-[contracts.energy]
-path = "contracts/energy.clar"
-depends_on = []
-
-[contracts.arcana]
-path = "contracts/arcana.clar"
-depends_on = []
-
-[contracts.aura]
-path = "contracts/aura.clar"
-depends_on = []
-
-[contracts.meme-engine-manager]
-path = "contracts/meme-engines/meme-engine-manager.clar"
-depends_on = []
-
 [contracts.raven-wisdom]
 path = "contracts/raven-wisdom.clar"
 depends_on = []
 
-[contracts.memobot-capacity]
-path = "contracts/memobot-capacity.clar"
+[contracts.status-effects]
+path = "contracts/status-effects.clar"
 depends_on = []
 
-[contracts.meme-engine]
-path = "contracts/meme-engines/meme-engine.clar"
+[contracts.charisma-rulebook-registry]
+path = "contracts/charisma-rulebook-registry.clar"
 depends_on = []
 
-[contracts.registry]
-path = "contracts/registry.clar"
+[contracts.initialize-energy]
+path = "contracts/initialize-energy.clar"
 depends_on = []
 
-[contracts.dungeon-keeper]
-path = "contracts/dungeon-keeper.clar"
+[contracts.charisma-rulebook]
+path = "contracts/charisma-rulebook.clar"
 depends_on = []
 
-[contracts.charisma-randomizer]
-path = "contracts/charisma-randomizer.clar"
-depends_on = []
+# [contracts.charisma-claims]
+# path = "contracts/charisma-claims.clar"
+# depends_on = []
 
-[contracts.fate-randomizer]
-path = "contracts/interactions/fate-randomizer.clar"
-depends_on = []
+# [contracts.red-pill-nft]
+# path = "contracts/red-pill-nft.clar"
+# depends_on = []
 
-[contracts.fatigue]
-path = "contracts/interactions/fatigue.clar"
-depends_on = []
+# [contracts.blue-pill-nft]
+# path = "contracts/blue-pill-nft.clar"
+# depends_on = []
 
-[contracts.keepers-petition]
-path = "contracts/interactions/keepers-petition.clar"
-depends_on = []
+# [contracts.charisma-token]
+# path = "contracts/charisma-token.clar"
+# depends_on = []
 
-[contracts.charisma-mine]
-path = "contracts/interactions/charisma-mine.clar"
-depends_on = []
+# [contracts.arcana]
+# path = "contracts/arcana.clar"
+# depends_on = []
 
-[contracts.the-troll-toll]
-path = "contracts/interactions/the-troll-toll.clar"
-depends_on = []
+# [contracts.meme-engine]
+# path = "contracts/meme-engines/meme-engine.clar"
+# depends_on = []
 
-[contracts.charismatic-corgi]
-path = "contracts/interactions/charismatic-corgi.clar"
-depends_on = []
+# [contracts.charisma-randomizer]
+# path = "contracts/charisma-randomizer.clar"
+# depends_on = []
 
-[contracts.charisma-virtual-welsh]
-path = "contracts/lp-tokens/charisma-virtual-welsh.clar"
-depends_on = []
+# [contracts.fate-randomizer]
+# path = "contracts/interactions/fate-randomizer.clar"
+# depends_on = []
+
+# [contracts.fatigue]
+# path = "contracts/interactions/fatigue.clar"
+# depends_on = []
+
+# [contracts.keepers-petition]
+# path = "contracts/interactions/keepers-petition.clar"
+# depends_on = []
+
+# [contracts.charisma-mine]
+# path = "contracts/interactions/charisma-mine.clar"
+# depends_on = []
+
+# [contracts.the-troll-toll]
+# path = "contracts/interactions/the-troll-toll.clar"
+# depends_on = []
+
+# [contracts.charismatic-corgi]
+# path = "contracts/interactions/charismatic-corgi.clar"
+# depends_on = []
+
+# [contracts.charisma-virtual-welsh]
+# path = "contracts/lp-tokens/charisma-virtual-welsh.clar"
+# depends_on = []
 
 # [contracts.dungeon-crawler]
 # path = "contracts/dungeon-crawler.clar"
@@ -170,52 +174,37 @@ depends_on = []
 # path = "contracts/lp-tokens/up-dog.clar"
 # depends_on = []
 
-[contracts.powered-swap]
-path = "contracts/primitives/powered-swap.clar"
-depends_on = []
+# [contracts.powered-swap]
+# path = "contracts/primitives/powered-swap.clar"
+# depends_on = []
 
-[contracts.buy-or-build]
-path = "contracts/primitives/buy-or-build.clar"
-depends_on = []
+# [contracts.buy-or-build]
+# path = "contracts/primitives/buy-or-build.clar"
+# depends_on = []
 
-[contracts.univ2-rotate]
-path = "contracts/univ2-rotate.clar"
-depends_on = []
+# [contracts.univ2-rotate]
+# path = "contracts/univ2-rotate.clar"
+# depends_on = []
 
-[contracts.hooter-the-owl]
-path = "contracts/sip10/hooter-the-owl.clar"
-depends_on = []
+# [contracts.hooter-the-owl]
+# path = "contracts/sip10/hooter-the-owl.clar"
+# depends_on = []
 
-[contracts.generational-welsh]
-path = "contracts/lp-tokens/generational-welsh.clar"
-depends_on = []
+# [contracts.generational-welsh]
+# path = "contracts/lp-tokens/generational-welsh.clar"
+# depends_on = []
 
-[contracts.arb-protection]
-path = "contracts/arb-protection.clar"
-depends_on = []
+# [contracts.arb-protection]
+# path = "contracts/arb-protection.clar"
+# depends_on = []
 
-[contracts.wstx-ap]
-path = "contracts/wstx-ap.clar"
-depends_on = []
+# [contracts.wstx-ap]
+# path = "contracts/wstx-ap.clar"
+# depends_on = []
 
-
-
-# traits
-[contracts.dao-traits-v4]
-path = "contracts/dao-traits-v4.clar"
-depends_on = []
-
-[contracts.dao-traits-v7]
-path = "contracts/dao-traits-v7.clar"
-depends_on = []
-
-[contracts.dao-traits-v9]
-path = "contracts/dao-traits-v9.clar"
-depends_on = []
-
-[contracts.charisma-traits-v0]
-path = "contracts/charisma-traits-v0.clar"
-depends_on = []
+# [contracts.charisma-rulebook]
+# path = "contracts/charisma-rulebook.clar"
+# depends_on = []
 
 
 clarity_version = 3

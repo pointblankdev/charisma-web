@@ -1,12 +1,12 @@
-;;; UniswapV2Pair.sol
-;;; UniswapV2Factory.sol
+;; Charisma DEX
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; traits
 (use-trait ft-trait .charisma-traits-v1.sip010-ft-trait)
 (use-trait ft-plus-trait .charisma-traits-v1.ft-plus-trait)
-(use-trait share-fee-to-trait .charisma-traits-v1.share-fee-to-trait)
 (use-trait rulebook-trait .charisma-traits-v1.rulebook-trait)
+(define-trait revenue-share-trait
+  ((get-fee-recipient (uint <ft-trait>) (response principal uint))))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; errors
@@ -24,8 +24,13 @@
 (define-constant err-collect-preconditions  (err u111))
 (define-constant err-collect-postconditions (err u112))
 (define-constant err-anti-rug               (err u113))
+(define-constant err-router-preconditions   (err u200))
+(define-constant err-router-postconditions  (err u201))
+(define-constant err-library-preconditions  (err u300))
 (define-constant err-unauthorized-rulebook  (err u401))
 (define-constant err-pay-to-play-required   (err u403))
+(define-constant err-preconditions          (err u501))
+(define-constant err-postconditions         (err u502))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; ownership
@@ -47,12 +52,12 @@
    (try! (check-owner))
    (ok (var-set protocol-fee-to new-protocol-fee-to)) ))
 
-(define-data-var share-fee-to principal .univ2-share-fee-to)
-(define-read-only (get-share-fee-to) (var-get share-fee-to))
-(define-public (set-share-fee-to (new-share-fee-to principal))
+(define-data-var revenue-share-contract principal .revenue-share)
+(define-read-only (get-revenue-share) (var-get revenue-share-contract))
+(define-public (set-revenue-share (new-revenue-share principal))
   (begin
    (try! (check-owner))
-   (ok (var-set share-fee-to new-share-fee-to)) ))
+   (ok (var-set revenue-share-contract new-revenue-share)) ))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;; storage
@@ -455,7 +460,7 @@
     (id            uint)
     (token-in      <ft-trait>)
     (token-out     <ft-trait>)
-    (share-fee-to0 <share-fee-to-trait>)
+    (revenue-share0 <revenue-share-trait>)
     (amt-in        uint)
     (amt-out       uint))
 
@@ -476,6 +481,7 @@
         (amt-fee-protocol (get amt-fee-protocol amts))
         (amt-fee-share    (get amt-fee-share    amts))
         (amt-fee-rest     (get amt-fee-rest     amts))
+        (fee-recipient    (try! (contract-call? revenue-share0 get-fee-recipient id token-in)))
 
         (r0              (get reserve0 pool))
         (r1              (get reserve1 pool))
@@ -508,7 +514,7 @@
                (is-eq (contract-of token-out) t1))
            (not (is-eq (contract-of token-in) (contract-of token-out)))
 
-           (is-eq (contract-of share-fee-to0) (get-share-fee-to))
+           (is-eq (contract-of revenue-share0) (get-revenue-share))
 
            (> amt-in  u0)
            (> amt-out u0)
@@ -531,12 +537,7 @@
     (try! (as-contract (contract-call? token-out transfer amt-out protocol user none)))
 
     (if (> amt-fee-share u0)
-      (begin
-        (try! (as-contract (contract-call?
-                            token-in transfer amt-fee-share protocol (get-share-fee-to) none)))
-        (try! (as-contract (contract-call?
-                            share-fee-to0 receive id is-token0 amt-fee-share)))
-      )
+      (try! (as-contract (contract-call? token-in transfer amt-fee-share protocol fee-recipient none)))
       true)
 
     ;; Update local state
@@ -645,5 +646,426 @@
            revenue: rev }))
       (print event)
       (ok event) )))
+
+;;; LIBRARY
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; quote
+(define-read-only
+  (quote
+    (amt-in      uint)
+    (reserve-in  uint)
+    (reserve-out uint))
+
+  (begin
+
+    (asserts!
+      (and (> amt-in      u0)
+           (> reserve-in  u0)
+           (> reserve-out u0))
+      err-library-preconditions)
+
+     (ok (/ (* amt-in reserve-out)
+            reserve-in) )))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; get-amount-in
+(define-read-only
+   (get-amount-in
+     (amt-out     uint)
+     (reserve-in  uint)
+     (reserve-out uint)
+     (swap-fee    (tuple (num uint) (den uint))) )
+
+  (begin
+    (asserts!
+        (and (> amt-out     u0)
+             (> reserve-in  u0)
+             (> reserve-out u0))
+        err-library-preconditions)
+
+    (let ((x (+ (/ (* reserve-in amt-out)
+                   (- reserve-out amt-out)) u1))
+          (y (/ (* x (get den swap-fee)) (get num swap-fee))) )
+        (ok (+ y u1) ))))
+
+;;; ROUTER
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; add-liquidity
+(define-read-only
+  (add-liquidity-calc
+    (id           uint)
+    (amt0-desired uint)
+    (amt1-desired uint)
+    (amt0-min     uint)
+    (amt1-min     uint))
+  (let ((pool (do-get-pool id))
+        (r0   (get reserve0 pool))
+        (r1   (get reserve1 pool)))
+    (if (and (is-eq r0 u0) (is-eq r1 u0))
+        (ok {amt0: amt0-desired, amt1: amt1-desired})
+        (let ((amt1-optimal (try! (quote amt0-desired r0 r1)))
+              (amt0-optimal (try! (quote amt1-desired r1 r0))) )
+            ;; Note we do not use optimal if > desired.
+            (if (<= amt1-optimal amt1-desired)
+                (begin
+                  (asserts! (>= amt1-optimal amt1-min) err-router-preconditions)
+                  (ok {amt0: amt0-desired, amt1: amt1-optimal}))
+                (begin
+                  (asserts!
+                    (and
+                      (<= amt0-optimal amt0-desired)
+                      (>= amt0-optimal amt0-min))
+                    err-router-preconditions)
+                  (ok {amt0: amt0-optimal, amt1: amt1-desired})) )) )))
+
+(define-public
+  (add-liquidity
+    (rulebook <rulebook-trait>)
+    (id uint)
+    (token0       <ft-trait>)
+    (token1       <ft-trait>)
+    (lp-token     <ft-plus-trait>)
+    (amt0-desired uint)
+    (amt1-desired uint)
+    (amt0-min     uint)
+    (amt1-min     uint))
+
+  (let ((amts (try! (add-liquidity-calc
+                id amt0-desired amt1-desired amt0-min amt1-min))))
+
+    (asserts!
+     (and (<= amt0-min amt0-desired)
+          (<= amt1-min amt1-desired)
+          (>= amt0-min u0)
+          (>= amt1-min u0)
+          (>= amt0-desired u0)
+          (>= amt1-desired u0))
+     err-router-preconditions)
+
+    (mint
+      rulebook
+      id
+      token0
+      token1
+      lp-token
+      (get amt0 amts)
+      (get amt1 amts)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; remove-liquidity
+(define-public
+  (remove-liquidity
+    (rulebook <rulebook-trait>)
+    (id        uint)
+    (token0    <ft-trait>)
+    (token1    <ft-trait>)
+    (lp-token  <ft-plus-trait>)
+    (liquidity uint)
+    (amt0-min  uint)
+    (amt1-min  uint))
+
+  (let ((event (try! (burn
+                  rulebook id token0 token1 lp-token liquidity))))
+
+    (asserts!
+      (and (>= (get amt0 event) amt0-min)
+           (>= (get amt1 event) amt1-min))
+      err-router-postconditions)
+
+    (ok event) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;; swap
+(define-public
+  (swap-exact-tokens-for-tokens
+    (rulebook       <rulebook-trait>)
+    (id             uint)
+    (token0         <ft-trait>)
+    (token1         <ft-trait>)
+    (token-in       <ft-trait>)
+    (token-out      <ft-trait>)
+    (revenue-share   <revenue-share-trait>)
+    (amt-in      uint)
+    (amt-out-min uint))
+
+  (let ((pool      (do-get-pool id))
+        (is-token0 (is-eq (contract-of token0) (contract-of token-in)))
+        (amt-out   (get-amount-out
+          amt-in
+          (if is-token0 (get reserve0 pool) (get reserve1 pool))
+          (if is-token0 (get reserve1 pool) (get reserve0 pool))
+          (get swap-fee pool) ))
+       (event      (try! (swap
+          rulebook
+          id
+          token-in
+          token-out
+          revenue-share
+          amt-in
+          amt-out))) )
+
+    (asserts!
+     (and (is-eq (get token0 pool) (contract-of token0))
+          (is-eq (get token1 pool) (contract-of token1))
+          (> amt-in      u0)
+          (> amt-out-min u0) )
+     err-router-preconditions)
+
+    (asserts!
+      (and (>= (get amt-out event) amt-out-min))
+      err-router-postconditions)
+
+    (ok event) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-public
+  (swap-tokens-for-exact-tokens
+    (rulebook     <rulebook-trait>)
+    (id           uint)
+    (token0       <ft-trait>)
+    (token1       <ft-trait>)
+    (token-in     <ft-trait>)
+    (token-out    <ft-trait>)
+    (revenue-share <revenue-share-trait>)
+    (amt-in-max   uint)
+    (amt-out      uint))
+
+  (let ((pool      (do-get-pool id))
+        (is-token0 (is-eq (contract-of token0) (contract-of token-in)))
+        (amt-in    (try! (get-amount-in
+          amt-out
+          (if is-token0 (get reserve0 pool) (get reserve1 pool))
+          (if is-token0 (get reserve1 pool) (get reserve0 pool))
+          (get swap-fee pool) )))
+        (event     (try! (swap
+          rulebook
+          id
+          token-in
+          token-out
+          revenue-share
+          amt-in
+          amt-out))) )
+
+  (asserts!
+   (and (is-eq (get token0 pool) (contract-of token0))
+        (is-eq (get token1 pool) (contract-of token1))
+        (> amt-in-max u0)
+        (> amt-out    u0) )
+   err-router-preconditions)
+
+  (asserts!
+    (and (<= (get amt-in event) amt-in-max))
+    err-router-postconditions)
+
+  (ok event) ))
+
+;;; PATH2
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-public
+  (do-swap
+   (rulebook     <rulebook-trait>)
+   (amt-in       uint)
+   (token-in     <ft-trait>)
+   (token-out    <ft-trait>)
+   (revenue-share <revenue-share-trait>))
+  (let ((args (try! (swap-args amt-in token-in token-out))))
+     (swap-exact-tokens-for-tokens
+      rulebook
+      (get id        args)
+      (if (get flipped args) token-out token-in)
+      (if (get flipped args) token-in token-out)
+      token-in
+      token-out
+      revenue-share
+      amt-in
+      (get amt-out-min args) )))
+
+(define-read-only
+  (swap-args
+   (amt-in    uint)
+   (token-in  <ft-trait>)
+   (token-out <ft-trait>))
+  (let ((res (unwrap-panic
+              (lookup-pool
+               (contract-of token-in)
+               (contract-of token-out)
+               )))
+        (id  (unwrap-panic
+              (get-pool-id
+               (if (get flipped res) (contract-of token-out) (contract-of token-in))
+               (if (get flipped res) (contract-of token-in)  (contract-of token-out))
+               )))
+
+        (pool        (get pool res))
+        (reserve-in  (if (get flipped res) (get reserve1 pool) (get reserve0 pool)))
+        (reserve-out (if (get flipped res) (get reserve0 pool) (get reserve1 pool)))
+        (amt-out     (get-amount-out
+                      amt-in
+                      reserve-in
+                      reserve-out
+                      (get swap-fee pool)
+                      )))
+    (asserts!
+     (and
+      (> amt-in u0)
+      ) err-preconditions)
+    (ok
+     {id         : id,
+      flipped    : (get flipped res),
+      amt-out-min: amt-out})))
+
+(define-read-only
+  (amount-out
+   (amt-in    uint)
+   (token-in  <ft-trait>)
+   (token-out <ft-trait>))
+  (let ((res (unwrap-panic
+              (lookup-pool
+               (contract-of token-in)
+               (contract-of token-out)
+               )))
+        (pool        (get pool res))
+        (reserve-in  (if (get flipped res) (get reserve1 pool) (get reserve0 pool)))
+        (reserve-out (if (get flipped res) (get reserve0 pool) (get reserve1 pool)))
+        (amt-out     (get-amount-out
+                       amt-in
+                       reserve-in
+                       reserve-out
+                       (get swap-fee pool))) )
+    amt-out))
+
+;; univ2-library/core
+(define-read-only
+   (get-amount-out
+     (amt-in       uint)
+     (reserve-in   uint)
+     (reserve-out  uint)
+     (swap-fee     (tuple (num uint) (den uint)))
+     )
+
+    (let ((amt-in-adjusted (/ (* amt-in (get num swap-fee)) (get den swap-fee))) )
+
+    (/ (* amt-in-adjusted reserve-out)
+       (+ reserve-in amt-in-adjusted)) ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-public
+  (swap-3
+   (rulebook     <rulebook-trait>)
+   (amt-in       uint)
+   (amt-out-min  uint)
+   (token-a      <ft-trait>)
+   (token-b      <ft-trait>)
+   (token-c      <ft-trait>)
+   (revenue-share <revenue-share-trait>))
+  (let ((b (try! (do-swap rulebook amt-in token-a token-b revenue-share)))
+        (c (try! (do-swap rulebook (get amt-out b) token-b token-c revenue-share)))
+        )
+    (asserts!
+     (>= (get amt-out c) amt-out-min)
+     err-postconditions)
+    (ok
+     {b: b,
+      c: c})
+    ))
+
+(define-public
+  (swap-4
+   (rulebook     <rulebook-trait>)
+   (amt-in       uint)
+   (amt-out-min  uint)
+   (token-a      <ft-trait>)
+   (token-b      <ft-trait>)
+   (token-c      <ft-trait>)
+   (token-d      <ft-trait>)
+   (revenue-share <revenue-share-trait>))
+  (let ((b (try! (do-swap rulebook amt-in token-a token-b revenue-share)))
+        (c (try! (do-swap rulebook (get amt-out b) token-b token-c revenue-share)))
+        (d (try! (do-swap rulebook (get amt-out c) token-c token-d revenue-share)))
+        )
+    (asserts!
+     (>= (get amt-out d) amt-out-min)
+     err-postconditions)
+    (ok
+     {b: b,
+      c: c,
+      d: d})
+    ))
+
+(define-public
+  (swap-5
+   (rulebook     <rulebook-trait>)
+   (amt-in       uint)
+   (amt-out-min  uint)
+   (token-a      <ft-trait>)
+   (token-b      <ft-trait>)
+   (token-c      <ft-trait>)
+   (token-d      <ft-trait>)
+   (token-e      <ft-trait>)
+   (revenue-share <revenue-share-trait>))
+  (let ((b (try! (do-swap rulebook amt-in token-a token-b revenue-share)))
+        (c (try! (do-swap rulebook (get amt-out b) token-b token-c revenue-share)))
+        (d (try! (do-swap rulebook (get amt-out c) token-c token-d revenue-share)))
+        (e (try! (do-swap rulebook (get amt-out d) token-d token-e revenue-share)))
+        )
+    (asserts!
+     (>= (get amt-out e) amt-out-min)
+     err-postconditions)
+    (ok
+     {b: b,
+      c: c,
+      d: d,
+      e: e})
+    ))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+(define-read-only
+  (get-amount-out-3
+   (amt-in   uint)
+   (token-a <ft-trait>)
+   (token-b <ft-trait>)
+   (token-c <ft-trait>))
+  (let ((b (amount-out amt-in token-a token-b))
+        (c (amount-out b      token-b token-c)))
+
+    {b: b,
+     c: c}))
+
+(define-read-only
+    (get-amount-out-4
+     (amt-in   uint)
+     (token-a <ft-trait>)
+     (token-b <ft-trait>)
+     (token-c <ft-trait>)
+     (token-d <ft-trait>))
+    (let ((b (amount-out amt-in  token-a token-b))
+          (c (amount-out b       token-b token-c))
+          (d (amount-out c       token-c token-d))
+          )
+
+      {b: b,
+      c: c,
+      d: d}))
+
+(define-read-only
+  (get-amount-out-5
+   (amt-in  uint)
+   (token-a <ft-trait>)
+   (token-b <ft-trait>)
+   (token-c <ft-trait>)
+   (token-d <ft-trait>)
+   (token-e <ft-trait>))
+  (let ((b (amount-out amt-in  token-a token-b))
+        (c (amount-out b       token-b token-c))
+        (d (amount-out c       token-c token-d))
+        (e (amount-out d       token-d token-e))
+        )
+    {b: b,
+    c: c,
+    d: d,
+    e: e}))
 
 ;;; eof

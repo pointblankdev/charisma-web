@@ -1,5 +1,6 @@
-(use-trait ft-trait .dao-traits-v4.sip010-ft-trait)
-(use-trait share-fee-to-trait .dao-traits-v4.share-fee-to-trait)
+(use-trait ft-trait .charisma-traits-v1.sip010-ft-trait)
+(use-trait share-fee-to-trait .charisma-traits-v1.share-fee-to-trait)
+(use-trait rulebook-trait .charisma-traits-v1.rulebook-trait)
 
 (define-constant err-preconditions  (err u2001))
 (define-constant err-postconditions (err u2002))
@@ -7,6 +8,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-public
   (do-swap
+   (rulebook     <rulebook-trait>)
    (amt-in       uint)
    (token-in     <ft-trait>)
    (token-out    <ft-trait>)
@@ -15,6 +17,7 @@
      (contract-call?
       .univ2-router
       swap-exact-tokens-for-tokens
+      rulebook
       (get id        args)
       (if (get flipped args) token-out token-in)
       (if (get flipped args) token-in token-out)
@@ -101,14 +104,15 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-public
   (swap-3
+   (rulebook     <rulebook-trait>)
    (amt-in       uint)
    (amt-out-min  uint)
    (token-a      <ft-trait>)
    (token-b      <ft-trait>)
    (token-c      <ft-trait>)
    (share-fee-to <share-fee-to-trait>))
-  (let ((b (try! (do-swap amt-in          token-a token-b share-fee-to)))
-        (c (try! (do-swap (get amt-out b) token-b token-c share-fee-to)))
+  (let ((b (try! (do-swap rulebook amt-in token-a token-b share-fee-to)))
+        (c (try! (do-swap rulebook (get amt-out b) token-b token-c share-fee-to)))
         )
     (asserts!
      (>= (get amt-out c) amt-out-min)
@@ -120,6 +124,7 @@
 
 (define-public
   (swap-4
+   (rulebook     <rulebook-trait>)
    (amt-in       uint)
    (amt-out-min  uint)
    (token-a      <ft-trait>)
@@ -127,9 +132,9 @@
    (token-c      <ft-trait>)
    (token-d      <ft-trait>)
    (share-fee-to <share-fee-to-trait>))
-  (let ((b (try! (do-swap amt-in          token-a token-b share-fee-to)))
-        (c (try! (do-swap (get amt-out b) token-b token-c share-fee-to)))
-        (d (try! (do-swap (get amt-out c) token-c token-d share-fee-to)))
+  (let ((b (try! (do-swap rulebook amt-in token-a token-b share-fee-to)))
+        (c (try! (do-swap rulebook (get amt-out b) token-b token-c share-fee-to)))
+        (d (try! (do-swap rulebook (get amt-out c) token-c token-d share-fee-to)))
         )
     (asserts!
      (>= (get amt-out d) amt-out-min)
@@ -142,6 +147,7 @@
 
 (define-public
   (swap-5
+   (rulebook     <rulebook-trait>)
    (amt-in       uint)
    (amt-out-min  uint)
    (token-a      <ft-trait>)
@@ -150,10 +156,10 @@
    (token-d      <ft-trait>)
    (token-e      <ft-trait>)
    (share-fee-to <share-fee-to-trait>))
-  (let ((b (try! (do-swap amt-in          token-a token-b share-fee-to)))
-        (c (try! (do-swap (get amt-out b) token-b token-c share-fee-to)))
-        (d (try! (do-swap (get amt-out c) token-c token-d share-fee-to)))
-        (e (try! (do-swap (get amt-out d) token-d token-e share-fee-to)))
+  (let ((b (try! (do-swap rulebook amt-in token-a token-b share-fee-to)))
+        (c (try! (do-swap rulebook (get amt-out b) token-b token-c share-fee-to)))
+        (d (try! (do-swap rulebook (get amt-out c) token-c token-d share-fee-to)))
+        (e (try! (do-swap rulebook (get amt-out d) token-d token-e share-fee-to)))
         )
     (asserts!
      (>= (get amt-out e) amt-out-min)

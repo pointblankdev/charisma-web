@@ -1,5 +1,5 @@
-(use-trait ft-trait .dao-traits-v4.sip010-ft-trait)
-(impl-trait .dao-traits-v4.share-fee-to-trait)
+(use-trait ft-trait .charisma-traits-v1.sip010-ft-trait)
+(impl-trait .charisma-traits-v1.share-fee-to-trait)
 
 ;; nop
 (define-public

@@ -27,7 +27,7 @@
 ;; Integration Points:
 ;; - Energetic Welsh (.energetic-welsh): NFT-based energy generation bonuses
 ;; - Raven Wisdom (.raven-wisdom): Burn wisdom calculations
-;; - Memobot Capacity (.memobot-capacity): Maximum energy limits
+;; - Memobot Capacity (.power-cells): Maximum energy limits
 ;;
 ;; Modification Order:
 ;; The order of modifications is crucial for correct calculation:
@@ -92,6 +92,13 @@
             target: (get target ctx)
         }))
 
+(define-read-only (modify-mint (ctx {amount: uint, target: principal, caller: principal}))
+    (let ((base-amount (get amount ctx)))
+        {
+            amount: base-amount,
+            target: (get target ctx)
+        }))
+
 (define-read-only (modify-burn (ctx {amount: uint, target: principal, caller: principal}))
     (let ((base-amount (get amount ctx))
         (reduced-amount (apply-raven-wisdom base-amount (get target ctx))))
@@ -123,4 +130,4 @@
   (contract-call? .raven-wisdom apply amount user))
 
 (define-private (apply-max-capacity (energy uint) (user principal))
-  (contract-call? .memobot-capacity apply energy user))
+  (contract-call? .power-cells apply energy user))

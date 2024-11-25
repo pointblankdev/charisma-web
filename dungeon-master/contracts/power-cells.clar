@@ -40,8 +40,6 @@
 ;; incentivizing Memobot ownership, and ensuring fair energy distribution while providing
 ;; clear feedback to users about their capacity status and options for improvement.
 
-(use-trait sip10-trait .dao-traits-v7.sip010-ft-trait)
-
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
 (define-constant CONTRACT-OWNER tx-sender)
@@ -68,16 +66,14 @@
     (let
         ((max-capacity (get-max-capacity user))
          (current-balance (get-energy-balance user))
-         (combined-energy (+ current-balance energy-amount))
-         (capped-total (min combined-energy max-capacity))
-         (energy-gain (if (> capped-total current-balance)
-                         (- capped-total current-balance)
+         (energy-gain (if (> max-capacity current-balance)
+                         (min (- max-capacity current-balance) energy-amount)
                          u1))  ;; Always return at least 1
          (memobot-count (unwrap-panic (contract-call? .memobots-guardians-of-the-gigaverse get-balance user))))
 
         ;; Print message only if user has Memobots
-        (if (< combined-energy max-capacity) 
-            (if (> memobot-count u0) (print "Your Memobot NFTs have allowed for increased energy capacity.")
+        (if (>= current-balance (var-get base-energy-storage)) 
+            (if (> energy-gain u1) (print "Your Memobot NFTs have allowed for increased energy capacity.")
                 (print "You've reached your maximum energy capacity. Get more Memobots to increase it."))
             (print "You've added some energy to your reserves: not yet at max capacity."))
         energy-gain

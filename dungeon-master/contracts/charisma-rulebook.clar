@@ -1,6 +1,6 @@
-;; Dungeon Keeper Contract
+;; Charisma Rulebook Contract
 ;;
-;; The Dungeon Keeper is the central security and orchestration hub of the Charisma protocol,
+;; The Charisma Rulebook is the central security and orchestration hub of the Charisma protocol,
 ;; managing all token operations through a system of verified interactions, multi-owner
 ;; authorization, and dynamic modifications via status effects. It ensures that all token
 ;; operations follow protocol rules while enabling complex GameFi mechanics.
@@ -10,14 +10,15 @@
 ;; 1. Token Operations
 ;;    Experience Token (.experience):
 ;;    - reward: Mint up to 1000 XP tokens
-;;    - punish: Burn up to 100 XP tokens
+;;    - punish: Burn up to 1000 XP tokens
 ;;
 ;;    Energy Token (.energy):
-;;    - energize: Mint up to 10000 energy
-;;    - exhaust: Burn up to 10000 energy
+;;    - energize: Mint up to 1000 energy
+;;    - exhaust: Burn up to 1000 energy
 ;;
 ;;    Governance Token (.dme000-governance-token):
 ;;    - transfer: Move up to 100 DMG
+;;    - mint: Mint up to 100 DMG
 ;;    - burn: Destroy up to 100 DMG
 ;;    - lock/unlock: Lock/unlock up to 100 DMG
 ;;
@@ -64,7 +65,7 @@
 ;; primary interface between the protocol's DeFi foundation and its GameFi features.
 
 ;; Traits
-(impl-trait .dao-traits-v9.rulebook-trait)
+(impl-trait .charisma-traits-v1.rulebook-trait)
 
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -73,38 +74,41 @@
 
 ;; Maximum limits for token operations
 (define-data-var max-reward uint u1000000000)  ;; 1000 Experience
-(define-data-var max-punish uint u100000000)  ;; 100 Experience
-(define-data-var max-energize uint u10000000000)  ;; 10000 Energy
-(define-data-var max-exhaust uint u10000000000)  ;; 10000 Energy
+(define-data-var max-punish uint u1000000000)  ;; 1000 Experience
+(define-data-var max-energize uint u1000000000)  ;; 1000 Energy
+(define-data-var max-exhaust uint u1000000000)  ;; 1000 Energy
 (define-data-var max-transfer uint u100000000)  ;; 100 DMG
+(define-data-var max-mint uint u100000000)  ;; 100 DMG
 (define-data-var max-burn uint u100000000)  ;; 100 DMG
 (define-data-var max-lock uint u100000000)  ;; 100 DMG
 (define-data-var max-unlock uint u100000000)  ;; 100 DMG
+
+;; Pay-to-play amount
+(define-data-var ptp-amount uint u10000000) ;; 10 tokens
 
 ;; Maps
 (define-map contract-owners principal bool)
 (define-map verified-interactions principal bool)
 
-;; Initialize the verified interactions map
-(map-set verified-interactions .meme-engine true)
-
 ;; Authorization checks
-(define-read-only (is-contract-owner)
-  (default-to false (map-get? contract-owners contract-caller))
-)
+(define-private (is-contract-owner)
+  (default-to false (map-get? contract-owners contract-caller)))
+
+(define-private (is-verified (interaction principal))
+  (default-to false (map-get? verified-interactions interaction)))
 
 ;; Initialize the contract with the deployer as the first owner
 (map-set contract-owners tx-sender true)
 
 ;; Initialize the verified interactions map
-(map-set verified-interactions .meme-engine-cha true)
-(map-set verified-interactions .meme-engine-iou-welsh true)
-(map-set verified-interactions .meme-engine-iou-roo true)
-(map-set verified-interactions .fatigue true)
-(map-set verified-interactions .charisma-mine true)
-(map-set verified-interactions .the-troll-toll true)
-(map-set verified-interactions .charismatic-corgi true)
-(map-set verified-interactions .keepers-petition true)
+;; (map-set verified-interactions .meme-engine-cha true)
+;; (map-set verified-interactions .meme-engine-iou-welsh true)
+;; (map-set verified-interactions .meme-engine-iou-roo true)
+;; (map-set verified-interactions .fatigue true)
+;; (map-set verified-interactions .charisma-mine true)
+;; (map-set verified-interactions .the-troll-toll true)
+;; (map-set verified-interactions .charismatic-corgi true)
+;; (map-set verified-interactions .keepers-petition true)
 
 ;; Admin functions
 
@@ -153,6 +157,11 @@
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
     (ok (var-set max-transfer new-max))))
 
+(define-public (set-max-mint (new-max uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set max-mint new-max))))
+
 (define-public (set-max-burn (new-max uint))
   (begin
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
@@ -168,53 +177,73 @@
     (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
     (ok (var-set max-unlock new-max))))
 
+(define-public (set-pay-to-play-amount (new-amount uint))
+  (begin
+    (asserts! (is-contract-owner) ERR_UNAUTHORIZED)
+    (ok (var-set ptp-amount new-amount))))
+
+;; Public functions for protocol operations
+
+(define-public (pay-to-play)
+  (begin
+    (unwrap-panic (contract-call? .initialize-energy initialize))
+    (try! (exhaust (var-get ptp-amount) tx-sender))
+    (try! (reward (var-get ptp-amount) tx-sender))
+    (ok true)))
+
 ;; Public functions for token operations
 
 (define-public (reward (amount uint) (target principal))
   (let ((modified (modify-reward {amount: amount, target: target, caller: contract-caller})))
-    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
     (asserts! (<= (get amount modified) (var-get max-reward)) ERR_EXCEEDS_LIMIT)
     (contract-call? .experience mint (get amount modified) (get target modified))))
 
 (define-public (punish (amount uint) (target principal))
   (let ((modified (modify-punish {amount: amount, target: target, caller: contract-caller})))
-    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
     (asserts! (<= (get amount modified) (var-get max-punish)) ERR_EXCEEDS_LIMIT)
     (contract-call? .experience burn (get amount modified) (get target modified))))
 
 (define-public (energize (amount uint) (target principal))
   (let ((modified (modify-energize {amount: amount, target: target, caller: contract-caller})))
-    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
     (asserts! (<= (get amount modified) (var-get max-energize)) ERR_EXCEEDS_LIMIT)
     (contract-call? .energy mint (get amount modified) (get target modified))))
 
 (define-public (exhaust (amount uint) (target principal))
   (let ((modified (modify-exhaust {amount: amount, target: target, caller: contract-caller})))
-    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
     (asserts! (<= (get amount modified) (var-get max-exhaust)) ERR_EXCEEDS_LIMIT)
     (contract-call? .energy burn (get amount modified) (get target modified))))
 
 (define-public (transfer (amount uint) (sender principal) (target principal))
   (let ((modified (modify-transfer {amount: amount, sender: sender, target: target, caller: contract-caller})))
-    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
     (asserts! (<= (get amount modified) (var-get max-transfer)) ERR_EXCEEDS_LIMIT)
     (contract-call? .dme000-governance-token dmg-transfer (get amount modified) (get sender modified) (get target modified))))
 
+(define-public (mint (amount uint) (target principal))
+  (let ((modified (modify-mint {amount: amount, target: target, caller: contract-caller})))
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
+    (asserts! (<= (get amount modified) (var-get max-mint)) ERR_EXCEEDS_LIMIT)
+    (contract-call? .dme000-governance-token dmg-mint (get amount modified) (get target modified))))
+
 (define-public (burn (amount uint) (target principal))
   (let ((modified (modify-burn {amount: amount, target: target, caller: contract-caller})))
-    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
     (asserts! (<= (get amount modified) (var-get max-burn)) ERR_EXCEEDS_LIMIT)
     (contract-call? .dme000-governance-token dmg-burn (get amount modified) (get target modified))))
 
 (define-public (lock (amount uint) (target principal))
   (let ((modified (modify-lock {amount: amount, target: target, caller: contract-caller})))
-    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
     (asserts! (<= (get amount modified) (var-get max-lock)) ERR_EXCEEDS_LIMIT)
     (contract-call? .dme000-governance-token dmg-lock (get amount modified) (get target modified))))
 
 (define-public (unlock (amount uint) (target principal))
   (let ((modified (modify-unlock {amount: amount, target: target, caller: contract-caller})))
-    (asserts! (is-verified-interaction contract-caller) ERR_UNVERIFIED)
+    (asserts! (is-verified contract-caller) ERR_UNVERIFIED)
     (asserts! (<= (get amount modified) (var-get max-unlock)) ERR_EXCEEDS_LIMIT)
     (contract-call? .dme000-governance-token dmg-unlock (get amount modified) (get target modified))))
 
@@ -235,6 +264,9 @@
 (define-private (modify-transfer (ctx {amount: uint, sender: principal, target: principal, caller: principal})) 
   (contract-call? .status-effects modify-transfer ctx))
 
+(define-private (modify-mint (ctx {amount: uint, target: principal, caller: principal})) 
+  (contract-call? .status-effects modify-mint ctx))
+
 (define-private (modify-burn (ctx {amount: uint, target: principal, caller: principal})) 
   (contract-call? .status-effects modify-burn ctx))
 
@@ -247,7 +279,7 @@
 ;; Read-only functions
 
 (define-read-only (is-verified-interaction (interaction principal))
-  (default-to false (map-get? verified-interactions interaction)))
+  (ok (is-verified interaction)))
 
 (define-read-only (is-owner (address principal))
-  (default-to false (map-get? contract-owners address)))
+  (ok (default-to false (map-get? contract-owners address))))

@@ -5,7 +5,7 @@
 ;; allowing for graceful protocol upgrades and emergency circuit breaking if needed.
 
 ;; Traits
-(use-trait rulebook-trait .dao-traits-v9.rulebook-trait)
+(use-trait rulebook-trait .charisma-traits-v1.rulebook-trait)
 
 ;; Constants
 (define-constant ERR_UNAUTHORIZED (err u401))
@@ -23,10 +23,10 @@
     enabled: bool})
 
 ;; Initialize rulebooks
-(map-set registered-rulebooks .dungeon-keeper-rc6 true)
-(map-set rulebook-metadata .dungeon-keeper-rc6 
-    {name: "Dungeon Keeper", 
-     version: "rc6", 
+(map-set registered-rulebooks .charisma-rulebook-v0 true)
+(map-set rulebook-metadata .charisma-rulebook-v0 
+    {name: "Charisma Rulebook", 
+     version: "v0", 
      enabled: true})
 
 ;; Private functions

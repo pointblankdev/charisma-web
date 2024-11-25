@@ -1,8 +1,9 @@
 ;;; UniswapV2Router02.sol
 
-(use-trait ft-trait .dao-traits-v4.sip010-ft-trait)
-(use-trait ft-plus-trait .dao-traits-v4.ft-plus-trait)
-(use-trait share-fee-to-trait .dao-traits-v4.share-fee-to-trait)
+(use-trait ft-trait .charisma-traits-v1.sip010-ft-trait)
+(use-trait ft-plus-trait .charisma-traits-v1.ft-plus-trait)
+(use-trait share-fee-to-trait .charisma-traits-v1.share-fee-to-trait)
+(use-trait rulebook-trait .charisma-traits-v1.rulebook-trait)
 
 (define-constant err-router-preconditions  (err u200))
 (define-constant err-router-postconditions (err u201))
@@ -38,6 +39,7 @@
 
 (define-public
   (add-liquidity
+    (rulebook <rulebook-trait>)
     (id uint)
     (token0       <ft-trait>)
     (token1       <ft-trait>)
@@ -60,6 +62,7 @@
      err-router-preconditions)
 
     (contract-call? .univ2-core mint
+      rulebook
       id
       token0
       token1
@@ -71,6 +74,7 @@
 ;;; remove-liquidity
 (define-public
   (remove-liquidity
+    (rulebook <rulebook-trait>)
     (id        uint)
     (token0    <ft-trait>)
     (token1    <ft-trait>)
@@ -80,7 +84,7 @@
     (amt1-min  uint))
 
   (let ((event (try! (contract-call? .univ2-core burn
-                  id token0 token1 lp-token liquidity))))
+                  rulebook id token0 token1 lp-token liquidity))))
 
     (asserts!
       (and (>= (get amt0 event) amt0-min)
@@ -93,6 +97,7 @@
 ;;; swap
 (define-public
   (swap-exact-tokens-for-tokens
+    (rulebook       <rulebook-trait>)
     (id             uint)
     (token0         <ft-trait>)
     (token1         <ft-trait>)
@@ -110,6 +115,7 @@
           (if is-token0 (get reserve1 pool) (get reserve0 pool))
           (get swap-fee pool) )))
        (event      (try! (contract-call? .univ2-core swap
+          rulebook
           id
           token-in
           token-out
@@ -133,6 +139,7 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 (define-public
   (swap-tokens-for-exact-tokens
+    (rulebook     <rulebook-trait>)
     (id           uint)
     (token0       <ft-trait>)
     (token1       <ft-trait>)
@@ -150,6 +157,7 @@
           (if is-token0 (get reserve1 pool) (get reserve0 pool))
           (get swap-fee pool) )))
         (event     (try! (contract-call? .univ2-core swap
+          rulebook
           id
           token-in
           token-out
