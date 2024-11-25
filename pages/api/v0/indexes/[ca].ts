@@ -1,4 +1,4 @@
-import { getContractMetadata, setContractMetadata } from '@lib/db-providers/kv';
+import { addIndexContract, getContractMetadata, setContractMetadata } from '@lib/db-providers/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {
@@ -18,6 +18,7 @@ export default async function getMetadata(
     let ca = req.query.ca as string;
     if (req.method === 'POST') {
       console.log(req.body);
+      await addIndexContract(ca);
       response = await setContractMetadata(ca, req.body);
     } else if (req.method === 'GET') {
       // if ca ends with .json, remove it
