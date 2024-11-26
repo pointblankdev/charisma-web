@@ -76,12 +76,6 @@ const ContractDeployer = () => {
     (asserts! (is-eq contract-caller (var-get owner)) ERR_UNAUTHORIZED)
     (ok (var-set owner new-owner))))
 
-(define-public (set-alpha (new-alpha uint))
-  (begin
-    (asserts! (is-eq contract-caller (var-get owner)) ERR_UNAUTHORIZED)
-    (asserts! (<= new-alpha MAX_ALPHA) ERR_UNAUTHORIZED)
-    (ok (var-set alpha new-alpha))))
-
 (define-public (set-swap-fee (new-fee uint))
   (begin
     (asserts! (is-eq contract-caller (var-get owner)) ERR_UNAUTHORIZED)
