@@ -259,7 +259,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
         contractAddress: pool.contractId.split('.')[0],
         contractName: pool.contractId.split('.')[1],
         functionName: 'mint',
-        functionArgs: [stxAddress, uintCV(hack / 2)],
+        functionArgs: [stxAddress, uintCV((hack / 2).toFixed(0))],
         onFinish: data => {
           console.log('Transaction successful', data);
           onClose();
@@ -299,7 +299,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
         contractAddress: pool.contractId.split('.')[0],
         contractName: pool.contractId.split('.')[1],
         functionName: 'burn',
-        functionArgs: [stxAddress, uintCV(hack / 2)],
+        functionArgs: [stxAddress, uintCV((hack / 2).toFixed(0))],
         onFinish: data => {
           console.log('Transaction successful', data);
           onClose();

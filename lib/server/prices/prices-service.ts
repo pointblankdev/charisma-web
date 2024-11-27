@@ -195,7 +195,7 @@ class PricesService {
       stSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       ROO: convertedVelarPrices['$ROO'],
       iouROO: rooIouRooratio * convertedVelarPrices['$ROO'],
-      HOOT: 0.0001,
+      HOOT: 0.001,
       DMG: 0.1
     };
 
