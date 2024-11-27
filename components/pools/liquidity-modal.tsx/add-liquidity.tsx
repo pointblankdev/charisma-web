@@ -40,7 +40,6 @@ const calculateDexterityLiquidity = (
   balance1: number,
   isAdd: boolean
 ) => {
-  console.log(pool);
   const poolBalance0 = pool.poolData.reserve0;
   const poolBalance1 = pool.poolData.reserve1;
 
@@ -55,7 +54,7 @@ const calculateDexterityLiquidity = (
     const amount1 = (maxAmount1 * sliderValue) / 100;
 
     // Calculate geometric mean for LP tokens
-    const lpAmount = Math.floor(Math.sqrt(amount0 * amount1) * 100);
+    const lpAmount = Math.floor(amount0 * amount1 * 100);
 
     return {
       amount0: amount0.toString(),
@@ -68,7 +67,7 @@ const calculateDexterityLiquidity = (
     const lpShare = sliderValue / 100;
     const amount0 = (poolBalance0 * lpShare).toString();
     const amount1 = (poolBalance1 * lpShare).toString();
-    const lpAmount = Math.floor(Math.sqrt(parseFloat(amount0) * parseFloat(amount1)) * 100);
+    const lpAmount = Math.floor(parseFloat(amount0) * parseFloat(amount1) * 100);
 
     return {
       amount0,
