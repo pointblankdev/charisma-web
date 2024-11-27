@@ -283,13 +283,16 @@ export async function getDecimals(
 export async function getTotalSupply(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
 ) {
-  const [address, name] = contract.split('.');
-
-  const path = `/v2/contracts/call-read/${address}/${name}/get-total-supply` as any;
-  const response = await client.POST(path, {
-    body: { sender: address, arguments: [] }
-  });
-  return Number(cvToValue(cvToValue(hexToCV(response.data.result))));
+  try {
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-total-supply` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [] }
+    });
+    return Number(cvToValue(cvToValue(hexToCV(response.data.result))));
+  } catch (error) {
+    return 0;
+  }
 }
 
 export async function getDexterityReserves(
