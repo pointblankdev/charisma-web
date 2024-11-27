@@ -22,10 +22,64 @@ import {
   createRemoveLiquidityTransaction,
   calculateUserPoolShare
 } from './liquidity-helpers';
-import { PostConditionMode, principalCV, standardPrincipalCV, uintCV } from '@stacks/transactions';
+import { PostConditionMode, standardPrincipalCV, uintCV } from '@stacks/transactions';
 import { network } from '@components/stacks-session/connect';
 
-// Components
+// Helper Functions
+const formatCurrency = (value: number) => {
+  if (value >= 1_000_000) {
+    return numeral(value).format('0.00a');
+  }
+  return numeral(value).format('0,0.00');
+};
+
+const calculateDexterityLiquidity = (
+  pool: Pool,
+  sliderValue: number,
+  balance0: number,
+  balance1: number,
+  isAdd: boolean
+) => {
+  console.log(pool);
+  const poolBalance0 = pool.poolData.reserve0;
+  const poolBalance1 = pool.poolData.reserve1;
+
+  if (isAdd) {
+    // Calculate proportional amounts based on the current pool ratio
+    const ratio = poolBalance1 / poolBalance0;
+    const maxAmount0 = Math.min(balance0, poolBalance0);
+    const maxAmount1 = Math.min(balance1, poolBalance1);
+
+    // Use the smaller of the two proportional amounts
+    const amount0 = (maxAmount0 * sliderValue) / 100;
+    const amount1 = (maxAmount1 * sliderValue) / 100;
+
+    // Calculate geometric mean for LP tokens
+    const lpAmount = Math.floor(Math.sqrt(amount0 * amount1) * 100);
+
+    return {
+      amount0: amount0.toString(),
+      amount1: amount1.toString(),
+      lpAmount,
+      limitingToken: amount0 / poolBalance0 < amount1 / poolBalance1 ? 'token0' : 'token1'
+    };
+  } else {
+    // For removal, calculate proportional amounts based on LP token share
+    const lpShare = sliderValue / 100;
+    const amount0 = (poolBalance0 * lpShare).toString();
+    const amount1 = (poolBalance1 * lpShare).toString();
+    const lpAmount = Math.floor(Math.sqrt(parseFloat(amount0) * parseFloat(amount1)) * 100);
+
+    return {
+      amount0,
+      amount1,
+      lpAmount,
+      limitingToken: null
+    };
+  }
+};
+
+// Component Interfaces
 interface SliderControlProps {
   value: number;
   onChange: (value: number) => void;
@@ -40,6 +94,24 @@ interface PoolShareDisplayProps {
   experienceLevel: number;
 }
 
+interface TokenDisplayProps {
+  amount: string;
+  symbol: string;
+  image: string;
+  decimals: number;
+  price: number;
+  isLimiting: boolean;
+  animate: boolean;
+}
+
+interface LiquidityDialogProps {
+  pool: Pool;
+  isAdd: boolean;
+  onClose: () => void;
+  prices: { [key: string]: number };
+}
+
+// Sub-Components
 const PoolShareDisplay = ({
   currentShare,
   pool,
@@ -69,13 +141,6 @@ const PoolShareDisplay = ({
       )}
     </DialogDescription>
   );
-};
-
-const formatCurrency = (value: number) => {
-  if (value >= 1_000_000) {
-    return numeral(value).format('0.00a');
-  }
-  return numeral(value).format('0,0.00');
 };
 
 const TokenDisplay = ({
@@ -142,7 +207,7 @@ const SliderControl = ({ value, onChange, isAdd, onMax }: SliderControlProps) =>
     <Label>{isAdd ? 'Liquidity to add (%)' : 'Liquidity to remove (%)'}</Label>
     <Slider
       value={[value]}
-      onValueChange={values => {
+      onValueChange={(values: number[]) => {
         onChange(values[0]);
         if (values[0] === 100) {
           onMax();
@@ -155,24 +220,7 @@ const SliderControl = ({ value, onChange, isAdd, onMax }: SliderControlProps) =>
   </div>
 );
 
-interface TokenDisplayProps {
-  amount: string;
-  symbol: string;
-  image: string;
-  decimals: number;
-  price: number;
-  isLimiting: boolean;
-  animate: boolean;
-}
-
 // Main Component
-interface LiquidityDialogProps {
-  pool: Pool;
-  isAdd: boolean;
-  onClose: () => void;
-  prices: { [key: string]: number };
-}
-
 const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps) => {
   const [sliderValue, setSliderValue] = useState(0);
   const [amount0, setAmount0] = useState('0');
@@ -216,51 +264,100 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
   useEffect(() => {
     if (!pool) return;
 
+    const token0Balance = getTokenBalance(pool.token0);
+    const token1Balance = getTokenBalance(pool.token1);
     const lpTokenBalance = getLpTokenBalance();
-    const userShareOfPool = lpTokenBalance / pool.poolData.totalSupply;
+
+    if (pool.lpInfo.dex === 'DEXTERITY') {
+      const result = calculateDexterityLiquidity(
+        pool,
+        sliderValue,
+        token0Balance,
+        token1Balance,
+        isAdd
+      );
+      setAmount0(result.amount0);
+      setAmount1(result.amount1);
+      setSelectedLpAmount(result.lpAmount);
+      setLimitingToken(result.limitingToken as any);
+    } else {
+      const userShareOfPool = lpTokenBalance / pool.poolData.totalSupply;
+
+      if (isAdd) {
+        const { amount0, amount1, limitingToken: newLimitingToken } = calculateTokenAmounts(
+          pool,
+          sliderValue,
+          token0Balance,
+          token1Balance
+        );
+        setAmount0(amount0);
+        setAmount1(amount1);
+        setLimitingToken(newLimitingToken as any);
+      } else {
+        const { amount0, amount1, selectedLpAmount } = calculateRemovalAmounts(
+          pool,
+          sliderValue,
+          lpTokenBalance,
+          userShareOfPool
+        );
+        setAmount0(amount0);
+        setAmount1(amount1);
+        setSelectedLpAmount(selectedLpAmount);
+        setLimitingToken(null);
+      }
+    }
+  }, [pool, isAdd, sliderValue, getTokenBalance, getLpTokenBalance]);
+
+  const handleDexterityLiquidity = useCallback(() => {
+    if (!pool || !stxAddress) return;
+
+    const lpAmount = Math.floor(parseFloat(amount0) * parseFloat(amount1) * 100);
+
+    doContractCall({
+      network,
+      contractAddress: pool.contractId.split('.')[0],
+      contractName: pool.contractId.split('.')[1],
+      functionName: isAdd ? 'mint' : 'burn',
+      postConditionMode: PostConditionMode.Allow,
+      functionArgs: [standardPrincipalCV(stxAddress), uintCV(lpAmount)],
+      onFinish: data => {
+        console.log('Transaction successful', data);
+        onClose();
+      },
+      onCancel: () => {
+        console.log('Transaction cancelled');
+      }
+    });
+  }, [pool, stxAddress, amount0, amount1, isAdd, doContractCall, onClose]);
+
+  const handleStandardLiquidity = useCallback(() => {
+    if (!pool || !stxAddress) return;
 
     if (isAdd) {
-      const balance0 = getTokenBalance(pool.token0);
-      const balance1 = getTokenBalance(pool.token1);
-
-      const { amount0, amount1, limitingToken: newLimitingToken } = calculateTokenAmounts(
+      const transaction = createAddLiquidityTransaction({
         pool,
-        sliderValue,
-        balance0,
-        balance1
-      );
-
-      setAmount0(amount0);
-      setAmount1(amount1);
-      setLimitingToken(newLimitingToken as any);
+        stxAddress,
+        amount0,
+        amount1,
+        onFinish: data => {
+          console.log('Transaction successful', data);
+          onClose();
+        },
+        onCancel: () => {
+          console.log('Transaction cancelled');
+        }
+      });
+      doContractCall(transaction);
     } else {
-      const { amount0, amount1, selectedLpAmount } = calculateRemovalAmounts(
+      const lpTokenBalance = getLpTokenBalance();
+      const lpTokensToRemove = Math.floor((lpTokenBalance * sliderValue) / 100);
+
+      const transaction = createRemoveLiquidityTransaction({
         pool,
-        sliderValue,
-        lpTokenBalance,
-        userShareOfPool
-      );
-
-      setAmount0(amount0);
-      setAmount1(amount1);
-      setSelectedLpAmount(selectedLpAmount);
-      setLimitingToken(null);
-    }
-  }, [pool, isAdd, sliderValue, getLpTokenBalance, getTokenBalance]);
-
-  const handleAddLiquidity = useCallback(() => {
-    if (!pool || !stxAddress) return;
-
-    if (pool.lpInfo.dex === 'DEXTERITY') {
-      console.log('Dexterity LP token detected');
-      const hack = Math.floor(Number(amount0) + Number(amount1) / 2);
-      doContractCall({
-        network: network,
-        contractAddress: pool.contractId.split('.')[0],
-        contractName: pool.contractId.split('.')[1],
-        functionName: 'mint',
-        postConditionMode: PostConditionMode.Allow,
-        functionArgs: [standardPrincipalCV(stxAddress), uintCV(hack)],
+        stxAddress,
+        lpTokensToRemove,
+        amount0,
+        amount1,
         onFinish: data => {
           console.log('Transaction successful', data);
           onClose();
@@ -269,70 +366,27 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
           console.log('Transaction cancelled');
         }
       });
-      return;
+      doContractCall(transaction);
     }
+  }, [
+    pool,
+    stxAddress,
+    isAdd,
+    amount0,
+    amount1,
+    sliderValue,
+    getLpTokenBalance,
+    doContractCall,
+    onClose
+  ]);
 
-    const transaction = createAddLiquidityTransaction({
-      pool,
-      stxAddress,
-      amount0,
-      amount1,
-      onFinish: data => {
-        console.log('Transaction successful', data);
-        onClose();
-      },
-      onCancel: () => {
-        console.log('Transaction cancelled');
-      }
-    });
-
-    doContractCall(transaction);
-  }, [pool, amount0, amount1, stxAddress, doContractCall, onClose]);
-
-  const handleRemoveLiquidity = useCallback(() => {
-    if (!pool || !stxAddress) return;
-
+  const handleAction = useCallback(() => {
     if (pool.lpInfo.dex === 'DEXTERITY') {
-      console.log('Dexterity LP token detected');
-      const hack = Math.floor(Number(amount0) + Number(amount1) / 2);
-      doContractCall({
-        network: network,
-        contractAddress: pool.contractId.split('.')[0],
-        contractName: pool.contractId.split('.')[1],
-        functionName: 'burn',
-        postConditionMode: PostConditionMode.Allow,
-        functionArgs: [standardPrincipalCV(stxAddress), uintCV(hack)],
-        onFinish: data => {
-          console.log('Transaction successful', data);
-          onClose();
-        },
-        onCancel: () => {
-          console.log('Transaction cancelled');
-        }
-      });
-      return;
+      handleDexterityLiquidity();
+    } else {
+      handleStandardLiquidity();
     }
-
-    const lpTokenBalance = getLpTokenBalance();
-    const lpTokensToRemove = Math.floor((lpTokenBalance * sliderValue) / 100);
-
-    const transaction = createRemoveLiquidityTransaction({
-      pool,
-      stxAddress,
-      lpTokensToRemove,
-      amount0,
-      amount1,
-      onFinish: data => {
-        console.log('Transaction successful', data);
-        onClose();
-      },
-      onCancel: () => {
-        console.log('Transaction cancelled');
-      }
-    });
-
-    doContractCall(transaction);
-  }, [pool, stxAddress, getLpTokenBalance, sliderValue, amount0, amount1, doContractCall, onClose]);
+  }, [pool, handleDexterityLiquidity, handleStandardLiquidity]);
 
   if (!pool) return null;
 
@@ -387,16 +441,12 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
           isAdd={isAdd}
           token0Balance={token0Balance}
           token1Balance={token1Balance}
-          token0Symbol={pool.token0.symbol}
-          token1Symbol={pool.token1.symbol}
+          token0Symbol={pool.token0.metadata.symbol}
+          token1Symbol={pool.token1.metadata.symbol}
           lpTokenBalance={lpTokenBalance}
           selectedLpAmount={selectedLpAmount}
         />
-        <Button
-          type="submit"
-          onClick={isAdd ? handleAddLiquidity : handleRemoveLiquidity}
-          disabled={sliderValue === 0}
-        >
+        <Button type="submit" onClick={handleAction} disabled={sliderValue === 0}>
           {isAdd ? 'Add Liquidity' : 'Remove Liquidity'}
         </Button>
       </DialogFooter>
