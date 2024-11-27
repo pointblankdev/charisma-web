@@ -4,7 +4,7 @@ import { Card, CardContent } from '@components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel } from '@components/ui/form';
 import { Input } from '@components/ui/input';
 import { useForm } from 'react-hook-form';
-import { Share } from 'lucide-react';
+import { Info, Share } from 'lucide-react';
 import SyntaxHighlighter from 'react-syntax-highlighter';
 import Layout from '@components/layout/layout';
 import { useGlobalState } from '@lib/hooks/global-state-context';
@@ -13,6 +13,7 @@ import { setIndexMetadata } from '@lib/user-api';
 import { network } from '@components/stacks-session/connect';
 import { PostConditionMode } from '@stacks/transactions';
 import LaunchpadHeader from '@components/launchpad/header';
+import { Alert, AlertDescription } from '@components/ui/alert';
 
 const ContractDeployer = () => {
   const [contractCode, setContractCode] = useState('');
@@ -395,6 +396,14 @@ const ContractDeployer = () => {
       <LaunchpadHeader />
       <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-3">
         <Card className="p-6">
+          <Alert className="mb-6">
+            <Info className="w-4 h-4" />
+            <AlertDescription>
+              Create your own liquidity pool and index token. This advanced AMM design uses higher
+              initial fees to protect early liquidity providers, with the ability to adjust fees as
+              the pool matures.
+            </AlertDescription>
+          </Alert>
           <Form {...form}>
             <form onChange={() => form.handleSubmit(onSubmit)()} className="space-y-4">
               <FormField
@@ -472,6 +481,15 @@ const ContractDeployer = () => {
                     <FormControl>
                       <Input placeholder="Enter default swap fee (%)" {...field} />
                     </FormControl>
+                    <div className="mt-2 space-y-2 text-sm text-gray-500">
+                      <p>Default: 5%. This higher initial fee serves multiple purposes:</p>
+                      <ul className="pl-4 space-y-1 list-disc">
+                        <li>Protects early liquidity providers who take the most risk</li>
+                        <li>Emphasizes long-term holding over frequent trading</li>
+                        <li>Creates natural market segmentation across different pools</li>
+                      </ul>
+                      <p>The fee can be adjusted lower as the pool matures and liquidity grows.</p>
+                    </div>
                   </FormItem>
                 )}
               />
@@ -491,6 +509,10 @@ const ContractDeployer = () => {
                 <Share className="w-4 h-4 mr-2" />
                 Deploy Contract
               </Button>
+              <div className="text-xs text-gray-500">
+                Note: Please make sure you are connected with Xverse wallet, as we've seen issues
+                with Clarity v3 contract deployments while connected with Leather.
+              </div>
             </form>
           </Form>
         </Card>
