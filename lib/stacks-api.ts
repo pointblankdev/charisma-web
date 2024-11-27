@@ -295,14 +295,17 @@ export async function getTotalSupply(
 export async function getDexterityReserves(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
 ) {
-  const [address, name] = contract.split('.');
-
-  const path = `/v2/contracts/call-read/${address}/${name}/get-reserves` as any;
-  const response = await client.POST(path, {
-    body: { sender: address, arguments: [] }
-  });
-  const reservesCV = cvToValue(hexToCV(response.data.result)).value;
-  return { token0: Number(reservesCV.token0.value), token1: Number(reservesCV.token1.value) };
+  try {
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-reserves` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [] }
+    });
+    const reservesCV = cvToValue(hexToCV(response.data.result)).value;
+    return { token0: Number(reservesCV.token0.value), token1: Number(reservesCV.token1.value) };
+  } catch (error) {
+    return { token0: 0, token1: 0 };
+  }
 }
 
 export async function getAvailableRedemptions() {
