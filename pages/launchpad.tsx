@@ -372,7 +372,7 @@ const ContractDeployer = () => {
       network: network,
       contractName: contractName,
       codeBody: contractCode,
-      clarityVersion: 1,
+      clarityVersion: 3,
       postConditionMode: PostConditionMode.Allow,
       onFinish: async (result: any) => {
         const response = await setIndexMetadata(fullContractName, {
