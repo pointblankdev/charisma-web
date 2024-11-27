@@ -22,7 +22,7 @@ import {
   createRemoveLiquidityTransaction,
   calculateUserPoolShare
 } from './liquidity-helpers';
-import { uintCV } from '@stacks/transactions';
+import { principalCV, standardPrincipalCV, uintCV } from '@stacks/transactions';
 import { network } from '@components/stacks-session/connect';
 
 // Components
@@ -253,13 +253,13 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
 
     if (pool.lpInfo.dex === 'DEXTERITY') {
       console.log('Dexterity LP token detected');
-      const hack = Number(amount0 + amount1);
+      const hack = Math.floor(Number(amount0) + Number(amount1) / 2);
       doContractCall({
         network: network,
         contractAddress: pool.contractId.split('.')[0],
         contractName: pool.contractId.split('.')[1],
         functionName: 'mint',
-        functionArgs: [stxAddress, uintCV((hack / 2).toFixed(0))],
+        functionArgs: [standardPrincipalCV(stxAddress), uintCV(hack)],
         onFinish: data => {
           console.log('Transaction successful', data);
           onClose();
@@ -293,13 +293,13 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
 
     if (pool.lpInfo.dex === 'DEXTERITY') {
       console.log('Dexterity LP token detected');
-      const hack = Number(amount0 + amount1);
+      const hack = Math.floor(Number(amount0) + Number(amount1) / 2);
       doContractCall({
         network: network,
         contractAddress: pool.contractId.split('.')[0],
         contractName: pool.contractId.split('.')[1],
         functionName: 'burn',
-        functionArgs: [stxAddress, uintCV((hack / 2).toFixed(0))],
+        functionArgs: [standardPrincipalCV(stxAddress), uintCV(hack)],
         onFinish: data => {
           console.log('Transaction successful', data);
           onClose();
