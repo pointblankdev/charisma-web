@@ -218,7 +218,11 @@ class PricesService {
     // Calculate dexterity index token prices
     const dexterityPools = await buildDexterityPools(tokens);
     for (const pool of dexterityPools) {
-      this.calculateLpTokenPrice(pool);
+      try {
+        this.calculateLpTokenPrice(pool);
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 
