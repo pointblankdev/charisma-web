@@ -253,7 +253,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
 
     if (pool.lpInfo.dex === 'DEXTERITY') {
       console.log('Dexterity LP token detected');
-      const hack = Math.floor(Number(amount0) * Number(amount1));
+      const hack = Math.floor(Number(amount0) + Number(amount1) / 2);
       doContractCall({
         network: network,
         contractAddress: pool.contractId.split('.')[0],
@@ -294,7 +294,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
 
     if (pool.lpInfo.dex === 'DEXTERITY') {
       console.log('Dexterity LP token detected');
-      const hack = Math.floor(Number(amount0) * Number(amount1));
+      const hack = Math.floor(Number(amount0) + Number(amount1) / 2);
       doContractCall({
         network: network,
         contractAddress: pool.contractId.split('.')[0],
