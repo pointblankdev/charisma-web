@@ -3,6 +3,7 @@ import cmc from '../../cmc-api';
 import { DexClient } from '../pools/pools.client';
 import TokenRegistryClient, { charismaNames } from '../registry/registry.client';
 import { buildDexterityPools } from 'pages/pools/dexterity';
+import { getDexterityReserves } from '@lib/stacks-api';
 
 const dexClient = new DexClient();
 const registryClient = new TokenRegistryClient();
@@ -151,7 +152,8 @@ class PricesService {
 
     // Get STX/CHA ratio
     const stxChaPool = await dexClient.getPoolById('31');
-    const stxCharatio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
+    const stxChaRatio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
+    const chaPrice = stxChaRatio * cmcPriceData.data['STX'].quote.USD.price;
 
     // Get WELSH/iouWELSH ratio
     const welshIouWelshPool = await dexClient.getPoolById('1');
@@ -170,6 +172,20 @@ class PricesService {
     const stxSharkPool = await dexClient.getPoolById('30');
     const stxSharkRatio = Number(stxSharkPool.reserve0) / Number(stxSharkPool.reserve1);
 
+    // Get DMG/CHA ratio
+    const dmgChaReserves = await getDexterityReserves(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-flow-dexterity'
+    );
+    const chaDmgRatio = Number(dmgChaReserves.token1) / Number(dmgChaReserves.token0);
+    const dmgPrice = chaDmgRatio * chaPrice;
+
+    // Get DMG/HOOT ratio
+    const dmgHootReserves = await getDexterityReserves(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
+    );
+    const dmgHootRatio = Number(dmgHootReserves.token0) / Number(dmgHootReserves.token1);
+    const hootPrice = dmgHootRatio * dmgPrice;
+
     // Convert Velar prices
     const convertedVelarPrices = Object.keys(velarPrices).reduce(
       (acc: { [key: string]: number }, key: string) => {
@@ -182,7 +198,7 @@ class PricesService {
     // Set base token prices
     this.tokenPrices = {
       ...convertedVelarPrices,
-      CHA: stxCharatio * cmcPriceData.data['STX'].quote.USD.price,
+      CHA: chaPrice,
       STX: cmcPriceData.data['STX'].quote.USD.price,
       wSTX: cmcPriceData.data['STX'].quote.USD.price,
       synSTX: stxSynStxratio * cmcPriceData.data['STX'].quote.USD.price,
@@ -195,8 +211,8 @@ class PricesService {
       stSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       ROO: convertedVelarPrices['$ROO'],
       iouROO: rooIouRooratio * convertedVelarPrices['$ROO'],
-      HOOT: 0.001,
-      DMG: 0.1
+      DMG: dmgPrice,
+      HOOT: hootPrice
     };
 
     // build pools data
