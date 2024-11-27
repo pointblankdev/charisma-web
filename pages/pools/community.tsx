@@ -93,14 +93,14 @@ export default function CommunityPoolsPage({ data }: Props) {
     if (wallet) setLoading(false);
   }, [wallet]);
 
-  useEffect(() => {
-    setIsExploding1(true);
-    delay(() => setIsExploding2(true), 300);
-    delay(() => setIsExploding1(false), 2800);
-    delay(() => setIsExploding2(false), 2800);
-  }, []);
+  // useEffect(() => {
+  //   setIsExploding1(true);
+  //   delay(() => setIsExploding2(true), 300);
+  //   delay(() => setIsExploding1(false), 2800);
+  //   delay(() => setIsExploding2(false), 2800);
+  // }, []);
 
-  const isAuthorized = wallet.experience.balance >= 1000 || wallet.redPilled;
+  const isAuthorized = wallet.experience.balance >= 0 || wallet.redPilled;
 
   return (
     <Page meta={meta} fullViewport>

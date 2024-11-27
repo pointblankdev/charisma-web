@@ -31,13 +31,9 @@ module.exports = {
     dangerouslyAllowSVG: true,
     imageSizes: [24, 64, 300],
     remotePatterns: [
-      {
-        protocol: 'https',
-        hostname: '**'
-      },
-      {
-        hostname: 'QmRrx5WSMsqfcoDuAzKgjj1d84s6Ttb6aVifsEfzwDqaBA'
-      }
+      { protocol: 'https', hostname: '**' },
+      { hostname: 's3-us-east-2.amazonaws.com' },
+      { hostname: 'QmRrx5WSMsqfcoDuAzKgjj1d84s6Ttb6aVifsEfzwDqaBA' }
     ]
   },
   webpack: config => {

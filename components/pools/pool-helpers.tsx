@@ -1,7 +1,7 @@
 import React from 'react';
 import Image from 'next/image';
 import { Button } from '@components/ui/button';
-import { Plus, Minus, ShoppingCart, Coins } from 'lucide-react';
+import { Plus, Minus, ShoppingCart, Coins, ExternalLink } from 'lucide-react';
 import numeral from 'numeral';
 import Link from 'next/link';
 import { Dialog } from '@components/ui/dialog';
@@ -16,6 +16,11 @@ export interface Pool {
     image?: string;
     images?: any;
     decimals: number;
+  };
+  lpInfo: {
+    dex: string;
+    token0: string;
+    token1: string;
   };
   token0: {
     symbol: string;
@@ -118,7 +123,19 @@ export const PoolDefinition = ({ pool }: { pool: Pool }) => (
       <Coins className="w-8 h-8 mr-2" />
     )}
     <div className="leading-none">
-      <div className="text-white truncate">{pool.metadata?.name}</div>
+      <div className="flex space-x-0.5 items-center">
+        <span className="text-lg text-white truncate" style={{ overflow: 'visible' }}>
+          {pool.metadata?.name}
+        </span>
+        <a
+          href={`https://explorer.hiro.so/txid/${pool.contractId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center p-1 transition-colors text-muted-foreground hover:text-white"
+        >
+          <ExternalLink className="w-4 h-4 pt-0.5" />
+        </a>
+      </div>
       <div className="text-sm text-muted-foreground">{pool.metadata?.symbol}</div>
     </div>
   </div>
@@ -140,7 +157,15 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
         ) : (
           <Coins className="mr-2" />
         )}
-        {pool.token0.metadata.symbol}
+        <span>{pool.token0.metadata.symbol}</span>
+        <a
+          href={`https://explorer.hiro.so/txid/${pool.token0.contractId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center p-1 transition-colors text-muted-foreground hover:text-white"
+        >
+          <ExternalLink className="w-3 h-3" />
+        </a>
       </div>
       <div className="flex items-center">
         {pool.token1.metadata.image ? (
@@ -154,7 +179,15 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
         ) : (
           <Coins className="mr-2" />
         )}
-        {pool.token1.metadata.symbol}
+        <span>{pool.token1.metadata.symbol}</span>
+        <a
+          href={`https://explorer.hiro.so/txid/${pool.token1.contractId}`}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="inline-flex items-center p-1 transition-colors text-muted-foreground hover:text-white"
+        >
+          <ExternalLink className="w-3 h-3" />
+        </a>
       </div>
     </div>
   </div>

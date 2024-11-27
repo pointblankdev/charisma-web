@@ -2,6 +2,7 @@ import velarApi from '../../velar-api';
 import cmc from '../../cmc-api';
 import { DexClient } from '../pools/pools.client';
 import TokenRegistryClient, { charismaNames } from '../registry/registry.client';
+import { buildDexterityPools } from 'pages/pools/dexterity';
 
 const dexClient = new DexClient();
 const registryClient = new TokenRegistryClient();
@@ -193,7 +194,9 @@ class PricesService {
       vLiSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       stSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       ROO: convertedVelarPrices['$ROO'],
-      iouROO: rooIouRooratio * convertedVelarPrices['$ROO']
+      iouROO: rooIouRooratio * convertedVelarPrices['$ROO'],
+      HOOT: 0.0001,
+      DMG: 0.1
     };
 
     // build pools data
@@ -209,6 +212,12 @@ class PricesService {
 
     // Calculate LP token prices
     for (const pool of pools) {
+      this.calculateLpTokenPrice(pool);
+    }
+
+    // Calculate dexterity index token prices
+    const dexterityPools = await buildDexterityPools(tokens);
+    for (const pool of dexterityPools) {
       this.calculateLpTokenPrice(pool);
     }
   }

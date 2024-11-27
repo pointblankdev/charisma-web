@@ -2,11 +2,13 @@ import { useRouter } from 'next/router';
 import Link from 'next/link';
 import {
   ChartBarIcon,
-  LineChartIcon,
-  Users2Icon,
-  CoinsIcon,
   ArrowRightLeftIcon,
-  LayersIcon
+  LayersIcon,
+  ChartNetworkIcon,
+  ChartSplineIcon,
+  ChartCandlestickIcon,
+  CrosshairIcon,
+  HandshakeIcon
 } from 'lucide-react';
 import { cn } from '@lib/utils';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
@@ -59,7 +61,7 @@ export default function PoolsLayout({ children }: any) {
 
       {/* Tabs Navigation */}
       <div className="w-full mb-0 sm:px-4">
-        <div className="relative z-30 grid grid-cols-3 max-w-xl gap-2 p-1 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg">
+        <div className="relative z-30 grid grid-cols-4 max-w-4xl gap-2 p-1 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -73,16 +75,13 @@ export default function PoolsLayout({ children }: any) {
                       : 'text-muted-foreground'
                   )}
                 >
-                  <ChartBarIcon className="w-4 h-4" />
+                  <ChartSplineIcon className="w-4 h-4" />
                   <span>Community Pools</span>
-                  <span className="absolute -top-1 -right-1 px-1.5 py-0.5 bg-primary text-primary-foreground text-[10px] font-medium rounded-full">
-                    New
-                  </span>
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="w-[400px] m-2">
                 <PoolTooltip
-                  icon={CoinsIcon}
+                  icon={HandshakeIcon}
                   title="Community Pools"
                   subtitle="Zero Protocol Fees"
                   description="These pools have zero protocol fees and utilize 100% of the swap fees to compensate LP providers, maximizing returns for the community."
@@ -104,7 +103,7 @@ export default function PoolsLayout({ children }: any) {
                       : 'text-muted-foreground'
                   )}
                 >
-                  <ChartBarIcon className="w-4 h-4" />
+                  <ChartCandlestickIcon className="w-4 h-4" />
                   <span>Spot Pools</span>
                 </Link>
               </TooltipTrigger>
@@ -132,7 +131,7 @@ export default function PoolsLayout({ children }: any) {
                       : 'text-muted-foreground'
                   )}
                 >
-                  <LineChartIcon className="w-4 h-4" />
+                  <ChartBarIcon className="w-4 h-4" />
                   <span>Derivative Pools</span>
                 </Link>
               </TooltipTrigger>
@@ -144,6 +143,42 @@ export default function PoolsLayout({ children }: any) {
                   description="These pools feature liquidity provider (LP) tokens as swappable assets. These pools will offer more consistent APYs and lower price volatility."
                   protocolFee={0.25}
                   lpYield={0.25}
+                />
+              </TooltipContent>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/pools/dexterity"
+                  className={cn(
+                    'relative flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-all',
+                    'hover:bg-accent/50 hover:text-accent-foreground',
+                    currentPath === '/pools/dexterity'
+                      ? 'bg-accent/90 text-accent-foreground shadow-sm'
+                      : 'text-muted-foreground'
+                  )}
+                >
+                  <ChartNetworkIcon className="w-4 h-4" />
+                  <span>Dexterity Pools</span>
+                  <span
+                    className={cn(
+                      currentPath !== '/pools/dexterity' ? 'animate-bounce' : '',
+                      'absolute -top-1 -right-1 px-1.5 py-0.5 bg-primary text-primary-foreground text-[10px] font-medium rounded-full'
+                    )}
+                  >
+                    New
+                  </span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="w-[400px] m-2">
+                <PoolTooltip
+                  icon={CrosshairIcon}
+                  title="Dexterity Pools"
+                  subtitle="Deploy your own DEX and Earn Fees"
+                  description="Create your own liquidity pool with any two tokens, set your own protocol fee and earn trading fees anytime someone swaps between your tokens."
+                  protocolFee={0}
+                  lpYield={'Variable '}
                 />
               </TooltipContent>
             </Tooltip>

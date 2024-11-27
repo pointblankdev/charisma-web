@@ -9,6 +9,14 @@ export async function addIndexContract(ca: string): Promise<void> {
   await kv.sadd(`indexes`, ca);
 }
 
+export async function removeIndexContract(ca: string): Promise<void> {
+  await kv.srem(`indexes`, ca);
+}
+
+export async function getIndexContracts(): Promise<any> {
+  return await kv.smembers('indexes');
+}
+
 export async function setContractMetadata(ca: string, data: any): Promise<void> {
   await kv.set(`ca:${ca}`, data);
 }

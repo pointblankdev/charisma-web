@@ -85,7 +85,7 @@ export default function SpotPoolsPage({ data }: Props) {
     if (wallet) setLoading(false);
   }, [wallet]);
 
-  const isAuthorized = wallet.experience.balance >= 1000 || wallet.redPilled;
+  const isAuthorized = wallet.experience.balance >= 0 || wallet.redPilled;
 
   return (
     <Page meta={meta} fullViewport>

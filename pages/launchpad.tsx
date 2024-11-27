@@ -12,6 +12,7 @@ import { useConnect } from '@stacks/connect-react';
 import { setIndexMetadata } from '@lib/user-api';
 import { network } from '@components/stacks-session/connect';
 import { PostConditionMode } from '@stacks/transactions';
+import LaunchpadHeader from '@components/launchpad/header';
 
 const ContractDeployer = () => {
   const [contractCode, setContractCode] = useState('');
@@ -377,6 +378,7 @@ const ContractDeployer = () => {
           name: form.getValues('indexTokenName'),
           image: form.getValues('indexTokenImage'),
           description: 'Index Token – LP, AMM DEX and Hold-to-Earn Engine',
+          decimals: 6,
           symbol: form.getValues('indexTokenSymbol'),
           tokenA: form.getValues('tokenA'),
           tokenB: form.getValues('tokenB'),
@@ -389,6 +391,7 @@ const ContractDeployer = () => {
 
   return (
     <Layout>
+      <LaunchpadHeader />
       <div className="grid grid-cols-1 gap-6 p-6 md:grid-cols-3">
         <Card className="p-6">
           <Form {...form}>

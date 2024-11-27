@@ -18,6 +18,7 @@ import { Checkbox } from '@components/ui/checkbox';
 import { cn } from '@lib/utils';
 import _ from 'lodash';
 import Image from 'next/image';
+import Link from 'next/link';
 
 type Props = {
   data: {
@@ -81,7 +82,8 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
 
   const subtitle = title === 'Community Pools' ? 'Zero protocol fees and high APYs to support our incredible memecoin communities' 
     : title ==='Spot Pools' ? 'Earn high APYs by providing LP in unique meme-to-meme liquidity pools'
-    : title ==='Derivative Pools' ? 'Put your LP tokens to work and earn additional yield with unique LP-to-LP pools': '';
+    : title ==='Derivative Pools' ? 'Put your LP tokens to work and earn additional yield with unique LP-to-LP pools'
+    : title ==='Dexterity Pools' ? `One-click to deploy your own mini-DEX, then collect trading fees anytime someone swaps between your tokens!`: '';
 
   return (
     <div className="sm:mx-auto sm:px-4">
@@ -98,7 +100,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
               </span>
             </div>
 
-            <div className="flex items-center gap-2">
+            <div className="flex items-center justify-between gap-2">
               <div className="flex overflow-hidden overflow-x-auto border rounded-xl scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                 {uniqueBaseTokens.map(token => (
                   <Button
@@ -121,6 +123,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                   </Button>
                 ))}
               </div>
+              <Link className='text-sm' href='/launchpad'>Want to create your own pool and collect fees?</Link>
             </div>
           </div>
 

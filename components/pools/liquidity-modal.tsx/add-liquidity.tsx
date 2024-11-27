@@ -22,6 +22,8 @@ import {
   createRemoveLiquidityTransaction,
   calculateUserPoolShare
 } from './liquidity-helpers';
+import { uintCV } from '@stacks/transactions';
+import { network } from '@components/stacks-session/connect';
 
 // Components
 interface SliderControlProps {
@@ -249,6 +251,26 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
   const handleAddLiquidity = useCallback(() => {
     if (!pool || !stxAddress) return;
 
+    if (pool.lpInfo.dex === 'DEXTERITY') {
+      console.log('Dexterity LP token detected');
+      const hack = Number(amount0 + amount1);
+      doContractCall({
+        network: network,
+        contractAddress: pool.contractId.split('.')[0],
+        contractName: pool.contractId.split('.')[1],
+        functionName: 'mint',
+        functionArgs: [stxAddress, uintCV(hack / 2)],
+        onFinish: data => {
+          console.log('Transaction successful', data);
+          onClose();
+        },
+        onCancel: () => {
+          console.log('Transaction cancelled');
+        }
+      });
+      return;
+    }
+
     const transaction = createAddLiquidityTransaction({
       pool,
       stxAddress,
@@ -268,6 +290,26 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
 
   const handleRemoveLiquidity = useCallback(() => {
     if (!pool || !stxAddress) return;
+
+    if (pool.lpInfo.dex === 'DEXTERITY') {
+      console.log('Dexterity LP token detected');
+      const hack = Number(amount0 + amount1);
+      doContractCall({
+        network: network,
+        contractAddress: pool.contractId.split('.')[0],
+        contractName: pool.contractId.split('.')[1],
+        functionName: 'burn',
+        functionArgs: [stxAddress, uintCV(hack / 2)],
+        onFinish: data => {
+          console.log('Transaction successful', data);
+          onClose();
+        },
+        onCancel: () => {
+          console.log('Transaction cancelled');
+        }
+      });
+      return;
+    }
 
     const lpTokenBalance = getLpTokenBalance();
     const lpTokensToRemove = Math.floor((lpTokenBalance * sliderValue) / 100);
