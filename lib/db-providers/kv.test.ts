@@ -67,7 +67,7 @@ describe('indexes', () => {
   });
 
   it('should set hoot-dex contract metadata by id', async () => {
-    const ca = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex';
+    const ca = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.catdog-dexterity';
     const metadata = {
       name: 'Night Owl',
       description: 'The first Dexterity index token.',

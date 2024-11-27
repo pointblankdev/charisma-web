@@ -6,6 +6,7 @@ export async function getContractMetadata(ca: string): Promise<any> {
 }
 
 export async function addIndexContract(ca: string): Promise<void> {
+  await kv.sadd('tokens:contracts', ca);
   await kv.sadd(`indexes`, ca);
 }
 
@@ -18,6 +19,10 @@ export async function getIndexContracts(): Promise<any> {
 }
 
 export async function setContractMetadata(ca: string, data: any): Promise<void> {
+  await kv.set(`metadata:${ca}`, {
+    ...data,
+    lastUpdated: Date.now()
+  });
   await kv.set(`ca:${ca}`, data);
 }
 
