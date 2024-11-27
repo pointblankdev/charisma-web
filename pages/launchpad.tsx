@@ -46,7 +46,7 @@ const ContractDeployer = () => {
 ;; ${fullContractName}
 
 ;; Implement SIP-010 trait
-(impl-trait .charisma-traits-v1.sip010-ft-trait)
+(impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-traits-v1.sip010-ft-trait)
 
 ;; Define the LP token
 (define-fungible-token index)
@@ -106,7 +106,7 @@ const ContractDeployer = () => {
       (contract-call? '${data.tokenB} get-balance CONTRACT))))
     (reserve-out (unwrap-panic (if forward (contract-call? '${data.tokenB} get-balance CONTRACT) 
       (contract-call? '${data.tokenA} get-balance CONTRACT))))
-    (paid-energy (match (contract-call? .charisma-rulebook-v0 exhaust u10000000 sender) success true error false))
+    (paid-energy (match (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 exhaust u10000000 sender) success true error false))
     ;; Calculate effective input amount
     (effective-in (if paid-energy amt-in (/ (* amt-in (- FEE_DENOMINATION (var-get swap-fee))) FEE_DENOMINATION)))
     ;; Calculate output with hybrid curve
@@ -291,7 +291,7 @@ const ContractDeployer = () => {
 
 (define-private (calculate-balance-integral-39 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-39 address start-block end-block))
+        (sample-points (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-manager-rc2 generate-sample-points-39 address start-block end-block))
         (balances (map get-balance-at sample-points))
         (dx (/ (- end-block start-block) u38))
         (areas (calculate-trapezoid-areas-39 balances dx)))
@@ -299,7 +299,7 @@ const ContractDeployer = () => {
 
 (define-private (calculate-balance-integral-19 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-19 address start-block end-block))
+        (sample-points (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-manager-rc2 generate-sample-points-19 address start-block end-block))
         (balances (map get-balance-at sample-points))
         (dx (/ (- end-block start-block) u18))
         (areas (calculate-trapezoid-areas-19 balances dx)))
@@ -307,7 +307,7 @@ const ContractDeployer = () => {
 
 (define-private (calculate-balance-integral-9 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-9 address start-block end-block))
+        (sample-points (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-manager-rc2 generate-sample-points-9 address start-block end-block))
         (balances (map get-balance-at sample-points))
         (dx (/ (- end-block start-block) u8))
         (areas (calculate-trapezoid-areas-9 balances dx)))
@@ -315,7 +315,7 @@ const ContractDeployer = () => {
 
 (define-private (calculate-balance-integral-5 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-5 address start-block end-block))
+        (sample-points (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-manager-rc2 generate-sample-points-5 address start-block end-block))
         (balances (map get-balance-at sample-points))
         (dx (/ (- end-block start-block) u4))
         (areas (calculate-trapezoid-areas-5 balances dx)))
@@ -323,7 +323,7 @@ const ContractDeployer = () => {
 
 (define-private (calculate-balance-integral-2 (address principal) (start-block uint) (end-block uint))
     (let (
-        (sample-points (contract-call? .meme-engine-manager-rc2 generate-sample-points-2 address start-block end-block))
+        (sample-points (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-manager-rc2 generate-sample-points-2 address start-block end-block))
         (balances (map get-balance-at sample-points))
         (dx (/ (- end-block start-block) u1))
         (areas (calculate-trapezoid-areas-2 balances dx)))
@@ -332,7 +332,7 @@ const ContractDeployer = () => {
 (define-private (calculate-balance-integral (address principal) (start-block uint) (end-block uint))
     (let (
         (block-difference (- end-block start-block))
-        (thresholds (unwrap-panic (contract-call? .meme-engine-manager-rc2 get-thresholds))))
+        (thresholds (unwrap-panic (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-manager-rc2 get-thresholds))))
         (if (>= block-difference (get threshold-39-point thresholds)) (calculate-balance-integral-39 address start-block end-block)
         (if (>= block-difference (get threshold-19-point thresholds)) (calculate-balance-integral-19 address start-block end-block)
         (if (>= block-difference (get threshold-9-point thresholds)) (calculate-balance-integral-9 address start-block end-block)
@@ -348,11 +348,11 @@ const ContractDeployer = () => {
     (end-block stacks-block-height)
     (start-block (get-last-tap-block sender))
     (balance-integral (calculate-balance-integral sender start-block end-block))
-    (incentive-score (contract-call? .aura get-incentive-score CONTRACT))
+    (incentive-score (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.aura get-incentive-score CONTRACT))
     (circulating-supply (unwrap-panic (get-total-supply)))
     (potential-energy (/ (* balance-integral incentive-score) circulating-supply)))
     (map-set last-tap-block sender end-block)
-    (contract-call? .charisma-rulebook-v0 energize potential-energy sender)))
+    (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 energize potential-energy sender)))
     
 (begin
   (mint DEPLOYER u${data.initialMint * 1000000})
