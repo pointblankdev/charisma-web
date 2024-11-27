@@ -384,6 +384,7 @@ const ContractDeployer = () => {
           tokenB: form.getValues('tokenB'),
           contractAddress: result.contractAddress
         });
+
         console.log(response);
       }
     });
