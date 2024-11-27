@@ -91,7 +91,7 @@ const LaunchpadHeader = () => {
               <h3 className="font-semibold">3. Fee Structure</h3>
               <p className="text-sm text-muted-foreground">
                 The default 5% swap fee is designed to protect early liquidity providers. As your
-                pool matures and liquidity grows, this can be adjusted lower to encourage more
+                pool matures and liquidity grows, this should be adjusted lower to encourage more
                 trading volume.
               </p>
             </div>

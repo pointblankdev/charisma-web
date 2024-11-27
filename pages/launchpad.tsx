@@ -488,7 +488,9 @@ const ContractDeployer = () => {
                         <li>Emphasizes long-term holding over frequent trading</li>
                         <li>Creates natural market segmentation across different pools</li>
                       </ul>
-                      <p>The fee can be adjusted lower as the pool matures and liquidity grows.</p>
+                      <p>
+                        The fee should be adjusted lower as the pool matures and liquidity grows.
+                      </p>
                     </div>
                   </FormItem>
                 )}
