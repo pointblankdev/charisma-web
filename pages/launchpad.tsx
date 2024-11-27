@@ -28,7 +28,7 @@ const ContractDeployer = () => {
       indexTokenImage: 'https://charisma.rocks/dmg-logo-square.png',
       tokenA: '',
       tokenB: '',
-      defaultSwapFee: '0.4',
+      defaultSwapFee: '5',
       initialMint: '100'
     }
   });
