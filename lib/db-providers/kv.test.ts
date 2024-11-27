@@ -81,9 +81,25 @@ describe('indexes', () => {
     console.log(response);
   });
 
+  it('should set cha-shark contract metadata by id', async () => {
+    const ca = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-shark-dexterity';
+    const metadata = {
+      name: 'Charismatic Shark',
+      image:
+        'https://drive.usercontent.google.com/download?id=1E9z9F7wAW97AIp6m1jOK9LBkZ2NUHtFo&export=view&authuser=0',
+      description: 'Index Token – LP, AMM DEX and Hold-to-Earn Engine',
+      decimals: 6,
+      symbol: 'cSHARK',
+      tokenA: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
+      tokenB: 'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.shark-coin-stxcity'
+    };
+    const response = await setContractMetadata(ca, metadata);
+    console.log(response);
+  });
+
   it('should remove index contract', async () => {
     const response = await removeIndexContract(
-      'SP1NP36KD0PWVPZP56XB8ECB6M6ZEF21731SA0SXR.welshstackuni-dexterity'
+      'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.charismatic-shark-dexterity'
     );
     console.log(response);
   });

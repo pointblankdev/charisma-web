@@ -1086,10 +1086,15 @@
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.1.5.tgz#1a0377f3b9020efe2fae03290bd2a12140c95c11"
   integrity sha512-LTMZiiLc+V4v1Yi16TD6aX2gmtKszNye0pQgbaLqkvhIqP7nVsSaJsWloGQjJfJ8offaoP5GtX3yY5swbcJxxQ==
 
-"@noble/hashes@1.5.0", "@noble/hashes@^1.1.2", "@noble/hashes@~1.5.0":
+"@noble/hashes@1.5.0", "@noble/hashes@~1.5.0":
   version "1.5.0"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.5.0.tgz#abadc5ca20332db2b1b2aa3e496e9af1213570b0"
   integrity sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA==
+
+"@noble/hashes@^1.1.2":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.6.1.tgz#df6e5943edcea504bac61395926d6fd67869a0d5"
+  integrity sha512-pq5D8h10hHBjyqX+cfBm0i8JUXJ0UhczFc4r74zbuT9XgewFo2E3J1cOaGtdZynILNmQ685YWGzGE1Zv6io50w==
 
 "@noble/secp256k1@1.7.1", "@noble/secp256k1@^1.6.3", "@noble/secp256k1@~1.7.0":
   version "1.7.1"
@@ -3448,7 +3453,7 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz#821f8442f4175d8f0467b9daf26e3a18e2d02af2"
   integrity sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==
 
-"@stacks/auth@^7.0.0", "@stacks/auth@^7.0.0-next.70":
+"@stacks/auth@^7.0.0":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@stacks/auth/-/auth-7.0.0.tgz#88b462b0928144c782039d3257e2ff0e02351e8e"
   integrity sha512-p0/FJy5jRRgtsVzGpWDgNE0fi/ioPCL3S1tZHRsvdKO7moquHWnTlBV/9yVkGbd+V0kD95Sd0euX5pwWA82MhA==
@@ -3480,17 +3485,22 @@
     "@types/bn.js" "^5.1.0"
     "@types/node" "^18.0.4"
 
-"@stacks/common@^7.0.0", "@stacks/common@^7.0.0-next.70", "@stacks/common@latest":
+"@stacks/common@^7.0.0", "@stacks/common@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@stacks/common/-/common-7.0.2.tgz#8b17f9cf6265cf1c9065bf3cd844556870a6ee20"
+  integrity sha512-+RSecHdkxOtswmE4tDDoZlYEuULpnTQVeDIG5eZ32opK8cFxf4EugAcK9CsIsHx/Se1yTEaQ21WGATmJGK84lQ==
+
+"@stacks/common@latest":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@stacks/common/-/common-7.0.0.tgz#1d06b4d0323ad0a3cf0bca6c8974682cc8ab5e09"
   integrity sha512-/BKBK9S9GEuGjbnc2fBAwsG21f8cfNekG/9mXLSMwBqnh4qaQY2hxK+6wRI2YXJgpkXrpZilpZy2sdPGlVUdQA==
 
-"@stacks/connect-react@latest":
-  version "22.5.0"
-  resolved "https://registry.yarnpkg.com/@stacks/connect-react/-/connect-react-22.5.0.tgz#a9ed4564bf469d3274de79073369d342cc258312"
-  integrity sha512-9pJXNgIhVzCX2iOsGuBELLUIIii04a7FFdrValqmIIIf2GH41hkbmo9gyFOr4/NcsMhXbzLE3U6SyCGYQHUliQ==
+"@stacks/connect-react@^22.6.0":
+  version "22.6.0"
+  resolved "https://registry.yarnpkg.com/@stacks/connect-react/-/connect-react-22.6.0.tgz#83af7751f13efb3cc5e43e6b46c708fc95857ad4"
+  integrity sha512-+ANQyxujO7ObrPps/Ix9y13a6yGhFbZSHbJW00bPNeYdo2YLxZHbPVCd0VWRdLO7O3y4kRi+nUH0zeWWJYHIbA==
   dependencies:
-    "@stacks/connect" "7.8.0"
+    "@stacks/connect" "7.9.0"
     jsontokens "^4.0.1"
 
 "@stacks/connect-ui@6.5.0":
@@ -3500,18 +3510,18 @@
   dependencies:
     "@stencil/core" "^2.17.1"
 
-"@stacks/connect@7.8.0", "@stacks/connect@latest":
-  version "7.8.0"
-  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.8.0.tgz#dc6bf15b0fdf940dd30087b12947c922ecf02f05"
-  integrity sha512-whwHygS69XyY/LMvlyp0Whu4mkWkFoJ4Z/Bva9aO1xLLyEVDbKLZnslGWmPs1Io/y76oGEorqVEh0MeLymTIjg==
+"@stacks/connect@7.9.0", "@stacks/connect@^7.9.0":
+  version "7.9.0"
+  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.9.0.tgz#460b3a91d5711190b5b0aa23bf10ed6b487888f9"
+  integrity sha512-UPv2UQpZwnNPYodL4bf+6Pu3kHY9BcRabAgAbmDajn3RFWvDrnOMmvLqJRGOvo5fEm8vSwxAGY8R7BSOPmlLdg==
   dependencies:
-    "@stacks/auth" "^7.0.0-next.70"
-    "@stacks/common" "^7.0.0-next.70"
+    "@stacks/auth" "^7.0.0"
+    "@stacks/common" "^7.0.0"
     "@stacks/connect-ui" "6.5.0"
-    "@stacks/network" "^7.0.0-next.70"
+    "@stacks/network" "^7.0.0"
     "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
-    "@stacks/profile" "^7.0.0-next.70"
-    "@stacks/transactions" "^7.0.0-next.70"
+    "@stacks/profile" "^7.0.0"
+    "@stacks/transactions" "^7.0.0"
     "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
     jsontokens "^4.0.1"
 
@@ -3530,7 +3540,21 @@
     ripemd160-min "^0.0.6"
     varuint-bitcoin "^1.1.2"
 
-"@stacks/encryption@^7.0.0", "@stacks/encryption@latest":
+"@stacks/encryption@^7.0.0":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@stacks/encryption/-/encryption-7.0.2.tgz#e16b229ff4ca5668e139e8f1e7d73cdb5099ace9"
+  integrity sha512-3evRvxPqVzQAhcZ8uacQrVfAETUMIV8VyKkHGsd4QZroGWlvXQheLV3CFeDttFb304QcKq/oKv1clOvQ2shaAw==
+  dependencies:
+    "@noble/hashes" "1.1.5"
+    "@noble/secp256k1" "1.7.1"
+    "@scure/bip39" "1.1.0"
+    "@stacks/common" "^7.0.2"
+    base64-js "^1.5.1"
+    bs58 "^5.0.0"
+    ripemd160-min "^0.0.6"
+    varuint-bitcoin "^1.1.2"
+
+"@stacks/encryption@latest":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@stacks/encryption/-/encryption-7.0.0.tgz#521f97171ee26078408606daf1fdf527e3b247da"
   integrity sha512-kQhiurn8s0DV6OALqEy2Aqwp2DNJUD41S1bnD/+UESyEDD5XRqL84MEo7mCL8pTPr+FVdhT+diEIPeAfEtbTPQ==
@@ -3545,7 +3569,6 @@
     varuint-bitcoin "^1.1.2"
 
 "@stacks/network-v6@npm:@stacks/network@^6.16.0", "@stacks/network@^6.17.0":
-  name "@stacks/network-v6"
   version "6.17.0"
   resolved "https://registry.yarnpkg.com/@stacks/network/-/network-6.17.0.tgz#9e0eefb8d72cb2243744beaf1e17673737290a49"
   integrity sha512-numHbfKjwco/rbkGPOEz8+FcJ2nBnS/tdJ8R422Q70h3SiA9eqk9RjSzB8p4JP8yW1SZvW+eihADHfMpBuZyfw==
@@ -3553,7 +3576,15 @@
     "@stacks/common" "^6.16.0"
     cross-fetch "^3.1.5"
 
-"@stacks/network@^7.0.0", "@stacks/network@^7.0.0-next.70", "@stacks/network@latest":
+"@stacks/network@^7.0.0", "@stacks/network@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@stacks/network/-/network-7.0.2.tgz#bbf1cb049ebcc9d3f8048950c7d230d79c87cb0b"
+  integrity sha512-XzHnoWqku/jRrTgMXhmh3c+I0O9vDH24KlhzGDZtBu+8CGGyHNPAZzGwvoUShonMXrXjEnfO9IYQwV5aJhfv6g==
+  dependencies:
+    "@stacks/common" "^7.0.2"
+    cross-fetch "^3.1.5"
+
+"@stacks/network@latest":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@stacks/network/-/network-7.0.0.tgz#cdb65f1c9064937bc2cf3469139364290f5f8d02"
   integrity sha512-4diddT0ii85BQ4PW6ww3l4cS7Oo0a5VIsJ7umBcCPAArIc4Sm/MIOEXIg9joKK8fVHLnWyh1p4D+febJQFfa+Q==
@@ -3561,14 +3592,14 @@
     "@stacks/common" "^7.0.0"
     cross-fetch "^3.1.5"
 
-"@stacks/profile@^7.0.0", "@stacks/profile@^7.0.0-next.70":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@stacks/profile/-/profile-7.0.0.tgz#5e96695b0784c396651b89b4ad2daaf42cb41179"
-  integrity sha512-E9RDodVgcLBs6ZiV88lVQyDjA8ZDVPswbPpLNHeAA+evJ2GwRKMJrNnirjydMI37aWm3ZpYOEMLMbqdi38VR7w==
+"@stacks/profile@^7.0.0":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@stacks/profile/-/profile-7.0.2.tgz#be28dc477141077c5d10a237828f26ee68f3aa25"
+  integrity sha512-BJis1ZAP2yzv0IFaJcm4mZFtauizcB1zBVpAeOSX06BDEUgM8h0L8uRvAbfTvSuSjsveNgblucZouZMSEsQMGA==
   dependencies:
-    "@stacks/common" "^7.0.0"
-    "@stacks/network" "^7.0.0"
-    "@stacks/transactions" "^7.0.0"
+    "@stacks/common" "^7.0.2"
+    "@stacks/network" "^7.0.2"
+    "@stacks/transactions" "^7.0.2"
     jsontokens "^4.0.1"
     schema-inspector "^2.0.2"
     zone-file "^2.0.0-beta.3"
@@ -3598,7 +3629,19 @@
     c32check "^2.0.0"
     lodash.clonedeep "^4.5.0"
 
-"@stacks/transactions@^7.0.0", "@stacks/transactions@^7.0.0-next.70", "@stacks/transactions@latest":
+"@stacks/transactions@^7.0.0", "@stacks/transactions@^7.0.2":
+  version "7.0.2"
+  resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-7.0.2.tgz#fe4a3ece5a779b65a1d7cbef9393f13dc7ec7f85"
+  integrity sha512-m2bvchqUeYv1ttXuC0EukW8UX4xBXTDcYb8bXmfI1RG89HXAvvCCgr5aiadU6zbutgoXvm8mquDt3nww0PO4Jg==
+  dependencies:
+    "@noble/hashes" "1.1.5"
+    "@noble/secp256k1" "1.7.1"
+    "@stacks/common" "^7.0.2"
+    "@stacks/network" "^7.0.2"
+    c32check "^2.0.0"
+    lodash.clonedeep "^4.5.0"
+
+"@stacks/transactions@latest":
   version "7.0.0"
   resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-7.0.0.tgz#8fe7105c218cfeb577617313cbabfa1b36cd1cc3"
   integrity sha512-9kGTnJLwRQPugLzbdJ8MmFED+eRhlJKIXpz2mshyy238hvBc4T0jynsoJMi4qGqvJYzsiRYCLDPJVkkUde85vA==
@@ -3882,11 +3925,11 @@
     form-data "^4.0.0"
 
 "@types/node@*":
-  version "22.8.6"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.8.6.tgz#e8a0c0871623283d8b3ef7d7b9b1bfdfd3028e22"
-  integrity sha512-tosuJYKrIqjQIlVCM4PEGxOmyg3FCPa/fViuJChnGeEIhjA46oy8FMVoF9su1/v8PNs2a8Q0iFNyOx0uOF91nw==
+  version "22.10.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.0.tgz#89bfc9e82496b9c7edea3382583fa94f75896e81"
+  integrity sha512-XC70cRZVElFHfIUB40FgZOBbgJYFKKMa5nb9lxcwYstFG/Mi+/Y0bGS+rs6Dmhmkpq4pnNiLiuZAbc02YCOnmA==
   dependencies:
-    undici-types "~6.19.8"
+    undici-types "~6.20.0"
 
 "@types/node@12.19.8":
   version "12.19.8"
@@ -3900,7 +3943,14 @@
   dependencies:
     undici-types "~5.26.4"
 
-"@types/node@^18.0.4", "@types/node@^18.11.17", "@types/node@^18.11.18":
+"@types/node@^18.0.4":
+  version "18.19.66"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.66.tgz#0937a47904ceba5994eedf5cf4b6d503d8d6136c"
+  integrity sha512-14HmtUdGxFUalGRfLLn9Gc1oNWvWh5zNbsyOLo5JV6WARSeN1QcEBKRnZm9QqNfrutgsl/hY4eJW63aZ44aBCg==
+  dependencies:
+    undici-types "~5.26.4"
+
+"@types/node@^18.11.17", "@types/node@^18.11.18":
   version "18.19.63"
   resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.63.tgz#2b2cdb8b3bd2b739ae38c5676cd012c80568022f"
   integrity sha512-hcUB7THvrGmaEcPcvUZCZtQ2Z3C+UR/aOcraBLCvTsFMh916Gc1kCCYcfcMuB76HM2pSerxl1PoP3KnmHzd9Lw==
@@ -10365,10 +10415,10 @@ undici-types@~5.26.4:
   resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-5.26.5.tgz#bcd539893d00b56e964fd2657a4866b221a65617"
   integrity sha512-JlCMO+ehdEIKqlFxk6IfVoAUVmgz7cU7zD/h9XZ0qzeosSHmUJVOzSQvvYSYWXkFXC+IfLKSIffhv0sVZup6pA==
 
-undici-types@~6.19.8:
-  version "6.19.8"
-  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.19.8.tgz#35111c9d1437ab83a7cdc0abae2f26d88eda0a02"
-  integrity sha512-ve2KP6f/JnbPBFyobGHuerC9g1FYGn/F8n1LWTwNxCEzd6IfqTwUQcNXgEtmmQ6DlRrC1hrSrBnCZPokRrDHjw==
+undici-types@~6.20.0:
+  version "6.20.0"
+  resolved "https://registry.yarnpkg.com/undici-types/-/undici-types-6.20.0.tgz#8171bf22c1f588d1554d55bf204bc624af388433"
+  integrity sha512-Ny6QZ2Nju20vw1SRHe3d9jVu6gJ+4e3+MMpqu7pqE5HT6WsTSlce++GQmK5UXS8mzV8DSYHrQH+Xrf2jVcuKNg==
 
 unified@^10.0.0:
   version "10.1.2"

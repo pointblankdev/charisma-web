@@ -46,7 +46,7 @@ const ContractDeployer = () => {
 ;; ${fullContractName}
 
 ;; Implement SIP-010 trait
-;; (impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-traits-v1.sip010-ft-trait)
+(impl-trait 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-traits-v1.sip010-ft-trait)
 
 ;; Define the LP token
 (define-fungible-token index)
@@ -354,9 +354,9 @@ const ContractDeployer = () => {
     (map-set last-tap-block sender end-block)
     (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 energize potential-energy sender)))
     
-;;(begin
-;;  (mint DEPLOYER u${data.initialMint * 1000000})
-;;)    
+(begin
+  (mint DEPLOYER u${data.initialMint * 1000000})
+)    
 `;
 
     setContractCode(code);
@@ -372,6 +372,7 @@ const ContractDeployer = () => {
       network: network,
       contractName: contractName,
       codeBody: contractCode,
+      clarityVersion: 3,
       postConditionMode: PostConditionMode.Allow,
       onFinish: async (result: any) => {
         const response = await setIndexMetadata(fullContractName, {
@@ -384,7 +385,6 @@ const ContractDeployer = () => {
           tokenB: form.getValues('tokenB'),
           contractAddress: result.contractAddress
         });
-
         console.log(response);
       }
     });
