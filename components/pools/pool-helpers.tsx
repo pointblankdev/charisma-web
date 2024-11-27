@@ -157,7 +157,7 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
         ) : (
           <Coins className="mr-2" />
         )}
-        <span>{pool.token0.metadata.symbol}</span>
+        <span className="mr-0.5">{pool.token0.metadata.symbol}</span>
         <a
           href={`https://explorer.hiro.so/txid/${pool.token0.contractId}`}
           target="_blank"
