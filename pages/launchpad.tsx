@@ -14,7 +14,6 @@ import { network } from '@components/stacks-session/connect';
 import { PostConditionMode } from '@stacks/transactions';
 import LaunchpadHeader from '@components/launchpad/header';
 import { Alert, AlertDescription } from '@components/ui/alert';
-import { Checkbox } from '@components/ui/checkbox';
 
 const ContractDeployer = () => {
   const [contractCode, setContractCode] = useState('');
@@ -22,6 +21,7 @@ const ContractDeployer = () => {
   const [fullContractName, setFullContractName] = useState('');
   const { stxAddress } = useGlobalState();
   const { doContractDeploy } = useConnect();
+  const [initialMintChecked, setInitialMintChecked] = useState(true);
 
   const form = useForm({
     defaultValues: {
@@ -356,7 +356,7 @@ const ContractDeployer = () => {
     (map-set last-tap-block sender end-block)
     (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 energize potential-energy sender)))
 
-${data.initialMint ? '(begin (mint DEPLOYER u1))' : ''}  
+${initialMintChecked ? '(begin (mint DEPLOYER u1))' : ''}  
 `;
 
     setContractCode(code);
@@ -388,10 +388,6 @@ ${data.initialMint ? '(begin (mint DEPLOYER u1))' : ''}
         console.log(response);
       }
     });
-  };
-
-  const handleCheckedChange = (checked: boolean) => {
-    form.setValue('initialMint', checked);
   };
 
   return (
@@ -495,22 +491,6 @@ ${data.initialMint ? '(begin (mint DEPLOYER u1))' : ''}
                         The fee should be adjusted lower as the pool matures and liquidity grows.
                       </p>
                     </div>
-                  </FormItem>
-                )}
-              />
-              <FormField
-                control={form.control}
-                name="initialMint"
-                render={() => (
-                  <FormItem className="flex items-end">
-                    <FormLabel>Mint LP to initialize pool</FormLabel>
-                    <FormControl>
-                      <Checkbox
-                        className="mx-2"
-                        defaultChecked={true}
-                        onCheckedChange={handleCheckedChange}
-                      />
-                    </FormControl>
                   </FormItem>
                 )}
               />
