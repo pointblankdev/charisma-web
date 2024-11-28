@@ -77,7 +77,7 @@ describe('Stacks API', () => {
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token';
+    const contractId = 'SPXZ32XFJZCT4TRDNE4R3HX3DRX9ZE6B5G2WZNRK.pixel-rozar-stxcity';
     const metadata = await getTokenMetadata(contractId);
     await setContractMetadata(contractId, metadata);
     const updatedMetadata = await getContractMetadata(contractId);

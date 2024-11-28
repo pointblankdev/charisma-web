@@ -186,6 +186,34 @@ class PricesService {
     const dmgHootRatio = Number(dmgHootReserves.token0) / Number(dmgHootReserves.token1);
     const hootPrice = dmgHootRatio * dmgPrice;
 
+    // Get pCHA price
+    const dmgpChaReserves = await getDexterityReserves(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmgpcha-dexterity'
+    );
+    const dmgpChaRatio = Number(dmgpChaReserves.token0) / Number(dmgpChaReserves.token1);
+    const pChaPrice = dmgpChaRatio * dmgPrice;
+
+    // Get RZR price
+    const dmgRZRReserves = await getDexterityReserves(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmgpcha-dexterity'
+    );
+    const dmgRZRRatio = Number(dmgRZRReserves.token0) / Number(dmgRZRReserves.token1);
+    const RZRPrice = dmgRZRRatio * dmgPrice;
+
+    // Get pRZR price
+    const dmgpRZRReserves = await getDexterityReserves(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmgpcha-dexterity'
+    );
+    const dmgpRZRRatio = Number(dmgpRZRReserves.token0) / Number(dmgpRZRReserves.token1);
+    const pRZRPrice = dmgpRZRRatio * dmgPrice;
+
+    // Get CREAM price
+    const dmgCreamReserves = await getDexterityReserves(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dmgpcha-dexterity'
+    );
+    const dmgCreamRatio = Number(dmgCreamReserves.token0) / Number(dmgCreamReserves.token1);
+    const CreamPrice = dmgCreamRatio * dmgPrice;
+
     // Convert Velar prices
     const convertedVelarPrices = Object.keys(velarPrices).reduce(
       (acc: { [key: string]: number }, key: string) => {
@@ -215,7 +243,10 @@ class PricesService {
       HOOT: hootPrice,
       CROW: 0.008,
       LUCK: 0.0000013,
-      pCHA: 0.000005
+      pCHA: pChaPrice,
+      RZR: RZRPrice,
+      Rozar: pRZRPrice,
+      CREAM: CreamPrice
     };
 
     // build pools data
