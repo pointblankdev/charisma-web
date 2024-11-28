@@ -34,8 +34,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     // get dexterity contracts
     const dexterityPools = await buildDexterityPools(tokenInfo.tokens);
 
-    console.log(dexterityPools);
-
     return {
       props: {
         data: {

@@ -99,7 +99,7 @@ describe('indexes', () => {
 
   it('should remove index contract', async () => {
     const response = await removeIndexContract(
-      'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.charismatic-phoenix-lp-dexterity'
+      'SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.db20-dexterity'
     );
     console.log(response);
   });

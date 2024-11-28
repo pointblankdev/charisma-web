@@ -212,7 +212,9 @@ class PricesService {
       ROO: convertedVelarPrices['$ROO'],
       iouROO: rooIouRooratio * convertedVelarPrices['$ROO'],
       DMG: dmgPrice,
-      HOOT: hootPrice
+      HOOT: hootPrice,
+      CROW: 0.008,
+      LUCK: 0.0000013
     };
 
     // build pools data
