@@ -356,7 +356,7 @@ const ContractDeployer = () => {
     (map-set last-tap-block sender end-block)
     (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 energize potential-energy sender)))
 
-${initialMintChecked ? '(begin (mint DEPLOYER u1))' : ''}  
+${initialMintChecked ? '(begin (mint DEPLOYER u1000000))' : ''}  
 `;
 
     setContractCode(code);

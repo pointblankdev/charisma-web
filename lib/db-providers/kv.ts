@@ -21,7 +21,7 @@ export async function getIndexContracts(): Promise<any> {
 
 export async function setContractMetadata(ca: string, data: any): Promise<void> {
   const existingMetadata = await getContractMetadata(ca);
-  const newMetadata = { ...existingMetadata, ...data };
+  const newMetadata = { ...existingMetadata, ...data, lastUpdated: Date.now() };
   await kv.sadd('tokens:contracts', ca);
   let decimals, symbol;
   try {
@@ -37,10 +37,7 @@ export async function setContractMetadata(ca: string, data: any): Promise<void> 
     newMetadata.symbol = symbol;
   }
   await kv.set(`ca:${ca}`, newMetadata);
-  await kv.set(`metadata:${ca}`, {
-    ...newMetadata,
-    lastUpdated: Date.now()
-  });
+  await kv.set(`metadata:${ca}`, newMetadata);
 }
 
 export async function getGlobalState(key: string): Promise<any> {
