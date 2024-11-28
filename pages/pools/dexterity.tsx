@@ -70,12 +70,12 @@ export async function buildDexterityPools(tokens: any[]) {
       metadata: { decimals: 6, ...contractMetadata },
       lpInfo: {
         dex: 'DEXTERITY',
-        token0: contractMetadata.tokenA,
-        token1: contractMetadata.tokenB
+        token0: contractMetadata?.tokenA || '',
+        token1: contractMetadata?.tokenB || ''
       },
       poolData: {
-        token0: contractMetadata.tokenA,
-        token1: contractMetadata.tokenB,
+        token0: contractMetadata?.tokenA || '',
+        token1: contractMetadata?.tokenB || '',
         reserve0: reserves.token0,
         reserve1: reserves.token1,
         lpToken: contract,
@@ -84,8 +84,8 @@ export async function buildDexterityPools(tokens: any[]) {
         protocolFee: { numerator: 0, denominator: 1000 },
         shareFee: { numerator: 0, denominator: 1000 }
       },
-      token0: tokens.find((t: any) => t.contractId === contractMetadata.tokenA) || dflt,
-      token1: tokens.find((t: any) => t.contractId === contractMetadata.tokenB) || dflt
+      token0: tokens.find((t: any) => t.contractId === contractMetadata?.tokenA || '') || dflt,
+      token1: tokens.find((t: any) => t.contractId === contractMetadata?.tokenB || '') || dflt
     });
   }
   return dexterityPools;
