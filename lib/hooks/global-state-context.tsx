@@ -138,6 +138,37 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
   }, [stxAddress, getCharismaTokenStats]);
 
   useEffect(() => {
+    sc.subscribeMempool((tx: any) => {
+      if (tx?.contract_call?.contract_id.endsWith('-dexterity')) {
+        console.log('Dexterity pool update:', tx);
+        const functionName = tx?.contract_call?.function_name;
+        if (functionName === 'swap' || functionName.includes('liquidity')) {
+          const shortAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`;
+
+          const description = (
+            <div className="space-y-2">
+              <p className="flex justify-between w-full text-sm">
+                <span>Address: {shortAddress}</span>
+                <span>{functionName.toUpperCase()}</span>
+              </p>
+              <p className="text-xs text-muted-foreground">{formatTime(tx.receipt_time_iso)}</p>
+            </div>
+          );
+
+          toast({
+            title: 'Degen Activity in the Dexterity Pool',
+            description
+          });
+        }
+      }
+    });
+
+    return () => {
+      sc.unsubscribeMempool();
+    };
+  }, [toast]);
+
+  useEffect(() => {
     sc.subscribeBlocks(block => {
       setBlock(block as any);
       // toast({
