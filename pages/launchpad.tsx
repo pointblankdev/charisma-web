@@ -14,6 +14,7 @@ import { network } from '@components/stacks-session/connect';
 import { PostConditionMode } from '@stacks/transactions';
 import LaunchpadHeader from '@components/launchpad/header';
 import { Alert, AlertDescription } from '@components/ui/alert';
+import { Checkbox } from '@components/ui/checkbox';
 
 const ContractDeployer = () => {
   const [contractCode, setContractCode] = useState('');
@@ -30,7 +31,7 @@ const ContractDeployer = () => {
       tokenA: '',
       tokenB: '',
       defaultSwapFee: '5',
-      initialMint: '100'
+      initialMint: true
     }
   });
 
@@ -354,10 +355,8 @@ const ContractDeployer = () => {
     (potential-energy (/ (* balance-integral incentive-score) circulating-supply)))
     (map-set last-tap-block sender end-block)
     (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 energize potential-energy sender)))
-    
-(begin
-  (mint DEPLOYER u${data.initialMint * 1000000})
-)    
+
+${data.initialMint ? '(begin (mint DEPLOYER u1))' : ''}  
 `;
 
     setContractCode(code);
@@ -389,6 +388,10 @@ const ContractDeployer = () => {
         console.log(response);
       }
     });
+  };
+
+  const handleCheckedChange = (checked: boolean) => {
+    form.setValue('initialMint', checked);
   };
 
   return (
@@ -484,7 +487,7 @@ const ContractDeployer = () => {
                     <div className="mt-2 space-y-2 text-sm text-gray-500">
                       <p>Default: 5%. This higher initial fee serves multiple purposes:</p>
                       <ul className="pl-4 space-y-1 list-disc">
-                        <li>Protects early liquidity providers who take the most risk</li>
+                        <li>Protection for LP providers from arbitrage while growing TVL</li>
                         <li>Emphasizes long-term holding over frequent trading</li>
                         <li>Creates natural market segmentation across different pools</li>
                       </ul>
@@ -498,11 +501,15 @@ const ContractDeployer = () => {
               <FormField
                 control={form.control}
                 name="initialMint"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Initial LP Token Mint</FormLabel>
+                render={() => (
+                  <FormItem className="flex items-end">
+                    <FormLabel>Mint LP to initialize pool</FormLabel>
                     <FormControl>
-                      <Input placeholder="Initial Amount of LP Tokens to Mint" {...field} />
+                      <Checkbox
+                        className="mx-2"
+                        defaultChecked={true}
+                        onCheckedChange={handleCheckedChange}
+                      />
                     </FormControl>
                   </FormItem>
                 )}
