@@ -10,11 +10,13 @@ import {
   client,
   getCollectionSize,
   getNftOwner,
-  getAllContractEvents
+  getAllContractEvents,
+  getTokenMetadata
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
 import { cvToValue, hexToCV } from '@stacks/transactions';
+import { setContractMetadata } from './db-providers/kv';
 
 describe('Stacks API', () => {
   it('should lookup a BNS name given an address', async () => {
@@ -63,6 +65,20 @@ describe('Stacks API', () => {
     );
     console.log(result);
     expect(result).toBeDefined();
+  });
+
+  it('should get token metadata', async () => {
+    const metadata = await getTokenMetadata(
+      'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.earlycrows-bonding-curve'
+    );
+    console.log(metadata);
+  });
+
+  it('should update token metadata', async () => {
+    const contractId = 'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.earlycrows-bonding-curve';
+    const metadata = await getTokenMetadata(contractId);
+    await setContractMetadata(contractId, metadata);
+    console.log(metadata);
   });
 
   it('should get nft token uri', async () => {

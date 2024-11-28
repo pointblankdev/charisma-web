@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@components/ui/button';
 import { Plus, Minus, ShoppingCart, Coins, ExternalLink } from 'lucide-react';
@@ -105,41 +105,58 @@ export const isStxChaPool = (pool: Pool) => {
 };
 
 const isCommunityPool = (pool: Pool) => {
-  return pool.metadata.name.includes('Community');
+  return pool.metadata.name.includes('Community') || pool.lpInfo.dex === 'DEXTERITY';
 };
 
 // Component: Pool Definition Cell
-export const PoolDefinition = ({ pool }: { pool: Pool }) => (
-  <div className="flex items-center mr-4">
-    {pool.metadata?.images?.logo || pool.metadata?.image ? (
-      <Image
-        src={pool.metadata?.images?.logo || pool.metadata?.image}
-        alt={pool.token1.metadata.symbol || 'Base Token 0'}
-        width={240}
-        height={240}
-        className={cn('w-8 mr-2', isCommunityPool(pool) ? 'rounded-none' : 'rounded-full')}
-      />
-    ) : (
-      <Coins className="w-8 h-8 mr-2" />
-    )}
-    <div className="leading-none">
-      <div className="flex space-x-0.5 items-center">
-        <span className="text-lg text-white truncate" style={{ overflow: 'visible' }}>
-          {pool.metadata?.name}
-        </span>
-        <a
-          href={`https://explorer.hiro.so/txid/${pool.contractId}`}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="inline-flex items-center p-1 transition-colors text-muted-foreground hover:text-white"
-        >
-          <ExternalLink className="w-4 h-4 pt-0.5" />
-        </a>
+export const PoolDefinition = ({ pool }: { pool: Pool }) => {
+  const handleImgError = () => {
+    setImgFail(true);
+    setImgSrc('/dmg-logo.png');
+  };
+  const [imgFail, setImgFail] = useState(false);
+  const [imgSrc, setImgSrc] = useState(pool.metadata?.images?.logo || pool.metadata?.image);
+  return (
+    <div className="flex items-center mr-4">
+      {imgSrc ? (
+        <Image
+          src={imgSrc}
+          alt={pool.token1.metadata.symbol || 'Base Token 0'}
+          width={240}
+          height={240}
+          className={cn(
+            'w-8 mr-2',
+            isCommunityPool(pool) ? 'rounded-md' : 'rounded-full',
+            imgFail ? 'blur' : ''
+          )}
+          blurDataURL="/dmg-logo.png" // Shows while loading and on error
+          placeholder="blur"
+          onError={() => {
+            handleImgError();
+          }}
+        />
+      ) : (
+        <Coins className="w-8 h-8 mr-2" />
+      )}
+      <div className="leading-none">
+        <div className="flex space-x-0.5 items-center">
+          <span className="text-lg text-white truncate" style={{ overflow: 'visible' }}>
+            {pool.metadata?.name}
+          </span>
+          <a
+            href={`https://explorer.hiro.so/txid/${pool.contractId}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="inline-flex items-center p-1 transition-colors text-muted-foreground hover:text-white"
+          >
+            <ExternalLink className="w-4 h-4 pt-0.5" />
+          </a>
+        </div>
+        <div className="text-sm text-muted-foreground">{pool.metadata?.symbol}</div>
       </div>
-      <div className="text-sm text-muted-foreground">{pool.metadata?.symbol}</div>
     </div>
-  </div>
-);
+  );
+};
 
 // Component: Pool Composition
 export const PoolComposition = ({ pool }: { pool: Pool }) => (
@@ -153,6 +170,8 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
             width={240}
             height={240}
             className="w-6 mr-2 rounded-full"
+            blurDataURL="/dmg-logo.png" // Shows while loading and on error
+            placeholder="blur"
           />
         ) : (
           <Coins className="mr-2" />
