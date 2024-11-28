@@ -149,20 +149,29 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             <div className="space-y-2">
               <p className="flex justify-between w-full text-sm">
                 <span>Address: {shortAddress}</span>
-                <span>{functionName.toUpperCase()}</span>
+                <span>Action: {functionName.toUpperCase()}</span>
               </p>
               <p className="text-xs text-muted-foreground">{formatTime(tx.receipt_time_iso)}</p>
             </div>
           );
 
           getContractMetadata(tx.contract_call.contract_id).then(async response => {
-            const metadata = await response.json();
-            toast({
-              image: metadata.image || '/dmg-logo.gif',
-              title: 'Degen Activity Detected in the Dexterity Pool',
-              description,
-              duration: 10000
-            });
+            try {
+              const metadata = await response.json();
+              toast({
+                image: metadata.image,
+                title: 'Degen Activity Detected in the Dexterity Pool',
+                description,
+                duration: 10000
+              });
+            } catch (error) {
+              toast({
+                image: '/charisma.png',
+                title: 'Degen Activity Detected in the Dexterity Pool',
+                description,
+                duration: 10000
+              });
+            }
           });
         }
       }
@@ -182,13 +191,13 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
       // });
 
       // Reset highest wrap bid on each new block
-      setHighestBid(0);
+      // setHighestBid(0);
 
       // Update Charisma token stats on each new block
       // We're calling this asynchronously without awaiting to avoid returning a Promise
-      getCharismaTokenStats().catch(error => {
-        console.error('Error updating Charisma token stats:', error);
-      });
+      // getCharismaTokenStats().catch(error => {
+      //   console.error('Error updating Charisma token stats:', error);
+      // });
     });
 
     const getBlockData = async () => {
