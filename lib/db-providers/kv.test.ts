@@ -101,7 +101,7 @@ describe('indexes', () => {
 
   it('should remove index contract', async () => {
     const response = await removeIndexContract(
-      'SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.db20-dexterity'
+      'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.goverment-of-lephrechauns-dexterity'
     );
     console.log(response);
   });
