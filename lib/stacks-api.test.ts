@@ -77,9 +77,13 @@ describe('Stacks API', () => {
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId = 'SPXZ32XFJZCT4TRDNE4R3HX3DRX9ZE6B5G2WZNRK.pixel-rozar-stxcity';
+    const contractId = 'SP1K8Y1JDM3MX9HNBS4MGYERRZSADVMZWASAPHPK3.conspiracy-dexterity';
     const metadata = await getTokenMetadata(contractId);
-    await setContractMetadata(contractId, metadata);
+    await setContractMetadata(contractId, {
+      ...metadata,
+      image:
+        'https://ton.x.com/i/ton/data/dm/1861896831417950711/1861896816515522560/-z273i8k.jpg:large'
+    });
     const updatedMetadata = await getContractMetadata(contractId);
     console.log(updatedMetadata);
   });
