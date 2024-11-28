@@ -420,7 +420,10 @@ export const PoolActions = ({
                 alt={pool.token0.metadata.symbol || 'Base Token 0'}
                 width={240}
                 height={240}
-                className={cn('w-6 mx-1 scale-[4.5] sm:scale-[2]', img0Fail ? 'blur' : '')}
+                className={cn(
+                  'w-6 mx-1 scale-[4.5] lg:scale-[2] hover:brightness-100 brightness-95',
+                  img0Fail ? 'blur' : ''
+                )}
                 blurDataURL="/dmg-logo.png" // Shows while loading and on error
                 placeholder="blur"
                 onError={() => {
@@ -442,7 +445,10 @@ export const PoolActions = ({
                 alt={pool.token1.metadata.symbol || 'Base Token 1'}
                 width={240}
                 height={240}
-                className={cn('w-6 mx-1 scale-[4.5] sm:scale-[2]', img1Fail ? 'blur' : '')}
+                className={cn(
+                  'w-6 mx-1 scale-[4.5] lg:scale-[2] hover:brightness-100 brightness-95',
+                  img1Fail ? 'blur' : ''
+                )}
                 blurDataURL="/dmg-logo.png" // Shows while loading and on error
                 placeholder="blur"
                 onError={() => {
