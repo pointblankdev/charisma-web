@@ -1,3 +1,4 @@
+import { getDecimals, getSymbol } from '@lib/stacks-api';
 import { kv } from '@vercel/kv';
 import _ from 'lodash';
 
@@ -20,11 +21,13 @@ export async function getIndexContracts(): Promise<any> {
 
 export async function setContractMetadata(ca: string, data: any): Promise<void> {
   const existingMetadata = await getContractMetadata(ca);
+  const decimals = await getDecimals(ca);
+  const symbol = await getSymbol(ca);
   await kv.sadd('tokens:contracts', ca);
-  await kv.set(`ca:${ca}`, { ...existingMetadata, ...data });
+  const newMetadata = { ...existingMetadata, ...data, decimals, symbol };
+  await kv.set(`ca:${ca}`, newMetadata);
   await kv.set(`metadata:${ca}`, {
-    ...existingMetadata,
-    ...data,
+    ...newMetadata,
     lastUpdated: Date.now()
   });
 }

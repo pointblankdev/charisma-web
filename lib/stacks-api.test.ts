@@ -77,15 +77,9 @@ describe('Stacks API', () => {
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId = 'SP1K8Y1JDM3MX9HNBS4MGYERRZSADVMZWASAPHPK3.simulation-coin-stxcity';
+    const contractId = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token';
     const metadata = await getTokenMetadata(contractId);
-    const decimals = await getDecimals(contractId);
-    const symbol = await getSymbol(contractId);
-    await setContractMetadata(contractId, {
-      ...metadata,
-      decimals,
-      symbol
-    });
+    await setContractMetadata(contractId, metadata);
     const updatedMetadata = await getContractMetadata(contractId);
     console.log(updatedMetadata);
   });
