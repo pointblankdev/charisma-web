@@ -6,6 +6,10 @@ import numeral from 'numeral';
 import Link from 'next/link';
 import { Dialog } from '@components/ui/dialog';
 import { cn } from '@lib/utils';
+import { useConnect } from '@stacks/connect-react';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { network } from '@components/stacks-session/connect';
+import { boolCV, PostConditionMode, uintCV } from '@stacks/transactions';
 
 export interface Pool {
   contractId: string;
@@ -250,46 +254,163 @@ interface PoolActionsProps {
   pool: Pool;
   onLiquidityAction: (pool: Pool, isAdd: boolean) => void;
   onQuickBuy: (pool: Pool) => void;
+  tokenPrices: { [key: string]: number };
 }
 
-export const PoolActions = ({ pool, onLiquidityAction, onQuickBuy }: PoolActionsProps) => (
-  <div className="flex justify-between space-x-6">
-    <div className="flex rounded-md">
-      <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
-        Liquidity
-      </span>
-      <button
-        type="button"
-        className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-primary hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
-        onClick={() => onLiquidityAction(pool, true)}
-      >
-        <Plus className="w-4 h-4" />
-      </button>
-      <button
-        type="button"
-        className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
-        onClick={() => onLiquidityAction(pool, false)}
-      >
-        <Minus className="w-4 h-4" />
-      </button>
-    </div>
-    {isStxChaPool(pool) && (
-      <Button
-        size="sm"
-        variant="secondary"
-        onClick={() => onQuickBuy(pool)}
-        className="whitespace-nowrap"
-      >
-        <ShoppingCart className="w-4 h-4 mr-1" /> Quick Buy
-      </Button>
-    )}
-    {/* <Link href={`/pools/${pool.poolData.id}`} passHref>
+export const PoolActions = ({
+  pool,
+  onLiquidityAction,
+  onQuickBuy,
+  tokenPrices
+}: PoolActionsProps) => {
+  const { doContractCall } = useConnect();
+
+  const handleBuyToken0Click = (pool: Pool) => {
+    const token1Price = tokenPrices[pool.token1.metadata.symbol];
+    const tenUsdInToken1 = Math.floor((10 / token1Price) * 10 ** pool.token1.metadata.decimals);
+    console.log();
+    doContractCall({
+      network,
+      contractAddress: pool.contractId.split('.')[0],
+      contractName: pool.contractId.split('.')[1],
+      functionName: 'swap',
+      postConditionMode: PostConditionMode.Allow,
+      functionArgs: [boolCV(false), uintCV(tenUsdInToken1)],
+      onFinish: data => {
+        console.log('Transaction successful', data);
+      },
+      onCancel: () => {
+        console.log('Transaction cancelled');
+      }
+    });
+  };
+
+  const handleBuyToken1Click = (pool: Pool) => {
+    const token0Price = tokenPrices[pool.token0.metadata.symbol];
+    const tenUsdInToken0 = Math.floor((10 / token0Price) * 10 ** pool.token0.metadata.decimals);
+    doContractCall({
+      network,
+      contractAddress: pool.contractId.split('.')[0],
+      contractName: pool.contractId.split('.')[1],
+      functionName: 'swap',
+      postConditionMode: PostConditionMode.Allow,
+      functionArgs: [boolCV(true), uintCV(tenUsdInToken0)],
+      onFinish: data => {
+        console.log('Transaction successful', data);
+      },
+      onCancel: () => {
+        console.log('Transaction cancelled');
+      }
+    });
+  };
+
+  const handleImg0Error = () => {
+    setImg0Fail(true);
+    setImgSrc0('/dmg-logo.png');
+  };
+  const handleImg1Error = () => {
+    setImg1Fail(true);
+    setImgSrc1('/dmg-logo.png');
+  };
+  const [img0Fail, setImg0Fail] = useState(false);
+  const [img1Fail, setImg1Fail] = useState(false);
+  const [imgSrc0, setImgSrc0] = useState(
+    pool.token0.metadata?.images?.logo || pool.token0.metadata?.image
+  );
+  const [imgSrc1, setImgSrc1] = useState(
+    pool.token1.metadata?.images?.logo || pool.token1.metadata?.image
+  );
+
+  return (
+    <div className="flex items-center justify-between space-x-1">
+      <div className="flex align-middle rounded-md h-[40px]">
+        <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
+          Liquidity
+        </span>
+        <button
+          type="button"
+          className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-primary hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+          onClick={() => onLiquidityAction(pool, true)}
+        >
+          <Plus className="w-4 h-4" />
+        </button>
+        <button
+          type="button"
+          className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+          onClick={() => onLiquidityAction(pool, false)}
+        >
+          <Minus className="w-4 h-4" />
+        </button>
+      </div>
+      {pool.lpInfo.dex === 'DEXTERITY' ? (
+        <div className="flex align-middle rounded-md h-[40px]">
+          <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
+            Buy $10
+          </span>
+          <button
+            type="button"
+            className="relative inline-flex items-center px-2 py-2 overflow-hidden text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+            onClick={() => handleBuyToken0Click(pool)}
+          >
+            {imgSrc0 ? (
+              <Image
+                src={imgSrc0}
+                alt={pool.token0.metadata.symbol || 'Base Token 0'}
+                width={240}
+                height={240}
+                className={cn('w-6 mx-1 scale-[2]', img0Fail ? 'blur' : '')}
+                blurDataURL="/dmg-logo.png" // Shows while loading and on error
+                placeholder="blur"
+                onError={() => {
+                  handleImg0Error();
+                }}
+              />
+            ) : (
+              <Coins className="w-8 h-8 mr-2" />
+            )}
+          </button>
+          <button
+            type="button"
+            className="relative inline-flex items-center px-2 py-2 -ml-px overflow-hidden text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+            onClick={() => handleBuyToken1Click(pool)}
+          >
+            {imgSrc1 ? (
+              <Image
+                src={imgSrc1}
+                alt={pool.token1.metadata.symbol || 'Base Token 1'}
+                width={240}
+                height={240}
+                className={cn('w-6 mx-1 scale-[2]', img1Fail ? 'blur' : '')}
+                blurDataURL="/dmg-logo.png" // Shows while loading and on error
+                placeholder="blur"
+                onError={() => {
+                  handleImg1Error();
+                }}
+              />
+            ) : (
+              <Coins className="w-8 h-8 mr-2" />
+            )}
+          </button>
+        </div>
+      ) : null}
+      {isStxChaPool(pool) && (
+        <Button
+          size="sm"
+          variant="secondary"
+          onClick={() => onQuickBuy(pool)}
+          className="whitespace-nowrap"
+        >
+          <ShoppingCart className="w-4 h-4 mr-1" /> Quick Buy
+        </Button>
+      )}
+      {/* <Link href={`/pools/${pool.poolData.id}`} passHref>
       <Button variant="link" className="whitespace-nowrap">
         View Chart
       </Button>
     </Link> */}
-  </div>
-);
+    </div>
+  );
+};
 
 // Dialogs Components
 interface DialogContainerProps {

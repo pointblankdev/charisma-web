@@ -160,6 +160,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                         pool={pool}
                         onLiquidityAction={handleLiquidityAction}
                         onQuickBuy={handleQuickBuy}
+                        tokenPrices={data.tokenPrices}
                       />
                     </td>
                   </tr>
