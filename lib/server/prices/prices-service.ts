@@ -214,7 +214,8 @@ class PricesService {
       DMG: dmgPrice,
       HOOT: hootPrice,
       CROW: 0.008,
-      LUCK: 0.0000013
+      LUCK: 0.0000013,
+      pCHA: 0.000005
     };
 
     // build pools data
