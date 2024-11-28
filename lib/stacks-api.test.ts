@@ -81,8 +81,7 @@ describe('Stacks API', () => {
     const metadata = await getTokenMetadata(contractId);
     await setContractMetadata(contractId, {
       ...metadata,
-      image:
-        'https://ton.x.com/i/ton/data/dm/1861896831417950711/1861896816515522560/-z273i8k.jpg:large'
+      image: 'https://charisma.rocks/indexes/conspiracy.jpg'
     });
     const updatedMetadata = await getContractMetadata(contractId);
     console.log(updatedMetadata);

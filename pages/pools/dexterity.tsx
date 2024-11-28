@@ -12,6 +12,7 @@ import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registr
 import PricesService from '@lib/server/prices/prices-service';
 import { getContractMetadata, getIndexContracts } from '@lib/db-providers/kv';
 import { getDexterityReserves, getTotalSupply } from '@lib/stacks-api';
+import Link from 'next/link';
 
 // Initialize clients
 const registryClient = new TokenRegistryClient();
@@ -118,6 +119,11 @@ export default function DexterityPoolsPage({ data }: Props) {
           >
             <PoolsLayout>
               <PoolsInterface data={data} title={'Dexterity Pools'} />
+              <div className="justify-center w-full p-1 m-1 text-center">
+                <Link className="w-full text-sm text-center" href="/launchpad">
+                  Want to create your own memecoin pool and join the fun?
+                </Link>
+              </div>
             </PoolsLayout>
           </motion.div>
         )}
