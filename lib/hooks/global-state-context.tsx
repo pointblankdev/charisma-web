@@ -1,6 +1,6 @@
 import React, { createContext, useCallback, useContext, useEffect } from 'react';
 import { usePersistedState } from './use-persisted-state';
-import { getLatestBlock } from '@lib/user-api';
+import { getContractMetadata, getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
@@ -155,9 +155,14 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             </div>
           );
 
-          toast({
-            title: 'Degen Activity in the Dexterity Pool',
-            description
+          getContractMetadata(tx.contract_call.contract_id).then(async response => {
+            const metadata = await response.json();
+            toast({
+              image: metadata.image || '/dmg-logo.gif',
+              title: 'Degen Activity Detected in the Dexterity Pool',
+              description,
+              duration: 10000
+            });
           });
         }
       }
