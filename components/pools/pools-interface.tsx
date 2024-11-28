@@ -19,6 +19,7 @@ import { cn } from '@lib/utils';
 import _ from 'lodash';
 import Image from 'next/image';
 import Link from 'next/link';
+import numeral from 'numeral';
 
 type Props = {
   data: {
@@ -153,7 +154,11 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                       <PoolReserves pool={pool} tokenPrices={data.tokenPrices} />
                     </td>
                     <td className="py-4 text-white min-w-24">
-                      {formatUSD(calculatePoolTVL(pool, data.tokenPrices))}
+                      <div className='flex flex-col leading-tight'>
+                        <div className=''>{formatUSD(calculatePoolTVL(pool, data.tokenPrices))}</div>
+                        <div className='text-xs text-gray-500/90'>{numeral(pool.poolData.totalSupply / 10 ** pool.metadata.decimals).format('0a')} total supply</div>
+                        <div className='text-xs text-primary/90'>{formatUSD(calculatePoolTVL(pool, data.tokenPrices) / (pool.poolData.totalSupply / 10 ** pool.metadata.decimals))} / token</div>
+                      </div>
                     </td>
                     <td className="py-4 min-w-36">
                       <PoolActions

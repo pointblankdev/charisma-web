@@ -9,7 +9,7 @@ import { cn } from '@lib/utils';
 import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
-import { boolCV, PostConditionMode, uintCV } from '@stacks/transactions';
+import { boolCV, PostConditionMode, standardPrincipalCV, uintCV } from '@stacks/transactions';
 
 export interface Pool {
   contractId: string;
@@ -264,6 +264,46 @@ export const PoolActions = ({
   tokenPrices
 }: PoolActionsProps) => {
   const { doContractCall } = useConnect();
+  const { stxAddress } = useGlobalState();
+
+  const lpTokenPrice =
+    calculatePoolTVL(pool, tokenPrices) /
+    (pool.poolData.totalSupply / 10 ** pool.metadata.decimals);
+  const twentyUsdInLpToken = Math.floor((20 / lpTokenPrice) * 10 ** pool.metadata.decimals);
+
+  const handleAddLiquidityClick = (pool: Pool) => {
+    doContractCall({
+      network,
+      contractAddress: pool.contractId.split('.')[0],
+      contractName: pool.contractId.split('.')[1],
+      functionName: 'mint',
+      postConditionMode: PostConditionMode.Allow,
+      functionArgs: [standardPrincipalCV(stxAddress), uintCV(twentyUsdInLpToken)],
+      onFinish: data => {
+        console.log('Add liquidity transaction successful', data);
+      },
+      onCancel: () => {
+        console.log('Add liquidity transaction cancelled');
+      }
+    });
+  };
+
+  const handleRemoveLiquidityClick = (pool: Pool) => {
+    doContractCall({
+      network,
+      contractAddress: pool.contractId.split('.')[0],
+      contractName: pool.contractId.split('.')[1],
+      functionName: 'burn',
+      postConditionMode: PostConditionMode.Allow,
+      functionArgs: [standardPrincipalCV(stxAddress), uintCV(twentyUsdInLpToken)],
+      onFinish: data => {
+        console.log('Remove liquidity transaction successful', data);
+      },
+      onCancel: () => {
+        console.log('Remove liquidity transaction cancelled');
+      }
+    });
+  };
 
   const handleBuyToken0Click = (pool: Pool) => {
     const token1Price = tokenPrices[pool.token1.metadata.symbol];
@@ -323,25 +363,47 @@ export const PoolActions = ({
 
   return (
     <div className="flex items-center justify-between space-x-2">
-      <div className="flex align-middle rounded-md h-[40px]">
-        <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
-          Liquidity
-        </span>
-        <button
-          type="button"
-          className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-primary hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
-          onClick={() => onLiquidityAction(pool, true)}
-        >
-          <Plus className="w-4 h-4" />
-        </button>
-        <button
-          type="button"
-          className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
-          onClick={() => onLiquidityAction(pool, false)}
-        >
-          <Minus className="w-4 h-4" />
-        </button>
-      </div>
+      {pool.lpInfo.dex === 'DEXTERITY' ? (
+        <div className="flex align-middle rounded-md h-[40px]">
+          <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background">
+            Mint/Burn $20
+          </span>
+          <button
+            type="button"
+            className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-primary hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+            onClick={() => handleAddLiquidityClick(pool)}
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+            onClick={() => handleRemoveLiquidityClick(pool)}
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+        </div>
+      ) : (
+        <div className="flex align-middle rounded-md h-[40px]">
+          <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
+            Liquidity
+          </span>
+          <button
+            type="button"
+            className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-primary hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+            onClick={() => onLiquidityAction(pool, true)}
+          >
+            <Plus className="w-4 h-4" />
+          </button>
+          <button
+            type="button"
+            className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
+            onClick={() => onLiquidityAction(pool, false)}
+          >
+            <Minus className="w-4 h-4" />
+          </button>
+        </div>
+      )}
       {pool.lpInfo.dex === 'DEXTERITY' ? (
         <div className="flex align-middle rounded-md h-[40px]">
           <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background">
