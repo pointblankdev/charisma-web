@@ -20,11 +20,11 @@ export default async function getMetadata(
     if (req.method === 'POST') {
       console.log(req.body);
       await addIndexContract(ca);
+      response = await setContractMetadata(ca, req.body);
       const metadataA = await getTokenMetadata(req.body.tokenA);
       await setContractMetadata(req.body.tokenA, metadataA);
       const metadataB = await getTokenMetadata(req.body.tokenB);
       await setContractMetadata(req.body.tokenB, metadataB);
-      response = await setContractMetadata(ca, req.body);
     } else if (req.method === 'GET') {
       // if ca ends with .json, remove it
       if (ca.endsWith('.json')) {

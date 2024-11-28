@@ -23,6 +23,7 @@ export async function setContractMetadata(ca: string, data: any): Promise<void> 
     ...data,
     lastUpdated: Date.now()
   });
+  await kv.sadd('tokens:contracts', ca);
   await kv.set(`ca:${ca}`, data);
 }
 

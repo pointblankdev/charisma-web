@@ -11,12 +11,14 @@ import {
   getCollectionSize,
   getNftOwner,
   getAllContractEvents,
-  getTokenMetadata
+  getTokenMetadata,
+  getDecimals,
+  getSymbol
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
 import { cvToValue, hexToCV } from '@stacks/transactions';
-import { setContractMetadata } from './db-providers/kv';
+import { getContractMetadata, setContractMetadata } from './db-providers/kv';
 
 describe('Stacks API', () => {
   it('should lookup a BNS name given an address', async () => {
@@ -69,16 +71,19 @@ describe('Stacks API', () => {
 
   it('should get token metadata', async () => {
     const metadata = await getTokenMetadata(
-      'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.earlycrows-bonding-curve'
+      'SP20VRJRCZ3FQG7RE4QSPFPQC24J92TKDXJVHWEAW.charisma-phoenix-stxcity'
     );
     console.log(metadata);
   });
 
   it('should update token metadata', async () => {
-    const contractId = 'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.earlycrows-bonding-curve';
+    const contractId = 'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.lephrecaun-with-bitcoin-stxcity';
     const metadata = await getTokenMetadata(contractId);
-    await setContractMetadata(contractId, metadata);
-    console.log(metadata);
+    const decimals = await getDecimals(contractId);
+    const symbol = await getSymbol(contractId);
+    await setContractMetadata(contractId, { ...metadata, decimals, symbol });
+    const updatedMetadata = await getContractMetadata(contractId);
+    console.log(updatedMetadata);
   });
 
   it('should get nft token uri', async () => {

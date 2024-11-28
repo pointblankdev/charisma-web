@@ -99,14 +99,14 @@ describe('indexes', () => {
 
   it('should remove index contract', async () => {
     const response = await removeIndexContract(
-      'SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.minidex-dexterity'
+      'SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.charismatic-phoenix-lp-dexterity'
     );
     console.log(response);
   });
 
-  it('should get index token contract metadata', async () => {
+  it('should get token contract metadata', async () => {
     const response = await getContractMetadata(
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
+      'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.earlycrows-bonding-curve'
     );
     console.log(response);
   });
