@@ -62,7 +62,9 @@ describe('indexes', () => {
   });
 
   it('should add index contract', async () => {
-    const response = await addIndexContract('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex');
+    const response = await addIndexContract(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.natures-perfect-predator-dexterity'
+    );
     console.log(response);
   });
 

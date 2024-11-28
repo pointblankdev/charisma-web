@@ -265,11 +265,15 @@ export const PoolActions = ({
 }: PoolActionsProps) => {
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
+  const [mintFactor, setMintFactor] = useState(1);
+  const [swapFactor, setSwapFactor] = useState(1);
 
   const lpTokenPrice =
     calculatePoolTVL(pool, tokenPrices) /
     (pool.poolData.totalSupply / 10 ** pool.metadata.decimals);
-  const twentyUsdInLpToken = Math.floor((20 / lpTokenPrice) * 10 ** pool.metadata.decimals);
+  const twentyUsdInLpToken = Math.floor(
+    ((2 * mintFactor) / lpTokenPrice) * 10 ** pool.metadata.decimals
+  );
 
   const handleAddLiquidityClick = (pool: Pool) => {
     doContractCall({
@@ -307,7 +311,9 @@ export const PoolActions = ({
 
   const handleBuyToken0Click = (pool: Pool) => {
     const token1Price = tokenPrices[pool.token1.metadata.symbol];
-    const tenUsdInToken1 = Math.floor((10 / token1Price) * 10 ** pool.token1.metadata.decimals);
+    const tenUsdInToken1 = Math.floor(
+      ((1 * swapFactor) / token1Price) * 10 ** pool.token1.metadata.decimals
+    );
     console.log();
     doContractCall({
       network,
@@ -327,7 +333,9 @@ export const PoolActions = ({
 
   const handleBuyToken1Click = (pool: Pool) => {
     const token0Price = tokenPrices[pool.token0.metadata.symbol];
-    const tenUsdInToken0 = Math.floor((10 / token0Price) * 10 ** pool.token0.metadata.decimals);
+    const tenUsdInToken0 = Math.floor(
+      ((1 * swapFactor) / token0Price) * 10 ** pool.token0.metadata.decimals
+    );
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
@@ -365,8 +373,11 @@ export const PoolActions = ({
     <div className="flex items-center justify-between space-x-2">
       {pool.lpInfo.dex === 'DEXTERITY' ? (
         <div className="flex align-middle rounded-md h-[40px]">
-          <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background">
-            Mint/Burn $20
+          <span
+            onClick={() => setMintFactor(f => f * 2)}
+            className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 cursor-pointer select-none hover:brightness-125 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background"
+          >
+            Mint/Burn ${numeral(2 * mintFactor).format('0')}
           </span>
           <button
             type="button"
@@ -406,8 +417,11 @@ export const PoolActions = ({
       )}
       {pool.lpInfo.dex === 'DEXTERITY' ? (
         <div className="flex align-middle rounded-md h-[40px]">
-          <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background">
-            Buy $10
+          <span
+            onClick={() => setSwapFactor(f => f * 2)}
+            className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 cursor-pointer select-none hover:brightness-125 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background"
+          >
+            Buy ${numeral(1 * swapFactor).format('0')}
           </span>
           <button
             type="button"
