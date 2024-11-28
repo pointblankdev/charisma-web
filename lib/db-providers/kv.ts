@@ -21,10 +21,21 @@ export async function getIndexContracts(): Promise<any> {
 
 export async function setContractMetadata(ca: string, data: any): Promise<void> {
   const existingMetadata = await getContractMetadata(ca);
-  const decimals = await getDecimals(ca);
-  const symbol = await getSymbol(ca);
+  const newMetadata = { ...existingMetadata, ...data };
   await kv.sadd('tokens:contracts', ca);
-  const newMetadata = { ...existingMetadata, ...data, decimals, symbol };
+  let decimals, symbol;
+  try {
+    decimals = await getDecimals(ca);
+    symbol = await getSymbol(ca);
+  } catch (error) {
+    console.error(error);
+  }
+  if (decimals) {
+    newMetadata.decimals = decimals;
+  }
+  if (symbol) {
+    newMetadata.symbol = symbol;
+  }
   await kv.set(`ca:${ca}`, newMetadata);
   await kv.set(`metadata:${ca}`, {
     ...newMetadata,
