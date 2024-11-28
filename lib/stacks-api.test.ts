@@ -77,11 +77,27 @@ describe('Stacks API', () => {
   });
 
   it('should update token metadata', async () => {
-    const contractId = 'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.lephrecaun-with-bitcoin-stxcity';
+    const contractId = 'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.crow-with-bitcoin-dexterity';
     const metadata = await getTokenMetadata(contractId);
     const decimals = await getDecimals(contractId);
     const symbol = await getSymbol(contractId);
-    await setContractMetadata(contractId, { ...metadata, decimals, symbol });
+    await setContractMetadata(contractId, {
+      ...metadata,
+      decimals,
+      symbol,
+      image: 'https://i.ibb.co/PQWyW1S/d567eeba-32f2-4287-8f44-3f22e403773a.png'
+    });
+    const updatedMetadata = await getContractMetadata(contractId);
+    console.log(updatedMetadata);
+  });
+
+  it('should update token metadata field', async () => {
+    const contractId = 'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.crow-with-bitcoin-dexterity';
+    const metadata = await getContractMetadata(contractId);
+    await setContractMetadata(contractId, {
+      ...metadata,
+      image: 'https://i.ibb.co/PQWyW1S/d567eeba-32f2-4287-8f44-3f22e403773a.png'
+    });
     const updatedMetadata = await getContractMetadata(contractId);
     console.log(updatedMetadata);
   });
