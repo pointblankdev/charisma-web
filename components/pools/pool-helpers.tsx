@@ -322,7 +322,7 @@ export const PoolActions = ({
   );
 
   return (
-    <div className="flex items-center justify-between space-x-1">
+    <div className="flex items-center justify-between space-x-2">
       <div className="flex align-middle rounded-md h-[40px]">
         <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
           Liquidity
@@ -344,7 +344,7 @@ export const PoolActions = ({
       </div>
       {pool.lpInfo.dex === 'DEXTERITY' ? (
         <div className="flex align-middle rounded-md h-[40px]">
-          <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
+          <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background">
             Buy $10
           </span>
           <button
@@ -358,7 +358,7 @@ export const PoolActions = ({
                 alt={pool.token0.metadata.symbol || 'Base Token 0'}
                 width={240}
                 height={240}
-                className={cn('w-6 mx-1 scale-[2]', img0Fail ? 'blur' : '')}
+                className={cn('w-6 mx-1 scale-[4.5] sm:scale-[2]', img0Fail ? 'blur' : '')}
                 blurDataURL="/dmg-logo.png" // Shows while loading and on error
                 placeholder="blur"
                 onError={() => {
@@ -380,7 +380,7 @@ export const PoolActions = ({
                 alt={pool.token1.metadata.symbol || 'Base Token 1'}
                 width={240}
                 height={240}
-                className={cn('w-6 mx-1 scale-[2]', img1Fail ? 'blur' : '')}
+                className={cn('w-6 mx-1 scale-[4.5] sm:scale-[2]', img1Fail ? 'blur' : '')}
                 blurDataURL="/dmg-logo.png" // Shows while loading and on error
                 placeholder="blur"
                 onError={() => {
