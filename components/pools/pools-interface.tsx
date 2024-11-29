@@ -125,7 +125,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                   </Button>
                 ))}
               </div>
-              <Link className='text-sm' href='/launchpad'>Want to create your own pool and collect fees?</Link>
+              <Link className='text-sm min-w-80' href='/launchpad'>Want to create your own pool and collect fees?</Link>
             </div>
           </div>
 

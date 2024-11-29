@@ -372,17 +372,17 @@ export const PoolActions = ({
 
   const handleBuyToken0Click = (pool: Pool) => {
     const token1Price = tokenPrices[pool.token1.metadata.symbol];
-    const tenUsdInToken1 = Math.floor(
+    console.log(token1Price);
+    const oneUsdInToken1 = Math.floor(
       ((1 * swapFactor) / token1Price) * 10 ** pool.token1.metadata.decimals
     );
-    console.log();
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'swap',
       postConditionMode: PostConditionMode.Allow,
-      functionArgs: [boolCV(false), uintCV(tenUsdInToken1)],
+      functionArgs: [boolCV(false), uintCV(oneUsdInToken1)],
       onFinish: data => {
         console.log('Transaction successful', data);
       },
@@ -394,7 +394,7 @@ export const PoolActions = ({
 
   const handleBuyToken1Click = (pool: Pool) => {
     const token0Price = tokenPrices[pool.token0.metadata.symbol];
-    const tenUsdInToken0 = Math.floor(
+    const oneUsdInToken0 = Math.floor(
       ((1 * swapFactor) / token0Price) * 10 ** pool.token0.metadata.decimals
     );
     doContractCall({
@@ -403,7 +403,7 @@ export const PoolActions = ({
       contractName: pool.contractId.split('.')[1],
       functionName: 'swap',
       postConditionMode: PostConditionMode.Allow,
-      functionArgs: [boolCV(true), uintCV(tenUsdInToken0)],
+      functionArgs: [boolCV(true), uintCV(oneUsdInToken0)],
       onFinish: data => {
         console.log('Transaction successful', data);
       },

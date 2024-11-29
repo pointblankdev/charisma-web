@@ -3,7 +3,7 @@ import cmc from '../../cmc-api';
 import { DexClient } from '../pools/pools.client';
 import TokenRegistryClient, { charismaNames } from '../registry/registry.client';
 import { buildDexterityPools } from 'pages/pools/dexterity';
-import { getDexterityReserves } from '@lib/stacks-api';
+import { getDexterityQuote, getDexterityReserves } from '@lib/stacks-api';
 
 const dexClient = new DexClient();
 const registryClient = new TokenRegistryClient();
@@ -173,11 +173,19 @@ class PricesService {
     const stxSharkRatio = Number(stxSharkPool.reserve0) / Number(stxSharkPool.reserve1);
 
     // Get DMG/CHA ratio
-    const dmgChaReserves = await getDexterityReserves(
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-flow-dexterity'
+    const amountIn = 1000000;
+    const amountOut = await getDexterityQuote(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cyclops-liquidity-dexterity',
+      true,
+      amountIn,
+      false
     );
-    const chaDmgRatio = Number(dmgChaReserves.token1) / Number(dmgChaReserves.token0);
+    const chaDmgRatio = Number(amountIn) / Number(amountOut);
     const dmgPrice = chaDmgRatio * chaPrice;
+    console.log('Amount in:', amountIn);
+    console.log('Amount out:', amountOut);
+    console.log('CHA/DMG ratio:', chaDmgRatio);
+    console.log('DMG price:', dmgPrice);
 
     // Get DMG/HOOT ratio
     const dmgHootReserves = await getDexterityReserves(

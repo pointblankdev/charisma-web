@@ -14,7 +14,8 @@ import {
   getTokenMetadata,
   getDecimals,
   getSymbol,
-  getDexterityFees
+  getDexterityFees,
+  getDexterityQuote
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
@@ -144,5 +145,14 @@ describe('Dexterity Pools', () => {
   it('should get fees', async () => {
     const fees = await getDexterityFees('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex');
     console.log(fees);
+  });
+  it('should get quote', async () => {
+    const amountOut = await getDexterityQuote(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cyclops-liquidity-dexterity',
+      false,
+      1000000,
+      false
+    );
+    console.log(amountOut);
   });
 }, 200000);

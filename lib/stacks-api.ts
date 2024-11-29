@@ -4,7 +4,9 @@ import {
   cvToValue,
   parseToCV,
   hexToCV,
-  cvToHex
+  cvToHex,
+  boolCV,
+  uintCV
 } from '@stacks/transactions';
 import { cvToJSON } from '@stacks/transactions';
 import { kv } from '@vercel/kv';
@@ -332,6 +334,32 @@ export async function getDexterityFees(
       protocolFee: { numerator: 0, denominator: 1000 },
       shareFee: { numerator: 0, denominator: 1000 }
     };
+  }
+}
+
+export async function getDexterityQuote(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex',
+  forwardSwap = true,
+  amountIn = 1000000,
+  applyFee = true
+) {
+  try {
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-quote` as any;
+    const response = await client.POST(path, {
+      body: {
+        sender: address,
+        arguments: [
+          cvToHex(boolCV(forwardSwap)),
+          cvToHex(uintCV(amountIn)),
+          cvToHex(boolCV(applyFee))
+        ]
+      }
+    });
+    const amountOut = cvToValue(hexToCV(response.data.result)).value;
+    return amountOut;
+  } catch (error) {
+    return 0;
   }
 }
 
