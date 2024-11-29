@@ -136,7 +136,7 @@ export default function DexterityPoolsPage({ data }: Props) {
 
 const DexterityDisclaimer = () => {
   return (
-    <div className="mt-6 mb-4">
+    <div className="mt-4 mb-2">
       <div className="grid grid-cols-2 gap-4 py-4 overflow-hidden sm:px-6 sm:rounded-lg">
         <Alert className="col-span-2 border-primary/20 bg-accent-foreground/5">
           <CrosshairIcon className="w-4 h-4 text-primary" />

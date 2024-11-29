@@ -182,10 +182,6 @@ class PricesService {
     );
     const chaDmgRatio = Number(amountIn) / Number(amountOut);
     const dmgPrice = chaDmgRatio * chaPrice;
-    console.log('Amount in:', amountIn);
-    console.log('Amount out:', amountOut);
-    console.log('CHA/DMG ratio:', chaDmgRatio);
-    console.log('DMG price:', dmgPrice);
 
     // Get DMG/HOOT ratio
     const dmgHootReserves = await getDexterityReserves(
