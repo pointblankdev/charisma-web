@@ -14,6 +14,9 @@ import { network } from '@components/stacks-session/connect';
 import { PostConditionMode } from '@stacks/transactions';
 import LaunchpadHeader from '@components/launchpad/header';
 import { Alert, AlertDescription } from '@components/ui/alert';
+import { Slider } from '@components/ui/slider';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
+import Image from 'next/image';
 
 const ContractDeployer = () => {
   const [contractCode, setContractCode] = useState('');
@@ -23,6 +26,30 @@ const ContractDeployer = () => {
   const { doContractDeploy } = useConnect();
   const [initialMintChecked, setInitialMintChecked] = useState(true);
 
+  // Helper functions for logarithmic slider
+  const logScale = (value: any) => {
+    const minp = 0;
+    const maxp = 100;
+    const minv = Math.log(0.01);
+    const maxv = Math.log(25);
+
+    const scale = (maxv - minv) / (maxp - minp);
+    return Math.exp(minv + scale * (value - minp));
+  };
+
+  const inverseLogScale = (value: any) => {
+    const minp = 0;
+    const maxp = 100;
+    const minv = Math.log(0.01);
+    const maxv = Math.log(25);
+
+    const scale = (maxv - minv) / (maxp - minp);
+    return (Math.log(value) - minv) / scale + minp;
+  };
+
+  const formatPercentage = (value: any) => `${value.toFixed(2)}%`;
+  const formatEnergyAmount = (value: any) => `${value.toFixed(1)}`;
+
   const form = useForm({
     defaultValues: {
       indexTokenName: 'MiniDex',
@@ -31,18 +58,27 @@ const ContractDeployer = () => {
       tokenA: '',
       tokenB: '',
       defaultSwapFee: '5',
+      alpha: '0.95',
+      energyBurnAmount: '10',
       initialMint: true
     }
   });
 
   const onSubmit = (data: any) => {
+    const precision = 1000000;
     const safeName = data.indexTokenName
       .toLowerCase()
       .replace(/[^a-zA-Z0-9 ]/g, '')
       .replace(/\s+/g, '-');
-    const defaultSwapFee = Math.max(0, Math.min(5, parseFloat(data.defaultSwapFee)));
+    const defaultSwapFee = Math.floor(
+      Math.max(0, Math.min(50, Number(parseFloat(data.defaultSwapFee).toFixed(6)))) * 10000
+    );
     const safeContractName = `${safeName}-dexterity`;
     const fullContractName = `${stxAddress}.${safeContractName}`;
+    const alpha = Math.floor(Math.max(0, Math.min(50, parseFloat(data.alpha))) * precision);
+    const energyBurnAmount = Math.floor(
+      Math.max(0, Math.min(1000, parseFloat(data.energyBurnAmount))) * precision
+    );
     // Generate contract code based on parameters
     const code = `;; ${data.indexTokenName} - LP Token, AMM DEX and Hold-to-Earn Engine
 ;; ${fullContractName}
@@ -56,18 +92,18 @@ const ContractDeployer = () => {
 ;; Constants
 (define-constant DEPLOYER tx-sender)
 (define-constant CONTRACT (as-contract tx-sender))
-(define-constant ERR_UNAUTHORIZED (err u401))
-(define-constant ERR_INVALID_FEE (err u402))
-(define-constant MAX_SWAP_FEE u50000) ;; 5%
-(define-constant FEE_DENOMINATION u1000000)
-(define-constant PRECISION u1000000)
-(define-constant MAX_ALPHA u1000000) ;; 1.0 in fixed point
-(define-constant MIN_ALPHA u0)       ;; 0.0 = constant sum (stableswap)
-                                     ;; 1.0 = constant product
+(define-constant ERR_UNAUTHORIZED (err u403))
+(define-constant MAX_SWAP_FEE u250000) ;; 25%
+(define-constant PRECISION u${precision})
+(define-constant ALPHA u${alpha})
+
 ;; Storage
 (define-data-var owner principal DEPLOYER)
-(define-data-var alpha uint u1000000) ;; Default to constant product
-(define-data-var swap-fee uint u${defaultSwapFee * 10000}) ;; Default to ${defaultSwapFee}%
+(define-data-var energy-burn-amount uint u${energyBurnAmount})
+(define-data-var swap-fee uint u${defaultSwapFee}) ;; Default to ${(
+      (defaultSwapFee / precision) *
+      100
+    ).toPrecision(2)}%
 (define-data-var token-uri (optional (string-utf8 256)) 
   (some u"https://charisma.rocks/api/v0/indexes/${fullContractName}"))
 (define-data-var first-start-block uint stacks-block-height)
@@ -84,6 +120,11 @@ const ContractDeployer = () => {
     (asserts! (is-eq contract-caller (var-get owner)) ERR_UNAUTHORIZED)
     (asserts! (<= new-fee MAX_SWAP_FEE) ERR_UNAUTHORIZED)
     (ok (var-set swap-fee new-fee))))
+
+(define-public (set-energy-burn-amount (new-amount uint))
+  (begin
+    (asserts! (is-eq contract-caller (var-get owner)) ERR_UNAUTHORIZED)
+    (ok (var-set energy-burn-amount new-amount))))
 
 (define-public (set-token-uri (value (string-utf8 256)))
   (if (is-eq contract-caller (var-get owner))
@@ -108,11 +149,12 @@ const ContractDeployer = () => {
       (contract-call? '${data.tokenB} get-balance CONTRACT))))
     (reserve-out (unwrap-panic (if forward (contract-call? '${data.tokenB} get-balance CONTRACT) 
       (contract-call? '${data.tokenA} get-balance CONTRACT))))
-    (paid-energy (match (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 exhaust u10000000 sender) success true error false))
-    ;; Calculate effective input amount
-    (effective-in (if paid-energy amt-in (/ (* amt-in (- FEE_DENOMINATION (var-get swap-fee))) FEE_DENOMINATION)))
-    ;; Calculate output with hybrid curve
-    (amt-out (calculate-output-amount reserve-in reserve-out effective-in (var-get alpha))))
+    ;; Calculate raw output amount first
+    (raw-out (calculate-output-amount reserve-in reserve-out amt-in ALPHA))
+    ;; Check if energy was paid and apply fees to output amount
+    (paid-energy (match (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 exhaust (var-get energy-burn-amount) sender) success true error false))
+    (amt-out (if paid-energy raw-out (/ (* raw-out (- PRECISION (var-get swap-fee))) PRECISION))))
+    ;; Execute the swap
     (try! (if forward (contract-call? '${data.tokenA} transfer amt-in sender CONTRACT none) 
       (contract-call? '${data.tokenB} transfer amt-in sender CONTRACT none)))
     (try! (as-contract (if forward (contract-call? '${
@@ -152,7 +194,7 @@ const ContractDeployer = () => {
   (ok (var-get owner)))
 
 (define-read-only (get-alpha)
-  (ok (var-get alpha)))
+  (ok ALPHA))
 
 (define-read-only (get-tokens)
   (ok {token0: '${data.tokenA}, token1: '${data.tokenB}}))
@@ -172,8 +214,9 @@ const ContractDeployer = () => {
       (contract-call? '${data.tokenB} get-balance CONTRACT))))
     (reserve-out (unwrap-panic (if forward (contract-call? '${data.tokenB} get-balance CONTRACT) 
       (contract-call? '${data.tokenA} get-balance CONTRACT))))
-    (effective-in (if apply-fee (/ (* amt-in (- FEE_DENOMINATION (var-get swap-fee))) FEE_DENOMINATION) amt-in)))
-    (ok (calculate-output-amount reserve-in reserve-out effective-in (var-get alpha)))))
+    (raw-out (calculate-output-amount reserve-in reserve-out amt-in ALPHA))
+    (output-amount (if apply-fee (/ (* raw-out (- PRECISION (var-get swap-fee))) PRECISION) raw-out)))
+    (ok output-amount)))
 
 ;; SIP-010 Implementation
 (define-read-only (get-name)
@@ -438,6 +481,21 @@ ${initialMintChecked ? '(begin (mint DEPLOYER u1000000))' : ''}
                     <FormControl>
                       <Input placeholder="Enter valid URL to hosted image" {...field} />
                     </FormControl>
+                    <div className="mt-2">
+                      {field.value && (
+                        <div className="relative w-24 h-24 overflow-hidden border border-gray-200 rounded-lg">
+                          <Image
+                            src={field.value}
+                            alt="Token logo preview"
+                            fill
+                            className="object-cover"
+                            onError={e => {
+                              e.currentTarget.src = '/api/placeholder/96/96';
+                            }}
+                          />
+                        </div>
+                      )}
+                    </div>
                   </FormItem>
                 )}
               />
@@ -473,12 +531,97 @@ ${initialMintChecked ? '(begin (mint DEPLOYER u1000000))' : ''}
               />
               <FormField
                 control={form.control}
+                name="alpha"
+                render={({ field }) => (
+                  <FormItem>
+                    <div className="flex items-center gap-2">
+                      <FormLabel>Alpha (Curve Shape)</FormLabel>
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Info className="w-4 h-4 text-gray-500" />
+                          </TooltipTrigger>
+                          <TooltipContent className="max-w-[800px] p-4">
+                            <div className="space-y-2">
+                              <p>
+                                <strong>Constant Product (α = 1.0):</strong>
+                              </p>
+                              <ul className="pl-4 list-disc">
+                                <li>Better for volatile or uncorrelated assets</li>
+                                <li>Higher fees on large trades</li>
+                                <li>More protection against price manipulation</li>
+                                <li>Example: STX/WELSH pools</li>
+                              </ul>
+                              <p>
+                                <strong>Constant Sum (α = 0.0):</strong>
+                              </p>
+                              <ul className="pl-4 list-disc">
+                                <li>Better for stable or correlated assets</li>
+                                <li>Lower slippage on large trades</li>
+                                <li>More capital efficient</li>
+                                <li>Example: sBTC/aBTC pools</li>
+                              </ul>
+                              <p className="pt-2">
+                                <strong>Choosing the right α:</strong>
+                              </p>
+                              <ul className="pl-4 list-disc">
+                                <li>Use lower α (0 – 0.3) for stableswaps</li>
+                                <li>Use higher α (0.8 – 1.0) for volatile pairs</li>
+                                <li>
+                                  Middle range (0.4 – 0.7) for correlated but not stable assets
+                                </li>
+                              </ul>
+                            </div>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </div>
+                    <FormControl>
+                      <div className="space-y-2">
+                        <Slider
+                          min={0}
+                          max={1}
+                          step={0.01}
+                          value={[parseFloat(field.value)]}
+                          onValueChange={([value]) => field.onChange(value.toString())}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>Constant Sum</span>
+                          <span>{formatPercentage(parseFloat(field.value) * 100)}</span>
+                          <span>Constant Product</span>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Select between a constant sum and constant product curve
+                    </p>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
                 name="defaultSwapFee"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Default Swap Fee (%)</FormLabel>
+                    <FormLabel>Default Swap Fee</FormLabel>
                     <FormControl>
-                      <Input placeholder="Enter default swap fee (%)" {...field} />
+                      <div className="space-y-2">
+                        <Slider
+                          min={0}
+                          max={100}
+                          step={1}
+                          value={[inverseLogScale(parseFloat(field.value))]}
+                          onValueChange={([value]) => field.onChange(logScale(value).toString())}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>0.01%</span>
+                          <span>{formatPercentage(parseFloat(field.value))}</span>
+                          <span>25%</span>
+                        </div>
+                      </div>
                     </FormControl>
                     <div className="mt-2 space-y-2 text-sm text-gray-500">
                       <p>Default: 5%. This higher initial fee serves multiple purposes:</p>
@@ -487,10 +630,37 @@ ${initialMintChecked ? '(begin (mint DEPLOYER u1000000))' : ''}
                         <li>Emphasizes long-term holding over frequent trading</li>
                         <li>Creates natural market segmentation across different pools</li>
                       </ul>
-                      <p>
-                        The fee should be adjusted lower as the pool matures and liquidity grows.
-                      </p>
                     </div>
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="energyBurnAmount"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Energy Burn Amount</FormLabel>
+                    <FormControl>
+                      <div className="space-y-2">
+                        <Slider
+                          min={1}
+                          max={100}
+                          step={1}
+                          value={[parseFloat(field.value)]}
+                          onValueChange={([value]) => field.onChange(value.toString())}
+                          className="w-full"
+                        />
+                        <div className="flex justify-between text-xs text-gray-500">
+                          <span>1</span>
+                          <span>{formatEnergyAmount(parseFloat(field.value))} Energy</span>
+                          <span>100</span>
+                        </div>
+                      </div>
+                    </FormControl>
+                    <p className="mt-2 text-sm text-gray-500">
+                      Amount of energy required to avoid swap fees
+                    </p>
                   </FormItem>
                 )}
               />

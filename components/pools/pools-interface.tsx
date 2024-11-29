@@ -10,7 +10,8 @@ import {
   PoolComposition,
   PoolReserves,
   PoolActions,
-  DialogContainer
+  DialogContainer,
+  PoolFees
 } from './pool-helpers';
 import { Popover, PopoverContent, PopoverTrigger } from '@components/ui/popover';
 import { Button } from '@components/ui/button';
@@ -134,6 +135,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                 <tr className="text-left text-gray-400">
                   <th className="py-2">Name</th>
                   <th className="py-2">Composition</th>
+                  <th className="py-2">Swap Fee</th>
                   <th className="py-2 text-center">Reserves</th>
                   <th className="py-2 cursor-pointer" onClick={handleSort}>
                     TVL {<ArrowUpDown className="inline ml-1" size={16} />}
@@ -149,6 +151,9 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                     </td>
                     <td className="py-4 min-w-32">
                       <PoolComposition pool={pool} />
+                    </td>
+                    <td className="w-20 py-4">
+                      <PoolFees pool={pool} />
                     </td>
                     <td className="py-4 pr-4 space-y-1 text-white min-w-48">
                       <PoolReserves pool={pool} tokenPrices={data.tokenPrices} />

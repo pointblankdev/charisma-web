@@ -11,7 +11,7 @@ import PoolsLayout from '@components/pools/layout';
 import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
 import { getContractMetadata, getIndexContracts } from '@lib/db-providers/kv';
-import { getDexterityReserves, getTotalSupply } from '@lib/stacks-api';
+import { getDexterityFees, getDexterityReserves, getTotalSupply } from '@lib/stacks-api';
 import Link from 'next/link';
 
 // Initialize clients
@@ -66,6 +66,7 @@ export async function buildDexterityPools(tokens: any[]) {
     const contractMetadata = await getContractMetadata(contract);
     const reserves = await getDexterityReserves(contract);
     const totalSupply = await getTotalSupply(contract);
+    const fees = await getDexterityFees(contract);
     dexterityPools.push({
       contractId: contract,
       metadata: { decimals: 6, ...contractMetadata },
@@ -81,9 +82,7 @@ export async function buildDexterityPools(tokens: any[]) {
         reserve1: reserves.token1,
         lpToken: contract,
         totalSupply: totalSupply,
-        swapFee: { numerator: 996, denominator: 1000 },
-        protocolFee: { numerator: 0, denominator: 1000 },
-        shareFee: { numerator: 0, denominator: 1000 }
+        ...fees
       },
       token0: tokens.find((t: any) => t.contractId === contractMetadata?.tokenA || '') || dflt,
       token1: tokens.find((t: any) => t.contractId === contractMetadata?.tokenB || '') || dflt

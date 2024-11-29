@@ -1,7 +1,16 @@
 import React, { useState } from 'react';
 import Image from 'next/image';
 import { Button } from '@components/ui/button';
-import { Plus, Minus, ShoppingCart, Coins, ExternalLink } from 'lucide-react';
+import {
+  Plus,
+  Minus,
+  ShoppingCart,
+  Coins,
+  ExternalLink,
+  Info,
+  ArrowRightLeftIcon,
+  HandCoinsIcon
+} from 'lucide-react';
 import numeral from 'numeral';
 import Link from 'next/link';
 import { Dialog } from '@components/ui/dialog';
@@ -9,7 +18,8 @@ import { cn } from '@lib/utils';
 import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
-import { boolCV, PostConditionMode, standardPrincipalCV, uintCV } from '@stacks/transactions';
+import { boolCV, Pc, PostConditionMode, standardPrincipalCV, uintCV } from '@stacks/transactions';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 
 export interface Pool {
   contractId: string;
@@ -215,6 +225,57 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
     </div>
   </div>
 );
+
+export const PoolFees = ({ pool }: any) => {
+  const poolData = pool.poolData;
+  // Calculate swap fee percentage (e.g., 0.5% for 995/1000)
+  const calculateSwapFeePercent = (fee: any) => {
+    if (!fee || !fee.numerator || !fee.denominator) return 0;
+    return ((1 - fee.numerator / fee.denominator) * 100).toFixed(2);
+  };
+
+  // Calculate protocol and share fees as percentage of swap fee
+  const calculateSecondaryFee = (swapFeePercent: any, fee: any) => {
+    if (!fee || !fee.numerator || !fee.denominator) return 0;
+    const portion = fee.numerator / fee.denominator;
+    return (swapFeePercent * portion).toFixed(2);
+  };
+
+  const swapFeePercent = calculateSwapFeePercent(poolData.swapFee);
+  const protocolFeePercent = calculateSecondaryFee(swapFeePercent, poolData.protocolFee);
+  const shareFeePercent = calculateSecondaryFee(swapFeePercent, poolData.shareFee);
+  const lpFeePercent = (
+    Number(swapFeePercent) -
+    Number(protocolFeePercent) -
+    Number(shareFeePercent)
+  ).toFixed(2);
+
+  return (
+    <div className="flex flex-col space-y-1">
+      <TooltipProvider>
+        <Tooltip>
+          <TooltipTrigger className="flex items-center space-x-1">
+            <span className="text-md text-muted-foreground">{swapFeePercent}%</span>
+            <HandCoinsIcon className="w-4 h-4 mt-0.5 text-muted-foreground/70" />
+          </TooltipTrigger>
+          <TooltipContent className="max-w-xs">
+            <div className="space-y-2">
+              <p className="text-sm">Fee Breakdown:</p>
+              <div className="space-y-1 text-xs">
+                <p>Total Swap Fee: {swapFeePercent}%</p>
+                <div className="pl-2 border-l border-primary">
+                  <p>LP Rebate: {lpFeePercent}%</p>
+                  {Number(protocolFeePercent) > 0 && <p>Protocol Fee: {protocolFeePercent}%</p>}
+                  {Number(shareFeePercent) > 0 && <p>Share Fee: {shareFeePercent}%</p>}
+                </div>
+              </div>
+            </div>
+          </TooltipContent>
+        </Tooltip>
+      </TooltipProvider>
+    </div>
+  );
+};
 
 // Component: Pool Reserves
 interface PoolReservesProps {

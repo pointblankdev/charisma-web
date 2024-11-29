@@ -13,7 +13,8 @@ import {
   getAllContractEvents,
   getTokenMetadata,
   getDecimals,
-  getSymbol
+  getSymbol,
+  getDexterityFees
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
@@ -77,11 +78,11 @@ describe('Stacks API', () => {
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId = 'SP1K8Y1JDM3MX9HNBS4MGYERRZSADVMZWASAPHPK3.conspiracy-dexterity';
+    const contractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.krdoll-dexterity';
     const metadata = await getTokenMetadata(contractId);
     await setContractMetadata(contractId, {
       ...metadata,
-      image: 'https://charisma.rocks/indexes/conspiracy.jpg'
+      image: 'https://charisma.rocks/indexes/krdoll.png'
     });
     const updatedMetadata = await getContractMetadata(contractId);
     console.log(updatedMetadata);
@@ -139,13 +140,9 @@ describe('Recovery', () => {
   });
 });
 
-describe('Read-only contract calls with api token', () => {
-  it('read-only functions should work', async () => {
-    const path = '/v2/contracts/call-read/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS/charisma-token/get-decimals' as any;
-    const response = await client.POST(path, {
-      body: { sender: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', arguments: [] }
-    });
-    return cvToValue(cvToValue(hexToCV(response.data.result)));
+describe('Dexterity Pools', () => {
+  it('should get fees', async () => {
+    const fees = await getDexterityFees('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex');
+    console.log(fees);
   });
-}),
-  20000;
+}, 200000);
