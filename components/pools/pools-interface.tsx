@@ -49,7 +49,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
   // Filter pools based on selected token
   const filteredPools = useMemo(() => {
     if (!selectedToken) return data.pools;
-    return data.pools.filter(pool => pool.token0.contractId === selectedToken.contractId);
+    return data.pools.filter(pool => pool.token0.contractId === selectedToken.contractId || pool.token1.contractId === selectedToken.contractId);
   }, [data.pools, selectedToken]);
 
   const sortedPools = useMemo(() => {
