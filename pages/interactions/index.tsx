@@ -188,6 +188,8 @@ export default function InteractionsPage({ interactionData, explorations }: Inte
     description: 'Discover and interact with Charisma protocol.'
   };
 
+  console.log(interactionData);
+
   const getInteractionsByCategory = (category: InteractionCategory) => {
     return category === INTERACTION_CATEGORIES.ALL
       ? interactionData

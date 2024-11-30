@@ -45,8 +45,6 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
   try {
     const metadata = await getInteractionUri(interaction.split('.')[0], interaction.split('.')[1]);
 
-    console.log(metadata);
-
     return {
       props: {
         metadata
@@ -61,6 +59,7 @@ export const getStaticProps: GetStaticProps<any> = async ({ params }) => {
 };
 
 export default function InteractionDetailPage({ metadata }: InteractionDetailProps) {
+  console.log(metadata);
   const { interact } = useDungeonCrawler();
   const { stxAddress } = useGlobalState();
   const [isLoading, setIsLoading] = useState(false);
