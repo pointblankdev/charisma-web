@@ -50,20 +50,20 @@ const Transfer = () => {
     openContractCall(
       {
         network: network,
-        contractAddress: 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ',
-        contractName: 'dme000-governance-token',
-        functionName: 'dmg-transfer',
+        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+        contractName: 'hooter-the-owl',
+        functionName: 'transfer',
         functionArgs: [
           uintCV(amount),
           standardPrincipalCV(sender),
-          standardPrincipalCV(recipient)
-          // contractPrincipalCV(recipient.split('.')[0], recipient.split('.')[1])
-          // optionalCVOf(noneCV())
+          // standardPrincipalCV(recipient)
+          contractPrincipalCV(recipient.split('.')[0], recipient.split('.')[1]),
+          noneCV()
         ],
         postConditionMode: PostConditionMode.Allow,
         postConditions: []
-      },
-      (window as any).AsignaProvider
+      }
+      // (window as any).AsignaProvider
     );
   }
 

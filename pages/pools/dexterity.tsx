@@ -11,7 +11,12 @@ import PoolsLayout from '@components/pools/layout';
 import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
 import { getContractMetadata, getIndexContracts } from '@lib/db-providers/kv';
-import { getDexterityFees, getDexterityReserves, getTotalSupply } from '@lib/stacks-api';
+import {
+  getDexterityFees,
+  getDexterityReserves,
+  getIsVerifiedInteraction,
+  getTotalSupply
+} from '@lib/stacks-api';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
 import { AlertTriangle, CrosshairIcon, RocketIcon, Sparkles } from 'lucide-react';
@@ -66,12 +71,13 @@ export async function buildDexterityPools(tokens: any[]) {
   for (const contract of dexterityContracts) {
     const dflt = { contractId: '', metadata: {} };
     const contractMetadata = await getContractMetadata(contract);
+    const verified = await getIsVerifiedInteraction(contract);
     const reserves = await getDexterityReserves(contract);
     const totalSupply = await getTotalSupply(contract);
     const fees = await getDexterityFees(contract);
     dexterityPools.push({
       contractId: contract,
-      metadata: { decimals: 6, ...contractMetadata },
+      metadata: { decimals: 6, ...contractMetadata, verified },
       lpInfo: {
         dex: 'DEXTERITY',
         token0: contractMetadata?.tokenA || '',

@@ -102,72 +102,49 @@ export const getStaticProps: GetStaticProps<InteractionsPageProps> = async () =>
   // Curated list of explorations
   const explorations: Exploration[] = [
     {
-      name: 'Breaking Stacks',
-      description: "Break the Stacks blockchain with back-to-back Keepers' Petitions.",
-      cover: '/explorations/breaking-stacks.png',
+      name: 'Release the Owls',
+      description: 'MAXIMUM ENERGY. MAXIMUM OWLS. MAXIMUM CHARISMA. MAXIMUM PROFIT.',
+      cover: '/interactions/hooter-farm.png',
       steps: [
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
-          action: 'PETITION',
-          description: 'Petition the Keepers for additional DMG tokens'
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
+          action: 'CLAIM_TOKENS',
+          description: 'Burn energy to claim Hooter (HOOT) token rewards.'
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
-          action: 'PETITION',
-          description: 'Petition the Keepers for additional DMG tokens'
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
+          action: 'CLAIM_TOKENS',
+          description: 'Burn energy to claim Hooter (HOOT) token rewards.'
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
-          action: 'PETITION',
-          description: 'Petition the Keepers for additional DMG tokens'
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
+          action: 'CLAIM_TOKENS',
+          description: 'Burn energy to claim Hooter (HOOT) token rewards.'
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
-          action: 'PETITION',
-          description: 'Petition the Keepers for additional DMG tokens'
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
+          action: 'CLAIM_TOKENS',
+          description: 'Burn energy to claim Hooter (HOOT) token rewards.'
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
-          action: 'PETITION',
-          description: 'Petition the Keepers for additional DMG tokens'
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
+          action: 'CLAIM_TOKENS',
+          description: 'Burn energy to claim Hooter (HOOT) token rewards.'
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4',
-          action: 'FORWARD',
-          description: 'Arbitrage swap forward and abort if not profitable'
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
+          action: 'CLAIM_TOKENS',
+          description: 'Burn energy to claim Hooter (HOOT) token rewards.'
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-corgi-rc4',
-          action: 'REVERSE',
-          description: 'Arbitrage swap reverse and abort if not profitable'
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
+          action: 'CLAIM_TOKENS',
+          description: 'Burn energy to claim Hooter (HOOT) token rewards.'
         },
         {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc4',
-          action: 'MINT',
-          description: 'Mint additional Charisma tokens'
-        }
-      ]
-    },
-    {
-      name: 'Charismatic Flow',
-      description:
-        'Collect energy from held CHA tokens and then attempt to wrap additional Charisma tokens.',
-      cover: '/explorations/charismatic-flow.png',
-      steps: [
-        {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7',
-          action: 'TAP',
-          description: 'Generate base energy'
-        },
-        {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.keepers-petition-rc7',
-          action: 'PETITION',
-          description: 'Petition the Keepers for additional DMG tokens'
-        },
-        {
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-mine-rc4',
-          action: 'MINT',
-          description: 'Mint additional Charisma tokens'
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
+          action: 'CLAIM_TOKENS',
+          description: 'Burn energy to claim Hooter (HOOT) token rewards.'
         }
       ]
     }

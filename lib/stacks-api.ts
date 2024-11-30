@@ -6,10 +6,12 @@ import {
   hexToCV,
   cvToHex,
   boolCV,
-  uintCV
+  uintCV,
+  contractPrincipalCV
 } from '@stacks/transactions';
 import { cvToJSON } from '@stacks/transactions';
 import { kv } from '@vercel/kv';
+import { latestDungeonKeeperContract } from 'pages/admin';
 
 const CACHE_DURATION = 60 * 60 * 24 * 7; // 7 days in seconds
 
@@ -295,6 +297,22 @@ export async function getTotalSupply(
   } catch (error) {
     return 0;
   }
+}
+
+export async function getIsVerifiedInteraction(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
+) {
+  const [
+    rulesAddress,
+    rulesName
+  ] = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0'.split('.');
+  const [address, name] = contract.split('.');
+  const path = `/v2/contracts/call-read/${rulesAddress}/${rulesName}/is-verified-interaction` as any;
+  const response = await client.POST(path, {
+    body: { sender: address, arguments: [cvToHex(contractPrincipalCV(address, name))] }
+  });
+  const verifiedCV = cvToValue(hexToCV(response.data.result)).value;
+  return verifiedCV;
 }
 
 export async function getDexterityReserves(

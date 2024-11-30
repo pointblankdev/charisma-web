@@ -37,6 +37,8 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState<any | null>(null);
 
+  console.log(data.pools)
+
   const totalTVL = calculateTotalTVL(data.pools, data.tokenPrices);
 
   // Filter pools based on selected token

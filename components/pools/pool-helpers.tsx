@@ -9,7 +9,8 @@ import {
   ExternalLink,
   Info,
   ArrowRightLeftIcon,
-  HandCoinsIcon
+  HandCoinsIcon,
+  ZapIcon
 } from 'lucide-react';
 import numeral from 'numeral';
 import Link from 'next/link';
@@ -30,6 +31,7 @@ export interface Pool {
     image?: string;
     images?: any;
     decimals: number;
+    verified: boolean;
   };
   lpInfo: {
     dex: string;
@@ -430,8 +432,25 @@ export const PoolActions = ({
     pool.token1.metadata?.images?.logo || pool.token1.metadata?.image
   );
 
+  const claimEnergy = async (pool: Pool) => {
+    doContractCall({
+      network,
+      contractAddress: pool.contractId.split('.')[0],
+      contractName: pool.contractId.split('.')[1],
+      functionName: 'tap',
+      postConditionMode: PostConditionMode.Deny,
+      functionArgs: [],
+      onFinish: data => {
+        console.log('Transaction successful', data);
+      },
+      onCancel: () => {
+        console.log('Transaction cancelled');
+      }
+    });
+  };
+
   return (
-    <div className="flex items-center justify-between space-x-2">
+    <div className="flex items-center justify-start space-x-2">
       {pool.lpInfo.dex === 'DEXTERITY' ? (
         <div className="flex align-middle rounded-md h-[40px]">
           <span
@@ -477,7 +496,7 @@ export const PoolActions = ({
         </div>
       )}
       {pool.lpInfo.dex === 'DEXTERITY' ? (
-        <div className="flex align-middle rounded-md h-[40px]">
+        <div className="flex align-left rounded-md h-[40px]">
           <span
             onClick={() => setSwapFactor(f => f * 2)}
             className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 cursor-pointer select-none hover:brightness-125 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background"
@@ -534,18 +553,18 @@ export const PoolActions = ({
               <Coins className="w-8 h-8 mr-2" />
             )}
           </button>
+
+          {pool.metadata.verified ? (
+            <Button
+              variant="ghost"
+              className="px-4 ml-2 text-sm font-medium leading-7 whitespace-nowrap"
+              onClick={() => claimEnergy(pool)}
+            >
+              <ZapIcon className="w-4 h-4" />
+            </Button>
+          ) : null}
         </div>
       ) : null}
-      {isStxChaPool(pool) && (
-        <Button
-          size="sm"
-          variant="secondary"
-          onClick={() => onQuickBuy(pool)}
-          className="whitespace-nowrap"
-        >
-          <ShoppingCart className="w-4 h-4 mr-1" /> Quick Buy
-        </Button>
-      )}
       {/* <Link href={`/pools/${pool.poolData.id}`} passHref>
       <Button variant="link" className="whitespace-nowrap">
         View Chart

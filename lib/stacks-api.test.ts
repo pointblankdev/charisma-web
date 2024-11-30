@@ -15,7 +15,8 @@ import {
   getDecimals,
   getSymbol,
   getDexterityFees,
-  getDexterityQuote
+  getDexterityQuote,
+  getIsVerifiedInteraction
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
@@ -147,6 +148,12 @@ describe('Recovery', () => {
 });
 
 describe('Dexterity Pools', () => {
+  it('should get is verified interaction', async () => {
+    const verified = await getIsVerifiedInteraction(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
+    );
+    console.log(verified);
+  });
   it('should get fees', async () => {
     const fees = await getDexterityFees('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex');
     console.log(fees);
