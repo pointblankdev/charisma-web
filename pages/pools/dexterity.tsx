@@ -164,6 +164,7 @@ const DexterityDisclaimer = () => {
               <li>Emerging memecoins and community tokens</li>
               <li>Creative trading mechanics and bonuses</li>
               <li>Fee waivers and special rewards</li>
+              <li>Hold-to-Earn energy for verified LPs</li>
             </ul>
           </AlertDescription>
         </Alert>
