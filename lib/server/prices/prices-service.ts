@@ -281,6 +281,8 @@ class PricesService {
     for (const pool of dexterityPools) {
       try {
         this.calculateLpTokenPrice(pool);
+        this.calculateLpTokenPrice(pool);
+        this.calculateLpTokenPrice(pool);
       } catch (error) {
         console.error(error);
       }
