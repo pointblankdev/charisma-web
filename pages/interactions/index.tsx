@@ -256,7 +256,6 @@ export default function InteractionsPage({ interactionData, explorations }: Inte
                 <TabsTrigger value="all">All Interactions</TabsTrigger>
                 <TabsTrigger value="hold-to-earn">Hold-to-Earn</TabsTrigger>
                 <TabsTrigger value="rewards">Rewards</TabsTrigger>
-                <TabsTrigger value="utility">Utility</TabsTrigger>
               </TabsList>
               {Object.values(INTERACTION_CATEGORIES).map(category => (
                 <TabsContent
