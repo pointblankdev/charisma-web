@@ -42,7 +42,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
   // Filter pools based on selected token
   const uniqueBaseTokens = useMemo(() => {
     const uniqueToken0s = data.pools.map(pool => pool.token0);
-    const uniqueToken1s = data.pools.map(pool => pool.token0);
+    const uniqueToken1s = data.pools.map(pool => pool.token1);
     return _.uniqBy([...uniqueToken0s, ...uniqueToken1s], 'contractId')
   }, [data.pools]);
   
@@ -102,7 +102,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
               </span>
             </div>
 
-            <div className="flex items-center justify-between gap-2">
+            <div className="flex items-center justify-between max-w-screen-xl gap-2 space-x-4">
               <div className="flex overflow-hidden overflow-x-auto border rounded-xl scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                 {uniqueBaseTokens.map(token => (
                   <Button
