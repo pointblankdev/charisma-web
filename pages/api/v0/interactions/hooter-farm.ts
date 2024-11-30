@@ -17,7 +17,7 @@ export default function InteractionAPI(
       'https://charisma.rocks/interactions/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
     image: 'https://charisma.rocks/interactions/hooter-farm.png',
     name: 'Hooter Farm',
-    subtitle: 'Burn energy to collect Hooter tokens.',
+    subtitle: 'Burn energy to claim Hooter (HOOT) token rewards.',
     description: ["Hooter farm burns energy to get Hooter memecoin tokens. It's that simple."],
     contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm',
     category: 'Rewards',
