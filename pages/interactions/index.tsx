@@ -228,7 +228,7 @@ export default function InteractionsPage({ interactionData, explorations }: Inte
       <Layout>
         <div className="h-full py-6">
           <div className="space-y-6">
-            <Tabs defaultValue="all" className="space-y-6">
+            {/* <Tabs defaultValue="all" className="space-y-6">
               <TabsList className="mx-4">
                 <TabsTrigger value="all">All Interactions</TabsTrigger>
                 <TabsTrigger value="hold-to-earn">Hold-to-Earn</TabsTrigger>
@@ -247,7 +247,13 @@ export default function InteractionsPage({ interactionData, explorations }: Inte
                   )}
                 </TabsContent>
               ))}
-            </Tabs>
+            </Tabs> */}
+
+            {renderInteractionSection(
+              'Energy Rewards',
+              getCategoryDescription(INTERACTION_CATEGORIES.REWARD),
+              getInteractionsByCategory(INTERACTION_CATEGORIES.REWARD)
+            )}
 
             {/* Recommended Section */}
             <div className="mt-8">
