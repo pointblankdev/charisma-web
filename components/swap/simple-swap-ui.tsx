@@ -16,9 +16,10 @@ const OnboardingSwapInterface = ({ data }: any) => {
   const { stxAddress } = useGlobalState();
 
   // Find the STX/CHA pool
-  const stxChaPool = useMemo(() => data.pools.find((p: any) => p.contractId.endsWith('.stx-cha')), [
-    data.pools
-  ]);
+  const stxChaPool = useMemo(
+    () => data.pools.find((p: any) => p.contractId.endsWith('.wstx-cha')),
+    [data.pools]
+  );
 
   // Calculate estimated CHA output
   const estimatedChaOutput = useMemo(() => {
@@ -53,7 +54,7 @@ const OnboardingSwapInterface = ({ data }: any) => {
       functionName: 'do-swap',
       functionArgs: [
         uintCV(BigInt(stxAmount * 10 ** 6)),
-        contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'stx'),
+        contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'wstx'),
         contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'charisma-token'),
         contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to')
       ],

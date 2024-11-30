@@ -164,7 +164,7 @@ class PricesService {
     ]);
 
     // Get STX/CHA ratio
-    const stxChaPool = await dexClient.getPoolById('31');
+    const stxChaPool = await dexClient.getPoolById('4');
     const stxChaRatio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
     const chaPrice = stxChaRatio * cmcPriceData.data['STX'].quote.USD.price;
 
@@ -191,7 +191,7 @@ class PricesService {
       'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cyclops-liquidity-dexterity',
       true,
       amountIn,
-      false
+      true
     );
     const chaDmgRatio = Number(amountIn) / Number(amountOut);
     const dmgPrice = chaDmgRatio * chaPrice;

@@ -71,16 +71,20 @@ describe('Stacks API', () => {
     expect(result).toBeDefined();
   });
 
-  it('should get token metadata', async () => {
-    const metadata = await getTokenMetadata(
-      'SP20VRJRCZ3FQG7RE4QSPFPQC24J92TKDXJVHWEAW.charisma-phoenix-stxcity'
+  it('should get token metadata for single token', async () => {
+    const metadata = await getTokenMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha');
+    console.log(metadata);
+  });
+
+  it('should get contract metadata for single token', async () => {
+    const metadata = await getContractMetadata(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha'
     );
     console.log(metadata);
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId =
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.natures-perfect-predator-dexterity';
+    const contractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha';
     const metadata = await getTokenMetadata(contractId);
     await setContractMetadata(contractId, {
       ...metadata,
