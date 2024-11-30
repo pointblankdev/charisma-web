@@ -135,7 +135,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
                 <tr className="text-left text-gray-400">
                   <th className="py-2">Name</th>
                   <th className="py-2">Composition</th>
-                  <th className="py-2">LP Rebate</th>
+                  <th className="py-2">Swap Fee</th>
                   <th className="py-2 text-center">Reserves</th>
                   <th className="py-2 cursor-pointer" onClick={handleSort}>
                     TVL {<ArrowUpDown className="inline ml-1" size={16} />}
