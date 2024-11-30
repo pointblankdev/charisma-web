@@ -967,9 +967,9 @@ const DungeonKeeperSection = () => {
   );
 };
 
-const latestDungeonKeeperContractId = 'dungeon-keeper-rc6';
+const latestDungeonKeeperContractId = 'charisma-rulebook-v0';
 export const latestDungeonKeeperContract =
-  'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dungeon-keeper-rc6';
+  'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0';
 
 // Helper function to convert decimal input to micro-units
 const toMicroUnits = (value: string) => {

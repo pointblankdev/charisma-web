@@ -27,7 +27,7 @@ interface DungeonCrawlerHook {
 
 export function useDungeonCrawler(
   contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-  contractName = 'dungeon-crawler-rc8'
+  contractName = 'dungeon-crawler-v0'
 ): DungeonCrawlerHook {
   const { stxAddress } = useGlobalState();
 
@@ -48,7 +48,7 @@ export function useDungeonCrawler(
       const [interactionAddress, interactionName] = metadata.contract.split('.');
 
       const functionArgs = [
-        contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'dungeon-keeper-rc6'),
+        contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'charisma-rulebook-v0'),
         contractPrincipalCV(interactionAddress, interactionName),
         stringAsciiCV(action)
       ] as any[];
@@ -78,7 +78,7 @@ export function useDungeonCrawler(
           return args;
         },
         [
-          contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'dungeon-keeper-rc6')
+          contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'charisma-rulebook-v0')
         ] as any[]
       );
 
