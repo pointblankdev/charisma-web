@@ -79,7 +79,7 @@ class PricesService {
 
     // Validate LP token data
     if (!token.token0 || !token.token1 || !token.poolData) {
-      console.log(token.token0, token.token1, token.poolData);
+      console.log(token);
       console.warn(`Missing required LP data for ${token.metadata.symbol}`);
       return 0;
     }
@@ -280,8 +280,6 @@ class PricesService {
     const dexterityPools = await buildDexterityPools(tokens);
     for (const pool of dexterityPools) {
       try {
-        this.calculateLpTokenPrice(pool);
-        this.calculateLpTokenPrice(pool);
         this.calculateLpTokenPrice(pool);
       } catch (error) {
         console.error(error);
