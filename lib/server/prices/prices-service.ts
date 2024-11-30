@@ -9,15 +9,15 @@ import { kv } from '@vercel/kv';
 const dexClient = new DexClient();
 const registryClient = new TokenRegistryClient();
 
-export const cache = {
-  get: async (key: string) => {
-    return await kv.get(key);
-  },
+// export const cache = {
+//   get: async (key: string) => {
+//     return await kv.get(key);
+//   },
 
-  set: async (key: string, value: any, ttlSeconds = 60 * 100) => {
-    return await kv.set(key, value, { ex: ttlSeconds });
-  }
-};
+//   set: async (key: string, value: any, ttlSeconds = 60 * 100) => {
+//     return await kv.set(key, value, { ex: ttlSeconds });
+//   }
+// };
 
 export interface TokenInfo {
   symbol: string;
@@ -72,7 +72,8 @@ class PricesService {
 
     // Return cached price if available and valid
     const cachedPrice =
-      this.tokenPrices[token.metadata.symbol] || cache.get(`price-cache:${token.contractId}`);
+      // this.tokenPrices[token.metadata.symbol] || cache.get(`price-cache:${token.contractId}`);
+      this.tokenPrices[token.metadata.symbol];
     if (typeof cachedPrice === 'number' && !isNaN(cachedPrice) && cachedPrice > 0) {
       console.log(`Returning cached price for ${token.metadata.symbol}: ${cachedPrice}`);
       return cachedPrice;
@@ -147,7 +148,7 @@ class PricesService {
 
     // Cache the valid calculated price
     this.tokenPrices[token.metadata.symbol] = lpTokenPrice;
-    cache.set(`price-cache:${token.contractId}`, lpTokenPrice);
+    // cache.set(`price-cache:${token.contractId}`, lpTokenPrice);
     // console.log(`Calculated price for ${token.metadata.symbol}: ${lpTokenPrice}`);
 
     return lpTokenPrice;
