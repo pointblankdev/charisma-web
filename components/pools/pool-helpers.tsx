@@ -10,7 +10,8 @@ import {
   Info,
   ArrowRightLeftIcon,
   HandCoinsIcon,
-  ZapIcon
+  ZapIcon,
+  Zap
 } from 'lucide-react';
 import numeral from 'numeral';
 import Link from 'next/link';
@@ -557,7 +558,7 @@ export const PoolActions = ({
           {pool.metadata.verified ? (
             <Button
               variant="ghost"
-              className="px-4 ml-2 text-sm font-medium leading-7 whitespace-nowrap"
+              className="px-4 ml-2 text-sm font-medium leading-7"
               onClick={() => claimEnergy(pool)}
             >
               <ZapIcon className="w-4 h-4" />
