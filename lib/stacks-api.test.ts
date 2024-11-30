@@ -79,11 +79,12 @@ describe('Stacks API', () => {
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.krdoll-dexterity';
+    const contractId =
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.natures-perfect-predator-dexterity';
     const metadata = await getTokenMetadata(contractId);
     await setContractMetadata(contractId, {
       ...metadata,
-      image: 'https://charisma.rocks/indexes/krdoll.png'
+      image: 'https://charisma.rocks/indexes/npp.jpeg'
     });
     const updatedMetadata = await getContractMetadata(contractId);
     console.log(updatedMetadata);

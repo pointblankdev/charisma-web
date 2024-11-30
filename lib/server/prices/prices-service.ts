@@ -67,7 +67,7 @@ class PricesService {
     }
 
     // Handle non-LP tokens (base case)
-    if (!token.lpInfo) {
+    if (!token.lpInfo && !token.token0 && !token.token1) {
       const baseTokenPrice = Number(this.tokenPrices[token.metadata.symbol]);
       if (!isNaN(baseTokenPrice) && baseTokenPrice > 0) {
         console.log(`Base token ${token.metadata.symbol} price: ${baseTokenPrice}`);
@@ -114,14 +114,14 @@ class PricesService {
     const adjustedReserve1 = Number(reserve1) / Math.pow(10, token1Decimals);
     const adjustedTotalSupply = Number(totalSupply) / Math.pow(10, lpDecimals);
 
-    console.log(`${token.metadata.symbol} adjusted values:`, {
-      reserve0: adjustedReserve0,
-      reserve1: adjustedReserve1,
-      totalSupply: adjustedTotalSupply,
-      token0Decimals,
-      token1Decimals,
-      lpDecimals
-    });
+    // console.log(`${token.metadata.symbol} adjusted values:`, {
+    //   reserve0: adjustedReserve0,
+    //   reserve1: adjustedReserve1,
+    //   totalSupply: adjustedTotalSupply,
+    //   token0Decimals,
+    //   token1Decimals,
+    //   lpDecimals
+    // });
 
     // Calculate LP token price with decimal-adjusted values
     const totalPoolValue = token0Price * adjustedReserve0 + token1Price * adjustedReserve1;
@@ -280,6 +280,8 @@ class PricesService {
     const dexterityPools = await buildDexterityPools(tokens);
     for (const pool of dexterityPools) {
       try {
+        this.calculateLpTokenPrice(pool);
+        this.calculateLpTokenPrice(pool);
         this.calculateLpTokenPrice(pool);
       } catch (error) {
         console.error(error);
