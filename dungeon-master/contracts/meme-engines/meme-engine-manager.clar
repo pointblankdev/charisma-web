@@ -19,10 +19,6 @@
 ;; - Sample Point Generation: generate-sample-points-X functions for various calculation resolutions.
 ;; - Threshold Retrieval: get-thresholds function to retrieve current threshold values.
 ;;
-;; Security Features:
-;; - Authorization checks using Dungeon Master contract.
-;; - Validation of threshold values to maintain logical consistency.
-;;
 ;; Integration with Charisma Ecosystem:
 ;; - Works in conjunction with meme engines to provide consistent calculation parameters.
 ;; - Interacts with Dungeon Master for authorization checks.
@@ -40,41 +36,70 @@
 ;; Error codes
 (define-constant ERR_UNAUTHORIZED (err u401))
 (define-constant ERR_INVALID_THRESHOLD (err u402))
+(define-constant ERR_INVALID_SCORE (err u405))
 
-;; Data Variables
+;; Incentive score state
+(define-constant DEPLOYER tx-sender)
+(define-constant MAX_SCORE u1000000000)
+(define-data-var default-score uint u1000000)
+(define-map incentive-scores principal uint)
+
+;; Data variables
 (define-data-var threshold-5-point uint u12)
 (define-data-var threshold-9-point uint u50)
 (define-data-var threshold-19-point uint u500)
 (define-data-var threshold-39-point uint u10000)
 
 ;; Authorization control
-(define-private (is-authorized)
-    (or (is-eq tx-sender .dungeon-master) 
-        (contract-call? .dungeon-master is-extension contract-caller)))
+(define-read-only (is-authorized)
+  (ok (asserts! (is-eq contract-caller DEPLOYER) ERR_UNAUTHORIZED))
+)
+
+;; Incentive score functions
+
+(define-read-only (get-incentive-score (token principal))
+  (default-to (var-get default-score) (map-get? incentive-scores token))
+)
+
+(define-public (set-incentive-score (token principal) (score uint))
+  (begin
+    (try! (is-authorized))
+    (asserts! (<= score MAX_SCORE) ERR_INVALID_SCORE)
+    (ok (map-set incentive-scores token score))
+  )
+)
+
+(define-public (set-default-score (score uint))
+  (begin
+    (try! (is-authorized))
+    (asserts! (<= score MAX_SCORE) ERR_INVALID_SCORE)
+    (ok (var-set default-score score))
+  )
+)
 
 ;; Functions to update thresholds
 
 (define-public (set-threshold-5-point (new-threshold uint))
   (begin
-    (asserts! (is-authorized) ERR_UNAUTHORIZED)
+    (try! (is-authorized))
     (asserts! (< new-threshold (var-get threshold-9-point)) ERR_INVALID_THRESHOLD)
     (ok (var-set threshold-5-point new-threshold))))
 
 (define-public (set-threshold-9-point (new-threshold uint))
   (begin
-    (asserts! (is-authorized) ERR_UNAUTHORIZED)
+    (try! (is-authorized))
     (asserts! (and (> new-threshold (var-get threshold-5-point)) (< new-threshold (var-get threshold-19-point))) ERR_INVALID_THRESHOLD)
     (ok (var-set threshold-9-point new-threshold))))
 
 (define-public (set-threshold-19-point (new-threshold uint))
   (begin
-    (asserts! (is-authorized) ERR_UNAUTHORIZED)
+    (try! (is-authorized))
     (asserts! (and (> new-threshold (var-get threshold-9-point)) (< new-threshold (var-get threshold-39-point))) ERR_INVALID_THRESHOLD)
     (ok (var-set threshold-19-point new-threshold))))
 
 (define-public (set-threshold-39-point (new-threshold uint))
   (begin
-    (asserts! (is-authorized) ERR_UNAUTHORIZED)
+    (try! (is-authorized))
     (asserts! (> new-threshold (var-get threshold-19-point)) ERR_INVALID_THRESHOLD)
     (ok (var-set threshold-39-point new-threshold))))
 
