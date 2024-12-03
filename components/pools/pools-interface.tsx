@@ -83,7 +83,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
   };
 
   const subtitle = title === 'Community Pools' ? 'Zero protocol fees and high APYs to support our incredible memecoin communities' 
-    : title ==='Spot Pools' ? 'Earn high APYs by providing LP in unique meme-to-meme liquidity pools'
+    : title ==='Spot Pools' ? 'Earn modest APYs by providing LP in unique STX-anchored liquidity pools'
     : title ==='Derivative Pools' ? 'Put your LP tokens to work and earn additional yield with unique LP-to-LP pools'
     : title ==='Dexterity Pools' ? `One-click to deploy your own mini-DEX, then collect trading fees anytime someone swaps between your tokens!`: '';
 

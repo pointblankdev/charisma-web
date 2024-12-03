@@ -263,11 +263,11 @@ const TokenRedemptions = ({ data }: any) => {
 
   const iouWelsh: any =
     balances?.fungible_tokens?.[
-    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh::synthetic-welsh'
     ];
   const iouRoo: any =
     balances?.fungible_tokens?.[
-    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo'
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo::synthetic-roo'
     ];
 
   const formatNumber = (num: number) => numeral(num / Math.pow(10, 6)).format('0,0.00');
@@ -301,7 +301,7 @@ const TokenRedemptions = ({ data }: any) => {
                 Donate {index === 0 ? '10k WELSH' : '100 ROO'}
               </Button>
               <Button
-                disabled={data[`synthetic${token}`].available === 0 || !wallet.bluePilled}
+                disabled={data[`synthetic${token}`].available === 0}
                 onClick={() => (index === 0 ? redeemWelsh(10000000000) : redeemRoo(100000000))}
                 className="w-full bg-blue-800"
               >

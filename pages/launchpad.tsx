@@ -31,7 +31,7 @@ const ContractDeployer = () => {
     const minp = 0;
     const maxp = 100;
     const minv = Math.log(0.01);
-    const maxv = Math.log(25);
+    const maxv = Math.log(50);
 
     const scale = (maxv - minv) / (maxp - minp);
     return Math.exp(minv + scale * (value - minp));
@@ -41,7 +41,7 @@ const ContractDeployer = () => {
     const minp = 0;
     const maxp = 100;
     const minv = Math.log(0.01);
-    const maxv = Math.log(25);
+    const maxv = Math.log(50);
 
     const scale = (maxv - minv) / (maxp - minp);
     return (Math.log(value) - minv) / scale + minp;
@@ -93,7 +93,6 @@ const ContractDeployer = () => {
 (define-constant DEPLOYER tx-sender)
 (define-constant CONTRACT (as-contract tx-sender))
 (define-constant ERR_UNAUTHORIZED (err u403))
-(define-constant MAX_SWAP_FEE u250000) ;; 25%
 (define-constant PRECISION u${precision})
 (define-constant ALPHA u${alpha})
 
@@ -114,12 +113,6 @@ const ContractDeployer = () => {
   (begin
     (asserts! (is-eq contract-caller (var-get owner)) ERR_UNAUTHORIZED)
     (ok (var-set owner new-owner))))
-
-(define-public (set-swap-fee (new-fee uint))
-  (begin
-    (asserts! (is-eq contract-caller (var-get owner)) ERR_UNAUTHORIZED)
-    (asserts! (<= new-fee MAX_SWAP_FEE) ERR_UNAUTHORIZED)
-    (ok (var-set swap-fee new-fee))))
 
 (define-public (set-energy-burn-amount (new-amount uint))
   (begin
@@ -619,7 +612,7 @@ ${initialMintChecked ? '(begin (mint DEPLOYER u1000000))' : ''}
                         <div className="flex justify-between text-xs text-gray-500">
                           <span>0.01%</span>
                           <span>{formatPercentage(parseFloat(field.value))}</span>
-                          <span>25%</span>
+                          <span>50%</span>
                         </div>
                       </div>
                     </FormControl>

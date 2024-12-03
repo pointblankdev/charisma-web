@@ -11,6 +11,8 @@ import PoolsLayout from '@components/pools/layout';
 import { DexClient } from '@lib/server/pools/pools.client';
 import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
+import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
+import { AlertTriangleIcon, ArrowRightLeftIcon } from 'lucide-react';
 
 // Initialize clients
 const dexClient = new DexClient();
@@ -104,6 +106,18 @@ export default function SpotPoolsPage({ data }: Props) {
             className="sm:max-w-[2400px] sm:mx-auto sm:pb-10"
           >
             <PoolsLayout>
+              <div className="mt-4 mb-2">
+                <div className="grid grid-cols-2 gap-4 py-4 overflow-hidden sm:px-4 sm:rounded-lg">
+                  <Alert className="col-span-2 border-primary/20 bg-accent-foreground/5">
+                    <AlertTriangleIcon className="w-4 h-4 text-primary" />
+                    <AlertTitle className="text-white/95">Liquidity Migration</AlertTitle>
+                    <AlertDescription className="mt-2 text-white/80">
+                      Non-STX paired spot pools are being migrated to the new Dexterity pools.
+                      Moving forward– Spot pools will only be for STX paired assets.
+                    </AlertDescription>
+                  </Alert>
+                </div>
+              </div>
               {isAuthorized || true ? (
                 <PoolsInterface data={data} title={'Spot Pools'} />
               ) : (
