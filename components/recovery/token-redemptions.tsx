@@ -301,7 +301,7 @@ const TokenRedemptions = ({ data }: any) => {
                 Donate {index === 0 ? '10k WELSH' : '100 ROO'}
               </Button>
               <Button
-                disabled={data[`synthetic${token}`].available === 0}
+                disabled={data[`synthetic${token}`].available === 0 || !wallet.bluePilled}
                 onClick={() => (index === 0 ? redeemWelsh(10000000000) : redeemRoo(100000000))}
                 className="w-full bg-blue-800"
               >

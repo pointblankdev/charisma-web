@@ -85,8 +85,6 @@ export default function SpotPoolsPage({ data }: Props) {
     if (wallet) setLoading(false);
   }, [wallet]);
 
-  const isAuthorized = wallet.experience.balance >= 0 || wallet.redPilled;
-
   return (
     <Page meta={meta} fullViewport>
       <SkipNavContent />
@@ -99,31 +97,7 @@ export default function SpotPoolsPage({ data }: Props) {
             className="sm:max-w-[2400px] sm:mx-auto sm:pb-10"
           >
             <PoolsLayout>
-              {isAuthorized || true ? (
-                <PoolsInterface data={data} title={'Derivative Pools'} />
-              ) : (
-                <div className="flex flex-col items-center justify-center h-[calc(100vh-200px)]">
-                  <Card className="w-full max-w-lg p-6 text-center">
-                    <h2 className="mb-4 text-2xl font-bold">Access Restricted</h2>
-                    <p className="mb-4">To view and manage liquidity pools, you need either:</p>
-                    <ul className="mb-4 text-left list-disc list-inside">
-                      <li
-                        className={
-                          wallet.experience.balance >= 1000 ? 'text-green-500' : 'text-red-500'
-                        }
-                      >
-                        At least 1000 Experience {wallet.experience.balance >= 1000 ? '✓' : '✗'}
-                      </li>
-                      <li className={wallet.redPilled ? 'text-green-500' : 'text-red-500'}>
-                        Own the Red Pill NFT {wallet.redPilled ? '✓' : '✗'}
-                      </li>
-                    </ul>
-                    <p className="text-sm text-muted-foreground">
-                      Continue using Charisma to gain more experience and unlock this feature.
-                    </p>
-                  </Card>
-                </div>
-              )}
+              <PoolsInterface data={data} title={'Derivative Pools'} />
             </PoolsLayout>
           </motion.div>
         )}
