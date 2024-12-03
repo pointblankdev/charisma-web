@@ -169,15 +169,6 @@ class PricesService {
     const stxChaRatio = Number(stxChaPool.reserve0) / Number(stxChaPool.reserve1);
     const chaPrice = stxChaRatio * cmcPriceData.data['STX'].quote.USD.price;
 
-    // Get WELSH/iouWELSH ratio
-    const welshIouWelshPool = await dexClient.getPoolById('1');
-    const welshIouWelshratio =
-      Number(welshIouWelshPool.reserve0) / Number(welshIouWelshPool.reserve1);
-
-    // Get ROO/iouROO ratio
-    const rooIouRooPool = await dexClient.getPoolById('2');
-    const rooIouRooratio = Number(rooIouRooPool.reserve0) / Number(rooIouRooPool.reserve1);
-
     // get STX/synSTX ratio
     const stxSynStxPool = await dexClient.getPoolById('10');
     const stxSynStxratio = Number(stxSynStxPool.reserve0) / Number(stxSynStxPool.reserve1);
@@ -192,7 +183,7 @@ class PricesService {
       'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cyclops-liquidity-dexterity',
       true,
       amountIn,
-      true
+      false
     );
     const chaDmgRatio = Number(amountIn) / Number(amountOut);
     const dmgPrice = chaDmgRatio * chaPrice;
@@ -259,11 +250,11 @@ class PricesService {
       ordi: cmcPriceData.data['ORDI'].quote.USD.price,
       DOG: cmcPriceData.data['DOG'].quote.USD.price,
       WELSH: cmcPriceData.data['WELSH'].quote.USD.price,
-      iouWELSH: welshIouWelshratio * cmcPriceData.data['WELSH'].quote.USD.price,
+      iouWELSH: cmcPriceData.data['WELSH'].quote.USD.price,
       vLiSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       stSTX: cmcPriceData.data['STX'].quote.USD.price * 1.1,
       ROO: convertedVelarPrices['$ROO'],
-      iouROO: rooIouRooratio * convertedVelarPrices['$ROO'],
+      iouROO: convertedVelarPrices['$ROO'],
       DMG: dmgPrice,
       HOOT: hootPrice,
       LUCK: 0.0000013,
