@@ -146,7 +146,7 @@ const ContractDeployer = () => {
     (raw-out (calculate-output-amount reserve-in reserve-out amt-in ALPHA))
     ;; Check if energy was paid and apply fees to output amount
     (paid-energy (match (contract-call? 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0 exhaust (var-get energy-burn-amount) sender) success true error false))
-    (amt-out (if paid-energy raw-out (/ (* raw-out (- PRECISION (var-get swap-fee))) PRECISION))))
+    (amt-out (if paid-energy (/ raw-out u2) (/ (* raw-out (- PRECISION (var-get swap-fee))) PRECISION))))
     ;; Execute the swap
     (try! (if forward (contract-call? '${data.tokenA} transfer amt-in sender CONTRACT none) 
       (contract-call? '${data.tokenB} transfer amt-in sender CONTRACT none)))
@@ -208,7 +208,7 @@ const ContractDeployer = () => {
     (reserve-out (unwrap-panic (if forward (contract-call? '${data.tokenB} get-balance CONTRACT) 
       (contract-call? '${data.tokenA} get-balance CONTRACT))))
     (raw-out (calculate-output-amount reserve-in reserve-out amt-in ALPHA))
-    (output-amount (if apply-fee (/ (* raw-out (- PRECISION (var-get swap-fee))) PRECISION) raw-out)))
+    (output-amount (if apply-fee (/ (* raw-out (- PRECISION (var-get swap-fee))) PRECISION) (/ raw-out u2))))
     (ok output-amount)))
 
 ;; SIP-010 Implementation

@@ -148,10 +148,10 @@ const DexterityDisclaimer = () => {
           <CrosshairIcon className="w-4 h-4 text-primary" />
           <AlertTitle className="text-white/95">Welcome to Dexterity Pools!</AlertTitle>
           <AlertDescription className="mt-2 text-white/80">
-            Dexterity Pools are an exciting GameFi/DeFi hybrid protocol where anyone can create
-            custom liquidity pools with unique trading logic. These pools often feature high fee
-            rebates for LP holders and special bonuses that can waive trading fees or provide other
-            advantages.
+            Dexterity Pools are a self-service DeFi swap protocol where anyone can create custom
+            liquidity pools with unique trading logic. These pools often feature high fee rebates
+            for LP holders and special bonuses that can waive or reduce trading fees or provide
+            other advantages.
           </AlertDescription>
         </Alert>
 
@@ -160,7 +160,6 @@ const DexterityDisclaimer = () => {
           <AlertDescription className="mt-1 text-white/80">
             Enjoy a fast-paced trading environment with:
             <ul className="mt-2 ml-4 space-y-1 list-disc marker:text-primary">
-              <li>High TVL and trading volumes</li>
               <li>Emerging memecoins and community tokens</li>
               <li>Creative trading mechanics and bonuses</li>
               <li>Fee waivers and special rewards</li>

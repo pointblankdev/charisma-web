@@ -101,7 +101,7 @@ describe('indexes', () => {
 
   it('should remove index contract', async () => {
     const response = await removeIndexContract(
-      'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.goverment-of-lephrechauns-dexterity'
+      'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.methylphenidate-dexterity'
     );
     console.log(response);
   });
