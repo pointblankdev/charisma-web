@@ -18,6 +18,7 @@ import {
 import { initializeGraph } from './swap-graph';
 import dynamic from 'next/dynamic';
 import SimpleSwapInterface from './simple-swap-ui';
+
 const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), {
   ssr: false
 });
