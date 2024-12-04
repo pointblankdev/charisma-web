@@ -556,13 +556,28 @@ export const PoolActions = ({
           </button>
 
           {pool.metadata.verified ? (
-            <Button
-              variant="ghost"
-              className="px-4 ml-2 text-sm font-medium leading-7"
-              onClick={() => claimEnergy(pool)}
-            >
-              <ZapIcon className="w-4 h-4" />
-            </Button>
+            <TooltipProvider>
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    variant="ghost"
+                    className="px-4 ml-2 text-sm font-medium leading-7"
+                    onClick={() => claimEnergy(pool)}
+                  >
+                    <ZapIcon className="w-4 h-4" />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipContent className="max-w-xs">
+                  <div className="space-y-2">
+                    <p className="text-sm">
+                      If you hold LP tokens, you can "tap" them for Energy tokens, which can be
+                      burned to reduce or eliminate trading fees. The more LP tokens you hold and
+                      the longer you hold them, the more energy you can claim every fast block.
+                    </p>
+                  </div>
+                </TooltipContent>
+              </Tooltip>
+            </TooltipProvider>
           ) : null}
         </div>
       ) : null}
