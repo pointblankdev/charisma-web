@@ -28,16 +28,16 @@ interface Props {
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // Get all prices
-  const prices = await PricesService.getAllTokenPrices();
+  // const prices = await PricesService.getAllTokenPrices();
 
   // Get pools data
-  const pools = PricesService.pools;
+  // const pools = PricesService.pools;
 
   return {
     props: {
       data: {
-        prices,
-        pools,
+        prices: {},
+        pools: [],
         lastUpdate: new Date().toISOString()
       }
     },
