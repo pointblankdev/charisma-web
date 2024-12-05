@@ -374,8 +374,7 @@ export const PoolActions = ({
   };
 
   const handleBuyToken0Click = (pool: Pool) => {
-    const token1Price = tokenPrices[pool.token1.metadata.symbol];
-    console.log(token1Price);
+    const token1Price = tokenPrices[pool.token1.contractId];
     const oneUsdInToken1 = Math.floor(
       ((1 * swapFactor) / token1Price) * 10 ** pool.token1.metadata.decimals
     );
@@ -396,7 +395,7 @@ export const PoolActions = ({
   };
 
   const handleBuyToken1Click = (pool: Pool) => {
-    const token0Price = tokenPrices[pool.token0.metadata.symbol];
+    const token0Price = tokenPrices[pool.token0.contractId];
     const oneUsdInToken0 = Math.floor(
       ((1 * swapFactor) / token0Price) * 10 ** pool.token0.metadata.decimals
     );
