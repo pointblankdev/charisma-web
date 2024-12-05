@@ -302,56 +302,20 @@ export async function getTotalSupply(
 export async function getIsVerifiedInteraction(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
 ) {
-  const [
-    rulesAddress,
-    rulesName
-  ] = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0'.split('.');
-  const [address, name] = contract.split('.');
-  const path = `/v2/contracts/call-read/${rulesAddress}/${rulesName}/is-verified-interaction` as any;
-  const response = await client.POST(path, {
-    body: { sender: address, arguments: [cvToHex(contractPrincipalCV(address, name))] }
-  });
-  const verifiedCV = cvToValue(hexToCV(response.data.result)).value;
-  return verifiedCV;
-}
-
-export async function getDexterityReserves(
-  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
-) {
   try {
+    const [
+      rulesAddress,
+      rulesName
+    ] = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0'.split('.');
     const [address, name] = contract.split('.');
-    const path = `/v2/contracts/call-read/${address}/${name}/get-reserves` as any;
+    const path = `/v2/contracts/call-read/${rulesAddress}/${rulesName}/is-verified-interaction` as any;
     const response = await client.POST(path, {
-      body: { sender: address, arguments: [] }
+      body: { sender: address, arguments: [cvToHex(contractPrincipalCV(address, name))] }
     });
-    const reservesCV = cvToValue(hexToCV(response.data.result)).value;
-    return { token0: Number(reservesCV.token0.value), token1: Number(reservesCV.token1.value) };
+    const verifiedCV = cvToValue(hexToCV(response.data.result)).value;
+    return verifiedCV;
   } catch (error) {
-    return { token0: 0, token1: 0 };
-  }
-}
-
-export async function getDexterityFees(
-  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
-) {
-  try {
-    const [address, name] = contract.split('.');
-    const path = `/v2/contracts/call-read/${address}/${name}/get-swap-fee` as any;
-    const response = await client.POST(path, {
-      body: { sender: address, arguments: [] }
-    });
-    const feesCV = cvToValue(hexToCV(response.data.result)).value;
-    return {
-      swapFee: { numerator: 1000 - feesCV / 1000, denominator: 1000 },
-      protocolFee: { numerator: 0, denominator: 1000 },
-      shareFee: { numerator: 0, denominator: 1000 }
-    };
-  } catch (error) {
-    return {
-      swapFee: { numerator: 1000, denominator: 1000 },
-      protocolFee: { numerator: 0, denominator: 1000 },
-      shareFee: { numerator: 0, denominator: 1000 }
-    };
+    return false;
   }
 }
 

@@ -8,18 +8,12 @@ import useWallet from '@lib/hooks/wallet-balance-provider';
 import { motion } from 'framer-motion';
 import { PoolsInterface } from '@components/pools/pools-interface';
 import PoolsLayout from '@components/pools/layout';
-import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
+import TokenRegistryClient from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
-import { getContractMetadata, getIndexContracts } from '@lib/db-providers/kv';
-import {
-  getDexterityFees,
-  getDexterityReserves,
-  getIsVerifiedInteraction,
-  getTotalSupply
-} from '@lib/stacks-api';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
 import { AlertTriangle, CrosshairIcon, RocketIcon, Sparkles } from 'lucide-react';
+import { buildDexterityPools } from '@lib/dexterity';
 
 // Initialize clients
 const registryClient = new TokenRegistryClient();
@@ -39,8 +33,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       registryClient.listAll(),
       service.getAllTokenPrices()
     ]);
-
-    console.log(prices);
 
     // get dexterity contracts
     const dexterityPools = await buildDexterityPools(tokenInfo.tokens);
@@ -67,40 +59,6 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     };
   }
 };
-
-export async function buildDexterityPools(tokens: any[]) {
-  const dexterityPools = [];
-  const dexterityContracts = await getIndexContracts();
-  for (const contract of dexterityContracts) {
-    const dflt = { contractId: '', metadata: {} };
-    const contractMetadata = await getContractMetadata(contract);
-    const verified = await getIsVerifiedInteraction(contract);
-    const reserves = await getDexterityReserves(contract);
-    const totalSupply = await getTotalSupply(contract);
-    const fees = await getDexterityFees(contract);
-    dexterityPools.push({
-      contractId: contract,
-      metadata: { decimals: 6, ...contractMetadata, verified },
-      lpInfo: {
-        dex: 'DEXTERITY',
-        token0: contractMetadata?.tokenA || '',
-        token1: contractMetadata?.tokenB || ''
-      },
-      poolData: {
-        token0: contractMetadata?.tokenA || '',
-        token1: contractMetadata?.tokenB || '',
-        reserve0: reserves.token0,
-        reserve1: reserves.token1,
-        lpToken: contract,
-        totalSupply: totalSupply,
-        ...fees
-      },
-      token0: tokens.find((t: any) => t.contractId === contractMetadata?.tokenA || '') || dflt,
-      token1: tokens.find((t: any) => t.contractId === contractMetadata?.tokenB || '') || dflt
-    });
-  }
-  return dexterityPools;
-}
 
 export default function DexterityPoolsPage({ data }: Props) {
   const meta = {

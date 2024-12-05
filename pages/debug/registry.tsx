@@ -88,12 +88,12 @@ interface Props {
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   // Get all prices
-  // const { tokens } = await client.listAll();
+  const { tokens } = await client.listAll();
 
   return {
     props: {
       data: {
-        tokens: [],
+        tokens,
         lastUpdate: new Date().toISOString()
       }
     },

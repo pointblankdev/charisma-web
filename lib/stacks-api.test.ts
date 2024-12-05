@@ -14,7 +14,6 @@ import {
   getTokenMetadata,
   getDecimals,
   getSymbol,
-  getDexterityFees,
   getDexterityQuote,
   getIsVerifiedInteraction
 } from './stacks-api';
@@ -22,6 +21,7 @@ import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
 import { cvToValue, hexToCV } from '@stacks/transactions';
 import { getContractMetadata, setContractMetadata } from './db-providers/kv';
+import { getDexterityFees } from './dexterity';
 
 describe('Stacks API', () => {
   it('should lookup a BNS name given an address', async () => {
