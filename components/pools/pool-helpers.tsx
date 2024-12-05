@@ -22,6 +22,8 @@ import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
 import { boolCV, Pc, PostConditionMode, standardPrincipalCV, uintCV } from '@stacks/transactions';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
+import useWallet from '@lib/hooks/wallet-balance-provider';
+import DexterityControls from './dexterity-controls';
 
 export interface Pool {
   contractId: string;
@@ -329,24 +331,15 @@ export const PoolActions = ({
 }: PoolActionsProps) => {
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
-  const [mintFactor, setMintFactor] = useState(1);
-  const [swapFactor, setSwapFactor] = useState(1);
 
-  const lpTokenPrice =
-    calculatePoolTVL(pool, tokenPrices) /
-    (pool.poolData.totalSupply / 10 ** pool.metadata.decimals);
-  const twentyUsdInLpToken = Math.floor(
-    ((2 * mintFactor) / lpTokenPrice) * 10 ** pool.metadata.decimals
-  );
-
-  const handleAddLiquidityClick = (pool: Pool) => {
+  const handleAddLiquidityClick = (pool: Pool, amount: number) => {
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'mint',
       postConditionMode: PostConditionMode.Allow,
-      functionArgs: [standardPrincipalCV(stxAddress), uintCV(twentyUsdInLpToken)],
+      functionArgs: [standardPrincipalCV(stxAddress), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Add liquidity transaction successful', data);
       },
@@ -356,14 +349,14 @@ export const PoolActions = ({
     });
   };
 
-  const handleRemoveLiquidityClick = (pool: Pool) => {
+  const handleRemoveLiquidityClick = (pool: Pool, amount: number) => {
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'burn',
       postConditionMode: PostConditionMode.Allow,
-      functionArgs: [standardPrincipalCV(stxAddress), uintCV(twentyUsdInLpToken)],
+      functionArgs: [standardPrincipalCV(stxAddress), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Remove liquidity transaction successful', data);
       },
@@ -373,18 +366,14 @@ export const PoolActions = ({
     });
   };
 
-  const handleBuyToken0Click = (pool: Pool) => {
-    const token1Price = tokenPrices[pool.token1.contractId];
-    const oneUsdInToken1 = Math.floor(
-      ((1 * swapFactor) / token1Price) * 10 ** pool.token1.metadata.decimals
-    );
+  const handleBuyToken0Click = (pool: Pool, amount: number) => {
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'swap',
       postConditionMode: PostConditionMode.Allow,
-      functionArgs: [boolCV(false), uintCV(oneUsdInToken1)],
+      functionArgs: [boolCV(false), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Transaction successful', data);
       },
@@ -394,18 +383,14 @@ export const PoolActions = ({
     });
   };
 
-  const handleBuyToken1Click = (pool: Pool) => {
-    const token0Price = tokenPrices[pool.token0.contractId];
-    const oneUsdInToken0 = Math.floor(
-      ((1 * swapFactor) / token0Price) * 10 ** pool.token0.metadata.decimals
-    );
+  const handleBuyToken1Click = (pool: Pool, amount: number) => {
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'swap',
       postConditionMode: PostConditionMode.Allow,
-      functionArgs: [boolCV(true), uintCV(oneUsdInToken0)],
+      functionArgs: [boolCV(true), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Transaction successful', data);
       },
@@ -452,28 +437,15 @@ export const PoolActions = ({
   return (
     <div className="flex items-center justify-start space-x-2">
       {pool.lpInfo.dex === 'DEXTERITY' ? (
-        <div className="flex align-middle rounded-md h-[40px]">
-          <span
-            onClick={() => setMintFactor(f => f * 2)}
-            className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 cursor-pointer select-none hover:brightness-125 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background"
-          >
-            Mint/Burn ${numeral(2 * mintFactor).format('0')}
-          </span>
-          <button
-            type="button"
-            className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-primary hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
-            onClick={() => handleAddLiquidityClick(pool)}
-          >
-            <Plus className="w-4 h-4" />
-          </button>
-          <button
-            type="button"
-            className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
-            onClick={() => handleRemoveLiquidityClick(pool)}
-          >
-            <Minus className="w-4 h-4" />
-          </button>
-        </div>
+        <DexterityControls
+          pool={pool}
+          tokenPrices={tokenPrices}
+          onAddLiquidity={handleAddLiquidityClick}
+          onRemoveLiquidity={handleRemoveLiquidityClick}
+          onSwap={(isToken0, amount) =>
+            isToken0 ? handleBuyToken0Click(pool, amount) : handleBuyToken1Click(pool, amount)
+          }
+        />
       ) : (
         <div className="flex align-middle rounded-md h-[40px]">
           <span className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 rounded-l-md border-gray-700/80 bg-background">
@@ -497,63 +469,6 @@ export const PoolActions = ({
       )}
       {pool.lpInfo.dex === 'DEXTERITY' ? (
         <div className="flex align-left rounded-md h-[40px]">
-          <span
-            onClick={() => setSwapFactor(f => f * 2)}
-            className="px-4 py-1 text-sm font-medium leading-7 border border-r-0 cursor-pointer select-none hover:brightness-125 whitespace-nowrap rounded-l-md border-gray-700/80 bg-background"
-          >
-            Buy ${numeral(1 * swapFactor).format('0')}
-          </span>
-          <button
-            type="button"
-            className="relative inline-flex items-center px-2 py-2 overflow-hidden text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
-            onClick={() => handleBuyToken0Click(pool)}
-          >
-            {imgSrc0 ? (
-              <Image
-                src={imgSrc0}
-                alt={pool.token0.metadata.symbol || 'Base Token 0'}
-                width={240}
-                height={240}
-                className={cn(
-                  'w-6 mx-1 scale-[4.5] lg:scale-[2] hover:brightness-100 brightness-95',
-                  img0Fail ? 'blur' : ''
-                )}
-                blurDataURL="/dmg-logo.png" // Shows while loading and on error
-                placeholder="blur"
-                onError={() => {
-                  handleImg0Error();
-                }}
-              />
-            ) : (
-              <Coins className="w-8 h-8 mr-2" />
-            )}
-          </button>
-          <button
-            type="button"
-            className="relative inline-flex items-center px-2 py-2 -ml-px overflow-hidden text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
-            onClick={() => handleBuyToken1Click(pool)}
-          >
-            {imgSrc1 ? (
-              <Image
-                src={imgSrc1}
-                alt={pool.token1.metadata.symbol || 'Base Token 1'}
-                width={240}
-                height={240}
-                className={cn(
-                  'w-6 mx-1 scale-[4.5] lg:scale-[2] hover:brightness-100 brightness-95',
-                  img1Fail ? 'blur' : ''
-                )}
-                blurDataURL="/dmg-logo.png" // Shows while loading and on error
-                placeholder="blur"
-                onError={() => {
-                  handleImg1Error();
-                }}
-              />
-            ) : (
-              <Coins className="w-8 h-8 mr-2" />
-            )}
-          </button>
-
           {pool.metadata.verified ? (
             <TooltipProvider>
               <Tooltip>
