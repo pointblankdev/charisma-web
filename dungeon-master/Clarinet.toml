@@ -138,6 +138,10 @@ depends_on = []
 path = "contracts/interactions/hooter-farm.clar"
 depends_on = []
 
+[contracts.split-swap]
+path = "contracts/dex/split-swap.clar"
+depends_on = []
+
 # [contracts.fate-randomizer]
 # path = "contracts/interactions/fate-randomizer.clar"
 # depends_on = []

@@ -1,9 +1,15 @@
 import { kv } from '@vercel/kv';
-import { cvToValue, hexToCV } from '@stacks/transactions';
-import { client, getIsVerifiedInteraction, getTotalSupply } from './stacks-api';
+import {
+  boolCV,
+  contractPrincipalCV,
+  cvToHex,
+  cvToValue,
+  hexToCV,
+  uintCV
+} from '@stacks/transactions';
+import { client, getTotalSupply } from './stacks-api';
 import { getContractMetadata, getIndexContracts } from './db-providers/kv';
 
-const CACHE_TTL = 300; // 5 minutes in seconds
 const CACHE_PREFIX = 'dexterity:';
 
 interface DexterityReserves {
@@ -26,7 +32,6 @@ export async function buildDexterityPools(tokens: any[]) {
   const dexterityPools = [];
   const dexterityContracts = await getIndexContracts();
   for (const contract of dexterityContracts) {
-    console.log(contract);
     const dflt = { contractId: '', metadata: {} };
     const [contractMetadata, verified, reserves, totalSupply, fees] = await Promise.all([
       getContractMetadata(contract),
@@ -88,7 +93,7 @@ export async function getDexterityReserves(
     };
 
     // Cache the result
-    await kv.set(cacheKey, reserves, { ex: CACHE_TTL });
+    await kv.set(cacheKey, reserves, { ex: 60 });
     return reserves;
   } catch (error) {
     console.error(`Error fetching reserves for ${contract}:`, error);
@@ -126,7 +131,7 @@ export async function getDexterityFees(
     };
 
     // Cache the result
-    await kv.set(cacheKey, fees, { ex: CACHE_TTL });
+    await kv.set(cacheKey, fees, { ex: 60 * 60 * 24 });
     return fees;
   } catch (error) {
     console.error(`Error fetching fees for ${contract}:`, error);
@@ -135,6 +140,74 @@ export async function getDexterityFees(
       protocolFee: { numerator: 0, denominator: 1000 },
       shareFee: { numerator: 0, denominator: 1000 }
     };
+  }
+}
+
+export async function getIsVerifiedInteraction(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
+) {
+  const cacheKey = `${CACHE_PREFIX}verified:${contract}`;
+
+  try {
+    // Try to get from cache
+    const cached = await kv.get<boolean>(cacheKey);
+    if (cached !== null) {
+      return cached;
+    }
+
+    const [
+      rulesAddress,
+      rulesName
+    ] = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0'.split('.');
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${rulesAddress}/${rulesName}/is-verified-interaction` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [cvToHex(contractPrincipalCV(address, name))] }
+    });
+    const verifiedCV = cvToValue(hexToCV(response.data.result)).value;
+
+    // Cache for 7 days
+    await kv.set(cacheKey, verifiedCV, { ex: 60 * 60 * 24 * 7 });
+    return verifiedCV;
+  } catch (error) {
+    return false;
+  }
+}
+
+export async function getDexterityQuote(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex',
+  forwardSwap = true,
+  amountIn = 1000000,
+  applyFee = true
+) {
+  const cacheKey = `${CACHE_PREFIX}quote:${contract}:${forwardSwap}:${amountIn}:${applyFee}`;
+
+  try {
+    // Try to get from cache
+    const cached = await kv.get<number>(cacheKey);
+    if (cached !== null) {
+      return cached;
+    }
+
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-quote` as any;
+    const response = await client.POST(path, {
+      body: {
+        sender: address,
+        arguments: [
+          cvToHex(boolCV(forwardSwap)),
+          cvToHex(uintCV(amountIn)),
+          cvToHex(boolCV(applyFee))
+        ]
+      }
+    });
+    const amountOut = cvToValue(hexToCV(response.data.result)).value;
+
+    // Cache for 30 seconds
+    await kv.set(cacheKey, amountOut, { ex: 30 });
+    return amountOut;
+  } catch (error) {
+    return 0;
   }
 }
 

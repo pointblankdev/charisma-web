@@ -4,14 +4,10 @@ import {
   cvToValue,
   parseToCV,
   hexToCV,
-  cvToHex,
-  boolCV,
-  uintCV,
-  contractPrincipalCV
+  cvToHex
 } from '@stacks/transactions';
 import { cvToJSON } from '@stacks/transactions';
 import { kv } from '@vercel/kv';
-import { latestDungeonKeeperContract } from 'pages/admin';
 
 const CACHE_DURATION = 60 * 60 * 24 * 7; // 7 days in seconds
 
@@ -251,96 +247,95 @@ export async function getNftURI(
 export async function getSymbol(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
 ) {
-  const [address, name] = contract.split('.');
+  const cacheKey = `symbol:${contract}`;
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-symbol` as any;
-  const response = await client.POST(path, {
-    body: { sender: address, arguments: [] }
-  });
-  return String(cvToValue(hexToCV(response.data.result)).value);
+  try {
+    const cached = await kv.get(cacheKey);
+    if (cached !== null) return cached;
+
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-symbol` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [] }
+    });
+    const symbol = String(cvToValue(hexToCV(response.data.result)).value);
+
+    await kv.set(cacheKey, symbol, { ex: CACHE_DURATION });
+    return symbol;
+  } catch (error) {
+    console.error(`Error fetching symbol for ${contract}:`, error);
+    throw error;
+  }
 }
 
 export async function getTokenName(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
 ) {
-  const [address, name] = contract.split('.');
+  const cacheKey = `token-name:${contract}`;
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-name` as any;
-  const response = await client.POST(path, {
-    body: { sender: address, arguments: [] }
-  });
-  return String(cvToValue(hexToCV(response.data.result)).value);
+  try {
+    const cached = await kv.get(cacheKey);
+    if (cached !== null) return cached;
+
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-name` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [] }
+    });
+    const tokenName = String(cvToValue(hexToCV(response.data.result)).value);
+
+    await kv.set(cacheKey, tokenName, { ex: CACHE_DURATION });
+    return tokenName;
+  } catch (error) {
+    console.error(`Error fetching token name for ${contract}:`, error);
+    throw error;
+  }
 }
 
 export async function getDecimals(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
 ) {
-  const [address, name] = contract.split('.');
+  const cacheKey = `decimals:${contract}`;
 
-  const path = `/v2/contracts/call-read/${address}/${name}/get-decimals` as any;
-  const response = await client.POST(path, {
-    body: { sender: address, arguments: [] }
-  });
-  return Number(cvToValue(cvToValue(hexToCV(response.data.result))));
+  try {
+    const cached = await kv.get(cacheKey);
+    if (cached !== null) return Number(cached);
+
+    const [address, name] = contract.split('.');
+    const path = `/v2/contracts/call-read/${address}/${name}/get-decimals` as any;
+    const response = await client.POST(path, {
+      body: { sender: address, arguments: [] }
+    });
+    const decimals = Number(cvToValue(cvToValue(hexToCV(response.data.result))));
+
+    await kv.set(cacheKey, decimals, { ex: CACHE_DURATION });
+    return decimals;
+  } catch (error) {
+    console.error(`Error fetching decimals for ${contract}:`, error);
+    throw error;
+  }
 }
 
 export async function getTotalSupply(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
 ) {
+  const cacheKey = `total-supply:${contract}`;
+
   try {
+    const cached = await kv.get(cacheKey);
+    if (cached !== null) return Number(cached);
+
     const [address, name] = contract.split('.');
     const path = `/v2/contracts/call-read/${address}/${name}/get-total-supply` as any;
     const response = await client.POST(path, {
       body: { sender: address, arguments: [] }
     });
-    return Number(cvToValue(cvToValue(hexToCV(response.data.result))));
-  } catch (error) {
-    return 0;
-  }
-}
+    const totalSupply = Number(cvToValue(cvToValue(hexToCV(response.data.result))));
 
-export async function getIsVerifiedInteraction(
-  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
-) {
-  try {
-    const [
-      rulesAddress,
-      rulesName
-    ] = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0'.split('.');
-    const [address, name] = contract.split('.');
-    const path = `/v2/contracts/call-read/${rulesAddress}/${rulesName}/is-verified-interaction` as any;
-    const response = await client.POST(path, {
-      body: { sender: address, arguments: [cvToHex(contractPrincipalCV(address, name))] }
-    });
-    const verifiedCV = cvToValue(hexToCV(response.data.result)).value;
-    return verifiedCV;
+    await kv.set(cacheKey, totalSupply, { ex: 60 * 10 });
+    return totalSupply;
   } catch (error) {
-    return false;
-  }
-}
-
-export async function getDexterityQuote(
-  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex',
-  forwardSwap = true,
-  amountIn = 1000000,
-  applyFee = true
-) {
-  try {
-    const [address, name] = contract.split('.');
-    const path = `/v2/contracts/call-read/${address}/${name}/get-quote` as any;
-    const response = await client.POST(path, {
-      body: {
-        sender: address,
-        arguments: [
-          cvToHex(boolCV(forwardSwap)),
-          cvToHex(uintCV(amountIn)),
-          cvToHex(boolCV(applyFee))
-        ]
-      }
-    });
-    const amountOut = cvToValue(hexToCV(response.data.result)).value;
-    return amountOut;
-  } catch (error) {
+    console.error(`Error fetching total supply for ${contract}:`, error);
     return 0;
   }
 }
