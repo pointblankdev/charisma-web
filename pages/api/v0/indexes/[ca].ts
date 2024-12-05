@@ -51,23 +51,26 @@ export default async function getMetadata(
     if (req.method === 'POST') {
       console.log('Received POST request:', req.body);
 
+      // Notify dexterity service
+      await notifyDexterity(ca);
       // Add to index and set metadata
       await addIndexContract(ca);
       response = await setContractMetadata(ca, req.body);
 
       // Process token metadata
       if (req.body.tokenA) {
+        // Notify dexterity service
+        await notifyDexterity(req.body.tokenA);
         const metadataA = await getTokenMetadata(req.body.tokenA);
         await setContractMetadata(req.body.tokenA, metadataA);
       }
 
       if (req.body.tokenB) {
+        // Notify dexterity service
+        await notifyDexterity(req.body.tokenB);
         const metadataB = await getTokenMetadata(req.body.tokenB);
         await setContractMetadata(req.body.tokenB, metadataB);
       }
-
-      // Notify dexterity service
-      await notifyDexterity(ca);
     } else if (req.method === 'GET') {
       if (ca.endsWith('.json')) {
         ca = ca.slice(0, -5);
