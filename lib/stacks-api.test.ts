@@ -96,11 +96,11 @@ describe('Stacks API', () => {
   });
 
   it('should update the token metadata field', async () => {
-    const contractId =
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.natures-perfect-predator-dexterity';
+    const contractId = 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.charismatic-dollar-dexterity';
     const metadata = await getContractMetadata(contractId);
     await setContractMetadata(contractId, {
-      ...metadata
+      ...metadata,
+      image: 'https://charisma.rocks/indexes/cha-susdt.png'
     });
     const updatedMetadata = await getContractMetadata(contractId);
     console.log(updatedMetadata);
