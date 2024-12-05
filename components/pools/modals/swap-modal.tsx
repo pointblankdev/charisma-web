@@ -66,32 +66,42 @@ const PoolVisualizer = ({ pool, amounts, tokenPrices, isToken0 }: any) => {
         <div className="space-y-2">
           <div className="text-sm text-muted-foreground">Current Pool</div>
           <div className="flex h-3 overflow-hidden rounded-full">
-            <div style={{ width: `${token0Percent}%`, backgroundColor: color0 || '#1d4ed8' }} />
-            <div style={{ width: `${token1Percent}%`, backgroundColor: color1 || '#4f46e5' }} />
+            <div style={{ width: `${token0Percent}%`, backgroundColor: color0 || '#1d4ed800' }} />
+            <div style={{ width: `${token1Percent}%`, backgroundColor: color1 || '#4f46e500' }} />
           </div>
         </div>
         <div className="space-y-2">
           <div className="text-sm text-muted-foreground">After Swap</div>
           <div className="flex h-3 overflow-hidden rounded-full">
-            <div style={{ width: `${newToken0Percent}%`, backgroundColor: color0 || '#1d4ed8' }} />
-            <div style={{ width: `${newToken1Percent}%`, backgroundColor: color1 || '#4f46e5' }} />
+            <div
+              style={{ width: `${newToken1Percent}%`, backgroundColor: color0 || '#1d4ed800' }}
+            />
+            <div
+              style={{ width: `${newToken0Percent}%`, backgroundColor: color1 || '#4f46e500' }}
+            />
           </div>
         </div>
       </div>
 
       <div className="flex justify-between text-xs text-muted-foreground">
         <div className="flex items-center space-x-1">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color0 || '#1d4ed8' }} />
+          <div
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: color0 || '#1d4ed800' }}
+          />
           <span>
-            {pool.token0.metadata.symbol}: {token0Percent.toFixed(1)}% →{' '}
-            {newToken0Percent.toFixed(1)}%
+            {pool.token0.metadata.symbol}: {token1Percent.toFixed(1)}% →{' '}
+            {newToken1Percent.toFixed(1)}%
           </span>
         </div>
         <div className="flex items-center space-x-1">
-          <div className="w-2 h-2 rounded-full" style={{ backgroundColor: color1 || '#4f46e5' }} />
+          <div
+            className="w-2 h-2 rounded-full"
+            style={{ backgroundColor: color1 || '#4f46e500' }}
+          />
           <span>
-            {pool.token1.metadata.symbol}: {token1Percent.toFixed(1)}% →{' '}
-            {newToken1Percent.toFixed(1)}%
+            {pool.token1.metadata.symbol}: {token0Percent.toFixed(1)}% →{' '}
+            {newToken0Percent.toFixed(1)}%
           </span>
         </div>
       </div>
