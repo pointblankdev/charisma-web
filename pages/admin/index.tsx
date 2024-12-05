@@ -53,12 +53,14 @@ interface AdminDashboardProps {
   marketplaceStats: MarketplaceStats;
 }
 
+const service = PricesService.getInstance();
+
 export const getStaticProps: GetStaticProps<AdminDashboardProps> = async () => {
   try {
     // Fetch pools and token prices in parallel
     const [pools, tokenPrices, marketplaceStats] = await Promise.all([
       PoolsService.getPools(),
-      PricesService.getAllTokenPrices(),
+      service.getAllTokenPrices(),
       MarketplaceService.getStats()
     ]);
 
@@ -80,9 +82,11 @@ export const getStaticProps: GetStaticProps<AdminDashboardProps> = async () => {
 
         // Calculate USD values using token decimals from pool data
         const token0USD =
-          (feesCollected.token0 / 10 ** pool.token0.decimals) * tokenPrices[pool.token0.symbol];
+          (feesCollected.token0 / 10 ** pool.token0.decimals) *
+          tokenPrices[pool.token0.contractAddress];
         const token1USD =
-          (feesCollected.token1 / 10 ** pool.token1.decimals) * tokenPrices[pool.token1.symbol];
+          (feesCollected.token1 / 10 ** pool.token1.decimals) *
+          tokenPrices[pool.token1.contractAddress];
         const totalUSD = token0USD + token1USD;
 
         return {

@@ -3,7 +3,6 @@ import Image from 'next/image';
 import { ChevronDown, ArrowUpDown, Coins } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
-import { formatBalance } from '@lib/hooks/dex/pool-operations';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
@@ -18,6 +17,10 @@ import {
 import { initializeGraph } from './swap-graph';
 import dynamic from 'next/dynamic';
 import SimpleSwapInterface from './simple-swap-ui';
+
+const formatBalance = (balance: number, decimals: number) => {
+  return (balance / 10 ** decimals).toFixed(decimals);
+};
 
 const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), {
   ssr: false
@@ -412,7 +415,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
               <TokenInput
                 token={fromToken}
                 amount={fromAmount}
-                price={data.prices[fromToken.metadata.symbol] || 0}
+                price={data.prices[fromToken.contractId] || 0}
                 onChange={handleFromAmountChange}
                 onUseMax={handleUseMax}
                 balance={getBalance(fromToken.contractId)}
@@ -458,7 +461,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
               <TokenInput
                 token={toToken}
                 amount={estimatedAmountOut}
-                price={data.prices[toToken?.metadata.symbol] || 0}
+                price={data.prices[toToken?.contractId] || 0}
                 disabled
                 isCalculating={isCalculating}
                 balance={getBalance(toToken?.contractId)}

@@ -80,11 +80,11 @@ export interface Pool {
 export const calculatePoolTVL = (pool: Pool, tokenPrices: { [key: string]: number }) => {
   const token0Value =
     (pool.poolData.reserve0 / 10 ** pool.token0.metadata.decimals) *
-      tokenPrices[pool.token0.metadata.symbol] || 0;
+      tokenPrices[pool.token0.contractId] || 0;
 
   const token1Value =
     (pool.poolData.reserve1 / 10 ** pool.token1.metadata.decimals) *
-      tokenPrices[pool.token1.metadata.symbol] || 0;
+      tokenPrices[pool.token1.contractId] || 0;
 
   return token0Value + token1Value;
 };
@@ -295,7 +295,7 @@ export const PoolReserves = ({ pool, tokenPrices }: PoolReservesProps) => (
       <div className="text-right text-muted-foreground">
         {formatUSD(
           (pool.poolData.reserve0 / 10 ** pool.token0.metadata.decimals) *
-            tokenPrices[pool.token0.metadata.symbol]
+            tokenPrices[pool.token0.contractId]
         )}
       </div>
     </div>
@@ -306,7 +306,7 @@ export const PoolReserves = ({ pool, tokenPrices }: PoolReservesProps) => (
       <div className="text-right text-muted-foreground">
         {formatUSD(
           (pool.poolData.reserve1 / 10 ** pool.token1.metadata.decimals) *
-            tokenPrices[pool.token1.metadata.symbol]
+            tokenPrices[pool.token1.contractId]
         )}
       </div>
     </div>

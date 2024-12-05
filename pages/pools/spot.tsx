@@ -17,6 +17,7 @@ import { AlertTriangleIcon, ArrowRightLeftIcon } from 'lucide-react';
 // Initialize clients
 const dexClient = new DexClient();
 const registryClient = new TokenRegistryClient();
+const service = PricesService.getInstance();
 
 type Props = {
   data: {
@@ -30,7 +31,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     // Get enhanced token info and prices in parallel
     const [tokenInfo, prices] = await Promise.all([
       registryClient.listAll(),
-      PricesService.getAllTokenPrices()
+      service.getAllTokenPrices()
     ]);
 
     // build pools data

@@ -10,12 +10,13 @@ import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registr
 // Initialize client
 const dexClient = new DexClient();
 const registryClient = new TokenRegistryClient();
+const service = PricesService.getInstance();
 
 export const getStaticProps: GetStaticProps<any> = async () => {
   // Get enhanced token info and prices in parallel
   const [tokenInfo, prices] = await Promise.all([
     registryClient.listAll(),
-    PricesService.getAllTokenPrices()
+    service.getAllTokenPrices()
   ]);
 
   // build pools data

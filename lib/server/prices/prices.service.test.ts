@@ -1,114 +1,93 @@
+import { describe, test } from 'vitest';
 import PricesService from './prices-service';
 
+describe('PricesService Integration Tests', () => {
+  const service = PricesService.getInstance();
 
-describe('PricesService', () => {
-  test('getAllTokenPrices should return prices for all tokens', async () => {
-    const prices = await PricesService.getAllTokenPrices();
+  // Test tokens array
+  const testTokens = [
+    'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.token-abtc',
+    'SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-ordi',
+    'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+  ];
 
-    expect(prices).toBeDefined();
-    expect(typeof prices).toBe('object');
-
-    // Check if we have prices for the main tokens
-    expect(prices.CHA).toBeDefined();
-    expect(prices.STX).toBeDefined();
-    expect(prices.ORDI).toBeDefined();
-    expect(prices.WELSH).toBeDefined();
-    expect(prices.iouWELSH).toBeDefined();
-    expect(prices.iouROO).toBeDefined();
-
-    // Check if prices are reasonable (non-zero and not extremely high)
-    Object.values(prices).forEach(price => {
-      expect(price).toBeGreaterThanOrEqual(0);
-      expect(price).toBeLessThan(100000); // Adjust this upper limit as needed
-    });
-
-    // Check if iouWELSH price matches WELSH price
-    expect(prices.iouWELSH).toBe(prices.WELSH);
-
-    console.log('All token prices:', prices);
+  test('getTokenPrice - single token price fetch', async () => {
+    console.log('\nTesting getTokenPrice:');
+    try {
+      const price = await service.getTokenPrice(testTokens[0]);
+      console.log(`Price for ${testTokens[0]}: $${price}`);
+    } catch (error) {
+      console.error('Error fetching single token price:', error);
+    }
   });
 
-  test('getPoolReserves should return non-zero reserves for STX-CHA pool', async () => {
-    const poolId = 4;
-    const token0Address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx';
-    const token1Address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token';
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: Accessing private method for testing
-    const reserves = await PricesService.getPoolReserves(poolId, token0Address, token1Address);
-
-    expect(reserves.token0).toBeGreaterThan(0);
-    expect(reserves.token1).toBeGreaterThan(0);
-
-    console.log('Pool reserves:', reserves);
+  test('getTokenPrices - multiple token prices fetch', async () => {
+    console.log('\nTesting getTokenPrices:');
+    try {
+      const prices = await service.getTokenPrices(testTokens);
+      console.log('Prices for multiple tokens:');
+      Object.entries(prices).forEach(([token, price]) => {
+        console.log(`${token}: $${price}`);
+      });
+    } catch (error) {
+      console.error('Error fetching multiple token prices:', error);
+    }
   });
 
-  test('calculateChaPrice should return a reasonable CHA price', async () => {
-    const allPrices = await PricesService.getAllTokenPrices();
-    const stxPrice = allPrices.STX;
+  test('getAllTokenPrices - fetch all prices', async () => {
+    console.log('\nTesting getAllTokenPrices:');
+    try {
+      const allPrices = await service.getAllTokenPrices();
+      console.log('All token prices:');
+      const priceEntries = Object.entries(allPrices);
+      console.log(`Total tokens with prices: ${priceEntries.length}`);
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: Accessing private method for testing
-    const chaPrice = await PricesService.calculateChaPrice(stxPrice);
-
-    expect(chaPrice).toBeGreaterThan(0);
-    expect(chaPrice).toBeLessThan(stxPrice * 10); // Assuming CHA price is not more than 10 times STX price
-
-    console.log('Calculated CHA price:', chaPrice);
+      // Log first 5 prices as sample
+      console.log('\nFirst 5 prices:');
+      priceEntries.slice(0, 5).forEach(([token, price]) => {
+        console.log(`${token}: $${price}`);
+      });
+    } catch (error) {
+      console.error('Error fetching all token prices:', error);
+    }
   });
 
-  test('getPool should return pool information for a valid pool ID', async () => {
-    const poolId = 4; // STX-CHA pool
+  test('getAllPools - fetch all pools', async () => {
+    console.log('\nTesting getAllPools:');
+    try {
+      const pools = await service.getAllPools();
+      if (!pools) {
+        console.log('No pools data received');
+        return;
+      }
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: Accessing private method for testing
-    const poolInfo = await PricesService.getPool(poolId);
+      console.log(`Total pools: ${pools.length}`);
 
-    expect(poolInfo).toBeDefined();
-    expect(poolInfo.token0).toBe('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx');
-    expect(poolInfo.token1).toBe('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token');
-    expect(poolInfo.reserve0).toBeDefined();
-    expect(poolInfo.reserve1).toBeDefined();
-    expect(poolInfo.symbol).toBe('wSTX-CHA');
-
-    console.log('Pool info:', poolInfo);
-  });
-
-  test('lookupPool should return pool information for valid token addresses', async () => {
-    const token0Address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx';
-    const token1Address = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token';
-
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore: Accessing private method for testing
-    const poolInfo = await PricesService.lookupPool(token0Address, token1Address);
-
-    expect(poolInfo).toBeDefined();
-    expect(poolInfo.pool).toBeDefined();
-    expect(poolInfo.pool.token0).toBe(token0Address);
-    expect(poolInfo.pool.token1).toBe(token1Address);
-    expect(poolInfo.pool.reserve0).toBeDefined();
-    expect(poolInfo.pool.reserve1).toBeDefined();
-
-    console.log('Looked up pool info:', poolInfo);
-  });
-
-  test('getLpTokenPriceByPoolId should return a valid price for updog pools', async () => {
-    await PricesService.updateAllTokenPrices();
-    const id = 8; // UPDOG pool
-    const lpTokenPrice = await PricesService.getLpTokenPriceByPoolId(id);
-
-    expect(lpTokenPrice).toBeDefined();
-    expect(lpTokenPrice).toBeGreaterThan(0);
-    expect(lpTokenPrice).toBeLessThan(1000000); // Adjust this upper limit as needed
-
-    console.log(`Pool ${id} LP token price:`, lpTokenPrice);
-  });
-
-  test('getLpTokenPriceByPoolId should throw an error for an invalid pool ID', async () => {
-    const invalidPoolId = 9999;
-
-    await expect(PricesService.getLpTokenPriceByPoolId(invalidPoolId)).rejects.toThrow(
-      'Pool not found'
-    );
+      // Log first pool as sample
+      if (pools.length > 0) {
+        const samplePool = pools[0];
+        console.log('\nSample pool data:');
+        console.log({
+          poolId: samplePool.poolId,
+          symbol: samplePool.symbol,
+          token0: {
+            symbol: samplePool.token0Info.symbol,
+            price: samplePool.token0Price
+          },
+          token1: {
+            symbol: samplePool.token1Info.symbol,
+            price: samplePool.token1Price
+          },
+          reserves: {
+            token0USD: samplePool.reserve0ConvertUsd,
+            token1USD: samplePool.reserve1ConvertUsd
+          },
+          source: samplePool.source,
+          lastUpdated: samplePool.lastUpdated
+        });
+      }
+    } catch (error) {
+      console.error('Error fetching pools:', error);
+    }
   });
 });

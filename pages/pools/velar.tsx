@@ -15,6 +15,7 @@ import PricesService from '@lib/server/prices/prices-service';
 // Initialize clients
 const dexClient = new DexClient('VELAR' as DexProvider);
 const registryClient = new TokenRegistryClient();
+const service = PricesService.getInstance();
 
 type Props = {
   data: {
@@ -28,7 +29,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     // Get enhanced token info and prices in parallel
     const [tokenInfo, prices] = await Promise.all([
       registryClient.listAll(),
-      PricesService.getAllTokenPrices()
+      service.getAllTokenPrices()
     ]);
 
     const velarNames = ['VELAR'];

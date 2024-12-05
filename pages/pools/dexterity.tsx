@@ -23,6 +23,7 @@ import { AlertTriangle, CrosshairIcon, RocketIcon, Sparkles } from 'lucide-react
 
 // Initialize clients
 const registryClient = new TokenRegistryClient();
+const service = PricesService.getInstance();
 
 type Props = {
   data: {
@@ -36,8 +37,10 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     // Get enhanced token info and prices in parallel
     const [tokenInfo, prices] = await Promise.all([
       registryClient.listAll(),
-      PricesService.getAllTokenPrices()
+      service.getAllTokenPrices()
     ]);
+
+    console.log(prices);
 
     // get dexterity contracts
     const dexterityPools = await buildDexterityPools(tokenInfo.tokens);
