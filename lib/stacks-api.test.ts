@@ -13,15 +13,13 @@ import {
   getAllContractEvents,
   getTokenMetadata,
   getDecimals,
-  getSymbol,
-  getDexterityQuote,
-  getIsVerifiedInteraction
+  getSymbol
 } from './stacks-api';
 import { describe, it, expect } from 'vitest';
 import { hexToInt } from '@stacks/common';
 import { cvToValue, hexToCV } from '@stacks/transactions';
 import { getContractMetadata, setContractMetadata } from './db-providers/kv';
-import { getDexterityFees } from './dexterity';
+import { getDexterityFees, getDexterityQuote, getIsVerifiedInteraction } from './dexterity';
 
 describe('Stacks API', () => {
   it('should lookup a BNS name given an address', async () => {
@@ -79,7 +77,7 @@ describe('Stacks API', () => {
 
   it('should get contract metadata for single token', async () => {
     const metadata = await getContractMetadata(
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha'
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.updog-dexterity'
     );
     console.log(metadata);
   });

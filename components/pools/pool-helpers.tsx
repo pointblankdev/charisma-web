@@ -333,6 +333,8 @@ export const PoolActions = ({
   const { stxAddress } = useGlobalState();
   const { wallet } = useWallet();
 
+  console.log(pool.contractId, pool);
+
   const isAudited = pool.audit && pool.token0.audit && pool.token1.audit;
 
   const handleAddLiquidityClick = (pool: Pool, amount: number) => {

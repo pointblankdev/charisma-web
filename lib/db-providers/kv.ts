@@ -38,12 +38,6 @@ export async function setContractMetadata(ca: string, data: any): Promise<void> 
   }
   await kv.set(`ca:${ca}`, newMetadata);
   await kv.set(`metadata:${ca}`, newMetadata);
-  const audit: any = await kv.get(`contract-audit:${ca}`);
-  await kv.set(`contract-audit:${ca}`, {
-    ...audit,
-    fungibleTokens: [{ tokenIdentifier: data.identifier }],
-    timestamp: Date.now()
-  });
 }
 
 export async function getGlobalState(key: string): Promise<any> {
