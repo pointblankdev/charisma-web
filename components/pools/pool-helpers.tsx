@@ -331,6 +331,7 @@ export const PoolActions = ({
 }: PoolActionsProps) => {
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
+  const { wallet } = useWallet();
 
   const isAudited = pool.audit && pool.token0.audit && pool.token1.audit;
 
@@ -388,20 +389,29 @@ export const PoolActions = ({
   };
 
   const handleBuyToken0Click = (pool: Pool, amount: number) => {
+    const postConditions = [
+      Pc.principal(stxAddress)
+        .willSendGte(1)
+        .ft(pool.token1.contractId as any, pool.token1.audit.fungibleTokens[0].tokenIdentifier),
+      Pc.principal(pool.contractId)
+        .willSendGte(1)
+        .ft(pool.token0.contractId as any, pool.token0.audit.fungibleTokens[0].tokenIdentifier)
+    ];
+
+    if (wallet.energy.balance >= 10 && pool.metadata.verified) {
+      postConditions.push(
+        Pc.principal(stxAddress)
+          .willSendGte(0)
+          .ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.energy', 'energy')
+      );
+    }
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'swap',
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(stxAddress)
-          .willSendGte(1)
-          .ft(pool.token1.contractId as any, pool.token1.audit.fungibleTokens[0].tokenIdentifier),
-        Pc.principal(pool.contractId)
-          .willSendGte(1)
-          .ft(pool.token0.contractId as any, pool.token0.audit.fungibleTokens[0].tokenIdentifier)
-      ],
+      postConditions,
       functionArgs: [boolCV(false), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Transaction successful', data);
@@ -413,20 +423,29 @@ export const PoolActions = ({
   };
 
   const handleBuyToken1Click = (pool: Pool, amount: number) => {
+    const postConditions = [
+      Pc.principal(stxAddress)
+        .willSendGte(1)
+        .ft(pool.token0.contractId as any, pool.token0.audit.fungibleTokens[0].tokenIdentifier),
+      Pc.principal(pool.contractId)
+        .willSendGte(1)
+        .ft(pool.token1.contractId as any, pool.token1.audit.fungibleTokens[0].tokenIdentifier)
+    ];
+
+    if (wallet.energy.balance >= 10 && pool.metadata.verified) {
+      postConditions.push(
+        Pc.principal(stxAddress)
+          .willSendGte(0)
+          .ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.energy', 'energy')
+      );
+    }
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'swap',
       postConditionMode: PostConditionMode.Deny,
-      postConditions: [
-        Pc.principal(stxAddress)
-          .willSendGte(1)
-          .ft(pool.token0.contractId as any, pool.token0.audit.fungibleTokens[0].tokenIdentifier),
-        Pc.principal(pool.contractId)
-          .willSendGte(1)
-          .ft(pool.token1.contractId as any, pool.token1.audit.fungibleTokens[0].tokenIdentifier)
-      ],
+      postConditions,
       functionArgs: [boolCV(true), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Transaction successful', data);

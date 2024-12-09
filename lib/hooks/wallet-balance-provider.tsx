@@ -7,6 +7,7 @@ export type Wallet = {
   experience: { balance: number; amount: number };
   charisma: { balance: number; amount: number };
   governance: { balance: number; amount: number };
+  energy: { balance: number; amount: number };
   redPilled: boolean;
   bluePilled: boolean;
   ravens: any;
@@ -61,6 +62,7 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
   const experience = getBalanceByKey(
     'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience'
   );
+  const energy = getBalanceByKey('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.energy::energy');
   const governance = getBalanceByKey(
     'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token::charisma'
   );
@@ -79,6 +81,7 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
     balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven::raven'];
 
   const wallet: Wallet = {
+    energy: { amount: energy, balance: energy / Math.pow(10, 6) },
     experience: { amount: experience, balance: experience / Math.pow(10, 6) },
     governance: { amount: governance, balance: governance / Math.pow(10, 6) },
     charisma: { amount: charisma, balance: charisma / Math.pow(10, 6) },
