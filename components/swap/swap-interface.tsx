@@ -233,6 +233,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
   const [slippage, setSlippage] = useState(10);
   const [swapPath, setSwapPath] = useState<any[]>([]);
   const [isMultiHop, setIsMultiHop] = useState(false);
+  const [swappableTokens, setSwappableTokens] = useState<any[]>([]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
   const toDropdownRef = useRef<HTMLDivElement>(null);
@@ -246,6 +247,15 @@ export const SwapInterface = ({ data }: { data: any }) => {
   // Initialize graph on component mount
   useEffect(() => {
     initializeGraph(data.tokens, data.pools);
+
+    // only show tokens that are swappable (nodes.value.connections > 0)
+    const graph = getGraph();
+    setSwappableTokens(
+      data.tokens.filter((token: any) => {
+        const node = graph.nodes.get(token.contractId);
+        return (node?.connections && node.connections.size > 0) || false;
+      })
+    );
   }, [data.tokens, data.pools]);
 
   useEffect(() => {
@@ -378,13 +388,6 @@ export const SwapInterface = ({ data }: { data: any }) => {
     setFromAmount('');
     setEstimatedAmountOut('0');
   };
-
-  // only show tokens that are swappable (nodes.value.connections > 0)
-  const graph = getGraph();
-  const swappableTokens = data.tokens.filter((token: any) => {
-    const node = graph.nodes.get(token.contractId);
-    return (node?.connections && node.connections.size > 0) || false;
-  });
 
   return hasHighExperience || true ? (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4">

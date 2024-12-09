@@ -74,6 +74,7 @@ interface DexterityControlsProps {
   onAddLiquidity: (pool: Pool, amount: number) => void;
   onRemoveLiquidity: (pool: Pool, amount: number) => void;
   onSwap: (isSwap0: boolean, swapAmount: number) => void;
+  isAudited?: boolean;
 }
 
 const DexterityControls: React.FC<DexterityControlsProps> = ({
@@ -81,7 +82,8 @@ const DexterityControls: React.FC<DexterityControlsProps> = ({
   tokenPrices,
   onAddLiquidity,
   onRemoveLiquidity,
-  onSwap
+  onSwap,
+  isAudited = false
 }) => {
   return (
     <div className="flex space-x-2">
@@ -90,7 +92,7 @@ const DexterityControls: React.FC<DexterityControlsProps> = ({
         tokenPrices={tokenPrices}
         onAddLiquidity={onAddLiquidity}
         trigger={
-          <Button variant="outline">
+          <Button variant="outline" disabled={!isAudited}>
             <Plus className="w-4 h-4 mr-2" />
             Add
           </Button>
@@ -102,7 +104,7 @@ const DexterityControls: React.FC<DexterityControlsProps> = ({
         tokenPrices={tokenPrices}
         onRemoveLiquidity={onRemoveLiquidity}
         trigger={
-          <Button variant="outline">
+          <Button variant="outline" disabled={!isAudited}>
             <Minus className="w-4 h-4 mr-2" />
             Remove
           </Button>
@@ -115,7 +117,7 @@ const DexterityControls: React.FC<DexterityControlsProps> = ({
         onSwap={onSwap}
         isToken0={true}
         trigger={
-          <Button variant="outline" className="flex items-center space-x-1">
+          <Button disabled={!isAudited} variant="outline" className="flex items-center space-x-1">
             <img
               src={pool.token0.metadata.image || '/dmg-logo.png'}
               className="w-6 h-6 rounded-full"
@@ -131,7 +133,7 @@ const DexterityControls: React.FC<DexterityControlsProps> = ({
         onSwap={onSwap}
         isToken0={false}
         trigger={
-          <Button variant="outline" className="flex items-center space-x-1">
+          <Button disabled={!isAudited} variant="outline" className="flex items-center space-x-1">
             <img
               src={pool.token1.metadata.image || '/dmg-logo.png'}
               className="w-6 h-6 rounded-full"

@@ -419,7 +419,8 @@ ${initialMintChecked ? '(begin (mint DEPLOYER u1000000))' : ''}
           symbol: form.getValues('indexTokenSymbol'),
           tokenA: form.getValues('tokenA'),
           tokenB: form.getValues('tokenB'),
-          contractAddress: result.contractAddress
+          contractAddress: result.contractAddress,
+          identifier: 'index'
         });
         console.log(response);
       }

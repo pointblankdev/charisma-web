@@ -332,13 +332,23 @@ export const PoolActions = ({
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
 
+  const isAudited = pool.audit && pool.token0.audit && pool.token1.audit;
+
   const handleAddLiquidityClick = (pool: Pool, amount: number) => {
     doContractCall({
       network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'mint',
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(stxAddress)
+          .willSendGte(1)
+          .ft(pool.token0.contractId as any, pool.token0.audit.fungibleTokens[0].tokenIdentifier),
+        Pc.principal(stxAddress)
+          .willSendGte(1)
+          .ft(pool.token1.contractId as any, pool.token1.audit.fungibleTokens[0].tokenIdentifier)
+      ],
       functionArgs: [standardPrincipalCV(stxAddress), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Add liquidity transaction successful', data);
@@ -355,7 +365,18 @@ export const PoolActions = ({
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'burn',
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(stxAddress)
+          .willSendGte(1)
+          .ft(pool.contractId as any, pool.audit.fungibleTokens[0].tokenIdentifier),
+        Pc.principal(pool.contractId)
+          .willSendGte(1)
+          .ft(pool.token0.contractId as any, pool.token0.audit.fungibleTokens[0].tokenIdentifier),
+        Pc.principal(pool.contractId)
+          .willSendGte(1)
+          .ft(pool.token1.contractId as any, pool.token1.audit.fungibleTokens[0].tokenIdentifier)
+      ],
       functionArgs: [standardPrincipalCV(stxAddress), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Remove liquidity transaction successful', data);
@@ -372,7 +393,15 @@ export const PoolActions = ({
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'swap',
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(stxAddress)
+          .willSendGte(1)
+          .ft(pool.token1.contractId as any, pool.token1.audit.fungibleTokens[0].tokenIdentifier),
+        Pc.principal(pool.contractId)
+          .willSendGte(1)
+          .ft(pool.token0.contractId as any, pool.token0.audit.fungibleTokens[0].tokenIdentifier)
+      ],
       functionArgs: [boolCV(false), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Transaction successful', data);
@@ -389,7 +418,15 @@ export const PoolActions = ({
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'swap',
-      postConditionMode: PostConditionMode.Allow,
+      postConditionMode: PostConditionMode.Deny,
+      postConditions: [
+        Pc.principal(stxAddress)
+          .willSendGte(1)
+          .ft(pool.token0.contractId as any, pool.token0.audit.fungibleTokens[0].tokenIdentifier),
+        Pc.principal(pool.contractId)
+          .willSendGte(1)
+          .ft(pool.token1.contractId as any, pool.token1.audit.fungibleTokens[0].tokenIdentifier)
+      ],
       functionArgs: [boolCV(true), uintCV(Math.floor(amount))],
       onFinish: data => {
         console.log('Transaction successful', data);
@@ -438,6 +475,7 @@ export const PoolActions = ({
     <div className="flex items-center justify-start space-x-2">
       {pool.lpInfo.dex === 'DEXTERITY' ? (
         <DexterityControls
+          isAudited={isAudited}
           pool={pool}
           tokenPrices={tokenPrices}
           onAddLiquidity={handleAddLiquidityClick}
@@ -453,6 +491,7 @@ export const PoolActions = ({
           </span>
           <button
             type="button"
+            disabled={!isAudited}
             className="relative inline-flex items-center px-2 py-2 text-sm font-medium border bg-primary hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
             onClick={() => onLiquidityAction(pool, true)}
           >
@@ -460,6 +499,7 @@ export const PoolActions = ({
           </button>
           <button
             type="button"
+            disabled={!isAudited}
             className="relative inline-flex items-center px-2 py-2 -ml-px text-sm font-medium border bg-background hover:bg-accent/90 hover:text-accent-foreground border-gray-700/80 rounded-r-md focus:z-10 focus:outline-none focus:ring-1 focus:ring-accent focus:border-accentring-accent"
             onClick={() => onLiquidityAction(pool, false)}
           >

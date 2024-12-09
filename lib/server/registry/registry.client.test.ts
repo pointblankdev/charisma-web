@@ -1,5 +1,6 @@
 import { describe, test } from 'vitest';
 import TokenRegistryClient from './registry.client';
+import _ from 'lodash';
 
 const registry = new TokenRegistryClient();
 

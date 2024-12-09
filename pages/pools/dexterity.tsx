@@ -12,7 +12,7 @@ import TokenRegistryClient from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
 import Link from 'next/link';
 import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
-import { AlertTriangle, CrosshairIcon, RocketIcon, Sparkles } from 'lucide-react';
+import { AlertTriangle, CrosshairIcon, Sparkles } from 'lucide-react';
 import { buildDexterityPools } from '@lib/dexterity';
 
 // Initialize clients

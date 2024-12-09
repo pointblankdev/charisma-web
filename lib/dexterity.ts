@@ -42,6 +42,7 @@ export async function buildDexterityPools(tokens: any[]) {
     ]);
     dexterityPools.push({
       contractId: contract,
+      audit: tokens.find((t: any) => t.contractId === contract || '')?.audit || {},
       metadata: { decimals: 6, ...contractMetadata, verified },
       lpInfo: {
         dex: 'DEXTERITY',
