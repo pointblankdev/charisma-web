@@ -14,7 +14,7 @@ import {
   formatUSD,
   calculateEstimatedAmountOutWithCache
 } from './swap-helpers';
-import { initializeGraph } from './swap-graph';
+import { getGraph, initializeGraph } from './swap-graph';
 import dynamic from 'next/dynamic';
 import SimpleSwapInterface from './simple-swap-ui';
 
@@ -379,7 +379,14 @@ export const SwapInterface = ({ data }: { data: any }) => {
     setEstimatedAmountOut('0');
   };
 
-  return hasHighExperience ? (
+  // only show tokens that are swappable (nodes.value.connections > 0)
+  const graph = getGraph();
+  const swappableTokens = data.tokens.filter((token: any) => {
+    const node = graph.nodes.get(token.contractId);
+    return (node?.connections && node.connections.size > 0) || false;
+  });
+
+  return hasHighExperience || true ? (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4">
       <div className="mt-6">
         <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
@@ -401,7 +408,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
                   />
                   {showFromTokens && (
                     <TokenList
-                      tokens={data.tokens}
+                      tokens={swappableTokens}
                       onSelect={token => {
                         setFromToken(token);
                         setShowFromTokens(false);
