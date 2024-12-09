@@ -62,7 +62,7 @@ export default async function getMetadata(
       console.log('Received POST request:', req.body);
 
       // Notify dexterity service and audit main contract
-      await Promise.all([notifyDexterity(ca), auditContract(ca)]);
+      await Promise.all([notifyDexterity(ca)]);
 
       // Add to index and set metadata
       await addIndexContract(ca);
