@@ -31,10 +31,11 @@ export async function getNamesFromAddress(address: string) {
   return response?.data?.names;
 }
 
-export async function getAccountBalance(principal: string) {
+export async function getAccountBalance(principal: string, untilBlock = 'latest') {
   const { data: response } = await client.GET('/extended/v1/address/{principal}/balances', {
     params: {
-      path: { principal }
+      path: { principal },
+      query: { until_block: untilBlock }
     }
   });
   return response;

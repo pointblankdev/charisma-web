@@ -1,0 +1,2682 @@
+[
+  {
+    "address": "SP1FFZ1HEAC0Y9GF4QCSRVHVRASPF1TZPAGRS2X9J",
+    "stx": {
+      "tokenBalance": 37500000,
+      "decimals": 6,
+      "balanceWithDecimals": 37.5,
+      "tokenPrice": 2.12,
+      "usdValue": 79.5
+    },
+    "tokens": {
+      "SP2TZK01NKDC89J6TA56SA47SDF7RTHYEQ79AAB9A.Wrapped-USD::wrapped-usd": {
+        "tokenBalance": 2119977229,
+        "decimals": 8,
+        "balanceWithDecimals": 21.19977229,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam::TheFellowshipOfTheMeme": {
+        "tokenBalance": 1047264565,
+        "decimals": 6,
+        "balanceWithDecimals": 1047.264565,
+        "tokenPrice": 0.2323166144687379,
+        "usdValue": 243.29695819387547
+      }
+    },
+    "totalUsdValue": 322.79695819387547
+  },
+  {
+    "address": "SP19JX6PCVDJC67MNYSWXR9VHZCV2YCQSJYKSSNCT",
+    "stx": {
+      "tokenBalance": 14300000,
+      "decimals": 6,
+      "balanceWithDecimals": 14.3,
+      "tokenPrice": 2.12,
+      "usdValue": 30.316000000000003
+    },
+    "tokens": {
+      "SP1F8AEVYSYK572MNYYNAX5XAH4M8PRHH0R7VDZEW.stand-with-crypto::SAVE": {
+        "tokenBalance": 100000000,
+        "decimals": 3,
+        "balanceWithDecimals": 100000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1X4F4PE8ZJ46628482Z6DEC4PQ9J3A5W8S9749D.degencoin-stxcity::DEGEN": {
+        "tokenBalance": 458295000000,
+        "decimals": 6,
+        "balanceWithDecimals": 458295,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz::tokensoft-token": {
+        "tokenBalance": 475368965,
+        "decimals": 3,
+        "balanceWithDecimals": 475368.965,
+        "tokenPrice": 0.000043498112214771074,
+        "usdValue": 20.677652582989584
+      },
+      "SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope::NOT": {
+        "tokenBalance": 492891711,
+        "decimals": 0,
+        "balanceWithDecimals": 492891711,
+        "tokenPrice": 2.6048471093030473e-8,
+        "usdValue": 12.83907548597783
+      },
+      "SP3SMQNVWRBVWC81SRJYFV4X1ZQ7AWWJFBQJMC724.fam::TheFellowshipOfTheMeme": {
+        "tokenBalance": 623655143,
+        "decimals": 6,
+        "balanceWithDecimals": 623.655143,
+        "tokenPrice": 0.2323166144687379,
+        "usdValue": 144.88545141777658
+      },
+      "SPX7Z21BD3HR8VXQE6NS38KX6PY7V184KDVVYMZW.x::X": {
+        "tokenBalance": 1000000,
+        "decimals": 2,
+        "balanceWithDecimals": 10000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 208.718179486744
+  },
+  {
+    "address": "SP33T4Y43C59EMRKFG7T7EA9ZJQZEC1P9KMECGP63",
+    "stx": {
+      "tokenBalance": 56355908,
+      "decimals": 6,
+      "balanceWithDecimals": 56.355908,
+      "tokenPrice": 2.12,
+      "usdValue": 119.47452496000001
+    },
+    "tokens": {
+      "SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token::gus": {
+        "tokenBalance": 442765255360,
+        "decimals": 6,
+        "balanceWithDecimals": 442765.25536,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.donald-trump::TREMP": {
+        "tokenBalance": 965948,
+        "decimals": 0,
+        "balanceWithDecimals": 965948,
+        "tokenPrice": 0.00008315760638544224,
+        "usdValue": 80.32592357280517
+      },
+      "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token::ststx": {
+        "tokenBalance": 492987,
+        "decimals": 6,
+        "balanceWithDecimals": 0.492987,
+        "tokenPrice": 2.170804818144047,
+        "usdValue": 1.0701785548823795
+      },
+      "SPZXE76HAF3621C4RQGHJ26ENXGEZV2JWAV2Y10Z.jindo::jindo": {
+        "tokenBalance": 183631246351,
+        "decimals": 6,
+        "balanceWithDecimals": 183631.246351,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 200.87062708768755
+  },
+  {
+    "address": "SP2CZP2W4PCD22GWXFYYKV40JXZBWVFN692T0FJQH",
+    "stx": {
+      "tokenBalance": 58227661,
+      "decimals": 6,
+      "balanceWithDecimals": 58.227661,
+      "tokenPrice": 2.12,
+      "usdValue": 123.44264132
+    },
+    "tokens": {
+      "SP1X4F4PE8ZJ46628482Z6DEC4PQ9J3A5W8S9749D.degencoin-stxcity::DEGEN": {
+        "tokenBalance": 458295000000,
+        "decimals": 6,
+        "balanceWithDecimals": 458295,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz::tokensoft-token": {
+        "tokenBalance": 31806503,
+        "decimals": 3,
+        "balanceWithDecimals": 31806.503,
+        "tokenPrice": 0.000043498112214771074,
+        "usdValue": 1.3835228366534529
+      }
+    },
+    "totalUsdValue": 124.82616415665346
+  },
+  {
+    "address": "SP6PAMVVD7MY89G80B4CG8NS4M7VGYJZQYHANHH0",
+    "stx": {
+      "tokenBalance": 3600000,
+      "decimals": 6,
+      "balanceWithDecimals": 3.6,
+      "tokenPrice": 2.12,
+      "usdValue": 7.632000000000001
+    },
+    "tokens": {
+      "SPBNZD0NMBJVRYJZ3SJ4MTRSZ3FEMGGTV2YM5MFV.moist-sock-bonding-curve::Moist": {
+        "tokenBalance": 55492025828,
+        "decimals": 6,
+        "balanceWithDecimals": 55492.025828,
+        "tokenPrice": 0.002088654230462247,
+        "usdValue": 115.90365450257248
+      }
+    },
+    "totalUsdValue": 123.53565450257248
+  },
+  {
+    "address": "SP1TZE9ZY61FYR7YM9BR0543XKX9YG5TR92YFTFSZ",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP35K818S3K2GSNEBC3M35GA3W8Q7X72KF4WAP0JT",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP6CWNRQWF468S6A56Q995WVY7F6X43GFRM0B55Y",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1TP7192SZ2SRAFT0JY0V91EYJBBH8C6KA3GBSDH",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP129ABK9RK7Y2MCMWR48KPP2S3BSSDDMZT91Y3SN",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3NRRJS9BNEDJN9WG7CNVQ247N9DHFVSQRJ3RC8J",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3F37HCN7G2CXFVZRT36M57SWKG77P2BSEKGS0T7",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2E7W684Z809YQ9Q9JVDT0G8VJPQGDZPAGAJQ70A",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP123QBTNPJMSHM3AT5V7D2CM1VTZHVGEP10ABQMP",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1367QT2AXZZPJF61SE62RNM7J1Q3EDP4FFAS35Z",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2ND6JBSG3GMRKKGD1HX9VZCBR4XF7TCW3BTMC3M",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPZC8995Q7DP1MFZFS2D6DY8A666E2GCDKV2QYYD",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2R9ZYD0051GRY5F007VXGNEQ7MCH93WDQW0CRTZ",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP25PX4QCN2PFP6TY1937T8DCWSBQ0PCY5N0RA0DC",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3Y7RPD5ZW0427MM89CE9CRP4YC6QGK950CP5W36",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2AV53M5ZP4AZWXMZ96BS6DXW4RCSYEF60D9YXR3",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3ESX446W6JKZHR1SFCY1VFZ9ABD48TPV1HYKQCM",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP164XXZ0KB28EDEKFXRFSBNR5CNG612S23ZV779Z",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1C5ZQRX85YT7VWD5C59EW9HNQ5GSQZ3PTGYJMFR",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP11EQ9AAMBZXFSS0041CTPZQB0ZJHW4QCF0BQ2XJ",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPEE42K8S0HHAXXV573JNEC15X7R2B0G7AZ4FWK2",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP196ZACHG9W5J3SBXW58A5RANDQBAE53RAT4YKGS",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP188QKRWK5DXABBKWRJ7ZAFAK6ZV8Y7FF8AJMNH",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1T2MGQY81WA1N3HBGHFBTXPWV45GV41BWGGY54Q",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP99NW85G7KAFGEWM6DCKKEFEVS1XMXHDNHWK9QZ",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP230BFWS042S0RC7JXWGRJJ2CARYYTX7AKAH3Z92",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP30CK1KXXZTWRXH6EPP96KY6QKF30VDXEFNNZK03",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3F4DJQE962P2ZN5ZB7YGPD667TAMPSF3EJS5K6M",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2147XSDB6EW8BQ75QSFFFXNJDVG68S5H1FE4WZR",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP8FG7GTK6V6YFWSYA3NYNGRNMB4ABN22V73C8WE",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP19PSB3YX0FZH7Z9QZPSE7GZ8RN1H0V322657N2H",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP5G9PSBPY64BWTKDBW137DAET7J77AZT2PS21VT",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP355MNMSMEVPC1A93QCGTQQWJ3BHMXF9KD3Q1EBT",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2R3R70TSP5YS88A3FVVN8J145Q7BET2J44KJMA6",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2N931AC6PBZQGFS8AR4SQ4CHAW45X59BWCZ3AQS",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3GCA2CQXZFA8KW17EP8GHFGKSAY3QJE8FBXKRR6",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3FXF9FANPHE81FFNE1CMKNX7R2T4Z53EYSVN5WW",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1FSGPHCPB60D82PP7VR7W8ZRYN9JBDR1KPBYAH8",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3AQT16W55P4VVCJJ6FG2NZS6EMWC63EHRMJ3ATK",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPM1NRTDPK68K6CNG5RQKZ55EDPPW2HHYXTMJ5XZ",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPEK15KDDG8510BGWZ8EJZCMCSAA049AZ6DZ1QW6",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP161PHK53D1CTYFG1AT6P01NXY5FXZ6X6FHWRRG2",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP28TF0YDMGRBC6W367YG13JWCP1VKJW6W7GK05B0",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPDDHGY9MJHN9RJ5T5P39CCH3W2H4M8APG5ADH77",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3X2BK9J9GRGWJWA6MW5B5B4ZQRQMQ0MWTC5ATQN",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3JM48EQC79CS40JBE5Y39282FZJADV6QMK28ZNW",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP05EKKEAZKN5ARJS1MP0H13K54EPVVFGA2MGHV8",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1GA0ASQZGWWTDE69JG7T5YEJ680YE422CVTR05H",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3SJNJ63DEYMYQPQH3CGJZ0GFXGW7BW3HZDK10E6",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1B67QXVVZQ2Q99BJ5T1JZQ1JT59VEMQ357KX4WC",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1VKYE03E6YT1K965YPJCHHK1RH8VQRYJ1RG2XV5",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP27S76PT5VFKCEWM1H5GKN1AS7QDN09TJDYMQ1TZ",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPAPPDYCQ1N0DVYPSR6RM2167DXZHYSHQ2GBCAR8",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP3SR7VHQNTR3684QZBNZX7Y9TP7XRZ6CXEBGMA9T",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2KTNV76Q43MMT9421W9QMJWDGQSHCRBGZ3ZYZ07",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP7RRB2C68P43N2R71RJXWVTKED51RG2PZ0EESWQ",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP363R7G8ABXMECY5HSA1Z0BB0J8QYQPDVSGXD9M8",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2XAT47SS1BM3BVZ9SYMCMY10PZVC8R8YWJR1ZCC",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPBE48YFTFN0VJCZGAH2JRH7BSSTTCCSCZG67HHM",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2CSPX675GM5NMVJ0QWXCWP1F64BXX1QHC336DEB",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPFW48GAYH10TKM2960BKH9EF1FSYN392YDB5CM2",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP2X6KN1SXKRPDXXBN27ZDQKK76QSKA758YM5P2ZN",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SP1AM67VSADHKKTMF4WGEJYAJSYDAZE7VBHNFXZ5C",
+    "stx": {
+      "tokenBalance": 58000000,
+      "decimals": 6,
+      "balanceWithDecimals": 58,
+      "tokenPrice": 2.12,
+      "usdValue": 122.96000000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.96000000000001
+  },
+  {
+    "address": "SPY1WRZ16ZCX6BP5FJTC1TS7BVXYCGTKDWFAS09J",
+    "stx": {
+      "tokenBalance": 57900000,
+      "decimals": 6,
+      "balanceWithDecimals": 57.9,
+      "tokenPrice": 2.12,
+      "usdValue": 122.748
+    },
+    "tokens": {},
+    "totalUsdValue": 122.748
+  },
+  {
+    "address": "SP2NEFHTS4K06GXY1H701NE3AX4EB0826MXK8VMFX",
+    "stx": {
+      "tokenBalance": 57900000,
+      "decimals": 6,
+      "balanceWithDecimals": 57.9,
+      "tokenPrice": 2.12,
+      "usdValue": 122.748
+    },
+    "tokens": {},
+    "totalUsdValue": 122.748
+  },
+  {
+    "address": "SP2F0DD3X3QDZW1AQS4SCM8N1BYKYAY0831JFDP9J",
+    "stx": {
+      "tokenBalance": 57800000,
+      "decimals": 6,
+      "balanceWithDecimals": 57.8,
+      "tokenPrice": 2.12,
+      "usdValue": 122.536
+    },
+    "tokens": {},
+    "totalUsdValue": 122.536
+  },
+  {
+    "address": "SP2G192AS4P9TW1BXFKSQX18R4RH1FHYRP1MA3VC7",
+    "stx": {
+      "tokenBalance": 57700000,
+      "decimals": 6,
+      "balanceWithDecimals": 57.7,
+      "tokenPrice": 2.12,
+      "usdValue": 122.32400000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.32400000000001
+  },
+  {
+    "address": "SPRPWQ0N3ZV8NWHHXS8HW4MFZWEX921M0063WPC0",
+    "stx": {
+      "tokenBalance": 57700000,
+      "decimals": 6,
+      "balanceWithDecimals": 57.7,
+      "tokenPrice": 2.12,
+      "usdValue": 122.32400000000001
+    },
+    "tokens": {},
+    "totalUsdValue": 122.32400000000001
+  },
+  {
+    "address": "SP3GEF4KYM4V41FHC9NX0F7K0GW1VC6A4WNJ855X3",
+    "stx": {
+      "tokenBalance": 8846952,
+      "decimals": 6,
+      "balanceWithDecimals": 8.846952,
+      "tokenPrice": 2.12,
+      "usdValue": 18.75553824
+    },
+    "tokens": {
+      "SP17CDWPAE74A84XE2KC8Y37CEQ3R5Q634WX3AMSE.scihub-stxcity::Sci": {
+        "tokenBalance": 123456000000,
+        "decimals": 6,
+        "balanceWithDecimals": 123456,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2TZK01NKDC89J6TA56SA47SDF7RTHYEQ79AAB9A.Wrapped-USD::wrapped-usd": {
+        "tokenBalance": 34805,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00034805,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP4M2C88EE8RQZPYTC4PZ88CE16YGP825EYF6KBQ.stacks-rock::rock": {
+        "tokenBalance": 80776403469284,
+        "decimals": 6,
+        "balanceWithDecimals": 80776403.469284,
+        "tokenPrice": 9.516853268711019e-7,
+        "usdValue": 76.87371793913755
+      },
+      "SPQ5CEHETP8K4Q2FSNNK9ANMPAVBSA9NN86YSN59.stone-bonding-curve::STONE": {
+        "tokenBalance": 2422787540,
+        "decimals": 6,
+        "balanceWithDecimals": 2422.78754,
+        "tokenPrice": 0.010039772128740021,
+        "usdValue": 24.324234817950597
+      }
+    },
+    "totalUsdValue": 119.95349099708815
+  },
+  {
+    "address": "SP2CCHTHNHDA0Q9V62HT5N51XE6FAY7ZE2JDW4HS2",
+    "stx": {
+      "tokenBalance": 55800000,
+      "decimals": 6,
+      "balanceWithDecimals": 55.8,
+      "tokenPrice": 2.12,
+      "usdValue": 118.296
+    },
+    "tokens": {
+      "SP8CFZ1ZQM71Y1E17G9SWFP1D0RNE1KSPKZ306ZC.wen::WenStacks": {
+        "tokenBalance": 154640128493576,
+        "decimals": 8,
+        "balanceWithDecimals": 1546401.28493576,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 118.296
+  },
+  {
+    "address": "SP3EN83D2FRZ0J0HPYDK5GWP7FPDMVFQ95WH5QQR",
+    "stx": {
+      "tokenBalance": 49170000,
+      "decimals": 6,
+      "balanceWithDecimals": 49.17,
+      "tokenPrice": 2.12,
+      "usdValue": 104.24040000000001
+    },
+    "tokens": {
+      "SP28NB976TJHHGF4218KT194NPWP9N1X3WY516Z1P.new-hashiko::HSHKO": {
+        "tokenBalance": 364886492249003,
+        "decimals": 6,
+        "balanceWithDecimals": 364886492.249003,
+        "tokenPrice": 3.5545734991233696e-8,
+        "usdValue": 12.97015855536391
+      }
+    },
+    "totalUsdValue": 117.21055855536392
+  },
+  {
+    "address": "SP3Y95KPPQG2Q3MQ4YN0YDFX49577TJWTGKQ479YN",
+    "stx": {
+      "tokenBalance": 55000000,
+      "decimals": 6,
+      "balanceWithDecimals": 55,
+      "tokenPrice": 2.12,
+      "usdValue": 116.60000000000001
+    },
+    "tokens": {
+      "SP3Y95KPPQG2Q3MQ4YN0YDFX49577TJWTGKQ479YN.amish-meme-coin::AMISH": {
+        "tokenBalance": 401005000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 401005000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3Y95KPPQG2Q3MQ4YN0YDFX49577TJWTGKQ479YN.jimi-hendrix-memecoin::JIMI": {
+        "tokenBalance": 5896297000000,
+        "decimals": 6,
+        "balanceWithDecimals": 5896297,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3Y95KPPQG2Q3MQ4YN0YDFX49577TJWTGKQ479YN.jimi::JIMI": {
+        "tokenBalance": 5896297000000,
+        "decimals": 6,
+        "balanceWithDecimals": 5896297,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 116.60000000000001
+  },
+  {
+    "address": "SPPGGPRBQ0C2S38Q8YHCEW2DVJBABSAPGXQF0NR",
+    "stx": {
+      "tokenBalance": 53200000,
+      "decimals": 6,
+      "balanceWithDecimals": 53.2,
+      "tokenPrice": 2.12,
+      "usdValue": 112.784
+    },
+    "tokens": {
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 1841850704,
+        "decimals": 6,
+        "balanceWithDecimals": 1841.850704,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 3.2370721824930597
+      },
+      "SPPGGPRBQ0C2S38Q8YHCEW2DVJBABSAPGXQF0NR.crashlimit::CRASHLIMIT": {
+        "tokenBalance": 10000000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 10000000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPPGGPRBQ0C2S38Q8YHCEW2DVJBABSAPGXQF0NR.meme-fun-token::MEME": {
+        "tokenBalance": 1000000000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 1000000000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 116.02107218249307
+  },
+  {
+    "address": "SPPJ6SDG0MB0QY5SQ7ATY7GBVKV4D2T33PSPS14M",
+    "stx": {
+      "tokenBalance": 42700000,
+      "decimals": 6,
+      "balanceWithDecimals": 42.7,
+      "tokenPrice": 2.12,
+      "usdValue": 90.52400000000002
+    },
+    "tokens": {
+      "SP17CDWPAE74A84XE2KC8Y37CEQ3R5Q634WX3AMSE.scihub-stxcity::Sci": {
+        "tokenBalance": 177775000000,
+        "decimals": 6,
+        "balanceWithDecimals": 177775,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1F8AEVYSYK572MNYYNAX5XAH4M8PRHH0R7VDZEW.stand-with-crypto::SAVE": {
+        "tokenBalance": 100000000,
+        "decimals": 3,
+        "balanceWithDecimals": 100000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve::FAIR": {
+        "tokenBalance": 1674332176952,
+        "decimals": 6,
+        "balanceWithDecimals": 1674332.176952,
+        "tokenPrice": 0.000005183536834409439,
+        "usdValue": 8.678962512267635
+      },
+      "SPBNZD0NMBJVRYJZ3SJ4MTRSZ3FEMGGTV2YM5MFV.moist-sock-bonding-curve::Moist": {
+        "tokenBalance": 5078219857,
+        "decimals": 6,
+        "balanceWithDecimals": 5078.219857,
+        "tokenPrice": 0.002088654230462247,
+        "usdValue": 10.606645387540437
+      },
+      "SPQ5CEHETP8K4Q2FSNNK9ANMPAVBSA9NN86YSN59.stone-bonding-curve::STONE": {
+        "tokenBalance": 591024010,
+        "decimals": 6,
+        "balanceWithDecimals": 591.02401,
+        "tokenPrice": 0.010039772128740021,
+        "usdValue": 5.933746383014163
+      }
+    },
+    "totalUsdValue": 115.74335428282225
+  },
+  {
+    "address": "SP1QA2P8Z3G92W8QFPZRW4S39ETTZ1YY89YYJXJ91",
+    "stx": {
+      "tokenBalance": 43689766,
+      "decimals": 6,
+      "balanceWithDecimals": 43.689766,
+      "tokenPrice": 2.12,
+      "usdValue": 92.62230392000001
+    },
+    "tokens": {
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 7822601413,
+        "decimals": 6,
+        "balanceWithDecimals": 7822.601413,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 13.748305100820595
+      }
+    },
+    "totalUsdValue": 106.37060902082061
+  },
+  {
+    "address": "SP3EZPDTN1HJW9AMFWXMFG3Y7RPQXYVGVRX851G4E",
+    "stx": {
+      "tokenBalance": 50000000,
+      "decimals": 6,
+      "balanceWithDecimals": 50,
+      "tokenPrice": 2.12,
+      "usdValue": 106
+    },
+    "tokens": {},
+    "totalUsdValue": 106
+  },
+  {
+    "address": "SP22JJ7N9RN6ZDY2F6M2DHSDTYN4P768AHF3AG90A",
+    "stx": {
+      "tokenBalance": 17500000,
+      "decimals": 6,
+      "balanceWithDecimals": 17.5,
+      "tokenPrice": 2.12,
+      "usdValue": 37.1
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 34419479999,
+        "decimals": 6,
+        "balanceWithDecimals": 34419.479999,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 16.414718025154155
+      },
+      "SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin::EDMUND": {
+        "tokenBalance": 4920340533,
+        "decimals": 4,
+        "balanceWithDecimals": 492034.0533,
+        "tokenPrice": 0.00003528425053326867,
+        "usdValue": 17.36105280753687
+      },
+      "SP1N4EXSR8DP5GRN2XCWZEW9PR32JHNRYW7MVPNTA.PomerenianBoo-Pomboo::PomeranianBoo": {
+        "tokenBalance": 32634510241820,
+        "decimals": 8,
+        "balanceWithDecimals": 326345.1024182,
+        "tokenPrice": 0.00006779154528114129,
+        "usdValue": 22.123438787862096
+      },
+      "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.donald-trump::TREMP": {
+        "tokenBalance": 124528,
+        "decimals": 0,
+        "balanceWithDecimals": 124528,
+        "tokenPrice": 0.00008315760638544224,
+        "usdValue": 10.355450407966352
+      }
+    },
+    "totalUsdValue": 103.35466002851948
+  },
+  {
+    "address": "SP3BJB7VG8626V79K027J081MMFXXPM1AQ0CTAKQN",
+    "stx": {
+      "tokenBalance": 26132448,
+      "decimals": 6,
+      "balanceWithDecimals": 26.132448,
+      "tokenPrice": 2.12,
+      "usdValue": 55.40078976
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 4674044,
+        "decimals": 6,
+        "balanceWithDecimals": 4.674044,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 0.00222906081961124
+      },
+      "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar": {
+        "tokenBalance": 669828,
+        "decimals": 6,
+        "balanceWithDecimals": 0.669828,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 19090947493,
+        "decimals": 6,
+        "balanceWithDecimals": 19090.947493,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 33.55254306595847
+      },
+      "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.donald-trump::TREMP": {
+        "tokenBalance": 170718,
+        "decimals": 0,
+        "balanceWithDecimals": 170718,
+        "tokenPrice": 0.00008315760638544224,
+        "usdValue": 14.19650024690993
+      }
+    },
+    "totalUsdValue": 103.152062133688
+  },
+  {
+    "address": "SP3V008KV6KXYJ7HGQMAWWZBW83ARX1B2K7FPDMS1",
+    "stx": {
+      "tokenBalance": 12566911,
+      "decimals": 6,
+      "balanceWithDecimals": 12.566911,
+      "tokenPrice": 2.12,
+      "usdValue": 26.64185132
+    },
+    "tokens": {
+      "SP1H1733V5MZ3SZ9XRW9FKYGEZT0JDGEB8Y634C7R.miamicoin-token-v2::miamicoin": {
+        "tokenBalance": 1427177277,
+        "decimals": 6,
+        "balanceWithDecimals": 1427.177277,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 17432546331,
+        "decimals": 6,
+        "balanceWithDecimals": 17432.546331,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 30.637885402736504
+      },
+      "SP3V008KV6KXYJ7HGQMAWWZBW83ARX1B2K7FPDMS1.deer-token::DEER": {
+        "tokenBalance": 99000000,
+        "decimals": 6,
+        "balanceWithDecimals": 99,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP4SZE494VC2YC5JYG7AYFQ44F5Q4PYV7DVMDPBG.ststx-token::ststx": {
+        "tokenBalance": 20864931,
+        "decimals": 6,
+        "balanceWithDecimals": 20.864931,
+        "tokenPrice": 2.170804818144047,
+        "usdValue": 45.29369274504309
+      }
+    },
+    "totalUsdValue": 102.57342946777959
+  },
+  {
+    "address": "SP3ATARVC33R83F1GSRE3BYF0089HVBAQXMVCXVZH",
+    "stx": {
+      "tokenBalance": 47900000,
+      "decimals": 6,
+      "balanceWithDecimals": 47.9,
+      "tokenPrice": 2.12,
+      "usdValue": 101.548
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 22733309162,
+        "decimals": 8,
+        "balanceWithDecimals": 227.33309162,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 101.548
+  },
+  {
+    "address": "SPK0PEGF4Z37H0D6V1JEMGTD7BE36MHT75P8548J",
+    "stx": {
+      "tokenBalance": 47900000,
+      "decimals": 6,
+      "balanceWithDecimals": 47.9,
+      "tokenPrice": 2.12,
+      "usdValue": 101.548
+    },
+    "tokens": {
+      "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-token::diko": {
+        "tokenBalance": 120132963,
+        "decimals": 6,
+        "balanceWithDecimals": 120.132963,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 101.548
+  },
+  {
+    "address": "SP2FCH9H0D6EE5XM68293NEDXAF7EPQPFFNBEA5QD",
+    "stx": {
+      "tokenBalance": 2400002,
+      "decimals": 6,
+      "balanceWithDecimals": 2.400002,
+      "tokenPrice": 2.12,
+      "usdValue": 5.088004240000001
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 3165,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00003165,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 116020,
+        "decimals": 6,
+        "balanceWithDecimals": 0.11602,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 0.00005533016725800956
+      },
+      "SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope::NOT": {
+        "tokenBalance": 3591685463,
+        "decimals": 0,
+        "balanceWithDecimals": 3591685463,
+        "tokenPrice": 2.6048471093030473e-8,
+        "usdValue": 93.55791495821327
+      }
+    },
+    "totalUsdValue": 98.64597452838053
+  },
+  {
+    "address": "SP3KAP7ZJB2VH7KG93VZCK6BG81N0VTDENEEGZDNH",
+    "stx": {
+      "tokenBalance": 7700000,
+      "decimals": 6,
+      "balanceWithDecimals": 7.7,
+      "tokenPrice": 2.12,
+      "usdValue": 16.324
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 172414520813,
+        "decimals": 6,
+        "balanceWithDecimals": 172414.520813,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 82.22482567051252
+      }
+    },
+    "totalUsdValue": 98.54882567051251
+  },
+  {
+    "address": "SP3GAWKQVJ58N0P556GBXJ2TK3B12XEKHEJAWP1Y2",
+    "stx": {
+      "tokenBalance": 42400000,
+      "decimals": 6,
+      "balanceWithDecimals": 42.4,
+      "tokenPrice": 2.12,
+      "usdValue": 89.888
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 17270189794,
+        "decimals": 6,
+        "balanceWithDecimals": 17270.189794,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 8.236187639024218
+      },
+      "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-token::diko": {
+        "tokenBalance": 118045640,
+        "decimals": 6,
+        "balanceWithDecimals": 118.04564,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 98.12418763902423
+  },
+  {
+    "address": "SPDWP5J90YQHQKY1DJJJ5DCWK7XXQH1B7D7ABX20",
+    "stx": {
+      "tokenBalance": 2600000,
+      "decimals": 6,
+      "balanceWithDecimals": 2.6,
+      "tokenPrice": 2.12,
+      "usdValue": 5.5120000000000005
+    },
+    "tokens": {
+      "SP12JCJYJJ31C59MV94SNFFM4687H9A04Q3BHTAJM.NoCodeClarity-Token::NoCodeClarity-Token": {
+        "tokenBalance": 43645261,
+        "decimals": 3,
+        "balanceWithDecimals": 43645.261,
+        "tokenPrice": 0.00017315514450818814,
+        "usdValue": 7.557401475552588
+      },
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 99565286447,
+        "decimals": 6,
+        "balanceWithDecimals": 99565.286447,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 47.4828818497168
+      },
+      "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo": {
+        "tokenBalance": 703714054,
+        "decimals": 6,
+        "balanceWithDecimals": 703.714054,
+        "tokenPrice": 0.040867979308129174,
+        "usdValue": 28.759371397711696
+      },
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 3003755977,
+        "decimals": 6,
+        "balanceWithDecimals": 3003.755977,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 5.279133045380622
+      }
+    },
+    "totalUsdValue": 94.5907877683617
+  },
+  {
+    "address": "SP3DW51ZWA456T01Y43PS4D9MZRQG23V3C8K5Y4FA",
+    "stx": {
+      "tokenBalance": 37800000,
+      "decimals": 6,
+      "balanceWithDecimals": 37.8,
+      "tokenPrice": 2.12,
+      "usdValue": 80.136
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 6919930258,
+        "decimals": 8,
+        "balanceWithDecimals": 69.19930258,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2TZK01NKDC89J6TA56SA47SDF7RTHYEQ79AAB9A.Wrapped-USD::wrapped-usd": {
+        "tokenBalance": 96198933,
+        "decimals": 8,
+        "balanceWithDecimals": 0.96198933,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc::bridged-btc": {
+        "tokenBalance": 2015,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00002015,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin": {
+        "tokenBalance": 8118,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00008118,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3R4MHK99JAAM0N3T0CBZRZVSVQFG1N75DQ08JSD.Wsbtc::Wsbtc": {
+        "tokenBalance": 470624865,
+        "decimals": 6,
+        "balanceWithDecimals": 470.624865,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP7V1SE7EA3ZG3QTWSBA2AAG8SRHEYJ06EBBD1J2.max-token::max": {
+        "tokenBalance": 822043500928,
+        "decimals": 6,
+        "balanceWithDecimals": 822043.500928,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPAAZWD8D1RXQG85HDH9NQ90DV8TGXBXS4XY02J3.vkng-token::viking": {
+        "tokenBalance": 91445398043,
+        "decimals": 6,
+        "balanceWithDecimals": 91445.398043,
+        "tokenPrice": 0.00015475833922233188,
+        "usdValue": 14.151937930659756
+      },
+      "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh": {
+        "tokenBalance": 111366935,
+        "decimals": 8,
+        "balanceWithDecimals": 1.11366935,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 94.28793793065975
+  },
+  {
+    "address": "SPVK65NCJRSJP1JW7ZW5Y3SJ9REDTKQ1B535K1TA",
+    "stx": {
+      "tokenBalance": 28800000,
+      "decimals": 6,
+      "balanceWithDecimals": 28.8,
+      "tokenPrice": 2.12,
+      "usdValue": 61.056000000000004
+    },
+    "tokens": {
+      "SP1F8AEVYSYK572MNYYNAX5XAH4M8PRHH0R7VDZEW.stand-with-crypto::SAVE": {
+        "tokenBalance": 100000000,
+        "decimals": 3,
+        "balanceWithDecimals": 100000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin::EDMUND": {
+        "tokenBalance": 502221551,
+        "decimals": 4,
+        "balanceWithDecimals": 50222.1551,
+        "tokenPrice": 0.00003528425053326867,
+        "usdValue": 1.7720511028690769
+      },
+      "SP1X4F4PE8ZJ46628482Z6DEC4PQ9J3A5W8S9749D.degencoin-stxcity::DEGEN": {
+        "tokenBalance": 458295000000,
+        "decimals": 6,
+        "balanceWithDecimals": 458295,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz::tokensoft-token": {
+        "tokenBalance": 715439732,
+        "decimals": 3,
+        "balanceWithDecimals": 715439.732,
+        "tokenPrice": 0.000043498112214771074,
+        "usdValue": 31.120277745441744
+      },
+      "SP2VNZNV7SPZSRDK4FNXM0A0DA43Y16TC9J68Q7CB.hodl-on-stacks::HODL": {
+        "tokenBalance": 300000,
+        "decimals": 3,
+        "balanceWithDecimals": 300,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPX7Z21BD3HR8VXQE6NS38KX6PY7V184KDVVYMZW.x::X": {
+        "tokenBalance": 1000000,
+        "decimals": 2,
+        "balanceWithDecimals": 10000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 93.94832884831082
+  },
+  {
+    "address": "SP24YYHW29XPA1784W7CTD5PVPH0649PX7PEP5ZP6",
+    "stx": {
+      "tokenBalance": 24241319,
+      "decimals": 6,
+      "balanceWithDecimals": 24.241319,
+      "tokenPrice": 2.12,
+      "usdValue": 51.39159628
+    },
+    "tokens": {
+      "SP1QBKVTKP2DG8BGHQQD3KG6EBWWCB6V4X5NXQRYR.eth-thcam-stxcity::THCAM": {
+        "tokenBalance": 559121639433,
+        "decimals": 6,
+        "balanceWithDecimals": 559121.639433,
+        "tokenPrice": 0.000012691614676984,
+        "usdValue": 7.0961564052472195
+      },
+      "SP1X4F4PE8ZJ46628482Z6DEC4PQ9J3A5W8S9749D.degencoin-stxcity::DEGEN": {
+        "tokenBalance": 458295000000,
+        "decimals": 6,
+        "balanceWithDecimals": 458295,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz::tokensoft-token": {
+        "tokenBalance": 430297,
+        "decimals": 3,
+        "balanceWithDecimals": 430.297,
+        "tokenPrice": 0.000043498112214771074,
+        "usdValue": 0.01871710719167935
+      },
+      "SP2F4QC563WN0A0949WPH5W1YXVC4M1R46QKE0G14.memegoatstx::memegoatstx": {
+        "tokenBalance": 3029932921438,
+        "decimals": 6,
+        "balanceWithDecimals": 3029932.921438,
+        "tokenPrice": 0.000009466718243060388,
+        "usdValue": 28.683521262626375
+      },
+      "SP2TZK01NKDC89J6TA56SA47SDF7RTHYEQ79AAB9A.Wrapped-USD::wrapped-usd": {
+        "tokenBalance": 3831,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00003831,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 87.18999105506528
+  },
+  {
+    "address": "SP2CAC754R7QSC3MB9Y0PPCKYB63ERB9N2RKP3YZK",
+    "stx": {
+      "tokenBalance": 900000,
+      "decimals": 6,
+      "balanceWithDecimals": 0.9,
+      "tokenPrice": 2.12,
+      "usdValue": 1.9080000000000001
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 175040125362,
+        "decimals": 6,
+        "balanceWithDecimals": 175040.125362,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 83.47698166818154
+      },
+      "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-token::diko": {
+        "tokenBalance": 11640872,
+        "decimals": 6,
+        "balanceWithDecimals": 11.640872,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2CAC754R7QSC3MB9Y0PPCKYB63ERB9N2RKP3YZK.bork-coin::BRK": {
+        "tokenBalance": 1000000000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 1000000000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 85.38498166818154
+  },
+  {
+    "address": "SP3XWYM4EJ9ARJPD3T0XBHRBRXWBT3KM62XRRAG7X",
+    "stx": {
+      "tokenBalance": 2400000,
+      "decimals": 6,
+      "balanceWithDecimals": 2.4,
+      "tokenPrice": 2.12,
+      "usdValue": 5.088
+    },
+    "tokens": {
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 44325700897,
+        "decimals": 6,
+        "balanceWithDecimals": 44325.700897,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 77.90289030026962
+      }
+    },
+    "totalUsdValue": 82.99089030026961
+  },
+  {
+    "address": "SP1WNY6TVQNGXRAM0EWFPR47T1K8P5BQ4JDGZNEYN",
+    "stx": {
+      "tokenBalance": 400000,
+      "decimals": 6,
+      "balanceWithDecimals": 0.4,
+      "tokenPrice": 2.12,
+      "usdValue": 0.8480000000000001
+    },
+    "tokens": {
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 46484156446,
+        "decimals": 6,
+        "balanceWithDecimals": 46484.156446,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 81.69639886187109
+      }
+    },
+    "totalUsdValue": 82.54439886187109
+  },
+  {
+    "address": "SP8M1ED62SF4VAD7AGB405ZX7CYSW25MZBQTX8AH",
+    "stx": {
+      "tokenBalance": 37800000,
+      "decimals": 6,
+      "balanceWithDecimals": 37.8,
+      "tokenPrice": 2.12,
+      "usdValue": 80.136
+    },
+    "tokens": {
+      "SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin": {
+        "tokenBalance": 19544,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00019544,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh": {
+        "tokenBalance": 2125581880,
+        "decimals": 8,
+        "balanceWithDecimals": 21.2558188,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 80.136
+  },
+  {
+    "address": "SPC2XBKQ3XCPS19MWNXM46QV801GAZ42JQGHJYM6",
+    "stx": {
+      "tokenBalance": 13416892,
+      "decimals": 6,
+      "balanceWithDecimals": 13.416892,
+      "tokenPrice": 2.12,
+      "usdValue": 28.443811040000003
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 44665161619,
+        "decimals": 6,
+        "balanceWithDecimals": 44665.161619,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 21.300903835418886
+      },
+      "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo": {
+        "tokenBalance": 522968747,
+        "decimals": 6,
+        "balanceWithDecimals": 522.968747,
+        "tokenPrice": 0.040867979308129174,
+        "usdValue": 21.37267593119424
+      },
+      "SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope::NOT": {
+        "tokenBalance": 25626510,
+        "decimals": 0,
+        "balanceWithDecimals": 25626510,
+        "tokenPrice": 2.6048471093030473e-8,
+        "usdValue": 0.6675314049502563
+      },
+      "SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin": {
+        "tokenBalance": 20247,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00020247,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.donald-trump::TREMP": {
+        "tokenBalance": 64078,
+        "decimals": 0,
+        "balanceWithDecimals": 64078,
+        "tokenPrice": 0.00008315760638544224,
+        "usdValue": 5.328573101966368
+      }
+    },
+    "totalUsdValue": 77.11349531352975
+  },
+  {
+    "address": "SP25Z0JDH5GS91J8DXSPATCQHFDJQTA3VR03Z0747",
+    "stx": {
+      "tokenBalance": 20300000,
+      "decimals": 6,
+      "balanceWithDecimals": 20.3,
+      "tokenPrice": 2.12,
+      "usdValue": 43.036
+    },
+    "tokens": {
+      "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar": {
+        "tokenBalance": 508445497,
+        "decimals": 6,
+        "balanceWithDecimals": 508.445497,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo": {
+        "tokenBalance": 780588802,
+        "decimals": 6,
+        "balanceWithDecimals": 780.588802,
+        "tokenPrice": 0.040867979308129174,
+        "usdValue": 31.90108700829334
+      },
+      "SP2M6H8EHQ4KJ0BDPWZCKCF04FA6AXERFZ0CPCJK9.russian-roulette-stxcity::Roulette": {
+        "tokenBalance": 5000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 5000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPGWF6FPVXB6GBF5XVEC73ZHW7WT67Q7JMRJTXVK.assman-stxcity::SAUCE": {
+        "tokenBalance": 100000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 100000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 74.93708700829335
+  },
+  {
+    "address": "SP3YCD189N7Q4G6Z825CCV8JTYF5ES261F2AJG5ET",
+    "stx": {
+      "tokenBalance": 2864,
+      "decimals": 6,
+      "balanceWithDecimals": 0.002864,
+      "tokenPrice": 2.12,
+      "usdValue": 0.0060716799999999994
+    },
+    "tokens": {
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 40465139573,
+        "decimals": 6,
+        "balanceWithDecimals": 40465.139573,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 71.11791275372414
+      }
+    },
+    "totalUsdValue": 71.12398443372415
+  },
+  {
+    "address": "SP263A1S7Y8WFEQ3QH4FC0XJ5H22VXKK34JT1A61V",
+    "stx": {
+      "tokenBalance": 24600000,
+      "decimals": 6,
+      "balanceWithDecimals": 24.6,
+      "tokenPrice": 2.12,
+      "usdValue": 52.15200000000001
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 38852461066,
+        "decimals": 6,
+        "balanceWithDecimals": 38852.461066,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 18.528815455672166
+      },
+      "SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin": {
+        "tokenBalance": 45428,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00045428,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 70.68081545567217
+  },
+  {
+    "address": "SP312TQ306SD7B7J2BPXKGBBYV780QGJJQSTVBT7N",
+    "stx": {
+      "tokenBalance": 600000,
+      "decimals": 6,
+      "balanceWithDecimals": 0.6,
+      "tokenPrice": 2.12,
+      "usdValue": 1.272
+    },
+    "tokens": {
+      "SP17CDWPAE74A84XE2KC8Y37CEQ3R5Q634WX3AMSE.scihub-stxcity::Sci": {
+        "tokenBalance": 54319000000,
+        "decimals": 6,
+        "balanceWithDecimals": 54319,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 75234184360,
+        "decimals": 6,
+        "balanceWithDecimals": 75234.18436,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 35.87933118564668
+      },
+      "SP1F8AEVYSYK572MNYYNAX5XAH4M8PRHH0R7VDZEW.stand-with-crypto::SAVE": {
+        "tokenBalance": 100000000,
+        "decimals": 3,
+        "balanceWithDecimals": 100000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP253J64EGMH59TV32CQXXTVKH5TQVGN108TA5TND.fair-bonding-curve::FAIR": {
+        "tokenBalance": 6420500881856,
+        "decimals": 6,
+        "balanceWithDecimals": 6420500.881856,
+        "tokenPrice": 0.000005183536834409439,
+        "usdValue": 33.28090281645886
+      },
+      "SP312TQ306SD7B7J2BPXKGBBYV780QGJJQSTVBT7N.meme-coin::MEME": {
+        "tokenBalance": 1000000000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 1000000000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP312TQ306SD7B7J2BPXKGBBYV780QGJJQSTVBT7N.stx_mainstream::STXM": {
+        "tokenBalance": 867867000000,
+        "decimals": 6,
+        "balanceWithDecimals": 867867,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP7XAX5CHYM6V1SYHSE83RYS9ZVA23MNTPNGMTZ5.ecoprime-stxcity::Eco": {
+        "tokenBalance": 1000,
+        "decimals": 6,
+        "balanceWithDecimals": 0.001,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP8CFZ1ZQM71Y1E17G9SWFP1D0RNE1KSPKZ306ZC.wen::WenStacks": {
+        "tokenBalance": 392883334335269,
+        "decimals": 8,
+        "balanceWithDecimals": 3928833.34335269,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 70.43223400210555
+  },
+  {
+    "address": "SPSTH2G02VPDK7H1AS32725E33JJKJCZ293DSW5F",
+    "stx": {
+      "tokenBalance": 14228614,
+      "decimals": 6,
+      "balanceWithDecimals": 14.228614,
+      "tokenPrice": 2.12,
+      "usdValue": 30.164661680000002
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 69420181610,
+        "decimals": 6,
+        "balanceWithDecimals": 69420.18161,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 33.10662178557748
+      },
+      "SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token::gus": {
+        "tokenBalance": 1573340950469,
+        "decimals": 6,
+        "balanceWithDecimals": 1573340.950469,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1X4F4PE8ZJ46628482Z6DEC4PQ9J3A5W8S9749D.degencoin-stxcity::DEGEN": {
+        "tokenBalance": 458295000000,
+        "decimals": 6,
+        "balanceWithDecimals": 458295,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz::tokensoft-token": {
+        "tokenBalance": 28961540,
+        "decimals": 3,
+        "balanceWithDecimals": 28961.54,
+        "tokenPrice": 0.000043498112214771074,
+        "usdValue": 1.2597723168325812
+      },
+      "SP2TZK01NKDC89J6TA56SA47SDF7RTHYEQ79AAB9A.Wrapped-USD::wrapped-usd": {
+        "tokenBalance": 88546718,
+        "decimals": 8,
+        "balanceWithDecimals": 0.88546718,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt::bridged-usdt": {
+        "tokenBalance": 191714627,
+        "decimals": 8,
+        "balanceWithDecimals": 1.91714627,
+        "tokenPrice": 1.0897028278318028,
+        "usdValue": 2.089119711786193
+      }
+    },
+    "totalUsdValue": 66.62017549419625
+  },
+  {
+    "address": "SP1K807E6R9R248P9N1W0Q6SQGE7GXXGPFMR6MCM7",
+    "stx": {
+      "tokenBalance": 25339870,
+      "decimals": 6,
+      "balanceWithDecimals": 25.33987,
+      "tokenPrice": 2.12,
+      "usdValue": 53.7205244
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 6533316431,
+        "decimals": 8,
+        "balanceWithDecimals": 65.33316431,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 6202978056,
+        "decimals": 6,
+        "balanceWithDecimals": 6202.978056,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 2.9582124921241424
+      },
+      "SP1K807E6R9R248P9N1W0Q6SQGE7GXXGPFMR6MCM7.human::HUM": {
+        "tokenBalance": 1000000000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 1000000000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2C1WREHGM75C7TGFAEJPFKTFTEGZKF6DFT6E2GE.kangaroo::kangaroo": {
+        "tokenBalance": 46684657,
+        "decimals": 6,
+        "balanceWithDecimals": 46.684657,
+        "tokenPrice": 0.040867979308129174,
+        "usdValue": 1.9079075962831078
+      },
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 990866958,
+        "decimals": 6,
+        "balanceWithDecimals": 990.866958,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 1.7414592069419537
+      }
+    },
+    "totalUsdValue": 60.328103695349206
+  },
+  {
+    "address": "SP1GJHX46ZD4AWH4Z4T3VKKV6KTTMF8M2GCY05FCZ",
+    "stx": {
+      "tokenBalance": 26612137,
+      "decimals": 6,
+      "balanceWithDecimals": 26.612137,
+      "tokenPrice": 2.12,
+      "usdValue": 56.41773044000001
+    },
+    "tokens": {
+      "SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token::gus": {
+        "tokenBalance": 18093026,
+        "decimals": 6,
+        "balanceWithDecimals": 18.093026,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1NSCD02EE377W77JA5RHXF9S6RT6A6CA7K039DH.hawk-thua::SPIT": {
+        "tokenBalance": 421860,
+        "decimals": 0,
+        "balanceWithDecimals": 421860,
+        "tokenPrice": 0.000004737600618755015,
+        "usdValue": 1.9986041970279906
+      }
+    },
+    "totalUsdValue": 58.416334637028
+  },
+  {
+    "address": "SP3K7FT3042GM65464F07ZZ9JT6ED0BTXRYFZG1FM",
+    "stx": {
+      "tokenBalance": 5981343,
+      "decimals": 6,
+      "balanceWithDecimals": 5.981343,
+      "tokenPrice": 2.12,
+      "usdValue": 12.68044716
+    },
+    "tokens": {
+      "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh": {
+        "tokenBalance": 2583755184,
+        "decimals": 8,
+        "balanceWithDecimals": 25.83755184,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPQ5CEHETP8K4Q2FSNNK9ANMPAVBSA9NN86YSN59.stone-bonding-curve::STONE": {
+        "tokenBalance": 4241355421,
+        "decimals": 6,
+        "balanceWithDecimals": 4241.355421,
+        "tokenPrice": 0.010039772128740021,
+        "usdValue": 42.5822419438362
+      }
+    },
+    "totalUsdValue": 55.2626891038362
+  },
+  {
+    "address": "SP3NBVJMZQ1HYJBYM35FT3YWZDT31VCWGRX7527Z6",
+    "stx": {
+      "tokenBalance": 1400307,
+      "decimals": 6,
+      "balanceWithDecimals": 1.400307,
+      "tokenPrice": 2.12,
+      "usdValue": 2.96865084
+    },
+    "tokens": {
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 39999000000,
+        "decimals": 6,
+        "balanceWithDecimals": 39999,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 19.0756021388823
+      },
+      "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar": {
+        "tokenBalance": 78895717,
+        "decimals": 6,
+        "balanceWithDecimals": 78.895717,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2F4QC563WN0A0949WPH5W1YXVC4M1R46QKE0G14.memegoatstx::memegoatstx": {
+        "tokenBalance": 346420233953,
+        "decimals": 6,
+        "balanceWithDecimals": 346420.233953,
+        "tokenPrice": 0.000009466718243060388,
+        "usdValue": 3.2794627485281125
+      },
+      "SP2X2Z28NXZVJFCJPBR9Q3NBVYBK3GPX8PXA3R83C.odin-tkn::odin": {
+        "tokenBalance": 339702374754,
+        "decimals": 6,
+        "balanceWithDecimals": 339702.374754,
+        "tokenPrice": 0.000076749726128353,
+        "usdValue": 26.072064227520634
+      },
+      "SP3TCNAP82H54EKQX1W5D01QPHMKRM018KH4TF3VH.zerebro-ai-stxcity::ZEREBRO": {
+        "tokenBalance": 1000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 1000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 51.39577995493105
+  },
+  {
+    "address": "SPYE5QVX8QVV323EPBWK1N6DYK240CYNKV18WACE",
+    "stx": {
+      "tokenBalance": 9700000,
+      "decimals": 6,
+      "balanceWithDecimals": 9.7,
+      "tokenPrice": 2.12,
+      "usdValue": 20.564
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 61867790581,
+        "decimals": 8,
+        "balanceWithDecimals": 618.67790581,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 54836137214,
+        "decimals": 6,
+        "balanceWithDecimals": 54836.137214,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 26.15146219474041
+      },
+      "SP1X4F4PE8ZJ46628482Z6DEC4PQ9J3A5W8S9749D.degencoin-stxcity::DEGEN": {
+        "tokenBalance": 458295000000,
+        "decimals": 6,
+        "balanceWithDecimals": 458295,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz::tokensoft-token": {
+        "tokenBalance": 31317200,
+        "decimals": 3,
+        "balanceWithDecimals": 31317.2,
+        "tokenPrice": 0.000043498112214771074,
+        "usdValue": 1.3622390798524286
+      }
+    },
+    "totalUsdValue": 48.07770127459284
+  },
+  {
+    "address": "SP17KCHX2027WA6WK2GEF1GE0S7CCS70VS17W9CRP",
+    "stx": {
+      "tokenBalance": 1,
+      "decimals": 6,
+      "balanceWithDecimals": 0.000001,
+      "tokenPrice": 2.12,
+      "usdValue": 0.00000212
+    },
+    "tokens": {
+      "SP17KCHX2027WA6WK2GEF1GE0S7CCS70VS17W9CRP.saffron-city-mayor-token::SCM": {
+        "tokenBalance": 69420000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 69420000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP17KCHX2027WA6WK2GEF1GE0S7CCS70VS17W9CRP.sponge-bob-mocking::SBOB": {
+        "tokenBalance": 1000000000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 1000000000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1AY6K3PQV5MRT6R4S671NWW2FRVPKM0BR162CT6.leo-token::leo": {
+        "tokenBalance": 26062304100,
+        "decimals": 6,
+        "balanceWithDecimals": 26062.3041,
+        "tokenPrice": 0.00047690197602145805,
+        "usdValue": 12.429164324962148
+      },
+      "SP1JFFSYTSH7VBM54K29ZFS9H4SVB67EA8VT2MYJ9.gus-token::gus": {
+        "tokenBalance": 6777762464,
+        "decimals": 6,
+        "balanceWithDecimals": 6777.762464,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin::EDMUND": {
+        "tokenBalance": 4830916875,
+        "decimals": 4,
+        "balanceWithDecimals": 483091.6875,
+        "tokenPrice": 0.00003528425053326867,
+        "usdValue": 17.045528132289537
+      },
+      "SP1NSCD02EE377W77JA5RHXF9S6RT6A6CA7K039DH.hawk-thua::SPIT": {
+        "tokenBalance": 978835,
+        "decimals": 0,
+        "balanceWithDecimals": 978835,
+        "tokenPrice": 0.000004737600618755015,
+        "usdValue": 4.637329301659065
+      },
+      "SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin": {
+        "tokenBalance": 22338,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00022338,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 878760719,
+        "decimals": 6,
+        "balanceWithDecimals": 878.760719,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 1.5444313007372288
+      },
+      "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.donald-trump::TREMP": {
+        "tokenBalance": 91768,
+        "decimals": 0,
+        "balanceWithDecimals": 91768,
+        "tokenPrice": 0.00008315760638544224,
+        "usdValue": 7.631207222779263
+      }
+    },
+    "totalUsdValue": 43.28766240242724
+  },
+  {
+    "address": "SP5MGJNG0BW5N84RVAVXTGGW4YSFTQNNAGQ0WCXR",
+    "stx": {
+      "tokenBalance": 8600000,
+      "decimals": 6,
+      "balanceWithDecimals": 8.6,
+      "tokenPrice": 2.12,
+      "usdValue": 18.232
+    },
+    "tokens": {
+      "SP3TMGZ7WTT658PA632A3BA4B1GRXBNNEN8XPZQ5X.donald-trump::TREMP": {
+        "tokenBalance": 230277,
+        "decimals": 0,
+        "balanceWithDecimals": 230277,
+        "tokenPrice": 0.00008315760638544224,
+        "usdValue": 19.149284125620483
+      }
+    },
+    "totalUsdValue": 37.38128412562048
+  },
+  {
+    "address": "SP321HAK9EJKWJZGVAF2SDM7Y7N3GEAVP5K2PVXBV",
+    "stx": {
+      "tokenBalance": 0,
+      "decimals": 6,
+      "balanceWithDecimals": 0,
+      "tokenPrice": 2.12,
+      "usdValue": 0
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 8923565739,
+        "decimals": 8,
+        "balanceWithDecimals": 89.23565739,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1MJPVQ6ZE408ZW4JM6HET50S8GYTYRZ7PC6RKH7.edmundfitzgeraldcoin::EDMUND": {
+        "tokenBalance": 9777606696,
+        "decimals": 4,
+        "balanceWithDecimals": 977760.6696,
+        "tokenPrice": 0.00003528425053326867,
+        "usdValue": 34.49955242774293
+      },
+      "SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin": {
+        "tokenBalance": 8945,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00008945,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 811532672,
+        "decimals": 6,
+        "balanceWithDecimals": 811.532672,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 1.4262772938166788
+      },
+      "SP3R4MHK99JAAM0N3T0CBZRZVSVQFG1N75DQ08JSD.nakamoto::nakamoto": {
+        "tokenBalance": 920947540953559000,
+        "decimals": 6,
+        "balanceWithDecimals": 920947540953.5591,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh": {
+        "tokenBalance": 373429190,
+        "decimals": 8,
+        "balanceWithDecimals": 3.7342919,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 35.92582972155961
+  },
+  {
+    "address": "SP3STCNSGJC9PRXRNYTX6Q18S8R4S1CE30M4KEKEN",
+    "stx": {
+      "tokenBalance": 18986,
+      "decimals": 6,
+      "balanceWithDecimals": 0.018986,
+      "tokenPrice": 2.12,
+      "usdValue": 0.04025032
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 8007588513,
+        "decimals": 8,
+        "balanceWithDecimals": 80.07588513,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar": {
+        "tokenBalance": 29053459,
+        "decimals": 6,
+        "balanceWithDecimals": 29.053459,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2TZK01NKDC89J6TA56SA47SDF7RTHYEQ79AAB9A.Wrapped-USD::wrapped-usd": {
+        "tokenBalance": 4357437315,
+        "decimals": 8,
+        "balanceWithDecimals": 43.57437315,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3Y2ZSH8P7D50B0VBTSX11S7XSG24M1VB9YFQA4K.token-aeusdc::aeUSDC": {
+        "tokenBalance": 32559202,
+        "decimals": 6,
+        "balanceWithDecimals": 32.559202,
+        "tokenPrice": 1.0209999380839032,
+        "usdValue": 33.2429432260613
+      },
+      "SPA0SZQ6KCCYMJV5XVKSNM7Y1DGDXH39A11ZX2Y8.gamestop::GME": {
+        "tokenBalance": 130400821,
+        "decimals": 4,
+        "balanceWithDecimals": 13040.0821,
+        "tokenPrice": 0.00017206111630826577,
+        "usdValue": 2.2436910828774344
+      },
+      "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh": {
+        "tokenBalance": 1335202044,
+        "decimals": 8,
+        "balanceWithDecimals": 13.35202044,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 35.52688462893873
+  },
+  {
+    "address": "SPYRSNCJ1K805QR2N8MW5YCRQ59F07CV35G68YW2",
+    "stx": {
+      "tokenBalance": 6300000,
+      "decimals": 6,
+      "balanceWithDecimals": 6.3,
+      "tokenPrice": 2.12,
+      "usdValue": 13.356
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 25474847333,
+        "decimals": 8,
+        "balanceWithDecimals": 254.74847333,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar": {
+        "tokenBalance": 238582441,
+        "decimals": 6,
+        "balanceWithDecimals": 238.582441,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2TZK01NKDC89J6TA56SA47SDF7RTHYEQ79AAB9A.Wrapped-USD::wrapped-usd": {
+        "tokenBalance": 1339477494,
+        "decimals": 8,
+        "balanceWithDecimals": 13.39477494,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.liquid-staked-welsh-v2::liquid-staked-token": {
+        "tokenBalance": 3065070596,
+        "decimals": 6,
+        "balanceWithDecimals": 3065.070596,
+        "tokenPrice": 0.0015285419933038545,
+        "usdValue": 4.685089118426873
+      },
+      "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token::welshcorgicoin": {
+        "tokenBalance": 6370282247,
+        "decimals": 6,
+        "balanceWithDecimals": 6370.282247,
+        "tokenPrice": 0.0017575106252982488,
+        "usdValue": 11.195838735251304
+      }
+    },
+    "totalUsdValue": 29.236927853678175
+  },
+  {
+    "address": "SP2733BAJCTWBM0790KC9GZYMP73S0VDYPRSAF95",
+    "stx": {
+      "tokenBalance": 13233570,
+      "decimals": 6,
+      "balanceWithDecimals": 13.23357,
+      "tokenPrice": 2.12,
+      "usdValue": 28.055168400000003
+    },
+    "tokens": {},
+    "totalUsdValue": 28.055168400000003
+  },
+  {
+    "address": "SPGJD6N15JEDP999DCM26A74J22QPP6TBCNR12K",
+    "stx": {
+      "tokenBalance": 7700000,
+      "decimals": 6,
+      "balanceWithDecimals": 7.7,
+      "tokenPrice": 2.12,
+      "usdValue": 16.324
+    },
+    "tokens": {
+      "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar": {
+        "tokenBalance": 1301321756,
+        "decimals": 6,
+        "balanceWithDecimals": 1301.321756,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 16.324
+  },
+  {
+    "address": "SP2M8BZ2K4RPC8J87E9295S4XX161PV4ZCX77ETV9",
+    "stx": {
+      "tokenBalance": 7600000,
+      "decimals": 6,
+      "balanceWithDecimals": 7.6,
+      "tokenPrice": 2.12,
+      "usdValue": 16.112
+    },
+    "tokens": {
+      "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar": {
+        "tokenBalance": 1325528048,
+        "decimals": 6,
+        "balanceWithDecimals": 1325.528048,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 16.112
+  },
+  {
+    "address": "SP3J3GBHJHB44HG7JVJ60F3G1GFD7DBAKCTVQ3P3A",
+    "stx": {
+      "tokenBalance": 7248904,
+      "decimals": 6,
+      "balanceWithDecimals": 7.248904,
+      "tokenPrice": 2.12,
+      "usdValue": 15.36767648
+    },
+    "tokens": {
+      "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex::alex": {
+        "tokenBalance": 23427734010,
+        "decimals": 8,
+        "balanceWithDecimals": 234.2773401,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.velar-token::velar": {
+        "tokenBalance": 27841301,
+        "decimals": 6,
+        "balanceWithDecimals": 27.841301,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3DX3H4FEYZJZ586MFBS25ZW3HZDMEW92260R2PR.Wrapped-Bitcoin::wrapped-bitcoin": {
+        "tokenBalance": 10252,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00010252,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3R4MHK99JAAM0N3T0CBZRZVSVQFG1N75DQ08JSD.nakamoto::nakamoto": {
+        "tokenBalance": 421042590309878200,
+        "decimals": 6,
+        "balanceWithDecimals": 421042590309.87823,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP3R4MHK99JAAM0N3T0CBZRZVSVQFG1N75DQ08JSD.Wsbtc::Wsbtc": {
+        "tokenBalance": 10150247866,
+        "decimals": 6,
+        "balanceWithDecimals": 10150.247866,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP7V1SE7EA3ZG3QTWSBA2AAG8SRHEYJ06EBBD1J2.max-token::max": {
+        "tokenBalance": 822548067341,
+        "decimals": 6,
+        "balanceWithDecimals": 822548.067341,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1::usdh": {
+        "tokenBalance": 2159936791,
+        "decimals": 8,
+        "balanceWithDecimals": 21.59936791,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SPZXE76HAF3621C4RQGHJ26ENXGEZV2JWAV2Y10Z.jindo::jindo": {
+        "tokenBalance": 183569358654,
+        "decimals": 6,
+        "balanceWithDecimals": 183569.358654,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 15.36767648
+  },
+  {
+    "address": "SP94EJNY5JS6XM2JJGFHPN4067X6FNKQ50ZM6BV5",
+    "stx": {
+      "tokenBalance": 3844487,
+      "decimals": 6,
+      "balanceWithDecimals": 3.844487,
+      "tokenPrice": 2.12,
+      "usdValue": 8.15031244
+    },
+    "tokens": {
+      "SP1NSCD02EE377W77JA5RHXF9S6RT6A6CA7K039DH.hawk-thua::SPIT": {
+        "tokenBalance": 734605,
+        "decimals": 0,
+        "balanceWithDecimals": 734605,
+        "tokenPrice": 0.000004737600618755015,
+        "usdValue": 3.480265102540528
+      },
+      "SPZXE76HAF3621C4RQGHJ26ENXGEZV2JWAV2Y10Z.jindo::jindo": {
+        "tokenBalance": 918637702611,
+        "decimals": 6,
+        "balanceWithDecimals": 918637.702611,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 11.630577542540529
+  },
+  {
+    "address": "SP388ZPC7RVQ23548NWK543AYYP2A2AB55A2ZKMCP",
+    "stx": {
+      "tokenBalance": 2999091,
+      "decimals": 6,
+      "balanceWithDecimals": 2.999091,
+      "tokenPrice": 2.12,
+      "usdValue": 6.358072920000001
+    },
+    "tokens": {
+      "SP1NSCD02EE377W77JA5RHXF9S6RT6A6CA7K039DH.hawk-thua::SPIT": {
+        "tokenBalance": 69387,
+        "decimals": 0,
+        "balanceWithDecimals": 69387,
+        "tokenPrice": 0.000004737600618755015,
+        "usdValue": 0.32872789413355424
+      },
+      "SP2M6H8EHQ4KJ0BDPWZCKCF04FA6AXERFZ0CPCJK9.russian-roulette-stxcity::Roulette": {
+        "tokenBalance": 5000000000,
+        "decimals": 6,
+        "balanceWithDecimals": 5000,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 6.686800814133555
+  },
+  {
+    "address": "SP3ZAMGR9YSV2EXQF80MT4Y14MYNV5KAJRVBP01C5",
+    "stx": {
+      "tokenBalance": 1371867,
+      "decimals": 6,
+      "balanceWithDecimals": 1.371867,
+      "tokenPrice": 2.12,
+      "usdValue": 2.90835804
+    },
+    "tokens": {
+      "SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.arkadiko-token::diko": {
+        "tokenBalance": 576989520,
+        "decimals": 6,
+        "balanceWithDecimals": 576.98952,
+        "tokenPrice": 0,
+        "usdValue": 0
+      },
+      "SP2TZK01NKDC89J6TA56SA47SDF7RTHYEQ79AAB9A.Wrapped-USD::wrapped-usd": {
+        "tokenBalance": 244034,
+        "decimals": 8,
+        "balanceWithDecimals": 0.00244034,
+        "tokenPrice": 0,
+        "usdValue": 0
+      }
+    },
+    "totalUsdValue": 2.90835804
+  }
+]
