@@ -163,7 +163,7 @@ export const PoolDefinition = ({ pool }: { pool: Pool }) => {
             {pool.metadata?.name}
           </span>
           <a
-            href={`https://explorer.hiro.so/txid/${pool.contractId}`}
+            href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center p-1 transition-colors text-muted-foreground hover:text-white"
@@ -197,7 +197,7 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
         )}
         <span className="mr-0.5">{pool.token0.metadata.symbol}</span>
         <a
-          href={`https://explorer.hiro.so/txid/${pool.token0.contractId}`}
+          href={`https://explorer.stxer.xyz/txid/${pool.token0.contractId}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center p-1 transition-colors text-muted-foreground hover:text-white"
@@ -219,7 +219,7 @@ export const PoolComposition = ({ pool }: { pool: Pool }) => (
         )}
         <span>{pool.token1.metadata.symbol}</span>
         <a
-          href={`https://explorer.hiro.so/txid/${pool.token1.contractId}`}
+          href={`https://explorer.stxer.xyz/txid/${pool.token1.contractId}`}
           target="_blank"
           rel="noopener noreferrer"
           className="inline-flex items-center p-1 transition-colors text-muted-foreground hover:text-white"

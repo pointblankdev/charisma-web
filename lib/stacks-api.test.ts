@@ -83,11 +83,14 @@ describe('Stacks API', () => {
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha';
+    const contractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex';
     const metadata = await getTokenMetadata(contractId);
+    console.log(metadata);
     await setContractMetadata(contractId, {
       ...metadata,
-      image: 'https://charisma.rocks/indexes/npp.jpeg'
+      name: 'Night Owl',
+      description: 'The first permissionless pool and LP token created on Stacks.',
+      image: 'https://charisma.rocks/sip10/hooter/body.png'
     });
     const updatedMetadata = await getContractMetadata(contractId);
     console.log(updatedMetadata);

@@ -419,7 +419,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
           symbol={pool.token0.metadata.symbol}
           image={pool.token0.metadata.image || '/dmg-logo.gif'}
           decimals={pool.token0.metadata.decimals}
-          price={prices[pool.token0.metadata.symbol] || 0}
+          price={prices[pool.token0.contractId] || 0}
           isLimiting={limitingToken === 'token0'}
           animate={animate}
         />
@@ -429,7 +429,7 @@ const LiquidityDialog = ({ pool, isAdd, onClose, prices }: LiquidityDialogProps)
           symbol={pool.token1.metadata.symbol}
           image={pool.token1.metadata.image || '/dmg-logo.gif'}
           decimals={pool.token1.metadata.decimals}
-          price={prices[pool.token1.metadata.symbol] || 0}
+          price={prices[pool.token1.contractId] || 0}
           isLimiting={limitingToken === 'token1'}
           animate={animate}
         />

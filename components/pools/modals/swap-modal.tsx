@@ -248,12 +248,12 @@ export const SwapModal = ({ pool, tokenPrices, onSwap, isToken0, trigger }: any)
               </Alert>
             )}
 
-            <PoolVisualizer
+            {/* <PoolVisualizer
               pool={pool}
               amounts={swapAmounts}
               tokenPrices={tokenPrices}
               isToken0={isToken0}
-            />
+            /> */}
 
             <div className="text-sm text-center text-muted-foreground">
               {expectedPrice > 0 && (

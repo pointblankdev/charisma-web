@@ -78,7 +78,7 @@ export default function InteractionDetailPage({ metadata }: InteractionDetailPro
 
   const ContractLink = () => (
     <a
-      href={`https://explorer.hiro.so/txid/${metadata.contract}`}
+      href={`https://explorer.stxer.xyz/txid/${metadata.contract}`}
       target="_blank"
       rel="noopener noreferrer"
       className="inline-flex items-center space-x-1 transition-colors group text-gray-50/90 hover:text-gray-50"
