@@ -33,17 +33,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const { accessToken, refreshToken } = await client.loginWithOAuth2({
       code: code as string,
       codeVerifier: codeVerifier,
-      redirectUri: 'https://charisma.rocks/debug/twitter'
+      redirectUri: 'https://charisma.rocks/api/v0/x/auth'
     });
 
-    // Here you should store these tokens securely
-    // Example: Save to your database
-    // await saveTokensToDatabase(accessToken, refreshToken)
+    // Set tokens in headers
+    res.setHeader('Access-Token', accessToken);
+    res.setHeader('Refresh-Token', refreshToken!);
 
-    return res.status(200).json({
-      accessToken,
-      refreshToken
-    });
+    // Redirect to /debug/twitter
+    res.redirect('https://charisma.rocks/debug/twitter');
+    res.end();
   } catch (error: any) {
     console.error('Failed to exchange code for tokens:', error);
     return res.status(500).json({
