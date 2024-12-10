@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { TwitterApi } from 'twitter-api-v2';
+import cookie from 'cookie';
 
 type ResponseData = {
   accessToken?: string;
@@ -17,7 +18,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     return res.status(405).json({ error: 'Method not allowed' });
   }
 
-  const { state, code, codeVerifier } = req.query;
+  const { state, code } = req.query;
+  const cookies = cookie.parse(req.headers.cookie || '');
+  const codeVerifier = cookies.codeVerifier;
 
   if (!state || !code || !codeVerifier) {
     return res.status(400).json({
@@ -29,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     // Exchange the code for tokens
     const { accessToken, refreshToken } = await client.loginWithOAuth2({
       code: code as string,
-      codeVerifier: codeVerifier as string,
+      codeVerifier: codeVerifier,
       redirectUri: 'https://charisma.rocks/api/v0/x/auth'
     });
 

@@ -1,5 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { TwitterApi } from 'twitter-api-v2';
+import cookie from 'cookie';
 
 type ResponseData = {
   url?: string;
@@ -26,10 +27,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       }
     );
 
+    // Set the codeVerifier in a cookie
+    res.setHeader(
+      'Set-Cookie',
+      cookie.serialize('codeVerifier', codeVerifier, {
+        // httpOnly: true,
+        // secure: process.env.NODE_ENV === 'production',
+        maxAge: 60 * 60, // 1 hour
+        path: '/'
+      })
+    );
+
     return res.status(200).json({
-      url,
-      state,
-      codeVerifier
+      url
     });
   } catch (error: any) {
     console.error('Failed to generate auth URL:', error);
