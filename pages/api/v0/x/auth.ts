@@ -41,8 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     res.setHeader('Refresh-Token', refreshToken!);
 
     // Redirect to /debug/twitter
-    res.redirect('https://charisma.rocks/debug/twitter');
-    res.end();
+    return res.redirect('https://charisma.rocks/debug/twitter');
   } catch (error: any) {
     console.error('Failed to exchange code for tokens:', error);
     return res.status(500).json({
