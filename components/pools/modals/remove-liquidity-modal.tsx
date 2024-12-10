@@ -159,7 +159,7 @@ export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, tri
           <DialogTitle>Remove Liquidity</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <TokenDisplay
               amount={amounts.token0Amount / 10 ** pool.token0.metadata.decimals}
               symbol={pool.token0.metadata.symbol}
@@ -172,7 +172,7 @@ export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, tri
               imgSrc={pool.token1.metadata.image}
               label="You will receive"
             />
-          </div>
+          </div> */}
 
           <div className="space-y-4">
             <TokenDisplay
