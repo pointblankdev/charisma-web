@@ -101,7 +101,7 @@ describe('indexes', () => {
 
   it('should remove index contract', async () => {
     const response = await removeIndexContract(
-      'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE.methylphenidate-dexterity'
+      'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.mentalbalance-dexterity'
     );
     console.log(response);
   });
