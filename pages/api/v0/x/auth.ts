@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const { accessToken, refreshToken } = await client.loginWithOAuth2({
       code: code as string,
       codeVerifier: codeVerifier,
-      redirectUri: 'https://charisma.rocks/api/v0/x/auth'
+      redirectUri: 'https://charisma.rocks/debug/twitter'
     });
 
     // Here you should store these tokens securely
