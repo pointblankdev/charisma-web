@@ -31,16 +31,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     res.setHeader(
       'Set-Cookie',
       cookie.serialize('codeVerifier', codeVerifier, {
-        // httpOnly: true,
-        // secure: process.env.NODE_ENV === 'production',
+        httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
         maxAge: 60 * 60, // 1 hour
         path: '/'
       })
     );
 
-    return res.status(200).json({
-      url
-    });
+    return res.redirect(url);
   } catch (error: any) {
     console.error('Failed to generate auth URL:', error);
     return res.status(500).json({
