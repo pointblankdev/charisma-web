@@ -41,6 +41,7 @@ export async function getAccountBalance(principal: string, untilBlock = 'latest'
     params.params.query = { until_block: untilBlock };
   }
   const { data: response } = await client.GET('/extended/v1/address/{principal}/balances', params);
+
   return response;
 }
 
