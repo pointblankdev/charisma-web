@@ -19,7 +19,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
   try {
     // Get chat response from Charisma API
-    const charismaResponse = await fetch('http://localhost:3001/api/chat', {
+    const charismaResponse = await fetch('https://explore.charisma.rocks/api/chat', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
