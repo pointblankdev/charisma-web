@@ -1,179 +1,242 @@
-import React, { useState, useEffect } from 'react';
-import { TwitterApi } from 'twitter-api-v2';
-import { MessageSquare, Send, AlertCircle, CheckCircle2, RefreshCw } from 'lucide-react';
+// pages/debug/twitter.tsx
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/router';
+import { Send, Search, User, Heart, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 
-const TwitterDashboard = () => {
-  const [tweet, setTweet] = useState('');
+export default function TwitterDebug() {
+  const router = useRouter();
+  const [accessToken, setAccessToken] = useState('');
   const [status, setStatus] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
-  const [userInfo, setUserInfo] = useState(null as any);
-  const [recentTweets, setRecentTweets] = useState([]);
 
-  // Get token from URL params or localStorage
-  const [token, setToken] = useState(() => {
-    if (typeof window !== 'undefined') {
-      const params = new URLSearchParams(window.location.search);
-      const urlToken = params.get('accessToken');
-      if (urlToken) {
-        localStorage.setItem('twitter_token', urlToken);
-        // Clean URL
-        window.history.replaceState({}, document.title, window.location.pathname);
-        return urlToken;
-      }
-      return localStorage.getItem('twitter_token');
-    }
-    return null;
-  }) as any;
+  // Form states
+  const [tweetText, setTweetText] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [username, setUsername] = useState('');
+  const [tweetId, setTweetId] = useState('');
+  const [likeUserId, setLikeUserId] = useState('');
+  const [likeTweetId, setLikeTweetId] = useState('');
 
-  // Fetch user info and recent tweets on load
-  useEffect(() => {
-    if (token) {
-      fetchUserInfo();
-      fetchRecentTweets();
-    }
-  }, [token]);
+  // Results
+  const [results, setResults] = useState<any>(null);
 
-  const fetchUserInfo = async () => {
-    try {
-      const client = new TwitterApi(token);
-      const me = (await client.v2.me()) as any;
-      setUserInfo(me.data);
-    } catch (err) {
-      setError('Failed to fetch user info');
-      console.error(err);
-    }
-  };
-
-  const fetchRecentTweets = async () => {
-    try {
-      const client = new TwitterApi(token);
-      if (userInfo?.id) {
-        const tweets: any = await client.v2.userTimeline(userInfo.id, {
-          max_results: 5,
-          'tweet.fields': ['created_at']
-        });
-        setRecentTweets(tweets.data.data || []);
-      }
-    } catch (err) {
-      setError('Failed to fetch recent tweets');
-      console.error(err);
-    }
-  };
-
-  const handleTweet = async () => {
-    if (!tweet.trim()) return;
-
+  const callApi = async (endpoint: string, action: string, method: string = 'GET', body?: any) => {
     setLoading(true);
-    setError('');
-    setSuccess('');
+    setStatus('');
+    setResults(null);
 
     try {
-      const client = new TwitterApi(token);
-      await client.v2.tweet(tweet);
+      const queryParams = new URLSearchParams({ endpoint, action });
+      if (method === 'GET' && body) {
+        Object.entries(body).forEach(([key, value]) => {
+          queryParams.append(key, value as string);
+        });
+      }
 
-      setSuccess('Tweet posted successfully!');
-      setTweet('');
-      // Refresh recent tweets
-      fetchRecentTweets();
-    } catch (err: any) {
-      setError(err.message || 'Failed to post tweet');
-      console.error(err);
+      const response = await fetch(`/api/v0/x?${queryParams}`, {
+        method,
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${accessToken}`
+        },
+        ...(method !== 'GET' && body ? { body: JSON.stringify(body) } : {})
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || 'API call failed');
+      }
+
+      setResults(data.data);
+      setStatus('Success!');
+    } catch (error: any) {
+      setStatus(`Error: ${error.message}`);
     } finally {
       setLoading(false);
     }
   };
 
-  if (!token) {
-    return (
-      <div className="max-w-2xl p-6 mx-auto mt-10 text-center">
-        <AlertCircle className="w-16 h-16 mx-auto mb-4 text-red-500" />
-        <h2 className="mb-4 text-2xl font-bold">No Access Token Found</h2>
-        <p className="text-gray-600">Please authenticate with Twitter first.</p>
-      </div>
-    );
-  }
-
   return (
-    <div className="max-w-2xl p-6 mx-auto">
-      {/* User Info */}
-      {userInfo && (
-        <div className="p-4 mb-6 rounded-lg bg-blue-50">
-          <h2 className="mb-2 text-xl font-bold">Welcome, @{userInfo.username}!</h2>
-          <p className="text-gray-600">{userInfo.name}</p>
-        </div>
-      )}
+    <div className="max-w-2xl p-8 mx-auto">
+      <h1 className="mb-6 text-2xl font-bold">Twitter API Debug Dashboard</h1>
 
-      {/* Tweet Composer */}
-      <div className="mb-6">
-        <div className="flex flex-col space-y-4">
-          <textarea
-            value={tweet}
-            onChange={e => setTweet(e.target.value)}
-            placeholder="What's happening?"
-            className="w-full p-4 border rounded-lg resize-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-            rows={4}
-            maxLength={280}
-          />
-          <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-500">{tweet.length}/280 characters</span>
+      {/* Token Display */}
+      <div className="p-4 mb-8 rounded-lg">
+        <h2 className="mb-2 text-sm font-semibold">Access Token:</h2>
+        <div className="text-xs break-all">{accessToken}</div>
+      </div>
+
+      {/* API Actions */}
+      <div className="space-y-8">
+        {/* Post Tweet */}
+        <div className="p-4 border rounded-lg">
+          <h3 className="flex items-center mb-3 font-semibold">
+            <Send className="w-4 h-4 mr-2" />
+            Post Tweet
+          </h3>
+          <div className="space-y-3">
+            <textarea
+              value={tweetText}
+              onChange={e => setTweetText(e.target.value)}
+              className="w-full p-2 border rounded bg-accent-foreground"
+              rows={3}
+              placeholder="Tweet text..."
+            />
             <button
-              onClick={handleTweet}
-              disabled={loading || !tweet.trim()}
-              className="flex items-center px-6 py-2 space-x-2 text-white bg-blue-500 rounded-full hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              onClick={() => callApi('TWEETS', 'POST', 'POST', { text: tweetText })}
+              className="px-4 py-2 text-white rounded cursor-pointer bg-primary hover:brightness-105"
+              disabled={!tweetText || loading}
             >
-              {loading ? (
-                <RefreshCw className="w-5 h-5 animate-spin" />
-              ) : (
-                <Send className="w-5 h-5" />
-              )}
-              <span>Tweet</span>
+              Post Tweet
             </button>
           </div>
         </div>
-      </div>
 
-      {/* Status Messages */}
-      {error && (
-        <div className="flex items-center p-4 mb-4 space-x-2 text-red-700 rounded-lg bg-red-50">
-          <AlertCircle className="w-5 h-5" />
-          <span>{error}</span>
+        {/* Search Tweets */}
+        <div className="p-4 border rounded-lg">
+          <h3 className="flex items-center mb-3 font-semibold">
+            <Search className="w-4 h-4 mr-2" />
+            Search Tweets
+          </h3>
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={e => setSearchQuery(e.target.value)}
+              className="w-full p-2 border rounded bg-accent-foreground"
+              placeholder="Search query..."
+            />
+            <button
+              onClick={() => callApi('TWEETS', 'SEARCH', 'GET', { query: searchQuery })}
+              className="px-4 py-2 text-white rounded cursor-pointer bg-primary hover:brightness-105"
+              disabled={!searchQuery || loading}
+            >
+              Search
+            </button>
+          </div>
         </div>
-      )}
 
-      {success && (
-        <div className="flex items-center p-4 mb-4 space-x-2 text-green-700 rounded-lg bg-green-50">
-          <CheckCircle2 className="w-5 h-5" />
-          <span>{success}</span>
+        {/* Get User */}
+        <div className="p-4 border rounded-lg">
+          <h3 className="flex items-center mb-3 font-semibold">
+            <User className="w-4 h-4 mr-2" />
+            Get User
+          </h3>
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={username}
+              onChange={e => setUsername(e.target.value)}
+              className="w-full p-2 border rounded bg-accent-foreground"
+              placeholder="Username..."
+            />
+            <button
+              onClick={() => callApi('USERS', 'GET', 'GET', { username })}
+              className="px-4 py-2 text-white rounded cursor-pointer bg-primary hover:brightness-105"
+              disabled={!username || loading}
+            >
+              Get User
+            </button>
+          </div>
         </div>
-      )}
 
-      {/* Recent Tweets */}
-      <div className="mt-8">
-        <div className="flex items-center mb-4 space-x-2">
-          <MessageSquare className="w-5 h-5" />
-          <h2 className="text-xl font-bold">Recent Tweets</h2>
-          <button
-            onClick={fetchRecentTweets}
-            className="p-2 ml-auto rounded-full hover:bg-gray-100"
-          >
-            <RefreshCw className="w-5 h-5" />
-          </button>
+        {/* Get Tweet */}
+        <div className="p-4 border rounded-lg">
+          <h3 className="flex items-center mb-3 font-semibold">
+            <Search className="w-4 h-4 mr-2" />
+            Get Tweet
+          </h3>
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={tweetId}
+              onChange={e => setTweetId(e.target.value)}
+              className="w-full p-2 border rounded bg-accent-foreground"
+              placeholder="Tweet ID..."
+            />
+            <button
+              onClick={() => callApi('TWEETS', 'GET', 'GET', { id: tweetId })}
+              className="px-4 py-2 text-white rounded cursor-pointer bg-primary hover:brightness-105"
+              disabled={!tweetId || loading}
+            >
+              Get Tweet
+            </button>
+          </div>
         </div>
-        <div className="space-y-4">
-          {recentTweets.map((tweet: any) => (
-            <div key={tweet.id} className="p-4 border rounded-lg">
-              <p>{tweet.text}</p>
-              <span className="text-sm text-gray-500">
-                {new Date(tweet.created_at).toLocaleString()}
-              </span>
-            </div>
-          ))}
+
+        {/* Like Tweet */}
+        <div className="p-4 border rounded-lg">
+          <h3 className="flex items-center mb-3 font-semibold">
+            <Heart className="w-4 h-4 mr-2" />
+            Like Tweet
+          </h3>
+          <div className="space-y-3">
+            <input
+              type="text"
+              value={likeUserId}
+              onChange={e => setLikeUserId(e.target.value)}
+              className="w-full p-2 border rounded bg-accent-foreground"
+              placeholder="User ID..."
+            />
+            <input
+              type="text"
+              value={likeTweetId}
+              onChange={e => setLikeTweetId(e.target.value)}
+              className="w-full p-2 border rounded bg-accent-foreground"
+              placeholder="Tweet ID to like..."
+            />
+            <button
+              onClick={() =>
+                callApi('LIKES', 'POST', 'POST', { userId: likeUserId, tweetId: likeTweetId })
+              }
+              className="px-4 py-2 text-white rounded cursor-pointer bg-primary hover:brightness-105"
+              disabled={!likeUserId || !likeTweetId || loading}
+            >
+              Like Tweet
+            </button>
+          </div>
         </div>
+
+        {/* Status and Results */}
+        {(status || loading || results) && (
+          <div className="p-4 space-y-4 border rounded-lg">
+            {/* Loading Indicator */}
+            {loading && (
+              <div className="flex items-center text-blue-500">
+                <Loader className="w-4 h-4 mr-2 animate-spin" />
+                Loading...
+              </div>
+            )}
+
+            {/* Status Message */}
+            {status && (
+              <div
+                className={`flex items-center ${
+                  status.includes('Error') ? 'text-red-500' : 'text-green-500'
+                }`}
+              >
+                {status.includes('Error') ? (
+                  <AlertCircle className="w-4 h-4 mr-2" />
+                ) : (
+                  <CheckCircle className="w-4 h-4 mr-2" />
+                )}
+                {status}
+              </div>
+            )}
+
+            {/* Results */}
+            {results && (
+              <div>
+                <h4 className="mb-2 font-semibold">Results:</h4>
+                <pre className="p-4 overflow-auto text-sm rounded">
+                  {JSON.stringify(results, null, 2)}
+                </pre>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
-};
-
-export default TwitterDashboard;
+}

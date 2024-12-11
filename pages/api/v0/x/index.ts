@@ -10,14 +10,23 @@ type ResponseData = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<ResponseData>) {
   try {
-    // Get the access token from Authorization header
-    const bearerToken = req.headers.authorization?.split('Bearer ')[1];
-    if (!bearerToken) {
-      return res.status(401).json({ error: 'No access token provided' });
-    }
+    // // Get the access token from Authorization header
+    // const bearerToken = req.headers.authorization?.split('Bearer ')[1];
+    // if (!bearerToken) {
+    //   return res.status(401).json({ error: 'No access token provided' });
+    // }
 
     // Initialize client with the bearer token
-    const client = new TwitterApi(bearerToken);
+    // const client = new TwitterApi(bearerToken);
+
+    // Initialize Twitter client
+    const client = new TwitterApi({
+      appKey: process.env.DM_API_KEY || '', // API Key
+      appSecret: process.env.DM_API_SECRET || '', // API Secret
+      accessToken: process.env.DM_ACCESS_TOKEN || '', // Access Token
+      accessSecret: process.env.DM_ACCESS_SECRET || '' // Access Secret
+    });
+    const rwClient = client.readWrite;
 
     const { endpoint = 'TWEETS', action = 'GET' } = req.query;
 
@@ -28,7 +37,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         if (!id) {
           return res.status(400).json({ error: 'Tweet ID required' });
         }
-        const tweet = await client.v2.get(id as string);
+        const tweet = await rwClient.v2.get(id as string);
         return res.status(200).json({ data: tweet });
       }
 
@@ -37,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         if (!text) {
           return res.status(400).json({ error: 'Tweet text required' });
         }
-        const { data: createdTweet } = await client.v2.tweet(req.body.text);
+        const { data: createdTweet } = await rwClient.v2.tweet(req.body.text);
         return res.status(201).json({ data: createdTweet });
       }
 
@@ -55,7 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         if (!username) {
           return res.status(400).json({ error: 'Username required' });
         }
-        const user = await client.v2.userByUsername(username as string);
+        const user = await rwClient.v2.userByUsername(username as string);
         return res.status(200).json({ data: user });
       }
 
