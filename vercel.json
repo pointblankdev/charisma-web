@@ -6,7 +6,7 @@
         },
         {
             "path": "/api/v0/x/tweet",
-            "schedule": "* */2 * * *"
+            "schedule": "* */3 * * *"
         }
     ]
 }
