@@ -3,6 +3,10 @@
         {
             "path": "/api/v0/blocks/cache",
             "schedule": "*/5 * * * *"
+        },
+        {
+            "path": "/api/v0/x/tweet",
+            "schedule": "* */2 * * *"
         }
     ]
 }
