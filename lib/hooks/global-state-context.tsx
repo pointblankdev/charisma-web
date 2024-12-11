@@ -75,39 +75,39 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
     }
   }, [setStxAddress]);
 
-  const getLastTapBlock = useCallback(async () => {
-    if (stxAddress && block?.height) {
-      const engines = [
-        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7',
-        'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-vself-rc2'
-      ];
-      for (const engine of engines) {
-        const [contractAddress, contractName] = engine.split('.');
-        try {
-          const result = await fetchCallReadOnlyFunction({
-            network: network,
-            contractAddress,
-            contractName,
-            functionName: 'get-last-tap-block',
-            functionArgs: [principalCV(stxAddress)],
-            senderAddress: stxAddress
-          });
+  // const getLastTapBlock = useCallback(async () => {
+  //   if (stxAddress && block?.height) {
+  //     const engines = [
+  //       'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-cha-rc7',
+  //       'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.meme-engine-vself-rc2'
+  //     ];
+  //     for (const engine of engines) {
+  //       const [contractAddress, contractName] = engine.split('.');
+  //       try {
+  //         const result = await fetchCallReadOnlyFunction({
+  //           network: network,
+  //           contractAddress,
+  //           contractName,
+  //           functionName: 'get-last-tap-block',
+  //           functionArgs: [principalCV(stxAddress)],
+  //           senderAddress: stxAddress
+  //         });
 
-          const lastBlock = Number(cvToValue(result));
-          setTappedAt((taps: any) => ({
-            ...taps,
-            [engine]: lastBlock
-          }));
-        } catch (error) {
-          console.error('Failed to fetch last tap block:', error);
-        }
-      }
-    }
-  }, [block?.height]);
+  //         const lastBlock = Number(cvToValue(result));
+  //         setTappedAt((taps: any) => ({
+  //           ...taps,
+  //           [engine]: lastBlock
+  //         }));
+  //       } catch (error) {
+  //         console.error('Failed to fetch last tap block:', error);
+  //       }
+  //     }
+  //   }
+  // }, [block?.height]);
 
-  useEffect(() => {
-    getLastTapBlock();
-  }, [stxAddress, getLastTapBlock]);
+  // useEffect(() => {
+  //   getLastTapBlock();
+  // }, [stxAddress, getLastTapBlock]);
 
   // Function to update energy of a specific token in the lands state
   const updateTokenEnergy = (landId: string, energy: number) => {
