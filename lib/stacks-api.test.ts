@@ -191,7 +191,7 @@ describe('AI BTC Dev', async () => {
       const formattedBalances = {
         address,
         stx: Number(balances?.stx.balance),
-        tokens: Object.entries(balances?.fungible_tokens as any).reduce(
+        tokens: Object.entries(balances?.fungible_tokens).reduce(
           (acc: { [key: string]: any }, [key, value]: any) => {
             const balance = Number(value?.balance);
             if (balance > 0) {
