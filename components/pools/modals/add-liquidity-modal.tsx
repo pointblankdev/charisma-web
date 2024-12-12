@@ -111,45 +111,32 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
   const maxAmount = useMemo(() => {
     const token0Balance = getBalance(pool.token0.contractId) || 0;
     const token1Balance = getBalance(pool.token1.contractId) || 0;
-    const ratio = pool.poolData.reserve1 / pool.poolData.reserve0;
 
-    const token0MaxUsd =
-      (token0Balance / 10 ** pool.token0.metadata.decimals) *
-      tokenPrices[pool.token0.contractId] *
-      (1 + ratio);
-    const token1MaxUsd =
-      (token1Balance / 10 ** pool.token1.metadata.decimals) *
-      tokenPrices[pool.token1.contractId] *
-      (1 + 1 / ratio);
+    // Calculate token amounts needed for the entire pool
+    const token0PerLp = pool.poolData.reserve0 / pool.poolData.totalSupply;
+    const token1PerLp = pool.poolData.reserve1 / pool.poolData.totalSupply;
 
-    return Math.min(token0MaxUsd, token1MaxUsd);
-  }, [pool, tokenPrices, getBalance]);
+    // Calculate max LP tokens possible with each token's balance
+    const maxLpFromToken0 = token0Balance / token0PerLp;
+    const maxLpFromToken1 = token1Balance / token1PerLp;
+
+    // Return the minimum possible LP tokens based on limiting token
+    return Math.min(maxLpFromToken0, maxLpFromToken1);
+  }, [pool, getBalance]);
 
   const amounts = useMemo(() => {
-    const baseAmount = Math.min(amount, maxAmount);
+    const lpTokens = Math.min(amount, maxAmount);
 
-    const ratio = pool.poolData.reserve1 / pool.poolData.reserve0;
-    const token0USD = baseAmount / (1 + ratio);
-    const token1USD = baseAmount - token0USD;
-
-    const token0Price = tokenPrices[pool.token0.contractId];
-    const token1Price = tokenPrices[pool.token1.contractId];
-
-    const token0ReservesTVL =
-      (pool.poolData.reserve0 * token0Price) / 10 ** pool.token0.metadata.decimals;
-    const token1ReservesTVL =
-      (pool.poolData.reserve1 * token1Price) / 10 ** pool.token1.metadata.decimals;
-
-    const lpTokenPrice =
-      (token0ReservesTVL + token1ReservesTVL) /
-      (pool.poolData.totalSupply / 10 ** pool.metadata.decimals);
+    // Calculate token amounts proportional to the pool ratio
+    const token0Amount = (lpTokens * pool.poolData.reserve0) / pool.poolData.totalSupply;
+    const token1Amount = (lpTokens * pool.poolData.reserve1) / pool.poolData.totalSupply;
 
     return {
-      lpTokens: (baseAmount / lpTokenPrice) * 10 ** pool.metadata.decimals,
-      token0Amount: (token0USD / token0Price) * 10 ** pool.token0.metadata.decimals,
-      token1Amount: (token1USD / token1Price) * 10 ** pool.token1.metadata.decimals
+      lpTokens,
+      token0Amount,
+      token1Amount
     };
-  }, [amount, maxAmount, pool, tokenPrices]);
+  }, [amount, maxAmount, pool]);
 
   const isMaxed = amount > maxAmount;
 
