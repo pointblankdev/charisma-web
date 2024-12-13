@@ -45,6 +45,7 @@ import { Tabs, TabsList, TabsTrigger } from '@components/ui/tabs';
 import { useToast } from '@components/ui/use-toast';
 import { COLLECTIONS } from './collections';
 import ListNFTDialog from './list-nft-dialog';
+import TokenList from './token-drawer';
 
 interface GlobalDrawerProps {
   open: boolean;
@@ -574,87 +575,101 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
     ? currentInventory.find(item => item.slot === parseInt(activeId))
     : null;
 
+  // Render helper for the content based on view mode
+  const renderContent = () => {
+    if (inventoryState.viewMode === 'tokens') {
+      return <TokenList />;
+    }
+
+    // NFT Grid Content
+    return (
+      <DndContext
+        sensors={sensors}
+        onDragStart={handleDragStart}
+        onDragOver={handleDragOver}
+        onDragEnd={handleDragEnd}
+      >
+        <div
+          className={cn(
+            'grid h-full gap-1',
+            'grid-cols-[repeat(auto-fill,minmax(6rem,1fr))]',
+            'auto-rows-[6rem]',
+            'p-0.5',
+            'rounded-lg'
+          )}
+        >
+          {/* Existing NFT grid items */}
+          {Array.from({ length: 150 }).map((_, index) => (
+            <DraggableSlot
+              key={`${currentCollection.id}-${index}`}
+              index={index}
+              item={currentInventory.find(item => item.slot === index) || null}
+              isDraggedOver={draggedOverId === index.toString()}
+            />
+          ))}
+        </div>
+
+        <DragOverlayPortal>
+          <DragOverlay dropAnimation={null}>
+            {activeItem ? <DragOverlayContent item={activeItem} /> : null}
+          </DragOverlay>
+        </DragOverlayPortal>
+      </DndContext>
+    );
+  };
+
   return (
     <Drawer open={open} onClose={onClose}>
       <DrawerContent className="h-[80vh] bg-black/40 backdrop-blur-md border-t border-white/10">
         <div className="flex flex-col h-full">
-          {/* Header with tabs */}
+          {/* Main view mode tabs */}
           <div className="border-b border-white/5">
-            <div className="flex items-center justify-between px-4 py-2">
-              <div className="flex items-center gap-2">
-                <span className="flex items-center space-x-2 text-xs font-medium text-white/60">
-                  <div>{currentInventory.length} ITEMS</div>
-                  {loadingCollections.size > 0 && <Loader2 className="w-3 h-3 animate-spin" />}
-                </span>
-              </div>
-              <div className="space-x-1">
-                <span className="text-xs text-white/40">Drag to rearrange</span>
-                <span className="text-xs text-white/40">|</span>
-                <span className="text-xs text-white/40">Right-click for commands</span>
-                <span className="text-xs text-white/40">|</span>
-                <span className="text-xs text-white/40">ESC to close</span>
-              </div>
-            </div>
-
             <Tabs
-              value={inventoryState.activeTab}
+              value={inventoryState.viewMode}
               onValueChange={value =>
-                setInventoryState((prev: any) => ({ ...prev, activeTab: value }))
+                setInventoryState((prev: any) => ({ ...prev, viewMode: value }))
               }
-              className="px-4 pb-2 overflow-x-scroll"
+              className="w-full px-4 py-2"
             >
               <TabsList className="bg-white/5">
-                {nonEmptyCollections.map(collection => (
-                  <TabsTrigger
-                    key={collection.id}
-                    value={collection.id}
-                    className="text-xs data-[state=active]:bg-white/10"
-                  >
-                    {collection.name}
-                    {loadingCollections.has(collection.id) && (
-                      <Loader2 className="w-3 h-3 ml-2 animate-spin" />
-                    )}
-                  </TabsTrigger>
-                ))}
+                <TabsTrigger value="tokens" className="text-xs data-[state=active]:bg-white/10">
+                  Tokens
+                </TabsTrigger>
+                <TabsTrigger value="nfts" className="text-xs data-[state=active]:bg-white/10">
+                  NFTs
+                </TabsTrigger>
               </TabsList>
             </Tabs>
-          </div>
 
-          {/* Grid */}
-          <div className="relative flex-1 w-full h-full p-4 overflow-y-scroll">
-            <DndContext
-              sensors={sensors}
-              onDragStart={handleDragStart}
-              onDragOver={handleDragOver}
-              onDragEnd={handleDragEnd}
-            >
-              <div
-                className={cn(
-                  'grid h-full gap-1',
-                  'grid-cols-[repeat(auto-fill,minmax(6rem,1fr))]',
-                  'auto-rows-[6rem]',
-                  'p-0.5',
-                  // 'bg-white/5',
-                  'rounded-lg'
-                )}
+            {/* Collection tabs - only show for NFT view */}
+            {inventoryState.viewMode === 'nfts' && (
+              <Tabs
+                value={inventoryState.activeTab}
+                onValueChange={value =>
+                  setInventoryState((prev: any) => ({ ...prev, activeTab: value }))
+                }
+                className="px-4 pb-2 overflow-x-scroll"
               >
-                {Array.from({ length: 150 }).map((_, index) => (
-                  <DraggableSlot
-                    key={`${currentCollection.id}-${index}`}
-                    index={index}
-                    item={currentInventory.find(item => item.slot === index) || null}
-                    isDraggedOver={draggedOverId === index.toString()}
-                  />
-                ))}
-              </div>
-
-              <DragOverlayPortal>
-                <DragOverlay dropAnimation={null}>
-                  {activeItem ? <DragOverlayContent item={activeItem} /> : null}
-                </DragOverlay>
-              </DragOverlayPortal>
-            </DndContext>
+                <TabsList className="bg-white/5">
+                  {nonEmptyCollections.map(collection => (
+                    <TabsTrigger
+                      key={collection.id}
+                      value={collection.id}
+                      className="text-xs data-[state=active]:bg-white/10"
+                    >
+                      {collection.name}
+                      {loadingCollections.has(collection.id) && (
+                        <Loader2 className="w-3 h-3 ml-2 animate-spin" />
+                      )}
+                    </TabsTrigger>
+                  ))}
+                </TabsList>
+              </Tabs>
+            )}
           </div>
+
+          {/* Main content area */}
+          <div className="relative flex-1 w-full h-full overflow-y-scroll">{renderContent()}</div>
         </div>
       </DrawerContent>
     </Drawer>

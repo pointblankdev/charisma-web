@@ -45,13 +45,14 @@ const Transfer = () => {
   const [sender, setSender] = useState('');
   const [recipient, setRecipient] = useState('');
   const [amount, setAmount] = useState('');
+  const [contract, setContract] = useState('');
 
   function transfer() {
     openContractCall(
       {
         network: network,
-        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-        contractName: 'hooter-the-owl',
+        contractAddress: contract.split('.')[0],
+        contractName: contract.split('.')[1],
         functionName: 'transfer',
         functionArgs: [
           uintCV(amount),
@@ -69,6 +70,11 @@ const Transfer = () => {
 
   return (
     <>
+      <Input
+        onChange={e => setContract(e.target.value)}
+        className="w-full"
+        placeholder="Token to Send"
+      />
       <Input onChange={e => setAmount(e.target.value)} className="w-full" placeholder="Amount" />
       <Input onChange={e => setSender(e.target.value)} className="w-full" placeholder="Sender" />
       <Input

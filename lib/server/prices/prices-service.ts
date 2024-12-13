@@ -107,6 +107,14 @@ class PricesService {
       if (!response.success || !response.data?.prices) {
         throw new Error('Failed to fetch prices');
       }
+      if (
+        !response.data.prices[
+          'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.crow-with-bitcoin-dexterity'
+        ]
+      )
+        response.data.prices[
+          'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.crow-with-bitcoin-dexterity'
+        ] = 0.0003;
 
       return response.data.prices;
     } catch (error) {
