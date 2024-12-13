@@ -605,7 +605,7 @@ ${initialMintChecked ? '(begin (mint DEPLOYER u1000000))' : ''}
                         <Slider
                           min={0}
                           max={100}
-                          step={1}
+                          step={0.001}
                           value={[inverseLogScale(parseFloat(field.value))]}
                           onValueChange={([value]) => field.onChange(logScale(value).toString())}
                           className="w-full"

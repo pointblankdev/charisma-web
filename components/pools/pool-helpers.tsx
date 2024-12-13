@@ -100,6 +100,9 @@ export const calculateTotalTVL = (pools: Pool[], tokenPrices: { [key: string]: n
 
 // Updated formatting functions
 export const formatUSD = (value: number) => {
+  if (value <= 0.01) {
+    return numeral(value).format('$0.0000');
+  }
   if (value >= 1_000_000) {
     return numeral(value).format('$0.00a');
   }

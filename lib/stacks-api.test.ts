@@ -83,13 +83,13 @@ describe('Stacks API', () => {
 
   it('should get contract metadata for single token', async () => {
     const metadata = await getContractMetadata(
-      'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.mentalbalance-dexterity'
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tmntcha-dexterity'
     );
     console.log(metadata);
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId = 'SP3M31QFF6S96215K4Y2Z9K5SGHJN384NV6YM6VM8.satoshai';
+    const contractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tmntcha-dexterity';
     const metadata = await getTokenMetadata(contractId);
     console.log(metadata);
     await setContractMetadata(contractId, {

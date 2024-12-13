@@ -4,8 +4,7 @@ import { getContractMetadata, getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
-import { network, userSession } from '@components/stacks-session/connect';
-import { cvToValue, fetchCallReadOnlyFunction, principalCV } from '@stacks/transactions';
+import { userSession } from '@components/stacks-session/connect';
 
 const socketUrl = 'https://api.mainnet.hiro.so';
 const sc = new StacksApiSocketClient({ url: socketUrl });
