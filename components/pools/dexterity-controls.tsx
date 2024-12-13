@@ -14,6 +14,7 @@ interface TokenDisplayProps {
   imgSrc?: string;
   label: string;
   rounded?: boolean;
+  price: number;
 }
 
 export const TokenDisplay: React.FC<TokenDisplayProps> = ({
@@ -21,23 +22,27 @@ export const TokenDisplay: React.FC<TokenDisplayProps> = ({
   symbol,
   imgSrc,
   label,
-  rounded = true
-}) => (
-  <div className="flex items-center p-4 space-x-2 rounded-lg bg-secondary/5">
-    <img
-      src={imgSrc || '/dmg-logo.png'}
-      alt={symbol}
-      className={cn('w-8 h-8', rounded ? 'rounded-full' : 'rounded-md')}
-    />
-    <div className="flex flex-col">
-      <span className="text-sm text-muted-foreground">{label}</span>
-      <div className="flex items-baseline space-x-2">
-        <span className="text-xl font-medium">{numeral(amount).format('0,0.00')}</span>
-        <span className="text-sm text-muted-foreground">{symbol}</span>
+  price
+}) => {
+  const usdValue = amount * price;
+
+  return (
+    <div className="flex items-center justify-between p-4 border rounded-lg border-border">
+      <div className="flex items-center space-x-3">
+        <img src={imgSrc} alt={symbol} className="w-8 h-8 rounded-full" />
+        <div>
+          <div className="text-sm text-muted-foreground">{label}</div>
+          <div className="text-lg font-medium">
+            {numeral(amount).format('0,0.0000')} {symbol}
+          </div>
+        </div>
+      </div>
+      <div className="text-right text-muted-foreground">
+        ≈ ${numeral(usdValue).format('0,0.00')}
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 interface BalanceInfoProps {
   balance: number;

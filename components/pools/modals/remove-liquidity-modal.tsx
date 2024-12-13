@@ -179,6 +179,7 @@ export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, tri
               amount={amounts.lpTokens / 10 ** pool.metadata.decimals}
               symbol={pool.metadata.symbol}
               imgSrc={pool.metadata.image}
+              price={tokenPrices[pool.contractId]}
               label="You will burn"
               rounded={false}
             />

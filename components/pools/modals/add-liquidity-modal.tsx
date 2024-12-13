@@ -153,6 +153,7 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
               amount={amounts.token0Amount / 10 ** pool.token0.metadata.decimals}
               symbol={pool.token0.metadata.symbol}
               imgSrc={pool.token0.metadata.image}
+              price={tokenPrices[pool.token0.contractId]}
               label="You will deposit"
             />
             <BalanceInfo
@@ -169,6 +170,7 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
               amount={amounts.token1Amount / 10 ** pool.token1.metadata.decimals}
               symbol={pool.token1.metadata.symbol}
               imgSrc={pool.token1.metadata.image}
+              price={tokenPrices[pool.token1.contractId]}
               label="You will deposit"
             />
             <BalanceInfo

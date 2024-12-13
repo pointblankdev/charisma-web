@@ -209,6 +209,7 @@ export const SwapModal = ({ pool, tokenPrices, onSwap, isToken0, trigger }: any)
               amount={swapAmounts.inAmount / 10 ** inToken.metadata.decimals}
               symbol={inToken.metadata.symbol}
               imgSrc={inToken.metadata.image}
+              price={tokenPrices[inToken.contractId]}
               label="You pay"
             />
             <div className="flex justify-center">
@@ -220,6 +221,7 @@ export const SwapModal = ({ pool, tokenPrices, onSwap, isToken0, trigger }: any)
               amount={quoteAmount / 10 ** outToken.metadata.decimals}
               symbol={outToken.metadata.symbol}
               imgSrc={outToken.metadata.image}
+              price={tokenPrices[outToken.contractId]}
               label="You receive (estimated)"
             />
             <BalanceInfo
