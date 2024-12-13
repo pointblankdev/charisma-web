@@ -89,7 +89,8 @@ describe('Stacks API', () => {
   });
 
   it('should update token metadata with decimals and token lookup', async () => {
-    const contractId = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tmntcha-dexterity';
+    const contractId =
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.teenage-mutant-ninja-turtles-dexterity';
     const metadata = await getTokenMetadata(contractId);
     console.log(metadata);
     await setContractMetadata(contractId, {
