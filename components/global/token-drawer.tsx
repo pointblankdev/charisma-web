@@ -39,7 +39,7 @@ const formatTokenInfo = (contractId: string, balance: string) => {
 };
 
 const TokenListItem = ({ token, metadata }: { token: any; metadata?: any }) => {
-  const formattedBalance = numeral(Number(token.balance)).format('0,0.00');
+  const formattedBalance = numeral(Number(token.balance)).format('0,0');
   const [imageError, setImageError] = useState(false);
 
   return (
@@ -191,7 +191,7 @@ const TokenList = () => {
   return (
     <div className="space-y-4">
       {/* Portfolio Summary */}
-      <div className="px-4 py-2 rounded-lg bg-white/5">
+      <div className="px-4 py-2 rounded-lg bg-white/5 blur">
         <div className="mb-1 text-sm text-white/60">Portfolio Value</div>
         <div className="text-2xl font-medium">$4,891.23</div>
         <div className="text-sm text-green-500">+3.2% (24h)</div>
