@@ -1,5 +1,11 @@
 {
   "name": "Dexterity",
   "description": "The first Stacks token to implement the liquidity pool SIP spec.",
-  "image": "https://charisma.rocks/sip10/dexterity/logo.png"
+  "image": "https://charisma.rocks/sip10/dexterity/logo.png",
+  "properties": {
+    "contractName": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dexterity-pool-v1",
+    "tokenAContract": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
+    "tokenBContract": "SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.dme000-governance-token",
+    "lpRebatePercent": 5
+  }
 }
