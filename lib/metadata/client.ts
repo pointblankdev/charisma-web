@@ -114,6 +114,17 @@ export class TokenMetadataClient {
     });
     return response.json();
   }
+
+  async migrateData(oldKey: string, newKey: string): Promise<ApiResponse<Record<string, any>>> {
+    const response = await this.fetchWithAuth(`/migrate`, {
+      method: 'POST',
+      body: JSON.stringify({
+        oldKey,
+        newKey
+      })
+    });
+    return response.json();
+  }
 }
 
 // Example usage:

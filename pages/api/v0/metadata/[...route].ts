@@ -204,7 +204,63 @@ async function handleUpdate(
   }
 }
 
+// Add to existing interfaces
+interface MigrationRequest {
+  oldKey: string;
+  newKey: string;
+}
+
+// Add migration handler
+async function handleMigrate(req: NextApiRequest, res: NextApiResponse) {
+  const { oldKey, newKey } = req.body as MigrationRequest;
+
+  if (!isValidContractId(oldKey) || !isValidContractId(newKey)) {
+    return res.status(400).json({ error: 'Invalid contract ID format' });
+  }
+
+  try {
+    // Get old data
+    const oldKeyFormatted = getKvKey(oldKey);
+    const newKeyFormatted = getKvKey(newKey);
+
+    const oldData = await kv.get<TokenMetadata>(oldKeyFormatted);
+    if (!oldData) {
+      return res.status(404).json({ error: 'Source data not found' });
+    }
+
+    // Copy data to new key
+    await kv.set(newKeyFormatted, oldData);
+
+    // Optional: Update lastUpdated timestamp
+    const updatedData = {
+      ...oldData,
+      properties: {
+        ...oldData.properties,
+        lastUpdated: new Date().toISOString()
+      }
+    };
+
+    await kv.set(newKeyFormatted, updatedData);
+
+    return res.status(200).json({
+      success: true,
+      source: oldKey,
+      destination: newKey,
+      metadata: updatedData
+    });
+  } catch (error) {
+    console.error('Failed to migrate data:', error);
+    return res.status(500).json({ error: 'Failed to migrate data' });
+  }
+}
+
+// Update the handler function to include the new migrate route
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+  // Auth check for protected routes
+  if (req.method !== 'GET' && !validateAuth(req)) {
+    return res.status(401).json({ error: 'Unauthorized' });
+  }
+
   const { route } = req.query;
   const paths = route as string[];
 
@@ -217,6 +273,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // GET /api/v0/metadata/{contractId}
     if (req.method === 'GET') {
       return handleGet(req, res, paths[0]);
+    }
+    if (req.method === 'POST') {
+      return handleMigrate(req, res);
     }
   } else if (paths.length === 2) {
     const [action, contractId] = paths;

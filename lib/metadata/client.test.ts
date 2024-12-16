@@ -60,22 +60,15 @@ describe('TokenMetadataClient Integration Tests', () => {
     console.log('Patch Response:', JSON.stringify(patchResult, null, 2), '\n');
   });
 
-  test('generate with different image prompt', async () => {
-    console.log('Testing metadata generation with custom image prompt...\n');
+  test('move data to new endpoint', async () => {
+    const result1 = await client.get('SP15WAVKQNT241YVCGQMJS777E17H9TS96M21Q5DX.sexy-pepe');
 
-    const customContractId = 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.custom-token';
+    const result2 = await client.patch(
+      'SP15WAVKQNT241YVCGQMJS777E17H9TS96M21Q5DX.sexy-pep',
+      result1.metadata as any
+    );
 
-    const result = await client.generate(customContractId, {
-      name: 'Custom Token',
-      symbol: 'CUST',
-      decimals: 6,
-      identifier: 'CUST',
-      description: 'A token with custom artwork',
-      imagePrompt:
-        'Create a cyberpunk-style cryptocurrency token icon with neon colors and circuit board patterns.'
-    });
-
-    console.log('Custom Generate Response:', JSON.stringify(result, null, 2));
+    console.log('Custom Generate Response:', JSON.stringify(result2, null, 2));
   });
 
   test('get metadata by contract ID', async () => {
@@ -96,6 +89,20 @@ describe('TokenMetadataClient Integration Tests', () => {
       } catch (error) {
         console.log('Error Response:', error, '\n');
       }
+    }
+  });
+
+  test('migrate data to new key', async () => {
+    console.log('Starting full data migration...\n');
+
+    const oldKey = 'SP15WAVKQNT241YVCGQMJS777E17H9TS96M21Q5DX.sexy-pepe';
+    const newKey = 'SP15WAVKQNT241YVCGQMJS777E17H9TS96M21Q5DX.sexy-pep';
+
+    try {
+      const results = await client.migrateData(oldKey, newKey);
+      console.log('Migration Results:', JSON.stringify(results, null, 2));
+    } catch (error) {
+      console.error('Migration failed:', error);
     }
   });
 }, 200000);
