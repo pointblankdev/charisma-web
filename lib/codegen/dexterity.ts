@@ -1,4 +1,5 @@
 interface ContractParams {
+  tokenUri: string;
   contractName: string;
   tokenAContract: string;
   tokenBContract: string;
@@ -9,6 +10,7 @@ interface ContractParams {
 
 export function generateContractCode(params: ContractParams): string {
   const {
+    tokenUri,
     contractName,
     tokenAContract,
     tokenBContract,
@@ -16,6 +18,9 @@ export function generateContractCode(params: ContractParams): string {
     lpTokenSymbol,
     lpRebatePercent
   } = params;
+
+  // Check if token A is STX
+  const isTokenAStx = tokenAContract === '.stx';
 
   const lpRebateRaw = Math.floor((parseFloat(lpRebatePercent.toString()) / 100) * 1000000);
 
@@ -46,7 +51,7 @@ export function generateContractCode(params: ContractParams): string {
 
 ;; Define LP token
 (define-fungible-token ${lpTokenSymbol})
-(define-data-var token-uri (optional (string-utf8 256)) none)
+(define-data-var token-uri (optional (string-utf8 256)) (some u"${tokenUri}"))
 
 ;; --- SIP10 Functions ---
 
@@ -108,7 +113,11 @@ export function generateContractCode(params: ContractParams): string {
         (sender tx-sender)
         (delta (get-swap-quote amount (some OP_SWAP_A_TO_B))))
         ;; Transfer token A to pool
-        (try! (contract-call? '${tokenAContract} transfer amount sender CONTRACT none))
+        ${
+          isTokenAStx
+            ? '(try! (stx-transfer? amount sender CONTRACT))'
+            : `(try! (contract-call? '${tokenAContract} transfer amount sender CONTRACT none))`
+        }
         ;; Transfer token B to sender
         (try! (as-contract (contract-call? '${tokenBContract} transfer (get dy delta) CONTRACT sender none)))
         (ok delta)))
@@ -120,14 +129,22 @@ export function generateContractCode(params: ContractParams): string {
         ;; Transfer token B to pool
         (try! (contract-call? '${tokenBContract} transfer amount sender CONTRACT none))
         ;; Transfer token A to sender
-        (try! (as-contract (contract-call? '${tokenAContract} transfer (get dy delta) CONTRACT sender none)))
+        ${
+          isTokenAStx
+            ? '(try! (as-contract (stx-transfer? (get dy delta) CONTRACT sender)))'
+            : `(try! (as-contract (contract-call? '${tokenAContract} transfer (get dy delta) CONTRACT sender none)))`
+        }
         (ok delta)))
 
 (define-public (add-liquidity (amount uint))
     (let (
         (sender tx-sender)
         (delta (get-liquidity-quote amount)))
-        (try! (contract-call? '${tokenAContract} transfer (get dx delta) sender CONTRACT none))
+        ${
+          isTokenAStx
+            ? '(try! (stx-transfer? (get dx delta) sender CONTRACT))'
+            : `(try! (contract-call? '${tokenAContract} transfer (get dx delta) sender CONTRACT none))`
+        }
         (try! (contract-call? '${tokenBContract} transfer (get dy delta) sender CONTRACT none))
         (try! (ft-mint? ${lpTokenSymbol} (get dk delta) sender))
         (ok delta)))
@@ -137,7 +154,11 @@ export function generateContractCode(params: ContractParams): string {
         (sender tx-sender)
         (delta (get-liquidity-quote amount)))
         (try! (ft-burn? ${lpTokenSymbol} (get dk delta) sender))
-        (try! (as-contract (contract-call? '${tokenAContract} transfer (get dx delta) CONTRACT sender none)))
+        ${
+          isTokenAStx
+            ? '(try! (as-contract (stx-transfer? (get dx delta) CONTRACT sender)))'
+            : `(try! (as-contract (contract-call? '${tokenAContract} transfer (get dx delta) CONTRACT sender none)))`
+        }
         (try! (as-contract (contract-call? '${tokenBContract} transfer (get dy delta) CONTRACT sender none)))
         (ok delta)))
 
@@ -148,7 +169,11 @@ export function generateContractCode(params: ContractParams): string {
 
 (define-private (get-reserves)
     { 
-      a: (unwrap-panic (contract-call? '${tokenAContract} get-balance CONTRACT)), 
+      a: ${
+        isTokenAStx
+          ? '(stx-get-balance CONTRACT)'
+          : `(unwrap-panic (contract-call? '${tokenAContract} get-balance CONTRACT))`
+      }, 
       b: (unwrap-panic (contract-call? '${tokenBContract} get-balance CONTRACT)) 
     })
 
@@ -182,14 +207,19 @@ export function generateContractCode(params: ContractParams): string {
         }))`;
 }
 
+// Helper to determine if contract name is safe for STX pool
 export function sanitizeContractName(name: string): string {
-  return name
+  const sanitized = name
     .toLowerCase()
     .replace(/[^a-zA-Z0-9 ]/g, '')
     .replace(/\s+/g, '-');
+  return sanitized;
+}
+export function getFullContractName(sanitizedName: string, stxAddress: string): string {
+  const safeContractName = `${sanitizedName}`;
+  return `${stxAddress}.${safeContractName}`;
 }
 
-export function getFullContractName(sanitizedName: string, stxAddress: string): string {
-  const safeContractName = `${sanitizedName}-pool-v1`;
-  return `${stxAddress}.${safeContractName}`;
+export function getTokenUri(contractId: string): string {
+  return `https://charisma.rocks/api/v0/metadata/${contractId}`;
 }

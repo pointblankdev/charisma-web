@@ -52,6 +52,8 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
       };
     });
 
+    console.log(pools);
+
     return {
       props: {
         data: {

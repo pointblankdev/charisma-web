@@ -12,6 +12,7 @@ import Layout from '@components/layout/layout';
 import {
   generateContractCode,
   getFullContractName,
+  getTokenUri,
   sanitizeContractName
 } from '@lib/codegen/dexterity';
 import { TokenSelector } from '@components/dexterity/token-selector';
@@ -104,6 +105,7 @@ export default function ContractDeployer() {
     setFullContractName(fullName);
 
     const code = generateContractCode({
+      tokenUri: getTokenUri(fullContractName),
       contractName: data.contractName,
       tokenAContract: data.tokenAContract,
       tokenBContract: data.tokenBContract,

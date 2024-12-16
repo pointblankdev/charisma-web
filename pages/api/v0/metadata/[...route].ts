@@ -214,7 +214,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   // Handle different route patterns
   if (paths.length === 1) {
-    // GET /api/token-metadata/{contractId}
+    // GET /api/v0/metadata/{contractId}
     if (req.method === 'GET') {
       return handleGet(req, res, paths[0]);
     }

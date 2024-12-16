@@ -9,7 +9,7 @@ const PRESET_TOKENS = [
   {
     name: 'Stacks',
     symbol: 'STX',
-    contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx',
+    contractId: '.stx',
     image: '/stx-logo.png',
     description: 'Native token of the Stacks blockchain'
   },
@@ -60,11 +60,9 @@ export function TokenSelector({ onSelect }: TokenSelectorProps) {
             key={token.contractId}
             className={cn(
               'relative overflow-hidden transition-all cursor-pointer group hover:border-primary/50',
-              (token.symbol === 'sBTC' || token.symbol === 'STX') && 'grayscale'
+              token.symbol === 'sBTC' && 'grayscale'
             )}
-            onClick={() =>
-              token.symbol === 'sBTC' || token.symbol === 'STX' ? null : onSelect(token)
-            }
+            onClick={() => (token.symbol === 'sBTC' ? null : onSelect(token))}
           >
             {/* Background Gradient */}
             <div className="absolute inset-0 bg-gradient-to-br from-primary/5 to-transparent" />
