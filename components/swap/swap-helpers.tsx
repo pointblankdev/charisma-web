@@ -315,16 +315,12 @@ export const createSwapTransaction = async ({
     // Pool receives token from sender (first hop) or previous pool
     if (fromToken.metadata.symbol !== 'STX') {
       postConditions.push(
-        Pc.principal(index === 0 ? stxAddress : hops[index - 1].pool.contractId)
+        Pc.principal(stxAddress)
           .willSendLte(inputAmount)
           .ft(fromToken.contractId, fromToken.metadata.identifier)
       );
     } else {
-      postConditions.push(
-        Pc.principal(index === 0 ? stxAddress : hops[index - 1].pool.contractId)
-          .willSendLte(inputAmount)
-          .ustx()
-      );
+      postConditions.push(Pc.principal(stxAddress).willSendLte(inputAmount).ustx());
     }
 
     const outputWithSlippage = Math.floor(outputAmount * (1 - slippage / 100));
