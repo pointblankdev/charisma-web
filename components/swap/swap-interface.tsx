@@ -14,7 +14,7 @@ import {
   formatUSD,
   calculateEstimatedAmountOutWithCache
 } from './swap-helpers';
-import { getGraph, initializeGraph } from './swap-graph';
+import { getGraph, initializeGraph } from './swap-graph-dexterity';
 import dynamic from 'next/dynamic';
 import SimpleSwapInterface from './simple-swap-ui';
 
@@ -230,9 +230,8 @@ export const SwapInterface = ({ data }: { data: any }) => {
   const [showToTokens, setShowToTokens] = useState(false);
   const [estimatedAmountOut, setEstimatedAmountOut] = useState('0');
   const [isCalculating, setIsCalculating] = useState(false);
-  const [slippage, setSlippage] = useState(10);
+  const [slippage, setSlippage] = useState(0);
   const [swapPath, setSwapPath] = useState<any[]>([]);
-  const [isMultiHop, setIsMultiHop] = useState(false);
   const [swappableTokens, setSwappableTokens] = useState<any[]>([]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
@@ -291,16 +290,17 @@ export const SwapInterface = ({ data }: { data: any }) => {
 
       setIsCalculating(true);
       try {
-        const estimated = await calculateEstimatedAmountOutWithCache(
+        const deltas = await calculateEstimatedAmountOutWithCache(
           amount,
           fromToken,
           toToken,
           swapPath,
-          stxAddress,
-          isMultiHop,
-          data.currentPool
+          stxAddress
         );
-        setEstimatedAmountOut(estimated);
+        const amountOut = deltas[deltas.length - 1].dy.value;
+        setEstimatedAmountOut(
+          (amountOut / 10 ** toToken.metadata.decimals).toFixed(toToken.metadata.decimals)
+        );
       } catch (error) {
         console.error('Error estimating amount:', error);
         setEstimatedAmountOut('0');
@@ -308,7 +308,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
         setIsCalculating(false);
       }
     },
-    [fromToken, toToken, stxAddress, isMultiHop, swapPath, data.currentPool]
+    [fromToken, toToken, stxAddress, swapPath]
   );
 
   const handleFromAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -335,10 +335,8 @@ export const SwapInterface = ({ data }: { data: any }) => {
       hasHighExperience
     );
     if (path) {
-      setIsMultiHop(path.length > 2);
       setSwapPath(path);
     } else {
-      setIsMultiHop(false);
       setSwapPath([]);
     }
   }, [fromToken, toToken, fromAmount, stxAddress, hasHighExperience]);
@@ -351,7 +349,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
     handleEstimateAmount(fromAmount);
   }, [fromAmount, handleEstimateAmount]);
 
-  const handleSwap = () => {
+  const handleSwap = async () => {
     if (!fromToken || !toToken || !stxAddress) return;
 
     const minimumAmountOut = calculateMinimumAmountOut(
@@ -360,15 +358,15 @@ export const SwapInterface = ({ data }: { data: any }) => {
       toToken.metadata.decimals
     );
 
-    const transaction = createSwapTransaction({
+    const transaction = await createSwapTransaction({
       pool: data.currentPool,
       fromToken,
       toToken,
       fromAmount,
       minimumAmountOut,
       swapPath,
-      isMultiHop,
       stxAddress,
+      slippage,
       onFinish: (data: any) => {
         console.log('Swap successful:', data);
         setFromAmount('');
@@ -425,10 +423,10 @@ export const SwapInterface = ({ data }: { data: any }) => {
               <TokenInput
                 token={fromToken}
                 amount={fromAmount}
-                price={data.prices[fromToken.contractId] || 0}
+                price={data.prices[fromToken?.contractId] || 0}
                 onChange={handleFromAmountChange}
                 onUseMax={handleUseMax}
-                balance={getBalance(fromToken.contractId)}
+                balance={getBalance(fromToken?.contractId)}
                 duration={0.01}
               />
             </div>
@@ -438,7 +436,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
               <button
                 className="p-2 mx-auto rounded-full bg-[var(--sidebar)]"
                 onClick={handleSwapDirectionToggle}
-                disabled={fromToken.metadata.symbol === 'STX' && !hasHighExperience}
+                disabled={fromToken?.metadata.symbol === 'STX' && !hasHighExperience}
               >
                 <ArrowUpDown className="text-gray-400" size={24} />
               </button>

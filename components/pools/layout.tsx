@@ -50,7 +50,7 @@ export default function PoolsLayout({ children }: any) {
   const currentPath = router.pathname;
 
   return (
-    <div className="flex flex-col w-full max-w-[2400px] mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="flex flex-col w-full max-w-[3000px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header Section */}
       <div className="my-2 mt-4 sm:px-4">
         <h1 className="mb-3 text-3xl font-bold tracking-tight">Liquidity Pools</h1>
@@ -61,7 +61,7 @@ export default function PoolsLayout({ children }: any) {
 
       {/* Tabs Navigation */}
       <div className="w-full mb-0 sm:px-4">
-        <div className="relative z-30 grid grid-cols-4 max-w-4xl gap-2 p-1 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg">
+        <div className="relative z-30 grid grid-cols-4 max-w-5xl gap-2 p-1 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger asChild>
@@ -119,7 +119,7 @@ export default function PoolsLayout({ children }: any) {
               </TooltipContent>
             </Tooltip>
 
-            <Tooltip>
+            {/* <Tooltip>
               <TooltipTrigger asChild>
                 <Link
                   href="/pools/derivatives"
@@ -145,7 +145,7 @@ export default function PoolsLayout({ children }: any) {
                   lpYield={0.25}
                 />
               </TooltipContent>
-            </Tooltip>
+            </Tooltip> */}
 
             <Tooltip>
               <TooltipTrigger asChild>
@@ -160,10 +160,45 @@ export default function PoolsLayout({ children }: any) {
                   )}
                 >
                   <ChartNetworkIcon className="w-4 h-4" />
+                  <span>Dexterity Pools (Classic)</span>
+                  <span
+                    className={cn(
+                      currentPath !== '/pools/new-dex' ? '' : '',
+                      'absolute -top-2 -right-1 px-1.5 py-0.5 bg-gray-500 text-primary-foreground text-[10px] font-medium rounded-full'
+                    )}
+                  >
+                    Deprecated
+                  </span>
+                </Link>
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="w-[400px] m-2">
+                <PoolTooltip
+                  icon={CrosshairIcon}
+                  title="Dexterity Pools"
+                  subtitle="Deploy your own DEX and Earn Fees"
+                  description="Create your own liquidity pool with any two tokens, set your own protocol fee and earn trading fees anytime someone swaps between your tokens."
+                  protocolFee={0}
+                  lpYield={'Variable '}
+                />
+              </TooltipContent>
+            </Tooltip>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <Link
+                  href="/pools/new-dex"
+                  className={cn(
+                    'relative flex items-center justify-center gap-2 px-4 py-2 rounded-md transition-all',
+                    'hover:bg-accent/50 hover:text-accent-foreground',
+                    currentPath === '/pools/new-dex'
+                      ? 'bg-accent/90 text-accent-foreground shadow-sm'
+                      : 'text-muted-foreground'
+                  )}
+                >
+                  <ChartNetworkIcon className="w-4 h-4" />
                   <span>Dexterity Pools</span>
                   <span
                     className={cn(
-                      currentPath !== '/pools/dexterity' ? 'animate-bounce' : '',
+                      currentPath !== '/pools/new-dex' ? 'animate-bounce' : '',
                       'absolute -top-1 -right-1 px-1.5 py-0.5 bg-primary text-primary-foreground text-[10px] font-medium rounded-full'
                     )}
                   >

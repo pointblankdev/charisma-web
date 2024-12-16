@@ -6,52 +6,69 @@ import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/server/prices/prices-service';
 import { DexClient } from '@lib/server/pools/pools.client';
 import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
+import { DEXTERITY_ABI, getContractsByTrait } from '@lib/server/traits/service';
+import { getDecimals, getIdentifier, getSymbol, getTokenMetadata } from '@lib/stacks-api';
+import _ from 'lodash';
 
 // Initialize client
-const dexClient = new DexClient();
-const registryClient = new TokenRegistryClient();
 const service = PricesService.getInstance();
 
 export const getStaticProps: GetStaticProps<any> = async () => {
   // Get enhanced token info and prices in parallel
-  const [tokenInfo, prices] = await Promise.all([
-    registryClient.listAll(),
+  const [contracts, prices] = await Promise.all([
+    getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 }),
     service.getAllTokenPrices()
   ]);
 
-  // build pools data
-  const tokenList = tokenInfo.tokens;
-  const lpTokens = tokenList.filter((t: any) => charismaNames.includes(t.lpInfo?.dex));
+  const tokens = [];
   const pools = [];
-  for (const lpToken of lpTokens) {
-    try {
-      const poolData = await dexClient.getPool(lpToken.lpInfo.token0, lpToken.lpInfo.token1);
-      const token0 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token0) || {};
-      const token1 = tokenList.find((t: any) => t.contractId === lpToken.lpInfo.token1) || {};
-      pools.push({ ...lpToken, token0: token0, token1: token1, poolData });
-    } catch (error) {
-      console.warn(error);
-    }
-  }
 
-  // filter out specific tokens
-  const allowedTokens = tokenList
-    .filter((t: any) => t.audit)
-    .filter((t: any) => t.metadata?.symbol !== 'EXP')
-    .filter((t: any) => t.metadata?.symbol)
-    .filter(
-      (t: any) =>
-        t.audit?.fungibleTokens?.[0]?.tokenIdentifier ||
-        t.metadata.symbol === 'STX' ||
-        t.metadata.symbol === 'wSTX'
-    );
+  // get all token metadata
+  for (const contract of contracts) {
+    const metadata = await getTokenMetadata(contract.contract_id);
+
+    const metadataA = await getTokenMetadata(metadata.properties.tokenAContract);
+    const metadataB = await getTokenMetadata(metadata.properties.tokenBContract);
+
+    const token0 = {
+      contractId: metadata.properties.tokenAContract,
+      metadata: {
+        ...metadataA,
+        symbol: await getSymbol(metadata.properties.tokenAContract),
+        decimals: await getDecimals(metadata.properties.tokenAContract),
+        identifier: await getIdentifier(metadata.properties.tokenAContract)
+      }
+    };
+    const token1 = {
+      contractId: metadata.properties.tokenBContract,
+      metadata: {
+        ...metadataB,
+        symbol: await getSymbol(metadata.properties.tokenBContract),
+        decimals: await getDecimals(metadata.properties.tokenBContract),
+        identifier: await getIdentifier(metadata.properties.tokenBContract)
+      }
+    };
+
+    tokens.push(token0, token1);
+    pools.push({
+      contractId: contract.contract_id,
+      metadata: {
+        ...metadata,
+        symbol: await getSymbol(contract.contract_id),
+        decimals: await getDecimals(contract.contract_id),
+        identifier: await getIdentifier(contract.contract_id)
+      },
+      token0,
+      token1
+    });
+  }
 
   return {
     props: {
       data: {
         prices,
-        tokens: allowedTokens,
-        pools
+        tokens: _.uniqBy(tokens, 'contractId'),
+        pools: pools
       }
     },
     revalidate: 60

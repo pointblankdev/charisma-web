@@ -43,6 +43,7 @@ export const WalletBalancesProvider: React.FC<{ children: React.ReactNode }> = (
   }, [stxAddress]);
 
   const getKeyByContractAddress = (contractAddress: string) => {
+    if (!contractAddress) return '';
     if (contractAddress.endsWith('.wstx')) return 'STX::native';
     if (contractAddress.endsWith('.stx')) return 'STX::native';
     const tokensArray = Object.keys(balances?.fungible_tokens || {});

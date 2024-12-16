@@ -8,6 +8,7 @@ import {
 } from '@stacks/transactions';
 import { cvToJSON } from '@stacks/transactions';
 import { kv } from '@vercel/kv';
+import { getContractInfo } from './server/traits/service';
 
 const CACHE_DURATION = 60 * 60 * 24 * 7; // 7 days in seconds
 
@@ -271,6 +272,13 @@ export async function getSymbol(
     console.error(`Error fetching symbol for ${contract}:`, error);
     throw error;
   }
+}
+
+export async function getIdentifier(
+  contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+) {
+  const contractInfo = await getContractInfo(contract);
+  return JSON.parse(contractInfo.data.abi).fungible_tokens[0].name;
 }
 
 export async function getTokenName(

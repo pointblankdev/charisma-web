@@ -4,12 +4,38 @@ import {
   PostConditionMode,
   uintCV,
   cvToValue,
-  listCV
+  listCV,
+  bufferCV,
+  someCV,
+  optionalCVOf,
+  tupleCV
 } from '@stacks/transactions';
 import { fetchCallReadOnlyFunction } from '@stacks/transactions';
 import { network } from '@components/stacks-session/connect';
-import { getGraph } from './swap-graph';
+import { getGraph, SwapGraph } from './swap-graph-dexterity';
 import { uniqBy } from 'lodash';
+import { hexToBytes } from '@stacks/common';
+
+// Helper to determine if path exists and get pool info
+function getPoolFromGraph(fromToken: string, toToken: string, graph: SwapGraph) {
+  // Get node from graph
+  const node = graph.nodes.get(fromToken);
+  if (!node) return null;
+
+  // Get connection to target token
+  const connection = node.connections.get(toToken);
+  if (!connection) return null;
+
+  return connection.pool;
+}
+
+// Helper to create hop tuple
+function createHopTuple(pool: any, isAToB: boolean) {
+  return tupleCV({
+    pool: contractPrincipalCV(pool.contractId.split('.')[0], pool.contractId.split('.')[1]),
+    opcode: optionalCVOf(bufferCV(hexToBytes(isAToB ? '00' : '01')))
+  });
+}
 
 // Cache key generator
 const getAmountCacheKey = (
@@ -24,7 +50,7 @@ const getAmountCacheKey = (
 };
 
 // Simple cache implementation
-const amountCache = new Map<string, { amount: string; timestamp: number }>();
+const amountCache = new Map<string, { amounts: any[]; timestamp: number }>();
 
 // Cache duration in milliseconds (e.g., 30 seconds)
 const CACHE_DURATION = 30 * 1000;
@@ -40,10 +66,8 @@ export const calculateEstimatedAmountOutWithCache = async (
   fromToken: any,
   toToken: any,
   swapPath: any[],
-  stxAddress: string,
-  isMultiHop: boolean,
-  _currentPool?: any
-): Promise<string> => {
+  stxAddress: string
+): Promise<any[]> => {
   const cacheKey = getAmountCacheKey(fromAmount, fromToken, toToken, swapPath);
   const now = Date.now();
 
@@ -51,23 +75,21 @@ export const calculateEstimatedAmountOutWithCache = async (
   const cached = amountCache.get(cacheKey);
   if (cached && now - cached.timestamp < CACHE_DURATION) {
     console.log('Cache hit for amount calculation:', cacheKey);
-    return cached.amount;
+    return cached.amounts;
   }
 
   // Calculate if not in cache or expired
-  const amount = await calculateEstimatedAmountOut(
+  const amounts = await calculateEstimatedAmountOut(
     fromAmount,
     fromToken,
     toToken,
     swapPath,
-    stxAddress,
-    isMultiHop,
-    _currentPool
+    stxAddress
   );
 
   // Update cache
   amountCache.set(cacheKey, {
-    amount,
+    amounts,
     timestamp: now
   });
 
@@ -82,7 +104,7 @@ export const calculateEstimatedAmountOutWithCache = async (
     }
   }
 
-  return amount;
+  return amounts;
 };
 
 export const calculateEstimatedAmountOut = async (
@@ -90,80 +112,56 @@ export const calculateEstimatedAmountOut = async (
   fromToken: any,
   toToken: any,
   swapPath: any[],
-  stxAddress: string,
-  isMultiHop: boolean,
-  _currentPool?: any // We won't use this anymore
-): Promise<string> => {
-  if (!fromAmount || isNaN(parseFloat(fromAmount))) {
-    return '0';
-  }
+  stxAddress: string
+): Promise<any[]> => {
+  if (!fromAmount || isNaN(parseFloat(fromAmount))) return [];
 
   const graph = getGraph();
-  const amountInMicroTokens = BigInt(
+  let currentAmount = BigInt(
     Math.floor(parseFloat(fromAmount) * 10 ** fromToken.metadata.decimals)
   );
+  const results = [];
 
   try {
-    const contractAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
-    const contractName = 'univ2-path2';
+    // Process each hop in the path
+    for (let i = 0; i < swapPath.length - 1; i++) {
+      const currentToken = swapPath[i];
+      const nextToken = swapPath[i + 1];
 
-    let response;
-    if (isMultiHop) {
-      const functionName = `get-amount-out-${swapPath.length}`;
-      const functionArgs = [
-        uintCV(amountInMicroTokens),
-        ...swapPath.map(token =>
-          contractPrincipalCV(token.contractId.split('.')[0], token.contractId.split('.')[1])
-        )
-      ];
-
-      if (swapPath.length === 4) functionArgs.push(listCV([]) as any);
-
-      response = await fetchCallReadOnlyFunction({
-        contractAddress,
-        contractName,
-        functionName,
-        functionArgs,
-        senderAddress: stxAddress
-      });
-    } else {
-      // Get pool from graph for single-hop swap
-      const pool = graph.getDirectPool(fromToken.contractId, toToken.contractId);
-      if (!pool) {
+      // Get pool from graph
+      const pool = getPoolFromGraph(currentToken.contractId, nextToken.contractId, graph);
+      if (!pool)
         throw new Error(
-          `No pool found between ${fromToken.metadata.symbol} and ${toToken.metadata.symbol}`
+          `No pool found between ${currentToken.metadata.symbol} and ${nextToken.metadata.symbol}`
         );
-      }
 
-      response = await fetchCallReadOnlyFunction({
-        contractAddress,
-        contractName,
-        functionName: 'amount-out',
+      // Determine direction
+      const isAToB = pool.token0.contractId === currentToken.contractId;
+
+      // Get quote from pool
+      const response = await fetchCallReadOnlyFunction({
+        contractAddress: pool.contractId.split('.')[0],
+        contractName: pool.contractId.split('.')[1],
+        functionName: 'quote',
         functionArgs: [
-          uintCV(amountInMicroTokens),
-          contractPrincipalCV(
-            fromToken.contractId.split('.')[0],
-            fromToken.contractId.split('.')[1]
-          ),
-          contractPrincipalCV(toToken.contractId.split('.')[0], toToken.contractId.split('.')[1])
+          uintCV(currentAmount),
+          optionalCVOf(bufferCV(hexToBytes(isAToB ? '00' : '01')))
         ],
         senderAddress: stxAddress
       });
+
+      const result = cvToValue(response).value;
+      results.push(result);
+      currentAmount = BigInt(result.dy.value);
     }
 
-    const result = cvToValue(response);
+    console.log('Amounts:', results);
 
-    if (isMultiHop) {
-      const lastHopResult = result[Object.keys(result).pop() as any];
-      return (Number(lastHopResult.value) / 10 ** toToken.metadata.decimals).toFixed(
-        toToken.metadata.decimals
-      );
-    }
-
-    return (Number(result) / 10 ** toToken.metadata.decimals).toFixed(toToken.metadata.decimals);
+    // Return final amount
+    return results;
   } catch (error) {
-    console.error('Error calculating estimated amount:', error);
-    return '0';
+    console.error('Error calculating quote:', error);
+    return [];
   }
 };
 
@@ -176,7 +174,7 @@ export const findBestSwapPath = async (
   hasHighExperience: boolean
 ): Promise<any[] | null> => {
   const graph = getGraph();
-  const paths = graph.findAllPaths(fromToken.contractId, toToken.contractId, hasHighExperience);
+  const paths = graph.findAllPaths(fromToken?.contractId, toToken?.contractId, hasHighExperience);
 
   if (paths.length === 0) return null;
 
@@ -188,17 +186,16 @@ export const findBestSwapPath = async (
     const pathAmounts = await Promise.all(
       paths.map(async path => {
         try {
-          const amount = await calculateEstimatedAmountOutWithCache(
+          const amounts = await calculateEstimatedAmountOutWithCache(
             fromAmount,
             fromToken,
             toToken,
             path,
-            stxAddress,
-            path.length > 2 // isMultiHop if path length > 2
+            stxAddress
           );
           return {
             path,
-            amount: parseFloat(amount)
+            amount: parseFloat(amounts[amounts.length - 1].dy.value)
           };
         } catch (error) {
           console.warn('Error calculating amount for path:', error);
@@ -259,121 +256,102 @@ export const poolExists = (token0: any, token1: any, pools: any[]): boolean => {
   );
 };
 
-export const createSwapTransaction = ({
-  fromToken,
-  toToken,
+export const createSwapTransaction = async ({
   fromAmount,
-  minimumAmountOut,
   swapPath,
-  isMultiHop,
-  stxAddress,
   onFinish,
-  onCancel
+  stxAddress,
+  slippage
 }: any) => {
   const graph = getGraph();
-  const pool = isMultiHop ? null : graph.getDirectPool(fromToken.contractId, toToken.contractId);
+  const functionName = `swap-${swapPath.length - 1}`;
 
-  const postConditions: any[] = [];
-  const amountInMicroTokens = Math.floor(
-    parseFloat(fromAmount) * 10 ** fromToken.metadata.decimals
+  // Get quotes first to determine amounts for each hop
+  const results = await calculateEstimatedAmountOut(
+    fromAmount,
+    swapPath[0],
+    swapPath[swapPath.length - 1],
+    swapPath,
+    stxAddress
   );
-  const minAmountOutMicroTokens = Math.floor(
-    parseFloat(minimumAmountOut) * 10 ** toToken.metadata.decimals
-  );
 
-  // Add post-condition for the initial token transfer from the user
-  if (fromToken.metadata.symbol !== 'STX') {
-    postConditions.push(
-      Pc.principal(stxAddress)
-        .willSendGte(1)
-        .ft(fromToken.contractId, fromToken.audit.fungibleTokens[0].tokenIdentifier)
-    );
-  } else {
-    postConditions.push(Pc.principal(stxAddress).willSendGte(1).ustx());
-  }
-
-  if (isMultiHop) {
-    // Add post-conditions for intermediate hops
-    for (let i = 1; i < swapPath.length - 1; i++) {
-      const inToken = swapPath[i];
-      const outToken = swapPath[i + 1];
-      console.log(inToken);
-      console.log(outToken);
-      let inPc = Pc.principal(stxAddress).willSendGte(1);
-      let outPc = Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(
-        1
+  // Create hop tuples and gather pools with quote results
+  const hops = swapPath.slice(0, -1).map((token: any, index: number) => {
+    const nextToken = swapPath[index + 1];
+    const pool = getPoolFromGraph(token.contractId, nextToken.contractId, graph);
+    if (!pool)
+      throw new Error(
+        `No pool found between ${token.metadata.symbol} and ${nextToken.metadata.symbol}`
       );
-      if (inToken.metadata.symbol !== 'STX') {
-        inPc = inPc.ft(inToken.contractId, inToken.audit.fungibleTokens[0].tokenIdentifier) as any;
-        outPc = outPc.ft(
-          inToken.contractId,
-          inToken.audit.fungibleTokens[0].tokenIdentifier
-        ) as any;
-      } else {
-        inPc = inPc.ustx() as any;
-        outPc = outPc.ustx() as any;
-      }
-      postConditions.push(inPc);
-      postConditions.push(outPc);
+
+    const isAToB = pool.token0.contractId === token.contractId;
+
+    return {
+      tuple: createHopTuple(pool, isAToB),
+      pool,
+      fromToken: token,
+      toToken: nextToken,
+      quoteResult: results[index] // Add quote result
+    };
+  });
+
+  // Calculate amount in micro tokens
+  const amountInMicroTokens = Math.floor(
+    parseFloat(fromAmount) * 10 ** swapPath[0].metadata.decimals
+  );
+
+  // Create post conditions
+  const postConditions: any = [];
+
+  // Add pool contract transfers for each hop
+  hops.forEach((hop: any, index: number) => {
+    const { pool, fromToken, toToken, quoteResult } = hop;
+    const poolPrincipal = pool.contractId;
+
+    // Get expected amounts from quote
+    const inputAmount = index === 0 ? amountInMicroTokens : hops[index - 1].quoteResult.dy.value;
+    const outputAmount = quoteResult.dy.value;
+
+    // Pool receives token from sender (first hop) or previous pool
+    if (fromToken.metadata.symbol !== 'STX') {
+      postConditions.push(
+        Pc.principal(index === 0 ? stxAddress : hops[index - 1].pool.contractId)
+          .willSendLte(inputAmount)
+          .ft(fromToken.contractId, fromToken.metadata.identifier)
+      );
+    } else {
+      postConditions.push(
+        Pc.principal(index === 0 ? stxAddress : hops[index - 1].pool.contractId)
+          .willSendLte(inputAmount)
+          .ustx()
+      );
     }
-  }
 
-  // Add post-condition for the final token transfer to the user
-  if (toToken.metadata.symbol !== 'STX') {
-    postConditions.push(
-      Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core')
-        .willSendGte(1)
-        .ft(toToken.contractId, toToken.audit.fungibleTokens[0].tokenIdentifier)
-    );
-  } else {
-    postConditions.push(
-      Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.univ2-core').willSendGte(1).ustx()
-    );
-  }
+    const outputWithSlippage = Math.floor(outputAmount * (1 - slippage / 100));
+    // Pool sends token to next recipient (final recipient or next pool)
+    if (toToken.metadata.symbol !== 'STX') {
+      postConditions.push(
+        Pc.principal(poolPrincipal)
+          .willSendGte(outputWithSlippage)
+          .ft(toToken.contractId, toToken.metadata.identifier)
+      );
+    } else {
+      postConditions.push(Pc.principal(poolPrincipal).willSendGte(outputWithSlippage).ustx());
+    }
+  });
 
+  // Remove duplicates while preserving order
   const uniqueConditions = uniqBy(postConditions, JSON.stringify);
-
-  const contractName = isMultiHop ? 'univ2-path2' : 'univ2-router';
-  const functionName = isMultiHop ? `swap-${swapPath.length}` : 'swap-exact-tokens-for-tokens';
-
-  const functionArgs = isMultiHop
-    ? [
-        uintCV(amountInMicroTokens),
-        uintCV(minAmountOutMicroTokens),
-        ...swapPath.map((token: any) =>
-          contractPrincipalCV(token.contractId.split('.')[0], token.contractId.split('.')[1])
-        ),
-        contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to')
-      ]
-    : [
-        uintCV(pool.poolData.id),
-        contractPrincipalCV(
-          pool.token0.contractId.split('.')[0],
-          pool.token0.contractId.split('.')[1]
-        ),
-        contractPrincipalCV(
-          pool.token1.contractId.split('.')[0],
-          pool.token1.contractId.split('.')[1]
-        ),
-        contractPrincipalCV(fromToken.contractId.split('.')[0], fromToken.contractId.split('.')[1]),
-        contractPrincipalCV(toToken.contractId.split('.')[0], toToken.contractId.split('.')[1]),
-        contractPrincipalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', 'univ2-share-fee-to'),
-        uintCV(amountInMicroTokens),
-        uintCV(minAmountOutMicroTokens)
-      ];
-
-  // console.log(uniqueConditions);
 
   return {
     network,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-    contractName,
+    contractName: 'multihop',
     functionName,
-    functionArgs,
+    functionArgs: [uintCV(amountInMicroTokens), ...hops.map((h: any) => h.tuple)],
     postConditionMode: PostConditionMode.Deny,
     postConditions: uniqueConditions,
-    onFinish,
-    onCancel
+    onFinish
   };
 };
 

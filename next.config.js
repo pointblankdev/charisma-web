@@ -33,7 +33,8 @@ module.exports = {
     remotePatterns: [
       { protocol: 'https', hostname: '**' },
       { hostname: 's3-us-east-2.amazonaws.com' },
-      { hostname: 'QmRrx5WSMsqfcoDuAzKgjj1d84s6Ttb6aVifsEfzwDqaBA' }
+      { hostname: 'QmRrx5WSMsqfcoDuAzKgjj1d84s6Ttb6aVifsEfzwDqaBA' },
+      { hostname: 'kghatiwehgh3dclz.public.blob.vercel-storage.com' }
     ]
   },
   webpack: config => {
