@@ -6,7 +6,7 @@ export default function PoolsIndex() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/pools/dexterity');
+    router.replace('/pools/new-dex');
   }, [router]);
 
   return null;
