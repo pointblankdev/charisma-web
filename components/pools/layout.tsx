@@ -63,7 +63,7 @@ export default function PoolsLayout({ children }: any) {
       <div className="w-full mb-0 sm:px-4">
         <div className="relative z-30 grid grid-cols-4 max-w-5xl gap-2 p-1 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg">
           <TooltipProvider>
-            <Tooltip>
+            {/* <Tooltip>
               <TooltipTrigger asChild>
                 <Link
                   href="/pools/community"
@@ -89,7 +89,7 @@ export default function PoolsLayout({ children }: any) {
                   lpYield={0.2}
                 />
               </TooltipContent>
-            </Tooltip>
+            </Tooltip> */}
 
             <Tooltip>
               <TooltipTrigger asChild>
