@@ -4,72 +4,83 @@ import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
 import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/server/prices/prices-service';
-import { DexClient } from '@lib/server/pools/pools.client';
-import TokenRegistryClient, { charismaNames } from '@lib/server/registry/registry.client';
 import { DEXTERITY_ABI, getContractsByTrait } from '@lib/server/traits/service';
 import { getDecimals, getIdentifier, getSymbol, getTokenMetadata } from '@lib/stacks-api';
 import _ from 'lodash';
 
-// Initialize client
-const service = PricesService.getInstance();
+// Define default STX token data
+const STX_TOKEN = {
+  contractId: '.stx',
+  metadata: {
+    name: 'Stacks',
+    symbol: 'STX',
+    decimals: 6,
+    identifier: '.stx',
+    image: '/stx-logo.png',
+    description: 'Native Stacks blockchain token'
+  }
+};
+
+// Helper to get token data
+async function getTokenData(contractId: string) {
+  if (contractId === '.stx') return STX_TOKEN;
+
+  return {
+    contractId,
+    metadata: {
+      ...(await getTokenMetadata(contractId)),
+      symbol: await getSymbol(contractId),
+      decimals: await getDecimals(contractId),
+      identifier: await getIdentifier(contractId)
+    }
+  };
+}
+
+// Helper to get pool data
+async function getPoolData(contract: any) {
+  const metadata = await getTokenMetadata(contract.contract_id);
+  const [token0, token1] = await Promise.all([
+    getTokenData(metadata.properties.tokenAContract),
+    getTokenData(metadata.properties.tokenBContract)
+  ]);
+
+  return {
+    contractId: contract.contract_id,
+    metadata: {
+      ...metadata,
+      symbol: await getSymbol(contract.contract_id),
+      decimals: await getDecimals(contract.contract_id),
+      identifier: await getIdentifier(contract.contract_id)
+    },
+    token0,
+    token1
+  };
+}
 
 export const getStaticProps: GetStaticProps<any> = async () => {
-  // Get enhanced token info and prices in parallel
+  const service = PricesService.getInstance();
+
+  // Get contracts and prices
   const [contracts, prices] = await Promise.all([
     getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 }),
     service.getAllTokenPrices()
   ]);
 
-  const tokens = [];
-  const pools = [];
+  // Add STX price mapping
+  prices['.stx'] = prices['SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'];
 
-  // get all token metadata
-  for (const contract of contracts) {
-    const metadata = await getTokenMetadata(contract.contract_id);
+  // Get pools data
+  const pools = await Promise.all(contracts.map((contract: any) => getPoolData(contract)));
 
-    const metadataA = await getTokenMetadata(metadata.properties.tokenAContract);
-    const metadataB = await getTokenMetadata(metadata.properties.tokenBContract);
-
-    const token0 = {
-      contractId: metadata.properties.tokenAContract,
-      metadata: {
-        ...metadataA,
-        symbol: await getSymbol(metadata.properties.tokenAContract),
-        decimals: await getDecimals(metadata.properties.tokenAContract),
-        identifier: await getIdentifier(metadata.properties.tokenAContract)
-      }
-    };
-    const token1 = {
-      contractId: metadata.properties.tokenBContract,
-      metadata: {
-        ...metadataB,
-        symbol: await getSymbol(metadata.properties.tokenBContract),
-        decimals: await getDecimals(metadata.properties.tokenBContract),
-        identifier: await getIdentifier(metadata.properties.tokenBContract)
-      }
-    };
-
-    tokens.push(token0, token1);
-    pools.push({
-      contractId: contract.contract_id,
-      metadata: {
-        ...metadata,
-        symbol: await getSymbol(contract.contract_id),
-        decimals: await getDecimals(contract.contract_id),
-        identifier: await getIdentifier(contract.contract_id)
-      },
-      token0,
-      token1
-    });
-  }
+  // Extract unique tokens from pools and add STX
+  const tokens = _.uniqBy(
+    [STX_TOKEN, ...pools.flatMap(pool => [pool.token0, pool.token1])],
+    'contractId'
+  );
 
   return {
     props: {
-      data: {
-        prices,
-        tokens: _.uniqBy(tokens, 'contractId'),
-        pools: pools
-      }
+      data: { prices, tokens, pools }
     },
     revalidate: 60
   };
