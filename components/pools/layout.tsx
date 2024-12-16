@@ -61,7 +61,7 @@ export default function PoolsLayout({ children }: any) {
 
       {/* Tabs Navigation */}
       <div className="w-full mb-0 sm:px-4">
-        <div className="relative z-30 grid grid-cols-4 max-w-5xl gap-2 p-1 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg">
+        <div className="relative z-30 grid grid-cols-3 max-w-5xl gap-2 p-1 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-lg">
           <TooltipProvider>
             {/* <Tooltip>
               <TooltipTrigger asChild>
