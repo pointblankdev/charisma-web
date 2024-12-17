@@ -105,6 +105,14 @@ export default function PoolsLayout({ children }: any) {
                 >
                   <ChartCandlestickIcon className="w-4 h-4" />
                   <span>Spot Pools</span>
+                  <span
+                    className={cn(
+                      currentPath !== '/pools/new-dex' ? '' : '',
+                      'absolute -top-2 -right-1 px-1.5 py-0.5 bg-gray-500 text-primary-foreground text-[10px] font-medium rounded-full'
+                    )}
+                  >
+                    Deprecated
+                  </span>
                 </Link>
               </TooltipTrigger>
               <TooltipContent side="bottom" className="w-[400px] m-2">
