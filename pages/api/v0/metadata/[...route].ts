@@ -2,6 +2,7 @@ import { kv } from '@vercel/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 import { put } from '@vercel/blob';
+import { getSymbol, getTokenMetadata } from '@lib/stacks-api';
 
 const openai = new OpenAI({
   apiKey: process.env.OPENAI_API_KEY
@@ -75,22 +76,66 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse, contractId: 
 async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contractId: string) {
   const data = req.body as GenerateMetadataRequest;
 
-  // Validate required fields
-  const requiredFields = ['name', 'symbol', 'decimals', 'identifier', 'description'];
-  const missingFields = requiredFields.filter(field => !(field in data));
-  if (missingFields.length > 0) {
+  // Validate required token properties
+  if (!data.properties?.tokenAContract || !data.properties?.tokenBContract) {
     return res.status(400).json({
-      error: `Missing required fields: ${missingFields.join(', ')}`
+      error: 'Missing required token contracts'
     });
   }
 
+  function generateTokenDetails(tokenAMeta: any, tokenBMeta: any) {
+    // Fallback to basic generation
+    return {
+      name: `${tokenAMeta.symbol}-${tokenBMeta.symbol} LP Token`,
+      symbol: `${tokenAMeta.symbol}-${tokenBMeta.symbol}`,
+      description: `Liquidity pool token for the ${tokenAMeta.symbol}-${tokenBMeta.symbol} trading pair`
+    };
+  }
+
   try {
+    // Fetch metadata for both tokens using Stacks API
+    const [tokenAMeta, tokenBMeta] = await Promise.all([
+      data.properties.tokenAContract === '.stx'
+        ? { symbol: 'STX', name: 'Stacks', decimals: 6 }
+        : {
+            ...getTokenMetadata(data.properties.tokenAContract),
+            symbol: await getSymbol(data.properties.tokenAContract)
+          },
+      data.properties.tokenBContract === '.stx'
+        ? { symbol: 'STX', name: 'Stacks', decimals: 6 }
+        : {
+            ...getTokenMetadata(data.properties.tokenBContract),
+            symbol: await getSymbol(data.properties.tokenBContract)
+          }
+    ]);
+
+    // Generate token details
+    const generatedDetails = generateTokenDetails(tokenAMeta, tokenBMeta);
+
+    // Generate metadata based on tokens
+    const generatedMetadata = {
+      name: generatedDetails.name,
+      symbol: generatedDetails.symbol,
+      decimals: data.decimals || 6,
+      identifier: data.symbol,
+      description: generatedDetails.description
+    };
+
+    const charismaTheme =
+      data.properties.tokenAContract.includes('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
+      data.properties.tokenBContract.includes('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
+      data.properties.tokenAContract.includes('charisma') ||
+      data.properties.tokenBContract.includes('charisma');
+
     // Generate image using OpenAI
     const imagePrompt =
-      (data.imagePrompt ||
-        `A cryptocurrency token logo for ${data.name} (${data.symbol}). ${data.description}.`) +
-      `. No empty space around the edges. Simple and elegent with a single focal point. Do not include any text in the logo.` +
-      `In the style of a Magic the Gathering set symbol.`;
+      data.imagePrompt ||
+      `A iconic logo combining elements of ${tokenAMeta.symbol} and ${tokenBMeta.symbol} tokens. ` +
+        `An elegant fusion representing a liquidity pool pair. ` +
+        `DO NOT INCLUDE TEXT. NO BACKGROUND. No empty space around the edges. ` +
+        `Simple and elegant with a single focal point. ` +
+        `${charismaTheme ? `Red as primary color in theme. ` : ``}` +
+        `In the style of a Magic the Gathering set symbol.`;
 
     const response = await openai.images.generate({
       model: 'dall-e-3',
@@ -99,32 +144,28 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
       size: '1024x1024'
     });
 
-    // Download the image from OpenAI
+    // Download and upload image (same as before)
     const imageUrl = response.data[0].url as string;
     const imageResponse = await fetch(imageUrl);
     const imageBlob = await imageResponse.blob();
 
-    // Upload to Vercel Blob
     const filename = `${contractId}-${Date.now()}.png`;
     const blob = await put(filename, imageBlob, {
       access: 'public',
       contentType: 'image/png'
     });
 
-    // Construct metadata
+    // Construct final metadata
     const metadata: TokenMetadata = {
-      name: data.name,
-      symbol: data.symbol,
-      decimals: data.decimals,
-      identifier: data.identifier,
-      description: data.description,
+      ...generatedMetadata,
       image: blob.url,
       properties: {
         ...data.properties,
         generated: {
           date: new Date().toISOString(),
           imagePrompt,
-          imagePathname: blob.pathname
+          imagePathname: blob.pathname,
+          aiGeneratedDetails: generatedDetails
         }
       }
     };
@@ -256,11 +297,6 @@ async function handleMigrate(req: NextApiRequest, res: NextApiResponse) {
 
 // Update the handler function to include the new migrate route
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Auth check for protected routes
-  if (req.method !== 'GET' && !validateAuth(req)) {
-    return res.status(401).json({ error: 'Unauthorized' });
-  }
-
   const { route } = req.query;
   const paths = route as string[];
 

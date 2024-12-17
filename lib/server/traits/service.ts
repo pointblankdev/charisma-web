@@ -1,5 +1,6 @@
 import { client } from '@lib/stacks-api';
 import { kv } from '@vercel/kv';
+import _ from 'lodash';
 
 interface ContractsByTraitParams {
   traitAbi: any; // The trait ABI in JSON format
@@ -37,7 +38,7 @@ export async function getContractsByTrait({
     //   ex: 60 * 60 // 1 hour
     // });
 
-    return response.data?.results;
+    return _.uniqBy(response.data?.results, 'contract_id');
   } catch (error) {
     console.error('Error fetching contracts by trait:', error);
     throw error;

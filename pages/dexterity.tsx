@@ -1,183 +1,187 @@
-// pages/contract-deployer.tsx
-import { useState } from 'react';
-import { Card } from '@components/ui/card';
-import { Alert, AlertDescription } from '@components/ui/alert';
-import { Info } from 'lucide-react';
-import { useForm } from 'react-hook-form';
-import { useGlobalState } from '@lib/hooks/global-state-context';
-import { useConnect } from '@stacks/connect-react';
-import { network } from '@components/stacks-session/connect';
-import { PostConditionMode } from '@stacks/transactions';
-import Layout from '@components/layout/layout';
-import {
-  generateContractCode,
-  getFullContractName,
-  getTokenUri,
-  sanitizeContractName
-} from '@lib/codegen/dexterity';
+import { ContractStepper } from '@components/dexterity/contract-stepper';
 import { TokenSelector } from '@components/dexterity/token-selector';
-import { PoolConfigurationForm } from '@components/dexterity/pool-configuration-form';
-import { MetadataPreview } from '@components/dexterity/metadata-preview';
-import { CodePreview } from '@components/dexterity/code-preview';
+import { TokenSettingsForm } from '@components/dexterity/token-settings.form';
+import Layout from '@components/layout/layout';
+import { Button } from '@components/ui/button';
+import { Card } from '@components/ui/card';
+import { sanitizeContractName } from '@lib/codegen/dexterity';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { useContractCode } from '@lib/hooks/use-contract-code';
+import { useContractDeployment } from '@lib/hooks/use-contract-deployment';
+import { fetchTokenMetadata } from '@lib/hooks/use-token-metadata';
+import PricesService from '@lib/server/prices/prices-service';
+import { cn } from '@lib/utils';
+import { useConnect } from '@stacks/connect-react';
+import { WandSparkles } from 'lucide-react';
+import { GetStaticProps } from 'next';
+import { useState, useEffect } from 'react';
+import { useForm } from 'react-hook-form';
 
-type WizardStep = 'select-token-a' | 'configure-pool';
+type Props = {
+  prices: { [key: string]: number };
+};
 
-export default function ContractDeployer() {
-  const [contractCode, setContractCode] = useState('');
-  const [contractName, setContractName] = useState('');
-  const [fullContractName, setFullContractName] = useState('');
-  const [metadata, setMetadata] = useState<any | null>(null);
+export const getStaticProps: GetStaticProps<Props> = async () => {
+  const service = PricesService.getInstance();
+  const prices = await service.getAllTokenPrices();
+  return {
+    props: { prices },
+    revalidate: 60
+  };
+};
+
+export default function ContractDeployer({ prices }: Props) {
+  const [currentStep, setCurrentStep] = useState('select-token-a');
+  const [showCode, setShowCode] = useState(false);
   const [isGenerating, setIsGenerating] = useState(false);
-  const [showCodePreview, setShowCodePreview] = useState(false);
-  const [currentStep, setCurrentStep] = useState<WizardStep>('select-token-a');
+  const [metadata, setMetadata] = useState(null as any);
+  const [tokenAMetadata, setTokenAMetadata] = useState(null as any);
+  const [tokenBMetadata, setTokenBMetadata] = useState(null as any);
+
   const { stxAddress } = useGlobalState();
+  const { contractCode, updateContractCode } = useContractCode();
   const { doContractDeploy } = useConnect();
+  const { deployContract } = useContractDeployment(doContractDeploy);
 
   const form = useForm({
     defaultValues: {
-      contractName: 'TokenPair',
       tokenAContract: '',
       tokenBContract: '',
-      lpTokenName: 'Token Pair LP',
-      lpTokenSymbol: 'TPLP',
-      lpRebatePercent: 5,
-      description: 'Liquidity pool token representing shares in a token pair.'
+      lpTokenName: '',
+      lpTokenSymbol: '',
+      lpRebatePercent: 2,
+      description: '',
+      initialLiquidityA: 1000000,
+      initialLiquidityB: 1000000
     }
   });
 
-  const handleTokenASelection = (token: { contractId: string; name?: string; symbol?: string }) => {
-    form.setValue('tokenAContract', token.contractId);
-    if (token.name && token.symbol) {
-      form.setValue('contractName', `${token.symbol}Pair`);
-      form.setValue('lpTokenName', `${token.symbol} LP Token`);
-      form.setValue('lpTokenSymbol', `${token.symbol}LP`);
-      form.setValue(
-        'description',
-        `Liquidity pool token representing shares in a ${token.name} pair`
-      );
+  const formValues = form.watch();
+  const safeTokenName = sanitizeContractName(formValues.lpTokenName);
+  const fullContractName = `${stxAddress}.${safeTokenName}`;
+
+  useEffect(() => {
+    if (formValues.tokenAContract && formValues.tokenBContract) {
+      updateContractCode({
+        fullContractName,
+        ...formValues
+      });
     }
+  }, [formValues, fullContractName, stxAddress, updateContractCode]);
+
+  const handleTokenASelection = async (token: any) => {
+    form.setValue('tokenAContract', token.contractId);
+    form.setValue('lpTokenName', `${token.symbol} LP Token`);
+    form.setValue('lpTokenSymbol', `${token.symbol}LP`);
+    form.setValue('description', `Liquidity pool token for the ${token.name} pair`);
+
+    const metadata = await fetchTokenMetadata(token.contractId);
+    setTokenAMetadata(metadata);
+    setCurrentStep('select-token-b');
+  };
+
+  const handleTokenBSelection = async (token: any) => {
+    form.setValue('tokenBContract', token.contractId);
+    const metadata = await fetchTokenMetadata(token.contractId);
+    setTokenBMetadata(metadata);
     setCurrentStep('configure-pool');
   };
 
   const generateMetadata = async () => {
-    const formData = form.getValues();
     setIsGenerating(true);
-
     try {
-      const response = await fetch('/api/v0/metadata/generate/' + fullContractName, {
+      const response = await fetch(`/api/v0/metadata/generate/${fullContractName}`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formData.lpTokenName,
-          symbol: formData.lpTokenSymbol,
+          name: formValues.lpTokenName,
+          symbol: formValues.lpTokenSymbol,
           decimals: 6,
-          identifier: formData.lpTokenSymbol,
-          description: formData.description,
+          identifier: formValues.lpTokenSymbol,
+          description: formValues.description,
           properties: {
-            contractName: formData.contractName,
-            tokenAContract: formData.tokenAContract,
-            tokenBContract: formData.tokenBContract,
-            lpRebatePercent: formData.lpRebatePercent
+            contractName: fullContractName,
+            tokenAContract: formValues.tokenAContract,
+            tokenBContract: formValues.tokenBContract,
+            lpRebatePercent: formValues.lpRebatePercent
           }
         })
       });
 
-      if (!response.ok) {
-        throw new Error('Failed to generate metadata');
-      }
-
+      if (!response.ok) throw new Error('Failed to generate metadata');
       const result = await response.json();
       setMetadata(result.metadata);
-    } catch (error) {
-      console.error('Error generating metadata:', error);
+    } catch (err) {
+      console.error('Metadata generation error:', err);
+      alert('Failed to generate metadata');
     } finally {
       setIsGenerating(false);
     }
   };
 
-  const onSubmit = () => {
-    const data = form.getValues();
-    const safeName = sanitizeContractName(data.contractName);
-    const fullName = getFullContractName(safeName, stxAddress);
-    setContractName(safeName);
-    setFullContractName(fullName);
-
-    const code = generateContractCode({
-      tokenUri: getTokenUri(fullContractName),
-      contractName: data.contractName,
-      tokenAContract: data.tokenAContract,
-      tokenBContract: data.tokenBContract,
-      lpTokenName: data.lpTokenName,
-      lpTokenSymbol: data.lpTokenSymbol,
-      lpRebatePercent: data.lpRebatePercent
-    });
-
-    setContractCode(code);
-  };
-
-  const deployContract = async (e: any) => {
-    e.preventDefault();
-    if (!metadata) {
-      alert('Please generate metadata before deploying');
-      return;
-    }
-
-    doContractDeploy({
-      network,
-      contractName,
+  const handleDeploy = () => {
+    deployContract({
+      contractName: safeTokenName,
       codeBody: contractCode,
-      clarityVersion: 3,
-      postConditionMode: PostConditionMode.Deny,
-      onFinish: (result: any) => {
-        console.log('Contract deployed:', result);
-      }
+      metadata
     });
   };
+
+  const stepIndex = currentStep === 'select-token-a' ? 0 : currentStep === 'select-token-b' ? 1 : 2;
 
   return (
     <Layout>
-      <div className="container max-w-6xl p-6 mx-auto space-y-6">
-        <Card className="p-6">
-          {currentStep === 'select-token-a' ? (
-            <div>
-              <div className="max-w-2xl mx-auto">
-                <Alert className="flex justify-center mb-6">
-                  <div className="flex items-center space-x-2">
-                    <Info className="w-4 h-4" />
-                    <AlertDescription>
-                      Select Token A for your liquidity pool. This will be the primary token in your
-                      pair.
-                    </AlertDescription>
-                  </div>
-                </Alert>
+      <div style={{ padding: '1rem' }}>
+        <ContractStepper currentStepIndex={stepIndex} />
 
-                <TokenSelector onSelect={handleTokenASelection} />
-              </div>
-            </div>
-          ) : (
-            <div className="grid grid-cols-1 gap-8 lg:grid-cols-2">
-              <PoolConfigurationForm
-                form={form}
-                onSubmit={() => form.handleSubmit(onSubmit)()}
-                onGenerateMetadata={generateMetadata}
-                onDeploy={deployContract}
-                isGenerating={isGenerating}
-                hasMetadata={!!metadata}
-              />
+        {currentStep === 'select-token-a' && <TokenSelector onSelect={handleTokenASelection} />}
 
-              <MetadataPreview metadata={metadata} />
-            </div>
-          )}
-        </Card>
+        {currentStep === 'select-token-b' && (
+          <TokenSelector
+            onSelect={handleTokenBSelection}
+            excludeToken={formValues.tokenAContract}
+          />
+        )}
 
         {currentStep === 'configure-pool' && (
-          <CodePreview
-            code={contractCode}
-            showPreview={showCodePreview}
-            onTogglePreview={() => setShowCodePreview(!showCodePreview)}
+          <TokenSettingsForm
+            prices={prices}
+            isGenerating={isGenerating}
+            metadata={metadata}
+            tokenAMetadata={tokenAMetadata}
+            tokenBMetadata={tokenBMetadata}
+            form={form}
           />
+        )}
+
+        {contractCode && (
+          <div className="mt-6 space-y-4">
+            <div className="flex justify-between space-x-4">
+              <Button variant="outline" onClick={() => setShowCode(!showCode)}>
+                {showCode ? 'Hide Source Code' : 'Show Source Code'}
+              </Button>
+              <Button onClick={generateMetadata} variant="outline">
+                <WandSparkles className="w-4 h-4 mr-2" /> Generate Metadata
+              </Button>
+              <Button
+                onClick={handleDeploy}
+                disabled={!metadata || isGenerating}
+                className={cn(
+                  'font-medium transition-colors min-w-48',
+                  !metadata || isGenerating
+                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                    : ''
+                )}
+              >
+                Deploy Liquidity Pool
+              </Button>
+            </div>
+            {showCode && (
+              <Card className="p-4">
+                <pre>{contractCode}</pre>
+              </Card>
+            )}
+          </div>
         )}
       </div>
     </Layout>

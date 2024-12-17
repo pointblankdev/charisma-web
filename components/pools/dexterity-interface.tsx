@@ -1,7 +1,21 @@
-import { ExternalLink, Verified } from 'lucide-react';
+import { ExternalLink, Verified, MoreHorizontal, Plus, ArrowLeftRight } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger
+} from '@components/ui/dropdown-menu';
+import { Button } from '@components/ui/button';
+import { useRouter } from 'next/router';
+import { AddLiquidityModal } from './modals/add-liquidity-modal';
+import { useConnect } from '@stacks/connect-react';
+import { useGlobalState } from '@lib/hooks/global-state-context';
+import { network } from '@components/stacks-session/connect';
+import { bufferCV, optionalCVOf, Pc, PostConditionMode, uintCV } from '@stacks/transactions';
+import { hexToBytes } from '@stacks/common';
 
 // Define verified addresses with their BNS names
 const VERIFIED_ADDRESSES: Record<string, string> = {
@@ -23,8 +37,60 @@ const AddressDisplay = ({ address }: { address: string }) => {
   );
 };
 
+// Action menu component
+const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
+  const router = useRouter();
+  const { doContractCall } = useConnect();
+  const { stxAddress } = useGlobalState();
+
+  const handleAddLiquidityClick = (pool: any, amount: number) => {
+    doContractCall({
+      network: network,
+      contractAddress: pool.contractId.split('.')[0],
+      contractName: pool.contractId.split('.')[1],
+      functionName: 'execute',
+      postConditionMode: PostConditionMode.Allow,
+      postConditions: [],
+      functionArgs: [uintCV(Math.floor(amount)), optionalCVOf(bufferCV(hexToBytes('02')))],
+      onFinish: data => {
+        console.log('Add liquidity transaction successful', data);
+      },
+      onCancel: () => {
+        console.log('Add liquidity transaction cancelled');
+      }
+    });
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <MoreHorizontal className="size-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <AddLiquidityModal
+          pool={pool}
+          tokenPrices={prices}
+          onAddLiquidity={handleAddLiquidityClick}
+          trigger={
+            <DropdownMenuItem onSelect={e => e.preventDefault()}>
+              <Plus className="w-4 h-4 mr-2" />
+              Add Liquidity
+            </DropdownMenuItem>
+          }
+        />
+        {/* <DropdownMenuItem disabled>Remove Liquidity</DropdownMenuItem> */}
+        <DropdownMenuItem onClick={() => router.push(`/swap`)}>
+          <ArrowLeftRight className="w-4 h-4 mr-2" /> Swap Tokens
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 // Pool row component
-const PoolRow = ({ pool }: { pool: any }) => {
+const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const deployerAddress = pool.contractId.split('.')[0];
 
   return (
@@ -55,11 +121,20 @@ const PoolRow = ({ pool }: { pool: any }) => {
       <td className="px-4 py-4 space-x-2 text-lg leading-snug text-white">
         <AddressDisplay address={deployerAddress} />
       </td>
+      <td className="px-4 py-4 text-right">
+        <ActionMenu pool={pool} prices={prices} />
+      </td>
     </tr>
   );
 };
 
-export const DexterityInterface = ({ data }: any) => {
+export const DexterityInterface = ({
+  data,
+  prices
+}: {
+  data: any;
+  prices: Record<string, number>;
+}) => {
   const [sortOrder] = useState<'asc' | 'desc'>('desc');
 
   const sortedPools = useMemo(() => {
@@ -87,11 +162,12 @@ export const DexterityInterface = ({ data }: any) => {
                 <tr className="text-left text-gray-400">
                   <th className="px-4 py-2">Pool Details</th>
                   <th className="px-4 py-2">Deployer</th>
+                  <th className="px-4 py-2 text-right">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {sortedPools.map((pool: any, index: number) => (
-                  <PoolRow key={index} pool={pool} />
+                  <PoolRow key={index} pool={pool} prices={prices} />
                 ))}
               </tbody>
             </table>

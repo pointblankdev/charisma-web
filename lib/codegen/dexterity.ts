@@ -1,30 +1,66 @@
 interface ContractParams {
   tokenUri: string;
-  contractName: string;
   tokenAContract: string;
   tokenBContract: string;
   lpTokenName: string;
   lpTokenSymbol: string;
   lpRebatePercent: number;
+  initialLiquidityA: number;
+  initialLiquidityB: number;
 }
 
 export function generateContractCode(params: ContractParams): string {
   const {
     tokenUri,
-    contractName,
     tokenAContract,
     tokenBContract,
     lpTokenName,
     lpTokenSymbol,
-    lpRebatePercent
+    lpRebatePercent,
+    initialLiquidityA,
+    initialLiquidityB
   } = params;
 
-  // Check if token A is STX
+  // Check which token is STX (if any)
   const isTokenAStx = tokenAContract === '.stx';
+  const isTokenBStx = tokenBContract === '.stx';
 
   const lpRebateRaw = Math.floor((parseFloat(lpRebatePercent.toString()) / 100) * 1000000);
 
-  return `;; Title: ${contractName}
+  // Determine which token has more and calculate the additional amount needed
+  const baseAmount = Math.min(initialLiquidityA, initialLiquidityB);
+  const additionalTokenA = Math.max(0, initialLiquidityA - baseAmount);
+  const additionalTokenB = Math.max(0, initialLiquidityB - baseAmount);
+
+  // Helper function to generate transfer code based on token type
+  const generateTransferIn = (
+    isStx: boolean,
+    tokenContract: string,
+    amount: string,
+    sender: string,
+    recipient: string
+  ) =>
+    isStx
+      ? `(try! (stx-transfer? ${amount} ${sender} ${recipient}))`
+      : `(try! (contract-call? '${tokenContract} transfer ${amount} ${sender} ${recipient} none))`;
+
+  const generateTransferOut = (
+    isStx: boolean,
+    tokenContract: string,
+    amount: string,
+    sender: string,
+    recipient: string
+  ) =>
+    isStx
+      ? `(try! (as-contract (stx-transfer? ${amount} ${sender} ${recipient})))`
+      : `(try! (as-contract (contract-call? '${tokenContract} transfer ${amount} ${sender} ${recipient} none)))`;
+
+  const getBalance = (isStx: boolean, tokenContract: string, owner: string) =>
+    isStx
+      ? `(stx-get-balance ${owner})`
+      : `(unwrap-panic (contract-call? '${tokenContract} get-balance ${owner}))`;
+
+  const mainContract = `;; Title: ${lpTokenName}
 ;; Version: 1.0.0
 ;; Description: 
 ;;   Implementation of the standard trait interface for liquidity pools on the Stacks blockchain.
@@ -113,13 +149,9 @@ export function generateContractCode(params: ContractParams): string {
         (sender tx-sender)
         (delta (get-swap-quote amount (some OP_SWAP_A_TO_B))))
         ;; Transfer token A to pool
-        ${
-          isTokenAStx
-            ? '(try! (stx-transfer? amount sender CONTRACT))'
-            : `(try! (contract-call? '${tokenAContract} transfer amount sender CONTRACT none))`
-        }
+        ${generateTransferIn(isTokenAStx, tokenAContract, 'amount', 'sender', 'CONTRACT')}
         ;; Transfer token B to sender
-        (try! (as-contract (contract-call? '${tokenBContract} transfer (get dy delta) CONTRACT sender none)))
+        ${generateTransferOut(isTokenBStx, tokenBContract, '(get dy delta)', 'CONTRACT', 'sender')}
         (ok delta)))
 
 (define-public (swap-b-to-a (amount uint))
@@ -127,25 +159,17 @@ export function generateContractCode(params: ContractParams): string {
         (sender tx-sender)
         (delta (get-swap-quote amount (some OP_SWAP_B_TO_A))))
         ;; Transfer token B to pool
-        (try! (contract-call? '${tokenBContract} transfer amount sender CONTRACT none))
+        ${generateTransferIn(isTokenBStx, tokenBContract, 'amount', 'sender', 'CONTRACT')}
         ;; Transfer token A to sender
-        ${
-          isTokenAStx
-            ? '(try! (as-contract (stx-transfer? (get dy delta) CONTRACT sender)))'
-            : `(try! (as-contract (contract-call? '${tokenAContract} transfer (get dy delta) CONTRACT sender none)))`
-        }
+        ${generateTransferOut(isTokenAStx, tokenAContract, '(get dy delta)', 'CONTRACT', 'sender')}
         (ok delta)))
 
 (define-public (add-liquidity (amount uint))
     (let (
         (sender tx-sender)
         (delta (get-liquidity-quote amount)))
-        ${
-          isTokenAStx
-            ? '(try! (stx-transfer? (get dx delta) sender CONTRACT))'
-            : `(try! (contract-call? '${tokenAContract} transfer (get dx delta) sender CONTRACT none))`
-        }
-        (try! (contract-call? '${tokenBContract} transfer (get dy delta) sender CONTRACT none))
+        ${generateTransferIn(isTokenAStx, tokenAContract, '(get dx delta)', 'sender', 'CONTRACT')}
+        ${generateTransferIn(isTokenBStx, tokenBContract, '(get dy delta)', 'sender', 'CONTRACT')}
         (try! (ft-mint? ${lpTokenSymbol} (get dk delta) sender))
         (ok delta)))
 
@@ -154,12 +178,8 @@ export function generateContractCode(params: ContractParams): string {
         (sender tx-sender)
         (delta (get-liquidity-quote amount)))
         (try! (ft-burn? ${lpTokenSymbol} (get dk delta) sender))
-        ${
-          isTokenAStx
-            ? '(try! (as-contract (stx-transfer? (get dx delta) CONTRACT sender)))'
-            : `(try! (as-contract (contract-call? '${tokenAContract} transfer (get dx delta) CONTRACT sender none)))`
-        }
-        (try! (as-contract (contract-call? '${tokenBContract} transfer (get dy delta) CONTRACT sender none)))
+        ${generateTransferOut(isTokenAStx, tokenAContract, '(get dx delta)', 'CONTRACT', 'sender')}
+        ${generateTransferOut(isTokenBStx, tokenBContract, '(get dy delta)', 'CONTRACT', 'sender')}
         (ok delta)))
 
 ;; --- Helper Functions ---
@@ -169,12 +189,8 @@ export function generateContractCode(params: ContractParams): string {
 
 (define-private (get-reserves)
     { 
-      a: ${
-        isTokenAStx
-          ? '(stx-get-balance CONTRACT)'
-          : `(unwrap-panic (contract-call? '${tokenAContract} get-balance CONTRACT))`
-      }, 
-      b: (unwrap-panic (contract-call? '${tokenBContract} get-balance CONTRACT)) 
+      a: ${getBalance(isTokenAStx, tokenAContract, 'CONTRACT')}, 
+      b: ${getBalance(isTokenBStx, tokenBContract, 'CONTRACT')}
     })
 
 ;; --- Quote Functions ---
@@ -205,9 +221,52 @@ export function generateContractCode(params: ContractParams): string {
           dy: (if (> k u0) (/ (* amount (get b reserves)) k) amount),
           dk: amount
         }))`;
+
+  // Generate initialization block with initial liquidity and additional token transfer if needed
+  let initializationBlock = `
+
+;; --- Initialization ---
+(begin
+    ;; Add initial balanced liquidity (handles both token transfers at 1:1)
+    (try! (add-liquidity u${baseAmount}))`;
+
+  // Add additional token A transfer if needed
+  if (additionalTokenA > 0) {
+    initializationBlock += `
+    
+    ;; Transfer additional token A to achieve desired ratio
+    ${generateTransferIn(
+      isTokenAStx,
+      tokenAContract,
+      `u${additionalTokenA}`,
+      'tx-sender',
+      'CONTRACT'
+    )}`;
+  }
+
+  // Add additional token B transfer if needed
+  if (additionalTokenB > 0) {
+    initializationBlock += `
+    ;; Transfer additional token B to achieve desired ratio
+    ${generateTransferIn(
+      isTokenBStx,
+      tokenBContract,
+      `u${additionalTokenB}`,
+      'tx-sender',
+      'CONTRACT'
+    )}`;
+  }
+
+  // initializationBlock += `
+  //   (ok true)`;
+
+  initializationBlock += `)`;
+
+  // Combine all parts
+  return `${mainContract}${initializationBlock}`;
 }
 
-// Helper to determine if contract name is safe for STX pool
+// Helper functions remain the same
 export function sanitizeContractName(name: string): string {
   const sanitized = name
     .toLowerCase()
@@ -215,6 +274,7 @@ export function sanitizeContractName(name: string): string {
     .replace(/\s+/g, '-');
   return sanitized;
 }
+
 export function getFullContractName(sanitizedName: string, stxAddress: string): string {
   const safeContractName = `${sanitizedName}`;
   return `${stxAddress}.${safeContractName}`;
