@@ -112,15 +112,6 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
     // Generate token details
     const generatedDetails = generateTokenDetails(tokenAMeta, tokenBMeta);
 
-    // Generate metadata based on tokens
-    const generatedMetadata = {
-      name: generatedDetails.name,
-      symbol: generatedDetails.symbol,
-      decimals: data.decimals || 6,
-      identifier: data.symbol,
-      description: generatedDetails.description
-    };
-
     const charismaTheme =
       data.properties.tokenAContract.includes('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
       data.properties.tokenBContract.includes('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
