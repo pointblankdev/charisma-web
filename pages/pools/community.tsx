@@ -26,7 +26,7 @@ type Props = {
   };
 };
 
-export const getStaticProps: GetStaticProps<Props> = async () => {
+export const getServerSideProps = async () => {
   try {
     // Get enhanced token info and prices in parallel
     const [tokenInfo, prices] = await Promise.all([
@@ -60,8 +60,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           pools: communityPools,
           tokenPrices: prices
         }
-      },
-      revalidate: 60
+      }
     };
   } catch (error) {
     console.error('Error in getStaticProps:', error);
@@ -71,8 +70,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
           pools: [],
           tokenPrices: {}
         }
-      },
-      revalidate: 10
+      }
     };
   }
 };
