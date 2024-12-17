@@ -277,8 +277,21 @@ export async function getSymbol(
 export async function getIdentifier(
   contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
 ) {
-  const contractInfo = await getContractInfo(contract);
-  return JSON.parse(contractInfo.data.abi).fungible_tokens[0].name;
+  const cacheKey = `token-identifier:${contract}`;
+
+  try {
+    const cached = await kv.get(cacheKey);
+    if (cached !== null) return cached;
+
+    const contractInfo = await getContractInfo(contract);
+    const tokenIdentifier = JSON.parse(contractInfo.data.abi).fungible_tokens[0].name;
+
+    await kv.set(cacheKey, tokenIdentifier, { ex: CACHE_DURATION });
+    return tokenIdentifier;
+  } catch (error) {
+    console.error(`Error fetching token name for ${contract}:`, error);
+    throw error;
+  }
 }
 
 export async function getTokenName(
