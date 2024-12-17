@@ -129,13 +129,15 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
 
     // Generate image using OpenAI
     const imagePrompt =
-      data.imagePrompt ||
-      `A iconic logo combining elements of ${tokenAMeta.symbol} and ${tokenBMeta.symbol} tokens. ` +
-        `An elegant fusion representing a liquidity pool pair. ` +
-        `DO NOT INCLUDE TEXT. NO BACKGROUND. No empty space around the edges. ` +
-        `Simple and elegant with a single focal point. ` +
-        `${charismaTheme ? `Red as primary color in theme. ` : ``}` +
-        `In the style of a Magic the Gathering set symbol.`;
+      `Design a sleek, modern logo for ${data.name}. It's described by: ${data.description}. ` +
+      `Create a minimalist, balanced design that subtly represents the fusion of ${tokenAMeta.symbol} and ${tokenBMeta.symbol} through abstract geometric shapes. ` +
+      `The logo should feel cool and sophisticated, using clean lines and a bold approach that conveys power and wealth. ` +
+      `DO NOT include any text or symbols. NO background elements other than black. Avoid empty space around the edges. ` +
+      `Focus on creating a single, cohesive emblem that could work as a financial product icon. ` +
+      `${
+        charismaTheme ? `Incorporate a deep red as the primary color in a sophisticated way. ` : ``
+      }` +
+      `The design should be iconic and instantly recognizable at small sizes, similar to a premium brand mark or currency symbol.`;
 
     const response = await openai.images.generate({
       model: 'dall-e-3',

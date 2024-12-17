@@ -46,13 +46,8 @@ export function TokenSettingsForm(props: TokenSettingsFormProps) {
 
   // Shimmer Placeholder Component
   const ShimmerPlaceholder = () => (
-    <div className="flex items-start space-x-4 animate-pulse">
-      <div className="w-32 h-32 bg-gray-200 rounded" />
-      <div className="space-y-2">
-        <div className="w-32 h-10 bg-gray-200 rounded" />
-        <div className="w-24 h-6 bg-gray-200 rounded" />
-        <div className="w-40 h-6 bg-gray-200 rounded" />
-      </div>
+    <div className="flex items-start animate-pulse">
+      <div className="bg-gray-200 rounded w-36 h-36" />
     </div>
   );
 
@@ -60,53 +55,51 @@ export function TokenSettingsForm(props: TokenSettingsFormProps) {
     <div className="grid gap-2 my-2 lg:grid-cols-2">
       {/* Left Card: Token Metadata Overview */}
       <div className="p-6 space-y-6 border rounded-lg bg-background">
-        {isGenerating ? (
-          <ShimmerPlaceholder />
-        ) : (
-          <div className="space-y-6">
-            <div className="flex items-start space-x-4">
-              {metadata?.image ? (
-                <img
-                  src={metadata.image}
-                  alt={formValues.lpTokenName || 'LP Token'}
-                  className="object-contain rounded-lg w-36 h-36"
+        <div className="space-y-2">
+          <div className="flex items-start space-x-4">
+            {isGenerating ? (
+              <ShimmerPlaceholder />
+            ) : metadata?.image ? (
+              <img
+                src={metadata.image}
+                alt={formValues.lpTokenName || 'LP Token'}
+                className="object-contain rounded-lg w-36 h-36"
+              />
+            ) : (
+              <div className="flex items-center justify-center rounded w-36 h-36 bg-accent">
+                <span className="text-xs text-accent-foreground">No Image</span>
+              </div>
+            )}
+            <div className="flex-1 space-y-2">
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Token Name</Label>
+                <Input
+                  value={formValues.lpTokenName}
+                  onChange={e => setValue('lpTokenName', e.target.value)}
+                  placeholder="Enter token name"
                 />
-              ) : (
-                <div className="flex items-center justify-center rounded w-36 h-36 bg-accent">
-                  <span className="text-xs text-accent-foreground">No Image</span>
-                </div>
-              )}
-              <div className="flex-1 space-y-2">
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Token Name</Label>
-                  <Input
-                    value={formValues.lpTokenName}
-                    onChange={e => setValue('lpTokenName', e.target.value)}
-                    placeholder="Enter token name"
-                  />
-                </div>
-                <div className="space-y-1">
-                  <Label className="text-muted-foreground">Token Symbol</Label>
-                  <Input
-                    value={formValues.lpTokenSymbol}
-                    onChange={e => setValue('lpTokenSymbol', e.target.value)}
-                    placeholder="Enter token symbol"
-                  />
-                </div>
+              </div>
+              <div className="space-y-1">
+                <Label className="text-muted-foreground">Token Symbol</Label>
+                <Input
+                  value={formValues.lpTokenSymbol}
+                  onChange={e => setValue('lpTokenSymbol', e.target.value)}
+                  placeholder="Enter token symbol"
+                />
               </div>
             </div>
-
-            <div className="space-y-1">
-              <Label className="text-muted-foreground">Description</Label>
-              <Textarea
-                value={formValues.description}
-                onChange={e => setValue('description', e.target.value)}
-                placeholder="Enter token description"
-                rows={3}
-              />
-            </div>
           </div>
-        )}
+
+          <div className="space-y-1">
+            <Label className="text-muted-foreground">Description</Label>
+            <Textarea
+              value={formValues.description}
+              onChange={e => setValue('description', e.target.value)}
+              placeholder="Enter token description"
+              rows={3}
+            />
+          </div>
+        </div>
 
         {/* LP Rebate Percentage */}
         <div className="pt-4 mt-4 space-y-4 border-t border-border">
