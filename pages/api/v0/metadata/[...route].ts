@@ -158,6 +158,7 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
       ...data,
       image: blob.url,
       properties: {
+        ...data.properties,
         generated: {
           date: new Date().toISOString(),
           imagePrompt,
