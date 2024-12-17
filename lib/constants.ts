@@ -32,7 +32,7 @@ export const NAVIGATION = [
     route: '/pools/spot'
   },
   {
-    name: 'Dex (Alpha)',
+    name: 'Dex (Old)',
     route: '/pools/dexterity'
   }
   // {
