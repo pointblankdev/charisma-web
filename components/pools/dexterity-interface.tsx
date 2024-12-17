@@ -14,7 +14,15 @@ import { AddLiquidityModal } from './modals/add-liquidity-modal';
 import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
-import { bufferCV, optionalCVOf, PostConditionMode, uintCV } from '@stacks/transactions';
+import {
+  bufferCV,
+  cvToValue,
+  fetchCallReadOnlyFunction,
+  optionalCVOf,
+  Pc,
+  PostConditionMode,
+  uintCV
+} from '@stacks/transactions';
 import { hexToBytes } from '@stacks/common';
 import numeral from 'numeral';
 
@@ -69,15 +77,42 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
 
-  const handleAddLiquidityClick = (pool: any, amount: number) => {
+  const handleAddLiquidityClick = async (pool: any, amount: number) => {
+    const amountIn = Math.floor(amount);
+    const response = await fetchCallReadOnlyFunction({
+      contractAddress: pool.contractId.split('.')[0],
+      contractName: pool.contractId.split('.')[1],
+      functionName: 'quote',
+      functionArgs: [uintCV(amountIn), optionalCVOf(bufferCV(hexToBytes('02')))],
+      senderAddress: stxAddress
+    });
+    const result = cvToValue(response).value;
+
+    // Helper function to create post condition based on token type
+    const createPostCondition = (token: any, amount: number) => {
+      if (token.contractId === '.stx') {
+        return Pc.principal(stxAddress).willSendEq(amount).ustx();
+      } else {
+        return Pc.principal(stxAddress)
+          .willSendEq(amount)
+          .ft(token.contractId, token.metadata.identifier);
+      }
+    };
+
+    // Create post conditions for both tokens
+    const postConditions = [
+      createPostCondition(pool.token0, result.dx.value),
+      createPostCondition(pool.token1, result.dy.value)
+    ];
+
     doContractCall({
       network: network,
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'execute',
-      postConditionMode: PostConditionMode.Allow,
-      postConditions: [],
-      functionArgs: [uintCV(Math.floor(amount)), optionalCVOf(bufferCV(hexToBytes('02')))],
+      postConditionMode: PostConditionMode.Deny,
+      postConditions,
+      functionArgs: [uintCV(amountIn), optionalCVOf(bufferCV(hexToBytes('02')))],
       onFinish: data => {
         console.log('Add liquidity transaction successful', data);
       },
