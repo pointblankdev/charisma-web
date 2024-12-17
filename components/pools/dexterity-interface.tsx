@@ -45,6 +45,34 @@ const AddressDisplay = ({ address }: { address: string }) => {
   );
 };
 
+const TokenPairDisplay = ({ token0, token1 }: { token0: any; token1: any }) => (
+  <div className="flex flex-col items-center justify-start">
+    <div className="flex items-center -space-x-2">
+      <div className="z-10 border-2 rounded-full border-background">
+        <Image
+          src={token0.metadata.image}
+          alt={token0.metadata.symbol}
+          width={24}
+          height={24}
+          className="rounded-full"
+        />
+      </div>
+      <div className="border-2 rounded-full border-background">
+        <Image
+          src={token1.metadata.image}
+          alt={token1.metadata.symbol}
+          width={24}
+          height={24}
+          className="rounded-full"
+        />
+      </div>
+    </div>
+    <span className="whitespace-nowrap">
+      {token0.metadata.symbol}-{token1.metadata.symbol}
+    </span>
+  </div>
+);
+
 const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const tvl = useMemo(() => {
     const token0Value =
@@ -178,6 +206,9 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
         </div>
       </td>
       <td className="px-4 py-4 text-white">
+        <TokenPairDisplay token0={pool.token0} token1={pool.token1} />
+      </td>
+      <td className="px-4 py-4 text-white">
         <TVLDisplay pool={pool} prices={prices} />
       </td>
       <td className="px-4 py-4 space-x-2 text-lg leading-snug text-white">
@@ -245,6 +276,7 @@ export const DexterityInterface = ({
               <thead>
                 <tr className="text-left text-gray-400">
                   <th className="px-4 py-2"></th>
+                  <th className="px-4 py-2 text-center">Pair</th>
                   <th className="px-4 py-2">Liquidity</th>
                   <th className="px-4 py-2">Deployer</th>
                   <th className="px-4 py-2 text-right"></th>
