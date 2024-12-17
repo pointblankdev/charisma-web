@@ -6,7 +6,6 @@ export async function fetchTokenMetadata(contractId: string) {
   }
   const response = await getContractMetadata(contractId);
   if (response.ok) {
-    const metadata = await response.json();
-    return { decimals: metadata.decimals, name: metadata.name, symbol: metadata.symbol };
+    return await response.json();
   }
 }

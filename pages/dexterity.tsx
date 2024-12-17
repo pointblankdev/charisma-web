@@ -11,10 +11,10 @@ import { useContractDeployment } from '@lib/hooks/use-contract-deployment';
 import { fetchTokenMetadata } from '@lib/hooks/use-token-metadata';
 import PricesService from '@lib/server/prices/prices-service';
 import { cn } from '@lib/utils';
-import { useConnect } from '@stacks/connect-react';
+import { Pc } from '@stacks/transactions';
 import { WandSparkles } from 'lucide-react';
 import { GetStaticProps } from 'next';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 
 type Props = {
@@ -37,11 +37,9 @@ export default function ContractDeployer({ prices }: Props) {
   const [metadata, setMetadata] = useState(null as any);
   const [tokenAMetadata, setTokenAMetadata] = useState(null as any);
   const [tokenBMetadata, setTokenBMetadata] = useState(null as any);
-
   const { stxAddress } = useGlobalState();
   const { contractCode, updateContractCode } = useContractCode();
-  const { doContractDeploy } = useConnect();
-  const { deployContract } = useContractDeployment(doContractDeploy);
+  const { deployContract } = useContractDeployment();
 
   const form = useForm({
     defaultValues: {
@@ -59,6 +57,47 @@ export default function ContractDeployer({ prices }: Props) {
   const formValues = form.watch();
   const safeTokenName = sanitizeContractName(formValues.lpTokenName);
   const fullContractName = `${stxAddress}.${safeTokenName}`;
+
+  // Calculate post conditions based on initial liquidity
+  const postConditions = useMemo(() => {
+    if (!formValues.tokenAContract || !formValues.tokenBContract) return [];
+
+    const conditions = [];
+    const isTokenAStx = formValues.tokenAContract === '.stx';
+    const isTokenBStx = formValues.tokenBContract === '.stx';
+
+    // Handle token A
+    if (isTokenAStx) {
+      conditions.push(Pc.principal(stxAddress).willSendEq(formValues.initialLiquidityA).ustx());
+    } else {
+      conditions.push(
+        Pc.principal(stxAddress)
+          .willSendEq(formValues.initialLiquidityA)
+          .ft(formValues.tokenAContract as any, tokenAMetadata?.identifier)
+      );
+    }
+
+    // Handle token B
+    if (isTokenBStx) {
+      conditions.push(Pc.principal(stxAddress).willSendEq(formValues.initialLiquidityB).ustx());
+    } else {
+      conditions.push(
+        Pc.principal(stxAddress)
+          .willSendEq(formValues.initialLiquidityB)
+          .ft(formValues.tokenBContract as any, tokenBMetadata?.identifier)
+      );
+    }
+
+    return conditions;
+  }, [
+    formValues.tokenAContract,
+    formValues.tokenBContract,
+    formValues.initialLiquidityA,
+    formValues.initialLiquidityB,
+    stxAddress,
+    tokenAMetadata,
+    tokenBMetadata
+  ]);
 
   useEffect(() => {
     if (formValues.tokenAContract && formValues.tokenBContract) {
@@ -123,6 +162,7 @@ export default function ContractDeployer({ prices }: Props) {
     deployContract({
       contractName: safeTokenName,
       codeBody: contractCode,
+      postConditions,
       metadata
     });
   };
@@ -161,7 +201,7 @@ export default function ContractDeployer({ prices }: Props) {
                 {showCode ? 'Hide Source Code' : 'Show Source Code'}
               </Button>
               <Button onClick={generateMetadata} variant="outline">
-                <WandSparkles className="w-4 h-4 mr-2" /> Generate Metadata
+                <WandSparkles className="w-4 h-4 mr-2" /> Generate Image from Metadata
               </Button>
               <Button
                 onClick={handleDeploy}

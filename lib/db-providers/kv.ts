@@ -1,9 +1,11 @@
-import { getDecimals, getSymbol } from '@lib/stacks-api';
+import { getDecimals, getIdentifier, getSymbol } from '@lib/stacks-api';
 import { kv } from '@vercel/kv';
 import _ from 'lodash';
 
 export async function getContractMetadata(ca: string): Promise<any> {
-  return await kv.get(`ca:${ca}`);
+  const identifier: string = await getIdentifier(ca);
+  const metadata: any = await kv.get(`ca:${ca}`);
+  return { ...metadata, identifier };
 }
 
 export async function addIndexContract(ca: string): Promise<void> {
