@@ -129,11 +129,7 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
 
     // Generate image using OpenAI
     const imagePrompt =
-      `Design a sleek, modern logo for ${data.name}. It's described by: ${data.description}. ` +
-      `Create a minimalist, balanced design that subtly represents the fusion of ${tokenAMeta.symbol} and ${tokenBMeta.symbol} through abstract geometric shapes. ` +
-      `The logo should feel cool and sophisticated, using clean lines and a bold approach that conveys power and wealth. ` +
-      `DO NOT include any text or symbols. NO background elements other than black. Avoid empty space around the edges. ` +
-      `Focus on creating a single, cohesive emblem that could work as a financial product icon. ` +
+      `Design a iconic logo for ${data.name}, described by: ${data.description}. DO NOT include any text or words.` +
       `${
         charismaTheme ? `Incorporate a deep red as the primary color in a sophisticated way. ` : ``
       }` +
