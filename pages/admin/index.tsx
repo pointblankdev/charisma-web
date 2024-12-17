@@ -55,73 +55,73 @@ interface AdminDashboardProps {
 
 const service = PricesService.getInstance();
 
-export const getStaticProps: GetStaticProps<AdminDashboardProps> = async () => {
-  try {
-    // Fetch pools and token prices in parallel
-    const [pools, tokenPrices, marketplaceStats] = await Promise.all([
-      PoolsService.getPools(),
-      service.getAllTokenPrices(),
-      MarketplaceService.getStats()
-    ]);
+// export const getStaticProps: GetStaticProps<AdminDashboardProps> = async () => {
+//   try {
+//     // Fetch pools and token prices in parallel
+//     const [pools, tokenPrices, marketplaceStats] = await Promise.all([
+//       PoolsService.getPools(),
+//       service.getAllTokenPrices(),
+//       MarketplaceService.getStats()
+//     ]);
 
-    const poolStats = await Promise.all(
-      pools.map(async pool => {
-        // Get revenue data from blockchain
-        const result: any = await fetchCallReadOnlyFunction({
-          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-          contractName: 'univ2-core',
-          functionName: 'do-get-revenue',
-          functionArgs: [uintCV(pool.id)],
-          senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-        });
+//     const poolStats = await Promise.all(
+//       pools.map(async pool => {
+//         // Get revenue data from blockchain
+//         const result: any = await fetchCallReadOnlyFunction({
+//           contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+//           contractName: 'univ2-core',
+//           functionName: 'do-get-revenue',
+//           functionArgs: [uintCV(pool.id)],
+//           senderAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+//         });
 
-        const feesCollected = {
-          token0: Number(result.data.token0.value),
-          token1: Number(result.data.token1.value)
-        };
+//         const feesCollected = {
+//           token0: Number(result.data.token0.value),
+//           token1: Number(result.data.token1.value)
+//         };
 
-        // Calculate USD values using token decimals from pool data
-        const token0USD =
-          (feesCollected.token0 / 10 ** pool.token0.decimals) *
-          tokenPrices[pool.token0.contractAddress];
-        const token1USD =
-          (feesCollected.token1 / 10 ** pool.token1.decimals) *
-          tokenPrices[pool.token1.contractAddress];
-        const totalUSD = token0USD + token1USD;
+//         // Calculate USD values using token decimals from pool data
+//         const token0USD =
+//           (feesCollected.token0 / 10 ** pool.token0.decimals) *
+//           tokenPrices[pool.token0.contractAddress];
+//         const token1USD =
+//           (feesCollected.token1 / 10 ** pool.token1.decimals) *
+//           tokenPrices[pool.token1.contractAddress];
+//         const totalUSD = token0USD + token1USD;
 
-        return {
-          id: pool.id,
-          name: `${pool.token0.symbol}-${pool.token1.symbol}`,
-          feesCollected,
-          totalUSD
-        };
-      })
-    );
+//         return {
+//           id: pool.id,
+//           name: `${pool.token0.symbol}-${pool.token1.symbol}`,
+//           feesCollected,
+//           totalUSD
+//         };
+//       })
+//     );
 
-    return {
-      props: {
-        poolStats,
-        marketplaceStats
-      },
-      revalidate: 600 // Revalidate every 10 minutes
-    };
-  } catch (error) {
-    console.error('Error fetching data:', error);
-    // Return empty stats rather than failing the build
-    return {
-      props: {
-        poolStats: [],
-        marketplaceStats: {
-          totalListings: 0,
-          totalVolume: 0,
-          activeListings: 0,
-          collections: {}
-        }
-      },
-      revalidate: 60 // Retry sooner if there was an error
-    };
-  }
-};
+//     return {
+//       props: {
+//         poolStats,
+//         marketplaceStats
+//       },
+//       revalidate: 600 // Revalidate every 10 minutes
+//     };
+//   } catch (error) {
+//     console.error('Error fetching data:', error);
+//     // Return empty stats rather than failing the build
+//     return {
+//       props: {
+//         poolStats: [],
+//         marketplaceStats: {
+//           totalListings: 0,
+//           totalVolume: 0,
+//           activeListings: 0,
+//           collections: {}
+//         }
+//       },
+//       revalidate: 60 // Retry sooner if there was an error
+//     };
+//   }
+// };
 
 export default function AdminDashboard({ poolStats, marketplaceStats }: AdminDashboardProps) {
   const meta = {
@@ -135,13 +135,13 @@ export default function AdminDashboard({ poolStats, marketplaceStats }: AdminDas
       <Layout>
         <div className="m-2 sm:container sm:mx-auto sm:py-10 md:max-w-6xl">
           <HeroSection />
-          <MarketplaceSection marketplaceStats={marketplaceStats} />
+          {/* <MarketplaceSection marketplaceStats={marketplaceStats} /> */}
           <div className="mb-12">
             <div className="w-full pt-4 text-3xl font-bold text-center uppercase">Swap Fees</div>
             <div className="w-full pb-8 text-center text-md text-muted/90">
               View protocol fees collected by each pool
             </div>
-            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+            {/* <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
               {poolStats.map(pool => (
                 <Card
                   key={pool.id}
@@ -158,7 +158,7 @@ export default function AdminDashboard({ poolStats, marketplaceStats }: AdminDas
                   <p>Token 1: {numeral(pool.feesCollected.token1 / 1e6).format('0,0.000000')}</p>
                 </Card>
               ))}
-            </div>
+            </div> */}
           </div>
           <DexSection />
           <TokenSection />
