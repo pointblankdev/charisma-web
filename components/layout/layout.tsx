@@ -152,15 +152,15 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               )}
               onClick={drawer.open}
             >
-              {wallet.experience.balance > 1 && (
+              {/* {wallet.experience.balance > 1 && (
                 <div
                   className="cursor-help"
                   title={'You have over 1 EXP and have unlocked all swap routes.'}
                 >
                   ✨
                 </div>
-              )}
-              {wallet.redPilled && (
+              )} */}
+              {/* {wallet.redPilled && (
                 <Image
                   src={redPillFloating}
                   alt="Red Pill"
@@ -171,8 +171,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                     'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'
                   }
                 />
-              )}
-              {wallet.bluePilled && (
+              )} */}
+              {/* {wallet.bluePilled && (
                 <Image
                   src={bluePillFloating}
                   alt="Blue Pill"
@@ -183,7 +183,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                     'The Blue Pill NFT offers your early access to Charisma Recovery token redemptions.'
                   }
                 />
-              )}
+              )} */}
               <ConnectWallet />
             </div>
           </header>
