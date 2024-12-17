@@ -61,12 +61,16 @@ describe('TokenMetadataClient Integration Tests', () => {
   });
 
   test('move data to new endpoint', async () => {
-    const result1 = await client.get('SP15WAVKQNT241YVCGQMJS777E17H9TS96M21Q5DX.sexy-pepe');
+    const result1 = await client.get('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.mecha-meme');
 
-    const result2 = await client.patch(
-      'SP15WAVKQNT241YVCGQMJS777E17H9TS96M21Q5DX.sexy-pep',
-      result1.metadata as any
-    );
+    const result2 = await client.patch('SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q.mecha-meme', {
+      ...(result1.metadata as any),
+      properties: {
+        contractName: 'mecha-meme',
+        tokenAContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
+        tokenBContract: 'SP3HNEXSXJK2RYNG5P6YSEE53FREX645JPJJ5FBFA.meme-stxcity'
+      }
+    });
 
     console.log('Custom Generate Response:', JSON.stringify(result2, null, 2));
   });
@@ -75,11 +79,7 @@ describe('TokenMetadataClient Integration Tests', () => {
     console.log('Testing metadata retrieval by contract ID...\n');
 
     // Test with multiple contract IDs
-    const contractIds = [
-      'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.test-token',
-      'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.custom-token',
-      'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.nonexistent-token' // Testing with non-existent token
-    ];
+    const contractIds = ['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dungeon-master-liquidity'];
 
     for (const contractId of contractIds) {
       console.log(`Getting metadata for ${contractId}...`);
@@ -95,8 +95,8 @@ describe('TokenMetadataClient Integration Tests', () => {
   test('migrate data to new key', async () => {
     console.log('Starting full data migration...\n');
 
-    const oldKey = 'SP15WAVKQNT241YVCGQMJS777E17H9TS96M21Q5DX.sexy-pepe';
-    const newKey = 'SP15WAVKQNT241YVCGQMJS777E17H9TS96M21Q5DX.sexy-pep';
+    const oldKey = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dungeon-master-liquidity';
+    const newKey = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dungeon-master-liquidity';
 
     try {
       const results = await client.migrateData(oldKey, newKey);
