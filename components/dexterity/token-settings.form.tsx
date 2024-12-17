@@ -44,6 +44,15 @@ export function TokenSettingsForm(props: TokenSettingsFormProps) {
       (prices[formValues.tokenBContract] || 0)
     : 0;
 
+  console.log('TokenSettingsForm', {
+    prices,
+    isGenerating,
+    tokenAMetadata,
+    tokenBMetadata,
+    metadata,
+    form
+  });
+
   // Shimmer Placeholder Component
   const ShimmerPlaceholder = () => (
     <div className="flex items-start animate-pulse">

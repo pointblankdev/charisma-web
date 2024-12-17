@@ -1,11 +1,66 @@
-import { getDecimals, getIdentifier, getSymbol } from '@lib/stacks-api';
+import { getDecimals, getIdentifier, getSymbol, getTokenMetadata } from '@lib/stacks-api';
 import { kv } from '@vercel/kv';
 import _ from 'lodash';
 
-export async function getContractMetadata(ca: string): Promise<any> {
-  const identifier: string = await getIdentifier(ca);
-  const metadata: any = await kv.get(`ca:${ca}`);
-  return { ...metadata, identifier };
+// Define default STX token data
+const STX_TOKEN = {
+  contractId: '.stx',
+  metadata: {
+    name: 'Stacks',
+    symbol: 'STX',
+    decimals: 6,
+    identifier: '.stx',
+    image: '/stx-logo.png',
+    description: 'Native Stacks blockchain token'
+  }
+};
+
+// Helper to get token data
+export async function getTokenData(contractId: string) {
+  if (contractId === '.stx') return STX_TOKEN;
+
+  return {
+    contractId,
+    metadata: {
+      ...(await getTokenMetadata(contractId)),
+      symbol: await getSymbol(contractId),
+      decimals: await getDecimals(contractId),
+      identifier: await getIdentifier(contractId)
+    }
+  };
+}
+
+export async function getContractMetadata(contractId: string): Promise<any> {
+  // Return STX data if it's the native token
+  if (contractId === '.stx') return STX_TOKEN;
+
+  try {
+    // Get cached metadata
+    const cachedMetadata: any = await kv.get(`ca:${contractId}`);
+
+    // Get on-chain metadata
+    const [tokenMetadata, symbol, decimals, identifier] = await Promise.all([
+      getTokenMetadata(contractId),
+      getSymbol(contractId),
+      getDecimals(contractId),
+      getIdentifier(contractId)
+    ]);
+
+    // Combine cached and on-chain metadata
+    const metadata = {
+      contractId,
+      ...cachedMetadata,
+      ...tokenMetadata,
+      symbol,
+      decimals,
+      identifier
+    };
+
+    return metadata;
+  } catch (error) {
+    console.error(`Error fetching metadata for ${contractId}:`, error);
+    throw error;
+  }
 }
 
 export async function addIndexContract(ca: string): Promise<void> {

@@ -110,6 +110,8 @@ class PricesService {
 
       response.data.prices['.stx'] =
         response.data.prices['SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'];
+      response.data.prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dexterity-pool-v1'] =
+        response.data.prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'];
 
       return response.data.prices;
     } catch (error) {

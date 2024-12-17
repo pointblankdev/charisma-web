@@ -122,6 +122,7 @@ export default function ContractDeployer({ prices }: Props) {
   const handleTokenBSelection = async (token: any) => {
     form.setValue('tokenBContract', token.contractId);
     const metadata = await fetchTokenMetadata(token.contractId);
+    console.log({ metadata });
     setTokenBMetadata(metadata);
     setCurrentStep('configure-pool');
   };

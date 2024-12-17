@@ -113,8 +113,6 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
     const generatedDetails = generateTokenDetails(tokenAMeta, tokenBMeta);
 
     const charismaTheme =
-      data.properties.tokenAContract.includes('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
-      data.properties.tokenBContract.includes('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') ||
       data.properties.tokenAContract.includes('charisma') ||
       data.properties.tokenBContract.includes('charisma');
 
