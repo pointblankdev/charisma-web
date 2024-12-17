@@ -2,22 +2,13 @@ import { GetStaticProps } from 'next';
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import Layout from '@components/layout/layout';
-import { Card } from '@components/ui/card';
 import { useEffect, useState } from 'react';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { motion } from 'framer-motion';
-import { PoolsInterface } from '@components/pools/pools-interface';
 import PoolsLayout from '@components/pools/layout';
-import TokenRegistryClient from '@lib/server/registry/registry.client';
 import PricesService from '@lib/server/prices/prices-service';
 import Link from 'next/link';
-import { Alert, AlertDescription, AlertTitle } from '@components/ui/alert';
-import { AlertTriangle, CrosshairIcon, Sparkles } from 'lucide-react';
-import {
-  DEXTERITY_ABI,
-  getAllContractsByTrait,
-  getContractsByTrait
-} from '@lib/server/traits/service';
+import { DEXTERITY_ABI, getContractsByTrait } from '@lib/server/traits/service';
 import {
   getAccountBalance,
   getDecimals,
