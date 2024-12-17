@@ -66,9 +66,6 @@ export const getStaticProps: GetStaticProps<any> = async () => {
     service.getAllTokenPrices()
   ]);
 
-  // Add STX price mapping
-  prices['.stx'] = prices['SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'];
-
   // Get pools data
   const pools = await Promise.all(contracts.map((contract: any) => getPoolData(contract)));
 
