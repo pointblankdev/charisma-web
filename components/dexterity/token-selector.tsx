@@ -18,8 +18,8 @@ const PRESET_TOKENS = [
   {
     name: 'Bitcoin',
     symbol: 'sBTC',
-    contractId: 'SP000000000000000000002Q6VF78.sbtc',
-    image: '/sbtc-logo.png',
+    contractId: 'SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token',
+    image: '/sbtc.png',
     description: 'Bitcoin token on the Stacks blockchain'
   },
   {
@@ -66,7 +66,7 @@ export function TokenSelector({ onSelect, excludeToken }: TokenSelectorProps) {
     <div className="my-2 space-y-2">
       <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
         {PRESET_TOKENS.map(token => {
-          const isDisabled = token.symbol === 'sBTC' || token.contractId === excludeToken;
+          const isDisabled = token.contractId === excludeToken;
 
           return (
             <Card
