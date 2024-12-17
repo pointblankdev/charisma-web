@@ -192,7 +192,7 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
         />
         <div>
           <div className="flex items-center space-x-1 leading-tight">
-            <div className="text-xl leading-none">{pool.metadata.name}</div>
+            <div className="text-lg leading-none">{pool.metadata.name}</div>
             <Link
               href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
               target="_blank"

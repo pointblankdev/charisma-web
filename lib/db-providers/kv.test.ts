@@ -100,9 +100,7 @@ describe('indexes', () => {
   });
 
   it('should remove index contract', async () => {
-    const response = await removeIndexContract(
-      'SP2J6Y09JMFWWZCT4VJX0BA5W7A9HZP5EX96Y6VZY.greenorange-dexterity'
-    );
+    const response = await removeIndexContract('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cha-ten');
     console.log(response);
   });
 
