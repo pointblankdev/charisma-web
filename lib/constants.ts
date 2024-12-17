@@ -26,19 +26,19 @@ export const NAVIGATION = [
   {
     name: 'Invest',
     route: '/pools'
-  },
-  {
-    name: 'Earn',
-    route: '/interactions'
-  },
-  {
-    name: 'Shop',
-    route: '/shop'
-  },
-  {
-    name: 'Redeem',
-    route: '/recovery'
   }
+  // {
+  //   name: 'Earn',
+  //   route: '/interactions'
+  // },
+  // {
+  //   name: 'Shop',
+  //   route: '/shop'
+  // },
+  // {
+  //   name: 'Redeem',
+  //   route: '/recovery'
+  // }
 ];
 
 export type TicketGenerationState = 'default' | 'loading';
