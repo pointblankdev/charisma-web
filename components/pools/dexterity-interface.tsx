@@ -186,8 +186,8 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
         <Image
           src={pool.metadata.image}
           alt={pool.metadata.name}
-          width={48}
-          height={48}
+          width={40}
+          height={40}
           className="object-cover mr-3 rounded-md"
         />
         <div>
