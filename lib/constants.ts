@@ -25,12 +25,16 @@ export const NAVIGATION = [
   },
   {
     name: 'Liquidity Pools',
-    route: '/pools'
+    route: '/pools/new-dex'
+  },
+  {
+    name: 'Spot (Deprecated)',
+    route: '/pools/spot'
+  },
+  {
+    name: 'Dex (Alpha)',
+    route: '/pools/dexterity'
   }
-  // {
-  //   name: 'Earn',
-  //   route: '/interactions'
-  // },
   // {
   //   name: 'Shop',
   //   route: '/shop'
