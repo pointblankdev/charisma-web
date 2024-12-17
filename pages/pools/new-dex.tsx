@@ -103,7 +103,14 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   ]);
 
   // Get pools data
-  const pools = await Promise.all(contracts.map((contract: any) => getPoolData(contract)));
+  const pools = [];
+  for (const contract of contracts) {
+    try {
+      pools.push(await getPoolData(contract));
+    } catch (error) {
+      console.warn('Error fetching pool data:', error);
+    }
+  }
 
   // Extract unique tokens from pools and add STX
   const tokens = _.uniqBy(
