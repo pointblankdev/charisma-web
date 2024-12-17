@@ -17,10 +17,10 @@ export async function getContractsByTrait({
 
   try {
     // Try to get from cache first
-    // const cachedData = await kv.get(cacheKey);
-    // if (cachedData !== null) {
-    //   return cachedData as any;
-    // }
+    const cachedData = await kv.get(cacheKey);
+    if (cachedData !== null) {
+      return cachedData as any;
+    }
 
     // If not in cache, fetch from API
     const response = await client.GET('/extended/v1/contract/by_trait', {
@@ -33,10 +33,10 @@ export async function getContractsByTrait({
       }
     });
 
-    // Cache the result for 1 hour
-    // await kv.set(cacheKey, response.data?.results, {
-    //   ex: 60 * 60 // 1 hour
-    // });
+    // Cache the result for 12 hours
+    await kv.set(cacheKey, response.data?.results, {
+      ex: 60 * 60 * 12 // 12 hours
+    });
 
     return _.uniqBy(response.data?.results, 'contract_id');
   } catch (error) {
