@@ -19,6 +19,7 @@ import {
 } from '@lib/stacks-api';
 import DexterityInterface from '@components/pools/dexterity-interface';
 import _ from 'lodash';
+import { kv } from '@vercel/kv';
 
 // Define default STX token data
 const STX_TOKEN = {
@@ -93,37 +94,94 @@ async function getPoolData(contract: any) {
   };
 }
 
-export const getStaticProps: GetStaticProps<any> = async () => {
-  const service = PricesService.getInstance();
+async function getCachedOrFetchPoolData(contract: any, ttlSeconds = 300) {
+  // 5 minutes cache
+  const cacheKey = `pool:data:${contract.contract_id}`;
 
-  // Get contracts and prices
-  const [contracts, prices] = await Promise.all([
-    getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 }),
-    service.getAllTokenPrices()
-  ]);
-
-  // Get pools data
-  const pools = [];
-  for (const contract of contracts) {
-    try {
-      pools.push(await getPoolData(contract));
-    } catch (error) {
-      console.warn('Error fetching pool data:', error);
-    }
+  // Try to get from cache first
+  const cachedData = await kv.get(cacheKey);
+  if (cachedData) {
+    return cachedData;
   }
 
-  // Extract unique tokens from pools and add STX
-  const tokens = _.uniqBy(
-    [STX_TOKEN, ...pools.flatMap(pool => [pool.token0, pool.token1])],
-    'contractId'
-  );
+  // If not in cache, fetch and store
+  const poolData = await getPoolData(contract);
+  await kv.set(cacheKey, poolData, { ex: ttlSeconds });
+  return poolData;
+}
 
-  return {
-    props: {
-      data: { prices, tokens, pools }
-    },
-    revalidate: 60
-  };
+async function getCachedOrFetchPrices(ttlSeconds = 120) {
+  // 1 minute cache for prices
+  const cacheKey = 'prices:all';
+
+  // Try to get from cache first
+  const cachedPrices = await kv.get(cacheKey);
+  if (cachedPrices) {
+    return cachedPrices;
+  }
+
+  // If not in cache, fetch and store
+  const service = PricesService.getInstance();
+  const prices = await service.getAllTokenPrices();
+  await kv.set(cacheKey, prices, { ex: ttlSeconds });
+  return prices;
+}
+
+async function getCachedOrFetchContracts(ttlSeconds = 300) {
+  // 5 minutes cache
+  const cacheKey = 'contracts:dexterity';
+
+  // Try to get from cache first
+  const cachedContracts = await kv.get(cacheKey);
+  if (cachedContracts) {
+    return cachedContracts;
+  }
+
+  // If not in cache, fetch and store
+  const contracts = await getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 });
+  await kv.set(cacheKey, contracts, { ex: ttlSeconds });
+  return contracts;
+}
+
+export const getStaticProps: GetStaticProps<any> = async () => {
+  try {
+    // Get contracts and prices in parallel using cached functions
+    const [contracts, prices] = await Promise.all([
+      getCachedOrFetchContracts(),
+      getCachedOrFetchPrices()
+    ]);
+
+    // Get pools data with caching
+    const pools: any[] = [];
+    for (const contract of contracts) {
+      try {
+        pools.push(await getCachedOrFetchPoolData(contract));
+      } catch (error) {
+        console.warn('Error fetching pool data:', error);
+      }
+    }
+
+    // Extract unique tokens from pools and add STX
+    const tokens = _.uniqBy(
+      [STX_TOKEN, ...pools.flatMap(pool => [pool.token0, pool.token1])],
+      'contractId'
+    );
+
+    return {
+      props: {
+        data: { prices, tokens, pools }
+      },
+      revalidate: 60
+    };
+  } catch (error) {
+    console.error('Error in getStaticProps:', error);
+    return {
+      props: {
+        data: { prices: {}, tokens: [STX_TOKEN], pools: [] }
+      },
+      revalidate: 60
+    };
+  }
 };
 
 export default function DexterityPoolsPage({ data }: any) {
