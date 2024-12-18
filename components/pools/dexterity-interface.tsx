@@ -317,9 +317,10 @@ export const DexterityInterface = ({
           <div className="px-4 mb-4 sm:px-0">
             <div className="flex items-baseline justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-white/95">Dexterity Pools</h1>
+                <h1 className="text-2xl font-bold text-white/95">Liquidity Vaults</h1>
                 <div className="text-sm text-muted-foreground">
-                  Deploy your own liquidity pool and earn trading fees on every swap.
+                  Deploy your own Decentralized Liquidity Vault (DLV) and collect trading fees on
+                  every swap.
                 </div>
               </div>
               <div className="text-right">

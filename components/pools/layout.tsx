@@ -53,9 +53,9 @@ export default function PoolsLayout({ children }: any) {
     <div className="flex flex-col w-full max-w-[3000px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header Section */}
       <div className="my-2 mt-4 sm:px-4">
-        <h1 className="mb-3 text-3xl font-bold tracking-tight">Liquidity Pools</h1>
+        <h1 className="mb-3 text-3xl font-bold tracking-tight">Earn Yield Rewards</h1>
         <p className="text-lg text-muted-foreground/90">
-          Earn yield while your tokens are securely stored in decentralized liquidity pools.
+          Earn fees from swaps while your tokens are secured in a liquidity vault.
         </p>
       </div>
 
