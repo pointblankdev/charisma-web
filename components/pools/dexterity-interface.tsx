@@ -321,8 +321,7 @@ export const DexterityInterface = ({
               <div>
                 <h1 className="text-2xl font-bold text-white/95">Liquidity Vaults</h1>
                 <div className="text-sm text-muted-foreground">
-                  Deploy your own Decentralized Liquidity Vault (DLV) and collect trading fees on
-                  every swap.
+                  Decentralized Liquidity Vaults (DLV) are a more secure form of liquidity pools.
                 </div>
               </div>
               <div className="text-right">

@@ -28,12 +28,8 @@ export const NAVIGATION = [
     route: '/pools/new-dex'
   },
   {
-    name: 'Spot (Deprecated)',
-    route: '/pools/spot'
-  },
-  {
-    name: 'Pools (Old)',
-    route: '/pools/dexterity'
+    name: 'Need the old pools?',
+    route: 'https://charisma-3aadc5yyv-pointblankdev.vercel.app/pools/dexterity'
   }
   // {
   //   name: 'Shop',
