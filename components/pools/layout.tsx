@@ -55,7 +55,7 @@ export default function PoolsLayout({ children }: any) {
       <div className="my-2 mt-4 sm:px-4">
         <h1 className="mb-3 text-3xl font-bold tracking-tight">Earn Yield Rewards</h1>
         <p className="text-lg text-muted-foreground/90">
-          Earn fees from swaps while your tokens are secured in a liquidity vault.
+          Earn fees by putting your money to work for you– powering true DeFi on Stacks!
         </p>
       </div>
 

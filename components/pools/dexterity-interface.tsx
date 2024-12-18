@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger
 } from '@components/ui/dropdown-menu';
 import { Button } from '@components/ui/button';
@@ -214,7 +215,7 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
           trigger={
             <DropdownMenuItem onSelect={e => e.preventDefault()} className="cursor-pointer">
               <Plus className="w-4 h-4 mr-2" />
-              Add Liquidity
+              Start Earning (Deposit)
             </DropdownMenuItem>
           }
         />
@@ -225,10 +226,11 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
           trigger={
             <DropdownMenuItem onSelect={e => e.preventDefault()} className="cursor-pointer">
               <Minus className="w-4 h-4 mr-2" />
-              Remove Liquidity
+              Stop Earning (Withdraw)
             </DropdownMenuItem>
           }
         />
+        <DropdownMenuSeparator />
         <DropdownMenuItem onClick={() => router.push(`/swap`)} className="cursor-pointer">
           <ArrowLeftRight className="w-4 h-4 mr-2" /> Swap Tokens
         </DropdownMenuItem>
