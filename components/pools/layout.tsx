@@ -55,7 +55,7 @@ export default function PoolsLayout({ children }: any) {
       <div className="my-2 mt-4 sm:px-4">
         <h1 className="mb-3 text-3xl font-bold tracking-tight">Liquidity Pools</h1>
         <p className="text-lg text-muted-foreground/90">
-          View and manage liquidity pools on the Charisma DEX
+          Earn yield while your tokens are securely stored in decentralized liquidity pools.
         </p>
       </div>
 
