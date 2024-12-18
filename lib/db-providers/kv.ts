@@ -39,8 +39,8 @@ export async function getContractMetadata(contractId: string): Promise<any> {
     const cachedMetadata: any = await kv.get(`ca:${contractId}`);
 
     // Get on-chain metadata
-    const [tokenMetadata, symbol, decimals, identifier] = await Promise.all([
-      getTokenMetadata(contractId),
+    const [symbol, decimals, identifier] = await Promise.all([
+      // getTokenMetadata(contractId),
       getSymbol(contractId),
       getDecimals(contractId),
       getIdentifier(contractId)
@@ -50,7 +50,6 @@ export async function getContractMetadata(contractId: string): Promise<any> {
     const metadata = {
       contractId,
       ...cachedMetadata,
-      ...tokenMetadata,
       symbol,
       decimals,
       identifier

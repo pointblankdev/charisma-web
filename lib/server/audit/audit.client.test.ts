@@ -3,7 +3,7 @@ import { describe, it } from 'vitest';
 import { ContractAuditClient } from './audit.client';
 
 // Initialize client with test URL
-const client = new ContractAuditClient('http://localhost:3001/api/v0');
+const client = new ContractAuditClient('http://localhost:3000/api/v0');
 
 describe('ContractAuditClient', () => {
   it('successfully audits the contract', async () => {

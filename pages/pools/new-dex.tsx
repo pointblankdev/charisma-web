@@ -51,6 +51,7 @@ async function getTokenData(contractId: string) {
 
 async function getPoolData(contract: any) {
   const metadata = await getTokenMetadata(contract.contract_id);
+  console.log(metadata.properties);
   const [token0, token1] = await Promise.all([
     getTokenData(metadata.properties.tokenAContract),
     getTokenData(metadata.properties.tokenBContract)
@@ -132,15 +133,16 @@ async function getCachedOrFetchContracts(ttlSeconds = 300) {
   const cacheKey = 'contracts:dexterity';
 
   // Try to get from cache first
-  const cachedContracts = await kv.get(cacheKey);
-  if (cachedContracts) {
-    return cachedContracts;
-  }
+  // const cachedContracts = await kv.get(cacheKey);
+  // if (cachedContracts) {
+  //   return cachedContracts;
+  // }
 
   // If not in cache, fetch and store
   const contracts = await getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 });
-  await kv.set(cacheKey, contracts, { ex: ttlSeconds });
-  return contracts;
+  const uniqueContracts = _.uniqBy(contracts, 'contract_id');
+  await kv.set(cacheKey, uniqueContracts, { ex: ttlSeconds });
+  return uniqueContracts;
 }
 
 export const getStaticProps: GetStaticProps<any> = async () => {
@@ -161,15 +163,9 @@ export const getStaticProps: GetStaticProps<any> = async () => {
       }
     }
 
-    // Extract unique tokens from pools and add STX
-    const tokens = _.uniqBy(
-      [STX_TOKEN, ...pools.flatMap(pool => [pool.token0, pool.token1])],
-      'contractId'
-    );
-
     return {
       props: {
-        data: { prices, tokens, pools }
+        data: { prices, pools }
       },
       revalidate: 60
     };
@@ -177,7 +173,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
     console.error('Error in getStaticProps:', error);
     return {
       props: {
-        data: { prices: {}, tokens: [STX_TOKEN], pools: [] }
+        data: { prices: {}, pools: [] }
       },
       revalidate: 60
     };

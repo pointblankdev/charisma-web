@@ -1,5 +1,5 @@
 export const HOST =
-  process.env.NODE_ENV === 'development' ? 'http://localhost:3001' : 'https://charisma.rocks';
+  process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://charisma.rocks';
 
 export async function getContractMetadata(ca: string) {
   return await fetch(`${HOST}/api/metadata/${ca}`, {

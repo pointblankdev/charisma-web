@@ -1,17 +1,12 @@
 import { describe, test } from 'vitest';
 import { TokenMetadataClient } from './client';
-
-export const HOST = 'http://localhost:3001';
-
-// Create test client
-const client = new TokenMetadataClient(HOST, process.env.API_SECRET_KEY || '');
-
-console.log('Token Metadata Client:', client, '\n');
-
-// Test contract ID
-const testContractId = 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.test-token';
-
 describe('TokenMetadataClient Integration Tests', () => {
+  const HOST = 'http://localhost:3000';
+  // Create test client
+  const client = new TokenMetadataClient(HOST, process.env.API_SECRET_KEY || '');
+  // Test contract ID
+  const testContractId = 'SP2PABAF9FTAJYNFZH93XENAJ8FVY99RRM50D2JG9.test-token';
+
   test('full workflow - generate, get, update, patch', async () => {
     console.log('Starting token metadata workflow test...\n');
 

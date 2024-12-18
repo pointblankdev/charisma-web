@@ -23,9 +23,6 @@ import { getContractMetadata, setContractMetadata } from './db-providers/kv';
 import { getDexterityFees, getDexterityQuote, getIsVerifiedInteraction } from './dexterity';
 import { addresses } from './server/aibtcdev.constants';
 import { writeFileSync } from 'fs';
-import PricesService from './server/prices/prices-service';
-
-const service = PricesService.getInstance();
 
 describe('Stacks API', () => {
   it('should lookup a BNS name given an address', async () => {
@@ -77,13 +74,15 @@ describe('Stacks API', () => {
   });
 
   it('should get token metadata for single token', async () => {
-    const metadata = await getTokenMetadata('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx-cha');
+    const metadata = await getTokenMetadata(
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
+    );
     console.log(metadata);
   });
 
   it('should get contract metadata for single token', async () => {
     const metadata = await getContractMetadata(
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.tmntcha-dexterity'
+      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'
     );
     console.log(metadata);
   });
@@ -146,133 +145,4 @@ describe('Stacks API', () => {
     console.log(secretKey128);
     expect(secretKey128).toBeDefined();
   });
-});
-
-describe('Recovery', () => {
-  it('should get available redemptions', async () => {
-    const response = await getAvailableRedemptions();
-    console.log(response);
-  });
-});
-
-describe('Dexterity Pools', () => {
-  it('should get is verified interaction', async () => {
-    const verified = await getIsVerifiedInteraction(
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex'
-    );
-    console.log(verified);
-  });
-  it('should get fees', async () => {
-    const fees = await getDexterityFees('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hoot-dex');
-    console.log(fees);
-  });
-  it('should get quote', async () => {
-    const amountOut = await getDexterityQuote(
-      'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.cyclops-liquidity-dexterity',
-      false,
-      1000000,
-      false
-    );
-    console.log(amountOut);
-  });
-}, 200000);
-
-describe('AI BTC Dev', async () => {
-  const prices = await service.getAllTokenPrices();
-
-  it('should get balances at block 260000', async () => {
-    const balances = await getAccountBalance('SP1FFZ1HEAC0Y9GF4QCSRVHVRASPF1TZPAGRS2X9J', '260000');
-    console.log(balances);
-  });
-
-  it('should format and write balances to file', async () => {
-    const allBalances = [];
-    for (const address of addresses) {
-      const balances = await getAccountBalance(address, '260000');
-      const formattedBalances = {
-        address,
-        stx: Number(balances?.stx.balance),
-        tokens: Object.entries(balances?.fungible_tokens).reduce(
-          (acc: { [key: string]: any }, [key, value]: any) => {
-            const balance = Number(value?.balance);
-            if (balance > 0) {
-              acc[key] = balance;
-            }
-            return acc;
-          },
-          {} as { [key: string]: any }
-        )
-      };
-      if (formattedBalances.stx > 0 || Object.keys(formattedBalances.tokens).length > 0) {
-        allBalances.push(formattedBalances);
-      }
-    }
-    allBalances.sort((a, b) => b.stx - a.stx);
-    writeFileSync('./output/balances.json', JSON.stringify(allBalances, null, 2));
-  });
-
-  it('should calculate itemized balance in USD for each address and total portfolio balance', async () => {
-    const allBalances = [];
-    const missingTokens = new Set<string>();
-    const decimalsMap = new Map<string, number>();
-
-    for (const address of addresses) {
-      const balances = await getAccountBalance(address, '260000');
-      const formattedBalances: any = {
-        address,
-        stx: {
-          tokenBalance: Number(balances?.stx.balance),
-          decimals: 6,
-          balanceWithDecimals: Number(balances?.stx.balance) / 10 ** 6,
-          tokenPrice: Number(prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx'] || 0),
-          usdValue:
-            (Number(balances?.stx.balance) / 10 ** 6) *
-            Number(prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.wstx'] || 0)
-        },
-        tokens: await Object.entries(balances?.fungible_tokens || {}).reduce(
-          async (accPromise: Promise<{ [key: string]: any }>, [key, value]: any) => {
-            const acc = await accPromise;
-            const tokenKey = key.split('::')[0];
-            let decimals = decimalsMap.get(tokenKey);
-            if (decimals === undefined) {
-              decimals = await getDecimals(tokenKey);
-              decimalsMap.set(tokenKey, decimals);
-            }
-            const balance = Number(value?.balance);
-            const balanceWithDecimals = balance / Number(10 ** decimals);
-            const price = Number(prices[tokenKey]);
-            const usdValue = balanceWithDecimals * (price || 0);
-            if (balance > 0) {
-              acc[key] = {
-                tokenBalance: balance,
-                decimals,
-                balanceWithDecimals,
-                tokenPrice: price || 0,
-                usdValue
-              };
-            }
-            return acc;
-          },
-          Promise.resolve({} as { [key: string]: any })
-        )
-      };
-
-      formattedBalances['totalUsdValue'] =
-        Number(formattedBalances.stx.usdValue) +
-        Number(
-          Object.values(formattedBalances.tokens).reduce(
-            (acc, token: any) => Number(acc) + Number(token.usdValue),
-            0
-          )
-        );
-
-      if (formattedBalances.totalUsdValue > 0) {
-        allBalances.push(formattedBalances);
-      }
-    }
-
-    allBalances.sort((a, b) => b.totalUsdValue - a.totalUsdValue);
-    writeFileSync('./output/itemized_balances.json', JSON.stringify(allBalances, null, 2));
-    console.log('Missing tokens:', Array.from(missingTokens));
-  });
-}, 200000);
+}, 50000);
