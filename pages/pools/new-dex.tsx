@@ -111,23 +111,6 @@ async function getCachedOrFetchPoolData(contract: any, ttlSeconds = 300) {
   return poolData;
 }
 
-async function getCachedOrFetchPrices(ttlSeconds = 120) {
-  // 1 minute cache for prices
-  const cacheKey = 'prices:all';
-
-  // Try to get from cache first
-  const cachedPrices = await kv.get(cacheKey);
-  if (cachedPrices) {
-    return cachedPrices;
-  }
-
-  // If not in cache, fetch and store
-  const service = PricesService.getInstance();
-  const prices = await service.getAllTokenPrices();
-  await kv.set(cacheKey, prices, { ex: ttlSeconds });
-  return prices;
-}
-
 async function getCachedOrFetchContracts(ttlSeconds = 300) {
   // 5 minutes cache
   const cacheKey = 'contracts:dexterity';
@@ -141,16 +124,17 @@ async function getCachedOrFetchContracts(ttlSeconds = 300) {
   // If not in cache, fetch and store
   const contracts = await getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 });
   const uniqueContracts = _.uniqBy(contracts, 'contract_id');
-  await kv.set(cacheKey, uniqueContracts, { ex: ttlSeconds });
+  // await kv.set(cacheKey, uniqueContracts, { ex: ttlSeconds });
   return uniqueContracts;
 }
 
+const service = PricesService.getInstance();
 export const getStaticProps: GetStaticProps<any> = async () => {
   try {
     // Get contracts and prices in parallel using cached functions
     const [contracts, prices] = await Promise.all([
       getCachedOrFetchContracts(),
-      getCachedOrFetchPrices()
+      await service.getAllTokenPrices()
     ]);
 
     // Get pools data with caching

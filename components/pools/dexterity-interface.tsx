@@ -186,13 +186,13 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
         <Image
           src={pool.metadata.image}
           alt={pool.metadata.name}
-          width={40}
-          height={40}
-          className="object-cover mr-3 rounded-md"
+          width={44}
+          height={44}
+          className="object-cover mt-0.5 mr-3 rounded-md"
         />
         <div>
-          <div className="flex items-center space-x-1 leading-tight">
-            <div className="text-lg leading-none">{pool.metadata.name}</div>
+          <div className="flex items-center space-x-1 leading-snug">
+            <div className="text-lg leading-snug">{pool.metadata.name}</div>
             <Link
               href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
               target="_blank"
