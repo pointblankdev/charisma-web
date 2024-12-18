@@ -24,7 +24,7 @@ export const NAVIGATION = [
     route: '/swap'
   },
   {
-    name: 'Liquidity Pools',
+    name: 'Earn Yield',
     route: '/pools/new-dex'
   },
   {
@@ -32,7 +32,7 @@ export const NAVIGATION = [
     route: '/pools/spot'
   },
   {
-    name: 'Dex (Old)',
+    name: 'Pools (Old)',
     route: '/pools/dexterity'
   }
   // {

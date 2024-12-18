@@ -1,4 +1,4 @@
-import { ExternalLink, Verified, MoreHorizontal, Plus, ArrowLeftRight } from 'lucide-react';
+import { ExternalLink, Verified, MoreHorizontal, Plus, ArrowLeftRight, Minus } from 'lucide-react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
@@ -11,6 +11,7 @@ import {
 import { Button } from '@components/ui/button';
 import { useRouter } from 'next/router';
 import { AddLiquidityModal } from './modals/add-liquidity-modal';
+import { RemoveLiquidityModal } from './modals/remove-liquidity-modal';
 import { useConnect } from '@stacks/connect-react';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { network } from '@components/stacks-session/connect';
@@ -105,34 +106,43 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
 
-  const handleAddLiquidityClick = async (pool: any, amount: number) => {
-    const amountIn = Math.floor(amount);
+  // Helper function to create post condition based on token type
+  const createPostCondition = (token: any, amount: number, sender = stxAddress) => {
+    if (token.contractId === '.stx') {
+      return Pc.principal(sender).willSendEq(amount).ustx();
+    } else {
+      return Pc.principal(sender)
+        .willSendEq(amount)
+        .ft(token.contractId, token.metadata.identifier);
+    }
+  };
+
+  // Helper function to get quote for transaction
+  const getQuote = async (pool: any, amount: number, operationType: '02' | '03') => {
     const response = await fetchCallReadOnlyFunction({
       contractAddress: pool.contractId.split('.')[0],
       contractName: pool.contractId.split('.')[1],
       functionName: 'quote',
-      functionArgs: [uintCV(amountIn), optionalCVOf(bufferCV(hexToBytes('02')))],
+      functionArgs: [uintCV(amount), optionalCVOf(bufferCV(hexToBytes(operationType)))],
       senderAddress: stxAddress
     });
-    const result = cvToValue(response).value;
+    return cvToValue(response).value;
+  };
 
-    // Helper function to create post condition based on token type
-    const createPostCondition = (token: any, amount: number) => {
-      if (token.contractId === '.stx') {
-        return Pc.principal(stxAddress).willSendEq(amount).ustx();
-      } else {
-        return Pc.principal(stxAddress)
-          .willSendEq(amount)
-          .ft(token.contractId, token.metadata.identifier);
-      }
-    };
-
-    // Create post conditions for both tokens
-    const postConditions = [
-      createPostCondition(pool.token0, result.dx.value),
-      createPostCondition(pool.token1, result.dy.value)
-    ];
-
+  // Helper function to execute contract call
+  const executePoolOperation = ({
+    pool,
+    amount,
+    operationType,
+    postConditions,
+    operationName
+  }: {
+    pool: any;
+    amount: number;
+    operationType: '02' | '03';
+    postConditions: any[];
+    operationName: string;
+  }) => {
     doContractCall({
       network: network,
       contractAddress: pool.contractId.split('.')[0],
@@ -140,13 +150,52 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
       functionName: 'execute',
       postConditionMode: PostConditionMode.Deny,
       postConditions,
-      functionArgs: [uintCV(amountIn), optionalCVOf(bufferCV(hexToBytes('02')))],
+      functionArgs: [uintCV(amount), optionalCVOf(bufferCV(hexToBytes(operationType)))],
       onFinish: data => {
-        console.log('Add liquidity transaction successful', data);
+        console.log(`${operationName} transaction successful`, data);
       },
       onCancel: () => {
-        console.log('Add liquidity transaction cancelled');
+        console.log(`${operationName} transaction cancelled`);
       }
+    });
+  };
+
+  const handleRemoveLiquidityClick = async (pool: any, amount: number) => {
+    const amountIn = Math.floor(amount);
+    const quote = await getQuote(pool, amountIn, '03');
+
+    // Create post conditions for the tokens being received and the LP token being burned
+    const postConditions = [
+      createPostCondition(pool, amountIn), // LP token
+      createPostCondition(pool.token0, quote.dx.value, pool.contractId),
+      createPostCondition(pool.token1, quote.dy.value, pool.contractId)
+    ];
+
+    executePoolOperation({
+      pool,
+      amount: amountIn,
+      operationType: '03',
+      postConditions,
+      operationName: 'Remove liquidity'
+    });
+  };
+
+  const handleAddLiquidityClick = async (pool: any, amount: number) => {
+    const amountIn = Math.floor(amount);
+    const quote = await getQuote(pool, amountIn, '02');
+
+    // Create post conditions for both tokens being added
+    const postConditions = [
+      createPostCondition(pool.token0, quote.dx.value),
+      createPostCondition(pool.token1, quote.dy.value)
+    ];
+
+    executePoolOperation({
+      pool,
+      amount: amountIn,
+      operationType: '02',
+      postConditions,
+      operationName: 'Add liquidity'
     });
   };
 
@@ -163,13 +212,24 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
           tokenPrices={prices}
           onAddLiquidity={handleAddLiquidityClick}
           trigger={
-            <DropdownMenuItem onSelect={e => e.preventDefault()}>
+            <DropdownMenuItem onSelect={e => e.preventDefault()} className="cursor-pointer">
               <Plus className="w-4 h-4 mr-2" />
               Add Liquidity
             </DropdownMenuItem>
           }
         />
-        <DropdownMenuItem onClick={() => router.push(`/swap`)}>
+        <RemoveLiquidityModal
+          pool={pool}
+          tokenPrices={prices}
+          onRemoveLiquidity={handleRemoveLiquidityClick}
+          trigger={
+            <DropdownMenuItem onSelect={e => e.preventDefault()} className="cursor-pointer">
+              <Minus className="w-4 h-4 mr-2" />
+              Remove Liquidity
+            </DropdownMenuItem>
+          }
+        />
+        <DropdownMenuItem onClick={() => router.push(`/swap`)} className="cursor-pointer">
           <ArrowLeftRight className="w-4 h-4 mr-2" /> Swap Tokens
         </DropdownMenuItem>
       </DropdownMenuContent>
