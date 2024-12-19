@@ -1,0 +1,14 @@
+{
+  "name": "Dexterity Testnet",
+  "description": "The first token to implement the liquidity pool SIP spec",
+  "image": "https://charisma.rocks/sip10/dexterity/logo.png",
+  "identifier": "DEX",
+  "symbol": "DEX",
+  "decimals": 6,
+  "properties": {
+    "contractName": "ST2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2SYCBMRR.lp-token-rc4",
+    "tokenAContract": "ST2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2SYCBMRR.charisma",
+    "tokenBContract": "ST2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2SYCBMRR.dme000-governance-token",
+    "lpRebatePercent": 5
+  }
+}
