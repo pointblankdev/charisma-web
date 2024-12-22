@@ -18,8 +18,6 @@ export default async function callReadOnly(
     if (req.method === 'POST') {
       console.log('Received POST request:', req.body);
       const body = req.body;
-      await Dexterity.discoverPools();
-      console.log(Dexterity.config);
       response = await Dexterity.client.callReadOnly(body.contractId, body.method, body.args);
     } else {
       code = 501;
