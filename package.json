@@ -75,7 +75,7 @@
     "commafy-anything": "^4.0.0",
     "cookie": "0.4.1",
     "date-fns": "^2.30.0",
-    "dexterity-sdk": "^0.1.0-rc.43",
+    "dexterity-sdk": "^0.1.0-rc.44",
     "framer-motion": "^10.15.2",
     "fs": "^0.0.1-security",
     "htmlescape": "1.1.1",

@@ -5451,10 +5451,10 @@ detect-node-es@^1.1.0:
   resolved "https://registry.yarnpkg.com/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-dexterity-sdk@^0.1.0-rc.42:
-  version "0.1.0-rc.42"
-  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.1.0-rc.42.tgz#fe108204e69930ffa4b17345596d9c7356ec7ec6"
-  integrity sha512-v7BQeppVLiTJnF+VkdtIzxH7semjezPxtWgU/MxpqbEfgi+/pcf4eEJttm8Q4ASvZqQ3+jpswrXAZG1pGWw1lg==
+dexterity-sdk@^0.1.0-rc.44:
+  version "0.1.0-rc.44"
+  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.1.0-rc.44.tgz#93a4f6de9b7a04fd58b973bf7f964ada8c262596"
+  integrity sha512-LnzNG65qQQL4ABTZZPQlOqpPJ3fmLbp30+HiZDtm1o9DX9A6Jr3lmMbOWfOrZThnotNm8uL4y2roJehRiYvthg==
   dependencies:
     "@stacks/blockchain-api-client" "8.4.0"
     "@stacks/common" "7.0.2"
@@ -5463,6 +5463,7 @@ dexterity-sdk@^0.1.0-rc.42:
     "@stacks/transactions" "7.0.2"
     "@stacks/wallet-sdk" "^7.0.2"
     dotenv "^16.4.7"
+    tests "link:../dexterity/tests"
 
 didyoumean@^1.2.2:
   version "1.2.2"
@@ -10317,6 +10318,10 @@ test-exclude@^6.0.0:
     "@istanbuljs/schema" "^0.1.2"
     glob "^7.1.4"
     minimatch "^3.0.4"
+
+"tests@link:/Users/ross/Documents/dexterity/tests":
+  version "0.0.0"
+  uid ""
 
 text-table@^0.2.0:
   version "0.2.0"
