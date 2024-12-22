@@ -6,17 +6,14 @@ import { cn } from '@lib/utils';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useConnect } from '@stacks/connect-react';
-import {
-  findBestSwapPath,
-  createSwapTransaction,
-  isValidTokenPair,
-  calculateMinimumAmountOut,
-  formatUSD,
-  calculateEstimatedAmountOutWithCache
-} from './swap-helpers';
-import { getGraph, initializeGraph } from './swap-graph-dexterity';
 import dynamic from 'next/dynamic';
-import SimpleSwapInterface from './simple-swap-ui';
+import { Dexterity, LPToken, Token } from 'dexterity-sdk';
+import { Vault } from 'dexterity-sdk/dist/core/vault';
+
+const formatUSD = (amount: number, price: number) => {
+  const value = amount * price;
+  return value;
+};
 
 const formatBalance = (balance: number, decimals: number) => {
   return (balance / 10 ** decimals).toFixed(decimals);
@@ -27,7 +24,7 @@ const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), {
 });
 
 interface TokenSelectProps {
-  token: any;
+  token: Token;
   isFrom: boolean;
   onClick: () => void;
 }
@@ -37,66 +34,112 @@ const TokenSelect = ({ token, isFrom, onClick }: TokenSelectProps) => (
     className="flex items-center px-3 py-1 border rounded-full shadow-lg border-primary/30 shadow-primary/10"
     onClick={onClick}
   >
-    {(token?.metadata.images?.logo || token?.metadata.image) && (
+    {token.image && (
       <Image
-        src={token?.metadata.images?.logo || token?.metadata.image}
-        alt={token?.metadata.symbol}
+        src={token.image}
+        alt={token.symbol}
         width={240}
         height={240}
         className="w-6 mr-2 rounded-full"
       />
     )}
-    <span className="mr-1 text-white">{token?.metadata.symbol}</span>
+    <span className="mr-1 text-white">{token.symbol}</span>
     <ChevronDown className="text-gray-400" size={16} />
   </button>
 );
 
 interface TokenListProps {
-  tokens: any[];
-  onSelect: (token: any) => void;
+  tokens: Token[];
+  onSelect: (token: Token) => void;
   fromToken?: any;
   hasHighExperience: boolean;
   pools: any[];
 }
 
-const TokenList = ({ tokens, onSelect, fromToken, pools }: TokenListProps) => (
-  <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
-    {tokens.map(token => {
-      const isDisabled = fromToken && !isValidTokenPair(fromToken, token, pools);
+const TokenList = ({ tokens, onSelect, fromToken, pools }: TokenListProps) => {
+  const [validTokens, setValidTokens] = useState<Set<string>>(new Set());
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
-      const src = token?.metadata.images?.logo || token?.metadata.image;
-      return (
-        <button
-          key={token.metadata.symbol}
-          className={cn(
-            'flex items-center w-full px-4 py-2 text-left',
-            isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'
-          )}
-          onClick={() => !isDisabled && onSelect(token)}
-          disabled={isDisabled}
-        >
-          {src ? (
-            <Image
-              src={src}
-              alt={token.metadata.symbol}
-              width={240}
-              height={240}
-              className="w-6 mr-2 rounded-full"
-            />
-          ) : (
-            <Coins className="mr-2" />
-          )}
-          <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate')}>
-            {token.metadata.symbol}
-          </span>
-        </button>
-      );
-    })}
-  </div>
-);
+  // useEffect(() => {
+  //   const validateTokens = async () => {
+  //     if (!fromToken) {
+  //       setValidTokens(new Set(tokens.map(t => t.contractId)));
+  //       setIsLoading(false);
+  //       return;
+  //     }
+
+  //     setIsLoading(true);
+  //     const validSet = new Set<string>();
+
+  //     // Run validations in parallel
+  //     const validations = tokens.map(async otherToken => {
+  //       try {
+  //         const quote = await Dexterity.getQuote(fromToken.contractId, otherToken.contractId, 1000);
+  //         if (quote.amountOut > 0) {
+  //           validSet.add(otherToken.contractId);
+  //         }
+  //       } catch (error) {
+  //         console.error('Error validating token pair:', error);
+  //       }
+  //     });
+
+  //     await Promise.all(validations);
+  //     setValidTokens(validSet);
+  //     setIsLoading(false);
+  //   };
+
+  //   validateTokens();
+  // }, [fromToken, tokens, pools]);
+
+  if (isLoading) {
+    return (
+      <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
+        <div className="flex items-center justify-center w-full p-4">
+          <span className="text-gray-400">Validating pairs...</span>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
+      {tokens.map(token => {
+        const isDisabled = false; //fromToken && !validTokens.has(token.contractId);
+        const src = token.image;
+
+        return (
+          <button
+            key={token.symbol}
+            className={cn(
+              'flex items-center w-full px-4 py-2 text-left',
+              isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'
+            )}
+            onClick={() => !isDisabled && onSelect(token)}
+            disabled={isDisabled}
+          >
+            {src ? (
+              <Image
+                src={src}
+                alt={token.symbol}
+                width={240}
+                height={240}
+                className="w-6 mr-2 rounded-full"
+              />
+            ) : (
+              <Coins className="mr-2" />
+            )}
+            <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate')}>
+              {token.symbol}
+            </span>
+          </button>
+        );
+      })}
+    </div>
+  );
+};
 
 interface TokenInputProps {
-  token: any;
+  token: Token;
   amount: string;
   price: number;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
@@ -143,7 +186,7 @@ const TokenInput = ({
               animateToNumber={formatUSD(Number(amount), price)}
             />
             <div>
-              {token?.metadata.symbol?.startsWith('iou') && (
+              {token.symbol?.startsWith('iou') && (
                 <span
                   className="px-1.5 ml-2 text-sm text-white/50 rounded-full cursor-help bg-accent-foreground pb-0.5"
                   title="Synthetic token price disclaimer"
@@ -160,7 +203,7 @@ const TokenInput = ({
           <>
             <span className="mr-2 text-gray-400">
               <span className="mr-1">Balance:</span>
-              {formatBalance(balance, token?.metadata.decimals)}
+              {formatBalance(balance, token.decimals)}
             </span>
             {onUseMax && (
               <button className="text-sm text-primary hover:text-primary" onClick={onUseMax}>
@@ -177,16 +220,16 @@ const TokenInput = ({
 interface SwapDetailsProps {
   swapPath: any[];
   minimumReceived: string;
-  toToken: any;
+  toToken: Token;
 }
 
 const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) => (
   <div className="flex justify-between pt-6">
     <div className="text-sm text-gray-400">
-      Swap path: {swapPath.map(token => token.metadata.symbol).join(' → ')}
+      Swap path: {swapPath.map(token => token.symbol).join(' → ')}
     </div>
     <div className="text-sm text-gray-400">
-      Minimum received: {minimumReceived} {toToken?.metadata.symbol}
+      Minimum received: {minimumReceived} {toToken.symbol}
     </div>
   </div>
 );
@@ -214,9 +257,17 @@ const SlippageInput = ({ value, onChange }: SlippageInputProps) => (
   </div>
 );
 
-export const SwapInterface = ({ data }: { data: any }) => {
-  const [fromToken, setFromToken] = useState(data.tokens[0]);
-  const [toToken, setToToken] = useState(data.tokens[1]);
+export const SwapInterface = ({
+  prices,
+  tokens,
+  pools
+}: {
+  prices: any;
+  tokens: Token[];
+  pools: LPToken[];
+}) => {
+  const [fromToken, setFromToken] = useState(tokens[0]);
+  const [toToken, setToToken] = useState(tokens[1]);
   const [fromAmount, setFromAmount] = useState('');
   const [showFromTokens, setShowFromTokens] = useState(false);
   const [showToTokens, setShowToTokens] = useState(false);
@@ -225,29 +276,22 @@ export const SwapInterface = ({ data }: { data: any }) => {
   const [slippage, setSlippage] = useState(0);
   const [swapPath, setSwapPath] = useState<any[]>([]);
   const [swappableTokens, setSwappableTokens] = useState<any[]>([]);
-
-  const fromDropdownRef = useRef<HTMLDivElement>(null);
-  const toDropdownRef = useRef<HTMLDivElement>(null);
-
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
   const { getBalance, wallet } = useWallet();
 
-  const hasHighExperience = wallet.experience.balance >= 0;
-
-  // Initialize graph on component mount
   useEffect(() => {
-    initializeGraph(data.tokens, data.pools);
+    const vaults = pools.map(pool => new Vault(pool));
+    Dexterity.router.loadVaults(vaults);
+    Dexterity.config.stxAddress = stxAddress;
+    Dexterity.config.mode = 'client';
+    console.log('Loaded vaults:', Dexterity.router.vaults);
+  }, [pools, stxAddress]);
 
-    // only show tokens that are swappable (nodes.value.connections > 0)
-    const graph = getGraph();
-    setSwappableTokens(
-      data.tokens.filter((token: any) => {
-        const node = graph.nodes.get(token.contractId);
-        return (node?.connections && node.connections.size > 0) || false;
-      })
-    );
-  }, [data.tokens, data.pools]);
+  const fromDropdownRef = useRef<HTMLDivElement>(null);
+  const toDropdownRef = useRef<HTMLDivElement>(null);
+
+  const hasHighExperience = wallet.experience.balance >= 0;
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -279,20 +323,16 @@ export const SwapInterface = ({ data }: { data: any }) => {
         setEstimatedAmountOut('0');
         return;
       }
-
       setIsCalculating(true);
       try {
-        const deltas = await calculateEstimatedAmountOutWithCache(
-          amount,
-          fromToken,
-          toToken,
-          swapPath,
-          stxAddress
+        const quote = await Dexterity.getQuote(
+          fromToken.contractId,
+          toToken.contractId,
+          Number(amount) * 10 ** fromToken.decimals
         );
-        const amountOut = deltas[deltas.length - 1].dy.value;
-        setEstimatedAmountOut(
-          (amountOut / 10 ** toToken.metadata.decimals).toFixed(toToken.metadata.decimals)
-        );
+        const amountOut = quote.amountOut;
+        setSwapPath(quote.route.path || []);
+        setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
       } catch (error) {
         console.error('Error estimating amount:', error);
         setEstimatedAmountOut('0');
@@ -300,7 +340,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
         setIsCalculating(false);
       }
     },
-    [fromToken, toToken, stxAddress, swapPath]
+    [fromToken, toToken, stxAddress]
   );
 
   const handleFromAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -313,29 +353,10 @@ export const SwapInterface = ({ data }: { data: any }) => {
 
   const handleUseMax = () => {
     const maxBalance = getBalance(fromToken.contractId);
-    const formattedBalance = formatBalance(maxBalance, fromToken.metadata.decimals);
+    const formattedBalance = formatBalance(maxBalance, fromToken.decimals);
     setFromAmount(formattedBalance);
     handleEstimateAmount(formattedBalance);
   };
-
-  const updateSwapPath = useCallback(async () => {
-    const path = await findBestSwapPath(
-      fromToken,
-      toToken,
-      fromAmount,
-      stxAddress,
-      hasHighExperience
-    );
-    if (path) {
-      setSwapPath(path);
-    } else {
-      setSwapPath([]);
-    }
-  }, [fromToken, toToken, fromAmount, stxAddress, hasHighExperience]);
-
-  useEffect(() => {
-    updateSwapPath();
-  }, [fromToken, toToken, updateSwapPath]);
 
   useEffect(() => {
     handleEstimateAmount(fromAmount);
@@ -343,31 +364,12 @@ export const SwapInterface = ({ data }: { data: any }) => {
 
   const handleSwap = async () => {
     if (!fromToken || !toToken || !stxAddress) return;
-
-    const minimumAmountOut = calculateMinimumAmountOut(
-      estimatedAmountOut,
-      slippage,
-      toToken.metadata.decimals
+    console.log('Swapping:', fromToken, toToken, fromAmount);
+    const transaction = await Dexterity.buildSwap(
+      fromToken.contractId,
+      toToken.contractId,
+      Number(fromAmount) * 10 ** fromToken.decimals
     );
-
-    const transaction = await createSwapTransaction({
-      pool: data.currentPool,
-      fromToken,
-      toToken,
-      fromAmount,
-      minimumAmountOut,
-      swapPath,
-      stxAddress,
-      slippage,
-      onFinish: (data: any) => {
-        console.log('Swap successful:', data);
-        setFromAmount('');
-        setEstimatedAmountOut('0');
-      },
-      onCancel: () => {
-        console.log('Swap cancelled');
-      }
-    });
 
     doContractCall(transaction);
   };
@@ -379,7 +381,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
     setEstimatedAmountOut('0');
   };
 
-  return hasHighExperience || true ? (
+  return (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4">
       <div className="mt-6">
         <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
@@ -401,13 +403,13 @@ export const SwapInterface = ({ data }: { data: any }) => {
                   />
                   {showFromTokens && (
                     <TokenList
-                      tokens={swappableTokens}
+                      tokens={tokens}
                       onSelect={token => {
                         setFromToken(token);
                         setShowFromTokens(false);
                       }}
                       hasHighExperience={hasHighExperience}
-                      pools={data.pools}
+                      pools={pools}
                     />
                   )}
                 </div>
@@ -415,7 +417,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
               <TokenInput
                 token={fromToken}
                 amount={fromAmount}
-                price={data.prices[fromToken?.contractId] || 0}
+                price={prices[fromToken?.contractId] || 0}
                 onChange={handleFromAmountChange}
                 onUseMax={handleUseMax}
                 balance={getBalance(fromToken?.contractId)}
@@ -428,7 +430,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
               <button
                 className="p-2 mx-auto rounded-full bg-[var(--sidebar)]"
                 onClick={handleSwapDirectionToggle}
-                disabled={fromToken?.metadata.symbol === 'STX' && !hasHighExperience}
+                disabled={fromToken?.symbol === 'STX' && !hasHighExperience}
               >
                 <ArrowUpDown className="text-gray-400" size={24} />
               </button>
@@ -446,14 +448,14 @@ export const SwapInterface = ({ data }: { data: any }) => {
                   />
                   {showToTokens && (
                     <TokenList
-                      tokens={data.tokens}
+                      tokens={tokens}
                       onSelect={token => {
                         setToToken(token);
                         setShowToTokens(false);
                       }}
                       fromToken={fromToken}
                       hasHighExperience={hasHighExperience}
-                      pools={data.pools}
+                      pools={pools}
                     />
                   )}
                 </div>
@@ -461,7 +463,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
               <TokenInput
                 token={toToken}
                 amount={estimatedAmountOut}
-                price={data.prices[toToken?.contractId] || 0}
+                price={prices[toToken?.contractId] || 0}
                 disabled
                 isCalculating={isCalculating}
                 balance={getBalance(toToken?.contractId)}
@@ -470,11 +472,7 @@ export const SwapInterface = ({ data }: { data: any }) => {
 
             <SwapDetails
               swapPath={swapPath}
-              minimumReceived={calculateMinimumAmountOut(
-                estimatedAmountOut,
-                slippage,
-                toToken?.metadata.decimals
-              )}
+              minimumReceived={estimatedAmountOut}
               toToken={toToken}
             />
 
@@ -489,7 +487,5 @@ export const SwapInterface = ({ data }: { data: any }) => {
         </div>
       </div>
     </div>
-  ) : (
-    <SimpleSwapInterface data={data} />
   );
 };

@@ -100,20 +100,23 @@ class PricesService {
    */
   public async getAllTokenPrices(): Promise<Record<string, number>> {
     try {
-      const response = await this.fetchFromApi<ApiPriceResponse>('prices', {
-        operation: 'getAllPrices'
+      const response = await fetch('http://167.172.182.71:3000/v1/token-prices', {
+        method: 'GET',
+        headers: {
+          'X-Api-Key': process.env.KRAXEL_API_KEY || '',
+          'Content-Type': 'application/json'
+        }
       });
+      const { data } = await response.json();
+      // const response = await this.fetchFromApi<ApiPriceResponse>('prices', {
+      //   operation: 'getAllPrices'
+      // });
 
-      if (!response.success || !response.data?.prices) {
-        throw new Error('Failed to fetch prices');
-      }
+      data.prices['.stx'] = data.prices['SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'];
+      // data.prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dexterity-pool-v1'] =
+      //   data.prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'];
 
-      response.data.prices['.stx'] =
-        response.data.prices['SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'];
-      response.data.prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dexterity-pool-v1'] =
-        response.data.prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'];
-
-      return response.data.prices;
+      return data.prices;
     } catch (error) {
       console.error('Error fetching all prices:', error);
       return {};

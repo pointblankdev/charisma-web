@@ -4,93 +4,34 @@ import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
 import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/server/prices/prices-service';
-import { DEXTERITY_ABI, getContractsByTrait } from '@lib/server/traits/service';
-import { getDecimals, getIdentifier, getSymbol, getTokenMetadata } from '@lib/stacks-api';
-import _ from 'lodash';
-
-// Define default STX token data
-const STX_TOKEN = {
-  contractId: '.stx',
-  metadata: {
-    name: 'Stacks',
-    symbol: 'STX',
-    decimals: 6,
-    identifier: '.stx',
-    image: '/stx-logo.png',
-    description: 'Native Stacks blockchain token'
-  }
-};
-
-// Helper to get token data
-async function getTokenData(contractId: string) {
-  if (contractId === '.stx') return STX_TOKEN;
-
-  return {
-    contractId,
-    metadata: {
-      ...(await getTokenMetadata(contractId)),
-      symbol: await getSymbol(contractId),
-      decimals: await getDecimals(contractId),
-      identifier: await getIdentifier(contractId)
-    }
-  };
-}
-
-// Helper to get pool data
-async function getPoolData(contract: any) {
-  const metadata = await getTokenMetadata(contract.contract_id);
-  const [token0, token1] = await Promise.all([
-    getTokenData(metadata.properties.tokenAContract),
-    getTokenData(metadata.properties.tokenBContract)
-  ]);
-
-  return {
-    contractId: contract.contract_id,
-    metadata: {
-      ...metadata,
-      symbol: await getSymbol(contract.contract_id),
-      decimals: await getDecimals(contract.contract_id),
-      identifier: await getIdentifier(contract.contract_id)
-    },
-    token0,
-    token1
-  };
-}
+import { Dexterity, LPToken, Token } from 'dexterity-sdk';
 
 export const getStaticProps: GetStaticProps<any> = async () => {
   const service = PricesService.getInstance();
 
-  // Get contracts and prices
-  const [contracts, prices] = await Promise.all([
-    getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 }),
-    service.getAllTokenPrices()
-  ]);
-
-  // Get pools data
-  const pools = [];
-  for (const contract of contracts) {
-    try {
-      pools.push(await getPoolData(contract));
-    } catch (error) {
-      console.warn('Error fetching pool data:', error);
-    }
-  }
-
-  // Extract unique tokens from pools and add STX
-  const tokens = _.uniqBy(
-    [STX_TOKEN, ...pools.flatMap(pool => [pool.token0, pool.token1])],
-    'contractId'
-  );
+  const prices = await service.getAllTokenPrices();
+  const pools = await Dexterity.discoverPools();
+  const tokens = Dexterity.getTokens();
 
   return {
     props: {
-      data: { prices, tokens, pools }
+      prices,
+      tokens: tokens,
+      pools: pools
     },
     revalidate: 60
   };
 };
 
-export default function SwapPage({ data }: any) {
+export default function SwapPage({
+  prices,
+  tokens,
+  pools
+}: {
+  prices: any;
+  tokens: Token[];
+  pools: LPToken[];
+}) {
   const meta = {
     title: 'Charisma | Swap',
     description: 'Swap tokens on the Charisma DEX',
@@ -102,7 +43,7 @@ export default function SwapPage({ data }: any) {
       <SkipNavContent />
       <Layout>
         <div className="sm:container sm:mx-auto sm:pb-10 md:max-w-5xl">
-          <SwapInterface data={data} />
+          <SwapInterface prices={prices} tokens={tokens} pools={pools} />
         </div>
       </Layout>
     </Page>

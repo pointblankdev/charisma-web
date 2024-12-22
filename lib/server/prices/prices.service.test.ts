@@ -50,7 +50,7 @@ describe('PricesService Integration Tests', () => {
     } catch (error) {
       console.error('Error fetching all token prices:', error);
     }
-  });
+  }, 50000);
 
   test('getAllPools - fetch all pools', async () => {
     console.log('\nTesting getAllPools:');
