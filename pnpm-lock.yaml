@@ -9,5 +9,5 @@ importers:
   .:
     dependencies:
       dexterity-sdk:
-        specifier: ^0.1.0-rc.43
+        specifier: ^0.1.0-rc.44
         version: link:../dexterity

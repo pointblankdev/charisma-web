@@ -16,7 +16,6 @@ export default async function callReadOnly(
     code = 200;
   try {
     if (req.method === 'POST') {
-      console.log('Received POST request:', req.body);
       const body = req.body;
       response = await Dexterity.client.callReadOnly(body.contractId, body.method, body.args);
     } else {
