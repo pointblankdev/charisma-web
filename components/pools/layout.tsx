@@ -52,11 +52,24 @@ export default function PoolsLayout({ children }: any) {
   return (
     <div className="flex flex-col w-full max-w-[3000px] mx-auto px-4 sm:px-6 lg:px-8">
       {/* Header Section */}
-      <div className="my-2 mt-4 sm:px-4">
-        <h1 className="mb-3 text-3xl font-bold tracking-tight">Earn Yield 💰</h1>
-        <p className="text-lg text-muted-foreground/90">
-          Collect swap fees by depositing your tokens into a secure vault.
-        </p>
+      <div className="flex flex-col items-start justify-between my-4 sm:flex-row sm:items-center sm:my-6">
+        <div className="w-full">
+          <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">Earn Yield 💰</h1>
+          <p className="text-base sm:text-lg text-muted-foreground/90">
+            Collect swap fees by depositing your tokens into a secure vault.
+          </p>
+        </div>
+
+        <div className="flex flex-col items-end w-full mt-4 sm:mt-0">
+          <Link href="/dexterity">
+            <div className="inline-block px-6 py-1.5 mx-1 text-white rounded-lg bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+              Create New Pool
+            </div>
+          </Link>
+          <div className="mt-2 text-sm text-center text-muted-foreground">
+            Earn trading fees by creating your own liquidity pool
+          </div>
+        </div>
       </div>
 
       {/* Tabs Navigation */}
