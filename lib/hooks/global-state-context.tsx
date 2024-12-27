@@ -141,7 +141,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => {
     sc.subscribeMempool((tx: any) => {
       if (
-        tx?.contract_call?.contract_id.endsWith('.multihop') ||
+        tx?.contract_call?.contract_id === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.multihop' ||
         tx?.contract_call?.function_name === 'execute'
       ) {
         console.log('Dexterity Vault Update:', tx);

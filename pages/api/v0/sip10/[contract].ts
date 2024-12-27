@@ -12,7 +12,16 @@ type ErrorResponse = {
 // Initialize the cache with both get and set capabilities
 Dexterity.cache = new Dexterity.cacheProviders.CustomCache({
   get: async (key: string) => {
-    return await kv.get(key);
+    const data = (await kv.get(key)) as any;
+    return {
+      contractId: data.contractId,
+      identifier: data.identifier,
+      name: data.name,
+      symbol: data.symbol,
+      decimals: data.decimals,
+      description: data.description || '',
+      image: data.image || ''
+    };
   },
   set: async (key: string, value: any) => {
     await kv.set(key, value, { ex: 60 * 60 * 24 * 7 });
