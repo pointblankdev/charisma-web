@@ -27,7 +27,7 @@ import Image from 'next/image';
 import { Dexterity } from 'dexterity-sdk';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import { useRouter } from 'next/navigation';
-
+import { useToast } from '@components/ui/use-toast';
 interface FormattedToken {
   contractId: string;
   balance: string;
@@ -46,10 +46,25 @@ const formatBalance = (balance: string, decimals: number = 6) => {
   return numeral(value).format('0,0.000000');
 };
 
+// Update the TokenListItem component
 const TokenListItem = ({ token, metadata }: { token: FormattedToken; metadata?: any }) => {
   const router = useRouter();
   const [imageError, setImageError] = useState(false);
   const formattedBalance = formatBalance(token.balance, metadata?.decimals);
+  const { toast } = useToast();
+
+  const handleCopyContract = (e: React.MouseEvent) => {
+    // Don't trigger copy on right click (context menu)
+    if (e.button === 2) return;
+
+    const baseContractId = token.contractId.split('::')[0];
+    navigator.clipboard.writeText(baseContractId);
+    toast({
+      title: 'Contract ID copied to clipboard',
+      description: baseContractId,
+      duration: 2000
+    });
+  };
 
   // If no metadata yet, show placeholder content
   if (!metadata && token.contractId !== '.stx') {
@@ -73,7 +88,10 @@ const TokenListItem = ({ token, metadata }: { token: FormattedToken; metadata?: 
   return (
     <ContextMenu>
       <ContextMenuTrigger>
-        <div className="flex items-center justify-between p-3 transition-colors rounded-lg hover:bg-white/5 group">
+        <div
+          className="flex items-center justify-between p-3 transition-colors rounded-lg cursor-pointer hover:bg-white/5 group"
+          onClick={handleCopyContract}
+        >
           <div className="flex items-center space-x-3">
             <div className="relative w-10 h-10 overflow-hidden rounded-lg bg-white/5">
               {!imageError ? (
@@ -111,6 +129,9 @@ const TokenListItem = ({ token, metadata }: { token: FormattedToken; metadata?: 
                 )}
               </div>
             </div>
+          </div>
+          <div className="items-center hidden space-x-2 opacity-0 group-hover:opacity-100 group-hover:flex">
+            <Copy className="w-4 h-4 opacity-40" />
           </div>
         </div>
       </ContextMenuTrigger>
@@ -240,7 +261,6 @@ const TokenList = () => {
 
   return (
     <div className="space-y-4">
-      {/* Token count */}
       <div className="flex items-center justify-between px-4">
         <div className="text-sm text-white/60">
           {tokens.length} Token{tokens.length !== 1 ? 's' : ''}
@@ -248,7 +268,6 @@ const TokenList = () => {
         </div>
       </div>
 
-      {/* Token List */}
       <div className="grid grid-cols-1 gap-2 lg:grid-cols-2 xl:grid-cols-3">
         {tokens.map(token => (
           <TokenListItem

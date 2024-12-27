@@ -121,8 +121,9 @@ export function TokenSelector({ onSelect, excludeToken }: TokenSelectorProps) {
 
       <div className="flex flex-col items-center pt-4 space-y-4 border-t border-white/10">
         {showCustomInput ? (
-          <div className="w-full max-w-md space-y-2">
+          <div className="w-full max-w-4xl space-y-2">
             <div className="flex space-x-2">
+              <KeyboardShortcutHelper />
               <Input
                 placeholder="Enter contract ID"
                 value={customContractId}
@@ -155,3 +156,22 @@ export function TokenSelector({ onSelect, excludeToken }: TokenSelectorProps) {
     </div>
   );
 }
+
+const KeyboardShortcutHelper = () => {
+  // Detect if on Mac for showing correct modifier key
+  const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0;
+  const modifierKey = isMac ? '⌘' : 'Ctrl';
+
+  return (
+    <div className="flex items-center w-full px-4 text-sm rounded-lg text-white/60 bg-white/5">
+      <span className="whitespace-nowrap">
+        Press{' '}
+        <kbd className="px-1.5 py-0.5 mx-1 font-mono text-xs rounded bg-white/10">
+          {modifierKey}
+        </kbd>
+        +<kbd className="px-1.5 py-0.5 mx-1 font-mono text-xs rounded bg-white/10">I</kbd>
+        to view your token list and copy contract IDs
+      </span>
+    </div>
+  );
+};

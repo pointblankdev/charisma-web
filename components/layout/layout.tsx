@@ -128,9 +128,16 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                       <NavigationMenuItem key={i}>
                         <Link href={route} legacyBehavior passHref>
                           <NavigationMenuLink
-                            className={cn('px-4 py-2 block', {
-                              [styles['tab-active']]: activeRoute.endsWith(route)
-                            })}
+                            className={cn(
+                              'px-4 py-2 block',
+                              {
+                                [styles['tab-active']]: activeRoute.endsWith(route)
+                              },
+                              route ===
+                                'https://charisma-3aadc5yyv-pointblankdev.vercel.app/pools/dexterity'
+                                ? 'text-muted-foreground'
+                                : 'text-foreground'
+                            )}
                           >
                             {name}
                           </NavigationMenuLink>

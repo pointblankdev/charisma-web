@@ -27,6 +27,7 @@ import {
 } from '@stacks/transactions';
 import { hexToBytes } from '@stacks/common';
 import numeral from 'numeral';
+import { cn } from '@lib/utils';
 
 const VERIFIED_ADDRESSES: Record<string, string> = {
   SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS: 'rozar.btc',
@@ -50,7 +51,12 @@ const AddressDisplay = ({ address }: { address: string }) => {
 const TokenPairDisplay = ({ token0, token1 }: { token0: any; token1: any }) => (
   <div className="flex flex-col items-center justify-start">
     <div className="flex items-center -space-x-2">
-      <div className="z-10 border-2 rounded-full border-background">
+      <div
+        className={cn(
+          'z-10 rounded-full border-background',
+          token0.metadata.symbol === 'DMG' ? 'border-0' : 'border-2'
+        )}
+      >
         <Image
           src={token0.metadata.image}
           alt={token0.metadata.symbol}
@@ -59,7 +65,12 @@ const TokenPairDisplay = ({ token0, token1 }: { token0: any; token1: any }) => (
           className="rounded-full"
         />
       </div>
-      <div className="border-2 rounded-full border-background">
+      <div
+        className={cn(
+          'rounded-full border-background',
+          token1.metadata.symbol === 'DMG' ? 'border-0' : 'border-2'
+        )}
+      >
         <Image
           src={token1.metadata.image}
           alt={token1.metadata.symbol}

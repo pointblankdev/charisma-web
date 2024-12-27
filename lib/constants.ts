@@ -28,7 +28,7 @@ export const NAVIGATION = [
     route: '/pools/new-dex'
   },
   {
-    name: 'Need the old pools?',
+    name: 'Legacy Pools',
     route: 'https://charisma-3aadc5yyv-pointblankdev.vercel.app/pools/dexterity'
   }
   // {
