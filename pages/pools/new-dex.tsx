@@ -151,7 +151,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
       props: {
         data: { prices, pools }
       },
-      revalidate: 60
+      revalidate: 20
     };
   } catch (error) {
     console.error('Error in getStaticProps:', error);
@@ -159,7 +159,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
       props: {
         data: { prices: {}, pools: [] }
       },
-      revalidate: 60
+      revalidate: 20
     };
   }
 };

@@ -20,7 +20,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
       tokens: tokens,
       pools: pools
     },
-    revalidate: 60
+    revalidate: 20
   };
 };
 
