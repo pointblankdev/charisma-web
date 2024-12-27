@@ -635,7 +635,11 @@ export function GlobalDrawer({ open, onClose, userAddress }: GlobalDrawerProps) 
                 <TabsTrigger value="tokens" className="text-xs data-[state=active]:bg-white/10">
                   Tokens
                 </TabsTrigger>
-                <TabsTrigger value="nfts" className="text-xs data-[state=active]:bg-white/10">
+                <TabsTrigger
+                  value="nfts"
+                  disabled
+                  className="text-xs data-[state=active]:bg-white/10"
+                >
                   NFTs
                 </TabsTrigger>
               </TabsList>

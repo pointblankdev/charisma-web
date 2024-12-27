@@ -33,16 +33,21 @@ export async function getNamesFromAddress(address: string) {
 }
 
 export async function getAccountBalance(principal: string, untilBlock = 'latest') {
-  const params: any = {
+  const options: any = {
     params: {
       path: { principal }
     }
   };
   if (untilBlock !== 'latest') {
-    params.params.query = { until_block: untilBlock };
+    options.params.query = { until_block: untilBlock };
   }
-  const { data: response } = await client.GET('/extended/v1/address/{principal}/balances', params);
-
+  let response;
+  try {
+    const { data } = await client.GET('/extended/v1/address/{principal}/balances', options);
+    response = data;
+  } catch (error) {
+    response = {};
+  }
   return response;
 }
 
