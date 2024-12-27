@@ -8,9 +8,6 @@ import { Dexterity, LPToken, Token } from 'dexterity-sdk';
 
 export const getStaticProps: GetStaticProps<any> = async () => {
   const service = PricesService.getInstance();
-  const cache = Dexterity.cacheProviders.MemoryCache.getInstance();
-  Dexterity.cache = cache;
-
   const prices = await service.getAllTokenPrices();
   const pools = await Dexterity.discoverPools();
   const tokens = Dexterity.getTokens();
