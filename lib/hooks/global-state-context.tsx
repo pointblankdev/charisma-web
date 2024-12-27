@@ -140,7 +140,10 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   useEffect(() => {
     sc.subscribeMempool((tx: any) => {
-      if (tx?.contract_call?.contract_id.endsWith('.multihop')) {
+      if (
+        tx?.contract_call?.contract_id.endsWith('.multihop') ||
+        tx?.contract_call?.function_name === 'execute'
+      ) {
         console.log('Dexterity Vault Update:', tx);
         const functionName = tx?.contract_call?.function_name;
         const shortAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`;
@@ -159,14 +162,14 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
           try {
             toast({
               image: metadata.image,
-              title: 'Degen Activity Detected in a Dexterity Vault',
+              title: 'Degen Activity Detected in the Dexterity Vaults',
               description,
               duration: 10000
             });
           } catch (error) {
             toast({
               image: '/charisma.png',
-              title: 'Degen Activity Detected in a Dexterity Vault',
+              title: 'Degen Activity Detected in the Dexterity Vaults',
               description,
               duration: 10000
             });
