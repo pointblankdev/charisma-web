@@ -1,4 +1,15 @@
-import { ExternalLink, Verified, MoreHorizontal, Plus, ArrowLeftRight, Minus } from 'lucide-react';
+/* eslint-disable @typescript-eslint/restrict-plus-operands */
+import {
+  ExternalLink,
+  Verified,
+  MoreHorizontal,
+  Plus,
+  ArrowLeftRight,
+  Minus,
+  HelpCircle,
+  InfoIcon
+} from 'lucide-react';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
@@ -33,6 +44,128 @@ const VERIFIED_ADDRESSES: Record<string, string> = {
   SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS: 'rozar.btc',
   SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS: 'mooningshark.btc',
   SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE: 'kraqen.btc'
+};
+
+const calculatePoolMetrics = (events: any[], poolData: any) => {
+  // Get LP Rebate percentage from metadata (e.g., 5 for 5%)
+  const lpRebatePercent = Number(poolData.metadata.properties.lpRebatePercent) || 5;
+  const feeRate = lpRebatePercent / 100; // Convert 5 to 0.05 for calculations
+
+  if (!events?.length || !poolData.prices) {
+    return {
+      apy: 0,
+      lpRebate: lpRebatePercent,
+      totalFees: 0,
+      vaultAge: '0 days',
+      volume24h: 0,
+      feesLast30Days: 0,
+      tvl: 0
+    };
+  }
+
+  // Helper to convert token amount to USD value
+  const getTokenUsdValue = (amount: string, assetId: string): number => {
+    const tokenContractId = assetId.split('::')[0];
+    const tokenMetadata =
+      tokenContractId === poolData.token0.contractId
+        ? poolData.token0.metadata
+        : tokenContractId === poolData.token1.contractId
+        ? poolData.token1.metadata
+        : null;
+
+    if (!tokenMetadata) return 0;
+
+    const price = poolData.prices[tokenContractId] || 0;
+    const normalizedAmount = parseInt(amount) / Math.pow(10, tokenMetadata.decimals);
+    return normalizedAmount * price;
+  };
+
+  // Calculate TVL
+  const tvl =
+    (poolData.poolData.reserve0 / Math.pow(10, poolData.token0.metadata.decimals)) *
+      (poolData.prices[poolData.token0.contractId] || 0) +
+    (poolData.poolData.reserve1 / Math.pow(10, poolData.token1.metadata.decimals)) *
+      (poolData.prices[poolData.token1.contractId] || 0);
+
+  // Calculate pool age
+  const sortedEvents = [...events].sort((a, b) => a.block_time - b.block_time);
+  const firstEvent = sortedEvents[0];
+  const now = Math.floor(Date.now() / 1000);
+  const poolAgeInDays = Math.ceil((now - firstEvent.block_time) / (24 * 60 * 60));
+
+  // Calculate 24h volume
+  const last24hTimestamp = now - 24 * 60 * 60;
+  const volume24h = events
+    .filter(event => event.block_time >= last24hTimestamp)
+    .reduce((total, event) => {
+      const transferEvents = event.events.filter(
+        (e: { event_type: string; asset: { asset_event_type: string } }) =>
+          e.event_type === 'fungible_token_asset' && e.asset.asset_event_type === 'transfer'
+      );
+
+      const eventVolume = transferEvents.reduce(
+        (sum: number, e: { asset: { amount: string; asset_id: string } }) => {
+          const usdValue = getTokenUsdValue(e.asset.amount, e.asset.asset_id);
+          return sum + usdValue;
+        },
+        0
+      );
+
+      return total + eventVolume;
+    }, 0);
+
+  // Calculate 30-day fees
+  const last30DaysTimestamp = now - 30 * 24 * 60 * 60;
+  const feesLast30Days = events
+    .filter(event => event.block_time >= last30DaysTimestamp)
+    .reduce((total, event) => {
+      const transferEvents = event.events.filter(
+        (e: { event_type: string; asset: { asset_event_type: string } }) =>
+          e.event_type === 'fungible_token_asset' && e.asset.asset_event_type === 'transfer'
+      );
+
+      const eventFees = transferEvents.reduce(
+        (sum: number, e: { asset: { amount: string; asset_id: string } }) => {
+          const usdValue = getTokenUsdValue(e.asset.amount, e.asset.asset_id);
+          return sum + usdValue * feeRate;
+        },
+        0
+      );
+
+      return total + eventFees;
+    }, 0);
+
+  // Calculate total historical fees
+  const totalFees = events.reduce((total, event) => {
+    const transferEvents = event.events.filter(
+      (e: { event_type: string; asset: { asset_event_type: string } }) =>
+        e.event_type === 'fungible_token_asset' && e.asset.asset_event_type === 'transfer'
+    );
+
+    const eventFees = transferEvents.reduce(
+      (sum: number, e: { asset: { amount: string; asset_id: string } }) => {
+        const usdValue = getTokenUsdValue(e.asset.amount, e.asset.asset_id);
+        return sum + usdValue * feeRate;
+      },
+      0
+    );
+
+    return total + eventFees;
+  }, 0);
+
+  // Calculate APY based on 30-day fee rate
+  const annualizedFees = (feesLast30Days / 30) * 365;
+  const apy = tvl > 0 ? (annualizedFees / tvl) * 100 : 0;
+
+  return {
+    apy: parseFloat(apy.toFixed(2)),
+    lpRebate: lpRebatePercent,
+    totalFees,
+    vaultAge: `${poolAgeInDays} days`,
+    volume24h,
+    feesLast30Days,
+    tvl
+  };
 };
 
 const AddressDisplay = ({ address }: { address: string }) => {
@@ -250,6 +383,63 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
   );
 };
 
+const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
+  const poolWithPrices = { ...pool, prices };
+  const metrics = calculatePoolMetrics(pool.events, poolWithPrices);
+
+  console.log(metrics);
+
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger className="w-full">
+          <div className="mt-1 leading-snug">
+            <div className="text-lg font-medium text-green-400 whitespace-nowrap">
+              {metrics.apy}% APY
+            </div>
+            <div className="text-xs text-gray-400">
+              30d fees: ${numeral(metrics.feesLast30Days).format('0,0.00')}
+            </div>
+          </div>
+        </TooltipTrigger>
+        <TooltipContent side="bottom" className="w-80">
+          <div className="p-1 space-y-3">
+            <div className="font-medium">APY Breakdown</div>
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span>LP Fee Rate:</span>
+                <span className="font-medium">{metrics.lpRebate}%</span>
+              </div>
+              <div className="flex justify-between">
+                <span>24h Volume:</span>
+                <span className="font-medium">${numeral(metrics.volume24h).format('0,0')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>Total Fees Earned:</span>
+                <span className="font-medium">${numeral(metrics.totalFees).format('0,0.00')}</span>
+              </div>
+              <div className="flex justify-between">
+                <span>30-day Fees:</span>
+                <span className="font-medium">
+                  ${numeral(metrics.feesLast30Days).format('0,0.00')}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span>Vault Age:</span>
+                <span className="font-medium">{metrics.vaultAge}</span>
+              </div>
+              <div className="mt-2 text-xs text-gray-400">
+                APY is calculated based on recent trading volume, fees collected, and total
+                liquidity. Past performance does not guarantee future returns.
+              </div>
+            </div>
+          </div>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  );
+};
+
 const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const deployerAddress = pool.contractId.split('.')[0];
 
@@ -277,6 +467,9 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
           </div>
           <div className="text-sm text-gray-400">{pool.metadata.description}</div>
         </div>
+      </td>
+      <td className="px-4 py-4 text-white">
+        <APYDisplay pool={pool} prices={prices} />
       </td>
       <td className="px-4 py-4 text-white">
         <TokenPairDisplay token0={pool.token0} token1={pool.token1} />
@@ -348,10 +541,83 @@ export const DexterityInterface = ({
             <table className="w-full table-auto">
               <thead>
                 <tr className="text-left text-gray-400">
-                  <th className="px-4 py-2"></th>
-                  <th className="px-4 py-2 text-center">Pair</th>
-                  <th className="px-4 py-2">Liquidity</th>
-                  <th className="px-4 py-2">Deployer</th>
+                  <th className="px-4 py-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger className="flex items-center">
+                          Vault <HelpCircle className="ml-1 size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="w-64">
+                            The liquidity vault name, description, and identity. Each vault is a
+                            unique smart contract that manages a specific token pair.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </th>
+                  <th className="px-4 py-2" style={{ justifyItems: 'center' }}>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger className="flex items-center">
+                          Yield <HelpCircle className="ml-1 size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="w-64">
+                            Estimated annual percentage yield for liquidity providers. Hover over
+                            the APY value to see a detailed breakdown of factors including trading
+                            volume, fees, and vault history.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </th>
+                  <th className="px-4 py-2 text-center" style={{ justifyItems: 'center' }}>
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger className="flex items-center justify-center">
+                          Pair <HelpCircle className="ml-1 size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="w-64">
+                            The two tokens that can be exchanged in this vault. You can provide
+                            liquidity for this token pair to earn fees from trades.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </th>
+                  <th className="px-4 py-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger className="flex items-center">
+                          Liquidity <HelpCircle className="ml-1 size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="w-64">
+                            The total value locked (TVL) in this vault, calculated from the current
+                            market prices of both tokens. Shows the total amount of liquidity
+                            available for trading.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </th>
+                  <th className="px-4 py-2">
+                    <TooltipProvider>
+                      <Tooltip>
+                        <TooltipTrigger className="flex items-center">
+                          Deployer <HelpCircle className="ml-1 size-4" />
+                        </TooltipTrigger>
+                        <TooltipContent>
+                          <p className="w-64">
+                            The address that deployed this vault contract. Verified deployers are
+                            marked with a blue checkmark.
+                          </p>
+                        </TooltipContent>
+                      </Tooltip>
+                    </TooltipProvider>
+                  </th>
                   <th className="px-4 py-2 text-right"></th>
                 </tr>
               </thead>

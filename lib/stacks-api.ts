@@ -9,6 +9,7 @@ import {
 import { cvToJSON } from '@stacks/transactions';
 import { kv } from '@vercel/kv';
 import { getContractInfo } from './server/traits/service';
+import { address } from '@stacks/transactions/dist/cl';
 
 const CACHE_DURATION = 60 * 60 * 24 * 7; // 7 days in seconds
 
@@ -487,6 +488,45 @@ export async function getAllContractEvents(contractId: string, totalLimit: numbe
           block_time_iso: tx?.block_time_iso,
           sender_address: tx?.sender_address,
           ...contractEvent
+        };
+        allEvents.push(newContractEvent);
+      }
+      offset += response.data.results.length;
+      hasMore = response.data.results.length === limitPerRequest;
+    } else {
+      hasMore = false;
+    }
+  }
+
+  return allEvents;
+}
+export async function getAllContractTransactions(contractId: string, totalLimit: number = 5000) {
+  const allEvents: any[] = [];
+  let offset = 0;
+  let hasMore = true;
+  const limitPerRequest = 50;
+
+  while (hasMore && allEvents.length < totalLimit) {
+    const response: any = await client.GET('/extended/v1/address/{principal}/transactions', {
+      params: {
+        path: { principal: contractId },
+        query: {
+          limit: Math.min(limitPerRequest, totalLimit - allEvents.length),
+          offset,
+          type: ['fungible_token_asset', 'stx_asset']
+        }
+      }
+    });
+
+    if (response?.data?.results && response.data.results.length > 0) {
+      for (const event of response.data.results) {
+        if (event.tx_status !== 'success') continue;
+        const tx = await getTransaction(event.tx_id);
+        const newContractEvent = {
+          block_time: tx?.block_time,
+          block_time_iso: tx?.block_time_iso,
+          sender_address: tx?.sender_address,
+          events: tx.events
         };
         allEvents.push(newContractEvent);
       }

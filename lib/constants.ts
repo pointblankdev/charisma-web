@@ -25,20 +25,12 @@ export const NAVIGATION = [
   },
   {
     name: 'Earn Yield',
-    route: '/pools/new-dex'
+    route: '/pools'
   },
   {
     name: 'Legacy Pools',
     route: 'https://charisma-3aadc5yyv-pointblankdev.vercel.app/pools/dexterity'
   }
-  // {
-  //   name: 'Shop',
-  //   route: '/shop'
-  // },
-  // {
-  //   name: 'Redeem',
-  //   route: '/recovery'
-  // }
 ];
 
 export type TicketGenerationState = 'default' | 'loading';
