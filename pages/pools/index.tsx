@@ -106,7 +106,7 @@ async function getPoolData(contract: any) {
   };
 }
 
-async function getCachedOrFetchPoolData(contract: any, ttlSeconds = 300) {
+async function getCachedOrFetchPoolData(contract: any, ttlSeconds = 600) {
   const cacheKey = `pool:data:${contract.contract_id}`;
   const cachedData = await kv.get(cacheKey);
   if (cachedData) {
@@ -118,8 +118,7 @@ async function getCachedOrFetchPoolData(contract: any, ttlSeconds = 300) {
   return poolData;
 }
 
-async function getCachedOrFetchContracts(ttlSeconds = 300) {
-  const cacheKey = 'contracts:dexterity';
+async function findUniqueVaultContracts() {
   const contracts = await getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 });
   const uniqueContracts = _.uniqBy(contracts, 'contract_id');
   return uniqueContracts;
@@ -130,7 +129,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   try {
     // Get contracts and prices in parallel using cached functions
     const [contracts, prices] = await Promise.all([
-      getCachedOrFetchContracts(),
+      findUniqueVaultContracts(),
       service.getAllTokenPrices()
     ]);
 
@@ -154,7 +153,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
       props: {
         data: { prices, pools: validPools }
       },
-      revalidate: 20
+      revalidate: 60
     };
   } catch (error) {
     console.error('Error in getStaticProps:', error);
@@ -162,7 +161,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
       props: {
         data: { prices: {}, pools: [] }
       },
-      revalidate: 20
+      revalidate: 60
     };
   }
 };
