@@ -50,6 +50,11 @@ module.exports = {
         source: '/odins-raven/:path*',
         destination: '/sip9/odins-raven/:path*',
         permanent: true
+      },
+      {
+        source: '/pools/new-dex',
+        destination: '/pools',
+        permanent: false
       }
     ];
   },
