@@ -65,7 +65,7 @@ class PricesService {
   private static instance: PricesService;
   private readonly API_URL = 'https://explore.charisma.rocks';
 
-  private constructor() { }
+  private constructor() {}
 
   public static getInstance(): PricesService {
     if (!PricesService.instance) {
@@ -98,28 +98,36 @@ class PricesService {
   /**
    * Get all token prices
    */
-  public async getAllTokenPrices(): Promise<Record<string, number>> {
-    try {
-      const response = await fetch('http://167.172.182.71:3000/v1/token-prices', {
-        method: 'GET',
-        headers: {
-          'X-Api-Key': process.env.KRAXEL_API_KEY || '',
-          'Content-Type': 'application/json'
+  public async getAllTokenPrices() {
+    const MAX_RETRIES = 3;
+    let attempts = 0;
+
+    while (attempts < MAX_RETRIES) {
+      try {
+        const response = await fetch('http://167.172.182.71:3000/v1/token-prices', {
+          method: 'GET',
+          headers: {
+            'X-Api-Key': process.env.KRAXEL_API_KEY || '',
+            'Content-Type': 'application/json'
+          }
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed: ${response.statusText}`);
         }
-      });
-      const { data } = await response.json();
-      // const response = await this.fetchFromApi<ApiPriceResponse>('prices', {
-      //   operation: 'getAllPrices'
-      // });
 
-      data.prices['.stx'] = data.prices['SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'];
-      // data.prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dexterity-pool-v1'] =
-      //   data.prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token'];
+        const { data } = await response.json();
 
-      return data.prices;
-    } catch (error) {
-      console.error('Error fetching all prices:', error);
-      return {};
+        data.prices['.stx'] = data.prices['SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'];
+
+        return data.prices;
+      } catch (error) {
+        attempts++;
+        console.error(`Error fetching all prices (attempt ${attempts}):`, error);
+        if (attempts >= MAX_RETRIES) {
+          throw new Error('Failed to fetch all token prices');
+        }
+      }
     }
   }
 
