@@ -8,7 +8,15 @@ import {
   Minus,
   HelpCircle,
   InfoIcon,
-  ArrowUpDown
+  ArrowUpDown,
+  Lightbulb,
+  ZapIcon,
+  Shield,
+  ShieldHalf,
+  UsersIcon,
+  UsersRound,
+  WavesIcon,
+  Vault
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
@@ -553,8 +561,66 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
             <div className="flex items-baseline justify-between">
               <div>
                 <h1 className="text-2xl font-bold text-white/95">Liquidity Vaults</h1>
-                <div className="text-sm text-muted-foreground">
-                  Decentralized Liquidity Vaults (DLV) are a more secure form of liquidity pools.
+                <div className="flex items-center text-sm text-muted-foreground">
+                  Liquidity vaults are a more secure and decentralized form of liquidity pools.
+                  <TooltipProvider>
+                    <Tooltip>
+                      <TooltipTrigger asChild>
+                        <Link
+                          href="https://github.com/stacksgov/sips/pull/204"
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="ml-1"
+                        >
+                          <InfoIcon className="w-4 h-4 text-gray-400 hover:text-gray-200" />
+                        </Link>
+                      </TooltipTrigger>
+                      <TooltipContent
+                        side="bottom"
+                        className="max-w-lg p-4 text-white bg-gray-800 border-none rounded-lg shadow-lg"
+                      >
+                        <div className="space-y-4 leading-snug">
+                          <div className="flex items-center space-x-2">
+                            <Vault className="w-5 h-5 text-blue-400" />
+                            <p className="text-lg font-semibold">Liquidity Vaults</p>
+                          </div>
+                          <p className="text-white/80">
+                            Liquidity vaults are smart contracts that manage token pairs for
+                            trading. They are secure, decentralized, and simple enough that anyone
+                            can create one.
+                          </p>
+                          <div className="flex items-center space-x-2">
+                            <ShieldHalf className="w-5 h-5 text-green-400" />
+                            <p className="font-semibold">Secure and Decentralized</p>
+                          </div>
+                          <p className="text-white/80">
+                            Each vault is independent, so issues in one vault don't affect others.
+                            There are no shared admin keys or upgrade mechanisms.
+                          </p>
+                          <div className="flex items-center space-x-2">
+                            <ZapIcon className="w-5 h-5 text-yellow-400" />
+                            <p className="font-semibold">Key Benefits</p>
+                          </div>
+                          <ul className="space-y-2 list-disc list-inside text-white/80">
+                            <li>
+                              <span className="font-semibold text-white/90">
+                                Anyone Can Create:
+                              </span>{' '}
+                              Deploy your own vault using the standard interface.
+                            </li>
+                            <li>
+                              <span className="font-semibold text-white/90">Efficient:</span>{' '}
+                              Standardized controls with customizable settings and flexible fees.
+                            </li>
+                            <li>
+                              <span className="font-semibold text-white/90">Open-Source:</span>{' '}
+                              Easily link pools together and add new types.
+                            </li>
+                          </ul>
+                        </div>
+                      </TooltipContent>
+                    </Tooltip>
+                  </TooltipProvider>
                 </div>
               </div>
               <div className="text-right">
