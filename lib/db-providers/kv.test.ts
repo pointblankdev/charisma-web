@@ -23,20 +23,19 @@ import {
 
 describe('dexterity metadata cache', () => {
   it('should get contract metadata by id', async () => {
-    const token = await kv.get('sip10:SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-lp-token');
+    const token = await kv.get('token:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
     console.log(JSON.stringify(token, null, 2));
   });
 
   it('should set contract metadata by id', async () => {
-    await kv.set('token:SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes', {
-      contractId: 'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes',
-      identifier: 'DMG-RUN',
-      name: 'DMG-RUNES',
-      symbol: 'DMG-RUN',
+    await kv.set('token:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', {
+      contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh',
+      identifier: 'synthetic-welsh',
+      name: 'Synthetic Welsh',
+      symbol: 'iouWELSH',
       decimals: 6,
-      description: 'Liquidity pool token for the DMG-ROONS pair',
-      image:
-        'https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-lp-token-1735434744434-wvVOGJG1ofUaIarIgQ7GPqGkG8uCKR.png'
+      description: 'Welsh Corgi Coin Synthetic Asset',
+      image: 'https://charisma.rocks/welsh-logo.png'
     });
   });
 });
