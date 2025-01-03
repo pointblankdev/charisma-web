@@ -68,8 +68,10 @@ const calculatePoolMetrics = (events: any[], poolData: any) => {
 
   // Helper to convert token amount to USD value
   const getTokenUsdValue = (amount: string, assetId: string): number => {
+    if (!assetId) return 0;
+
     const tokenContractId = assetId.split('::')[0];
-    const tokenMetadata = poolData.liquidity[0]
+    const tokenMetadata = poolData.liquidity[0];
 
     if (!tokenMetadata) return 0;
 
@@ -81,9 +83,9 @@ const calculatePoolMetrics = (events: any[], poolData: any) => {
   // Calculate TVL
   const tvl =
     (poolData.liquidity[0].reserves / Math.pow(10, poolData.liquidity[0].decimals)) *
-    (poolData.prices[poolData.liquidity[0].contractId] || 0) +
+      (poolData.prices[poolData.liquidity[0].contractId] || 0) +
     (poolData.liquidity[1].reserves / Math.pow(10, poolData.liquidity[1].decimals)) *
-    (poolData.prices[poolData.liquidity[1].contractId] || 0);
+      (poolData.prices[poolData.liquidity[1].contractId] || 0);
 
   // Calculate pool age
   const sortedEvents = [...events].sort((a, b) => a.block_time - b.block_time);
@@ -96,9 +98,16 @@ const calculatePoolMetrics = (events: any[], poolData: any) => {
   const volume24h = events
     .filter(event => event.block_time >= last24hTimestamp)
     .reduce((total, event) => {
+      const allTransferEvents = event.events.every(
+        (e: { event_type: string; asset: { asset_event_type: string } }) =>
+          e.event_type === 'stx_asset' || e.event_type === 'fungible_token_asset'
+      );
+
+      if (!allTransferEvents) return total;
+
       const transferEvents = event.events.filter(
         (e: { event_type: string; asset: { asset_event_type: string } }) =>
-          e.event_type === 'fungible_token_asset' && e.asset.asset_event_type === 'transfer'
+          e.asset.asset_event_type === 'transfer'
       );
 
       const eventVolume = transferEvents.reduce(
@@ -254,9 +263,7 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
     if (token.contractId === '.stx') {
       return Pc.principal(sender).willSendEq(amount).ustx();
     } else {
-      return Pc.principal(sender)
-        .willSendEq(amount)
-        .ft(token.contractId, token.identifier);
+      return Pc.principal(sender).willSendEq(amount).ft(token.contractId, token.identifier);
     }
   };
 
@@ -483,13 +490,7 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
   );
 };
 
-const DexterityInterface = ({
-  data,
-  prices
-}: {
-  data: any;
-  prices: Record<string, number>;
-}) => {
+const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string, number> }) => {
   const [sortField, setSortField] = useState('tvl'); // Default sort by APY
   const [sortOrder, setSortOrder] = useState('desc');
 
@@ -509,9 +510,7 @@ const DexterityInterface = ({
       if (sortField === 'apy') {
         const metricsA = calculatePoolMetrics(a.events, { ...a, prices });
         const metricsB = calculatePoolMetrics(b.events, { ...b, prices });
-        return sortOrder === 'asc'
-          ? metricsA.apy - metricsB.apy
-          : metricsB.apy - metricsA.apy;
+        return sortOrder === 'asc' ? metricsA.apy - metricsB.apy : metricsB.apy - metricsA.apy;
       } else if (sortField === 'tvl') {
         const tvlA = calculateTVL(a);
         const tvlB = calculateTVL(b);
@@ -594,14 +593,17 @@ const DexterityInterface = ({
                             variant="ghost"
                             size="sm"
                             onClick={() => handleSort('apy')}
-                            className={`flex items-center space-x-1 ${sortField === 'apy' ? 'text-white' : ''}`}
+                            className={`flex items-center space-x-1 ${
+                              sortField === 'apy' ? 'text-white' : ''
+                            }`}
                           >
                             Yield <ArrowUpDown className="ml-1 size-4" />
                           </Button>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="w-64">
-                            Estimated annual percentage yield for liquidity providers. Click to sort.
+                            Estimated annual percentage yield for liquidity providers. Click to
+                            sort.
                           </p>
                         </TooltipContent>
                       </Tooltip>
@@ -630,7 +632,9 @@ const DexterityInterface = ({
                             variant="ghost"
                             size="sm"
                             onClick={() => handleSort('tvl')}
-                            className={`flex items-center space-x-1 ${sortField === 'tvl' ? 'text-white' : ''}`}
+                            className={`flex items-center space-x-1 ${
+                              sortField === 'tvl' ? 'text-white' : ''
+                            }`}
                           >
                             Liquidity <ArrowUpDown className="ml-1 size-4" />
                           </Button>
