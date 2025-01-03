@@ -1,3 +1,4 @@
+import { kv } from '@vercel/kv';
 import {
   addIndexContract,
   clearLeaderboard,
@@ -19,6 +20,26 @@ import {
   setNftCollectionMetadata,
   setNftMetadata
 } from './kv';
+
+describe('dexterity metadata cache', () => {
+  it('should get contract metadata by id', async () => {
+    const token = await kv.get('sip10:SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-lp-token');
+    console.log(JSON.stringify(token, null, 2));
+  });
+
+  it('should set contract metadata by id', async () => {
+    await kv.set('token:SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes', {
+      contractId: 'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes',
+      identifier: 'DMG-RUN',
+      name: 'DMG-RUNES',
+      symbol: 'DMG-RUN',
+      decimals: 6,
+      description: 'Liquidity pool token for the DMG-ROONS pair',
+      image:
+        'https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-lp-token-1735434744434-wvVOGJG1ofUaIarIgQ7GPqGkG8uCKR.png'
+    });
+  });
+});
 
 describe('tokens api', () => {
   it('should set charisma contract metadata by id', async () => {

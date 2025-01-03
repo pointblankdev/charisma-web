@@ -24,7 +24,7 @@ Dexterity.cache = new Dexterity.cacheProviders.CustomCache({
     };
   },
   set: async (key: string, value: any) => {
-    await kv.set(key, value, { ex: 60 * 60 * 24 * 7 });
+    await kv.set(key, value, { ex: 60 * 60 * 24 });
   }
 }) as any;
 
