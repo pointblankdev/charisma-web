@@ -20,8 +20,6 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
   const [amount, setAmount] = useState(50);
   const { getBalance } = useWallet();
 
-  console.log(pool)
-
   const maxAmount = useMemo(() => {
     const token0Balance = getBalance(pool.liquidity[0].contractId) || 0;
     const token1Balance = getBalance(pool.liquidity[1].contractId) || 0;
