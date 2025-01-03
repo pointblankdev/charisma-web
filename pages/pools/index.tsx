@@ -14,7 +14,12 @@ import _ from 'lodash';
 
 // Helper to process events data for a pool
 async function getPoolEvents(contractId: string) {
-  const events = await getAllContractTransactions(contractId);
+  let events = [];
+  try {
+    events = await getAllContractTransactions(contractId);
+  } catch (error) {
+    console.error('Error fetching pool events:', error);
+  }
   return events.map(event => ({
     block_time: event.block_time,
     block_time_iso: event.block_time_iso,
