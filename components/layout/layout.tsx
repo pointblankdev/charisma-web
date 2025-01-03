@@ -2,7 +2,7 @@ import Link from 'next/link';
 import { cn } from '@lib/utils';
 import { useRouter } from 'next/router';
 import { SkipNavContent } from '@reach/skip-nav';
-import { NAVIGATION } from '@lib/constants';
+import { BRAND_NAME, NAVIGATION } from '@lib/constants';
 import styles from './layout.module.css';
 import styleUtils from '../utils.module.css';
 import MobileMenu from '../mobile-menu';
@@ -25,6 +25,7 @@ import {
 } from '@components/ui/navigation-menu';
 import { ChartBarIcon, LineChartIcon, Sparkles } from 'lucide-react';
 import { GlobalDrawer, useGlobalDrawer } from '@components/global/drawer';
+import charisma from '@public/charisma.png';
 
 type Props = {
   children: React.ReactNode;
@@ -80,9 +81,23 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
             <div className={styles['header-logos']}>
               <MobileMenu key={router.asPath} />
               <div className={cn(styleUtils['hide-on-mobile'])}>
-                <Link href="/" className={cn(styles.logo)}>
-                  <Image src={dmgLogo} alt="DMG Logo" width="64" height="64" />
-                </Link>
+                {router.pathname !== '/' && (
+                  <Link href="/" className={cn(styles.logo, 'flex items-center gap-1')}>
+                    <Image src={charisma} alt="Logo" width="50" height="50" className="size-7" />
+                    <span
+                      style={{
+                        color: 'white',
+                        fontSize: '30px',
+                        lineHeight: 1.15,
+                        letterSpacing: '-0.05em',
+                        fontWeight: 700,
+                        textAlign: 'center'
+                      }}
+                    >
+                      {BRAND_NAME}
+                    </span>
+                  </Link>
+                )}
               </div>
             </div>
             <div className={styles.tabs}>
