@@ -38,7 +38,7 @@ const service = PricesService.getInstance();
 export const getStaticProps: GetStaticProps<any> = async () => {
   // Get contracts and prices in parallel using cached functions
   const [pools, prices] = await Promise.all([
-    Dexterity.discoverPools(100, blacklist),
+    Dexterity.discoverPools(50, blacklist),
     service.getAllTokenPrices()
   ]);
 
