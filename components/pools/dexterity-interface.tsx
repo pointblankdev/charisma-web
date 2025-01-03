@@ -7,7 +7,8 @@ import {
   ArrowLeftRight,
   Minus,
   HelpCircle,
-  InfoIcon
+  InfoIcon,
+  ArrowUpDown
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
@@ -39,6 +40,7 @@ import {
 import { hexToBytes } from '@stacks/common';
 import numeral from 'numeral';
 import { cn } from '@lib/utils';
+import { LPToken } from 'dexterity-sdk';
 
 const VERIFIED_ADDRESSES: Record<string, string> = {
   SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS: 'rozar.btc',
@@ -48,7 +50,7 @@ const VERIFIED_ADDRESSES: Record<string, string> = {
 
 const calculatePoolMetrics = (events: any[], poolData: any) => {
   // Get LP Rebate percentage from metadata (e.g., 5 for 5%)
-  const lpRebatePercent = Number(poolData.metadata.properties.lpRebatePercent) || 5;
+  const lpRebatePercent = Number(poolData.fee / 10000) || 5;
   const feeRate = lpRebatePercent / 100; // Convert 5 to 0.05 for calculations
 
   if (!events?.length || !poolData.prices) {
@@ -66,12 +68,7 @@ const calculatePoolMetrics = (events: any[], poolData: any) => {
   // Helper to convert token amount to USD value
   const getTokenUsdValue = (amount: string, assetId: string): number => {
     const tokenContractId = assetId.split('::')[0];
-    const tokenMetadata =
-      tokenContractId === poolData.token0.contractId
-        ? poolData.token0.metadata
-        : tokenContractId === poolData.token1.contractId
-        ? poolData.token1.metadata
-        : null;
+    const tokenMetadata = poolData.liquidity[0]
 
     if (!tokenMetadata) return 0;
 
@@ -82,10 +79,10 @@ const calculatePoolMetrics = (events: any[], poolData: any) => {
 
   // Calculate TVL
   const tvl =
-    (poolData.poolData.reserve0 / Math.pow(10, poolData.token0.metadata.decimals)) *
-      (poolData.prices[poolData.token0.contractId] || 0) +
-    (poolData.poolData.reserve1 / Math.pow(10, poolData.token1.metadata.decimals)) *
-      (poolData.prices[poolData.token1.contractId] || 0);
+    (poolData.liquidity[0].reserves / Math.pow(10, poolData.liquidity[0].decimals)) *
+    (poolData.prices[poolData.liquidity[0].contractId] || 0) +
+    (poolData.liquidity[1].reserves / Math.pow(10, poolData.liquidity[1].decimals)) *
+    (poolData.prices[poolData.liquidity[1].contractId] || 0);
 
   // Calculate pool age
   const sortedEvents = [...events].sort((a, b) => a.block_time - b.block_time);
@@ -181,18 +178,18 @@ const AddressDisplay = ({ address }: { address: string }) => {
   );
 };
 
-const TokenPairDisplay = ({ token0, token1 }: { token0: any; token1: any }) => (
+const TokenPairDisplay = ({ liquidity }: { liquidity: any[] }) => (
   <div className="flex flex-col items-center justify-start">
     <div className="flex items-center -space-x-2">
       <div
         className={cn(
           'z-10 rounded-full border-background',
-          token0.metadata.symbol === 'DMG' ? 'border-0' : 'border-2'
+          liquidity[0].symbol === 'DMG' ? 'border-0' : 'border-2'
         )}
       >
         <Image
-          src={token0.metadata.image}
-          alt={token0.metadata.symbol}
+          src={liquidity[0].image}
+          alt={liquidity[0].symbol}
           width={24}
           height={24}
           className="rounded-full"
@@ -201,12 +198,12 @@ const TokenPairDisplay = ({ token0, token1 }: { token0: any; token1: any }) => (
       <div
         className={cn(
           'rounded-full border-background',
-          token1.metadata.symbol === 'DMG' ? 'border-0' : 'border-2'
+          liquidity[1].symbol === 'DMG' ? 'border-0' : 'border-2'
         )}
       >
         <Image
-          src={token1.metadata.image}
-          alt={token1.metadata.symbol}
+          src={liquidity[1].image}
+          alt={liquidity[1].symbol}
           width={24}
           height={24}
           className="rounded-full"
@@ -214,7 +211,7 @@ const TokenPairDisplay = ({ token0, token1 }: { token0: any; token1: any }) => (
       </div>
     </div>
     <span className="whitespace-nowrap">
-      {token0.metadata.symbol}-{token1.metadata.symbol}
+      {liquidity[0].symbol}-{liquidity[1].symbol}
     </span>
   </div>
 );
@@ -222,11 +219,11 @@ const TokenPairDisplay = ({ token0, token1 }: { token0: any; token1: any }) => (
 const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const tvl = useMemo(() => {
     const token0Value =
-      (pool.poolData.reserve0 / 10 ** pool.token0.metadata.decimals) *
-      (prices[pool.token0.contractId] || 0);
+      (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
+      (prices[pool.liquidity[0].contractId] || 0);
     const token1Value =
-      (pool.poolData.reserve1 / 10 ** pool.token1.metadata.decimals) *
-      (prices[pool.token1.contractId] || 0);
+      (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
+      (prices[pool.liquidity[1].contractId] || 0);
     return token0Value + token1Value;
   }, [pool, prices]);
 
@@ -234,13 +231,13 @@ const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
     <div className="space-y-1">
       <div className="text-lg font-medium">${numeral(tvl).format('0,0.00')}</div>
       <div className="text-xs text-gray-400">
-        {numeral(pool.poolData.reserve0 / 10 ** pool.token0.metadata.decimals).format('0,0.00')}{' '}
-        {pool.token0.metadata.symbol}
+        {numeral(pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals).format('0,0.00')}{' '}
+        {pool.liquidity[0].symbol}
         {' + '}
-        {numeral(pool.poolData.reserve1 / 10 ** pool.token1.metadata.decimals).format(
+        {numeral(pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals).format(
           '0,0.00'
         )}{' '}
-        {pool.token1.metadata.symbol}
+        {pool.liquidity[1].symbol}
       </div>
     </div>
   );
@@ -258,7 +255,7 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
     } else {
       return Pc.principal(sender)
         .willSendEq(amount)
-        .ft(token.contractId, token.metadata.identifier);
+        .ft(token.contractId, token.identifier);
     }
   };
 
@@ -312,8 +309,8 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
     // Create post conditions for the tokens being received and the LP token being burned
     const postConditions = [
       createPostCondition(pool, amountIn), // LP token
-      createPostCondition(pool.token0, quote.dx.value, pool.contractId),
-      createPostCondition(pool.token1, quote.dy.value, pool.contractId)
+      createPostCondition(pool.liquidity[0], quote.dx.value, pool.contractId),
+      createPostCondition(pool.liquidity[1], quote.dy.value, pool.contractId)
     ];
 
     executePoolOperation({
@@ -331,8 +328,8 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
 
     // Create post conditions for both tokens being added
     const postConditions = [
-      createPostCondition(pool.token0, quote.dx.value),
-      createPostCondition(pool.token1, quote.dy.value)
+      createPostCondition(pool.liquidity[0], quote.dx.value),
+      createPostCondition(pool.liquidity[1], quote.dy.value)
     ];
 
     executePoolOperation({
@@ -386,8 +383,6 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
 const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const poolWithPrices = { ...pool, prices };
   const metrics = calculatePoolMetrics(pool.events, poolWithPrices);
-
-  console.log(metrics);
 
   return (
     <TooltipProvider>
@@ -447,15 +442,15 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
     <tr className="border-t border-gray-700/50">
       <td className="flex items-start px-4 py-4 text-white">
         <Image
-          src={pool.metadata.image}
-          alt={pool.metadata.name}
+          src={pool.image}
+          alt={pool.name}
           width={44}
           height={44}
           className="object-cover mt-0.5 mr-3 rounded-md"
         />
         <div>
           <div className="flex items-center space-x-1 leading-snug">
-            <div className="text-lg leading-snug">{pool.metadata.name}</div>
+            <div className="text-lg leading-snug">{pool.name}</div>
             <Link
               href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
               target="_blank"
@@ -465,14 +460,14 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
               <ExternalLink size={14} />
             </Link>
           </div>
-          <div className="text-sm text-gray-400">{pool.metadata.description}</div>
+          <div className="text-sm text-gray-400">{pool.description}</div>
         </div>
       </td>
       <td className="px-4 py-4 text-white">
         <APYDisplay pool={pool} prices={prices} />
       </td>
       <td className="px-4 py-4 text-white">
-        <TokenPairDisplay token0={pool.token0} token1={pool.token1} />
+        <TokenPairDisplay liquidity={pool.liquidity} />
       </td>
       <td className="px-4 py-4 text-white">
         <TVLDisplay pool={pool} prices={prices} />
@@ -487,34 +482,68 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
   );
 };
 
-export const DexterityInterface = ({
+const DexterityInterface = ({
   data,
   prices
 }: {
   data: any;
   prices: Record<string, number>;
 }) => {
-  const [sortOrder] = useState<'asc' | 'desc'>('desc');
+  const [sortField, setSortField] = useState('tvl'); // Default sort by APY
+  const [sortOrder, setSortOrder] = useState('desc');
 
   const sortedPools = useMemo(() => {
     return [...data.pools].sort((a, b) => {
-      const nameA = a.metadata.name.toUpperCase();
-      const nameB = b.metadata.name.toUpperCase();
+      // Helper function to calculate TVL for a pool
+      const calculateTVL = (pool: LPToken) => {
+        const token0Value =
+          (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
+          (prices[pool.liquidity[0].contractId] || 0);
+        const token1Value =
+          (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
+          (prices[pool.liquidity[1].contractId] || 0);
+        return Number(token0Value) + Number(token1Value);
+      };
+
+      if (sortField === 'apy') {
+        const metricsA = calculatePoolMetrics(a.events, { ...a, prices });
+        const metricsB = calculatePoolMetrics(b.events, { ...b, prices });
+        return sortOrder === 'asc'
+          ? metricsA.apy - metricsB.apy
+          : metricsB.apy - metricsA.apy;
+      } else if (sortField === 'tvl') {
+        const tvlA = calculateTVL(a);
+        const tvlB = calculateTVL(b);
+        return sortOrder === 'asc' ? tvlA - tvlB : tvlB - tvlA;
+      }
+
+      // Fallback to name sorting
+      const nameA = a.name.toUpperCase();
+      const nameB = b.name.toUpperCase();
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
     });
-  }, [data.pools, sortOrder]);
+  }, [data.pools, sortField, sortOrder, prices]);
 
   const totalTVL = useMemo(() => {
     return sortedPools.reduce((total, pool) => {
       const token0Value =
-        (pool.poolData.reserve0 / 10 ** pool.token0.metadata.decimals) *
-        (prices[pool.token0.contractId] || 0);
+        (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
+        (prices[pool.liquidity[0].contractId] || 0);
       const token1Value =
-        (pool.poolData.reserve1 / 10 ** pool.token1.metadata.decimals) *
-        (prices[pool.token1.contractId] || 0);
+        (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
+        (prices[pool.liquidity[1].contractId] || 0);
       return Number(total) + Number(token0Value) + Number(token1Value);
     }, 0);
   }, [sortedPools, prices]);
+
+  const handleSort = (field: string) => {
+    if (sortField === field) {
+      setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    } else {
+      setSortField(field);
+      setSortOrder('desc'); // Default to descending when changing fields
+    }
+  };
 
   return (
     <div className="sm:mx-auto sm:px-4">
@@ -556,23 +585,28 @@ export const DexterityInterface = ({
                       </Tooltip>
                     </TooltipProvider>
                   </th>
-                  <th className="px-4 py-2" style={{ justifyItems: 'center' }}>
+                  <th className="px-4 py-2">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="flex items-center">
-                          Yield <HelpCircle className="ml-1 size-4" />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleSort('apy')}
+                            className={`flex items-center space-x-1 ${sortField === 'apy' ? 'text-white' : ''}`}
+                          >
+                            Yield <ArrowUpDown className="ml-1 size-4" />
+                          </Button>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="w-64">
-                            Estimated annual percentage yield for liquidity providers. Hover over
-                            the APY value to see a detailed breakdown of factors including trading
-                            volume, fees, and vault history.
+                            Estimated annual percentage yield for liquidity providers. Click to sort.
                           </p>
                         </TooltipContent>
                       </Tooltip>
                     </TooltipProvider>
                   </th>
-                  <th className="px-4 py-2 text-center" style={{ justifyItems: 'center' }}>
+                  <th className="px-4 py-2 text-center">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="flex items-center justify-center">
@@ -591,13 +625,18 @@ export const DexterityInterface = ({
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="flex items-center">
-                          Liquidity <HelpCircle className="ml-1 size-4" />
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => handleSort('tvl')}
+                            className={`flex items-center space-x-1 ${sortField === 'tvl' ? 'text-white' : ''}`}
+                          >
+                            Liquidity <ArrowUpDown className="ml-1 size-4" />
+                          </Button>
                         </TooltipTrigger>
                         <TooltipContent>
                           <p className="w-64">
-                            The total value locked (TVL) in this vault, calculated from the current
-                            market prices of both tokens. Shows the total amount of liquidity
-                            available for trading.
+                            The total value locked (TVL) in this vault. Click to sort.
                           </p>
                         </TooltipContent>
                       </Tooltip>

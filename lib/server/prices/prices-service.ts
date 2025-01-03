@@ -65,7 +65,7 @@ class PricesService {
   private static instance: PricesService;
   private readonly API_URL = 'https://explore.charisma.rocks';
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): PricesService {
     if (!PricesService.instance) {

@@ -7,48 +7,10 @@ import useWallet from '@lib/hooks/wallet-balance-provider';
 import { motion } from 'framer-motion';
 import PricesService from '@lib/server/prices/prices-service';
 import Link from 'next/link';
-import { DEXTERITY_ABI, getContractsByTrait } from '@lib/server/traits/service';
-import {
-  getAccountBalance,
-  getAllContractEvents,
-  getAllContractTransactions,
-  getDecimals,
-  getIdentifier,
-  getSymbol,
-  getTokenMetadata,
-  getTotalSupply
-} from '@lib/stacks-api';
+import { getAllContractTransactions } from '@lib/stacks-api';
 import DexterityInterface from '@components/pools/dexterity-interface';
+import { Dexterity } from 'dexterity-sdk';
 import _ from 'lodash';
-import { kv } from '@vercel/kv';
-
-// Define default STX token data
-const STX_TOKEN = {
-  contractId: '.stx',
-  metadata: {
-    name: 'Stacks',
-    symbol: 'STX',
-    decimals: 6,
-    identifier: '.stx',
-    image: '/stx-logo.png',
-    description: 'Native Stacks blockchain token'
-  }
-};
-
-// Helper to get token data
-async function getTokenData(contractId: string) {
-  if (contractId === '.stx') return STX_TOKEN;
-
-  return {
-    contractId,
-    metadata: {
-      ...(await getTokenMetadata(contractId)),
-      symbol: await getSymbol(contractId),
-      decimals: await getDecimals(contractId),
-      identifier: await getIdentifier(contractId)
-    }
-  };
-}
 
 // Helper to process events data for a pool
 async function getPoolEvents(contractId: string) {
@@ -61,97 +23,24 @@ async function getPoolEvents(contractId: string) {
   }));
 }
 
-async function getPoolData(contract: any) {
-  const metadata = await getTokenMetadata(contract.contract_id);
-  const [token0, token1] = await Promise.all([
-    getTokenData(metadata.properties.tokenAContract),
-    getTokenData(metadata.properties.tokenBContract)
-  ]);
-
-  const reserves = await getAccountBalance(contract.contract_id);
-  const events = await getPoolEvents(contract.contract_id);
-
-  // Helper function to get balance for either STX or FT
-  const getTokenBalance = (assetIdentifier: string): number => {
-    if (assetIdentifier === '.stx::.stx') {
-      return parseInt(reserves.stx?.balance || '0');
-    }
-    const ftBalance = reserves.fungible_tokens?.[assetIdentifier]?.balance;
-    return ftBalance ? parseInt(ftBalance) : 0;
-  };
-
-  // Get balances for both tokens
-  const reserve0 = getTokenBalance(`${token0.contractId}::${token0.metadata.identifier}`);
-  const reserve1 = getTokenBalance(`${token1.contractId}::${token1.metadata.identifier}`);
-
-  // Get total supply
-  const totalSupply = await getTotalSupply(contract.contract_id);
-
-  return {
-    contractId: contract.contract_id,
-    poolData: {
-      reserve0,
-      reserve1,
-      totalSupply
-    },
-    metadata: {
-      ...metadata,
-      symbol: await getSymbol(contract.contract_id),
-      decimals: await getDecimals(contract.contract_id),
-      identifier: await getIdentifier(contract.contract_id)
-    },
-    token0,
-    token1,
-    events
-  };
-}
-
-async function getCachedOrFetchPoolData(contract: any, ttlSeconds = 600) {
-  const cacheKey = `pool:data:${contract.contract_id}`;
-  const cachedData = await kv.get(cacheKey);
-  if (cachedData) {
-    return cachedData;
-  }
-
-  const poolData = await getPoolData(contract);
-  await kv.set(cacheKey, poolData, { ex: ttlSeconds });
-  return poolData;
-}
-
-async function findUniqueVaultContracts() {
-  const contracts = await getContractsByTrait({ traitAbi: DEXTERITY_ABI, limit: 100 });
-  const uniqueContracts = _.uniqBy(contracts, 'contract_id');
-  return uniqueContracts;
-}
-
 const service = PricesService.getInstance();
 export const getStaticProps: GetStaticProps<any> = async () => {
   try {
     // Get contracts and prices in parallel using cached functions
-    const [contracts, prices] = await Promise.all([
-      findUniqueVaultContracts(),
+    const [pools, prices] = await Promise.all([
+      Dexterity.discoverPools(),
       service.getAllTokenPrices()
     ]);
 
-    // Get pools data with caching
-    const pools = await Promise.all(
-      contracts.map(async contract => {
-        try {
-          const pool = await getCachedOrFetchPoolData(contract);
-          return pool;
-        } catch (error) {
-          console.warn('Error fetching pool data:', error);
-          return null;
-        }
-      })
-    );
+    const uniquePools = _.uniqBy(pools, 'contractId');
 
-    // Filter out any null pools from failed fetches
-    const validPools = pools.filter(Boolean);
+    for (const pool of uniquePools) {
+      (pool as any).events = await getPoolEvents(pool.contractId);
+    }
 
     return {
       props: {
-        data: { prices, pools: validPools }
+        data: { prices, pools: uniquePools }
       },
       revalidate: 60
     };
