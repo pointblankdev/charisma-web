@@ -28,36 +28,34 @@ async function getPoolEvents(contractId: string) {
   }));
 }
 
+const blacklist = [
+  'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',
+  'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes',
+  'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.uahdmg'
+];
+
 const service = PricesService.getInstance();
 export const getStaticProps: GetStaticProps<any> = async () => {
-  try {
-    // Get contracts and prices in parallel using cached functions
-    const [pools, prices] = await Promise.all([
-      Dexterity.discoverPools(),
-      service.getAllTokenPrices()
-    ]);
+  // Get contracts and prices in parallel using cached functions
+  const [pools, prices] = await Promise.all([
+    Dexterity.discoverPools(),
+    service.getAllTokenPrices()
+  ]);
 
-    const uniquePools = _.uniqBy(pools, 'contractId');
+  const uniquePools = _.uniqBy(pools, 'contractId');
 
-    for (const pool of uniquePools) {
-      (pool as any).events = await getPoolEvents(pool.contractId);
-    }
+  const poolList = uniquePools.filter(pool => !blacklist.includes(pool.contractId));
 
-    return {
-      props: {
-        data: { prices, pools: uniquePools }
-      },
-      revalidate: 60
-    };
-  } catch (error) {
-    console.error('Error in getStaticProps:', error);
-    return {
-      props: {
-        data: { prices: {}, pools: [] }
-      },
-      revalidate: 60
-    };
+  for (const pool of poolList) {
+    (pool as any).events = await getPoolEvents(pool.contractId);
   }
+
+  return {
+    props: {
+      data: { prices, pools: poolList }
+    },
+    revalidate: 60
+  };
 };
 
 export default function DexterityPoolsPage({ data }: any) {
