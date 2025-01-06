@@ -159,7 +159,6 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                 }}
                 linkDirectionalParticles={1}
                 linkDirectionalParticleWidth={5}
-                linkColor={() => '#c1121f'}
 
             />
         </div>
