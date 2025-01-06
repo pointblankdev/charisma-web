@@ -55,6 +55,11 @@ module.exports = {
         source: '/pools/new-dex',
         destination: '/pools',
         permanent: false
+      },
+      {
+        source: '/api/v0/tokens/:path*',
+        destination: '/api/v0/metadata/:path*',
+        permanent: false
       }
     ];
   },

@@ -38,9 +38,6 @@ const isValidContractId = (contractId: string) => {
   return /^SP[A-Z0-9]+\.[^\/]+$/.test(contractId);
 };
 
-// Helper to construct KV key
-const getKvKey = (contractId: string) => `sip10:${contractId}`;
-
 // Helper to validate auth token
 const validateAuth = (req: NextApiRequest) => {
   const authHeader = req.headers.authorization;
@@ -57,7 +54,7 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse, contractId: 
       return res.status(400).json({ error: 'Invalid contract ID format' });
     }
 
-    const metadata = await kv.get<TokenMetadata>(getKvKey(contractId));
+    const metadata = await kv.get<TokenMetadata>(`sip10:${contractId}`);
     if (!metadata) {
       return res.status(404).json({ error: 'Metadata not found' });
     }
@@ -98,15 +95,15 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
       data.properties.tokenAContract === '.stx'
         ? { symbol: 'STX', name: 'Stacks', decimals: 6 }
         : {
-            ...getTokenMetadata(data.properties.tokenAContract),
-            symbol: await getSymbol(data.properties.tokenAContract)
-          },
+          ...getTokenMetadata(data.properties.tokenAContract),
+          symbol: await getSymbol(data.properties.tokenAContract)
+        },
       data.properties.tokenBContract === '.stx'
         ? { symbol: 'STX', name: 'Stacks', decimals: 6 }
         : {
-            ...getTokenMetadata(data.properties.tokenBContract),
-            symbol: await getSymbol(data.properties.tokenBContract)
-          }
+          ...getTokenMetadata(data.properties.tokenBContract),
+          symbol: await getSymbol(data.properties.tokenBContract)
+        }
     ]);
 
     // Generate token details
@@ -119,8 +116,7 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
     // Generate image using OpenAI
     const imagePrompt =
       `Design a iconic logo for ${data.name}, described by: ${data.description}. DO NOT include any text or words.` +
-      `${
-        charismaTheme ? `Incorporate a deep red as the primary color in a sophisticated way. ` : ``
+      `${charismaTheme ? `Incorporate a deep red as the primary color in a sophisticated way. ` : ``
       }` +
       `The design should be iconic and instantly recognizable at small sizes, similar to a premium brand mark or currency symbol.`;
 
@@ -158,7 +154,7 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
     };
 
     // Store metadata in KV
-    await kv.set(getKvKey(contractId), metadata);
+    await kv.set(`sip10:${contractId}`, metadata);
 
     return res.status(200).json({
       success: true,
@@ -191,12 +187,11 @@ async function handleUpdate(
   }
 
   try {
-    const key = getKvKey(contractId);
     let newMetadata: TokenMetadata;
 
     if (isPartial) {
       // Get existing metadata for partial update
-      const currentMetadata = await kv.get<TokenMetadata>(key);
+      const currentMetadata = await kv.get<TokenMetadata>(`sip10:${contractId}`);
       if (!currentMetadata && isPartial) {
         return res.status(404).json({ error: 'Metadata not found' });
       }
@@ -219,7 +214,7 @@ async function handleUpdate(
       };
     }
 
-    await kv.set(key, newMetadata);
+    await kv.set(`sip10:${contractId}`, newMetadata);
 
     return res.status(200).json({
       success: true,
@@ -248,8 +243,8 @@ async function handleMigrate(req: NextApiRequest, res: NextApiResponse) {
 
   try {
     // Get old data
-    const oldKeyFormatted = getKvKey(oldKey);
-    const newKeyFormatted = getKvKey(newKey);
+    const oldKeyFormatted = `sip10:${oldKey}`
+    const newKeyFormatted = `sip10:${newKey}`
 
     const oldData = await kv.get<TokenMetadata>(oldKeyFormatted);
     if (!oldData) {
