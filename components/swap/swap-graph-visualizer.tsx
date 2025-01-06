@@ -77,25 +77,6 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
         };
     }, [fromToken, toToken, paths, currentPath]);
 
-    useEffect(() => {
-        const initGraph = () => {
-            if (graphRef.current && graphRef.current.d3Force) {
-                graphRef.current.d3Force('charge', d3.forceManyBody().strength(-500));
-                graphRef.current.d3Force('link', d3.forceLink().distance(200));
-                graphRef.current.d3Force('center', d3.forceCenter().strength(0.03));
-                graphRef.current.zoomToFit(100);
-            }
-        };
-
-        // Try immediately
-        initGraph();
-
-        // Also try after a delay as fallback
-        const timer = setTimeout(initGraph, 500);
-
-        return () => clearTimeout(timer);
-    }, [graphData]);
-
     return (
         <div className="fixed inset-0 w-screen h-screen bg-black/5 z-50" onClick={() => setShowGraph(false)}>
             <ForceGraph2D
