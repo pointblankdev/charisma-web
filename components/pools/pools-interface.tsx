@@ -45,7 +45,7 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
     const uniqueToken1s = data.pools.map(pool => pool.token1);
     return _.uniqBy([...uniqueToken0s, ...uniqueToken1s], 'contractId')
   }, [data.pools]);
-  
+
   // Filter pools based on selected token
   const filteredPools = useMemo(() => {
     if (!selectedToken) return data.pools;
@@ -82,15 +82,15 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
     setSelectedToken((prevToken: any) => prevToken?.contractId === value.contractId ? null : value);
   };
 
-  const subtitle = title === 'Community Pools' ? 'Zero protocol fees and high APYs to support our incredible memecoin communities' 
-    : title ==='Spot Pools' ? 'Earn modest APYs by providing LP in unique STX-anchored liquidity pools'
-    : title ==='Derivative Pools' ? 'Put your LP tokens to work and earn additional yield with unique LP-to-LP pools'
-    : title ==='Dexterity Pools' ? `One-click to deploy your own mini-DEX, then collect trading fees anytime someone swaps between your tokens!`: '';
+  const subtitle = title === 'Community Pools' ? 'Zero protocol fees and high APYs to support our incredible memecoin communities'
+    : title === 'Spot Pools' ? 'Earn modest APYs by providing LP in unique STX-anchored liquidity pools'
+      : title === 'Derivative Pools' ? 'Put your LP tokens to work and earn additional yield with unique LP-to-LP pools'
+        : title === 'Dexterity Pools' ? `One-click to deploy your own mini-DEX, then collect trading fees anytime someone swaps between your tokens!` : '';
 
   return (
     <div className="sm:mx-auto sm:px-4">
       <div className="mt-6">
-      <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
+        <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
           <div className="flex flex-col gap-4 px-4 mb-4 sm:px-0">
             <div className="flex items-center justify-between">
               <div>
@@ -106,19 +106,19 @@ export const PoolsInterface = ({ data, title = 'Liquidity Pools' }: Props) => {
               <div className="flex overflow-hidden overflow-x-auto border rounded-xl scrollbar-thin scrollbar-thumb-muted-foreground/20 scrollbar-track-transparent">
                 {uniqueBaseTokens.map(token => (
                   <Button
-                    key={token.contractId} 
+                    key={token.contractId}
                     variant={selectedToken?.contractId === token.contractId ? "secondary" : "ghost"}
                     size="sm"
                     onClick={() => handleTokenSelect(token)}
                     className="h-8 px-3 py-0 rounded-none shrink-0"
-                    >
+                  >
                     <div className='flex items-center space-x-1'>
                       <Image
                         src={token.metadata.image || '/dmg-logo.gif'}
                         alt={token.metadata.symbol}
                         width={24}
                         height={24}
-                        className="w-6 h-6 rounded-full" 
+                        className="w-6 h-6 rounded-full"
                       />
                       <div>{token.metadata.symbol || token.contractId.split('.')[1]}</div>
                     </div>
