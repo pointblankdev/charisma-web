@@ -319,7 +319,7 @@ export const SwapInterface = ({
   };
 
   const handleEstimateAmount = useCallback(
-    (amount: string) => {
+    async (amount: string) => {
       // Clear any existing timer
       if (estimateTimer.current) {
         clearTimeout(estimateTimer.current);
@@ -348,7 +348,7 @@ export const SwapInterface = ({
         } finally {
           setIsCalculating(false);
         }
-      }, 200); // 500ms delay
+      }, 200); // 200ms delay
     },
     [fromToken, toToken, stxAddress, fromAmount]
   );
