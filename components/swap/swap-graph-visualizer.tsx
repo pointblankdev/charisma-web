@@ -15,7 +15,6 @@ interface SwapGraphVisualizerProps {
 }
 
 export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, setShowGraph }: SwapGraphVisualizerProps) {
-    const graphRef = useRef<any>();
 
     // Transform paths into graph data
     const graphData = useMemo(() => {
@@ -80,7 +79,6 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
     return (
         <div className="fixed inset-0 w-screen h-screen bg-black/5 z-50" onClick={() => setShowGraph(false)}>
             <ForceGraph2D
-                ref={graphRef}
                 graphData={graphData}
                 width={window.innerWidth}
                 height={window.innerHeight}
