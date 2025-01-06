@@ -275,10 +275,11 @@ export const SwapInterface = ({
   const [isCalculating, setIsCalculating] = useState(false);
   const [slippage, setSlippage] = useState(0);
   const [swapPath, setSwapPath] = useState<any[]>([]);
-  const [swappableTokens, setSwappableTokens] = useState<any[]>([]);
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
   const { getBalance, wallet } = useWallet();
+  // Add debounce timer ref
+  const estimateTimer = useRef<NodeJS.Timeout>();
 
   useEffect(() => {
     const vaults = pools.map(pool => new Vault(pool));
@@ -318,30 +319,47 @@ export const SwapInterface = ({
   };
 
   const handleEstimateAmount = useCallback(
-    async (amount: string) => {
+    (amount: string) => {
+      // Clear any existing timer
+      if (estimateTimer.current) {
+        clearTimeout(estimateTimer.current);
+      }
+
       if (!amount || isNaN(parseFloat(amount)) || !stxAddress || !fromToken || !toToken) {
         setEstimatedAmountOut('0');
         return;
       }
-      setIsCalculating(true);
-      try {
-        const quote = await Dexterity.getQuote(
-          fromToken.contractId,
-          toToken.contractId,
-          Number(amount) * 10 ** fromToken.decimals
-        );
-        const amountOut = quote.amountOut;
-        setSwapPath(quote.route.path || []);
-        setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
-      } catch (error) {
-        console.error('Error estimating amount:', error);
-        setEstimatedAmountOut('0');
-      } finally {
-        setIsCalculating(false);
-      }
+
+      // Set new timer
+      estimateTimer.current = setTimeout(async () => {
+        setIsCalculating(true);
+        try {
+          const quote = await Dexterity.getQuote(
+            fromToken.contractId,
+            toToken.contractId,
+            Number(amount) * 10 ** fromToken.decimals
+          );
+          const amountOut = quote.amountOut;
+          setSwapPath(quote.route.path || []);
+          setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
+        } catch (error) {
+          console.error('Error estimating amount:', error);
+          setEstimatedAmountOut('0');
+        } finally {
+          setIsCalculating(false);
+        }
+      }, 200); // 500ms delay
     },
-    [fromToken, toToken, stxAddress]
+    [fromToken, toToken, stxAddress, fromAmount]
   );
+
+  useEffect(() => {
+    return () => {
+      if (estimateTimer.current) {
+        clearTimeout(estimateTimer.current);
+      }
+    };
+  }, []);
 
   const handleFromAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -358,9 +376,9 @@ export const SwapInterface = ({
     handleEstimateAmount(formattedBalance);
   };
 
-  useEffect(() => {
-    handleEstimateAmount(fromAmount);
-  }, [fromAmount, handleEstimateAmount]);
+  // useEffect(() => {
+  //   handleEstimateAmount(fromAmount);
+  // }, [fromAmount, handleEstimateAmount]);
 
   const handleSwap = async () => {
     if (!fromToken || !toToken || !stxAddress) return;
