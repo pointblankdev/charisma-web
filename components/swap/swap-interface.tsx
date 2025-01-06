@@ -147,6 +147,7 @@ interface TokenInputProps {
   onUseMax?: () => void;
   balance?: number;
   isCalculating?: boolean;
+  exploringPaths?: number;
   duration?: number;
 }
 
@@ -159,6 +160,7 @@ const TokenInput = ({
   onUseMax,
   balance,
   isCalculating,
+  exploringPaths = 0,
   duration = 0.05
 }: TokenInputProps) => (
   <>
@@ -173,7 +175,7 @@ const TokenInput = ({
     <div className="flex items-center justify-between mt-2">
       <span className="text-gray-400">
         {isCalculating ? (
-          'Calculating...'
+          `Exploring ${exploringPaths} possible paths...`
         ) : (
           <div className="flex">
             <div>$</div>
@@ -185,16 +187,6 @@ const TokenInput = ({
               })}
               animateToNumber={formatUSD(Number(amount), price)}
             />
-            <div>
-              {token.symbol?.startsWith('iou') && (
-                <span
-                  className="px-1.5 ml-2 text-sm text-white/50 rounded-full cursor-help bg-accent-foreground pb-0.5"
-                  title="Synthetic token price disclaimer"
-                >
-                  𝖎
-                </span>
-              )}
-            </div>
           </div>
         )}
       </span>
@@ -278,8 +270,8 @@ export const SwapInterface = ({
   const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
   const { getBalance, wallet } = useWallet();
-  // Add debounce timer ref
   const estimateTimer = useRef<NodeJS.Timeout>();
+  const [exploringPaths, setExploringPaths] = useState(0);
 
   useEffect(() => {
     const vaults = pools.map(pool => new Vault(pool));
@@ -333,6 +325,7 @@ export const SwapInterface = ({
       // Set new timer
       estimateTimer.current = setTimeout(() => {
         setIsCalculating(true);
+        setExploringPaths(Dexterity.router.findAllPaths(fromToken.contractId, toToken.contractId, Dexterity.config.maxHops).length);
         Dexterity.getQuote(
           fromToken.contractId,
           toToken.contractId,
@@ -349,6 +342,7 @@ export const SwapInterface = ({
           })
           .finally(() => {
             setIsCalculating(false);
+            setExploringPaths(0);
           });
       }, 200); // Reduced to 200ms for better responsiveness
     },
@@ -486,6 +480,7 @@ export const SwapInterface = ({
                 price={prices[toToken?.contractId] || 0}
                 disabled
                 isCalculating={isCalculating}
+                exploringPaths={exploringPaths}
                 balance={getBalance(toToken?.contractId)}
               />
             </div>
