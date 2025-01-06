@@ -12,6 +12,8 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   const pools = await Dexterity.discoverPools();
   const tokens = Dexterity.getTokens();
 
+  console.log('Prices:', prices);
+
   return {
     props: {
       prices,

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { ChevronDown, ArrowUpDown, Coins } from 'lucide-react';
+import { ChevronDown, ArrowUpDown, Coins, Network } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import useWallet from '@lib/hooks/wallet-balance-provider';
@@ -9,6 +9,7 @@ import { useConnect } from '@stacks/connect-react';
 import dynamic from 'next/dynamic';
 import { Dexterity, LPToken, Token } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
+import { SwapGraphVisualizer } from './swap-graph-visualizer';
 
 const formatUSD = (amount: number, price: number) => {
   const value = amount * price;
@@ -57,50 +58,6 @@ interface TokenListProps {
 }
 
 const TokenList = ({ tokens, onSelect, fromToken, pools }: TokenListProps) => {
-  const [validTokens, setValidTokens] = useState<Set<string>>(new Set());
-  const [isLoading, setIsLoading] = useState<boolean>(false);
-
-  // useEffect(() => {
-  //   const validateTokens = async () => {
-  //     if (!fromToken) {
-  //       setValidTokens(new Set(tokens.map(t => t.contractId)));
-  //       setIsLoading(false);
-  //       return;
-  //     }
-
-  //     setIsLoading(true);
-  //     const validSet = new Set<string>();
-
-  //     // Run validations in parallel
-  //     const validations = tokens.map(async otherToken => {
-  //       try {
-  //         const quote = await Dexterity.getQuote(fromToken.contractId, otherToken.contractId, 1000);
-  //         if (quote.amountOut > 0) {
-  //           validSet.add(otherToken.contractId);
-  //         }
-  //       } catch (error) {
-  //         console.error('Error validating token pair:', error);
-  //       }
-  //     });
-
-  //     await Promise.all(validations);
-  //     setValidTokens(validSet);
-  //     setIsLoading(false);
-  //   };
-
-  //   validateTokens();
-  // }, [fromToken, tokens, pools]);
-
-  if (isLoading) {
-    return (
-      <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
-        <div className="flex items-center justify-center w-full p-4">
-          <span className="text-gray-400">Validating pairs...</span>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
       {tokens.map(token => {
@@ -240,6 +197,7 @@ const SlippageInput = ({ value, onChange }: SlippageInputProps) => (
           type="text"
           className="w-6 text-right text-gray-300 bg-transparent outline-none"
           value={value}
+          disabled
           onChange={onChange}
           placeholder="0.5"
         />
@@ -272,6 +230,7 @@ export const SwapInterface = ({
   const { getBalance, wallet } = useWallet();
   const estimateTimer = useRef<NodeJS.Timeout>();
   const [exploringPaths, setExploringPaths] = useState(0);
+  const [showGraph, setShowGraph] = useState(false);
 
   useEffect(() => {
     const vaults = pools.map(pool => new Vault(pool));
@@ -372,10 +331,6 @@ export const SwapInterface = ({
     handleEstimateAmount(formattedBalance);
   };
 
-  // useEffect(() => {
-  //   handleEstimateAmount(fromAmount);
-  // }, [fromAmount, handleEstimateAmount]);
-
   const handleSwap = async () => {
     if (!fromToken || !toToken || !stxAddress) return;
     console.log('Swapping:', fromToken, toToken, fromAmount);
@@ -401,8 +356,30 @@ export const SwapInterface = ({
         <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
           <div className="flex items-center justify-between mb-2">
             <h1 className="text-2xl font-bold text-white/95">Swap</h1>
-            <SlippageInput value={slippage} onChange={handleSlippageChange} />
+            <div className="flex items-center gap-2">
+              <button
+                className="p-2 rounded-full hover:bg-accent-foreground/10"
+                onClick={() => setShowGraph(!showGraph)}
+              >
+                <Network className="w-5 h-5 text-gray-400" />
+              </button>
+              <SlippageInput value={slippage} onChange={handleSlippageChange} />
+            </div>
           </div>
+
+          {showGraph && (
+            <SwapGraphVisualizer
+              fromToken={fromToken}
+              toToken={toToken}
+              paths={Dexterity.router.findAllPaths(
+                fromToken.contractId,
+                toToken.contractId,
+                Dexterity.config.maxHops
+              )}
+              currentPath={swapPath}
+              setShowGraph={setShowGraph}
+            />
+          )}
 
           <div className="mb-2 space-y-4">
             {/* From Section */}

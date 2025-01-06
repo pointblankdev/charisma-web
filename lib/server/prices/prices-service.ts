@@ -1,3 +1,5 @@
+import cmc from "@lib/cmc-api";
+
 export interface TokenInfo {
   symbol: string;
   name: string;
@@ -65,7 +67,7 @@ class PricesService {
   private static instance: PricesService;
   private readonly API_URL = 'https://explore.charisma.rocks';
 
-  private constructor() {}
+  private constructor() { }
 
   public static getInstance(): PricesService {
     if (!PricesService.instance) {
@@ -104,7 +106,7 @@ class PricesService {
 
     while (attempts < MAX_RETRIES) {
       try {
-        const response = await fetch('http://167.172.182.71:3000/v1/token-prices', {
+        const response = await fetch('https://kraxel.io/api/v2/token-prices', {
           method: 'GET',
           headers: {
             'X-Api-Key': process.env.KRAXEL_API_KEY || '',
@@ -117,8 +119,8 @@ class PricesService {
         }
 
         const { data } = await response.json();
-
-        data.prices['.stx'] = data.prices['SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.wstx'];
+        const cmcPriceData = await cmc.getQuotes({ symbol: ['STX'] });
+        data.prices['.stx'] = cmcPriceData.data['STX'].quote.USD.price;
 
         return data.prices;
       } catch (error) {
