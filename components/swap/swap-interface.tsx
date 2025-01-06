@@ -331,24 +331,26 @@ export const SwapInterface = ({
       }
 
       // Set new timer
-      estimateTimer.current = setTimeout(async () => {
+      estimateTimer.current = setTimeout(() => {
         setIsCalculating(true);
-        try {
-          const quote = await Dexterity.getQuote(
-            fromToken.contractId,
-            toToken.contractId,
-            Number(amount) * 10 ** fromToken.decimals
-          );
-          const amountOut = quote.amountOut;
-          setSwapPath(quote.route.path || []);
-          setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
-        } catch (error) {
-          console.error('Error estimating amount:', error);
-          setEstimatedAmountOut('0');
-        } finally {
-          setIsCalculating(false);
-        }
-      }, 200); // 200ms delay
+        Dexterity.getQuote(
+          fromToken.contractId,
+          toToken.contractId,
+          Number(amount) * 10 ** fromToken.decimals
+        )
+          .then(quote => {
+            const amountOut = quote.amountOut;
+            setSwapPath(quote.route.path || []);
+            setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
+          })
+          .catch(error => {
+            console.error('Error estimating amount:', error);
+            setEstimatedAmountOut('0');
+          })
+          .finally(() => {
+            setIsCalculating(false);
+          });
+      }, 200); // Reduced to 200ms for better responsiveness
     },
     [fromToken, toToken, stxAddress, fromAmount]
   );
