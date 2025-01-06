@@ -325,7 +325,7 @@ export const SwapInterface = ({
         clearTimeout(estimateTimer.current);
       }
 
-      if (!amount || isNaN(parseFloat(amount)) || !stxAddress || !fromToken || !toToken) {
+      if (!amount || isNaN(parseFloat(amount)) || !fromToken || !toToken) {
         setEstimatedAmountOut('0');
         return;
       }
@@ -352,7 +352,7 @@ export const SwapInterface = ({
           });
       }, 200); // Reduced to 200ms for better responsiveness
     },
-    [fromToken, toToken, stxAddress, fromAmount]
+    [fromToken, toToken]
   );
 
   useEffect(() => {
