@@ -35,7 +35,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
             id: toToken.contractId,
             image: toToken.image,
             name: toToken.symbol,
-            color: '#f87171', // red
+            color: '#c1121f', // red
             val: 20
         });
 
@@ -83,7 +83,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                 graphRef.current.d3Force('charge', d3.forceManyBody().strength(-500));
                 graphRef.current.d3Force('link', d3.forceLink().distance(200));
                 graphRef.current.d3Force('center', d3.forceCenter().strength(0.03));
-                graphRef.current.zoomToFit(40);
+                graphRef.current.zoomToFit(100);
             }
         };
 
@@ -97,7 +97,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
     }, [graphData]);
 
     return (
-        <div className="fixed inset-0 w-screen h-screen bg-black/5" onClick={() => setShowGraph(false)}>
+        <div className="fixed inset-0 w-screen h-screen bg-black/5 z-50" onClick={() => setShowGraph(false)}>
             <ForceGraph2D
                 ref={graphRef}
                 graphData={graphData}
@@ -133,12 +133,10 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                     </div>
                 `}
                 nodeRelSize={1.5}
-                linkDirectionalArrowLength={4}
-                linkDirectionalArrowRelPos={0.5}
                 linkCurvature={0}
                 backgroundColor="transparent"
                 cooldownTicks={150}
-                d3VelocityDecay={0.08}
+                d3VelocityDecay={0.999}
                 nodeCanvasObject={(node: any, ctx: any, globalScale: number) => {
                     const size = 12;
                     ctx.beginPath();
@@ -156,11 +154,12 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
 
                     // Draw border
                     ctx.strokeStyle = node.color;
-                    ctx.lineWidth = 1.5;
+                    ctx.lineWidth = 1;
                     ctx.stroke();
                 }}
-                linkDirectionalParticles={2}
-                linkDirectionalParticleWidth={1.5}
+                linkDirectionalParticles={1}
+                linkDirectionalParticleWidth={5}
+                linkColor={() => '#c1121f'}
 
             />
         </div>
