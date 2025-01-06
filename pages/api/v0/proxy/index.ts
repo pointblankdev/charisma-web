@@ -1,6 +1,8 @@
 import { Dexterity } from 'dexterity-sdk';
 import { NextApiRequest, NextApiResponse } from 'next';
 
+Dexterity.setConfig({ maxHops: 4 })
+
 type ErrorResponse = {
   error: {
     code: string;
