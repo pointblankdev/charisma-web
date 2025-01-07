@@ -14,22 +14,6 @@ import _ from 'lodash';
 
 Dexterity.configure({ apiKeyRotation: 'loop' }).catch(console.error);
 
-// Helper to process events data for a pool
-async function getPoolEvents(contractId: string) {
-  let events = [];
-  try {
-    events = await getAllContractTransactions(contractId);
-  } catch (error) {
-    console.error('Error fetching pool events:', error);
-  }
-  return events.map(event => ({
-    block_time: event.block_time,
-    block_time_iso: event.block_time_iso,
-    sender_address: event.sender_address,
-    events: event.events || []
-  }));
-}
-
 const blacklist = [
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes',
@@ -48,10 +32,6 @@ export const getStaticProps: GetStaticProps<any> = async () => {
 
   const uniquePools = _.uniqBy(pools, 'contractId');
 
-  for (const pool of uniquePools) {
-    (pool as any).events = await getPoolEvents(pool.contractId);
-  }
-
   return {
     props: {
       data: { prices, pools: uniquePools }
@@ -66,59 +46,79 @@ export default function DexterityPoolsPage({ data }: any) {
     description: 'View and manage self-listed liquidity pools on the Charisma DEX',
     image: 'https://charisma.rocks/pools-screenshot.png'
   };
-
-  const { wallet } = useWallet();
-  const [loading, setLoading] = useState(true);
+  const [poolsWithEvents, setPoolsWithEvents] = useState(data.pools);
 
   useEffect(() => {
-    if (wallet) setLoading(false);
-  }, [wallet]);
+    let mounted = true;
+
+    const fetchPoolEvents = async () => {
+      try {
+        const updatedPools = await Promise.all(
+          data.pools.map(async (pool: any) => {
+            try {
+              const response = await fetch(`/api/v0/transactions?contractId=${pool.contractId}`);
+              if (!response.ok) throw new Error('Failed to fetch events');
+              const events = await response.json();
+              return { ...pool, events };
+            } catch (error) {
+              console.error(`Error fetching events for pool ${pool.contractId}:`, error);
+              return { ...pool, events: [] };
+            }
+          })
+        );
+
+        if (mounted) {
+          setPoolsWithEvents(updatedPools);
+        }
+      } catch (err) {
+        if (mounted) {
+          console.error('Error fetching pool events:', err);
+        }
+      }
+    };
+
+    fetchPoolEvents();
+
+    return () => {
+      mounted = false;
+    };
+  }, [data.pools]);
 
   return (
     <Page meta={meta} fullViewport>
-      <SkipNavContent />
       <Layout>
-        {!loading && (
-          <motion.div
-            initial="hidden"
-            animate="visible"
-            variants={{ hidden: { opacity: 0 }, visible: { opacity: 1 } }}
-            className="sm:max-w-[2400px] sm:mx-auto sm:pb-10"
-          >
-            <div className="flex flex-col w-full max-w-[3000px] mx-auto px-4 sm:px-6 lg:px-8">
-              {/* Header Section */}
-              <div className="flex flex-col items-start justify-between mt-4 sm:flex-row sm:items-center sm:mt-6">
-                <div className="w-full">
-                  <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">
-                    Earn Yield 💰
-                  </h1>
-                  <p className="text-base sm:text-lg text-muted-foreground/90">
-                    Collect swap fees by depositing your tokens into a secure vault.
-                  </p>
+        <div className="flex flex-col w-full max-w-[3000px] mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Header Section */}
+          <div className="flex flex-col items-start justify-between mt-4 sm:flex-row sm:items-center sm:mt-6">
+            <div className="w-full">
+              <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">
+                Earn Yield 💰
+              </h1>
+              <p className="text-base sm:text-lg text-muted-foreground/90">
+                Collect swap fees by depositing your tokens into a secure vault.
+              </p>
+            </div>
+
+            <div className="flex flex-col items-end w-full mt-4 sm:mt-0">
+              <Link href="/dexterity">
+                <div className="inline-block px-6 py-1.5 mx-1 text-white rounded-lg bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                  Create New Pool
                 </div>
-
-                <div className="flex flex-col items-end w-full mt-4 sm:mt-0">
-                  <Link href="/dexterity">
-                    <div className="inline-block px-6 py-1.5 mx-1 text-white rounded-lg bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
-                      Create New Pool
-                    </div>
-                  </Link>
-                  <div className="mt-2 text-sm text-center text-muted-foreground">
-                    Earn trading fees by creating your own liquidity pool
-                  </div>
-                </div>
-              </div>
-
-              <DexterityInterface data={data} prices={data.prices} />
-
-              <div className="justify-center w-full p-1 m-1 text-center">
-                <Link className="w-full text-sm text-center" href="/dexterity">
-                  Want to create your own liquidity pool and earn trading fees?
-                </Link>
+              </Link>
+              <div className="mt-2 text-sm text-center text-muted-foreground">
+                Earn trading fees by creating your own liquidity pool
               </div>
             </div>
-          </motion.div>
-        )}
+          </div>
+
+          <DexterityInterface data={{ ...data, pools: poolsWithEvents }} prices={data.prices} />
+
+          <div className="justify-center w-full p-1 m-1 text-center">
+            <Link className="w-full text-sm text-center" href="/dexterity">
+              Want to create your own liquidity pool and earn trading fees?
+            </Link>
+          </div>
+        </div>
       </Layout>
     </Page>
   );

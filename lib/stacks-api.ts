@@ -9,9 +9,21 @@ import {
 import { cvToJSON } from '@stacks/transactions';
 import { kv } from '@vercel/kv';
 import { getContractInfo } from './server/traits/service';
-import { address } from '@stacks/transactions/dist/cl';
 
 const CACHE_DURATION = 60 * 60 * 24 * 7; // 7 days in seconds
+
+let currentKeyIndex = 0;
+
+function getNextApiKey(): string {
+  const apiKeys = (process.env.HIRO_API_KEYS || '').split(',').filter(Boolean);
+  if (!apiKeys.length) {
+    return process.env.STACKS_API_KEY || '';
+  }
+
+  const key = apiKeys[currentKeyIndex];
+  currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
+  return key;
+}
 
 export const client = createClient({
   baseUrl: 'https://api.mainnet.hiro.so'
@@ -19,7 +31,8 @@ export const client = createClient({
 
 client.use({
   onRequest({ request }) {
-    request.headers.set('x-hiro-api-key', String(process.env.STACKS_API_KEY));
+    const apiKey = getNextApiKey();
+    request.headers.set('x-hiro-api-key', apiKey);
     return request;
   }
 });
@@ -500,6 +513,7 @@ export async function getAllContractEvents(contractId: string, totalLimit: numbe
 
   return allEvents;
 }
+
 export async function getAllContractTransactions(contractId: string, totalLimit: number = 5000) {
   const allEvents: any[] = [];
   let offset = 0;

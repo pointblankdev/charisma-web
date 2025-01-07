@@ -21,7 +21,7 @@ import {
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useEffect } from 'react';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -49,6 +49,11 @@ import { hexToBytes } from '@stacks/common';
 import numeral from 'numeral';
 import { cn } from '@lib/utils';
 import { LPToken } from 'dexterity-sdk';
+import dynamic from 'next/dynamic';
+
+const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), {
+  ssr: false
+});
 
 const VERIFIED_ADDRESSES: Record<string, string> = {
   SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS: 'rozar.btc',
@@ -91,9 +96,9 @@ const calculatePoolMetrics = (events: any[], poolData: any) => {
   // Calculate TVL
   const tvl =
     (poolData.liquidity[0].reserves / Math.pow(10, poolData.liquidity[0].decimals)) *
-      (poolData.prices[poolData.liquidity[0].contractId] || 0) +
+    (poolData.prices[poolData.liquidity[0].contractId] || 0) +
     (poolData.liquidity[1].reserves / Math.pow(10, poolData.liquidity[1].decimals)) *
-      (poolData.prices[poolData.liquidity[1].contractId] || 0);
+    (poolData.prices[poolData.liquidity[1].contractId] || 0);
 
   // Calculate pool age
   const sortedEvents = [...events].sort((a, b) => a.block_time - b.block_time);
@@ -405,8 +410,16 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
       <Tooltip>
         <TooltipTrigger className="w-full">
           <div className="mt-1 leading-snug">
-            <div className="text-lg font-medium text-green-400 whitespace-nowrap">
-              {metrics.apy}% APY
+            <div className="flex justify-center items-center text-lg font-medium text-green-400 whitespace-nowrap">
+              <AnimatedNumbers
+                includeComma
+                transitions={index => ({
+                  type: 'spring',
+                  duration: index * 0.1
+                })}
+                animateToNumber={parseFloat(metrics.apy.toFixed(2))}
+              />
+              <span className="ml-1">% APY</span>
             </div>
             <div className="text-xs text-gray-400">
               30d fees: ${numeral(metrics.feesLast30Days).format('0,0.00')}
@@ -499,22 +512,22 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
 };
 
 const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string, number> }) => {
-  const [sortField, setSortField] = useState('tvl'); // Default sort by APY
+  const [sortField, setSortField] = useState('tvl');
   const [sortOrder, setSortOrder] = useState('desc');
+  const [mounted, setMounted] = useState(false);
 
   const sortedPools = useMemo(() => {
-    return [...data.pools].sort((a, b) => {
-      // Helper function to calculate TVL for a pool
-      const calculateTVL = (pool: LPToken) => {
-        const token0Value =
-          (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
-          (prices[pool.liquidity[0].contractId] || 0);
-        const token1Value =
-          (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
-          (prices[pool.liquidity[1].contractId] || 0);
-        return Number(token0Value) + Number(token1Value);
-      };
+    const calculateTVL = (pool: LPToken) => {
+      const token0Value =
+        (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
+        (prices[pool.liquidity[0].contractId] || 0);
+      const token1Value =
+        (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
+        (prices[pool.liquidity[1].contractId] || 0);
+      return Number(token0Value) + Number(token1Value);
+    };
 
+    return data.pools.sort((a: any, b: any) => {
       if (sortField === 'apy') {
         const metricsA = calculatePoolMetrics(a.events, { ...a, prices });
         const metricsB = calculatePoolMetrics(b.events, { ...b, prices });
@@ -525,7 +538,6 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
         return sortOrder === 'asc' ? tvlA - tvlB : tvlB - tvlA;
       }
 
-      // Fallback to name sorting
       const nameA = a.name.toUpperCase();
       const nameB = b.name.toUpperCase();
       return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
@@ -533,7 +545,7 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
   }, [data.pools, sortField, sortOrder, prices]);
 
   const totalTVL = useMemo(() => {
-    return sortedPools.reduce((total, pool) => {
+    return sortedPools.reduce((total: any, pool: any) => {
       const token0Value =
         (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
         (prices[pool.liquidity[0].contractId] || 0);
@@ -552,6 +564,10 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
       setSortOrder('desc'); // Default to descending when changing fields
     }
   };
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
 
   return (
     <div className="sm:mx-auto sm:px-4">
@@ -635,7 +651,7 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
           <div className="px-4 overflow-x-auto sm:px-0">
             <table className="w-full table-auto">
               <thead>
-                <tr className="text-left text-gray-400">
+                {mounted && <tr className="text-left text-gray-400">
                   <th className="px-4 py-2">
                     <TooltipProvider>
                       <Tooltip>
@@ -654,14 +670,13 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
                   <th className="px-4 py-2">
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger className="flex items-center">
+                        <TooltipTrigger className="flex">
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleSort('apy')}
-                            className={`flex items-center space-x-1 ${
-                              sortField === 'apy' ? 'text-white' : ''
-                            }`}
+                            className={`flex self-center items-center space-x-1 ${sortField === 'apy' ? 'text-white' : ''
+                              }`}
                           >
                             Yield <ArrowUpDown className="ml-1 size-4" />
                           </Button>
@@ -675,7 +690,7 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
                       </Tooltip>
                     </TooltipProvider>
                   </th>
-                  <th className="px-4 py-2 text-center">
+                  <th className="px-4 py-2 text-center items-center">
                     <TooltipProvider>
                       <Tooltip>
                         <TooltipTrigger className="flex items-center justify-center">
@@ -693,14 +708,13 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
                   <th className="px-4 py-2">
                     <TooltipProvider>
                       <Tooltip>
-                        <TooltipTrigger className="flex items-center">
+                        <TooltipTrigger>
                           <Button
                             variant="ghost"
                             size="sm"
                             onClick={() => handleSort('tvl')}
-                            className={`flex items-center space-x-1 ${
-                              sortField === 'tvl' ? 'text-white' : ''
-                            }`}
+                            className={`flex items-center space-x-1 ${sortField === 'tvl' ? 'text-white' : ''
+                              }`}
                           >
                             Liquidity <ArrowUpDown className="ml-1 size-4" />
                           </Button>
@@ -729,7 +743,7 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
                     </TooltipProvider>
                   </th>
                   <th className="px-4 py-2 text-right"></th>
-                </tr>
+                </tr>}
               </thead>
               <tbody>
                 {sortedPools.map((pool: any, index: number) => (
