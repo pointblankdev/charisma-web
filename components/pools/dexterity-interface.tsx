@@ -402,8 +402,13 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
 };
 
 const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
+  const [isLoading, setIsLoading] = useState(true);
   const poolWithPrices = { ...pool, prices };
   const metrics = calculatePoolMetrics(pool.events, poolWithPrices);
+
+  useEffect(() => {
+    setIsLoading(false);
+  }, []);
 
   return (
     <TooltipProvider>
@@ -417,12 +422,12 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                   type: 'spring',
                   duration: index * 0.1
                 })}
-                animateToNumber={parseFloat(metrics.apy.toFixed(2))}
+                animateToNumber={isLoading ? 0 : parseFloat(metrics.apy.toFixed(2))}
               />
               <span className="ml-1">% APY</span>
             </div>
             <div className="text-xs text-gray-400">
-              30d fees: ${numeral(metrics.feesLast30Days).format('0,0.00')}
+              30d fees: ${numeral(isLoading ? 0 : metrics.feesLast30Days).format('0,0.00')}
             </div>
           </div>
         </TooltipTrigger>
