@@ -169,7 +169,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                                     justify-content: space-between;
                                                     align-items: center;
                                                 ">
-                                                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${vault.getPool().name}</span>
+                                                    <span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${vault.getPool().name}</span>
                                                     <span style="
                                                         font-size: 11px;
                                                         color: #94a3b8;
