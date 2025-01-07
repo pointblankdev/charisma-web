@@ -346,7 +346,7 @@ export const SwapInterface = ({
 
 
   const handleMaxHopsChange = (value: string) => {
-    setMaxHops(_.clamp(Number(value) % 10, 1, 6));
+    setMaxHops(_.clamp(Number(value) % 10, 1, 7));
     Dexterity.configure({ maxHops });
     if (fromAmount) handleEstimateAmount(fromAmount)
   }
