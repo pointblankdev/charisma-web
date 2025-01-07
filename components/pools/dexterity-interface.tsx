@@ -656,99 +656,110 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
           <div className="px-4 overflow-x-auto sm:px-0">
             <table className="w-full table-auto">
               <thead>
-                {mounted && <tr className="text-left text-gray-400">
-                  <th className="px-4 py-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger className="flex items-center">
-                          Vault <HelpCircle className="ml-1 size-4" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="w-64">
-                            The liquidity vault name, description, and identity. Each vault is a
-                            unique smart contract that manages a specific token pair.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </th>
-                  <th className="px-4 py-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger className="flex">
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleSort('apy')}
-                            className={`flex self-center items-center space-x-1 ${sortField === 'apy' ? 'text-white' : ''
-                              }`}
-                          >
-                            Yield <ArrowUpDown className="ml-1 size-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="w-64">
-                            Estimated annual percentage yield for liquidity providers. Click to
-                            sort.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </th>
-                  <th className="px-4 py-2 text-center items-center">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger className="flex items-center justify-center">
-                          Pair <HelpCircle className="ml-1 size-4" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="w-64">
-                            The two tokens that can be exchanged in this vault. You can provide
-                            liquidity for this token pair to earn fees from trades.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </th>
-                  <th className="px-4 py-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            onClick={() => handleSort('tvl')}
-                            className={`flex items-center space-x-1 ${sortField === 'tvl' ? 'text-white' : ''
-                              }`}
-                          >
-                            Liquidity <ArrowUpDown className="ml-1 size-4" />
-                          </Button>
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="w-64">
-                            The total value locked (TVL) in this vault. Click to sort.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </th>
-                  <th className="px-4 py-2">
-                    <TooltipProvider>
-                      <Tooltip>
-                        <TooltipTrigger className="flex items-center">
-                          Deployer <HelpCircle className="ml-1 size-4" />
-                        </TooltipTrigger>
-                        <TooltipContent>
-                          <p className="w-64">
-                            The address that deployed this vault contract. Verified deployers are
-                            marked with a blue checkmark.
-                          </p>
-                        </TooltipContent>
-                      </Tooltip>
-                    </TooltipProvider>
-                  </th>
-                  <th className="px-4 py-2 text-right"></th>
-                </tr>}
+                {mounted ? (
+                  <tr className="text-left text-gray-400">
+                    <th className="px-4 py-2">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex items-center">
+                            Vault <HelpCircle className="ml-1 size-4" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-64">
+                              The liquidity vault name, description, and identity. Each vault is a
+                              unique smart contract that manages a specific token pair.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="px-4 py-2">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex">
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleSort('apy')}
+                              className={`flex self-center items-center space-x-1 ${sortField === 'apy' ? 'text-white' : ''
+                                }`}
+                            >
+                              Yield <ArrowUpDown className="ml-1 size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-64">
+                              Estimated annual percentage yield for liquidity providers. Click to
+                              sort.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="px-4 py-2 text-center items-center">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex items-center justify-center">
+                            Pair <HelpCircle className="ml-1 size-4" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-64">
+                              The two tokens that can be exchanged in this vault. You can provide
+                              liquidity for this token pair to earn fees from trades.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="px-4 py-2">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger>
+                            <Button
+                              variant="ghost"
+                              size="sm"
+                              onClick={() => handleSort('tvl')}
+                              className={`flex items-center space-x-1 ${sortField === 'tvl' ? 'text-white' : ''
+                                }`}
+                            >
+                              Liquidity <ArrowUpDown className="ml-1 size-4" />
+                            </Button>
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-64">
+                              The total value locked (TVL) in this vault. Click to sort.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="px-4 py-2">
+                      <TooltipProvider>
+                        <Tooltip>
+                          <TooltipTrigger className="flex items-center">
+                            Deployer <HelpCircle className="ml-1 size-4" />
+                          </TooltipTrigger>
+                          <TooltipContent>
+                            <p className="w-64">
+                              The address that deployed this vault contract. Verified deployers are
+                              marked with a blue checkmark.
+                            </p>
+                          </TooltipContent>
+                        </Tooltip>
+                      </TooltipProvider>
+                    </th>
+                    <th className="px-4 py-2 text-right"></th>
+                  </tr>
+                ) : (
+                  <tr className="text-left text-gray-400">
+                    <th className="px-4 py-2">Vault</th>
+                    <th className="px-4 py-2">Yield</th>
+                    <th className="px-4 py-2 text-center">Pair</th>
+                    <th className="px-4 py-2">Liquidity</th>
+                    <th className="px-4 py-2">Deployer</th>
+                    <th className="px-4 py-2 text-right"></th>
+                  </tr>
+                )}
               </thead>
               <tbody>
                 {sortedPools.map((pool: any, index: number) => (
