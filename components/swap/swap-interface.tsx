@@ -222,7 +222,7 @@ export const SwapInterface = ({
   const [maxHops, setMaxHops] = useState(3);
 
   useEffect(() => {
-    Dexterity.config.maxHops = maxHops;
+    Dexterity.configure({ maxHops });
     const vaults = pools.map(pool => new Vault(pool));
     Dexterity.router.loadVaults(vaults);
     console.log('Loaded vaults:', Dexterity.router.vaults);
@@ -268,7 +268,6 @@ export const SwapInterface = ({
         setEstimatedAmountOut('0');
         return;
       }
-
       // Set new timer
       estimateTimer.current = setTimeout(() => {
         setIsCalculating(true);
@@ -347,8 +346,9 @@ export const SwapInterface = ({
 
 
   const handleMaxHopsChange = (value: string) => {
-    setMaxHops(_.clamp(Number(value) % 10, 1, 9));
-    Dexterity.config.maxHops = maxHops;
+    setMaxHops(_.clamp(Number(value) % 10, 1, 6));
+    Dexterity.configure({ maxHops });
+    if (fromAmount) handleEstimateAmount(fromAmount)
   }
 
   const isArbitrageTrade = fromToken.contractId === toToken.contractId &&
@@ -368,7 +368,7 @@ export const SwapInterface = ({
         </div>
 
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
-          <span className="text-sm text-gray-400">Router Hops:</span>
+          <span className="text-sm text-gray-400">Search Depth:</span>
           <input
             type="text"
             className="w-2 text-sm text-white bg-transparent outline-none"

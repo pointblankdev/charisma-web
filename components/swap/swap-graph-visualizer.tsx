@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import * as d3 from 'd3';
+import { Dexterity } from 'dexterity-sdk';
 
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
     ssr: false
@@ -15,6 +16,7 @@ interface SwapGraphVisualizerProps {
 }
 
 export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, setShowGraph }: SwapGraphVisualizerProps) {
+
 
     // Transform paths into graph data
     const graphData = useMemo(() => {
@@ -82,35 +84,126 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                 graphData={graphData}
                 width={window.innerWidth}
                 height={window.innerHeight}
-                nodeLabel={(node: any) => `
-                    <div style="
-                        background: rgb(17, 17, 27);
-                        padding: 12px;
-                        border-radius: 8px;
-                        font-size: 14px;
-                        color: rgba(255, 255, 255, 0.95);
-                        display: flex;
-                        align-items: center;
-                        gap: 8px;
-                        min-width: 120px;
-                    ">
+                nodeLabel={(node: any) => {
+                    const routerNode = Dexterity.router.nodes.get(node.id);
+                    const token = routerNode?.token!
+                    const vaults = Array.from(Dexterity.getVaultsForToken(token.contractId).values());
+
+                    return `
                         <div style="
-                            width: 24px;
-                            height: 24px;
-                            border-radius: 9999px;
-                            background-image: url('${node.image}');
-                            background-size: cover;
-                            background-position: center;
-                        "></div>
-                        <div style="
-                            display: flex;
-                            flex-direction: column;
-                            gap: 2px;
+                            background: linear-gradient(180deg, rgba(17, 17, 27, 0.95) 0%, rgba(17, 17, 27, 0.98) 100%);
+                            padding: 16px;
+                            border-radius: 12px;
+                            font-size: 13px;
+                            color: rgba(255, 255, 255, 0.95);
+                            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
+                            position: relative;
+                            overflow: hidden;
                         ">
-                            <div style="font-weight: 500;">${node.name}</div>
+                            <div style="
+                                display: flex;
+                                gap: 16px;
+                                padding-bottom: 12px;
+                                margin-bottom: 12px;
+                                border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+                            ">
+                                <div style="
+                                    width: 48px;
+                                    height: 48px;
+                                    background-image: url('${token.image}');
+                                    background-size: cover;
+                                    background-position: center;
+                                    border-radius: 8px;
+                                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+                                "></div>
+                                <div style="flex: 1;">
+                                    <div style="
+                                        font-size: 18px;
+                                        font-weight: 600;
+                                        margin-bottom: 4px;
+                                    ">${token.name}</div>
+                                    <div style="
+                                        display: flex;
+                                        gap: 16px;
+                                        color: rgba(255, 255, 255, 0.7);
+                                        font-size: 12px;
+                                    ">
+                                        <div>Symbol: ${token.symbol}</div>
+                                        ${token.decimals ? `<div>Decimals: ${token.decimals}</div>` : ''}
+                                        ${token.supply ? `<div>Supply: ${Number(token.supply).toLocaleString()}</div>` : ''}
+                                    </div>
+                                    <div style="
+                                        font-size: 11px;
+                                        color: rgba(255, 255, 255, 0.5);
+                                        margin-top: 4px;
+                                    ">${token.contractId}</div>
+                                </div>
+                            </div>
+
+                            ${vaults.length > 0 ? `
+                                <div style="margin-top: 12px;">
+                                    <div style="
+                                        font-weight: 600;
+                                        margin-bottom: 12px;
+                                        font-size: 13px;
+                                        color: #ffd700;
+                                        letter-spacing: 0.05em;
+                                    ">Dexterity Vaults</div>
+                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                                        ${vaults.map(vault => `
+                                            <div style="
+                                                background: linear-gradient(to bottom, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.90)),
+                                                            url('${vault.getPool().image}') center/cover;
+                                                padding: 16px;
+                                                border-radius: 8px;
+                                                position: relative;
+                                                backdrop-filter: blur(10px);
+                                                min-width: 240px;
+                                            ">
+                                                <div style="
+                                                    font-weight: 500;
+                                                    color: #38bdf8;
+                                                    font-size: 14px;
+                                                    margin-bottom: 8px;
+                                                    display: flex;
+                                                    justify-content: space-between;
+                                                    align-items: center;
+                                                ">
+                                                    <span style="overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${vault.getPool().name}</span>
+                                                    <span style="
+                                                        font-size: 11px;
+                                                        color: #94a3b8;
+                                                        background: rgba(148, 163, 184, 0.1);
+                                                        padding: 4px 8px;
+                                                        border-radius: 12px;
+                                                        white-space: nowrap;
+                                                    ">Fee: ${(vault.getPool().fee / 1000000 * 100).toFixed(2)}%</span>
+                                                </div>
+                                                ${vault.getPool().liquidity.map(token => `
+                                                    <div style="
+                                                        display: flex;
+                                                        justify-content: space-between;
+                                                        align-items: center;
+                                                        padding: 8px;
+                                                        background: rgba(255, 255, 255, 0.03);
+                                                        margin-top: 8px;
+                                                        border-radius: 6px;
+                                                    ">
+                                                        <span style="color: #94a3b8;">${token.symbol}</span>
+                                                        <span style="
+                                                            color: #e2e8f0;
+                                                            font-family: 'SF Mono', monospace;
+                                                        ">${(token.reserves / Math.pow(10, token.decimals)).toLocaleString()}</span>
+                                                    </div>
+                                                `).join('')}
+                                            </div>
+                                        `).join('')}
+                                    </div>
+                                </div>
+                            ` : ''}
                         </div>
-                    </div>
-                `}
+                    `;
+                }}
                 nodeRelSize={1.5}
                 linkCurvature={0.5}
                 backgroundColor="transparent"

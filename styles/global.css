@@ -422,3 +422,7 @@ input {
 .bounce {
   animation: bounce 0.4s;
 }
+
+.graph-tooltip {
+  background: none;
+}
