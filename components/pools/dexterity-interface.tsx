@@ -426,7 +426,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
               />
               <span className="ml-1">% APY</span>
             </div>
-            <div className="text-xs text-gray-400">
+            <div className="text-xs text-gray-400 whitespace-nowrap">
               30d fees: ${numeral(isLoading ? 0 : metrics.feesLast30Days).format('0,0.00')}
             </div>
           </div>
