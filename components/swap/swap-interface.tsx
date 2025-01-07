@@ -222,7 +222,7 @@ export const SwapInterface = ({
   const [maxHops, setMaxHops] = useState(4);
 
   useEffect(() => {
-    Dexterity.configure({ maxHops });
+    Dexterity.configure({ maxHops }).catch(console.error);
     const vaults = pools.map(pool => new Vault(pool));
     Dexterity.router.loadVaults(vaults);
     console.log('Loaded vaults:', Dexterity.router.vaults);
@@ -347,7 +347,7 @@ export const SwapInterface = ({
 
   const handleMaxHopsChange = (value: string) => {
     setMaxHops(_.clamp(Number(value) % 10, 1, 7));
-    Dexterity.configure({ maxHops });
+    Dexterity.configure({ maxHops }).catch(console.error);
     if (fromAmount) handleEstimateAmount(fromAmount)
   }
 
