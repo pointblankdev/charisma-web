@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef } from 'react';
 import dynamic from 'next/dynamic';
 import * as d3 from 'd3';
-import { Dexterity } from 'dexterity-sdk';
+import { Dexterity, Token } from 'dexterity-sdk';
 
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
     ssr: false
@@ -86,7 +86,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                 height={window.innerHeight}
                 nodeLabel={(node: any) => {
                     const routerNode = Dexterity.router.nodes.get(node.id);
-                    const token = routerNode?.token!
+                    const token = routerNode?.token as Token
                     const vaults = Array.from(Dexterity.getVaultsForToken(token.contractId).values());
 
                     return `
