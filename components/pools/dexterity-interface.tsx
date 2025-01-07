@@ -196,43 +196,58 @@ const AddressDisplay = ({ address }: { address: string }) => {
   );
 };
 
-const TokenPairDisplay = ({ liquidity }: { liquidity: any[] }) => (
-  <div className="flex flex-col items-center justify-start">
-    <div className="flex items-center -space-x-2">
-      <div
-        className={cn(
-          'z-10 rounded-full border-background',
-          liquidity[0].symbol === 'DMG' ? 'border-0' : 'border-2'
-        )}
-      >
-        <Image
-          src={liquidity[0].image}
-          alt={liquidity[0].symbol}
-          width={24}
-          height={24}
-          className="rounded-full"
-        />
+const TokenPairDisplay = ({ liquidity }: { liquidity: any[] }) => {
+  const [img0Error, setImg0Error] = useState(false);
+  const [img1Error, setImg1Error] = useState(false);
+
+  const handleImg0Error = () => {
+    setImg0Error(true);
+  };
+
+  const handleImg1Error = () => {
+    setImg1Error(true);
+  };
+
+  return (
+    <div className="flex flex-col items-center justify-start">
+      <div className="flex items-center -space-x-2">
+        <div
+          className={cn(
+            'z-10 rounded-full border-background',
+            liquidity[0].symbol === 'DMG' ? 'border-0' : 'border-2'
+          )}
+        >
+          <Image
+            src={img0Error ? '/charisma.png' : liquidity[0].image}
+            alt={liquidity[0].symbol}
+            width={24}
+            height={24}
+            className={cn(`rounded-full`, img0Error ? 'blur-sm' : '')}
+            onError={handleImg0Error}
+          />
+        </div>
+        <div
+          className={cn(
+            'rounded-full border-background',
+            liquidity[1].symbol === 'DMG' ? 'border-0' : 'border-2'
+          )}
+        >
+          <Image
+            src={img1Error ? '/charisma.png' : liquidity[1].image}
+            alt={liquidity[1].symbol}
+            width={24}
+            height={24}
+            className={cn(`rounded-full`, img1Error ? 'blur-sm' : '')}
+            onError={handleImg1Error}
+          />
+        </div>
       </div>
-      <div
-        className={cn(
-          'rounded-full border-background',
-          liquidity[1].symbol === 'DMG' ? 'border-0' : 'border-2'
-        )}
-      >
-        <Image
-          src={liquidity[1].image}
-          alt={liquidity[1].symbol}
-          width={24}
-          height={24}
-          className="rounded-full"
-        />
-      </div>
+      <span className="whitespace-nowrap">
+        {liquidity[0].symbol}-{liquidity[1].symbol}
+      </span>
     </div>
-    <span className="whitespace-nowrap">
-      {liquidity[0].symbol}-{liquidity[1].symbol}
-    </span>
-  </div>
-);
+  );
+};
 
 const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const tvl = useMemo(() => {
@@ -452,31 +467,36 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
 };
 
 const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
+  const [poolImgError, setPoolImgError] = useState(false);
   const deployerAddress = pool.contractId.split('.')[0];
 
   return (
     <tr className="border-t border-gray-700/50">
-      <td className="flex items-start px-4 py-4 text-white">
+      <td className="flex px-4 py-4 text-white items-center">
         <Image
-          src={pool.image}
+          src={poolImgError ? '/charisma.png' : pool.image}
           alt={pool.name}
           width={44}
           height={44}
-          className="object-cover mt-0.5 mr-3 rounded-md"
+          className="object-cover mt-0.5 mr-3 rounded-md h-32 sm:h-24 lg:h-16 xl:h-12"
+          onError={() => setPoolImgError(true)}
         />
         <div>
           <div className="flex items-center space-x-1 leading-snug">
-            <div className="text-lg leading-snug">{pool.name}</div>
+            <div className=''>
+              <div className="text-lg md:block leading-snug">{pool.name}</div>
+              <div className="text-lg lg:hidden block leading-snug text-gray-400 lg:text-white">{pool.symbol}</div>
+            </div>
             <Link
               href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
               target="_blank"
               rel="noopener noreferrer"
-              className="inline-block mt-1"
+              className="inline-block mt-1 hidden lg:block"
             >
               <ExternalLink size={14} />
             </Link>
           </div>
-          <div className="text-sm text-gray-400">{pool.description}</div>
+          <div className="text-sm text-gray-400 hidden lg:block leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-64" title={pool.description}>{pool.description}</div>
         </div>
       </td>
       <td className="px-4 py-4 text-white">
