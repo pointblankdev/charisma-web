@@ -52,27 +52,29 @@ export default function DexterityPoolsPage({ data }: any) {
     let mounted = true;
 
     const fetchPoolEvents = async () => {
-      try {
-        const updatedPools = await Promise.all(
-          data.pools.map(async (pool: any) => {
-            try {
-              const response = await fetch(`/api/v0/transactions?contractId=${pool.contractId}`);
-              if (!response.ok) throw new Error('Failed to fetch events');
-              const events = await response.json();
-              return { ...pool, events };
-            } catch (error) {
-              console.error(`Error fetching events for pool ${pool.contractId}:`, error);
-              return { ...pool, events: [] };
-            }
-          })
-        );
+      // Initialize pools with empty events
+      if (mounted) {
+        setPoolsWithEvents(data.pools.map((pool: any) => ({ ...pool, events: [] })));
+      }
 
-        if (mounted) {
-          setPoolsWithEvents(updatedPools);
-        }
-      } catch (err) {
-        if (mounted) {
-          console.error('Error fetching pool events:', err);
+      // Fetch events for each pool individually
+      for (const pool of data.pools) {
+        if (!mounted) break;
+
+        try {
+          const response = await fetch(`/api/v0/transactions?contractId=${pool.contractId}`);
+          if (!response.ok) throw new Error('Failed to fetch events');
+          const events = await response.json();
+
+          if (mounted) {
+            setPoolsWithEvents((currentPools: any) =>
+              currentPools.map((p: any) =>
+                p.contractId === pool.contractId ? { ...p, events } : p
+              )
+            );
+          }
+        } catch (error) {
+          console.error(`Error fetching events for pool ${pool.contractId}:`, error);
         }
       }
     };
