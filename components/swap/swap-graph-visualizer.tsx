@@ -1,8 +1,9 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import * as d3 from 'd3';
 import { Dexterity, Token } from 'dexterity-sdk';
+import { Ysabeau_Infant } from 'next/font/google';
 
+const font = Ysabeau_Infant({ subsets: ['latin'] });
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
     ssr: false
 });
@@ -90,13 +91,9 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                     const vaults = Array.from(Dexterity.getVaultsForToken(token.contractId).values());
 
                     return `
-                        <div style="
-                            background: linear-gradient(180deg, rgba(17, 17, 27, 0.95) 0%, rgba(17, 17, 27, 0.98) 100%);
+                        <div class="${font.className}" style="
                             padding: 16px;
-                            border-radius: 12px;
                             font-size: 13px;
-                            color: rgba(255, 255, 255, 0.95);
-                            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
                             position: relative;
                             overflow: hidden;
                         ">
@@ -108,8 +105,8 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                 border-bottom: 1px solid rgba(255, 255, 255, 0.1);
                             ">
                                 <div style="
-                                    width: 48px;
-                                    height: 48px;
+                                    width: 72px;
+                                    height: 72px;
                                     background-image: url('${token.image}');
                                     background-size: cover;
                                     background-position: center;
@@ -120,7 +117,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                     <div style="
                                         font-size: 18px;
                                         font-weight: 600;
-                                        margin-bottom: 4px;
+                                        margin-bottom: 2px;
                                     ">${token.name}</div>
                                     <div style="
                                         display: flex;
@@ -149,10 +146,10 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                         color: #ffd700;
                                         letter-spacing: 0.05em;
                                     ">Dexterity Vaults</div>
-                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;">
+                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;));">
                                         ${vaults.map(vault => `
-                                            <div style="
-                                                background: linear-gradient(to bottom, rgba(30, 41, 59, 0.95), rgba(15, 23, 42, 0.90)),
+                                            <div class="border border-b-0 border-x-0 border-t-[var(--accents-7)]" style="
+                                                background: linear-gradient(to bottom, hsl(var(--accent-foreground) / 0.95), hsl(var(--accent-foreground) / 0.9)),
                                                             url('${vault.getPool().image}') center/cover;
                                                 padding: 16px;
                                                 border-radius: 8px;
@@ -162,7 +159,6 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                             ">
                                                 <div style="
                                                     font-weight: 500;
-                                                    color: #38bdf8;
                                                     font-size: 14px;
                                                     margin-bottom: 8px;
                                                     display: flex;
