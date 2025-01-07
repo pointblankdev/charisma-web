@@ -219,7 +219,7 @@ export const SwapInterface = ({
   const [exploringPaths, setExploringPaths] = useState(0);
   const [showGraph, setShowGraph] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
-  const [maxHops, setMaxHops] = useState(3);
+  const [maxHops, setMaxHops] = useState(4);
 
   useEffect(() => {
     Dexterity.configure({ maxHops });

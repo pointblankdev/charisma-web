@@ -77,7 +77,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
       Dexterity.configure({
         stxAddress: userStxAddress,
         mode: 'client',
-        maxHops: 6,
         // proxy: `${API_URL}/api/v0/proxy`, // uncomment in dev
       }).catch(console.error);
     }
