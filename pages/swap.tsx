@@ -6,6 +6,8 @@ import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/server/prices/prices-service';
 import { Dexterity, LPToken, Token } from 'dexterity-sdk';
 
+Dexterity.configure({ apiKeyRotation: 'loop' }).catch(console.error);
+
 export const getStaticProps: GetStaticProps<any> = async () => {
   const service = PricesService.getInstance();
   const prices = await service.getAllTokenPrices();

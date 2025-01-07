@@ -1,13 +1,13 @@
 import React, { createContext, useCallback, useContext, useEffect } from 'react';
 import { usePersistedState } from './use-persisted-state';
-import { getContractMetadata, getLatestBlock } from '@lib/user-api';
+import { getLatestBlock } from '@lib/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
 import { userSession } from '@components/stacks-session/connect';
 import { Dexterity } from 'dexterity-sdk';
+import { API_URL } from '@lib/constants';
 
-Dexterity.config.mode = 'client';
 const socketUrl = 'https://api.mainnet.hiro.so';
 const sc = new StacksApiSocketClient({ url: socketUrl });
 
@@ -72,7 +72,14 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 
   useEffect(() => {
     if (userSession?.isUserSignedIn()) {
-      setStxAddress(userSession.loadUserData().profile.stxAddress.mainnet);
+      const userStxAddress = userSession.loadUserData().profile.stxAddress.mainnet;
+      setStxAddress(userStxAddress);
+      Dexterity.configure({
+        stxAddress: userStxAddress,
+        mode: 'client',
+        maxHops: 6,
+        proxy: `${API_URL}/api/v0/proxy`,
+      }).catch(console.error);
     }
   }, [setStxAddress]);
 

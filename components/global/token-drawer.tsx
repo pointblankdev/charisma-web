@@ -33,8 +33,6 @@ interface FormattedToken {
   balance: string;
 }
 
-Dexterity.config.mode = 'client';
-
 const formatBalance = (balance: string, decimals: number = 6) => {
   const value = Number(balance) / Math.pow(10, decimals);
   if (value > 1000000) {

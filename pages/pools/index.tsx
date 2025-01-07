@@ -12,6 +12,8 @@ import DexterityInterface from '@components/pools/dexterity-interface';
 import { Dexterity } from 'dexterity-sdk';
 import _ from 'lodash';
 
+Dexterity.configure({ apiKeyRotation: 'loop' }).catch(console.error);
+
 // Helper to process events data for a pool
 async function getPoolEvents(contractId: string) {
   let events = [];

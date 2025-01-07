@@ -1,8 +1,6 @@
 import { Dexterity } from 'dexterity-sdk';
 import { NextApiRequest, NextApiResponse } from 'next';
 
-Dexterity.setConfig({ maxHops: 4 })
-
 type ErrorResponse = {
   error: {
     code: string;
@@ -10,12 +8,14 @@ type ErrorResponse = {
   };
 };
 
+// Initialize Dexterity SDK outside the handler
+Dexterity.configure().catch(console.error);
+
 export default async function callReadOnly(
   req: NextApiRequest,
   res: NextApiResponse<any | ErrorResponse>
 ) {
-  let response,
-    code = 200;
+  let response, code = 200;
   try {
     if (req.method === 'POST') {
       const body = req.body;

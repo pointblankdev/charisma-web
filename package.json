@@ -77,7 +77,7 @@
     "d3": "^7.9.0",
     "d3-force": "^3.0.0",
     "date-fns": "^2.30.0",
-    "dexterity-sdk": "^0.2.4",
+    "dexterity-sdk": "^0.3.1",
     "framer-motion": "^10.15.2",
     "fs": "^0.0.1-security",
     "htmlescape": "1.1.1",

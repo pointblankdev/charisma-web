@@ -26,7 +26,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
             id: fromToken.contractId,
             image: fromToken.image,
             name: fromToken.symbol,
-            color: '#4ade80', // green
+            color: '#c1121f', // red
             val: 20 // larger node
         });
 
@@ -34,7 +34,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
             id: toToken.contractId,
             image: toToken.image,
             name: toToken.symbol,
-            color: '#c1121f', // red
+            color: '#00AA00', // green
             val: 20
         });
 
@@ -74,7 +74,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
             nodes: Array.from(nodes.values()),
             links
         };
-    }, [fromToken, toToken, paths, currentPath]);
+    }, [fromToken, toToken, currentPath]);
 
     return (
         <div className="fixed inset-0 w-screen h-screen bg-black/5 z-50" onClick={() => setShowGraph(false)}>
@@ -112,12 +112,12 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                     </div>
                 `}
                 nodeRelSize={1.5}
-                linkCurvature={0}
+                linkCurvature={0.5}
                 backgroundColor="transparent"
                 cooldownTicks={150}
                 d3VelocityDecay={0.999}
                 nodeCanvasObject={(node: any, ctx: any, globalScale: number) => {
-                    const size = 12;
+                    const size = 4;
                     ctx.beginPath();
                     ctx.arc(node.x, node.y, size, 0, 2 * Math.PI, false);
                     ctx.fillStyle = 'white';

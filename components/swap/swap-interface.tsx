@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { ChevronDown, ArrowUpDown, Coins, Network } from 'lucide-react';
+import { ChevronDown, ArrowUpDown, Coins, Network, TrendingUp } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import useWallet from '@lib/hooks/wallet-balance-provider';
@@ -10,6 +10,7 @@ import dynamic from 'next/dynamic';
 import { Dexterity, LPToken, Token } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { SwapGraphVisualizer } from './swap-graph-visualizer';
+import _ from 'lodash';
 
 const formatUSD = (amount: number, price: number) => {
   const value = amount * price;
@@ -106,6 +107,7 @@ interface TokenInputProps {
   isCalculating?: boolean;
   exploringPaths?: number;
   duration?: number;
+  isArbitrage?: boolean;
 }
 
 const TokenInput = ({
@@ -118,17 +120,26 @@ const TokenInput = ({
   balance,
   isCalculating,
   exploringPaths = 0,
-  duration = 0.05
+  duration = 0.05,
+  isArbitrage = false
 }: TokenInputProps) => (
   <>
-    <input
-      type="text"
-      placeholder="0.00"
-      className="w-full text-2xl text-white bg-transparent outline-none"
-      value={isCalculating ? 'Calculating...' : amount}
-      onChange={onChange}
-      disabled={disabled}
-    />
+    <div className="flex items-center gap-2">
+      <input
+        type="text"
+        placeholder="0.00"
+        className={cn(`w-full text-2xl text-white bg-transparent outline-none`, isCalculating ? 'animate-pulse' : '')}
+        value={isCalculating ? 'Calculating...' : amount}
+        onChange={onChange}
+        disabled={disabled}
+      />
+      {isArbitrage && (
+        <div className="flex items-center gap-1 px-2 py-1 text-sm font-medium text-green-400 bg-green-400/10 rounded-full">
+          <TrendingUp size={14} />
+          <span>Arbitrage</span>
+        </div>
+      )}
+    </div>
     <div className="flex items-center justify-between mt-2">
       <span className="text-gray-400">
         {isCalculating ? (
@@ -183,30 +194,6 @@ const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) =
   </div>
 );
 
-interface SlippageInputProps {
-  value: number;
-  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
-}
-
-const SlippageInput = ({ value, onChange }: SlippageInputProps) => (
-  <div className="p-4">
-    <div className="flex items-center justify-between text-md">
-      <span className="text-gray-400">Slippage Tolerance</span>
-      <div className="flex items-center">
-        <input
-          type="text"
-          className="w-6 text-right text-gray-300 bg-transparent outline-none"
-          value={value}
-          disabled
-          onChange={onChange}
-          placeholder="0.5"
-        />
-        <span className="ml-1 text-gray-300">%</span>
-      </div>
-    </div>
-  </div>
-);
-
 export const SwapInterface = ({
   prices,
   tokens,
@@ -231,12 +218,13 @@ export const SwapInterface = ({
   const estimateTimer = useRef<NodeJS.Timeout>();
   const [exploringPaths, setExploringPaths] = useState(0);
   const [showGraph, setShowGraph] = useState(false);
+  const [isSwapping, setIsSwapping] = useState(false);
+  const [maxHops, setMaxHops] = useState(3);
 
   useEffect(() => {
+    Dexterity.config.maxHops = maxHops;
     const vaults = pools.map(pool => new Vault(pool));
     Dexterity.router.loadVaults(vaults);
-    Dexterity.config.stxAddress = stxAddress;
-    Dexterity.config.mode = 'client';
     console.log('Loaded vaults:', Dexterity.router.vaults);
   }, [pools, stxAddress]);
 
@@ -262,7 +250,7 @@ export const SwapInterface = ({
   const handleSlippageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
-      const numValue = parseFloat(value);
+      const numValue = parseFloat(value) % 100;
       if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
         setSlippage(numValue);
       }
@@ -284,7 +272,7 @@ export const SwapInterface = ({
       // Set new timer
       estimateTimer.current = setTimeout(() => {
         setIsCalculating(true);
-        setExploringPaths(Dexterity.router.findAllPaths(fromToken.contractId, toToken.contractId, Dexterity.config.maxHops).length);
+        setExploringPaths(Dexterity.router.findAllPaths(fromToken.contractId, toToken.contractId).length);
         Dexterity.getQuote(
           fromToken.contractId,
           toToken.contractId,
@@ -305,7 +293,7 @@ export const SwapInterface = ({
           });
       }, 200); // Reduced to 200ms for better responsiveness
     },
-    [fromToken, toToken]
+    [fromToken, toToken, maxHops]
   );
 
   useEffect(() => {
@@ -332,15 +320,22 @@ export const SwapInterface = ({
   };
 
   const handleSwap = async () => {
-    if (!fromToken || !toToken || !stxAddress) return;
-    console.log('Swapping:', fromToken, toToken, fromAmount);
-    const transaction = await Dexterity.buildSwap(
-      fromToken.contractId,
-      toToken.contractId,
-      Number(fromAmount) * 10 ** fromToken.decimals
-    );
+    if (!fromToken || !toToken || !stxAddress || swapPath.length <= 1) return;
 
-    doContractCall(transaction);
+    try {
+      setIsSwapping(true);
+      const transaction = await Dexterity.buildSwap(
+        fromToken.contractId,
+        toToken.contractId,
+        Number(fromAmount) * 10 ** fromToken.decimals
+      );
+
+      await doContractCall(transaction);
+    } catch (error) {
+      console.error('Swap failed:', error);
+    } finally {
+      setIsSwapping(false);
+    }
   };
 
   const handleSwapDirectionToggle = () => {
@@ -350,132 +345,178 @@ export const SwapInterface = ({
     setEstimatedAmountOut('0');
   };
 
+
+  const handleMaxHopsChange = (value: string) => {
+    setMaxHops(_.clamp(Number(value) % 10, 1, 9));
+    Dexterity.config.maxHops = maxHops;
+  }
+
+  const isArbitrageTrade = fromToken.contractId === toToken.contractId &&
+    Number(estimatedAmountOut) > Number(fromAmount);
+
   return (
-    <div className="max-w-screen-sm sm:mx-auto sm:px-4">
-      <div className="mt-6">
-        <div className="relative px-6 pb-4 pt-2 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
-          <div className="flex items-center justify-between mb-2">
-            <h1 className="text-2xl font-bold text-white/95">Swap</h1>
-            <div className="flex items-center gap-2">
-              <button
-                className="p-2 rounded-full hover:bg-accent-foreground/10"
-                onClick={() => setShowGraph(!showGraph)}
-              >
-                <Network className="w-5 h-5 text-gray-400" />
-              </button>
-              <SlippageInput value={slippage} onChange={handleSlippageChange} />
+    <div className="max-w-screen-sm sm:mx-auto sm:px-4 mt-4">
+      <div className="flex flex-wrap gap-2 mb-4 justify-start">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
+          <button
+            className="flex items-center gap-2 text-white text-sm"
+            onClick={() => setShowGraph(!showGraph)}
+          >
+            <Network className="w-4 h-4" />
+            <span>{showGraph ? 'Hide' : 'Show'} Graph</span>
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
+          <span className="text-sm text-gray-400">Router Hops:</span>
+          <input
+            type="text"
+            className="w-2 text-sm text-white bg-transparent outline-none"
+            value={maxHops}
+            onChange={e => handleMaxHopsChange(e.target.value)}
+          />
+        </div>
+
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
+          <span className="text-sm text-gray-400">Maximum Slippage:</span>
+          <input
+            type="text"
+            className="w-2 text-sm text-white bg-transparent outline-none"
+            value={slippage}
+            disabled
+            onChange={handleSlippageChange}
+            placeholder="0"
+          />
+          <span className="text-sm text-gray-400">%</span>
+        </div>
+      </div>
+
+      {showGraph && (
+        <SwapGraphVisualizer
+          fromToken={fromToken}
+          toToken={toToken}
+          paths={Dexterity.router.findAllPaths(fromToken.contractId, toToken.contractId)}
+          currentPath={swapPath}
+          setShowGraph={setShowGraph}
+        />
+      )}
+
+      <div className="relative px-6 pb-4 pt-4 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
+        <h1 className="text-2xl font-bold text-white/95 mb-4">Swap</h1>
+
+        <div className="mb-2 space-y-4">
+          {/* From Section */}
+          <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-400">From</span>
+              <div className="relative" ref={fromDropdownRef}>
+                <TokenSelect
+                  token={fromToken}
+                  isFrom={true}
+                  onClick={() => setShowFromTokens(!showFromTokens)}
+                />
+                {showFromTokens && (
+                  <TokenList
+                    tokens={tokens}
+                    onSelect={token => {
+                      setFromToken(token);
+                      setShowFromTokens(false);
+                    }}
+                    hasHighExperience={hasHighExperience}
+                    pools={pools}
+                  />
+                )}
+              </div>
             </div>
+            <TokenInput
+              token={fromToken}
+              amount={fromAmount}
+              price={prices[fromToken?.contractId] || 0}
+              onChange={handleFromAmountChange}
+              onUseMax={handleUseMax}
+              balance={getBalance(fromToken?.contractId)}
+              duration={0.01}
+            />
           </div>
 
-          {showGraph && (
-            <SwapGraphVisualizer
-              fromToken={fromToken}
-              toToken={toToken}
-              paths={Dexterity.router.findAllPaths(
-                fromToken.contractId,
-                toToken.contractId,
-                Dexterity.config.maxHops
-              )}
-              currentPath={swapPath}
-              setShowGraph={setShowGraph}
-            />
-          )}
-
-          <div className="mb-2 space-y-4">
-            {/* From Section */}
-            <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-400">From</span>
-                <div className="relative" ref={fromDropdownRef}>
-                  <TokenSelect
-                    token={fromToken}
-                    isFrom={true}
-                    onClick={() => setShowFromTokens(!showFromTokens)}
-                  />
-                  {showFromTokens && (
-                    <TokenList
-                      tokens={tokens}
-                      onSelect={token => {
-                        setFromToken(token);
-                        setShowFromTokens(false);
-                      }}
-                      hasHighExperience={hasHighExperience}
-                      pools={pools}
-                    />
-                  )}
-                </div>
-              </div>
-              <TokenInput
-                token={fromToken}
-                amount={fromAmount}
-                price={prices[fromToken?.contractId] || 0}
-                onChange={handleFromAmountChange}
-                onUseMax={handleUseMax}
-                balance={getBalance(fromToken?.contractId)}
-                duration={0.01}
-              />
-            </div>
-
-            {/* Swap Direction Button */}
-            <div className="flex">
-              <button
-                className="p-2 mx-auto rounded-full bg-[var(--sidebar)]"
-                onClick={handleSwapDirectionToggle}
-                disabled={fromToken?.symbol === 'STX' && !hasHighExperience}
-              >
-                <ArrowUpDown className="text-gray-400" size={24} />
-              </button>
-            </div>
-
-            {/* To Section */}
-            <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
-              <div className="flex items-center justify-between mb-2">
-                <span className="text-gray-400">To</span>
-                <div className="relative" ref={toDropdownRef}>
-                  <TokenSelect
-                    token={toToken}
-                    isFrom={false}
-                    onClick={() => setShowToTokens(!showToTokens)}
-                  />
-                  {showToTokens && (
-                    <TokenList
-                      tokens={tokens}
-                      onSelect={token => {
-                        setToToken(token);
-                        setShowToTokens(false);
-                      }}
-                      fromToken={fromToken}
-                      hasHighExperience={hasHighExperience}
-                      pools={pools}
-                    />
-                  )}
-                </div>
-              </div>
-              <TokenInput
-                token={toToken}
-                amount={estimatedAmountOut}
-                price={prices[toToken?.contractId] || 0}
-                disabled
-                isCalculating={isCalculating}
-                exploringPaths={exploringPaths}
-                balance={getBalance(toToken?.contractId)}
-              />
-            </div>
-
-            <SwapDetails
-              swapPath={swapPath}
-              minimumReceived={estimatedAmountOut}
-              toToken={toToken}
-            />
-
-            <Button
-              className="w-full px-4 py-3 mt-4 font-bold rounded-lg"
-              onClick={handleSwap}
-              disabled={isCalculating || estimatedAmountOut === '0' || !fromAmount}
+          {/* Swap Direction Button */}
+          <div className="flex">
+            <button
+              className="p-2 mx-auto rounded-full bg-[var(--sidebar)]"
+              onClick={handleSwapDirectionToggle}
+              disabled={fromToken?.symbol === 'STX' && !hasHighExperience}
             >
-              {isCalculating ? 'Calculating...' : 'Confirm Swap'}
-            </Button>
+              <ArrowUpDown className="text-gray-400" size={24} />
+            </button>
           </div>
+
+          {/* To Section */}
+          <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-gray-400">To</span>
+              <div className="relative" ref={toDropdownRef}>
+                <TokenSelect
+                  token={toToken}
+                  isFrom={false}
+                  onClick={() => setShowToTokens(!showToTokens)}
+                />
+                {showToTokens && (
+                  <TokenList
+                    tokens={tokens}
+                    onSelect={token => {
+                      setToToken(token);
+                      setShowToTokens(false);
+                    }}
+                    fromToken={fromToken}
+                    hasHighExperience={hasHighExperience}
+                    pools={pools}
+                  />
+                )}
+              </div>
+            </div>
+            <TokenInput
+              token={toToken}
+              amount={estimatedAmountOut}
+              price={prices[toToken?.contractId] || 0}
+              disabled
+              isCalculating={isCalculating}
+              exploringPaths={exploringPaths}
+              balance={getBalance(toToken?.contractId)}
+              isArbitrage={isArbitrageTrade}
+            />
+          </div>
+
+          <SwapDetails
+            swapPath={swapPath}
+            minimumReceived={estimatedAmountOut}
+            toToken={toToken}
+          />
+
+          <Button
+            className="w-full px-4 py-3 mt-4 font-bold rounded-lg"
+            onClick={handleSwap}
+            disabled={isCalculating || estimatedAmountOut === '0' || !fromAmount || isSwapping || swapPath.length <= 1}
+          >
+            {isCalculating ? <div className="flex items-center justify-center gap-2">
+              <span className="animate-pulse">Finding the best rate</span>
+              <span className="inline-block">
+                <span className="animate-[bounce_1.4s_infinite] inline-block">.</span>
+                <span className="animate-[bounce_1.4s_0.2s_infinite] inline-block">.</span>
+                <span className="animate-[bounce_1.4s_0.4s_infinite] inline-block">.</span>
+              </span>
+            </div> : isSwapping ? (
+              <div className="flex items-center justify-center gap-2">
+                <span className="animate-pulse">Building transaction</span>
+                <span className="inline-block">
+                  <span className="animate-[bounce_1.4s_infinite] inline-block">.</span>
+                  <span className="animate-[bounce_1.4s_0.2s_infinite] inline-block">.</span>
+                  <span className="animate-[bounce_1.4s_0.4s_infinite] inline-block">.</span>
+                </span>
+              </div>
+            ) : (
+              'Confirm Swap'
+            )}
+          </Button>
         </div>
       </div>
     </div>
