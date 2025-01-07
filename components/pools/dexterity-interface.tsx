@@ -49,11 +49,6 @@ import { hexToBytes } from '@stacks/common';
 import numeral from 'numeral';
 import { cn } from '@lib/utils';
 import { LPToken } from 'dexterity-sdk';
-import dynamic from 'next/dynamic';
-
-const AnimatedNumbers = dynamic(() => import('react-animated-numbers'), {
-  ssr: false
-});
 
 const VERIFIED_ADDRESSES: Record<string, string> = {
   SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS: 'rozar.btc',
@@ -402,13 +397,8 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
 };
 
 const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
-  const [isLoading, setIsLoading] = useState(true);
   const poolWithPrices = { ...pool, prices };
   const metrics = calculatePoolMetrics(pool.events, poolWithPrices);
-
-  useEffect(() => {
-    setIsLoading(false);
-  }, []);
 
   return (
     <TooltipProvider>
@@ -416,18 +406,10 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
         <TooltipTrigger className="w-full">
           <div className="mt-1 leading-snug">
             <div className="flex justify-center items-center text-lg font-medium text-green-400 whitespace-nowrap">
-              <AnimatedNumbers
-                includeComma
-                transitions={index => ({
-                  type: 'spring',
-                  duration: index * 0.1
-                })}
-                animateToNumber={isLoading ? 0 : parseFloat(metrics.apy.toFixed(2))}
-              />
-              <span className="ml-1">% APY</span>
+              {metrics.apy.toFixed(2)}% APY
             </div>
             <div className="text-xs text-gray-400 whitespace-nowrap">
-              30d fees: ${numeral(isLoading ? 0 : metrics.feesLast30Days).format('0,0.00')}
+              30d fees: ${numeral(metrics.feesLast30Days).format('0,0.00')}
             </div>
           </div>
         </TooltipTrigger>
