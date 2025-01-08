@@ -16,7 +16,7 @@ import numeral from 'numeral';
 import { TokenDisplay, BalanceInfo } from '../dexterity-controls';
 import { useColor } from 'color-thief-react';
 
-export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, trigger }: any) => {
+export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, trigger }: { pool: any, tokenPrices: any, onRemoveLiquidity: any, trigger: any }) => {
   const [amount, setAmount] = useState(50);
   const { getBalance } = useWallet();
 

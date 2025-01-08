@@ -39,8 +39,9 @@ describe('dexterity metadata cache', () => {
         "tokenAContract": ".stx",
         "tokenBContract": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
         "lpRebatePercent": 0.5,
+        'externalPoolId': "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01"
       },
-      "image": "",
+      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.alex-labs-vault-wrapper-1736373115358-as2pYrjlh6I17mx8exPnRDpEtwRtMZ.png",
       "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-cha-vault-wrapper-alex",
       "lastUpdated": "2025-01-08T18:46:21.750Z"
     });

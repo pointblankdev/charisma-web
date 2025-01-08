@@ -16,9 +16,10 @@ import numeral from 'numeral';
 import { TokenDisplay, BalanceInfo } from '../dexterity-controls';
 import { useColor } from 'color-thief-react';
 
-export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }: any) => {
+export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }: { pool: any, tokenPrices: any, onAddLiquidity: any, trigger: any }) => {
   const [amount, setAmount] = useState(50);
   const { getBalance } = useWallet();
+  console.log(pool);
 
   const maxAmount = useMemo(() => {
     const token0Balance = getBalance(pool.liquidity[0].contractId) || 0;
