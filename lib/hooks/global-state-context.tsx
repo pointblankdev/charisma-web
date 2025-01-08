@@ -6,8 +6,9 @@ import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
 import { userSession } from '@components/stacks-session/connect';
 import { Dexterity } from 'dexterity-sdk';
-import { API_URL } from '@lib/constants';
+import { SITE_URL } from '@lib/constants';
 
+const siteUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : SITE_URL
 const socketUrl = 'https://api.mainnet.hiro.so';
 const sc = new StacksApiSocketClient({ url: socketUrl });
 
@@ -77,7 +78,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
       Dexterity.configure({
         stxAddress: userStxAddress,
         mode: 'client',
-        // proxy: `${API_URL}/api/v0/proxy`, // uncomment in dev
+        proxy: `${siteUrl}/api/v0/proxy`, // uncomment in dev
       }).catch(console.error);
     }
   }, [setStxAddress]);
