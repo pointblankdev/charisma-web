@@ -150,7 +150,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                         ${vaults.map(vault => `
                                             <div class="border border-b-0 border-x-0 border-t-[var(--accents-7)]" style="
                                                 background: linear-gradient(to bottom, hsl(var(--accent-foreground) / 0.95), hsl(var(--accent-foreground) / 0.9)),
-                                                            url('${vault.getPool().image}') center/cover;
+                                                            url('${vault.image}') center/cover;
                                                 padding: 16px;
                                                 border-radius: 8px;
                                                 position: relative;
@@ -165,7 +165,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                                     justify-content: space-between;
                                                     align-items: center;
                                                 ">
-                                                    <span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${vault.getPool().name}</span>
+                                                    <span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${vault.name}</span>
                                                     <span style="
                                                         font-size: 11px;
                                                         color: #94a3b8;
@@ -173,25 +173,38 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                                         padding: 4px 8px;
                                                         border-radius: 12px;
                                                         white-space: nowrap;
-                                                    ">Fee: ${(vault.getPool().fee / 1000000 * 100).toFixed(2)}%</span>
+                                                    ">Fee: ${(vault.fee / 1000000 * 100).toFixed(2)}%</span>
                                                 </div>
-                                                ${vault.getPool().liquidity.map(token => `
-                                                    <div style="
-                                                        display: flex;
-                                                        justify-content: space-between;
-                                                        align-items: center;
-                                                        padding: 8px;
-                                                        background: rgba(255, 255, 255, 0.03);
-                                                        margin-top: 8px;
-                                                        border-radius: 6px;
-                                                    ">
-                                                        <span style="color: #94a3b8;">${token.symbol}</span>
-                                                        <span style="
-                                                            color: #e2e8f0;
-                                                            font-family: 'SF Mono', monospace;
-                                                        ">${(token.reserves / Math.pow(10, token.decimals)).toLocaleString()}</span>
-                                                    </div>
-                                                `).join('')}
+                                                <div style="
+                                                    display: flex;
+                                                    justify-content: space-between;
+                                                    align-items: center;
+                                                    padding: 8px;
+                                                    background: rgba(255, 255, 255, 0.03);
+                                                    margin-top: 8px;
+                                                    border-radius: 6px;
+                                                ">
+                                                    <span style="color: #94a3b8;">${vault.tokenA.symbol}</span>
+                                                    <span style="
+                                                        color: #e2e8f0;
+                                                        font-family: 'SF Mono', monospace;
+                                                    ">${(vault.tokenA.reserves / Math.pow(10, vault.tokenA.decimals)).toLocaleString()}</span>
+                                                </div>
+                                                <div style="
+                                                    display: flex;
+                                                    justify-content: space-between;
+                                                    align-items: center;
+                                                    padding: 8px;
+                                                    background: rgba(255, 255, 255, 0.03);
+                                                    margin-top: 8px;
+                                                    border-radius: 6px;
+                                                ">
+                                                    <span style="color: #94a3b8;">${vault.tokenB.symbol}</span>
+                                                    <span style="
+                                                        color: #e2e8f0;
+                                                        font-family: 'SF Mono', monospace;
+                                                    ">${(vault.tokenB.reserves / Math.pow(10, vault.tokenB.decimals)).toLocaleString()}</span>
+                                                </div>
                                             </div>
                                         `).join('')}
                                     </div>

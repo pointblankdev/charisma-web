@@ -225,7 +225,7 @@ export const SwapInterface = ({
     Dexterity.configure({ maxHops }).catch(console.error);
     const vaults = pools.map(pool => new Vault(pool));
     Dexterity.router.loadVaults(vaults);
-    console.log('Loaded vaults:', Dexterity.router.vaults);
+    console.log('Router initialized:', Dexterity.router.getGraphStats());
   }, [pools, stxAddress]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
@@ -250,7 +250,7 @@ export const SwapInterface = ({
   const handleSlippageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
     if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
-      const numValue = parseFloat(value) % 100;
+      const numValue = parseFloat(value);
       if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
         setSlippage(numValue);
       }
@@ -346,7 +346,7 @@ export const SwapInterface = ({
 
 
   const handleMaxHopsChange = (value: string) => {
-    setMaxHops(_.clamp(Number(value) % 10, 1, 7));
+    setMaxHops(_.clamp(Number(value), 0, 7));
     Dexterity.configure({ maxHops }).catch(console.error);
     if (fromAmount) handleEstimateAmount(fromAmount)
   }

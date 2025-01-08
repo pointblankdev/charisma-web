@@ -79,11 +79,12 @@ export function generateContractCode(params: ContractParams): string {
 (define-constant PRECISION u1000000)
 (define-constant LP_REBATE u${lpRebateRaw})
 
-;; Operation Types (Byte 0 of opcode)
-(define-constant OP_SWAP_A_TO_B 0x00)     ;; Swap token A for B
-(define-constant OP_SWAP_B_TO_A 0x01)     ;; Swap token B for A
-(define-constant OP_ADD_LIQUIDITY 0x02)   ;; Add liquidity
+;; Opcodes
+(define-constant OP_SWAP_A_TO_B 0x00)      ;; Swap token A for B
+(define-constant OP_SWAP_B_TO_A 0x01)      ;; Swap token B for A
+(define-constant OP_ADD_LIQUIDITY 0x02)    ;; Add liquidity
 (define-constant OP_REMOVE_LIQUIDITY 0x03) ;; Remove liquidity
+(define-constant OP_LOOKUP_RESERVES 0x04)  ;; Read pool reserves
 
 ;; Define LP token
 (define-fungible-token ${lpTokenSymbol})
@@ -140,7 +141,8 @@ export function generateContractCode(params: ContractParams): string {
         (if (is-eq operation OP_SWAP_B_TO_A) (ok (get-swap-quote amount opcode))
         (if (is-eq operation OP_ADD_LIQUIDITY) (ok (get-liquidity-quote amount))
         (if (is-eq operation OP_REMOVE_LIQUIDITY) (ok (get-liquidity-quote amount))
-        ERR_INVALID_OPERATION))))))
+        (if (is-eq operation OP_LOOKUP_RESERVES) (ok (get-reserves-quote))
+        ERR_INVALID_OPERATION)))))))
 
 ;; --- Execute Functions ---
 
@@ -220,6 +222,16 @@ export function generateContractCode(params: ContractParams): string {
           dx: (if (> k u0) (/ (* amount (get a reserves)) k) amount),
           dy: (if (> k u0) (/ (* amount (get b reserves)) k) amount),
           dk: amount
+        }))
+
+(define-read-only (get-reserves-quote)
+    (let (
+        (reserves (get-reserves))
+        (supply (ft-get-supply ${lpTokenSymbol})))
+        {
+          dx: (get a reserves),
+          dy: (get b reserves),
+          dk: supply
         }))`;
 
   // Generate initialization block with initial liquidity and additional token transfer if needed

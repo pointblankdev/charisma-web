@@ -9,7 +9,7 @@ import PricesService from '@lib/server/prices/prices-service';
 import Link from 'next/link';
 import { getAllContractTransactions } from '@lib/stacks-api';
 import DexterityInterface from '@components/pools/dexterity-interface';
-import { Dexterity } from 'dexterity-sdk';
+import { ContractId, Dexterity } from 'dexterity-sdk';
 import _ from 'lodash';
 
 Dexterity.configure({ apiKeyRotation: 'loop' }).catch(console.error);
@@ -20,13 +20,13 @@ const blacklist = [
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.uahdmg',
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-lp-token',
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.stx-lp-token'
-];
+] as ContractId[];
 
 const service = PricesService.getInstance();
 export const getStaticProps: GetStaticProps<any> = async () => {
   // Get contracts and prices in parallel using cached functions
   const [pools, prices] = await Promise.all([
-    Dexterity.discoverPools(50, blacklist),
+    Dexterity.discover({ blacklist, serialize: true }),
     service.getAllTokenPrices()
   ]);
 

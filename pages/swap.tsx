@@ -4,17 +4,22 @@ import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
 import { SwapInterface } from '@components/swap/swap-interface';
 import PricesService from '@lib/server/prices/prices-service';
-import { Dexterity, LPToken, Token } from 'dexterity-sdk';
+import { ContractId, Dexterity, LPToken, Token } from 'dexterity-sdk';
 
 Dexterity.configure({ apiKeyRotation: 'loop' }).catch(console.error);
+const blacklist = [
+  'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',
+  'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes',
+  'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.uahdmg',
+  'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-lp-token',
+  'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.stx-lp-token'
+] as ContractId[];
 
 export const getStaticProps: GetStaticProps<any> = async () => {
   const service = PricesService.getInstance();
   const prices = await service.getAllTokenPrices();
-  const pools = await Dexterity.discoverPools();
+  const pools = await Dexterity.discover({ serialize: true, blacklist });
   const tokens = Dexterity.getTokens();
-
-  console.log('Prices:', prices);
 
   return {
     props: {

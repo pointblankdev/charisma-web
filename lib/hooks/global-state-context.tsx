@@ -77,7 +77,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
       Dexterity.configure({
         stxAddress: userStxAddress,
         mode: 'client',
-        // proxy: `${API_URL}/api/v0/proxy`, // uncomment in dev
+        proxy: `${API_URL}/api/v0/proxy`, // uncomment in dev
       }).catch(console.error);
     }
   }, [setStxAddress]);
@@ -147,7 +147,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
   useEffect(() => {
     sc.subscribeMempool((tx: any) => {
       if (
-        tx?.contract_call?.contract_id === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.multihop' ||
         tx?.contract_call?.function_name === 'execute'
       ) {
         console.log('Dexterity Vault Update:', tx);
@@ -180,6 +179,21 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
               duration: 10000
             });
           }
+        });
+      } else if (tx?.contract_call?.contract_id === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.multihop') {
+        console.log('Dexterity Multihop Transaction:', tx);
+        const description = (
+          <div className="space-y-2">
+            <p className="flex justify-between w-full text-xs">
+              {JSON.stringify(tx?.contract_call)}
+            </p>
+            <p className="text-xs text-muted-foreground">{formatTime(tx.receipt_time_iso)}</p>
+          </div>
+        );
+        toast({
+          title: 'Dexterity Multihop Transaction',
+          description,
+          duration: 10000
         });
       }
     });
