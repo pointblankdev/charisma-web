@@ -27,15 +27,22 @@ describe('dexterity metadata cache', () => {
     console.log(JSON.stringify(token, null, 2));
   });
 
-  it('should set contract metadata by id', async () => {
-    await kv.set('token:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh', {
-      contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh',
-      identifier: 'synthetic-welsh',
-      name: 'Synthetic Welsh',
-      symbol: 'iouWELSH',
-      decimals: 6,
-      description: 'Welsh Corgi Coin Synthetic Asset',
-      image: 'https://charisma.rocks/welsh-logo.png'
+  it('should set contract metadata by id vault wrapper', async () => {
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-cha-vault-wrapper-alex', {
+      "name": "STX-CHA Vault Wrapper",
+      "symbol": "aSXC",
+      "decimals": 8,
+      "identifier": "aSXC",
+      "description": "Vault Wrapper for the ALEX STX-CHA LP Token",
+      "properties": {
+        "contractName": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-cha-vault-wrapper-alex",
+        "tokenAContract": ".stx",
+        "tokenBContract": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
+        "lpRebatePercent": 0.5,
+      },
+      "image": "",
+      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-cha-vault-wrapper-alex",
+      "lastUpdated": "2025-01-08T18:46:21.750Z"
     });
   });
 });
