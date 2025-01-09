@@ -160,7 +160,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
               <span>Address: {shortAddress}</span>
               <span>Action: {functionName.toUpperCase()}</span>
             </p>
-            <p className="text-xs text-muted-foreground">{formatTime(tx.receipt_time_iso)}</p>
+            <p className="text-xs">{formatTime(tx.receipt_time_iso)}</p>
           </div>
         );
 
