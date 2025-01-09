@@ -140,7 +140,7 @@ export default function ContractDeployer({ prices }: Props) {
     form.setValue('tokenAContract', token.contractId);
     form.setValue('lpTokenName', `${token.symbol} LP Token`);
     form.setValue('lpTokenSymbol', `${token.symbol}LP`);
-    form.setValue('description', `Liquidity pool token for the ${token.name} pair`);
+    form.setValue('description', `Liquidity vault for the ${token.name} pair`);
 
     const metadata = await Dexterity.getTokenInfo(token.contractId);
     setTokenAMetadata(metadata);
@@ -156,7 +156,7 @@ export default function ContractDeployer({ prices }: Props) {
     const tokenB = metadata?.symbol || 'Unknown';
     form.setValue('lpTokenName', `${tokenA}-${tokenB} LP Token`);
     form.setValue('lpTokenSymbol', `${tokenA}${tokenB}LP`);
-    form.setValue('description', `Liquidity pool token for the ${tokenA}-${tokenB} trading pair`);
+    form.setValue('description', `Liquidity vault for the ${tokenA}-${tokenB} trading pair`);
 
     setCurrentStep('configure-pool');
   };
@@ -220,13 +220,35 @@ export default function ContractDeployer({ prices }: Props) {
     }
   };
 
-  const handleDeploy = () => {
-    deployContract({
-      contractName: safeTokenName,
-      codeBody: contractCode,
-      postConditions,
-      metadata
-    });
+  const handleDeploy = async () => {
+    try {
+      // Deploy the contract with metadata
+      await deployContract({
+        contractName: safeTokenName,
+        codeBody: contractCode,
+        postConditions,
+        metadata: {
+          ...metadata,
+          name: formValues.lpTokenName,
+          symbol: formValues.lpTokenSymbol,
+          description: formValues.description,
+          identifier: formValues.lpTokenSymbol.toLowerCase(),
+          decimals: 6,
+          properties: {
+            ...metadata?.properties,
+            tokenAContract: formValues.tokenAContract,
+            tokenBContract: formValues.tokenBContract,
+            lpRebatePercent: formValues.lpRebatePercent,
+            tokenAMetadata,
+            tokenBMetadata,
+            date: new Date().toISOString()
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error during deployment:', error);
+      alert('Failed to deploy contract or update metadata');
+    }
   };
 
   const stepIndex = currentStep === 'select-token-a' ? 0 : currentStep === 'select-token-b' ? 1 : 2;

@@ -1,11 +1,13 @@
 import { network } from '@components/stacks-session/connect';
 import { useConnect } from '@stacks/connect-react';
 import { PostConditionMode } from '@stacks/transactions';
+import { useGlobalState } from './global-state-context';
 
 export function useContractDeployment() {
   const { doContractDeploy } = useConnect();
+  const { stxAddress } = useGlobalState();
 
-  const deployContract = (args: {
+  const deployContract = async (args: {
     contractName: string;
     codeBody: string;
     postConditions: any[];
@@ -26,6 +28,20 @@ export function useContractDeployment() {
       postConditions,
       onFinish: (result: any) => console.log('Contract deployed:', result)
     });
+
+    // Then update the metadata
+    const fullContractName = `${stxAddress}.${contractName}`;
+    const response = await fetch(`/api/v0/metadata/update/${fullContractName}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify(metadata)
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update metadata');
+    }
   };
 
   return { deployContract };

@@ -142,49 +142,23 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
 async function handleUpdate(
   req: NextApiRequest,
   res: NextApiResponse,
-  contractId: string,
-  isPartial = false
+  contractId: string
 ) {
-  const updates = req.body as Partial<TokenMetadata>;
-
-  if (!isPartial) {
-    // Validate required fields for full update
-    const requiredFields = ['name', 'description', 'image', 'identifier', 'symbol', 'decimals'];
-    const missingFields = requiredFields.filter(field => !(field in updates));
-    if (missingFields.length > 0) {
-      return res.status(400).json({
-        error: `Missing required fields: ${missingFields.join(', ')}`
-      });
-    }
-  }
+  const updates = req.body as TokenMetadata;
 
   try {
-    let newMetadata: TokenMetadata;
+    // Get existing metadata
+    const currentMetadata = await kv.get<TokenMetadata>(`sip10:${contractId}`);
 
-    if (isPartial) {
-      // Get existing metadata for partial update
-      const currentMetadata = await kv.get<TokenMetadata>(`sip10:${contractId}`);
-      if (!currentMetadata && isPartial) {
-        return res.status(404).json({ error: 'Metadata not found' });
+    // Merge existing and new metadata
+    const newMetadata = {
+      ...currentMetadata,
+      ...updates,
+      properties: {
+        ...currentMetadata?.properties,
+        ...updates.properties
       }
-      newMetadata = {
-        ...currentMetadata,
-        ...updates,
-        properties: {
-          ...currentMetadata?.properties,
-          ...updates.properties,
-          lastUpdated: new Date().toISOString()
-        }
-      };
-    } else {
-      newMetadata = {
-        ...updates,
-        properties: {
-          ...updates.properties,
-          lastUpdated: new Date().toISOString()
-        }
-      };
-    }
+    };
 
     await kv.set(`sip10:${contractId}`, newMetadata);
 
@@ -279,12 +253,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     if (action === 'update') {
-      if (req.method === 'POST') {
-        return handleUpdate(req, res, contractId, false);
-      }
-      if (req.method === 'PATCH') {
-        return handleUpdate(req, res, contractId, true);
-      }
+      return handleUpdate(req, res, contractId);
     }
   }
 

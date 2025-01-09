@@ -28,22 +28,39 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-welsh-vault-wrapper-alex', {
-      "name": "The Welshening",
-      "symbol": "WVW",
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.whats-up-dog', {
+      "name": "What's Up Dog?",
+      "symbol": "UPDOG",
       "decimals": 6,
-      "identifier": "WVW",
-      "description": "All your WELSH are belong to us.",
+      "identifier": "UPDOG",
+      "description": "Not much, how about you?",
       "properties": {
-        "contractName": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-welsh-vault-wrapper-alex",
-        "tokenAContract": ".stx",
-        "tokenBContract": "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
-        "lpRebatePercent": 0.5,
-        "externalPoolId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01"
+        "tokenAContract": "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
+        "tokenBContract": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog",
+        "lpRebatePercent": 2,
+        "tokenAMetadata": {
+          "contractId": "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
+          "identifier": "welshcorgicoin",
+          "name": "Welshcorgicoin",
+          "symbol": "WELSH",
+          "decimals": 6,
+          "description": "$WELSH is the first memecoin built on Stacks blockchain",
+          "image": "https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png"
+        },
+        "tokenBMetadata": {
+          "contractId": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog",
+          "identifier": "runes-dog",
+          "name": "DOG GO TO THE MOON (RUNES)",
+          "symbol": "DOG",
+          "decimals": 8,
+          "description": "DOG•GO•TO•THE•MOON (🐕)",
+          "image": "https://token-images.alexlab.co/runes-dog"
+        },
+        "date": "2025-01-09T18:45:23.764Z"
       },
-      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-corgi-god-1736392442557-9K2SPFmnqqwO7TUqOjtGGSr7yLoYtv.png",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-welsh-vault-wrapper-alex",
-      "lastUpdated": "2025-01-08T18:46:21.750Z"
+      "imagePrompt": "Welsh corgi dog powering up, surrounded by blocky green arrow symbols spiraling around him and rising upwards, visible motion and energy. intense manga art style with bold lines and deep contracts. Use a limited color palette with maximum 2-3 colors",
+      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.whats-up-dog-1736448323341-PQ1JtWPWx1TPOz91aOufnjwQAYcmB5.png",
+      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.whats-up-dog"
     });
   });
 });

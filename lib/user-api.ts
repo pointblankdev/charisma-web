@@ -30,6 +30,17 @@ export async function setIndexMetadata(ca: string, metadata: any) {
   });
 }
 
+
+export async function setVaultMetadata(ca: string, metadata: any) {
+  return await fetch(`${HOST}/api/v0/metadata/update/${ca}`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify(metadata)
+  });
+}
+
 export async function getLatestBlock() {
   const response = await fetch(`${HOST}/api/v0/blocks`, {
     method: 'GET',

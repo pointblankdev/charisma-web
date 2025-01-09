@@ -147,9 +147,9 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                   className="text-xs"
                 />
               </div>
-              <div className="mt-2 space-y-2">
+              <div className="mt-2 gap-2 flex flex-wrap">
 
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 w-max-24">
                   <Checkbox
                     id="limitedPalette"
                     checked={formValues.isLimitedPalette}
@@ -161,31 +161,29 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                   </label>
                 </div>
 
-                {/* <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
+                <div className="flex items-center space-x-2 w-max-24">
+                  <Checkbox
                     id="charismafied"
                     checked={formValues.isCharismafied}
-                    onChange={(e) => setValue('isCharismafied', e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300"
+                    onChange={(e) => setValue('isCharismafied', !!e)}
+                    className="w-4 h-4"
                   />
-                  <label htmlFor="charismafied" className="text-sm text-muted-foreground">
+                  <label htmlFor="limitedPalette" className="text-sm text-muted-foreground bg-muted-foreground/10 px-2 py-1 rounded-md">
                     Charisma Style
                   </label>
                 </div>
 
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
+                <div className="flex items-center space-x-2 w-max-24">
+                  <Checkbox
                     id="pixelated"
                     checked={formValues.isPixelated}
-                    onChange={(e) => setValue('isPixelated', e.target.checked)}
-                    className="w-4 h-4 rounded border-gray-300"
+                    onChange={(e) => setValue('isPixelated', !!e)}
+                    className="w-4 h-4"
                   />
-                  <label htmlFor="pixelated" className="text-sm text-muted-foreground">
+                  <label htmlFor="limitedPalette" className="text-sm text-muted-foreground bg-muted-foreground/10 px-2 py-1 rounded-md">
                     Pixel Art Style
                   </label>
-                </div> */}
+                </div>
               </div>
 
 
