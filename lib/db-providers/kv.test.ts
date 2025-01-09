@@ -28,21 +28,20 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-cha-vault-wrapper-alex', {
-      "name": "STX-CHA Vault Wrapper",
-      "symbol": "aSXC",
-      "decimals": 8,
-      "identifier": "aSXC",
-      "description": "Vault Wrapper for the ALEX STX-CHA LP Token",
+    await kv.set('sip10:SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.lp-token', {
+      "name": "SATS-sBTC Vault LP",
+      "symbol": "brc20-LP",
+      "decimals": 6,
+      "identifier": "brc20-LP",
+      "description": "Vault for the ALEX SATS-sBTC LP Token",
       "properties": {
-        "contractName": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-cha-vault-wrapper-alex",
-        "tokenAContract": ".stx",
-        "tokenBContract": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
-        "lpRebatePercent": 0.5,
-        'externalPoolId': "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01"
+        "contractName": "SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.lp-token",
+        "tokenAContract": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-sats",
+        "tokenBContract": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.brc20-sbtc",
+        "lpRebatePercent": 2,
       },
-      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.alex-labs-vault-wrapper-1736373115358-as2pYrjlh6I17mx8exPnRDpEtwRtMZ.png",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.stx-cha-vault-wrapper-alex",
+      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.satssbtc-vault-lp-1736387832433-X7u5QlJjLpE7EdyJII0Ru4zPhtJX0l.png",
+      "contractId": "SP26PZG61DH667XCX51TZNBHXM4HG4M6B2HWVM47V.lp-token",
       "lastUpdated": "2025-01-08T18:46:21.750Z"
     });
   });
