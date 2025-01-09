@@ -9,6 +9,18 @@ interface ContractParams {
   initialLiquidityB: number;
 }
 
+function sanitizeInteger(value: number): number {
+  // Ensure value is a positive integer
+  const sanitized = Math.floor(Math.abs(value));
+  // Prevent overflow by capping at u2^64-1 (max uint in Clarity)
+  return Math.min(sanitized, 18446744073709551615);
+}
+
+function sanitizePercentage(value: number): number {
+  // Ensure value is between 0-100
+  return Math.min(Math.max(Math.abs(value), 0), 100);
+}
+
 export function generateContractCode(params: ContractParams): string {
   const {
     tokenUri,
@@ -25,12 +37,17 @@ export function generateContractCode(params: ContractParams): string {
   const isTokenAStx = tokenAContract === '.stx';
   const isTokenBStx = tokenBContract === '.stx';
 
-  const lpRebateRaw = Math.floor((parseFloat(lpRebatePercent.toString()) / 100) * 1000000);
+  // Sanitize all numeric inputs
+  const sanitizedRebatePercent = sanitizePercentage(lpRebatePercent);
+  const lpRebateRaw = Math.floor((sanitizedRebatePercent / 100) * 1000000);
+
+  const sanitizedLiquidityA = sanitizeInteger(initialLiquidityA);
+  const sanitizedLiquidityB = sanitizeInteger(initialLiquidityB);
 
   // Determine which token has more and calculate the additional amount needed
-  const baseAmount = Math.min(initialLiquidityA, initialLiquidityB);
-  const additionalTokenA = Math.max(0, initialLiquidityA - baseAmount);
-  const additionalTokenB = Math.max(0, initialLiquidityB - baseAmount);
+  const baseAmount = Math.min(sanitizedLiquidityA, sanitizedLiquidityB);
+  const additionalTokenA = Math.max(0, sanitizedLiquidityA - baseAmount);
+  const additionalTokenB = Math.max(0, sanitizedLiquidityB - baseAmount);
 
   // Helper function to generate transfer code based on token type
   const generateTransferIn = (

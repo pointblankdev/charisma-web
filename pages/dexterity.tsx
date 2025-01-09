@@ -207,7 +207,7 @@ export default function ContractDeployer({ prices }: Props) {
         name: formValues.lpTokenName,
         symbol: formValues.lpTokenSymbol,
         description: formValues.description,
-        identifier: formValues.lpTokenSymbol.toLowerCase(),
+        identifier: formValues.lpTokenSymbol,
         decimals: 6,
         properties: {
           ...(metadata?.properties || {}),
