@@ -22,20 +22,20 @@ import {
 } from './kv';
 
 describe('dexterity metadata cache', () => {
-  it('should get contract metadata by id', async () => {
-    const token = await kv.get('token:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
-    console.log(JSON.stringify(token, null, 2));
+  it('should get dexterity metadata by id', async () => {
+    const token = await kv.get('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex-ii');
+    console.log(token);
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex-ii', {
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex', {
       "name": "THIS IS SPARTA",
       "symbol": "SPARTA",
       "decimals": 8,
       "identifier": "SPARTA",
       "description": "Liquidity vault for the aBTC-DOG trading pair",
       "properties": {
-        "externalPoolId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-pool-v2-01",
+        "externalPoolId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01",
         "tokenAContract": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
         "tokenBContract": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog",
         "lpRebatePercent": 2,

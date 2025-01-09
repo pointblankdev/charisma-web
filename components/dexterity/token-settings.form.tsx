@@ -165,7 +165,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                   <Checkbox
                     id="charismafied"
                     checked={formValues.isCharismafied}
-                    onChange={(e) => setValue('isCharismafied', !!e)}
+                    onCheckedChange={(e) => setValue('isCharismafied', !!e)}
                     className="w-4 h-4"
                   />
                   <label htmlFor="limitedPalette" className="text-sm text-muted-foreground bg-muted-foreground/10 px-2 py-1 rounded-md">
@@ -177,7 +177,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                   <Checkbox
                     id="pixelated"
                     checked={formValues.isPixelated}
-                    onChange={(e) => setValue('isPixelated', !!e)}
+                    onCheckedChange={(e) => setValue('isPixelated', !!e)}
                     className="w-4 h-4"
                   />
                   <label htmlFor="limitedPalette" className="text-sm text-muted-foreground bg-muted-foreground/10 px-2 py-1 rounded-md">

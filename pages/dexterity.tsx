@@ -15,6 +15,7 @@ import { Dexterity } from 'dexterity-sdk';
 import { GetStaticProps } from 'next';
 import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
+import { Loader2Icon } from 'lucide-react';
 
 type Props = {
   prices: { [key: string]: number };
@@ -52,6 +53,8 @@ export default function ContractDeployer({ prices }: Props) {
   const [metadata, setMetadata] = useState(null as any);
   const [tokenAMetadata, setTokenAMetadata] = useState(null as any);
   const [tokenBMetadata, setTokenBMetadata] = useState(null as any);
+  const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [isSavingMetadata, setIsSavingMetadata] = useState(false);
   const { stxAddress } = useGlobalState();
   const { contractCode, updateContractCode } = useContractCode();
   const { deployContract } = useContractDeployment();
@@ -66,7 +69,7 @@ export default function ContractDeployer({ prices }: Props) {
       description: '',
       initialLiquidityA: 1000000,
       initialLiquidityB: 1000000,
-      imagePrompt: '',
+      imagePrompt: 'Minimalist, professional logo combining geometric shapes and clean lines',
       isCharismafied: false,
       isLimitedPalette: true,
       isPixelated: false
@@ -141,6 +144,7 @@ export default function ContractDeployer({ prices }: Props) {
     form.setValue('lpTokenName', `${token.symbol} LP Token`);
     form.setValue('lpTokenSymbol', `${token.symbol}LP`);
     form.setValue('description', `Liquidity vault for the ${token.name} pair`);
+    form.setValue('imagePrompt', `Minimalist, professional logo combining geometric shapes and clean lines that represents ${token.name}`);
 
     const metadata = await Dexterity.getTokenInfo(token.contractId);
     setTokenAMetadata(metadata);
@@ -154,9 +158,13 @@ export default function ContractDeployer({ prices }: Props) {
 
     const tokenA = tokenAMetadata?.symbol || 'Unknown';
     const tokenB = metadata?.symbol || 'Unknown';
+    const tokenAName = tokenAMetadata?.name || 'Unknown';
+    const tokenBName = token.name || 'Unknown';
+
     form.setValue('lpTokenName', `${tokenA}-${tokenB} LP Token`);
-    form.setValue('lpTokenSymbol', `${tokenA}${tokenB}LP`);
+    form.setValue('lpTokenSymbol', `${tokenA}-${tokenB}`);
     form.setValue('description', `Liquidity vault for the ${tokenA}-${tokenB} trading pair`);
+    form.setValue('imagePrompt', `Minimalist, professional logo that represents a liquidity pool between ${tokenAName} and ${tokenBName}. Combine geometric shapes and clean lines to show the connection between these two tokens`);
 
     setCurrentStep('configure-pool');
   };
@@ -270,6 +278,65 @@ export default function ContractDeployer({ prices }: Props) {
     }
   };
 
+  const handleSaveMetadata = async () => {
+    try {
+      setIsSavingMetadata(true);
+      const formValues = form.getValues();
+
+      const currentMetadata = {
+        ...metadata,
+        name: formValues.lpTokenName,
+        symbol: formValues.lpTokenSymbol,
+        description: formValues.description,
+        identifier: formValues.lpTokenSymbol.toLowerCase(),
+        decimals: 6,
+        properties: {
+          ...(metadata?.properties || {}),
+          tokenAContract: formValues.tokenAContract,
+          tokenBContract: formValues.tokenBContract,
+          lpRebatePercent: formValues.lpRebatePercent,
+          tokenAMetadata,
+          tokenBMetadata,
+          date: new Date().toISOString()
+        },
+      };
+
+      const response = await fetch(`/api/v0/metadata/update/${fullContractName}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(currentMetadata)
+      });
+
+      if (!response.ok) throw new Error('Failed to save metadata');
+      const result = await response.json();
+
+      if (result.success && result.metadata) {
+        setMetadata(result.metadata);
+        setHasUnsavedChanges(false);
+      } else {
+        throw new Error('Invalid metadata response structure');
+      }
+    } catch (err) {
+      console.error('Metadata save error:', err);
+      alert('Failed to save metadata');
+    } finally {
+      setIsSavingMetadata(false);
+    }
+  };
+
+  useEffect(() => {
+    if (metadata) {
+      const currentValues = form.getValues();
+      const hasChanges =
+        currentValues.lpTokenName !== metadata.name ||
+        currentValues.lpTokenSymbol !== metadata.symbol ||
+        currentValues.description !== metadata.description ||
+        currentValues.lpRebatePercent !== metadata.properties?.lpRebatePercent;
+
+      setHasUnsavedChanges(hasChanges);
+    }
+  }, [form.watch(), metadata]);
+
   const stepIndex = currentStep === 'select-token-a' ? 0 : currentStep === 'select-token-b' ? 1 : 2;
 
   return (
@@ -305,18 +372,35 @@ export default function ContractDeployer({ prices }: Props) {
               <Button variant="outline" onClick={() => setShowCode(!showCode)}>
                 {showCode ? 'Hide Source Code' : 'Show Source Code'}
               </Button>
-              <Button
-                onClick={handleDeploy}
-                disabled={!metadata || isGenerating}
-                className={cn(
-                  'font-medium transition-colors min-w-48',
-                  !metadata || isGenerating
-                    ? 'bg-primary text-primary-foreground hover:bg-primary/90'
-                    : ''
-                )}
-              >
-                Deploy Liquidity Pool
-              </Button>
+              <div className="flex space-x-2">
+                <Button
+                  onClick={handleSaveMetadata}
+                  disabled={!metadata || isSavingMetadata || !hasUnsavedChanges}
+                  variant="outline"
+                  className="min-w-32"
+                >
+                  {isSavingMetadata ? (
+                    <>
+                      <Loader2Icon className="mr-2 h-4 w-4 animate-spin" />
+                      Saving...
+                    </>
+                  ) : (
+                    'Save Metadata'
+                  )}
+                </Button>
+                <Button
+                  onClick={handleDeploy}
+                  disabled={!metadata || isGenerating || hasUnsavedChanges}
+                  className={cn(
+                    'font-medium transition-colors min-w-48',
+                    (!metadata || isGenerating || hasUnsavedChanges)
+                      ? 'bg-primary text-primary-foreground hover:bg-primary/90'
+                      : ''
+                  )}
+                >
+                  {hasUnsavedChanges ? 'Save Changes First' : 'Deploy Liquidity Pool'}
+                </Button>
+              </div>
             </div>
             {showCode && (
               <Card className="p-4">
