@@ -26,7 +26,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
     props: {
       prices,
       tokens: tokens,
-      pools: pools
+      pools: pools.filter(pool => pool.externalPoolId !== undefined)
     },
     revalidate: 60
   };
