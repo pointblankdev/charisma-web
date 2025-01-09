@@ -71,98 +71,70 @@ async function handleGet(req: NextApiRequest, res: NextApiResponse, contractId: 
 }
 
 async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contractId: string) {
-  const data = req.body as GenerateMetadataRequest;
-
-  // Validate required token properties
-  if (!data.properties?.tokenAContract || !data.properties?.tokenBContract) {
-    return res.status(400).json({
-      error: 'Missing required token contracts'
-    });
-  }
-
-  function generateTokenDetails(tokenAMeta: any, tokenBMeta: any) {
-    // Fallback to basic generation
-    return {
-      name: `${tokenAMeta.symbol}-${tokenBMeta.symbol} LP Token`,
-      symbol: `${tokenAMeta.symbol}-${tokenBMeta.symbol}`,
-      description: `Liquidity pool token for the ${tokenAMeta.symbol}-${tokenBMeta.symbol} trading pair`
-    };
-  }
+  const data = req.body as GenerateMetadataRequest & {
+    imagePrompt?: string;
+    customImageUrl?: string;
+  };
 
   try {
-    // Fetch metadata for both tokens using Stacks API
-    const [tokenAMeta, tokenBMeta] = await Promise.all([
-      data.properties.tokenAContract === '.stx'
-        ? { symbol: 'STX', name: 'Stacks', decimals: 6 }
-        : {
-          ...getTokenMetadata(data.properties.tokenAContract),
-          symbol: await getSymbol(data.properties.tokenAContract)
-        },
-      data.properties.tokenBContract === '.stx'
-        ? { symbol: 'STX', name: 'Stacks', decimals: 6 }
-        : {
-          ...getTokenMetadata(data.properties.tokenBContract),
-          symbol: await getSymbol(data.properties.tokenBContract)
+    // If custom image URL provided, use it directly
+    if (data.customImageUrl) {
+      const metadata: TokenMetadata = {
+        ...data,
+        image: data.customImageUrl,
+        properties: {
+          ...data.properties,
+          generated: {
+            date: new Date().toISOString()
+          }
         }
-    ]);
+      };
 
-    // Generate token details
-    const generatedDetails = generateTokenDetails(tokenAMeta, tokenBMeta);
+      await kv.set(`sip10:${contractId}`, metadata);
+      return res.status(200).json({ success: true, contractId, metadata });
+    }
 
-    const charismaTheme =
-      data.properties.tokenAContract.includes('charisma') ||
-      data.properties.tokenBContract.includes('charisma');
+    // Otherwise generate image with AI
+    const imagePrompt = data.imagePrompt ||
+      `Design a iconic logo for ${data.name}, described by: ${data.description}`;
 
-    // Generate image using OpenAI
-    const imagePrompt =
-      `Design a iconic logo for ${data.name}, described by: ${data.description}. DO NOT include any text or words.` +
-      `${charismaTheme ? `Incorporate a deep red as the primary color in a sophisticated way. ` : ``
-      }` +
-      `The design should be iconic and instantly recognizable at small sizes, similar to a premium brand mark or currency symbol.`;
+    console.log('Image prompt:', imagePrompt);
 
+    // Generate image with OpenAI
     const response = await openai.images.generate({
-      model: 'dall-e-3',
+      model: "dall-e-3",
       prompt: imagePrompt,
       n: 1,
-      size: '1024x1024'
+      size: "1024x1024",
+      quality: 'standard',
+      response_format: "url"
     });
 
-    // Download and upload image (same as before)
-    const imageUrl = response.data[0].url as string;
-    const imageResponse = await fetch(imageUrl);
-    const imageBlob = await imageResponse.blob();
+    const imageUrl = response.data[0].url;
 
-    const filename = `${contractId}-${Date.now()}.png`;
-    const blob = await put(filename, imageBlob, {
-      access: 'public',
-      contentType: 'image/png'
+    // Upload the generated image to Vercel Blob
+    const imageResponse = await fetch(imageUrl!);
+    const imageBuffer = await imageResponse.arrayBuffer();
+    const blob = new Blob([imageBuffer]);
+    const { url } = await put(`${contractId}-${Date.now()}.png`, blob, {
+      access: 'public'
     });
 
-    // Construct final metadata
+    // Create and store metadata
     const metadata: TokenMetadata = {
       ...data,
-      image: blob.url,
+      image: url,
       properties: {
         ...data.properties,
-        generated: {
-          date: new Date().toISOString(),
-          imagePrompt,
-          imagePathname: blob.pathname,
-          aiGeneratedDetails: generatedDetails
-        }
+        date: new Date().toISOString()
       }
     };
 
-    // Store metadata in KV
     await kv.set(`sip10:${contractId}`, metadata);
+    return res.status(200).json({ success: true, contractId, metadata });
 
-    return res.status(200).json({
-      success: true,
-      contractId,
-      metadata
-    });
   } catch (error) {
-    console.error('Failed to generate metadata:', error);
+    console.error('Failed to generate metadata:', (error as Error).message);
     return res.status(500).json({ error: 'Failed to generate metadata' });
   }
 }

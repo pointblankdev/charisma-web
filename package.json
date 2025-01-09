@@ -78,6 +78,7 @@
     "d3-force": "^3.0.0",
     "date-fns": "^2.30.0",
     "dexterity-sdk": "^0.4.6",
+    "formidable": "^3.5.2",
     "framer-motion": "^10.15.2",
     "fs": "^0.0.1-security",
     "htmlescape": "1.1.1",
@@ -125,6 +126,7 @@
   "devDependencies": {
     "@types/cookie": "0.4.0",
     "@types/d3": "^7.4.3",
+    "@types/formidable": "^3.4.5",
     "@types/htmlescape": "1.1.1",
     "@types/jest": "^29.5.3",
     "@types/lodash": "^4.14.197",

@@ -8,11 +8,10 @@ import { sanitizeContractName } from '@lib/codegen/dexterity';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useContractCode } from '@lib/hooks/use-contract-code';
 import { useContractDeployment } from '@lib/hooks/use-contract-deployment';
-import { fetchTokenMetadata } from '@lib/hooks/use-token-metadata';
 import PricesService from '@lib/server/prices/prices-service';
 import { cn } from '@lib/utils';
 import { Pc } from '@stacks/transactions';
-import { WandSparkles } from 'lucide-react';
+import { Dexterity } from 'dexterity-sdk';
 import { GetStaticProps } from 'next';
 import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
@@ -20,6 +19,22 @@ import { useForm } from 'react-hook-form';
 type Props = {
   prices: { [key: string]: number };
 };
+
+interface FormValues {
+  tokenAContract: string;
+  tokenBContract: string;
+  lpTokenName: string;
+  lpTokenSymbol: string;
+  lpRebatePercent: number;
+  description: string;
+  initialLiquidityA: number;
+  initialLiquidityB: number;
+  imagePrompt: string;
+  customImage?: File;
+  isCharismafied: boolean;
+  isLimitedPalette: boolean;
+  isPixelated: boolean;
+}
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
   const service = PricesService.getInstance();
@@ -41,7 +56,7 @@ export default function ContractDeployer({ prices }: Props) {
   const { contractCode, updateContractCode } = useContractCode();
   const { deployContract } = useContractDeployment();
 
-  const form = useForm({
+  const form = useForm<FormValues>({
     defaultValues: {
       tokenAContract: '',
       tokenBContract: '',
@@ -50,7 +65,11 @@ export default function ContractDeployer({ prices }: Props) {
       lpRebatePercent: 2,
       description: '',
       initialLiquidityA: 1000000,
-      initialLiquidityB: 1000000
+      initialLiquidityB: 1000000,
+      imagePrompt: '',
+      isCharismafied: false,
+      isLimitedPalette: true,
+      isPixelated: false
     }
   });
 
@@ -60,32 +79,41 @@ export default function ContractDeployer({ prices }: Props) {
 
   // Calculate post conditions based on initial liquidity
   const postConditions = useMemo(() => {
-    if (!formValues.tokenAContract || !formValues.tokenBContract) return [];
+    if (!formValues.tokenAContract || !formValues.tokenBContract || !tokenAMetadata || !tokenBMetadata) return [];
 
     const conditions = [];
     const isTokenAStx = formValues.tokenAContract === '.stx';
     const isTokenBStx = formValues.tokenBContract === '.stx';
 
-    // Handle token A
-    if (isTokenAStx) {
-      conditions.push(Pc.principal(stxAddress).willSendEq(formValues.initialLiquidityA).ustx());
-    } else {
-      conditions.push(
-        Pc.principal(stxAddress)
-          .willSendEq(formValues.initialLiquidityA)
-          .ft(formValues.tokenAContract as any, tokenAMetadata?.identifier)
-      );
-    }
+    try {
 
-    // Handle token B
-    if (isTokenBStx) {
-      conditions.push(Pc.principal(stxAddress).willSendEq(formValues.initialLiquidityB).ustx());
-    } else {
-      conditions.push(
-        Pc.principal(stxAddress)
-          .willSendEq(formValues.initialLiquidityB)
-          .ft(formValues.tokenBContract as any, tokenBMetadata?.identifier)
-      );
+      const tokenAmountA = Math.floor(formValues.initialLiquidityA);
+      const tokenAmountB = Math.floor(formValues.initialLiquidityB);
+
+      // Handle token A
+      if (isTokenAStx) {
+        conditions.push(Pc.principal(stxAddress).willSendEq(tokenAmountA).ustx());
+      } else {
+        conditions.push(
+          Pc.principal(stxAddress)
+            .willSendEq(tokenAmountA)
+            .ft(formValues.tokenAContract as any, tokenAMetadata?.identifier)
+        );
+      }
+
+      // Handle token B
+      if (isTokenBStx) {
+        conditions.push(Pc.principal(stxAddress).willSendEq(tokenAmountB).ustx());
+      } else {
+        conditions.push(
+          Pc.principal(stxAddress)
+            .willSendEq(tokenAmountB)
+            .ft(formValues.tokenBContract as any, tokenBMetadata?.identifier)
+        );
+      }
+    } catch (error) {
+      console.error('Error fetching token metadata:', error);
+      return [];
     }
 
     return conditions;
@@ -114,43 +142,76 @@ export default function ContractDeployer({ prices }: Props) {
     form.setValue('lpTokenSymbol', `${token.symbol}LP`);
     form.setValue('description', `Liquidity pool token for the ${token.name} pair`);
 
-    const metadata = await fetchTokenMetadata(token.contractId);
+    const metadata = await Dexterity.getTokenInfo(token.contractId);
     setTokenAMetadata(metadata);
     setCurrentStep('select-token-b');
   };
 
   const handleTokenBSelection = async (token: any) => {
     form.setValue('tokenBContract', token.contractId);
-    const metadata = await fetchTokenMetadata(token.contractId);
-    console.log({ metadata });
+    const metadata = await Dexterity.getTokenInfo(token.contractId);
     setTokenBMetadata(metadata);
+
+    const tokenA = tokenAMetadata?.symbol || 'Unknown';
+    const tokenB = metadata?.symbol || 'Unknown';
+    form.setValue('lpTokenName', `${tokenA}-${tokenB} LP Token`);
+    form.setValue('lpTokenSymbol', `${tokenA}${tokenB}LP`);
+    form.setValue('description', `Liquidity pool token for the ${tokenA}-${tokenB} trading pair`);
+
     setCurrentStep('configure-pool');
+  };
+
+  const handleMetadataChange = (newMetadata: any) => {
+    setMetadata(newMetadata);
   };
 
   const generateMetadata = async () => {
     setIsGenerating(true);
     try {
+      const formValues = form.getValues();
+
+      let imageUrl;
+      if (formValues.customImage) {
+        const formData = new FormData();
+        formData.append('file', formValues.customImage);
+        const uploadResponse = await fetch('/api/v0/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const { url } = await uploadResponse.json();
+        imageUrl = url;
+      }
+
+      // Build the enhanced prompt
+      let enhancedPrompt = formValues.imagePrompt;
+      if (formValues.isCharismafied) {
+        enhancedPrompt += ". intense manga art style with bold lines and deep contracts";
+      }
+      if (formValues.isLimitedPalette) {
+        enhancedPrompt += ". Use a limited color palette with maximum 2-3 colors";
+      }
+      if (formValues.isPixelated) {
+        enhancedPrompt += ". Create in pixel art style with visible pixels and limited resolution";
+      }
+
       const response = await fetch(`/api/v0/metadata/generate/${fullContractName}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          name: formValues.lpTokenName,
-          symbol: formValues.lpTokenSymbol,
-          decimals: 6,
-          identifier: formValues.lpTokenSymbol,
-          description: formValues.description,
-          properties: {
-            contractName: fullContractName,
-            tokenAContract: formValues.tokenAContract,
-            tokenBContract: formValues.tokenBContract,
-            lpRebatePercent: formValues.lpRebatePercent
-          }
+          ...metadata,
+          imagePrompt: enhancedPrompt,
+          customImageUrl: imageUrl
         })
       });
 
       if (!response.ok) throw new Error('Failed to generate metadata');
       const result = await response.json();
-      setMetadata(result.metadata);
+
+      if (result.success && result.metadata) {
+        setMetadata(result.metadata);
+      } else {
+        throw new Error('Invalid metadata response structure');
+      }
     } catch (err) {
       console.error('Metadata generation error:', err);
       alert('Failed to generate metadata');
@@ -192,6 +253,8 @@ export default function ContractDeployer({ prices }: Props) {
             tokenAMetadata={tokenAMetadata}
             tokenBMetadata={tokenBMetadata}
             form={form}
+            onMetadataChange={handleMetadataChange}
+            onGenerateImage={generateMetadata}
           />
         )}
 
@@ -200,9 +263,6 @@ export default function ContractDeployer({ prices }: Props) {
             <div className="flex justify-between space-x-4">
               <Button variant="outline" onClick={() => setShowCode(!showCode)}>
                 {showCode ? 'Hide Source Code' : 'Show Source Code'}
-              </Button>
-              <Button onClick={generateMetadata} variant="outline">
-                <WandSparkles className="w-4 h-4 mr-2" /> Generate Image from Metadata
               </Button>
               <Button
                 onClick={handleDeploy}
