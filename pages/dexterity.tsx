@@ -194,11 +194,30 @@ export default function ContractDeployer({ prices }: Props) {
         enhancedPrompt += ". Create in pixel art style with visible pixels and limited resolution";
       }
 
+      // Include the current metadata state in the API call
+      const currentMetadata = {
+        name: formValues.lpTokenName,
+        symbol: formValues.lpTokenSymbol,
+        description: formValues.description,
+        identifier: formValues.lpTokenSymbol.toLowerCase(),
+        decimals: 6,
+        properties: {
+          ...(metadata?.properties || {}),
+          tokenAContract: formValues.tokenAContract,
+          tokenBContract: formValues.tokenBContract,
+          lpRebatePercent: formValues.lpRebatePercent,
+          tokenAMetadata,
+          tokenBMetadata,
+          date: new Date().toISOString()
+        },
+        ...metadata  // Spread existing metadata last to preserve any other fields
+      };
+
       const response = await fetch(`/api/v0/metadata/generate/${fullContractName}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          ...metadata,
+          ...currentMetadata,
           imagePrompt: enhancedPrompt,
           customImageUrl: imageUrl
         })

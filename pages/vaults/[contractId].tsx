@@ -174,7 +174,7 @@ export default function VaultMetadataPage({ initialMetadata, contractId }: Props
                     </Card>
 
                     {/* Updated Form Panel */}
-                    <Card className="p-6 space-y-6">
+                    {metadata && <Card className="p-6 space-y-6">
                         <div className="space-y-6">
                             <h2 className="text-xl font-medium">Basic Information</h2>
                             <div className="grid grid-cols-2 gap-4">
@@ -346,7 +346,7 @@ export default function VaultMetadataPage({ initialMetadata, contractId }: Props
                                 {isSaving ? 'Saving...' : 'Save Changes'}
                             </Button>
                         </div>
-                    </Card>
+                    </Card>}
                 </div>
             </div>
         </Layout>

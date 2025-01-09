@@ -28,24 +28,25 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.whats-up-dog', {
-      "name": "What's Up Dog?",
-      "symbol": "UPDOG",
-      "decimals": 6,
-      "identifier": "UPDOG",
-      "description": "Not much, how about you?",
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex', {
+      "name": "THIS IS SPARTA",
+      "symbol": "SPARTA",
+      "decimals": 8,
+      "identifier": "SPARTA",
+      "description": "Liquidity vault for the aBTC-DOG trading pair",
       "properties": {
-        "tokenAContract": "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
+        "externalPoolId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-pool-v2-01",
+        "tokenAContract": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
         "tokenBContract": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog",
         "lpRebatePercent": 2,
         "tokenAMetadata": {
-          "contractId": "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
-          "identifier": "welshcorgicoin",
-          "name": "Welshcorgicoin",
-          "symbol": "WELSH",
-          "decimals": 6,
-          "description": "$WELSH is the first memecoin built on Stacks blockchain",
-          "image": "https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png"
+          "contractId": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
+          "identifier": "bridged-btc",
+          "name": "aBTC",
+          "symbol": "aBTC",
+          "decimals": 8,
+          "description": "aBTC",
+          "image": "https://token-images.alexlab.co/token-abtc"
         },
         "tokenBMetadata": {
           "contractId": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog",
@@ -56,11 +57,11 @@ describe('dexterity metadata cache', () => {
           "description": "DOG•GO•TO•THE•MOON (🐕)",
           "image": "https://token-images.alexlab.co/runes-dog"
         },
-        "date": "2025-01-09T18:45:23.764Z"
+        "date": "2025-01-09T20:24:36.439Z"
       },
-      "imagePrompt": "Welsh corgi dog powering up, surrounded by blocky green arrow symbols spiraling around him and rising upwards, visible motion and energy. intense manga art style with bold lines and deep contracts. Use a limited color palette with maximum 2-3 colors",
-      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.whats-up-dog-1736448323341-PQ1JtWPWx1TPOz91aOufnjwQAYcmB5.png",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.whats-up-dog"
+      "imagePrompt": "THIS IS SPARTA. Use a limited color palette with maximum 2-3 colors",
+      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.this-is-sparta-1736454276259-atuRqbQm9L0Xu0AhCV0z8q7VXz0QXq.png",
+      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex"
     });
   });
 });

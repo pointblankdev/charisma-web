@@ -75,7 +75,6 @@ async function handleGenerate(req: NextApiRequest, res: NextApiResponse, contrac
     imagePrompt?: string;
     customImageUrl?: string;
   };
-
   try {
     // If custom image URL provided, use it directly
     if (data.customImageUrl) {
