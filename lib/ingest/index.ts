@@ -74,9 +74,9 @@ export const balancer = inngest.createFunction(
     { event: "balance" },
     async ({ dex, step, prices }) => {
         const tokens = dex.getTokens()
-        // for all tokens
         const txs = []
         for (const token of tokens) {
+            if (dex.getVaultsForToken(token.contractId).size <= 1) continue
             txs.push(await step.sendEvent(`swap`,
                 {
                     name: 'swap',
