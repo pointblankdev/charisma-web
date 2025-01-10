@@ -583,9 +583,10 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
           <div className="px-4 mb-4 sm:px-0">
             <div className="flex items-baseline justify-between">
               <div>
-                <h1 className="text-2xl font-bold text-white/95">Liquidity Vaults</h1>
-                <div className="flex items-center text-sm text-muted-foreground">
-                  Liquidity vaults are a more secure and decentralized form of liquidity pools.
+                <div className='flex items-center space-x-1.5'>
+                  <h1 className="text-2xl font-bold text-white/95">
+                    Liquidity Vaults
+                  </h1>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger asChild>
@@ -593,14 +594,14 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
                           href="https://github.com/stacksgov/sips/pull/204"
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="ml-1"
+                          className="ml-1 mt-2"
                         >
-                          <InfoIcon className="w-4 h-4 text-gray-400 hover:text-gray-200" />
+                          <InfoIcon className="w-4 h-4 text-gray-400/80 hover:text-gray-200" />
                         </Link>
                       </TooltipTrigger>
                       <TooltipContent
-                        side="bottom"
-                        className="max-w-lg p-4 text-white bg-gray-800 border-none rounded-lg shadow-lg"
+                        side="right"
+                        className="max-w-lg p-4 text-white bg-gray-800 border-none rounded-lg shadow-lg translate-y-24"
                       >
                         <div className="space-y-4 leading-snug">
                           <div className="flex items-center space-x-2">
@@ -645,15 +646,19 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
                     </Tooltip>
                   </TooltipProvider>
                 </div>
-              </div>
+                <div className="flex items-center text-sm text-muted-foreground">
+                  Liquidity vaults are a more secure and decentralized form of liquidity pools.
+
+                </div>
+              </div >
               <div className="text-right">
                 <div className="text-2xl font-bold text-white/95">
                   ${numeral(totalTVL).format('0,0.00')}
                 </div>
                 <div className="text-sm text-muted-foreground">Total Value Locked</div>
               </div>
-            </div>
-          </div>
+            </div >
+          </div >
 
           <div className="px-4 overflow-x-auto sm:px-0">
             <table className="w-full table-auto">
@@ -770,9 +775,9 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
               </tbody>
             </table>
           </div>
-        </div>
-      </div>
-    </div>
+        </div >
+      </div >
+    </div >
   );
 };
 
