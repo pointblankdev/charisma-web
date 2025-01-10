@@ -3,16 +3,13 @@ import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import Layout from '@components/layout/layout';
 import { useEffect, useState } from 'react';
-import useWallet from '@lib/hooks/wallet-balance-provider';
-import { motion } from 'framer-motion';
 import PricesService from '@lib/server/prices/prices-service';
 import Link from 'next/link';
-import { getAllContractTransactions } from '@lib/stacks-api';
 import DexterityInterface from '@components/pools/dexterity-interface';
 import { ContractId, Dexterity } from 'dexterity-sdk';
 import _ from 'lodash';
 
-Dexterity.configure({ apiKeyRotation: 'loop' }).catch(console.error);
+Dexterity.configure({ apiKeyRotation: 'loop', parallelRequests: 10 }).catch(console.error);
 
 const blacklist = [
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',

@@ -10,26 +10,28 @@ const blacklist = [
     'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.stx-lp-token'
 ] as ContractId[];
 
-// Initialize Dexterity SDK
-Dexterity.configure({ apiKeyRotation: 'loop', maxHops: 5, debug: true }).catch(console.error);
-
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    // Only allow GET requests from Vercel cron
-    if (req.method !== 'GET') {
-        return res.status(405).json({ error: 'Method not allowed' });
-    }
 
     // Verify the request is from Vercel Cron
     // if (process.env.VERCEL_ENV === 'production' && !req.headers['x-vercel-cron']) {
     //     return res.status(401).json({ error: 'Unauthorized' });
     // }
 
-    console.log('Dexterity Balancer Cron Job Running')
-
     try {
+        console.log('Dexterity Balancer Cron Job Running')
+
+        // Initialize Dexterity SDK
+        await Dexterity.configure({
+            apiKeyRotation: 'loop',
+            parallelRequests: 10,
+            debug: true,
+            maxHops: 5
+        })
         await Dexterity.discover({ blacklist });
+
         const tx = await Dexterity.executeSwap(".stx", ".stx", 1000000, { fee: 1000 })
         console.log(tx)
+
         return res.status(200).json({
             status: 'success',
             tx

@@ -7,7 +7,7 @@ import PricesService from '@lib/server/prices/prices-service';
 import { ContractId, Dexterity, LPToken, Token } from 'dexterity-sdk';
 
 
-Dexterity.configure({ apiKeyRotation: 'loop' }).catch(console.error);
+Dexterity.configure({ apiKeyRotation: 'loop', parallelRequests: 10 }).catch(console.error);
 const blacklist = [
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes',
