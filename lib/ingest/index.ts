@@ -1,5 +1,5 @@
 import PricesService from "@lib/server/prices/prices-service";
-import { ContractId, Dexterity } from "dexterity-sdk";
+import { ContractId, Dexterity, Quote } from "dexterity-sdk";
 import { Inngest, InngestMiddleware } from "inngest";
 
 const blacklist = [
@@ -52,11 +52,16 @@ export const inngest = new Inngest({ id: "dexterity", middleware: [dexterityMidd
 export const swapper = inngest.createFunction(
     { id: "swapper" },
     { event: "swap" },
-    async ({ dex, event }) => {
-        const quote = await dex.getQuote(event.data.from, event.data.to, event.data.amount)
-        if (!quote.route.hops.length) return { quote }
-        const tx = await dex.router.executeSwap(quote.route, event.data.amount, { fee: 1000 }) as any
-        return { tx }
+    async ({ dex, event, step }) => {
+        let quote: any, tx: any
+        await step.run(`get quote`, async () => {
+            quote = await dex.getQuote(event.data.from, event.data.to, event.data.amount)
+        })
+        if (!quote?.route?.hops?.length) return { quote }
+        await step.run(`swap ${event.data.from} to ${event.data.to}`, async () => {
+            tx = await dex.router.executeSwap(quote.route, event.data.amount, { fee: 1000 }) as any
+        })
+        return { quote, tx }
     },
 );
 
