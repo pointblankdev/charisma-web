@@ -25,9 +25,10 @@ type FormValues = {
   initialLiquidityB: number;
   imagePrompt: string;
   customImage?: File;
-  isCharismafied: boolean;
   isLimitedPalette: boolean;
-  isPixelated: boolean;
+  isRozarStyle: boolean;
+  isMooningSharkStyle: boolean;
+  isVinzoStyle: boolean;
 };
 
 type TokenSettingsFormProps = {
@@ -95,7 +96,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
         <Card className="p-6">
           <div className="flex flex-col md:flex-row md:space-x-6">
             {/* Token Image Section */}
-            <div className="relative mb-6 md:mb-0 md:w-1/3">
+            <div className="relative mb-6 md:mb-0 md:w-1/2">
               <div className="group">
                 <div
                   className={cn(
@@ -148,7 +149,6 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                 />
               </div>
               <div className="mt-2 gap-2 flex flex-wrap">
-
                 <div className="flex items-center space-x-2 w-max-24">
                   <Checkbox
                     id="limitedPalette"
@@ -156,32 +156,44 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                     onCheckedChange={(e) => setValue('isLimitedPalette', !!e)}
                     className="w-4 h-4"
                   />
-                  <label htmlFor="limitedPalette" className="text-sm text-muted-foreground bg-muted-foreground/10 px-2 py-1 rounded-md">
+                  <label htmlFor="limitedPalette" className="text-xs text-muted-foreground bg-muted-foreground/10 px-1 py-0.5 rounded-md">
                     Limit Color Palette
                   </label>
                 </div>
 
                 <div className="flex items-center space-x-2 w-max-24">
                   <Checkbox
-                    id="charismafied"
-                    checked={formValues.isCharismafied}
-                    onCheckedChange={(e) => setValue('isCharismafied', !!e)}
+                    id="rozarStyle"
+                    checked={formValues.isRozarStyle}
+                    onCheckedChange={(e) => setValue('isRozarStyle', !!e)}
                     className="w-4 h-4"
                   />
-                  <label htmlFor="limitedPalette" className="text-sm text-muted-foreground bg-muted-foreground/10 px-2 py-1 rounded-md">
-                    Charisma Style
+                  <label htmlFor="rozarStyle" className="text-xs text-muted-foreground bg-muted-foreground/10 px-1 py-0.5 rounded-md">
+                    Rozar Style
                   </label>
                 </div>
 
                 <div className="flex items-center space-x-2 w-max-24">
                   <Checkbox
-                    id="pixelated"
-                    checked={formValues.isPixelated}
-                    onCheckedChange={(e) => setValue('isPixelated', !!e)}
+                    id="mooningSharkStyle"
+                    checked={formValues.isMooningSharkStyle}
+                    onCheckedChange={(e) => setValue('isMooningSharkStyle', !!e)}
                     className="w-4 h-4"
                   />
-                  <label htmlFor="limitedPalette" className="text-sm text-muted-foreground bg-muted-foreground/10 px-2 py-1 rounded-md">
-                    Pixel Art Style
+                  <label htmlFor="mooningSharkStyle" className="text-xs text-muted-foreground bg-muted-foreground/10 px-1 py-0.5 rounded-md">
+                    Mooning Shark Style
+                  </label>
+                </div>
+
+                <div className="flex items-center space-x-2 w-max-24">
+                  <Checkbox
+                    id="vinzoStyle"
+                    checked={formValues.isVinzoStyle}
+                    onCheckedChange={(e) => setValue('isVinzoStyle', !!e)}
+                    className="w-4 h-4"
+                  />
+                  <label htmlFor="vinzoStyle" className="text-xs text-muted-foreground bg-muted-foreground/10 px-1 py-0.5 rounded-md">
+                    Vinzo Style
                   </label>
                 </div>
               </div>
@@ -234,6 +246,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                   onChange={e => setValue('description', e.target.value)}
                   placeholder="Enter token description"
                   rows={2}
+                  className="min-h-[200px]"
                 />
               </div>
             </div>

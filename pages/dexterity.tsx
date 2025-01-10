@@ -195,6 +195,9 @@ export default function ContractDeployer({ prices }: Props) {
       if (formValues.isCharismafied) {
         enhancedPrompt += ". intense manga art style with bold lines and deep contrast";
       }
+      if (formValues.isMooningSharkStyle) {
+        enhancedPrompt += ". electric ocean waves, metal band album cover style, minimalist art logo for a token, bold lines";
+      }
       if (formValues.isLimitedPalette) {
         enhancedPrompt += ". Use a limited color palette with maximum 2-3 colors";
       }
