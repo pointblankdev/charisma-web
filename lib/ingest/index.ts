@@ -66,7 +66,7 @@ export const balancer = inngest.createFunction(
     async ({ dex, step, prices }) => {
         const tokens = dex.getTokens()
         // for all tokens
-        let txs = []
+        const txs = []
         for (const token of tokens) {
             txs.push(await step.sendEvent(`swap`,
                 {
