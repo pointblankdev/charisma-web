@@ -1,5 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ContractId, Dexterity } from 'dexterity-sdk';
+import { inngest } from '@lib/ingest';
 
 // Reference to existing Dexterity configuration from:
 const blacklist = [
@@ -20,21 +21,29 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         console.log('Dexterity Balancer Cron Job Running')
 
-        // Initialize Dexterity SDK
-        await Dexterity.configure({
-            apiKeyRotation: 'loop',
-            parallelRequests: 10,
-            debug: true,
-            maxHops: 5
-        })
-        await Dexterity.discover({ blacklist });
+        const response = await inngest.send({
+            name: "test/hello.world",
+            data: {
+                email: "testUser@example.com",
+            },
+        });
 
-        const tx = await Dexterity.executeSwap(".stx", ".stx", 1000000, { fee: 1000 })
-        console.log(tx)
+        // Initialize Dexterity SDK
+        // await Dexterity.configure({
+        //     apiKeyRotation: 'loop',
+        //     parallelRequests: 10,
+        //     debug: true,
+        //     maxHops: 5
+        // })
+        // await Dexterity.discover({ blacklist });
+
+        // const tx = await Dexterity.executeSwap(".stx", ".stx", 1000000, { fee: 1000 })
+        // console.log(tx)
 
         return res.status(200).json({
             status: 'success',
-            tx
+            response
+            // tx
         });
 
     } catch (error) {

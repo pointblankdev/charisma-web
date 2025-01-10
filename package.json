@@ -13,7 +13,8 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:coverage": "jest --coverage",
-    "lint": "eslint --fix --ext .ts,.tsx ."
+    "lint": "eslint --fix --ext .ts,.tsx .",
+    "inngest": "npx inngest-cli@latest dev"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.31.0",
