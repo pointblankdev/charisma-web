@@ -3531,12 +3531,12 @@
   resolved "https://registry.yarnpkg.com/@stacks/common/-/common-7.0.0.tgz#1d06b4d0323ad0a3cf0bca6c8974682cc8ab5e09"
   integrity sha512-/BKBK9S9GEuGjbnc2fBAwsG21f8cfNekG/9mXLSMwBqnh4qaQY2hxK+6wRI2YXJgpkXrpZilpZy2sdPGlVUdQA==
 
-"@stacks/connect-react@^22.6.0":
-  version "22.6.0"
-  resolved "https://registry.yarnpkg.com/@stacks/connect-react/-/connect-react-22.6.0.tgz#83af7751f13efb3cc5e43e6b46c708fc95857ad4"
-  integrity sha512-+ANQyxujO7ObrPps/Ix9y13a6yGhFbZSHbJW00bPNeYdo2YLxZHbPVCd0VWRdLO7O3y4kRi+nUH0zeWWJYHIbA==
+"@stacks/connect-react@^22.6.1":
+  version "22.6.1"
+  resolved "https://registry.yarnpkg.com/@stacks/connect-react/-/connect-react-22.6.1.tgz#9ae70672a0266a1e5c4dffbbcfc0151da56a0d60"
+  integrity sha512-5sv6yK9lsBIPCxdKH7jIBKJNl7E7tzOx7qXuazyZ18rd597MJaZMXB9i8g7fj4Bc9SvGMWcITu/k1ed7wG0ukg==
   dependencies:
-    "@stacks/connect" "7.9.0"
+    "@stacks/connect" "7.10.0"
     jsontokens "^4.0.1"
 
 "@stacks/connect-ui@6.5.0":
@@ -3546,7 +3546,29 @@
   dependencies:
     "@stencil/core" "^2.17.1"
 
-"@stacks/connect@7.9.0", "@stacks/connect@^7.9.0":
+"@stacks/connect-ui@6.6.0":
+  version "6.6.0"
+  resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-6.6.0.tgz#780f62c1ecb39487f52d4c3618c1b2724686ae23"
+  integrity sha512-uc22RH99umYzB94h5LiKPtGu34IBGrwUb3TfijGb2ZMudaMCiv/Fr1jjZKfQW5MRmexnbAEmGZpFlQKinCcsUA==
+  dependencies:
+    "@stencil/core" "^2.17.1"
+
+"@stacks/connect@7.10.0", "@stacks/connect@^7.10.0":
+  version "7.10.0"
+  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.10.0.tgz#f82d5f6990d337b646cb8443cba2d5089399c826"
+  integrity sha512-h6i/cFWUVWLFyn8Y62+oDh7PJYQR5Ultrc6dEUp8rZZbHO9ldLT5Qm+rwTS0tRXzoPXJ2KNbqsG70Sqa/lRnVQ==
+  dependencies:
+    "@stacks/auth" "^7.0.0"
+    "@stacks/common" "^7.0.0"
+    "@stacks/connect-ui" "6.6.0"
+    "@stacks/network" "^7.0.0"
+    "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
+    "@stacks/profile" "^7.0.0"
+    "@stacks/transactions" "^7.0.0"
+    "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
+    jsontokens "^4.0.1"
+
+"@stacks/connect@^7.9.0":
   version "7.9.0"
   resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.9.0.tgz#460b3a91d5711190b5b0aa23bf10ed6b487888f9"
   integrity sha512-UPv2UQpZwnNPYodL4bf+6Pu3kHY9BcRabAgAbmDajn3RFWvDrnOMmvLqJRGOvo5fEm8vSwxAGY8R7BSOPmlLdg==
@@ -5891,10 +5913,10 @@ detect-node-es@^1.1.0:
   resolved "https://registry.yarnpkg.com/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-dexterity-sdk@^0.4.12:
-  version "0.4.12"
-  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.4.12.tgz#a5bb4f556e16009e349f0d10fc3a34dec297efa1"
-  integrity sha512-dkp8bu5lm8BvBxSwaxdvMwN9ioSAzLKJSB9z65nxnmQZGxGfUIordwND8lN0Dg1kERzjqZvuGLoYe8Cq5rONsg==
+dexterity-sdk@^0.4.13:
+  version "0.4.13"
+  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.4.13.tgz#27de0d4fafe2df7b632710a067d91f6cdb960ece"
+  integrity sha512-Z/ltxBfQSCqB9LKfdtbROKP75traiTCX1kgKKQVRKMtGNQeyfulxW5vJbRoze/BG9xg4U3sTRQIPr3Tdc+iGBw==
   dependencies:
     "@stacks/blockchain-api-client" "8.4.0"
     "@stacks/common" "7.0.2"
