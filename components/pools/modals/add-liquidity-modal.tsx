@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,107 +11,82 @@ import { Slider } from '@components/ui/slider';
 import { Plus, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@components/ui/alert';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import numeral from 'numeral';
-
-interface TokenDisplayProps {
-  amount: number;
-  symbol: string;
-  imgSrc?: string;
-  label: string;
-  rounded?: boolean;
-  price: number;
-}
-
-export const TokenDisplay: React.FC<TokenDisplayProps> = ({
-  amount,
-  symbol,
-  imgSrc,
-  label,
-  price
-}) => {
-  const usdValue = amount * price;
-
-  return (
-    <div className="flex items-center justify-between p-4 border rounded-lg border-border">
-      <div className="flex items-center space-x-3">
-        <img src={imgSrc} alt={symbol} className="w-8 h-8 rounded-full" />
-        <div>
-          <div className="text-sm text-muted-foreground">{label}</div>
-          <div className="text-lg font-medium">
-            {numeral(amount).format('0,0.0000')} {symbol}
-          </div>
-        </div>
-      </div>
-      <div className="text-right text-muted-foreground">
-        ≈ ${numeral(usdValue).format('0,0.00')}
-      </div>
-    </div>
-  );
-};
-
-interface BalanceInfoProps {
-  balance: number;
-  symbol: string;
-  price: number;
-  decimals: number;
-  required?: number;
-}
-
-export const BalanceInfo: React.FC<BalanceInfoProps> = ({
-  balance,
-  symbol,
-  price,
-  decimals,
-  required
-}) => {
-  const formattedBalance = balance / 10 ** decimals;
-
-  return (
-    <div className="flex flex-col space-y-1">
-      <div className="flex justify-between text-sm text-muted-foreground">
-        <span>
-          Balance: {numeral(formattedBalance).format('0,0.00')} {symbol}
-        </span>
-        <span>${numeral(formattedBalance * price).format('0,0.00')}</span>
-      </div>
-    </div>
-  );
-};
+import { TokenDisplay, BalanceInfo } from '../shared/token-display';
+import { Vault } from 'dexterity-sdk/dist/core/vault';
+import { Opcode } from 'dexterity-sdk/dist/core/opcode';
+import debounce from 'lodash/debounce';
 
 export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }: { pool: any, tokenPrices: any, onAddLiquidity: any, trigger: any }) => {
   const [amount, setAmount] = useState(50);
+  const [isQuoting, setIsQuoting] = useState(false);
+  const [quotedAmounts, setQuotedAmounts] = useState({
+    lpTokens: 0,
+    token0Amount: 0,
+    token1Amount: 0
+  });
   const { getBalance } = useWallet();
-  console.log(pool);
+  const [isProcessing, setIsProcessing] = useState(false);
+
+  // Memoize the vault instance
+  const vault = useMemo(() => new Vault(pool), [pool]);
 
   const maxAmount = useMemo(() => {
-    const token0Balance = getBalance(pool.liquidity[0].contractId) || 0;
-    const token1Balance = getBalance(pool.liquidity[1].contractId) || 0;
+    const token0Balance = getBalance(vault.tokenA.contractId) || 0;
+    const token1Balance = getBalance(vault.tokenB.contractId) || 0;
 
-    // Calculate token amounts needed for the entire pool
-    const token0PerLp = pool.liquidity[0].reserves / pool.supply;
-    const token1PerLp = pool.liquidity[1].reserves / pool.supply;
+    if (!vault.supply || vault.supply === 0) return 0;
 
-    // Calculate max LP tokens possible with each token's balance
+    const token0PerLp = vault.tokenA.reserves / vault.supply;
+    const token1PerLp = vault.tokenB.reserves / vault.supply;
+
+    if (token0PerLp === 0 || token1PerLp === 0) return 0;
+
     const maxLpFromToken0 = token0Balance / token0PerLp;
     const maxLpFromToken1 = token1Balance / token1PerLp;
 
-    // Return the minimum possible LP tokens based on limiting token
-    return Math.min(maxLpFromToken0, maxLpFromToken1);
-  }, [pool, getBalance]);
+    return Math.min(maxLpFromToken0, maxLpFromToken1) || 0;
+  }, [getBalance, vault]);
 
-  const amounts = useMemo(() => {
-    const lpTokens = Math.min(amount, maxAmount);
+  // Debounced fetch quote function
+  const debouncedFetchQuote = useCallback(
+    debounce(async (newAmount: number) => {
+      setIsQuoting(true);
+      const lpTokens = Math.floor(Math.min(newAmount, maxAmount));
 
-    // Calculate token amounts proportional to the pool ratio
-    const token0Amount = (lpTokens * pool.liquidity[0].reserves) / pool.supply;
-    const token1Amount = (lpTokens * pool.liquidity[1].reserves) / pool.supply;
+      try {
+        const quote = await vault.quote(lpTokens, Opcode.addLiquidity());
+        if (quote instanceof Error) {
+          setQuotedAmounts({
+            lpTokens: 0,
+            token0Amount: 0,
+            token1Amount: 0
+          });
+          return;
+        }
 
-    return {
-      lpTokens,
-      token0Amount,
-      token1Amount
-    };
-  }, [amount, maxAmount, pool]);
+        setQuotedAmounts({
+          lpTokens,
+          token0Amount: quote.amountIn,
+          token1Amount: quote.amountOut
+        });
+      } catch (error) {
+        console.error('Error fetching quote:', error);
+        setQuotedAmounts({
+          lpTokens: 0,
+          token0Amount: 0,
+          token1Amount: 0
+        });
+      } finally {
+        setIsQuoting(false);
+      }
+    }, 50),
+    [maxAmount, vault]
+  );
+
+  // Initial quote
+  useEffect(() => {
+    debouncedFetchQuote(amount);
+  }, []);
 
   const isMaxed = amount > maxAmount;
 
@@ -123,37 +98,40 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
           <DialogTitle>Add Liquidity</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          <div className="space-y-4">
+          <div className="space-y-4 relative">
+            <div className="animate-pulse-glow absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 blur-xl rounded-lg" />
             <TokenDisplay
-              amount={amounts.token0Amount / 10 ** pool.liquidity[0].decimals}
-              symbol={pool.liquidity[0].symbol}
-              imgSrc={pool.liquidity[0].image}
-              price={tokenPrices[pool.liquidity[0].contractId]}
-              label="You will deposit"
-            />
-            <BalanceInfo
-              balance={getBalance(pool.liquidity[0].contractId) || 0}
-              symbol={pool.liquidity[0].symbol}
-              price={tokenPrices[pool.liquidity[0].contractId]}
-              decimals={pool.liquidity[0].decimals}
-              required={amounts.token0Amount}
+              price={tokenPrices[vault.contractId]}
+              amount={amount / 10 ** vault.decimals}
+              symbol={vault.symbol}
+              imgSrc={vault.image}
+              label="You will receive"
+              decimals={vault.decimals}
+              isLoading={isQuoting}
             />
           </div>
 
           <div className="space-y-4">
             <TokenDisplay
-              amount={amounts.token1Amount / 10 ** pool.liquidity[1].decimals}
+              amount={quotedAmounts.token0Amount / 10 ** pool.liquidity[0].decimals}
+              symbol={pool.liquidity[0].symbol}
+              imgSrc={pool.liquidity[0].image}
+              price={tokenPrices[pool.liquidity[0].contractId]}
+              label="You will deposit"
+              decimals={pool.liquidity[0].decimals}
+              isLoading={isQuoting}
+            />
+          </div>
+
+          <div className="space-y-4">
+            <TokenDisplay
+              amount={quotedAmounts.token1Amount / 10 ** pool.liquidity[1].decimals}
               symbol={pool.liquidity[1].symbol}
               imgSrc={pool.liquidity[1].image}
               price={tokenPrices[pool.liquidity[1].contractId]}
               label="You will deposit"
-            />
-            <BalanceInfo
-              balance={getBalance(pool.liquidity[1].contractId) || 0}
-              symbol={pool.liquidity[1].symbol}
-              price={tokenPrices[pool.liquidity[1].contractId]}
               decimals={pool.liquidity[1].decimals}
-              required={amounts.token1Amount}
+              isLoading={isQuoting}
             />
           </div>
 
@@ -167,19 +145,57 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
 
             <Slider
               value={[amount]}
-              onValueChange={([val]) => setAmount(val)}
+              onValueChange={async ([val]) => {
+                setAmount(val);
+                debouncedFetchQuote(val);
+              }}
               max={maxAmount}
               step={0.001}
             />
-
-            <Button
-              className="w-full"
-              onClick={() => onAddLiquidity(pool, amounts.lpTokens)}
-              disabled={isMaxed}
-            >
-              Add Liquidity
-            </Button>
           </div>
+
+          <div className="space-y-4 border-t pt-4">
+            <BalanceInfo
+              balance={getBalance(pool.liquidity[0].contractId) || 0}
+              symbol={pool.liquidity[0].symbol}
+              price={tokenPrices[pool.liquidity[0].contractId]}
+              decimals={pool.liquidity[0].decimals}
+              required={quotedAmounts.token0Amount}
+            />
+            <BalanceInfo
+              balance={getBalance(pool.liquidity[1].contractId) || 0}
+              symbol={pool.liquidity[1].symbol}
+              price={tokenPrices[pool.liquidity[1].contractId]}
+              decimals={pool.liquidity[1].decimals}
+              required={quotedAmounts.token1Amount}
+            />
+          </div>
+
+          <Button
+            className="w-full"
+            onClick={async () => {
+              setIsProcessing(true);
+              try {
+                await onAddLiquidity(pool, quotedAmounts.lpTokens);
+              } finally {
+                setIsProcessing(false);
+              }
+            }}
+            disabled={isMaxed || isProcessing}
+          >
+            {isProcessing ? (
+              <div className="flex items-center justify-center">
+                <div className="mr-2">Processing</div>
+                <div className="flex space-x-1">
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
+                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
+                </div>
+              </div>
+            ) : (
+              'Add Liquidity'
+            )}
+          </Button>
         </div>
       </DialogContent>
     </Dialog>

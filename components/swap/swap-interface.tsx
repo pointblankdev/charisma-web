@@ -324,7 +324,6 @@ export const SwapInterface = ({
     try {
       setIsSwapping(true);
       const amount = Number(fromAmount) * 10 ** fromToken.decimals;
-      console.log(lastQuote);
       await Dexterity.router.executeSwap(lastQuote.route, amount);
     } catch (error) {
       console.error('Swap failed:', error);

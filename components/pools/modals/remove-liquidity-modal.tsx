@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useCallback } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -11,119 +11,66 @@ import { Slider } from '@components/ui/slider';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@components/ui/alert';
 import useWallet from '@lib/hooks/wallet-balance-provider';
-import numeral from 'numeral';
-
-interface TokenDisplayProps {
-  amount: number;
-  symbol: string;
-  imgSrc?: string;
-  label: string;
-  rounded?: boolean;
-  price: number;
-}
-
-export const TokenDisplay: React.FC<TokenDisplayProps> = ({
-  amount,
-  symbol,
-  imgSrc,
-  label,
-  price
-}) => {
-  const usdValue = amount * price;
-
-  return (
-    <div className="flex items-center justify-between p-4 border rounded-lg border-border">
-      <div className="flex items-center space-x-3">
-        <img src={imgSrc} alt={symbol} className="w-8 h-8 rounded-full" />
-        <div>
-          <div className="text-sm text-muted-foreground">{label}</div>
-          <div className="text-lg font-medium">
-            {numeral(amount).format('0,0.0000')} {symbol}
-          </div>
-        </div>
-      </div>
-      <div className="text-right text-muted-foreground">
-        ≈ ${numeral(usdValue).format('0,0.00')}
-      </div>
-    </div>
-  );
-};
-
-interface BalanceInfoProps {
-  balance: number;
-  symbol: string;
-  price: number;
-  decimals: number;
-  required?: number;
-}
-
-export const BalanceInfo: React.FC<BalanceInfoProps> = ({
-  balance,
-  symbol,
-  price,
-  decimals,
-  required
-}) => {
-  const formattedBalance = balance / 10 ** decimals;
-
-  return (
-    <div className="flex flex-col space-y-1">
-      <div className="flex justify-between text-sm text-muted-foreground">
-        <span>
-          Balance: {numeral(formattedBalance).format('0,0.00')} {symbol}
-        </span>
-        <span>${numeral(formattedBalance * price).format('0,0.00')}</span>
-      </div>
-    </div>
-  );
-};
+import { TokenDisplay, BalanceInfo } from '../shared/token-display';
+import { Vault } from 'dexterity-sdk/dist/core/vault';
+import { Opcode } from 'dexterity-sdk/dist/core/opcode';
+import debounce from 'lodash/debounce';
 
 export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, trigger }: { pool: any, tokenPrices: any, onRemoveLiquidity: any, trigger: any }) => {
   const [amount, setAmount] = useState(50);
+  const [isQuoting, setIsQuoting] = useState(false);
   const { getBalance } = useWallet();
+  const vault = useMemo(() => new Vault(pool), [pool]);
 
   const maxAmount = useMemo(() => {
     const lpBalance = getBalance(pool.contractId) || 0;
-    const token0ReservesTVL =
-      (pool.liquidity[0].reserves * tokenPrices[pool.liquidity[0].contractId]) /
-      10 ** pool.liquidity[0].decimals;
-    const token1ReservesTVL =
-      (pool.liquidity[1].reserves * tokenPrices[pool.liquidity[1].contractId]) /
-      10 ** pool.liquidity[1].decimals;
-    const lpTokenPrice =
-      (token0ReservesTVL + token1ReservesTVL) /
-      (pool.supply / 10 ** pool.decimals);
+    return lpBalance;
+  }, [pool, getBalance]);
 
-    return (lpBalance / 10 ** pool.decimals) * lpTokenPrice;
-  }, [pool, tokenPrices, getBalance]);
+  const debouncedFetchQuote = useCallback(
+    debounce(async (newAmount: number) => {
+      setIsQuoting(true);
+      const lpTokens = Math.floor(Math.min(newAmount, maxAmount));
 
-  const amounts = useMemo(() => {
-    const baseAmount = Math.min(amount, maxAmount);
+      try {
+        const quote = await vault.quote(lpTokens, Opcode.removeLiquidity());
+        if (quote instanceof Error) {
+          setAmounts({
+            lpTokens: 0,
+            token0Amount: 0,
+            token1Amount: 0
+          });
+          return;
+        }
 
-    const ratio = pool.liquidity[1].reserves / pool.liquidity[0].reserves;
-    const token0USD = baseAmount / (1 + ratio);
-    const token1USD = baseAmount - token0USD;
+        setAmounts({
+          lpTokens,
+          token0Amount: quote.amountIn,
+          token1Amount: quote.amountOut
+        });
+      } catch (error) {
+        console.error('Error fetching quote:', error);
+        setAmounts({
+          lpTokens: 0,
+          token0Amount: 0,
+          token1Amount: 0
+        });
+      } finally {
+        setIsQuoting(false);
+      }
+    }, 50),
+    [maxAmount, vault]
+  );
 
-    const token0Price = tokenPrices[pool.liquidity[0].contractId];
-    const token1Price = tokenPrices[pool.liquidity[1].contractId];
-
-    const token0ReservesTVL =
-      (pool.liquidity[0].reserves * token0Price) / 10 ** pool.liquidity[0].decimals;
-    const token1ReservesTVL =
-      (pool.liquidity[1].reserves * token1Price) / 10 ** pool.liquidity[1].decimals;
-
-    const lpTokenPrice =
-      (token0ReservesTVL + token1ReservesTVL) /
-      (pool.supply / 10 ** pool.decimals);
-
-    return {
-      lpTokens: (baseAmount / lpTokenPrice) * 10 ** pool.decimals,
-      token0Amount: (token0USD / token0Price) * 10 ** pool.liquidity[0].decimals,
-      token1Amount: (token1USD / token1Price) * 10 ** pool.liquidity[1].decimals
-    };
-  }, [amount, maxAmount, pool, tokenPrices]);
+  const [amounts, setAmounts] = useState({
+    lpTokens: 0,
+    token0Amount: 0,
+    token1Amount: 0
+  });
 
   const isMaxed = amount > maxAmount;
+
+  const [isProcessing, setIsProcessing] = useState(false);
 
   return (
     <Dialog>
@@ -133,29 +80,37 @@ export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, tri
           <DialogTitle>Remove Liquidity</DialogTitle>
         </DialogHeader>
         <div className="space-y-6">
-          {/* <div className="space-y-4">
+          <div className="space-y-4">
             <TokenDisplay
               amount={amounts.token0Amount / 10 ** pool.liquidity[0].decimals}
               symbol={pool.liquidity[0].symbol}
               imgSrc={pool.liquidity[0].image}
+              price={tokenPrices[pool.liquidity[0].contractId]}
               label="You will receive"
+              decimals={pool.liquidity[0].decimals}
+              isLoading={isQuoting}
             />
             <TokenDisplay
               amount={amounts.token1Amount / 10 ** pool.liquidity[1].decimals}
               symbol={pool.liquidity[1].symbol}
               imgSrc={pool.liquidity[1].image}
+              price={tokenPrices[pool.liquidity[1].contractId]}
               label="You will receive"
+              decimals={pool.liquidity[1].decimals}
+              isLoading={isQuoting}
             />
-          </div> */}
+          </div>
 
-          <div className="space-y-4">
+          <div className="space-y-4 relative">
+            <div className="animate-pulse-glow absolute -translate-y-4 inset-0 bg-gradient-to-r from-destructive/15 via-destructive/20 to-destructive/15 blur-xl rounded-lg" />
             <TokenDisplay
-              amount={amounts.lpTokens / 10 ** pool.decimals}
+              amount={amount / 10 ** pool.decimals}
               symbol={pool.symbol}
               imgSrc={pool.image}
               price={tokenPrices[pool.contractId]}
               label="You will burn"
-              rounded={false}
+              decimals={pool.decimals}
+              isLoading={isQuoting}
             />
             <BalanceInfo
               balance={getBalance(pool.contractId) || 0}
@@ -176,17 +131,38 @@ export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, tri
 
             <Slider
               value={[amount]}
-              onValueChange={([val]) => setAmount(val)}
+              onValueChange={async ([val]) => {
+                setAmount(val);
+                debouncedFetchQuote(val);
+              }}
               max={maxAmount}
               step={0.001}
             />
 
             <Button
               className="w-full"
-              onClick={() => onRemoveLiquidity(pool, amounts.lpTokens)}
-              disabled={isMaxed}
+              onClick={async () => {
+                setIsProcessing(true);
+                try {
+                  await onRemoveLiquidity(pool, amounts.lpTokens);
+                } finally {
+                  setIsProcessing(false);
+                }
+              }}
+              disabled={isMaxed || isProcessing}
             >
-              Remove Liquidity
+              {isProcessing ? (
+                <div className="flex items-center justify-center">
+                  <div className="mr-2">Processing</div>
+                  <div className="flex space-x-1">
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
+                    <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
+                  </div>
+                </div>
+              ) : (
+                'Remove Liquidity'
+              )}
             </Button>
           </div>
         </div>
