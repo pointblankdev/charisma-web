@@ -20,9 +20,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     // Verify the request is from Vercel Cron
-    if (process.env.VERCEL_ENV === 'production' && !req.headers['x-vercel-cron']) {
-        return res.status(401).json({ error: 'Unauthorized' });
-    }
+    // if (process.env.VERCEL_ENV === 'production' && !req.headers['x-vercel-cron']) {
+    //     return res.status(401).json({ error: 'Unauthorized' });
+    // }
 
     console.log('Dexterity Balancer Cron Job Running')
 
