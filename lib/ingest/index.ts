@@ -74,7 +74,7 @@ export const balancer = inngest.createFunction(
                     data: {
                         from: token.contractId,
                         to: token.contractId,
-                        amount: 10 ** token.decimals / prices[token.contractId]
+                        amount: Math.floor(10 ** token.decimals / prices[token.contractId])
                     }
                 }
             ))
