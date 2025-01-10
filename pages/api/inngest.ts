@@ -11,11 +11,11 @@ const blacklist = [
     'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.stx-lp-token',
 ] as ContractId[];
 
-export const balancer = inngest.createFunction(
-    { id: "balancer" },
-    { event: "balancer" },
+export const swap = inngest.createFunction(
+    { id: "swap" },
+    { event: "swap" },
     async ({ event, step }) => {
-        console.log('Dexterity Balancer Cron Job Running')
+        console.log('Dexterity Swap Execution')
 
         // Initialize Dexterity SDK
         await Dexterity.configure({
@@ -37,6 +37,6 @@ export const balancer = inngest.createFunction(
 export default serve({
     client: inngest,
     functions: [
-        balancer, // <-- This is where you'll always add your new functions
+        swap, // <-- This is where you'll always add your new functions
     ],
 });
