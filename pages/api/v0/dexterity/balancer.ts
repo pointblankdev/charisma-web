@@ -23,7 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // Initialize Dexterity SDK
         await Dexterity.configure({
             apiKeyRotation: 'loop',
-            parallelRequests: 16,
+            parallelRequests: 10,
             debug: true,
             maxHops: 5
         })
