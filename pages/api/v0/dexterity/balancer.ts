@@ -11,7 +11,7 @@ const blacklist = [
 ] as ContractId[];
 
 // Initialize Dexterity SDK
-Dexterity.configure({ apiKeyRotation: 'loop', maxHops: 7 }).catch(console.error);
+Dexterity.configure({ apiKeyRotation: 'loop', maxHops: 5 }).catch(console.error);
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     // Only allow GET requests from Vercel cron
