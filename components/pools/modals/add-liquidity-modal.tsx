@@ -99,7 +99,7 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
         </DialogHeader>
         <div className="space-y-6">
           <div className="space-y-4 relative">
-            <div className="animate-pulse-glow absolute inset-0 bg-gradient-to-r from-primary/20 via-primary/40 to-primary/20 blur-xl rounded-lg" />
+            <div className="animate-pulse-glow absolute inset-0 bg-gradient-to-r from-yellow-500/20 via-yellow-500/35 to-yellow-500/20 blur-xl rounded-lg" />
             <TokenDisplay
               price={tokenPrices[vault.contractId]}
               amount={amount / 10 ** vault.decimals}
