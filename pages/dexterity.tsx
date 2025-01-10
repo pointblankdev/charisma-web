@@ -193,7 +193,7 @@ export default function ContractDeployer({ prices }: Props) {
       // Build the enhanced prompt
       let enhancedPrompt = formValues.imagePrompt;
       if (formValues.isCharismafied) {
-        enhancedPrompt += ". intense manga art style with bold lines and deep contracts";
+        enhancedPrompt += ". intense manga art style with bold lines and deep contrast";
       }
       if (formValues.isLimitedPalette) {
         enhancedPrompt += ". Use a limited color palette with maximum 2-3 colors";

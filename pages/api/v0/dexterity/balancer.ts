@@ -1,8 +1,12 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { inngest } from '@lib/ingest';
 import { ContractId } from 'dexterity-sdk';
 import { Dexterity } from 'dexterity-sdk';
 import PricesService from '@lib/server/prices/prices-service';
+
+// Opt out of caching; every request should send a new event
+export const dynamic = "force-dynamic";
+
+const kraxel = PricesService.getInstance();
 
 const blacklist = [
     'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',
@@ -25,21 +29,43 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await Dexterity.configure({
             apiKeyRotation: 'loop',
             parallelRequests: 10,
-            maxHops: 4
+            maxHops: 5
         })
 
-        const prices = await PricesService.getInstance().getAllTokenPrices();
-        await Dexterity.discover({ blacklist })
+        const prices = await kraxel.getAllTokenPrices();
+        await Dexterity.discover({ blacklist, reserves: false })
 
         const tokens = Dexterity.getTokens()
         const txs = []
+        const fee = 1000
         for (const token of tokens) {
-            if (Dexterity.getVaultsForToken(token.contractId).size <= 1) continue
+            const vaults = Dexterity.getVaultsForToken(token.contractId)
+            if (vaults.size <= 1) {
+                txs.push({ token: token.symbol, msg: "less than 2 vaults" })
+                continue
+            }
+
             const amount = Math.floor(10 ** token.decimals / prices[token.contractId])
             const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
-            if (!quote.route.hops.length) continue
-            const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee: 1000 }) as any
-            txs.push(tx)
+
+            // Check if the quote is profitable including the fee in uSTX with prices
+            const feeInUSD = fee / 10 ** token.decimals * prices['.stx']
+            // amount out and in are in token units, convert to USD with decimals
+            const grossProfit = quote.amountOut / 10 ** token.decimals * prices[token.contractId] - feeInUSD
+            const netProfit = grossProfit - quote.amountIn / 10 ** token.decimals * prices[token.contractId]
+
+            if (netProfit < 0) {
+                txs.push({ token: token.symbol, msg: "not profitable", grossProfit, netProfit })
+                continue
+            }
+
+            if (!quote.route.hops.length) {
+                txs.push({ token: token.symbol, msg: "no routes found" })
+                continue
+            }
+
+            const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee }) as any
+            txs.push({ tx, grossProfit, netProfit })
         }
         return res.status(200).json({ txs });
 
