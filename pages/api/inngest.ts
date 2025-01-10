@@ -11,9 +11,9 @@ const blacklist = [
     'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.stx-lp-token',
 ] as ContractId[];
 
-export const helloWorld = inngest.createFunction(
-    { id: "balancer-stx" },
-    { event: "balancer/stx" },
+export const balancer = inngest.createFunction(
+    { id: "balancer" },
+    { event: "balancer" },
     async ({ event, step }) => {
         console.log('Dexterity Balancer Cron Job Running')
         // Initialize Dexterity SDK
@@ -34,6 +34,6 @@ export const helloWorld = inngest.createFunction(
 export default serve({
     client: inngest,
     functions: [
-        helloWorld, // <-- This is where you'll always add your new functions
+        balancer, // <-- This is where you'll always add your new functions
     ],
 });
