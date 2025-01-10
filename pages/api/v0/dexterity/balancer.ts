@@ -11,32 +11,32 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         console.log('Dexterity Balancer Cron Job Running')
 
-        await inngest.send({
-            name: "swap",
-            data: {
-                from: ".stx",
-                to: '.stx',
-                amount: 1000000
-            },
-        });
+        // await inngest.send({
+        //     name: "swap",
+        //     data: {
+        //         from: ".stx",
+        //         to: '.stx',
+        //         amount: 1000000
+        //     },
+        // });
 
-        await inngest.send({
-            name: "swap",
-            data: {
-                from: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
-                to: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
-                amount: 1000000
-            },
-        });
+        // await inngest.send({
+        //     name: "swap",
+        //     data: {
+        //         from: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
+        //         to: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
+        //         amount: 1000000
+        //     },
+        // });
 
-        await inngest.send({
-            name: "swap",
-            data: {
-                from: "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
-                to: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
-                amount: 1000000
-            },
-        });
+        // await inngest.send({
+        //     name: "swap",
+        //     data: {
+        //         from: "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
+        //         to: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
+        //         amount: 1000000
+        //     },
+        // });
 
         await inngest.send({
             name: "swap",
