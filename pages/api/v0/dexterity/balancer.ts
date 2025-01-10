@@ -12,7 +12,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         console.log('Dexterity Balancer Cron Job Running')
 
         await inngest.send({
-            name: "balancer/stx",
+            name: "balancer",
             data: {
                 from: ".stx",
                 to: '.stx',
@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         await inngest.send({
-            name: "balancer/cha",
+            name: "balancer",
             data: {
                 from: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token",
                 to: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
@@ -30,10 +30,19 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         await inngest.send({
-            name: "balancer/welsh",
+            name: "balancer",
             data: {
                 from: "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token",
                 to: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
+                amount: 1000000
+            },
+        });
+
+        await inngest.send({
+            name: "balancer",
+            data: {
+                from: ".stx",
+                to: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
                 amount: 1000000
             },
         });

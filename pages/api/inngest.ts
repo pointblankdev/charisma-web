@@ -21,7 +21,7 @@ export const balancer = inngest.createFunction(
         await Dexterity.configure({
             apiKeyRotation: 'loop',
             parallelRequests: 10,
-            maxHops: 3
+            maxHops: 4
         })
 
         await Dexterity.discover({ blacklist });
