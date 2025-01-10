@@ -6,7 +6,7 @@
         },
         {
             "path": "/api/v0/dexterity/balancer",
-            "schedule": "*/2 * * * *"
+            "schedule": "*/5 * * * *"
         }
     ]
 }
