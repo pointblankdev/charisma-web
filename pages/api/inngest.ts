@@ -16,15 +16,18 @@ export const balancer = inngest.createFunction(
     { event: "balancer" },
     async ({ event, step }) => {
         console.log('Dexterity Balancer Cron Job Running')
+
         // Initialize Dexterity SDK
         await Dexterity.configure({
             apiKeyRotation: 'loop',
             parallelRequests: 10,
             maxHops: 3
         })
+
         await Dexterity.discover({ blacklist });
-        console.log(event.data)
+
         const tx = await Dexterity.executeSwap(event.data.from, event.data.to, event.data.amount, { fee: 1000 }) as any
+
         if (tx.error) throw new Error(tx.error)
         return { tx }
     },
