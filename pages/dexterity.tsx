@@ -32,9 +32,10 @@ interface FormValues {
   initialLiquidityB: number;
   imagePrompt: string;
   customImage?: File;
-  isCharismafied: boolean;
+  isRozarStyle: boolean;
+  isMooningSharkStyle: boolean;
   isLimitedPalette: boolean;
-  isPixelated: boolean;
+  isVinzoStyle: boolean;
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
@@ -70,9 +71,10 @@ export default function ContractDeployer({ prices }: Props) {
       initialLiquidityA: 1000000,
       initialLiquidityB: 1000000,
       imagePrompt: 'Minimalist, professional logo combining geometric shapes and clean lines',
-      isCharismafied: false,
+      isRozarStyle: false,
+      isMooningSharkStyle: false,
+      isVinzoStyle: false,
       isLimitedPalette: true,
-      isPixelated: false
     }
   });
 
@@ -192,16 +194,16 @@ export default function ContractDeployer({ prices }: Props) {
 
       // Build the enhanced prompt
       let enhancedPrompt = formValues.imagePrompt;
-      if (formValues.isCharismafied) {
+      if (formValues.isLimitedPalette) {
+        enhancedPrompt += ". Use a limited color palette with maximum 2-3 colors";
+      }
+      if (formValues.isRozarStyle) {
         enhancedPrompt += ". intense manga art style with bold lines and deep contrast";
       }
       if (formValues.isMooningSharkStyle) {
         enhancedPrompt += ". electric ocean waves, metal band album cover style, minimalist art logo for a token, bold lines";
       }
-      if (formValues.isLimitedPalette) {
-        enhancedPrompt += ". Use a limited color palette with maximum 2-3 colors";
-      }
-      if (formValues.isPixelated) {
+      if (formValues.isVinzoStyle) {
         enhancedPrompt += ". Create in pixel art style with visible pixels and limited resolution";
       }
 
