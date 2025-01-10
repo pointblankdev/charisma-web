@@ -58,10 +58,12 @@ export const swapper = inngest.createFunction(
         let quote: any, tx: any
         await step.run(`get quote ${from} to ${to}`, async () => {
             quote = await dex.getQuote(event.data.from, event.data.to, event.data.amount)
+            return { quote }
         })
         if (!quote?.route?.hops?.length) return { quote }
         await step.run(`swap ${from} to ${to}`, async () => {
             tx = await dex.router.executeSwap(quote.route, event.data.amount, { fee: 1000 }) as any
+            return { tx }
         })
         return { quote, tx }
     },
