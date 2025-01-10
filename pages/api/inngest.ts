@@ -1,12 +1,32 @@
 import { inngest } from "@lib/ingest";
+import { ContractId, Dexterity } from "dexterity-sdk";
 import { serve } from "inngest/next";
 
+// Reference to existing Dexterity configuration from:
+const blacklist = [
+    'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',
+    'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-runes',
+    'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.uahdmg',
+    'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-lp-token',
+    'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.stx-lp-token',
+] as ContractId[];
+
 export const helloWorld = inngest.createFunction(
-    { id: "hello-world" },
-    { event: "test/hello.world" },
+    { id: "balancer-stx" },
+    { event: "balancer/stx" },
     async ({ event, step }) => {
-        await step.sleep("wait-a-moment", "1s");
-        return { message: `Hello ${event.data.email}!` };
+        console.log('Dexterity Balancer Cron Job Running')
+        // Initialize Dexterity SDK
+        await Dexterity.configure({
+            apiKeyRotation: 'loop',
+            parallelRequests: 10,
+            maxHops: 3
+        })
+        await Dexterity.discover({ blacklist });
+        console.log(event.data)
+        const tx = await Dexterity.executeSwap(event.data.from, event.data.to, event.data.amount, { fee: 1000 }) as any
+        if (tx.error) throw new Error(tx.error)
+        return { tx }
     },
 );
 
