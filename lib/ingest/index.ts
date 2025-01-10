@@ -18,7 +18,7 @@ const dexterityMiddleware = new InngestMiddleware({
         await Dexterity.configure({
             apiKeyRotation: 'loop',
             parallelRequests: 10,
-            maxHops: 6
+            maxHops: 4
         })
 
 
