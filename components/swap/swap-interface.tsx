@@ -5,9 +5,8 @@ import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import useWallet from '@lib/hooks/wallet-balance-provider';
 import { useGlobalState } from '@lib/hooks/global-state-context';
-import { useConnect } from '@stacks/connect-react';
 import dynamic from 'next/dynamic';
-import { Dexterity, LPToken, Token } from 'dexterity-sdk';
+import { Dexterity, LPToken, Quote, Token } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { SwapGraphVisualizer } from './swap-graph-visualizer';
 import _ from 'lodash';
@@ -212,7 +211,6 @@ export const SwapInterface = ({
   const [isCalculating, setIsCalculating] = useState(false);
   const [slippage, setSlippage] = useState(0);
   const [swapPath, setSwapPath] = useState<any[]>([]);
-  const { doContractCall } = useConnect();
   const { stxAddress } = useGlobalState();
   const { getBalance, wallet } = useWallet();
   const estimateTimer = useRef<NodeJS.Timeout>();
@@ -220,6 +218,7 @@ export const SwapInterface = ({
   const [showGraph, setShowGraph] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
   const [maxHops, setMaxHops] = useState(4);
+  const [lastQuote, setLastQuote] = useState<any>(null as Quote | null);
 
   useEffect(() => {
     Dexterity.configure({ maxHops }).catch(console.error);
@@ -280,6 +279,7 @@ export const SwapInterface = ({
           .then(quote => {
             const amountOut = quote.amountOut;
             setSwapPath(quote.route.path || []);
+            setLastQuote(quote);
             setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
           })
           .catch(error => {
@@ -323,13 +323,9 @@ export const SwapInterface = ({
 
     try {
       setIsSwapping(true);
-      const transaction = await Dexterity.buildSwap(
-        fromToken.contractId,
-        toToken.contractId,
-        Number(fromAmount) * 10 ** fromToken.decimals
-      );
-
-      await doContractCall(transaction);
+      const amount = Number(fromAmount) * 10 ** fromToken.decimals;
+      console.log(lastQuote);
+      await Dexterity.router.executeSwap(lastQuote.route, amount);
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {

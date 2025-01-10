@@ -13,7 +13,7 @@ import { Input } from '@components/ui/input';
 import { Alert, AlertDescription } from '@components/ui/alert';
 import { Loader2, Sparkles } from 'lucide-react';
 import Image from 'next/image';
-import { openContractCall } from '@stacks/connect-react';
+// import { openContractCall } from '@stacks/connect-react';
 import { network } from '@components/stacks-session/connect';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { contractPrincipalCV, uintCV } from '@stacks/transactions';
@@ -75,20 +75,20 @@ export default function ListNFTDialog({
       // Start the listing - this will gray out the NFT
       onListingStart();
 
-      await openContractCall({
-        network,
-        contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-        contractName: 'marketplace-v6',
-        functionName: 'list-asset',
-        functionArgs: [
-          contractPrincipalCV(contractAddress, contractName),
-          uintCV(parseInt(item.id)),
-          uintCV(parseFloat(price) * 1_000_000),
-          uintCV(250)
-        ],
-        postConditionMode: PostConditionMode.Allow,
-        postConditions: []
-      });
+      // await openContractCall({
+      //   network,
+      //   contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+      //   contractName: 'marketplace-v6',
+      //   functionName: 'list-asset',
+      //   functionArgs: [
+      //     contractPrincipalCV(contractAddress, contractName),
+      //     uintCV(parseInt(item.id)),
+      //     uintCV(parseFloat(price) * 1_000_000),
+      //     uintCV(250)
+      //   ],
+      //   postConditionMode: PostConditionMode.Allow,
+      //   postConditions: []
+      // });
 
       // Clear the backend cache
       await clearBackendCache();

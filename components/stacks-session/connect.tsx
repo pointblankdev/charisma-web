@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { AppConfig, showConnect, UserSession } from '@stacks/connect-react';
+import type { AppConfig, UserSession } from '@stacks/connect-react';
 import { cn } from '@lib/utils';
 import { Button } from '@components/ui/button';
 import { useGlobalState } from '@lib/hooks/global-state-context';
@@ -7,9 +7,16 @@ import * as Sentry from '@sentry/browser';
 import { getNamesFromAddress } from '@lib/stacks-api';
 import { STACKS_MAINNET } from '@stacks/network';
 
-export const appConfig = new AppConfig(['store_write', 'publish_data']);
+export let appConfig: AppConfig;
+export let userSession: UserSession;
 
-export const userSession = new UserSession({ appConfig });
+const initializeStacks = async () => {
+  const { AppConfig, UserSession } = await import('@stacks/connect-react');
+  appConfig = new AppConfig(['store_write', 'publish_data']);
+  userSession = new UserSession({ appConfig });
+};
+
+initializeStacks();
 
 export const appDetails = {
   name: 'Charisma',
@@ -18,7 +25,8 @@ export const appDetails = {
 
 export const network = STACKS_MAINNET;
 
-export function authenticate() {
+export async function authenticate() {
+  const { showConnect } = await import('@stacks/connect-react');
   showConnect({
     appDetails,
     onFinish: async e => {

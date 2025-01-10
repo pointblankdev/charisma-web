@@ -1,10 +1,10 @@
 import { network } from '@components/stacks-session/connect';
-import { useConnect } from '@stacks/connect-react';
+// import { useConnect } from '@stacks/connect-react';
 import { PostConditionMode } from '@stacks/transactions';
 import { useGlobalState } from './global-state-context';
 
 export function useContractDeployment() {
-  const { doContractDeploy } = useConnect();
+  // const { doContractDeploy } = useConnect();
   const { stxAddress } = useGlobalState();
 
   const deployContract = async (args: {
@@ -19,15 +19,15 @@ export function useContractDeployment() {
       return;
     }
 
-    doContractDeploy({
-      network,
-      contractName,
-      codeBody,
-      clarityVersion: 3,
-      postConditionMode: PostConditionMode.Deny,
-      postConditions,
-      onFinish: (result: any) => console.log('Contract deployed:', result)
-    });
+    // doContractDeploy({
+    //   network,
+    //   contractName,
+    //   codeBody,
+    //   clarityVersion: 3,
+    //   postConditionMode: PostConditionMode.Deny,
+    //   postConditions,
+    //   onFinish: (result: any) => console.log('Contract deployed:', result)
+    // });
 
     // Then update the metadata
     const fullContractName = `${stxAddress}.${contractName}`;

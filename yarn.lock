@@ -5913,10 +5913,10 @@ detect-node-es@^1.1.0:
   resolved "https://registry.yarnpkg.com/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-dexterity-sdk@^0.4.13:
-  version "0.4.13"
-  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.4.13.tgz#27de0d4fafe2df7b632710a067d91f6cdb960ece"
-  integrity sha512-Z/ltxBfQSCqB9LKfdtbROKP75traiTCX1kgKKQVRKMtGNQeyfulxW5vJbRoze/BG9xg4U3sTRQIPr3Tdc+iGBw==
+dexterity-sdk@^0.4.14:
+  version "0.4.14"
+  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.4.14.tgz#8914bdd29e7fac41b5e4b743663f0b271d9a4550"
+  integrity sha512-fFdVuqu4TjZCbzbMicFlqcFr9I69pJ3l/uG2nNXwytcZ2YxZ2Xd8kAET9miy4gdQsvj0U85f41xQHXI6xbogiQ==
   dependencies:
     "@stacks/blockchain-api-client" "8.4.0"
     "@stacks/common" "7.0.2"

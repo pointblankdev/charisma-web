@@ -16,7 +16,7 @@ import {
   UsersIcon,
   UsersRound,
   WavesIcon,
-  Vault
+  Lock,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
@@ -33,22 +33,15 @@ import { Button } from '@components/ui/button';
 import { useRouter } from 'next/router';
 import { AddLiquidityModal } from './modals/add-liquidity-modal';
 import { RemoveLiquidityModal } from './modals/remove-liquidity-modal';
-import { useConnect } from '@stacks/connect-react';
-import { useGlobalState } from '@lib/hooks/global-state-context';
-import { network } from '@components/stacks-session/connect';
-import {
-  bufferCV,
-  cvToValue,
-  fetchCallReadOnlyFunction,
-  optionalCVOf,
-  Pc,
-  PostConditionMode,
-  uintCV
-} from '@stacks/transactions';
-import { hexToBytes } from '@stacks/common';
 import numeral from 'numeral';
 import { cn } from '@lib/utils';
 import { LPToken } from 'dexterity-sdk';
+import dynamic from 'next/dynamic';
+import { Vault } from 'dexterity-sdk/dist/core/vault';
+import { Opcode } from 'dexterity-sdk/dist/core/opcode';
+
+const StacksConnect = dynamic(() => import('@stacks/connect-react') as any, { ssr: false });
+console.log(StacksConnect)
 
 const VERIFIED_ADDRESSES: Record<string, string> = {
   SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS: 'rozar.btc',
@@ -278,98 +271,26 @@ const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
 
 const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const router = useRouter();
-  const { doContractCall } = useConnect();
-  const { stxAddress } = useGlobalState();
-
-  // Helper function to create post condition based on token type
-  const createPostCondition = (token: any, amount: number, sender = stxAddress) => {
-    if (token.contractId === '.stx') {
-      return Pc.principal(sender).willSendEq(amount).ustx();
-    } else {
-      return Pc.principal(sender).willSendEq(amount).ft(token.contractId, token.identifier);
-    }
-  };
-
-  // Helper function to get quote for transaction
-  const getQuote = async (pool: any, amount: number, operationType: '02' | '03') => {
-    const response = await fetchCallReadOnlyFunction({
-      contractAddress: pool.contractId.split('.')[0],
-      contractName: pool.contractId.split('.')[1],
-      functionName: 'quote',
-      functionArgs: [uintCV(amount), optionalCVOf(bufferCV(hexToBytes(operationType)))],
-      senderAddress: stxAddress
-    });
-    return cvToValue(response).value;
-  };
-
-  // Helper function to execute contract call
-  const executePoolOperation = ({
-    pool,
-    amount,
-    operationType,
-    postConditions,
-    operationName
-  }: {
-    pool: any;
-    amount: number;
-    operationType: '02' | '03';
-    postConditions: any[];
-    operationName: string;
-  }) => {
-    doContractCall({
-      network: network,
-      contractAddress: pool.contractId.split('.')[0],
-      contractName: pool.contractId.split('.')[1],
-      functionName: 'execute',
-      postConditionMode: PostConditionMode.Deny,
-      postConditions,
-      functionArgs: [uintCV(amount), optionalCVOf(bufferCV(hexToBytes(operationType)))],
-      onFinish: data => {
-        console.log(`${operationName} transaction successful`, data);
-      },
-      onCancel: () => {
-        console.log(`${operationName} transaction cancelled`);
-      }
-    });
-  };
 
   const handleRemoveLiquidityClick = async (pool: any, amount: number) => {
     const amountIn = Math.floor(amount);
-    const quote = await getQuote(pool, amountIn, '03');
-
-    // Create post conditions for the tokens being received and the LP token being burned
-    const postConditions = [
-      createPostCondition(pool, amountIn), // LP token
-      createPostCondition(pool.liquidity[0], quote.dx.value, pool.contractId),
-      createPostCondition(pool.liquidity[1], quote.dy.value, pool.contractId)
-    ];
-
-    executePoolOperation({
-      pool,
-      amount: amountIn,
-      operationType: '03',
-      postConditions,
-      operationName: 'Remove liquidity'
-    });
+    const vault = await Vault.build(pool.contractId) as Vault
+    await vault.executeTransaction(
+      Opcode.removeLiquidity(),
+      amountIn,
+      {}
+    )
   };
 
   const handleAddLiquidityClick = async (pool: any, amount: number) => {
     const amountIn = Math.floor(amount);
-    const quote = await getQuote(pool, amountIn, '02');
+    const vault = await Vault.build(pool.contractId) as Vault
 
-    // Create post conditions for both tokens being added
-    const postConditions = [
-      createPostCondition(pool.liquidity[0], quote.dx.value),
-      createPostCondition(pool.liquidity[1], quote.dy.value)
-    ];
-
-    executePoolOperation({
-      pool,
-      amount: amountIn,
-      operationType: '02',
-      postConditions,
-      operationName: 'Add liquidity'
-    });
+    await vault.executeTransaction(
+      Opcode.addLiquidity(),
+      amountIn,
+      {}
+    )
   };
 
   return (
@@ -605,7 +526,7 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
                       >
                         <div className="space-y-4 leading-snug">
                           <div className="flex items-center space-x-2">
-                            <Vault className="w-5 h-5 text-blue-400" />
+                            <Lock className="w-5 h-5 text-blue-400" />
                             <p className="text-lg font-semibold">Liquidity Vaults</p>
                           </div>
                           <p className="text-white/80">

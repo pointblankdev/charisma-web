@@ -10,10 +10,6 @@ import Footer from './footer';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import ConnectWallet, { userSession } from '@components/stacks-session/connect';
-import useWallet from '@lib/hooks/wallet-balance-provider';
-import dmgLogo from '@public/dmg-logo.png';
-import redPillFloating from '@public/sip9/pills/red-pill-floating.gif';
-import bluePillFloating from '@public/sip9/pills/blue-pill-floating.gif';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import {
   NavigationMenu,
@@ -23,8 +19,8 @@ import {
   NavigationMenuList,
   NavigationMenuTrigger
 } from '@components/ui/navigation-menu';
-import { ChartBarIcon, LineChartIcon, Sparkles } from 'lucide-react';
-import { GlobalDrawer, useGlobalDrawer } from '@components/global/drawer';
+import { ChartBarIcon, LineChartIcon } from 'lucide-react';
+// import { GlobalDrawer, useGlobalDrawer } from '@components/global/drawer';
 import charisma from '@public/charisma.png';
 
 type Props = {
@@ -60,11 +56,10 @@ ListItem.displayName = 'ListItem';
 export default function Layout({ children, className, hideNav, layoutStyles }: Props) {
   const router = useRouter();
   const activeRoute = router.asPath;
+
   const { stxAddress } = useGlobalState();
+  // const drawer = useGlobalDrawer();
 
-  const drawer = useGlobalDrawer();
-
-  const { wallet } = useWallet();
   const [navigationTabs, setNavigationTabs] = useState([] as any[]);
 
   useEffect(() => {
@@ -172,40 +167,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 'whitespace-nowrap',
                 'sm:relative'
               )}
-              onClick={drawer.open}
+            // onClick={drawer.open}
             >
-              {/* {wallet.experience.balance > 1 && (
-                <div
-                  className="cursor-help"
-                  title={'You have over 1 EXP and have unlocked all swap routes.'}
-                >
-                  ✨
-                </div>
-              )} */}
-              {/* {wallet.redPilled && (
-                <Image
-                  src={redPillFloating}
-                  alt="Red Pill"
-                  width="40"
-                  height="40"
-                  className="cursor-help"
-                  title={
-                    'The Red Pill NFT enables you to wrap your earned rewards into Charisma tokens.'
-                  }
-                />
-              )} */}
-              {/* {wallet.bluePilled && (
-                <Image
-                  src={bluePillFloating}
-                  alt="Blue Pill"
-                  width="40"
-                  height="40"
-                  className="cursor-help"
-                  title={
-                    'The Blue Pill NFT offers your early access to Charisma Recovery token redemptions.'
-                  }
-                />
-              )} */}
               <ConnectWallet />
             </div>
           </header>
@@ -214,7 +177,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />
             <div className={cn(styles.full, className)}>{children}</div>
-            <GlobalDrawer open={drawer.isOpen} onClose={drawer.close} userAddress={stxAddress} />
+            {/* <GlobalDrawer open={drawer.isOpen} onClose={drawer.close} userAddress={stxAddress} /> */}
           </main>
           <Footer />
         </div>

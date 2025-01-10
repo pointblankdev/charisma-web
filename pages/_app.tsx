@@ -13,8 +13,15 @@ import { Toaster } from "@components/ui/toaster"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { WalletBalancesProvider } from '@lib/hooks/wallet-balance-provider';
 import { GlobalStateProvider } from '@lib/hooks/global-state-context';
-import { AuthOptions, Connect } from '@stacks/connect-react';
 import { appDetails, userSession } from '@components/stacks-session/connect';
+import dynamic from 'next/dynamic'
+
+// Create dynamic Connect component with SSR disabled
+const StacksConnect = dynamic(
+  () => import('@stacks/connect-react').then(mod => mod.Connect),
+  { ssr: false }
+);
+
 
 // If loading a variable font, you don't need to specify the font weight
 const font = Ysabeau_Infant({ subsets: ['latin'] })
@@ -24,27 +31,44 @@ export default function App({ Component, pageProps }: AppProps) {
     document.body.classList?.remove('loading');
   }, []);
 
-  const authOptions: AuthOptions = {
+  const authOptions: any = {
     appDetails,
     userSession,
   };
 
   return (
     <OverlayProvider>
-      <Connect authOptions={authOptions}>
-        <GlobalStateProvider>
-          <WalletBalancesProvider>
-            <main className={cn(font.className)}>
-              <Component {...pageProps} />
-            </main>
-            <Toaster />
-            <ResizeHandler />
-            <NProgress />
-            <Analytics />
-            <SpeedInsights />
-          </WalletBalancesProvider>
-        </GlobalStateProvider>
-      </Connect>
+      <>
+        {typeof window !== 'undefined' ? (
+          <StacksConnect authOptions={authOptions}>
+            <GlobalStateProvider>
+              <WalletBalancesProvider>
+                <main className={cn(font.className)}>
+                  <Component {...pageProps} />
+                </main>
+                <Toaster />
+                <ResizeHandler />
+                <NProgress />
+                <Analytics />
+                <SpeedInsights />
+              </WalletBalancesProvider>
+            </GlobalStateProvider>
+          </StacksConnect>
+        ) : (
+          <GlobalStateProvider>
+            <WalletBalancesProvider>
+              <main className={cn(font.className)}>
+                <Component {...pageProps} />
+              </main>
+              <Toaster />
+              <ResizeHandler />
+              <NProgress />
+              <Analytics />
+              <SpeedInsights />
+            </WalletBalancesProvider>
+          </GlobalStateProvider>
+        )}
+      </>
     </OverlayProvider>
   );
 }
