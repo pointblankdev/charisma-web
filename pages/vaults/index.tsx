@@ -14,7 +14,7 @@ export const getStaticProps: GetStaticProps<Props> = async () => {
     const vaults = await Dexterity.discover();
     return {
         props: {
-            vaults: JSON.parse(JSON.stringify(vaults))
+            vaults: vaults.map((vault) => vault.toLPToken && vault.toLPToken())
         },
         revalidate: 60 * 60 // 1 hour
     };

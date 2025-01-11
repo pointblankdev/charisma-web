@@ -28,7 +28,7 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars', {
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars-ii', {
       "name": "A Fistful of Dollars",
       "symbol": "aFOD",
       "description": "Liquidity vault wrapper for the aUSD-USDh trading pair on ALEX",
@@ -64,7 +64,7 @@ describe('dexterity metadata cache', () => {
       },
       "imagePrompt": "A literal Fistful of Dollars, American Western style logo.. Use a limited color palette with maximum 2-3 colors. intense manga art style with bold lines and deep contrast",
       "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars-1736596660371-c6DUc9xPrtYlYJ3W0I0Wxwm5IL0hw0.png",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars",
+      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars-ii",
       "lastUpdated": "2025-01-11T11:57:40.502Z"
     });
   });
