@@ -279,7 +279,7 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
 
   const handleRemoveLiquidityClick = async (pool: any, amount: number) => {
     const amountIn = Math.floor(amount);
-    const vault = await Vault.build(pool.contractId) as Vault
+    const vault = await Vault.build(pool.contractId)
     await vault.executeTransaction(
       Opcode.removeLiquidity(),
       amountIn,
@@ -289,7 +289,7 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
 
   const handleAddLiquidityClick = async (pool: any, amount: number) => {
     const amountIn = Math.floor(amount);
-    const vault = await Vault.build(pool.contractId) as Vault
+    const vault = await Vault.build(pool.contractId)
 
     await vault.executeTransaction(
       Opcode.addLiquidity(),
