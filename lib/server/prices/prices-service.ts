@@ -127,7 +127,8 @@ class PricesService {
         attempts++;
         console.error(`Error fetching all prices (attempt ${attempts}):`, error);
         if (attempts >= MAX_RETRIES) {
-          throw new Error('Failed to fetch all token prices');
+          console.error('Failed to fetch all token prices');
+          return {};
         }
       }
     }
