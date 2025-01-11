@@ -6,7 +6,11 @@
         },
         {
             "path": "/api/v0/dexterity/balancer",
-            "schedule": "*/5 * * * *"
+            "schedule": "*/7 * * * *"
+        },
+        {
+            "path": "/api/v0/dexterity/investor",
+            "schedule": "*/13 * * * *"
         }
     ]
 }

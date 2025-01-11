@@ -2,6 +2,7 @@ import { NextApiRequest, NextApiResponse } from 'next';
 import { ContractId } from 'dexterity-sdk';
 import { Dexterity } from 'dexterity-sdk';
 import PricesService from '@lib/server/prices/prices-service';
+import _ from 'lodash';
 
 // Opt out of caching; every request should send a new event
 export const dynamic = "force-dynamic";
@@ -33,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await Dexterity.configure({
             apiKeyRotation: 'loop',
             parallelRequests: 10,
-            maxHops: 3
+            maxHops: 4
         })
 
         const prices = await kraxel.getAllTokenPrices();
@@ -41,31 +42,18 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const tokens = Dexterity.getTokens()
         const txs = []
-        const fee = 1000
+        const fee = 1200
 
-        try {
-            console.log('Buying CHA with STX')
-            // Buy CHA with STX
-            const cha = tokens.find(token => token.contractId === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token')!
-            const amount = Math.floor(10 ** cha.decimals / prices[cha.contractId] / 5)
-            txs.push(await Dexterity.executeSwap('.stx', cha.contractId, amount, { fee }))
-        } catch (error) {
-            console.error('Error buying CHA:', error);
-        }
+        // Filter out tokens with less than 2 vaults
+        const filteredTokens = tokens.filter(token => Dexterity.getVaultsForToken(token.contractId).size > 1)
 
-        // wait a second
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        // Pick 3 random tokens
+        const randomTokens = _.sampleSize(filteredTokens, 3)
 
-        for (let i = 0; i < tokens.length; i++) {
+        for (let i = 0; i < randomTokens.length; i++) {
             const token = tokens[i];
             try {
                 console.log('Processing token:', token.symbol, `${i + 1}/${tokens.length}`)
-
-                const vaults = Dexterity.getVaultsForToken(token.contractId)
-                if (vaults.size <= 1) {
-                    txs.push({ token: token.symbol, msg: "less than 2 vaults" })
-                    continue
-                }
 
                 const amount = Math.floor(10 ** token.decimals / prices[token.contractId])
                 const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
@@ -90,7 +78,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee })
                 txs.push({ tx, grossProfit, netProfit })
 
-                await new Promise(resolve => setTimeout(resolve, 2000));
+                await new Promise(resolve => setTimeout(resolve, 10000));
             } catch (error) {
                 console.error('Error executing swap:', error);
             }
@@ -106,7 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         return res.status(500).json({
             status: 'error',
-            error: 'Internal server error during arbitrage scan'
+            error: 'Internal server error during task'
         });
     }
 }
