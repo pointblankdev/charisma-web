@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const tokens = Dexterity.getTokens()
         const txs = []
-        const fee = 1500
+        const fee = 1000
 
         try {
             console.log('Buying CHA with STX')
@@ -54,7 +54,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // wait a second
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await new Promise(resolve => setTimeout(resolve, 2000));
 
         for (let i = 0; i < tokens.length; i++) {
             const token = tokens[i];
@@ -90,8 +90,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee })
                 txs.push({ tx, grossProfit, netProfit })
 
-                // wait a second
-                await new Promise(resolve => setTimeout(resolve, 1000));
+                await new Promise(resolve => setTimeout(resolve, 2000));
             } catch (error) {
                 console.error('Error executing swap:', error);
             }
