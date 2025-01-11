@@ -38,7 +38,7 @@ export function VaultDetailView({ vault, prices }: VaultDetailProps) {
         const volume24h = recentEvents.reduce((sum, event) => {
             if (event.type === 'swap') {
                 const amount = event.tokenInAmount * prices[event.tokenIn] || 0;
-                return sum + amount;
+                return Number(sum) + amount;
             }
             return sum;
         }, 0);
