@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await Dexterity.configure({
             apiKeyRotation: 'loop',
             parallelRequests: 10,
-            maxHops: 4
+            maxHops: 3
         })
 
         const prices = await kraxel.getAllTokenPrices();
@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.error('Error buying CHA:', error);
         }
 
-        // wait 2 seconds
+        // wait a second
         await new Promise(resolve => setTimeout(resolve, 1000));
 
         for (let i = 0; i < tokens.length; i++) {
@@ -89,7 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee }) as any
                 txs.push({ tx, grossProfit, netProfit })
 
-                // wait 2 seconds
+                // wait a second
                 await new Promise(resolve => setTimeout(resolve, 1000));
             } catch (error) {
                 console.error('Error executing swap:', error);
