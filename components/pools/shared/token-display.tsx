@@ -29,7 +29,7 @@ export const TokenDisplay: React.FC<TokenDisplayProps> = ({
     return (
         <div className="flex items-center justify-between p-4 border rounded-lg border-border relative z-20 bg-background">
             <div className="flex items-center space-x-3">
-                <img src={imgSrc} alt={symbol} className="w-8 h-8 rounded-full" />
+                <img src={imgSrc} alt={symbol} className="w-8 h-8 rounded-md" />
                 <div>
                     <div className="text-sm text-muted-foreground">{label}</div>
                     <div className="text-lg font-medium">
