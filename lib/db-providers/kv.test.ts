@@ -28,44 +28,45 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars-ii', {
-      "name": "A Fistful of Dollars",
-      "symbol": "aFOD",
-      "description": "Liquidity vault wrapper for the aUSD-USDh trading pair on ALEX",
-      "identifier": "afod",
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.snow-crash', {
+      "name": "Snow Crash",
+      "symbol": "SNOW",
+      "description": "Liquidity vault wrapper for the aBTC-sBTC trading pair",
+      "identifier": "SNOW",
       "decimals": 6,
       "properties": {
         "externalPoolId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01",
-        "tokenAContract": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt",
-        "tokenBContract": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
+        "tokenAContract": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
+        "tokenBContract": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",
         "lpRebatePercent": 2,
         "tokenAMetadata": {
-          "contractId": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt",
-          "identifier": "bridged-usdt",
-          "name": "aUSD",
-          "symbol": "aUSD",
+          "contractId": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
+          "identifier": "bridged-btc",
+          "name": "aBTC",
+          "symbol": "aBTC",
           "decimals": 8,
-          "description": "aUSD",
-          "image": "https://token-images.alexlab.co/token-susdt"
+          "description": "aBTC",
+          "image": "https://token-images.alexlab.co/token-abtc"
         },
         "tokenBMetadata": {
-          "contractId": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
-          "identifier": "usdh",
-          "name": "Hermetica USDh",
-          "symbol": "USDh",
+          "contractId": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",
+          "identifier": "sbtc-token",
+          "name": "sBTC",
+          "symbol": "sBTC",
           "decimals": 8,
-          "description": "",
-          "image": ""
+          "description": "BTC is a 1:1 Bitcoin-backed asset on the Stacks Bitcoin L2 that will allow developers to leverage the security, network effects, and .5T in latent capital of the Bitcoin network.",
+          "image": "https://ipfs.io/ipfs/bafkreiffe46h5voimvulxm2s4ddszdm4uli4rwcvx34cgzz3xkfcc2hiwi"
         },
         "generated": {
-          "date": "2025-01-11T11:57:40.502Z"
+          "date": "2025-01-11T13:45:38.630Z"
         },
-        "date": "2025-01-11T11:57:47.594Z"
+        "date": "2025-01-11T13:45:47.396Z"
       },
-      "imagePrompt": "A literal Fistful of Dollars, American Western style logo.. Use a limited color palette with maximum 2-3 colors. intense manga art style with bold lines and deep contrast",
-      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars-1736596660371-c6DUc9xPrtYlYJ3W0I0Wxwm5IL0hw0.png",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars-ii",
-      "lastUpdated": "2025-01-11T11:57:40.502Z"
+      "imagePrompt": "Cypherpunk style logo that represents a liquidity vault for Bitcoin. Exhibits elements from Neil Stephenson's Snow Crash.. Use a limited color palette with maximum 2-3 colors. intense manga art style with bold lines and deep contrast",
+      "customImageUrl": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/snow-crash-5sGxYS6hotSVqJhRjktlg8qiuDoltE.jpeg",
+      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/snow-crash-5sGxYS6hotSVqJhRjktlg8qiuDoltE.jpeg",
+      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.snow-crash",
+      "lastUpdated": "2025-01-11T13:45:38.630Z"
     });
   });
 });
