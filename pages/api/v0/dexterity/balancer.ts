@@ -17,6 +17,10 @@ const blacklist = [
 ] as ContractId[];
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    res.writeHead(200, {
+        'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+    });
 
     // Verify the request is from Vercel Cron
     // if (process.env.VERCEL_ENV === 'production' && !req.headers['x-vercel-cron']) {
@@ -40,6 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const fee = 1500
 
         try {
+            console.log('Buying CHA with STX')
             // Buy CHA with STX
             const cha = tokens.find(token => token.contractId === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token')!
             const amount = Math.floor(10 ** cha.decimals / prices[cha.contractId] / 5)
@@ -51,8 +56,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         // wait 2 seconds
         await new Promise(resolve => setTimeout(resolve, 1000));
 
-        for (const token of tokens) {
+        for (let i = 0; i < tokens.length; i++) {
+            const token = tokens[i];
             try {
+                console.log('Processing token:', token.symbol, `${i + 1}/${tokens.length}`)
+
                 const vaults = Dexterity.getVaultsForToken(token.contractId)
                 if (vaults.size <= 1) {
                     txs.push({ token: token.symbol, msg: "less than 2 vaults" })
