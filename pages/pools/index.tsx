@@ -87,7 +87,6 @@ export default function DexterityPoolsPage({ data }: any) {
     <Page meta={meta} fullViewport>
       <Layout>
         <div className="flex flex-col w-full max-w-[3000px] mx-auto px-4 sm:px-6 lg:px-8">
-          {/* Header Section */}
           <div className="flex flex-col items-start justify-between mt-4 sm:flex-row sm:items-center sm:mt-6">
             <div className="w-full">
               <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">

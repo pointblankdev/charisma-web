@@ -38,37 +38,20 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <OverlayProvider>
-      <>
-        {typeof window !== 'undefined' ? (
-          <StacksConnect authOptions={authOptions}>
-            <GlobalStateProvider>
-              <WalletBalancesProvider>
-                <main className={cn(font.className)}>
-                  <Component {...pageProps} />
-                </main>
-                <Toaster />
-                <ResizeHandler />
-                <NProgress />
-                <Analytics />
-                <SpeedInsights />
-              </WalletBalancesProvider>
-            </GlobalStateProvider>
-          </StacksConnect>
-        ) : (
-          <GlobalStateProvider>
-            <WalletBalancesProvider>
-              <main className={cn(font.className)}>
-                <Component {...pageProps} />
-              </main>
-              <Toaster />
-              <ResizeHandler />
-              <NProgress />
-              <Analytics />
-              <SpeedInsights />
-            </WalletBalancesProvider>
-          </GlobalStateProvider>
-        )}
-      </>
+      <StacksConnect authOptions={authOptions}>
+        <GlobalStateProvider>
+          <WalletBalancesProvider>
+            <main className={cn(font.className)}>
+              <Component {...pageProps} />
+            </main>
+            <Toaster />
+            <ResizeHandler />
+            <NProgress />
+            <Analytics />
+            <SpeedInsights />
+          </WalletBalancesProvider>
+        </GlobalStateProvider>
+      </StacksConnect>
     </OverlayProvider>
   );
 }

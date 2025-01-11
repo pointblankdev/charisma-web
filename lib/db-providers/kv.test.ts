@@ -28,40 +28,44 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex', {
-      "name": "THIS IS SPARTA",
-      "symbol": "SPARTA",
-      "decimals": 8,
-      "identifier": "SPARTA",
-      "description": "Liquidity vault for the aBTC-DOG trading pair",
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars', {
+      "name": "A Fistful of Dollars",
+      "symbol": "aFOD",
+      "description": "Liquidity vault wrapper for the aUSD-USDh trading pair on ALEX",
+      "identifier": "afod",
+      "decimals": 6,
       "properties": {
         "externalPoolId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01",
-        "tokenAContract": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
-        "tokenBContract": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog",
+        "tokenAContract": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt",
+        "tokenBContract": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
         "lpRebatePercent": 2,
         "tokenAMetadata": {
-          "contractId": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
-          "identifier": "bridged-btc",
-          "name": "aBTC",
-          "symbol": "aBTC",
+          "contractId": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt",
+          "identifier": "bridged-usdt",
+          "name": "aUSD",
+          "symbol": "aUSD",
           "decimals": 8,
-          "description": "aBTC",
-          "image": "https://token-images.alexlab.co/token-abtc"
+          "description": "aUSD",
+          "image": "https://token-images.alexlab.co/token-susdt"
         },
         "tokenBMetadata": {
-          "contractId": "SP3K8BC0PPEVCV7NZ6QSRWPQ2JE9E5B6N3PA0KBR9.runes-dog",
-          "identifier": "runes-dog",
-          "name": "DOG GO TO THE MOON (RUNES)",
-          "symbol": "DOG",
+          "contractId": "SPN5AKG35QZSK2M8GAMR4AFX45659RJHDW353HSG.usdh-token-v1",
+          "identifier": "usdh",
+          "name": "Hermetica USDh",
+          "symbol": "USDh",
           "decimals": 8,
-          "description": "DOG•GO•TO•THE•MOON (🐕)",
-          "image": "https://token-images.alexlab.co/runes-dog"
+          "description": "",
+          "image": ""
         },
-        "date": "2025-01-09T20:24:36.439Z"
+        "generated": {
+          "date": "2025-01-11T11:57:40.502Z"
+        },
+        "date": "2025-01-11T11:57:47.594Z"
       },
-      "imagePrompt": "THIS IS SPARTA. Use a limited color palette with maximum 2-3 colors",
-      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.this-is-sparta-1736454276259-atuRqbQm9L0Xu0AhCV0z8q7VXz0QXq.png",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex"
+      "imagePrompt": "A literal Fistful of Dollars, American Western style logo.. Use a limited color palette with maximum 2-3 colors. intense manga art style with bold lines and deep contrast",
+      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars-1736596660371-c6DUc9xPrtYlYJ3W0I0Wxwm5IL0hw0.png",
+      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.a-fistful-of-dollars",
+      "lastUpdated": "2025-01-11T11:57:40.502Z"
     });
   });
 });
