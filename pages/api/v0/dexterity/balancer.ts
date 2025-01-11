@@ -86,7 +86,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     continue
                 }
 
-                console.log('Executing swap', quote.route, amount, { fee })
+                console.log('Executing swap', quote.route.hops, amount, { fee })
                 const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee })
                 txs.push({ tx, grossProfit, netProfit })
 
