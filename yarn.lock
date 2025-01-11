@@ -1085,9 +1085,9 @@
   integrity sha512-1j6kQFb7QRru7eKN3ZDvRcP13rugwdxZqCjbiAVZfIJwgj2A65UmT4TgARXGlXgnRkORLTDTrO19ZErt7+QXgA==
 
 "@noble/hashes@^1.1.2":
-  version "1.6.1"
-  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.6.1.tgz#df6e5943edcea504bac61395926d6fd67869a0d5"
-  integrity sha512-pq5D8h10hHBjyqX+cfBm0i8JUXJ0UhczFc4r74zbuT9XgewFo2E3J1cOaGtdZynILNmQ685YWGzGE1Zv6io50w==
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.7.0.tgz#5d9e33af2c7d04fee35de1519b80c958b2e35e39"
+  integrity sha512-HXydb0DgzTpDPwbVeDGCG1gIu7X6+AuU6Zl6av/E/KG8LMsvPntvq+w17CHRpKBmN6Ybdrt1eP3k4cj8DJa78w==
 
 "@noble/secp256k1@1.7.1", "@noble/secp256k1@^1.6.3", "@noble/secp256k1@~1.7.0":
   version "1.7.1"
@@ -3465,20 +3465,7 @@
   resolved "https://registry.yarnpkg.com/@socket.io/component-emitter/-/component-emitter-3.1.2.tgz#821f8442f4175d8f0467b9daf26e3a18e2d02af2"
   integrity sha512-9BCxFwvbGg/RsZK9tjXd8s4UcwR0MWeFQ1XEKIQVVvAGJyINdrqKMcTRyLoK8Rse1GjzLV9cwjWV1olXRWEXVA==
 
-"@stacks/auth@^7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@stacks/auth/-/auth-7.0.0.tgz#88b462b0928144c782039d3257e2ff0e02351e8e"
-  integrity sha512-p0/FJy5jRRgtsVzGpWDgNE0fi/ioPCL3S1tZHRsvdKO7moquHWnTlBV/9yVkGbd+V0kD95Sd0euX5pwWA82MhA==
-  dependencies:
-    "@noble/secp256k1" "1.7.1"
-    "@stacks/common" "^7.0.0"
-    "@stacks/encryption" "^7.0.0"
-    "@stacks/network" "^7.0.0"
-    "@stacks/profile" "^7.0.0"
-    cross-fetch "^3.1.5"
-    jsontokens "^4.0.1"
-
-"@stacks/auth@^7.0.2":
+"@stacks/auth@^7.0.0", "@stacks/auth@^7.0.2":
   version "7.0.2"
   resolved "https://registry.yarnpkg.com/@stacks/auth/-/auth-7.0.2.tgz#9c3ec5260a0ce2a62555d81a87f2dbe23d4de97a"
   integrity sha512-1N0ylkK9mz6RqIH3SbuIvoUG4eTgSkun7hHiPirScGCyXvmugjereGdTowSRSrEnl32/qrnquAAaO7a1XF6TMA==
@@ -3539,13 +3526,6 @@
     "@stacks/connect" "7.10.0"
     jsontokens "^4.0.1"
 
-"@stacks/connect-ui@6.5.0":
-  version "6.5.0"
-  resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-6.5.0.tgz#62741427c0107a7e7f137dfb63280eb16a9e49bb"
-  integrity sha512-iXSpl2NxrjERBqtGgkZp0tX1uJgdWZXmsNo3I0cJYYTTbieSAE/Al9nTYc1wLTPW5w5oVvZEkQKo90WIrHR8Rw==
-  dependencies:
-    "@stencil/core" "^2.17.1"
-
 "@stacks/connect-ui@6.6.0":
   version "6.6.0"
   resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-6.6.0.tgz#780f62c1ecb39487f52d4c3618c1b2724686ae23"
@@ -3553,7 +3533,7 @@
   dependencies:
     "@stencil/core" "^2.17.1"
 
-"@stacks/connect@7.10.0", "@stacks/connect@^7.10.0":
+"@stacks/connect@7.10.0", "@stacks/connect@^7.10.0", "@stacks/connect@^7.9.0":
   version "7.10.0"
   resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.10.0.tgz#f82d5f6990d337b646cb8443cba2d5089399c826"
   integrity sha512-h6i/cFWUVWLFyn8Y62+oDh7PJYQR5Ultrc6dEUp8rZZbHO9ldLT5Qm+rwTS0tRXzoPXJ2KNbqsG70Sqa/lRnVQ==
@@ -3561,21 +3541,6 @@
     "@stacks/auth" "^7.0.0"
     "@stacks/common" "^7.0.0"
     "@stacks/connect-ui" "6.6.0"
-    "@stacks/network" "^7.0.0"
-    "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
-    "@stacks/profile" "^7.0.0"
-    "@stacks/transactions" "^7.0.0"
-    "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
-    jsontokens "^4.0.1"
-
-"@stacks/connect@^7.9.0":
-  version "7.9.0"
-  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.9.0.tgz#460b3a91d5711190b5b0aa23bf10ed6b487888f9"
-  integrity sha512-UPv2UQpZwnNPYodL4bf+6Pu3kHY9BcRabAgAbmDajn3RFWvDrnOMmvLqJRGOvo5fEm8vSwxAGY8R7BSOPmlLdg==
-  dependencies:
-    "@stacks/auth" "^7.0.0"
-    "@stacks/common" "^7.0.0"
-    "@stacks/connect-ui" "6.5.0"
     "@stacks/network" "^7.0.0"
     "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
     "@stacks/profile" "^7.0.0"
@@ -4230,9 +4195,9 @@
     form-data "^4.0.0"
 
 "@types/node@*":
-  version "22.10.0"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.0.tgz#89bfc9e82496b9c7edea3382583fa94f75896e81"
-  integrity sha512-XC70cRZVElFHfIUB40FgZOBbgJYFKKMa5nb9lxcwYstFG/Mi+/Y0bGS+rs6Dmhmkpq4pnNiLiuZAbc02YCOnmA==
+  version "22.10.5"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-22.10.5.tgz#95af89a3fb74a2bb41ef9927f206e6472026e48b"
+  integrity sha512-F8Q+SeGimwOo86fiovQh8qiXfFEh2/ocYv7tU5pJ3EXMSSxk1Joj5wefpFK2fHTf/N6HKGSxIDBT9f3gCxXPkQ==
   dependencies:
     undici-types "~6.20.0"
 
@@ -4249,9 +4214,9 @@
     undici-types "~5.26.4"
 
 "@types/node@^18.0.4":
-  version "18.19.66"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.66.tgz#0937a47904ceba5994eedf5cf4b6d503d8d6136c"
-  integrity sha512-14HmtUdGxFUalGRfLLn9Gc1oNWvWh5zNbsyOLo5JV6WARSeN1QcEBKRnZm9QqNfrutgsl/hY4eJW63aZ44aBCg==
+  version "18.19.70"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-18.19.70.tgz#5a77508f5568d16fcd3b711c8102d7a430a04df7"
+  integrity sha512-RE+K0+KZoEpDUbGGctnGdkrLFwi1eYKTlIHNl2Um98mUkGsm1u2Ff6Ltd0e8DktTtC98uy7rSj+hO8t/QuLoVQ==
   dependencies:
     undici-types "~5.26.4"
 
@@ -5435,11 +5400,11 @@ create-jest@^29.7.0:
     prompts "^2.0.1"
 
 cross-fetch@^3.1.5:
-  version "3.1.8"
-  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.8.tgz#0327eba65fd68a7d119f8fb2bf9334a1a7956f82"
-  integrity sha512-cvA+JwZoU0Xq+h6WkMvAUqPEYy92Obet6UdKLfW60qn99ftItKjB5T+BkyWOFWe2pUyfQ+IJHmpOTznqk1M6Kg==
+  version "3.2.0"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.2.0.tgz#34e9192f53bc757d6614304d9e5e6fb4edb782e3"
+  integrity sha512-Q+xVJLoGOeIMXZmbUK4HYk+69cQH6LudR0Vu/pRm2YlU/hDV9CiS0gKUMaWY5f2NeUH9C1nV3bsTlCo0FsTV1Q==
   dependencies:
-    node-fetch "^2.6.12"
+    node-fetch "^2.7.0"
 
 cross-fetch@^4.0.0:
   version "4.1.0"
@@ -5913,10 +5878,10 @@ detect-node-es@^1.1.0:
   resolved "https://registry.yarnpkg.com/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-dexterity-sdk@next:
-  version "0.4.15"
-  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.4.15.tgz#0d1a241fde13b1d69b49cff9fd9cfaf7bfa9a7bb"
-  integrity sha512-12jM3sgvDf9ng9BxBkCVXZVQhXZN4Ilf7U0Uegz6L2CLvSuiqoa/AxXGxzuN9SagSmKLP55Wasz5Nd9EVxv/KQ==
+dexterity-sdk@^0.5.3:
+  version "0.5.3"
+  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.5.3.tgz#a9842a2b1d66c58bf87669358a81ea6d812bc250"
+  integrity sha512-Uvc0Q/1UjxrngHe5BE6PYwZuzOKFCHWzf2te/A14u2HolWqKDZtGyioWcAp2QaVvZdNqodQI3Jf+bVIZAtlHPw==
   dependencies:
     "@stacks/blockchain-api-client" "8.4.0"
     "@stacks/common" "7.0.2"
@@ -8788,7 +8753,7 @@ node-domexception@1.0.0, node-domexception@^1.0.0:
   resolved "https://registry.yarnpkg.com/node-domexception/-/node-domexception-1.0.0.tgz#6888db46a1f71c0b76b3f7555016b63fe64766e5"
   integrity sha512-/jKZoMpw0F8GRwl4/eLROPA3cfcXtLApP0QzLmUT/HuPCZWyB7IY9ZrMeKw2O/nFIqPQB3PVM9aYm0F312AXDQ==
 
-node-fetch@^2.6.0, node-fetch@^2.6.12, node-fetch@^2.6.7, node-fetch@^2.7.0:
+node-fetch@^2.6.0, node-fetch@^2.6.7, node-fetch@^2.7.0:
   version "2.7.0"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.7.0.tgz#d0f0fa6e3e2dc1d27efcd8ad99d550bda94d187d"
   integrity sha512-c4FRfUm/dbcWZ7U+1Wq0AwCyFL+3nt2bEw05wfxSz+DWpWsitgmSgYmy2dQdWyKC1694ELPqMs/YzUSNozLt8A==

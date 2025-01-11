@@ -4,7 +4,6 @@ import { TokenSettingsForm } from '@components/dexterity/token-settings.form';
 import Layout from '@components/layout/layout';
 import { Button } from '@components/ui/button';
 import { Card } from '@components/ui/card';
-import { sanitizeContractName } from '@lib/codegen/dexterity';
 import { useGlobalState } from '@lib/hooks/global-state-context';
 import { useContractCode } from '@lib/hooks/use-contract-code';
 import { useContractDeployment } from '@lib/hooks/use-contract-deployment';
@@ -16,6 +15,7 @@ import { GetStaticProps } from 'next';
 import { useState, useEffect, useMemo } from 'react';
 import { useForm } from 'react-hook-form';
 import { Loader2Icon } from 'lucide-react';
+import { sanitizeContractName } from '@lib/codegen/dexterity';
 
 type Props = {
   prices: { [key: string]: number };
@@ -264,7 +264,7 @@ export default function ContractDeployer({ prices }: Props) {
           name: formValues.lpTokenName,
           symbol: formValues.lpTokenSymbol,
           description: formValues.description,
-          identifier: formValues.lpTokenSymbol.toLowerCase(),
+          identifier: formValues.lpTokenSymbol,
           decimals: 6,
           properties: {
             ...metadata?.properties,
@@ -273,6 +273,8 @@ export default function ContractDeployer({ prices }: Props) {
             lpRebatePercent: formValues.lpRebatePercent,
             tokenAMetadata,
             tokenBMetadata,
+            initialLiquidityA: formValues.initialLiquidityA,
+            initialLiquidityB: formValues.initialLiquidityB,
             date: new Date().toISOString()
           }
         }
@@ -293,7 +295,7 @@ export default function ContractDeployer({ prices }: Props) {
         name: formValues.lpTokenName,
         symbol: formValues.lpTokenSymbol,
         description: formValues.description,
-        identifier: formValues.lpTokenSymbol.toLowerCase(),
+        identifier: formValues.lpTokenSymbol,
         decimals: 6,
         properties: {
           ...(metadata?.properties || {}),

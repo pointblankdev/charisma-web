@@ -1,36 +1,37 @@
-import { network } from '@components/stacks-session/connect';
-// import { useConnect } from '@stacks/connect-react';
-import { PostConditionMode } from '@stacks/transactions';
 import { useGlobalState } from './global-state-context';
+import { Vault } from 'dexterity-sdk';
 
 export function useContractDeployment() {
-  // const { doContractDeploy } = useConnect();
   const { stxAddress } = useGlobalState();
 
-  const deployContract = async (args: {
-    contractName: string;
-    codeBody: string;
-    postConditions: any[];
-    metadata: any;
-  }) => {
+  const deployContract = async (args: any) => {
     const { metadata, contractName, postConditions, codeBody } = args;
     if (!metadata) {
       alert('Please generate metadata before deploying');
       return;
     }
 
-    // doContractDeploy({
-    //   network,
-    //   contractName,
-    //   codeBody,
-    //   clarityVersion: 3,
-    //   postConditionMode: PostConditionMode.Deny,
-    //   postConditions,
-    //   onFinish: (result: any) => console.log('Contract deployed:', result)
-    // });
+    const fullContractName = `${stxAddress}.${contractName}`;
+
+    const vault = new Vault({
+      contractId: fullContractName,
+      ...metadata,
+      fee: metadata.properties.lpRebatePercent * 10000,
+      liquidity: [
+        {
+          ...metadata.properties.tokenAMetadata,
+          reserves: metadata.properties.initialLiquidityA
+        },
+        {
+          ...metadata.properties.tokenBMetadata,
+          reserves: metadata.properties.initialLiquidityB
+        }
+      ]
+    });
+
+    await vault.deployContract()
 
     // Then update the metadata
-    const fullContractName = `${stxAddress}.${contractName}`;
     const response = await fetch(`/api/v0/metadata/update/${fullContractName}`, {
       method: 'POST',
       headers: {
