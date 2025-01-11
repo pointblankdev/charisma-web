@@ -410,8 +410,10 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
         <div>
           <div className="flex items-center space-x-1 leading-snug">
             <div className=''>
-              <div className="text-lg md:block leading-snug">{pool.name}</div>
-              <div className="text-lg lg:hidden block leading-snug text-gray-400 lg:text-white">{pool.symbol}</div>
+              <Link href={`/vaults/${pool.contractId}`} className="hover:text-primary-foreground/80 text-primary-foreground transition-colors">
+                <div className="text-lg md:block leading-snug">{pool.name}</div>
+                <div className="text-lg lg:hidden block leading-snug text-gray-400 lg:text-white">{pool.symbol}</div>
+              </Link>
             </div>
             <Link
               href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
