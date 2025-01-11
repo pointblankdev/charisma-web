@@ -37,36 +37,65 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const tokens = Dexterity.getTokens()
         const txs = []
-        const fee = 1000
+        const fee = 1500
         for (const token of tokens) {
-            const vaults = Dexterity.getVaultsForToken(token.contractId)
-            if (vaults.size <= 1) {
-                txs.push({ token: token.symbol, msg: "less than 2 vaults" })
-                continue
+            try {
+                const vaults = Dexterity.getVaultsForToken(token.contractId)
+                if (vaults.size <= 1) {
+                    txs.push({ token: token.symbol, msg: "less than 2 vaults" })
+                    continue
+                }
+
+                const amount = Math.floor(10 ** token.decimals / prices[token.contractId])
+                const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
+
+                // Check if the quote is profitable including the fee in uSTX with prices
+                const feeInUSD = fee / 10 ** token.decimals * prices['.stx']
+                // amount out and in are in token units, convert to USD with decimals
+                const grossProfit = quote.amountOut / 10 ** token.decimals * prices[token.contractId] - feeInUSD
+                const netProfit = grossProfit - quote.amountIn / 10 ** token.decimals * prices[token.contractId]
+
+                if (netProfit < 0) {
+                    txs.push({ token: token.symbol, msg: "not profitable", grossProfit, netProfit })
+                    continue
+                }
+
+                if (!quote.route.hops.length) {
+                    txs.push({ token: token.symbol, msg: "no routes found" })
+                    continue
+                }
+
+                const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee }) as any
+                txs.push({ tx, grossProfit, netProfit })
+
+                // wait 2 seconds
+                await new Promise(resolve => setTimeout(resolve, 2000));
+            } catch (error) {
+                console.error('Error executing swap:', error);
             }
-
-            const amount = Math.floor(10 ** token.decimals / prices[token.contractId])
-            const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
-
-            // Check if the quote is profitable including the fee in uSTX with prices
-            const feeInUSD = fee / 10 ** token.decimals * prices['.stx']
-            // amount out and in are in token units, convert to USD with decimals
-            const grossProfit = quote.amountOut / 10 ** token.decimals * prices[token.contractId] - feeInUSD
-            const netProfit = grossProfit - quote.amountIn / 10 ** token.decimals * prices[token.contractId]
-
-            if (netProfit < 0) {
-                txs.push({ token: token.symbol, msg: "not profitable", grossProfit, netProfit })
-                continue
-            }
-
-            if (!quote.route.hops.length) {
-                txs.push({ token: token.symbol, msg: "no routes found" })
-                continue
-            }
-
-            const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee }) as any
-            txs.push({ tx, grossProfit, netProfit })
         }
+
+        // try {
+        //     // Arbitrage STX to STX
+        //     const stx = tokens.find(token => token.contractId === '.stx')!
+        //     const amount1 = Math.floor(10 ** stx.decimals / prices[stx.contractId])
+        //     txs.push(await Dexterity.executeSwap('.stx', '.stx', amount1, { fee }))
+        // } catch (error) {
+        //     console.error('Error arbitrage STX to STX:', error);
+        // }
+
+        // wait 2 seconds
+        await new Promise(resolve => setTimeout(resolve, 2000));
+
+        try {
+            // Buy CHA with STX
+            const cha = tokens.find(token => token.contractId === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token')!
+            const amount2 = Math.floor(10 ** cha.decimals / prices[cha.contractId] / 5)
+            txs.push(await Dexterity.executeSwap('.stx', cha.contractId, amount2, { fee }))
+        } catch (error) {
+            console.error('Error buying CHA:', error);
+        }
+
         return res.status(200).json({ txs });
 
     } catch (error) {
