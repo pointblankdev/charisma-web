@@ -272,6 +272,11 @@ const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
 const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const router = useRouter();
 
+  // If pool has externalPoolId, don't show any actions
+  if (pool.externalPoolId) {
+    return null;
+  }
+
   const handleRemoveLiquidityClick = async (pool: any, amount: number) => {
     const amountIn = Math.floor(amount);
     const vault = await Vault.build(pool.contractId) as Vault
