@@ -5,14 +5,11 @@ import Layout from '@components/layout/layout';
 import { Button } from '@components/ui/button';
 import { Card } from '@components/ui/card';
 import { useGlobalState } from '@lib/hooks/global-state-context';
-import { useContractCode } from '@lib/hooks/use-contract-code';
-import { useContractDeployment } from '@lib/hooks/use-contract-deployment';
 import PricesService from '@lib/server/prices/prices-service';
 import { cn } from '@lib/utils';
-import { Pc } from '@stacks/transactions';
-import { Dexterity } from 'dexterity-sdk';
+import { Dexterity, Vault } from 'dexterity-sdk';
 import { GetStaticProps } from 'next';
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Loader2Icon } from 'lucide-react';
 import { sanitizeContractName } from '@lib/codegen/dexterity';
@@ -57,8 +54,7 @@ export default function ContractDeployer({ prices }: Props) {
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSavingMetadata, setIsSavingMetadata] = useState(false);
   const { stxAddress } = useGlobalState();
-  const { contractCode, updateContractCode } = useContractCode();
-  const { deployContract } = useContractDeployment();
+  const [contractCode, setContractCode] = useState<string>('');
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -82,64 +78,36 @@ export default function ContractDeployer({ prices }: Props) {
   const safeTokenName = sanitizeContractName(formValues.lpTokenName);
   const fullContractName = `${stxAddress}.${safeTokenName}`;
 
-  // Calculate post conditions based on initial liquidity
-  const postConditions = useMemo(() => {
-    if (!formValues.tokenAContract || !formValues.tokenBContract || !tokenAMetadata || !tokenBMetadata) return [];
-
-    const conditions = [];
-    const isTokenAStx = formValues.tokenAContract === '.stx';
-    const isTokenBStx = formValues.tokenBContract === '.stx';
-
-    try {
-
-      const tokenAmountA = Math.floor(formValues.initialLiquidityA);
-      const tokenAmountB = Math.floor(formValues.initialLiquidityB);
-
-      // Handle token A
-      if (isTokenAStx) {
-        conditions.push(Pc.principal(stxAddress).willSendEq(tokenAmountA).ustx());
-      } else {
-        conditions.push(
-          Pc.principal(stxAddress)
-            .willSendEq(tokenAmountA)
-            .ft(formValues.tokenAContract as any, tokenAMetadata?.identifier)
-        );
-      }
-
-      // Handle token B
-      if (isTokenBStx) {
-        conditions.push(Pc.principal(stxAddress).willSendEq(tokenAmountB).ustx());
-      } else {
-        conditions.push(
-          Pc.principal(stxAddress)
-            .willSendEq(tokenAmountB)
-            .ft(formValues.tokenBContract as any, tokenBMetadata?.identifier)
-        );
-      }
-    } catch (error) {
-      console.error('Error fetching token metadata:', error);
-      return [];
-    }
-
-    return conditions;
-  }, [
-    formValues.tokenAContract,
-    formValues.tokenBContract,
-    formValues.initialLiquidityA,
-    formValues.initialLiquidityB,
-    stxAddress,
-    tokenAMetadata,
-    tokenBMetadata
-  ]);
-
   useEffect(() => {
     if (formValues.tokenAContract && formValues.tokenBContract) {
-      updateContractCode({
-        fullContractName,
-        ...formValues
-      });
+      try {
+        // Create temporary vault instance for code generation
+        const vault = new Vault({
+          contractId: fullContractName as any,
+          name: formValues.lpTokenName,
+          symbol: formValues.lpTokenSymbol,
+          description: formValues.description,
+          fee: Math.floor((formValues.lpRebatePercent / 100) * 1000000),
+          liquidity: [
+            {
+              ...tokenAMetadata,
+              reserves: formValues.initialLiquidityA,
+            },
+            {
+              ...tokenBMetadata,
+              reserves: formValues.initialLiquidityB,
+            }
+          ]
+        });
+
+        // Generate contract code
+        const code = vault.generateContractCode();
+        setContractCode(code);
+      } catch (error) {
+        console.error('Error generating contract code:', error);
+      }
     }
-  }, [formValues, fullContractName, stxAddress, updateContractCode]);
+  }, [formValues, fullContractName, tokenAMetadata, tokenBMetadata]);
 
   const handleTokenASelection = async (token: any) => {
     form.setValue('tokenAContract', token.contractId);
@@ -166,9 +134,9 @@ export default function ContractDeployer({ prices }: Props) {
     form.setValue('lpTokenName', `${tokenA}-${tokenB} LP Token`);
     form.setValue('lpTokenSymbol', `${tokenA}-${tokenB}`);
     form.setValue('description', `Liquidity vault for the ${tokenA}-${tokenB} trading pair`);
-    form.setValue('imagePrompt', `Minimalist, professional logo that represents a liquidity pool between ${tokenAName} and ${tokenBName}. Combine geometric shapes and clean lines to show the connection between these two tokens`);
+    form.setValue('imagePrompt', `Minimalist, professional logo that represents a liquidity vault between ${tokenAName} and ${tokenBName}. Combine geometric shapes and clean lines to show the connection between these two tokens`);
 
-    setCurrentStep('configure-pool');
+    setCurrentStep('configure-vault');
   };
 
   const handleMetadataChange = (newMetadata: any) => {
@@ -254,31 +222,29 @@ export default function ContractDeployer({ prices }: Props) {
 
   const handleDeploy = async () => {
     try {
-      // Deploy the contract with metadata
-      await deployContract({
-        contractName: safeTokenName,
-        codeBody: contractCode,
-        postConditions,
-        metadata: {
-          ...metadata,
-          name: formValues.lpTokenName,
-          symbol: formValues.lpTokenSymbol,
-          description: formValues.description,
-          identifier: formValues.lpTokenSymbol,
-          decimals: 6,
-          properties: {
-            ...metadata?.properties,
-            tokenAContract: formValues.tokenAContract,
-            tokenBContract: formValues.tokenBContract,
-            lpRebatePercent: formValues.lpRebatePercent,
-            tokenAMetadata,
-            tokenBMetadata,
-            initialLiquidityA: formValues.initialLiquidityA,
-            initialLiquidityB: formValues.initialLiquidityB,
-            date: new Date().toISOString()
+      // Create a new vault instance with the form values
+      const vault = new Vault({
+        ...metadata,
+        contractId: fullContractName as any,
+        name: formValues.lpTokenName,
+        symbol: formValues.lpTokenSymbol,
+        description: formValues.description,
+        fee: Math.floor((formValues.lpRebatePercent / 100) * 1000000), // Convert percentage to basis points
+        liquidity: [
+          {
+            ...tokenAMetadata,
+            reserves: formValues.initialLiquidityA,
+          },
+          {
+            ...tokenBMetadata,
+            reserves: formValues.initialLiquidityB,
           }
-        }
+        ],
       });
+
+      // Deploy using the vault's deployment method
+      await vault.deployContract();
+
     } catch (error) {
       console.error('Error during deployment:', error);
       alert('Failed to deploy contract or update metadata');
@@ -360,7 +326,7 @@ export default function ContractDeployer({ prices }: Props) {
           />
         )}
 
-        {currentStep === 'configure-pool' && (
+        {currentStep === 'configure-vault' && (
           <TokenSettingsForm
             prices={prices}
             isGenerating={isGenerating}
@@ -405,7 +371,7 @@ export default function ContractDeployer({ prices }: Props) {
                       : ''
                   )}
                 >
-                  {hasUnsavedChanges ? 'Save Changes First' : 'Deploy Liquidity Pool'}
+                  {hasUnsavedChanges ? 'Save Changes First' : 'Deploy Liquidity Vault'}
                 </Button>
               </div>
             </div>

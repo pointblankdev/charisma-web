@@ -99,7 +99,7 @@ export default function DexterityPoolsPage({ data }: any) {
             </div>
 
             <div className="flex flex-col items-end w-full mt-4 sm:mt-0">
-              <Link href="/dexterity">
+              <Link href="/deployer">
                 <div className="inline-block px-6 py-1.5 mx-1 text-white rounded-lg bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
                   Create New Pool
                 </div>
@@ -113,7 +113,7 @@ export default function DexterityPoolsPage({ data }: any) {
           <DexterityInterface data={{ ...data, pools: poolsWithEvents }} prices={data.prices} />
 
           <div className="justify-center w-full p-1 m-1 text-center">
-            <Link className="w-full text-sm text-center" href="/dexterity">
+            <Link className="w-full text-sm text-center" href="/deployer">
               Want to create your own liquidity pool and earn trading fees?
             </Link>
           </div>

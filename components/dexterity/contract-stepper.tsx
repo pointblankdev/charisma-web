@@ -1,4 +1,3 @@
-import { Card } from '@components/ui/card';
 import { StepIndicator } from '@components/dexterity/step-indicator';
 
 type ContractStepperProps = {
@@ -10,7 +9,7 @@ export function ContractStepper({ currentStepIndex }: ContractStepperProps) {
     <div className="p-2">
       <div className="px-8 pb-8">
         <StepIndicator
-          steps={['Select Token A', 'Select Token B', 'Configure Pool']}
+          steps={['Select Token A', 'Select Token B', 'Configure Vault']}
           currentStep={currentStepIndex}
         />
       </div>
