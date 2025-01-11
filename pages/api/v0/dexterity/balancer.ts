@@ -96,6 +96,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         }
 
+        console.log('Finished processing all tokens')
+        console.log(txs)
+
         return res.status(200).json({ txs });
 
     } catch (error) {
