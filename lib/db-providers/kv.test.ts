@@ -68,6 +68,19 @@ describe('dexterity metadata cache', () => {
       "lastUpdated": "2025-01-12T16:55:11.198Z"
     });
   });
+
+  it('should update contract metadata with external pool id', async () => {
+    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.shishi-guardians';
+    const existingData = await kv.get(key) as any;
+    await kv.set(key, {
+      ...existingData,
+      properties: {
+        ...existingData.properties,
+        externalPoolId: "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01"
+      }
+    });
+    console.log(await kv.get(key));
+  });
 });
 
 describe('tokens api', () => {
