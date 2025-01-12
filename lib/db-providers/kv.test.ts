@@ -28,25 +28,25 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.snow-crash', {
-      "name": "Snow Crash",
-      "symbol": "SNOW",
-      "description": "Liquidity vault wrapper for the aBTC-sBTC trading pair",
-      "identifier": "SNOW",
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-kimchi-premium', {
+      "name": "The Kimchi Premium",
+      "symbol": "KIMCHI",
+      "description": "Liquidity vault wrapper for the ALEX-sBTC trading pair",
+      "identifier": "KIMCHI",
       "decimals": 6,
       "properties": {
         "externalPoolId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01",
-        "tokenAContract": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
+        "tokenAContract": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex",
         "tokenBContract": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",
         "lpRebatePercent": 2,
         "tokenAMetadata": {
-          "contractId": "SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-abtc",
-          "identifier": "bridged-btc",
-          "name": "aBTC",
-          "symbol": "aBTC",
+          "contractId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex",
+          "identifier": "alex",
+          "name": "ALEX Token",
+          "symbol": "ALEX",
           "decimals": 8,
-          "description": "aBTC",
-          "image": "https://token-images.alexlab.co/token-abtc"
+          "description": "Bring your Bitcoin to Life: launch new projects, earn interest, rewrite finance, reinvent culture",
+          "image": "https://cdn.alexlab.co/logos/ALEX_Token.png"
         },
         "tokenBMetadata": {
           "contractId": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",
@@ -58,15 +58,14 @@ describe('dexterity metadata cache', () => {
           "image": "https://ipfs.io/ipfs/bafkreiffe46h5voimvulxm2s4ddszdm4uli4rwcvx34cgzz3xkfcc2hiwi"
         },
         "generated": {
-          "date": "2025-01-11T13:45:38.630Z"
+          "date": "2025-01-12T16:55:11.198Z"
         },
-        "date": "2025-01-11T13:45:47.396Z"
+        "date": "2025-01-12T16:55:19.690Z"
       },
-      "imagePrompt": "Cypherpunk style logo that represents a liquidity vault for Bitcoin. Exhibits elements from Neil Stephenson's Snow Crash.. Use a limited color palette with maximum 2-3 colors. intense manga art style with bold lines and deep contrast",
-      "customImageUrl": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/snow-crash-5sGxYS6hotSVqJhRjktlg8qiuDoltE.jpeg",
-      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/snow-crash-5sGxYS6hotSVqJhRjktlg8qiuDoltE.jpeg",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.snow-crash",
-      "lastUpdated": "2025-01-11T13:45:38.630Z"
+      "imagePrompt": "A jor of kimchi, electric blue and orange  color theme, black background. Use a limited color palette with maximum 2-3 colors. intense manga art style with bold lines and deep contrast",
+      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-kimchi-premium-1736700910383-1t253q3pBJvLAT8qJd93LyjqOumgfO.png",
+      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-kimchi-premium",
+      "lastUpdated": "2025-01-12T16:55:11.198Z"
     });
   });
 });

@@ -28,6 +28,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   ]);
 
   const uniquePools = _.uniqBy(pools, 'contractId');
+  console.log(uniquePools);
 
   return {
     props: {
