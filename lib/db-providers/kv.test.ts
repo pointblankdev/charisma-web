@@ -79,7 +79,8 @@ describe('dexterity metadata cache', () => {
         externalPoolId: "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-stx-aeusdc-v-1-2"
       }
     });
-    console.log(await kv.get(key));
+    const updatedData = await kv.get(key);
+    console.log(updatedData);
   });
 });
 
