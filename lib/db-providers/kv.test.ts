@@ -70,7 +70,7 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should update contract metadata with external pool id', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.timeless-constructs';
+    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.swords-to-plowshares';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
