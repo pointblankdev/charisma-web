@@ -206,8 +206,7 @@ const TokenPairDisplay = ({ liquidity }: { liquidity: any[] }) => {
       <div className="flex items-center -space-x-2">
         <div
           className={cn(
-            'z-10 rounded-full border-background',
-            liquidity[0].symbol === 'DMG' ? 'border-0' : 'border-2'
+            'z-10 rounded-full border-background bg-card border-2',
           )}
         >
           <Image
@@ -221,8 +220,7 @@ const TokenPairDisplay = ({ liquidity }: { liquidity: any[] }) => {
         </div>
         <div
           className={cn(
-            'rounded-full border-background',
-            liquidity[1].symbol === 'DMG' ? 'border-0' : 'border-2'
+            'rounded-full border-background bg-card border-2',
           )}
         >
           <Image
