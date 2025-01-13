@@ -16,41 +16,16 @@ interface Props {
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ params }) => {
-    const contractId = params?.contractId as string;
-
-    if (!contractId) {
-        return {
-            notFound: true
-        };
-    }
-
-    try {
-
-        // Fetch vault data
-        const vault = await Vault.build(contractId as ContractId) as any
-        vault.liquidity = [vault.tokenA, vault.tokenB];
-
-        if (!vault) {
-            return {
-                notFound: true
-            };
+    const contractId = params?.contractId as ContractId;
+    // Fetch vault data
+    const vault = await Vault.build(contractId)
+    const prices = await service.getAllTokenPrices();
+    return {
+        props: {
+            vault: JSON.parse(JSON.stringify(vault)), // Serialize for Next.js
+            prices
         }
-
-        const prices = await service.getAllTokenPrices();
-
-
-        return {
-            props: {
-                vault: JSON.parse(JSON.stringify(vault)), // Serialize for Next.js
-                prices
-            }
-        };
-    } catch (error) {
-        console.error('Error fetching vault data:', error);
-        return {
-            notFound: true
-        };
-    }
+    };
 };
 
 export default function VaultDetailPage({ vault, prices }: Props) {
