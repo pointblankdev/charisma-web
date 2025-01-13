@@ -112,7 +112,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
           const hops = args.slice(1);
           const vaults: Vault[] = [];
           const opcodes: number[] = [];
-          console.log(tx)
+          console.log('Multihop Swap:', tx)
 
           hops.forEach((hop: string) => {
             try {
@@ -136,7 +136,6 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             const amountInput = (Number(firstArg.value) / 10 ** firstHopTokenInput.decimals).toLocaleString(
               undefined, { maximumFractionDigits: firstHopTokenInput.decimals }
             );
-            console.log(lastArg, lastHopTokenOutput)
             const amountOutput = (Number(lastArg.value) / 10 ** lastHopTokenOutput.decimals).toLocaleString(
               undefined, { maximumFractionDigits: lastHopTokenOutput.decimals }
             );
@@ -190,7 +189,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             toast({
               title: `Multihop Swap ${firstHopTokenInput.symbol} → ${lastHopTokenOutput.symbol}: ${_.capitalize(tx.tx_status)}`,
               description,
-              duration: 80000
+              duration: 8000
             });
           }
         } catch (error) {
