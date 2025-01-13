@@ -5,8 +5,10 @@ import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { CharismaToken } from '@lib/cha-token-api';
 import { userSession } from '@components/stacks-session/connect';
-import { Dexterity } from 'dexterity-sdk';
+import { Dexterity, Vault } from 'dexterity-sdk';
 import { SITE_URL } from '@lib/constants';
+import { bufferCVFromString, cvToJSON, cvToValue, hexToCV } from '@stacks/transactions';
+import { hexToInt } from '@stacks/common';
 
 const siteUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : SITE_URL
 const socketUrl = 'https://api.mainnet.hiro.so';
@@ -80,7 +82,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
               <span>Address: {shortAddress}</span>
               <span>Action: {functionName.toUpperCase()}</span>
             </p>
-            <p className="text-xs">{formatTime(tx.receipt_time_iso)}</p>
+            <p className="text-xs text-primary-foreground/80">{formatTime(tx.receipt_time_iso)}</p>
           </div>
         );
 
@@ -102,19 +104,63 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
           }
         });
       } else if (tx?.contract_call?.contract_id === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.multihop') {
-        console.log('Dexterity Multihop Transaction:', tx);
-        const description = (
-          <div className="space-y-2">
-            <p className="flex justify-between w-full text-xs">
-              {JSON.stringify(tx?.contract_call)}
-            </p>
-            <p className="text-xs text-muted-foreground">{formatTime(tx.receipt_time_iso)}</p>
-          </div>
-        );
-        toast({
-          title: 'Dexterity Multihop Transaction',
-          description,
-          duration: 10000
+        console.log(tx)
+        const args = tx.contract_call.function_args.map((arg: any) => arg.hex)
+        // skip the first arg
+        const firstArg = hexToCV(args[0]) as any
+        const hops = args.slice(1)
+        const vaults: Vault[] = []
+        const opcodes: number[] = []
+
+        Promise.all(hops.map(async (hop: string) => {
+          const hopValue = hexToCV(hop) as any
+          const vaultId = hopValue.value.pool.value
+          const opcode = Number(hopValue.value.opcode.value.value.slice(1, 2))
+          const vault = await Dexterity.getVault(vaultId)
+          if (vault?.image) {
+            vaults.push(vault)
+            opcodes.push(opcode)
+          }
+        })).then(() => {
+          const firstHopToken = vaults[0].liquidity[opcodes[0]]
+          const description = (
+            <div>
+              <div className="space-y-2 overflow-scroll">
+                <div className="flex items-center gap-2 overflow-scroll">
+                  <div className="flex items-center gap-2">
+                    <div className='flex flex-col items-center'>
+                      <img
+                        src={firstHopToken.image}
+                        alt={`Vault 1`}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className='font-semibold whitespace-nowrap'>{Number(firstArg.value) / 10 ** firstHopToken.decimals} {firstHopToken.symbol}</div>
+                    </div>
+                    <span className="text-muted-foreground text-2xl">→</span>
+                  </div>
+                  {vaults.map((vault, index) => (
+                    <React.Fragment key={index}>
+                      <img
+                        src={vault?.image}
+                        alt={`Vault ${index + 1}`}
+                        className="w-16 h-16 rounded-md"
+                      />
+                      {index < vaults.length - 1 && (
+                        <span className="text-muted-foreground text-2xl">→</span>
+                      )}
+                    </React.Fragment>
+                  ))}
+                </div>
+              </div>
+              <p className="text-xs text-primary-foreground/80">{formatTime(tx.receipt_time_iso)}</p>
+            </div>
+          );
+
+          toast({
+            title: 'Dexterity Multihop Swap',
+            description,
+            duration: 10000
+          });
         });
       }
     });
