@@ -147,7 +147,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                         alt={firstHopToken.symbol}
                         className="w-8 h-8 rounded-full"
                       />
-                      <div className="font-semibold text-sm mt-1">
+                      <div className="font-semibold text-sm mt-1 whitespace-nowrap">
                         {amountInput} {firstHopToken.symbol}
                       </div>
                     </div>
@@ -173,7 +173,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                         alt={lastHopToken.symbol}
                         className="w-8 h-8 rounded-full"
                       />
-                      <div className="font-semibold text-sm mt-1">
+                      <div className="font-semibold text-sm mt-1 whitespace-nowrap">
                         {amountOutput} {lastHopToken.symbol}
                       </div>
                     </div>
