@@ -107,6 +107,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
         try {
           const args = tx.contract_call.function_args.map((arg: any) => arg.hex);
           const firstArg = hexToCV(args[0]) as any;
+          const lastArg = hexToCV(args[args.length - 1]) as any;
           const hops = args.slice(1);
           const vaults: Vault[] = [];
           const opcodes: number[] = [];
@@ -131,10 +132,10 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             const firstHopToken = vaults[0].liquidity[opcodes[0]];
             const lastHopToken = vaults[vaults.length - 1].liquidity[opcodes[opcodes.length - 1]];
             const amountInput = (Number(firstArg.value) / 10 ** firstHopToken.decimals).toLocaleString(
-              undefined, { maximumFractionDigits: 6 }
+              undefined, { maximumFractionDigits: firstHopToken.decimals }
             );
-            const amountOutput = (Number(firstArg.value) / 10 ** lastHopToken.decimals).toLocaleString(
-              undefined, { maximumFractionDigits: 6 }
+            const amountOutput = (Number(lastArg.value) / 10 ** lastHopToken.decimals).toLocaleString(
+              undefined, { maximumFractionDigits: lastHopToken.decimals }
             );
 
             const description = (
