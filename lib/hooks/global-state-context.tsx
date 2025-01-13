@@ -129,9 +129,12 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
           // Only proceed if we have valid vaults
           if (vaults.length > 0) {
             const firstHopToken = vaults[0].liquidity[opcodes[0]];
-            const amount = (Number(firstArg.value) / 10 ** firstHopToken.decimals).toLocaleString(
-              undefined,
-              { maximumFractionDigits: 6 }
+            const lastHopToken = vaults[vaults.length - 1].liquidity[opcodes[opcodes.length - 1]];
+            const amountInput = (Number(firstArg.value) / 10 ** firstHopToken.decimals).toLocaleString(
+              undefined, { maximumFractionDigits: 6 }
+            );
+            const amountOutput = (Number(firstArg.value) / 10 ** lastHopToken.decimals).toLocaleString(
+              undefined, { maximumFractionDigits: 6 }
             );
 
             const description = (
@@ -145,7 +148,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                         className="w-8 h-8 rounded-full"
                       />
                       <div className="font-semibold text-sm mt-1">
-                        {amount} {firstHopToken.symbol}
+                        {amountInput} {firstHopToken.symbol}
                       </div>
                     </div>
                     <span className="text-muted-foreground text-xl">→</span>
@@ -162,6 +165,17 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                           )}
                         </React.Fragment>
                       ))}
+                    </div>
+                    <span className="text-muted-foreground text-xl">→</span>
+                    <div className="flex flex-col items-center min-w-[80px]">
+                      <img
+                        src={lastHopToken.image}
+                        alt={lastHopToken.symbol}
+                        className="w-8 h-8 rounded-full"
+                      />
+                      <div className="font-semibold text-sm mt-1">
+                        {amountOutput} {lastHopToken.symbol}
+                      </div>
                     </div>
                   </div>
                 </div>
