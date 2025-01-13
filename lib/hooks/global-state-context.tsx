@@ -129,13 +129,13 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
           })
           // Only proceed if we have valid vaults
           if (vaults.length > 0) {
-            const firstHopToken = vaults[0].liquidity[opcodes[0]];
-            const lastHopToken = vaults[vaults.length - 1].liquidity[opcodes[opcodes.length - 1]];
-            const amountInput = (Number(firstArg.value) / 10 ** firstHopToken.decimals).toLocaleString(
-              undefined, { maximumFractionDigits: firstHopToken.decimals }
+            const firstHopTokenInput = vaults[0].liquidity[opcodes[0]];
+            const lastHopTokenOutput = vaults[vaults.length - 1].liquidity[Math.abs(opcodes[opcodes.length - 1] - 1)];
+            const amountInput = (Number(firstArg.value) / 10 ** firstHopTokenInput.decimals).toLocaleString(
+              undefined, { maximumFractionDigits: firstHopTokenInput.decimals }
             );
-            const amountOutput = (Number(lastArg.value) / 10 ** lastHopToken.decimals).toLocaleString(
-              undefined, { maximumFractionDigits: lastHopToken.decimals }
+            const amountOutput = (Number(lastArg.value) / 10 ** lastHopTokenOutput.decimals).toLocaleString(
+              undefined, { maximumFractionDigits: lastHopTokenOutput.decimals }
             );
 
             const description = (
@@ -144,12 +144,12 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                   <div className="flex items-center gap-3 min-w-min">
                     <div className="flex flex-col items-center min-w-[80px]">
                       <img
-                        src={firstHopToken.image}
-                        alt={firstHopToken.symbol}
+                        src={firstHopTokenInput.image}
+                        alt={firstHopTokenInput.symbol}
                         className="w-8 h-8 rounded-full"
                       />
                       <div className="font-semibold text-sm mt-1 whitespace-nowrap">
-                        {amountInput} {firstHopToken.symbol}
+                        {amountInput} {firstHopTokenInput.symbol}
                       </div>
                     </div>
                     <span className="text-muted-foreground text-xl">→</span>
@@ -170,12 +170,12 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     <span className="text-muted-foreground text-xl">→</span>
                     <div className="flex flex-col items-center min-w-[80px]">
                       <img
-                        src={lastHopToken.image}
-                        alt={lastHopToken.symbol}
+                        src={lastHopTokenOutput.image}
+                        alt={lastHopTokenOutput.symbol}
                         className="w-8 h-8 rounded-full"
                       />
                       <div className="font-semibold text-sm mt-1 whitespace-nowrap">
-                        {amountOutput} {lastHopToken.symbol}
+                        {amountOutput} {lastHopTokenOutput.symbol}
                       </div>
                     </div>
                   </div>
