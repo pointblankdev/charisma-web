@@ -70,13 +70,13 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should update contract metadata with external pool id', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.swords-to-plowshares';
+    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.lightning-in-a-bottle';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
       properties: {
         ...existingData.properties,
-        externalPoolId: "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core"
+        externalPoolId: "SM1793C4R5PZ4NS4VQ4WMP7SKKYVH8JZEWSZ9HCCR.xyk-pool-stx-aeusdc-v-1-2"
       }
     });
     console.log(await kv.get(key));
