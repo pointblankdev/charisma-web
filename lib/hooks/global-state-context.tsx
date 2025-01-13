@@ -157,9 +157,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
                     <span className="text-muted-foreground text-xl flex-shrink-0">→</span>
                     <div className="flex items-center gap-3 flex-shrink-0">
                       {vaults.map((vault, index) => (
-                        <React.Fragment key={vault.contractId || index}>
+                        <React.Fragment key={vault?.contractId || index}>
                           <img
-                            src={vault.image}
+                            src={vault?.image}
                             alt={`Vault ${index + 1}`}
                             className="w-12 h-12 rounded-md flex-shrink-0"
                           />
