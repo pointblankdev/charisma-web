@@ -10,7 +10,7 @@
         },
         {
             "path": "/api/v0/dexterity/investor",
-            "schedule": "*/13 * * * *"
+            "schedule": "*/3 * * * *"
         }
     ]
 }

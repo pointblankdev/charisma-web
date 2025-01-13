@@ -9,6 +9,7 @@ import { Dexterity, Vault } from 'dexterity-sdk';
 import { SITE_URL } from '@lib/constants';
 import { bufferCVFromString, cvToJSON, cvToValue, hexToCV } from '@stacks/transactions';
 import { hexToInt } from '@stacks/common';
+import _ from 'lodash';
 
 const siteUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : SITE_URL
 const socketUrl = 'https://api.mainnet.hiro.so';
@@ -111,6 +112,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
           const hops = args.slice(1);
           const vaults: Vault[] = [];
           const opcodes: number[] = [];
+          console.log(tx)
 
           hops.forEach((hop: string) => {
             try {
@@ -134,6 +136,7 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             const amountInput = (Number(firstArg.value) / 10 ** firstHopTokenInput.decimals).toLocaleString(
               undefined, { maximumFractionDigits: firstHopTokenInput.decimals }
             );
+            console.log(lastArg, lastHopTokenOutput)
             const amountOutput = (Number(lastArg.value) / 10 ** lastHopTokenOutput.decimals).toLocaleString(
               undefined, { maximumFractionDigits: lastHopTokenOutput.decimals }
             );
@@ -141,42 +144,42 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             const description = (
               <div className="space-y-3">
                 <div className="overflow-x-auto">
-                  <div className="flex items-center gap-3 min-w-min">
-                    <div className="flex flex-col items-center min-w-[80px]">
+                  <div className="flex items-center gap-3 whitespace-nowrap w-max m-2">
+                    <div className="flex flex-col items-center min-w-[80px] flex-shrink-0">
                       <img
                         src={firstHopTokenInput.image}
                         alt={firstHopTokenInput.symbol}
                         className="w-8 h-8 rounded-full"
                       />
-                      <div className="font-semibold text-sm mt-1 whitespace-nowrap">
+                      <div className="font-light text-sm">
                         {amountInput} {firstHopTokenInput.symbol}
                       </div>
                     </div>
-                    <span className="text-muted-foreground text-xl">→</span>
-                    <div className="flex items-center gap-3">
+                    <span className="text-muted-foreground text-xl flex-shrink-0">→</span>
+                    <div className="flex items-center gap-3 flex-shrink-0">
                       {vaults.map((vault, index) => (
                         <React.Fragment key={vault.contractId || index}>
                           <img
                             src={vault.image}
                             alt={`Vault ${index + 1}`}
-                            className="w-12 h-12 rounded-md"
+                            className="w-12 h-12 rounded-md flex-shrink-0"
                           />
                           {index < vaults.length - 1 && (
-                            <span className="text-muted-foreground text-xl">→</span>
+                            <span className="text-muted-foreground text-xl flex-shrink-0">→</span>
                           )}
                         </React.Fragment>
                       ))}
                     </div>
-                    <span className="text-muted-foreground text-xl">→</span>
-                    <div className="flex flex-col items-center min-w-[80px]">
+                    <span className="text-muted-foreground text-xl flex-shrink-0">→</span>
+                    <div className="flex flex-col items-center min-w-[80px] flex-shrink-0">
                       <img
                         src={lastHopTokenOutput.image}
                         alt={lastHopTokenOutput.symbol}
                         className="w-8 h-8 rounded-full"
                       />
-                      <div className="font-semibold text-sm mt-1 whitespace-nowrap">
+                      {/* <div className="font-light text-sm">
                         {amountOutput} {lastHopTokenOutput.symbol}
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </div>
@@ -185,9 +188,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
             );
 
             toast({
-              title: 'Multihop Swap Initiated',
+              title: `Multihop Swap ${firstHopTokenInput.symbol} → ${lastHopTokenOutput.symbol}: ${_.capitalize(tx.tx_status)}`,
               description,
-              duration: 8000
+              duration: 80000
             });
           }
         } catch (error) {
