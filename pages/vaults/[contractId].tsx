@@ -49,7 +49,8 @@ export default function VaultDetailPage({ vault, prices }: Props) {
                 </div>
 
                 {/* Main content */}
-                <VaultDetailView vault={vault} prices={prices} />
+                <div className="container mx-auto px-4">Coming soon...</div>
+                {/* <VaultDetailView vault={vault} prices={prices} /> */}
             </div>
         </Layout>
     );
