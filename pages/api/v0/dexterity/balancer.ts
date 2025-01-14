@@ -62,7 +62,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const feeInUSD = fee / 10 ** token.decimals * prices['.stx']
                 // amount out and in are in token units, convert to USD with decimals
                 const grossProfit = quote.amountOut / 10 ** token.decimals * prices[token.contractId] - feeInUSD
-                const netProfit = grossProfit - quote.amountIn / 10 ** token.decimals * prices[token.contractId]
+                const errorMargin = 0.005
+                const grossProfitWithMargin = grossProfit * (1 - errorMargin)
+                const netProfit = grossProfitWithMargin - quote.amountIn / 10 ** token.decimals * prices[token.contractId]
 
                 if (netProfit < 0) {
                     txs.push({ token: token.symbol, msg: "not profitable", grossProfit, netProfit })
