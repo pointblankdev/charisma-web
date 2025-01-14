@@ -70,17 +70,16 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should update contract metadata with external pool id', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-tesseract';
+    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.alexian-reserves';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
       properties: {
         ...existingData.properties,
-        externalPoolId: "SPQC38PW542EQJ5M11CR25P7BS1CA6QT4TBXGB3M.stableswap-stx-ststx-v-1-2"
+        externalPoolId: "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01"
       }
     });
-    const updatedData = await kv.get(key);
-    console.log(updatedData);
+    console.log(await kv.get(key));
   });
 });
 
