@@ -83,11 +83,11 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should update contract image', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charismatic-flow-pool-v1';
+    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.dexterity-pool-v1';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
-      image: "https://charisma.rocks/sip10/charismatic-flow.png"
+      image: "https://charisma.rocks/sip10/dexterity.png"
     });
     console.log(await kv.get(key));
   });

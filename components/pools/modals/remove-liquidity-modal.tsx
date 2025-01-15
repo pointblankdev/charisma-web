@@ -23,7 +23,7 @@ export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, tri
   const vault = useMemo(() => new Vault(pool), [pool]);
 
   const maxAmount = useMemo(() => {
-    const lpBalance = getBalance(pool.contractId) || 0;
+    const lpBalance = getBalance(`${pool.contractId}::${pool.identifier}`) || 0;
     return lpBalance;
   }, [pool, getBalance]);
 
