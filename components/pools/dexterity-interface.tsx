@@ -267,7 +267,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
     );
   }
 
-  if (!vault.generalInfo && !vault.engine) {
+  if (!vault.generalInfo) {
     return (
       <div className="mt-1 leading-snug">
         <div className="flex flex-col items-center">
