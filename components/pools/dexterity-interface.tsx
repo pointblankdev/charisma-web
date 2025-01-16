@@ -412,7 +412,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                   {/* Show resetting state within 10 blocks of a tap */}
                   {resetting && (
                     <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-1">
-                      <span>Resetting</span>
+                      <span>Cooldown</span>
                       <div className="w-full h-1.5 bg-muted/20 rounded-full overflow-hidden">
                         <div
                           className="h-full bg-primary/30 transition-all duration-500"
