@@ -355,7 +355,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
               </div>
 
               {/* Show either active rewards or placeholder explanation */}
-              {pool.engineContractId && vault.energyRate ? (
+              {pool.engineContractId ? (
                 <div className="space-y-4 rounded-lg bg-yellow-400/20 p-4 w-full">
                   {/* Header */}
                   <div className="font-medium text-primary-foreground/90 flex items-center text-base">
@@ -389,7 +389,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                   </div>
 
                   {/* Warning message when needed */}
-                  {vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && (
+                  {wallet.energy.balance + vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && (
                     <div className="text-xs text-red-400 bg-red-400/20 p-2 rounded-md flex items-center leading-snug">
                       <InfoIcon className="h-4 mr-2 w-12" />
                       Warning: Energy has reached maximum capacity ({energyCapacity}). You can only hold {energyCapacity} Energy at a time, so make sure to spend your tokens before harvesting more.
