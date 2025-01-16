@@ -304,8 +304,10 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
                 }
 
+                console.log(vaultAnalytics)
+
                 const totalEnergyEarned = Object.values(vaultAnalytics).reduce((acc, v: any) => Number(acc) + Number(v?.engine?.energyPerBlock || 0), 0);
-                if (!totalEnergyEarned) return
+                // if (!totalEnergyEarned) return
                 setVaultAnalytics(vaultAnalytics);
             } catch (error) {
                 console.error('Error processing vault analytics:', error);

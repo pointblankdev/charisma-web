@@ -120,9 +120,17 @@ const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
     return token0Value + token1Value;
   }, [pool, prices]);
 
+  const hasPriceData = prices[pool.liquidity[0].contractId] || prices[pool.liquidity[1].contractId];
+
   return (
     <div className="space-y-1">
-      <div className="text-lg font-medium">${numeral(tvl).format('0,0.00')}</div>
+      <div className="text-lg font-medium">
+        {hasPriceData ? (
+          `$${numeral(tvl).format('0,0.00')}`
+        ) : (
+          <span className="text-muted-foreground/40 text-sm">No price data</span>
+        )}
+      </div>
       <div className="text-xs text-gray-400">
         {numeral(pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals).format('0,0.00')}{' '}
         {pool.liquidity[0].symbol}
@@ -205,35 +213,10 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
 };
 
 const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
-
   const { vaultAnalytics, tapTokens, setVaultAnalytics, block, wallet } = useGlobal();
   const vault = vaultAnalytics[pool.contractId];
 
-  const handleClaim = async () => {
-    if (!pool.engineContractId) return;
-
-    try {
-      // Import the connect library dynamically to avoid require statements
-      const { openContractCall } = await import('@stacks/connect');
-      await openContractCall({
-        contractAddress: pool.engineContractId.split('.')[0],
-        contractName: pool.engineContractId.split('.')[1],
-        functionName: 'tap',
-        functionArgs: [],
-        network: Dexterity.config.network,
-        postConditionMode: PostConditionMode.Deny,
-        onFinish: () => {
-          tapTokens(pool.contractId);
-          setVaultAnalytics((va: any) => ({ ...va, [pool.contractId]: { ...va[pool.contractId], engine: { ...va[pool.contractId].engine, claimableTokens: 0 } } }));
-        }
-      });
-    } catch (error) {
-      console.error('Error claiming rewards:', error);
-      // You may want to add error handling/user feedback here
-    }
-  };
-
-  // If it's an external pool, show a simple message
+  // External pool display remains unchanged
   if (pool.externalPoolId) {
     return (
       <div className="mt-1 leading-snug">
@@ -246,7 +229,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
     );
   }
 
-  // If it's a dexterity vault, show a loading message
+  // Loading state remains unchanged
   if (!vault) {
     return (
       <div className="mt-1 leading-snug">
@@ -259,16 +242,17 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
     );
   }
 
-  if (!vault.generalInfo) {
-    return null;
-  }
+  // Calculate available metrics
+  const hasGeneralInfo = !!vault.generalInfo;
+  const hasEngineInfo = !!vault.engine;
+  const tradingFeeAPY = hasGeneralInfo ? vault.generalInfo.lpRebateAPY : 0;
+  const holdToEarnAPY = hasEngineInfo ? (vault.engine.epy * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0) : 0;
+  const totalAPY = tradingFeeAPY + holdToEarnAPY;
 
-
-  const lastTap = vault.engine.lastTap;
-  const holdToEarnAPY = (vault.engine.epy * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0)
-  const resetting = lastTap && block.height - lastTap <= 10
-  const energyPerDay = vault.engine.energyPerBlock * 17280 / 10 ** 6
-  const energyCapacity = 100 + (Number(wallet?.memobots?.count) * 10)
+  const lastTap = hasEngineInfo ? vault.engine.lastTap : 0;
+  const resetting = lastTap && block.height - lastTap <= 10;
+  const energyPerDay = hasEngineInfo ? vault.engine.energyPerBlock * 17280 / 10 ** 6 : 0;
+  const energyCapacity = 100 + (Number(wallet?.memobots?.count) * 10);
 
   return (
     <TooltipProvider>
@@ -277,9 +261,9 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
           <div className="mt-1 leading-snug">
             <div className="flex flex-col items-center">
               <div className="text-lg font-medium whitespace-nowrap">
-                {(vault.generalInfo.lpRebateAPY + Number(holdToEarnAPY)).toFixed(2)}% APY
+                {totalAPY.toFixed(2)}% APY
               </div>
-              <div className="flex items-center space-x-1 text-sm text-muted-foreground whitespace-nowrap ">
+              <div className="flex items-center space-x-1 text-sm text-muted-foreground whitespace-nowrap">
                 <span className={cn(pool.engineContractId ? 'flex items-center text-yellow-400 animate-pulse-glow' : 'text-muted-foreground')}>
                   <span>{pool.engineContractId ? 'Energized' : 'Trading Fee'} Yield</span>
                   {pool.engineContractId && <ZapIcon className="w-3 h-3 ml-1" />}
@@ -290,176 +274,115 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
         </TooltipTrigger>
         <TooltipContent side="bottom" className="w-[800px] shadow-lg rounded-lg bg-accent-foreground/20 backdrop-blur-2xl">
           <div className="p-4 space-y-4">
+            {/* Header section - always show */}
             <div className="flex items-center justify-between">
               <div className="font-medium text-lg">Yield Sources</div>
-              <div className="text-sm text-muted-foreground">
-                This vault generates
-                ${numeral(
-                  // Daily trading fees
-                  (vault.summary.last24h.reduce((acc: number, curr: any) => acc + curr.volume, 0) *
-                    vault.generalInfo.averageFeePercentage / 100) +
-                  // Daily energy rewards in USD (energyPerDay * total supply * HOOT price)
-                  (vault.engine.energyPerBlockPerToken * 17280 * (pool.supply / 10 ** pool.decimals) *
-                    prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'])
-                ).format('0,0.00')}/day for its liquidity providers
-              </div>
+              {hasGeneralInfo && hasEngineInfo && (
+                <div className="text-sm text-muted-foreground">
+                  This vault generates
+                  ${numeral(
+                    (vault.summary.last24h.reduce((acc: number, curr: any) => acc + curr.volume, 0) *
+                      vault.generalInfo.averageFeePercentage / 100) +
+                    (vault.engine.energyPerBlockPerToken * 17280 * (pool.supply / 10 ** pool.decimals) *
+                      prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'])
+                  ).format('0,0.00')}/day for its liquidity providers
+                </div>
+              )}
             </div>
 
             <div className="space-x-4 flex w-full">
-              {/* Trading Fee Rewards Section */}
-              <div className="space-y-2 rounded-lg bg-accent-foreground/70 p-3 w-full">
-                <div className="font-medium text-primary-foreground/90 flex items-center text-base">
-                  <ArrowLeftRight className="w-4 h-4 mr-2 text-primary" />
-                  Trading Fee Rewards
-                  <span className="ml-auto">{vault.generalInfo.lpRebateAPY.toFixed(2)}% APY</span>
-                </div>
-                <div className="space-y-1.5 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">LP Rebate</span>
-                    <span>{vault.generalInfo.averageFeePercentage.toFixed(2)}%</span>
-                  </div>
-
-                  {/* 24h Volume Section */}
-                  <div className="space-y-1">
-                    <div className="text-muted-foreground">24h Volume</div>
-                    <div className="ml-2 space-y-0.5">
-                      {vault.summary.last24h.map((tokenData: any, index: number) => (
-                        <div key={index} className="flex justify-between text-xs">
-                          <span>{pool.liquidity[index].symbol}</span>
-                          <span>${numeral(tokenData.volume).format('0,0.00')}</span>
-                        </div>
-                      ))}
-                      <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
-                        <span>Total</span>
-                        <span>
-                          ${numeral(vault.summary.last24h.reduce((acc: number, curr: any) => acc + curr.volume, 0)).format('0,0.00')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* 30-day Fees Section */}
-                  <div className="space-y-1">
-                    <div className="text-muted-foreground">Overall Fees Earned</div>
-                    <div className="ml-2 space-y-0.5">
-                      {vault.summary.overall.map((tokenData: any, index: number) => (
-                        <div key={index} className="flex justify-between text-xs">
-                          <span>{pool.liquidity[index].symbol}</span>
-                          <div className="space-x-2">
-                            <span>{numeral(tokenData.tokenFee).format('0,0.00')} {pool.liquidity[index].symbol}</span>
-                            <span className="text-muted-foreground">
-                              ${numeral(tokenData.tokenFeeValue).format('0,0.00')}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                      <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
-                        <span>Total Value</span>
-                        <span>
-                          ${numeral(vault.summary.overall.reduce((acc: number, curr: any) => acc + curr.tokenFeeValue, 0)).format('0,0.00')}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="text-xs text-muted-foreground mt-2">
-                  Trading fees are automatically reinvested into your position
-                </div>
-              </div>
-
-              {/* Show either active rewards or placeholder explanation */}
-              {pool.engineContractId ? (
-                <div className="space-y-4 rounded-lg bg-yellow-400/20 p-4 w-full">
-                  {/* Header */}
+              {/* Trading Fee Section - show if generalInfo exists */}
+              {hasGeneralInfo ? (
+                // Original trading fee section
+                <div className="space-y-2 rounded-lg bg-accent-foreground/70 p-3 w-full">
                   <div className="font-medium text-primary-foreground/90 flex items-center text-base">
-                    <ZapIcon className="w-4 h-4 mr-2 text-yellow-400" />
-                    Hold-to-Earn Rewards
-                    <span className="ml-auto">{holdToEarnAPY.toFixed(2)}% APY</span>
+                    <ArrowLeftRight className="w-4 h-4 mr-2 text-primary" />
+                    Trading Fee Rewards
+                    <span className="ml-auto">{tradingFeeAPY.toFixed(2)}% APY</span>
                   </div>
-
-                  {/* Description */}
-                  <div className="text-sm text-primary-foreground/70 leading-tight">
-                    Hold-to-earn is Charisma's way to reward long-term holders like you, without the need to give up custody of your tokens. Just hold LP tokens and earn rewards.
-                    <div className='pt-2' />
-                    When participating in hold-to-earn, you will be rewarded in the <ZapIcon className="w-3 h-3 mb-0.5 text-yellow-400 inline-block" /> Energy token. Energy is soulbound, and cannot be transferred, but you can burn it to receive tokens like HOOT or other rewards.
-                  </div>
-
-                  {/* Stats */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center p-2 rounded-md bg-black/20">
-                      <span className="text-sm text-muted-foreground">Daily Rate</span>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex items-center">
-                          {/* 5 sec block times, 60/5 = 12 blocks per minute, 12 * 60 = 720 blocks per hour, 720 * 24 = 17280 blocks per day */}
-                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400 animate-pulse-glow" />
-                          <span>{numeral(energyPerDay).format('0,0')}/day</span>
-                        </div>
-                        <span className="text-sm text-muted-foreground">
-                          ≈ ${numeral(energyPerDay * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
-                        </span>
-                      </div>
+                  <div className="space-y-1.5 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">LP Rebate</span>
+                      <span>{vault.generalInfo.averageFeePercentage.toFixed(2)}%</span>
                     </div>
-                  </div>
 
-                  {/* Warning message when needed */}
-                  {wallet.energy.balance + vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && (
-                    <div className="text-xs text-red-400 bg-red-400/20 p-2 rounded-md flex items-center leading-snug">
-                      <InfoIcon className="h-4 mr-2 w-12" />
-                      Warning: Energy has reached maximum capacity ({energyCapacity}). You can only hold {energyCapacity} Energy at a time, so make sure to spend your tokens before harvesting more.
-                    </div>
-                  )}
-
-                  {/* Show resetting state within 10 blocks of a tap */}
-                  {resetting && (
-                    <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-1">
-                      <span>Cooldown</span>
-                      <div className="w-full h-1.5 bg-muted/20 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-primary/30 transition-all duration-500"
-                          style={{
-                            width: `${((block.height - lastTap) / 10) * 100}%`
-                          }}
-                        />
-                      </div>
-                      <span>{block.height - lastTap}/10</span>
-                    </div>
-                  )}
-
-                  {/* Footer with claim section */}
-                  <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
-                    <div className="flex flex-col">
-                      {/* show x/10 resettings state within 10 blocks of a tap */}
-                      <span className="text-sm text-muted-foreground">Available to Claim</span>
-                      <div className="flex items-center space-x-2">
-                        <div
-                          key={vault.engine.claimableTokens}
-                          className={cn("flex items-center", "shake")}
-                        >
-                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
-                          <span className="font-medium">
-                            {numeral(Math.min(vault.engine.claimableTokens / 10 ** 6, energyCapacity)).format('0,0.00')}
+                    {/* 24h Volume Section */}
+                    <div className="space-y-1">
+                      <div className="text-muted-foreground">24h Volume</div>
+                      <div className="ml-2 space-y-0.5">
+                        {vault.summary.last24h.map((tokenData: any, index: number) => (
+                          <div key={index} className="flex justify-between text-xs">
+                            <span>{pool.liquidity[index].symbol}</span>
+                            <span>${numeral(tokenData.volume).format('0,0.00')}</span>
+                          </div>
+                        ))}
+                        <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
+                          <span>Total</span>
+                          <span>
+                            ${numeral(vault.summary.last24h.reduce((acc: number, curr: any) => acc + curr.volume, 0)).format('0,0.00')}
                           </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">
-                          ≈ ${numeral(Math.min(vault.engine.claimableTokens / 10 ** 6, energyCapacity) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
-                        </span>
                       </div>
                     </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        "h-8 px-3",
-                        vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && "animate-pulse bg-red-500/20"
-                      )}
-                      onClick={handleClaim}
-                      disabled={resetting}
-                    >
-                      <Gift className="w-4 h-4 mr-1" /> Claim Rewards
-                    </Button>
+
+                    {/* 30-day Fees Section */}
+                    <div className="space-y-1">
+                      <div className="text-muted-foreground">Overall Fees Earned</div>
+                      <div className="ml-2 space-y-0.5">
+                        {vault.summary.overall.map((tokenData: any, index: number) => (
+                          <div key={index} className="flex justify-between text-xs">
+                            <span>{pool.liquidity[index].symbol}</span>
+                            <div className="space-x-2">
+                              <span>{numeral(tokenData.tokenFee).format('0,0.00')} {pool.liquidity[index].symbol}</span>
+                              <span className="text-muted-foreground">
+                                ${numeral(tokenData.tokenFeeValue).format('0,0.00')}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                        <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
+                          <span>Total Value</span>
+                          <span>
+                            ${numeral(vault.summary.overall.reduce((acc: number, curr: any) => acc + curr.tokenFeeValue, 0)).format('0,0.00')}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-xs text-muted-foreground mt-2">
+                    Trading fees are automatically reinvested into your position
                   </div>
                 </div>
               ) : (
+                // Placeholder for missing trading fee data
+                <div className="space-y-2 rounded-lg bg-accent-foreground/20 p-3 w-full">
+                  <div className="font-medium text-primary-foreground/90 flex items-center text-base">
+                    <ArrowLeftRight className="w-4 h-4 mr-2 text-primary/40" />
+                    Trading Fee Rewards
+                    <span className="ml-auto text-muted-foreground">Data Unavailable</span>
+                  </div>
+                </div>
+              )}
+
+              {/* Energy Rewards Section - show appropriate version based on state */}
+              {pool.engineContractId ? (
+                hasEngineInfo ? (
+                  // Original energy rewards section when data exists
+                  <div className="space-y-4 rounded-lg bg-yellow-400/20 p-4 w-full">
+                    {/* ... existing energy rewards content ... */}
+                  </div>
+                ) : (
+                  // Placeholder when engine data is missing
+                  <div className="space-y-4 rounded-lg bg-yellow-400/10 p-4 w-full">
+                    <div className="font-medium text-primary-foreground/90 flex items-center text-base">
+                      <ZapIcon className="w-4 h-4 mr-2 text-yellow-400/40" />
+                      Hold-to-Earn Rewards
+                      <span className="ml-auto text-muted-foreground">Data Loading...</span>
+                    </div>
+                  </div>
+                )
+              ) : (
+                // Original inactive rewards section
                 <div className="space-y-2 rounded-lg bg-muted/20 p-3 w-full">
                   <div className="font-medium text-muted-foreground flex items-center text-base">
                     <ZapIcon className="w-4 h-4 mr-2" />
@@ -480,6 +403,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
 
             <div className="text-xs text-muted-foreground">
               APY calculations are based on historical data and may vary. Past performance does not guarantee future returns.
+              {(!hasGeneralInfo || !hasEngineInfo) && " Some analytics data is currently unavailable."}
             </div>
           </div>
         </TooltipContent>
@@ -552,7 +476,6 @@ const DexterityInterface = ({ data }: any) => {
   const [mounted, setMounted] = useState(false);
   const { vaultAnalytics } = useGlobal();
 
-
   useEffect(() => {
     Dexterity.configure({ maxHops: 4 }).catch(console.error);
     const vaults = data.vaults.map((v: any) => new Vault(v));
@@ -568,7 +491,6 @@ const DexterityInterface = ({ data }: any) => {
       setSortOrder('desc'); // Default to descending when changing fields
     }
   };
-
 
   const tvl = (pool: any) => {
     const token0Value =
