@@ -8,18 +8,13 @@ const openai = new OpenAI({
 });
 
 interface TokenMetadata {
-    name?: string;
-    symbol?: string;
-    decimals?: number;
-    identifier?: string;
-    description?: string;
-    image?: string;
-    image_data?: string;
-    external_url?: string;
-    background_color?: string;
-    animation_url?: string;
-    youtube_url?: string;
-    properties?: Record<string, any>;
+    name: string;
+    description: string;
+    image: string;
+    identifier: string;
+    symbol: string;
+    decimals: number;
+    properties?: any;
 }
 
 interface GenerateMetadataRequest {
@@ -58,10 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 ...data,
                 image: data.customImageUrl,
                 properties: {
-                    ...data.properties,
-                    generated: {
-                        date: new Date().toISOString()
-                    }
+                    ...data.properties
                 }
             };
 
@@ -97,10 +89,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             ...data,
             image: url,
             properties: {
-                ...data.properties,
-                generated: {
-                    date: new Date().toISOString()
-                }
+                ...data.properties
             }
         };
 
