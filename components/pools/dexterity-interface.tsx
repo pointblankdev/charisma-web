@@ -453,7 +453,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                     Energy Rewards
                     <span className="ml-auto">Inactive</span>
                   </div>
-                  <div className="space-y-4 text-xs text-primary-foreground/90">
+                  <div className="space-y-4 text-sm text-primary-foreground/90">
                     <p className="leading-snug">
                       Energy rewards are additional yield incentives that can be enabled for liquidity vaults. When active, liquidity providers earn extra rewards in the form of energy tokens.
                     </p>
