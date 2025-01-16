@@ -7,8 +7,8 @@ import {
   hexToCV,
   uintCV
 } from '@stacks/transactions';
-import { client, getTotalSupply } from './stacks-api';
-import { getContractMetadata, getIndexContracts } from './db-providers/kv';
+import { client, getTotalSupply } from './hiro/stacks-api';
+import { getContractMetadata, getIndexContracts } from './redis/kv';
 
 const CACHE_PREFIX = 'dexterity:';
 

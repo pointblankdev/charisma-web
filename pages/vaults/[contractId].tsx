@@ -1,11 +1,9 @@
 import { GetServerSideProps } from 'next';
 import Layout from '@components/layout/layout';
-import { VaultDetailView } from '@components/pools/vault-detail-view';
-import { ContractId, Dexterity, Liquidity } from 'dexterity-sdk';
+import { ContractId, Dexterity } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
-import PricesService from '@lib/server/prices/prices-service';
+import { Kraxel } from '@lib/kraxel';
 
-const service = PricesService.getInstance();
 
 // Initialize SDK
 Dexterity.configure({ apiKeyRotation: 'loop' })
@@ -19,7 +17,7 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     const contractId = params?.contractId as ContractId;
     // Fetch vault data
     const vault = await Vault.build(contractId)
-    const prices = await service.getAllTokenPrices();
+    const prices = await Kraxel.getAllTokenPrices();
     return {
         props: {
             vault: JSON.parse(JSON.stringify(vault)), // Serialize for Next.js

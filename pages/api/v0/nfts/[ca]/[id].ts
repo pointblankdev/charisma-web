@@ -1,4 +1,4 @@
-import { getNftCollectionMetadata, getNftMetadata, setNftMetadata } from '@lib/db-providers/kv';
+import { getNftCollectionMetadata, getNftMetadata, setNftMetadata } from '@lib/redis/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {

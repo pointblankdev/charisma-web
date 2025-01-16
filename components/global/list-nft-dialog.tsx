@@ -13,12 +13,8 @@ import { Input } from '@components/ui/input';
 import { Alert, AlertDescription } from '@components/ui/alert';
 import { Loader2, Sparkles } from 'lucide-react';
 import Image from 'next/image';
-// import { openContractCall } from '@stacks/connect-react';
-import { network } from '@components/stacks-session/connect';
-import { useGlobalState } from '@lib/hooks/global-state-context';
-import { contractPrincipalCV, uintCV } from '@stacks/transactions';
-import { PostConditionMode } from '@stacks/transactions';
 import { API_URL } from '@lib/constants';
+import { useGlobal } from '@lib/hooks/global-context';
 
 interface ListNFTDialogProps {
   isOpen: boolean;
@@ -41,7 +37,7 @@ export default function ListNFTDialog({
   const [isLoading, setIsLoading] = useState(false);
   const [price, setPrice] = useState('');
   const [error, setError] = useState<string | null>(null);
-  const { stxAddress } = useGlobalState();
+  const { stxAddress } = useGlobal();
 
   const clearBackendCache = async () => {
     try {

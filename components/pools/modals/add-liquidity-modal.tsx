@@ -10,11 +10,11 @@ import { Button } from '@components/ui/button';
 import { Slider } from '@components/ui/slider';
 import { Plus, AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@components/ui/alert';
-import useWallet from '@lib/hooks/wallet-balance-provider';
 import { TokenDisplay, BalanceInfo } from '../shared/token-display';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { Opcode } from 'dexterity-sdk/dist/core/opcode';
 import debounce from 'lodash/debounce';
+import { useGlobal } from '@lib/hooks/global-context';
 
 export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }: { pool: any, tokenPrices: any, onAddLiquidity: any, trigger: any }) => {
   const [amount, setAmount] = useState(50);
@@ -24,7 +24,7 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
     token0Amount: 0,
     token1Amount: 0
   });
-  const { getBalance } = useWallet();
+  const { getBalance } = useGlobal();
   const [isProcessing, setIsProcessing] = useState(false);
 
   // Memoize the vault instance

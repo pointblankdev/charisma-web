@@ -4,15 +4,22 @@ import { TokenSettingsForm } from '@components/dexterity/token-settings.form';
 import Layout from '@components/layout/layout';
 import { Button } from '@components/ui/button';
 import { Card } from '@components/ui/card';
-import { useGlobalState } from '@lib/hooks/global-state-context';
-import PricesService from '@lib/server/prices/prices-service';
 import { cn } from '@lib/utils';
 import { Dexterity, Vault } from 'dexterity-sdk';
 import { GetStaticProps } from 'next';
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { Loader2Icon } from 'lucide-react';
-import { sanitizeContractName } from '@lib/codegen/dexterity';
+import { Kraxel } from '@lib/kraxel';
+import { useGlobal } from '@lib/hooks/global-context';
+
+export function sanitizeContractName(name: string): string {
+  const sanitized = name
+    .toLowerCase()
+    .replace(/[^a-zA-Z0-9 ]/g, '')
+    .replace(/\s+/g, '-');
+  return sanitized;
+}
 
 type Props = {
   prices: { [key: string]: number };
@@ -36,8 +43,7 @@ interface FormValues {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-  const service = PricesService.getInstance();
-  const prices = await service.getAllTokenPrices();
+  const prices = await Kraxel.getAllTokenPrices();
   return {
     props: { prices },
     revalidate: 60
@@ -53,7 +59,7 @@ export default function ContractDeployer({ prices }: Props) {
   const [tokenBMetadata, setTokenBMetadata] = useState(null as any);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
   const [isSavingMetadata, setIsSavingMetadata] = useState(false);
-  const { stxAddress } = useGlobalState();
+  const { stxAddress } = useGlobal();
   const [contractCode, setContractCode] = useState<string>('');
 
   const form = useForm<FormValues>({

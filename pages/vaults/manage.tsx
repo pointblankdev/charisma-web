@@ -4,11 +4,11 @@ import Layout from '@components/layout/layout';
 import { Button } from '@components/ui/button';
 import { Card } from '@components/ui/card';
 import { Input } from '@components/ui/input';
-import { useGlobalState } from '@lib/hooks/global-state-context';
-import { setContractMetadata, setVaultMetadata } from '@lib/user-api';
+import { setContractMetadata, setVaultMetadata } from '@lib/fetchers/user-api';
 import { ContractId, Dexterity } from 'dexterity-sdk';
 import { GetServerSideProps } from 'next';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
+import { useGlobal } from '@lib/hooks/global-context';
 
 interface TokenMetadata {
     contractId: string;
@@ -66,10 +66,9 @@ export const getServerSideProps: GetServerSideProps<any> = async (context) => {
 };
 
 export default function VaultMetadataPage({ initialMetadata, contractId }: Props) {
-    const router = useRouter();
     const [metadata, setMetadata] = useState<VaultMetadata>(initialMetadata);
     const [isSaving, setIsSaving] = useState(false);
-    const { stxAddress } = useGlobalState();
+    const { stxAddress } = useGlobal();
     const [auth, setAuth] = useState<AuthState>({
         isAuthenticated: false,
         password: ''

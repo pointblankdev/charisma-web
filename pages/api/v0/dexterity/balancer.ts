@@ -1,13 +1,11 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ContractId } from 'dexterity-sdk';
 import { Dexterity } from 'dexterity-sdk';
-import PricesService from '@lib/server/prices/prices-service';
 import _ from 'lodash';
+import { Kraxel } from '@lib/kraxel';
 
 // Opt out of caching; every request should send a new event
 export const dynamic = "force-dynamic";
-
-const kraxel = PricesService.getInstance();
 
 const blacklist = [
     'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',
@@ -37,7 +35,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             maxHops: 4
         })
 
-        const prices = await kraxel.getAllTokenPrices();
+        const prices = await Kraxel.getAllTokenPrices();
         await Dexterity.discover({ blacklist, reserves: false })
 
         const tokens = Dexterity.getTokens()

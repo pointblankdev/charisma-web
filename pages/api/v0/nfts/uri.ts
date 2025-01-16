@@ -1,4 +1,4 @@
-import { getNftURI } from '@lib/stacks-api';
+import { getNftURI } from '@lib/hiro/stacks-api';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

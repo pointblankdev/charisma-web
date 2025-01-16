@@ -9,14 +9,10 @@ import {
   HelpCircle,
   InfoIcon,
   ArrowUpDown,
-  Lightbulb,
   ZapIcon,
-  Shield,
   ShieldHalf,
-  UsersIcon,
-  UsersRound,
-  WavesIcon,
   Lock,
+  Gift,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
@@ -35,145 +31,18 @@ import { AddLiquidityModal } from './modals/add-liquidity-modal';
 import { RemoveLiquidityModal } from './modals/remove-liquidity-modal';
 import numeral from 'numeral';
 import { cn } from '@lib/utils';
-import { LPToken } from 'dexterity-sdk';
-import dynamic from 'next/dynamic';
+import { Dexterity } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { Opcode } from 'dexterity-sdk/dist/core/opcode';
-
-const StacksConnect = dynamic(() => import('@stacks/connect-react') as any, { ssr: false });
-console.log(StacksConnect)
+import { PostConditionMode } from '@stacks/transactions';
+import { useGlobal } from '@lib/hooks/global-context';
+import { toast } from '@components/ui/use-toast';
 
 const VERIFIED_ADDRESSES: Record<string, string> = {
   SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS: 'rozar.btc',
   SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS: 'mooningshark.btc',
   SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE: 'kraqen.btc',
   SP3T1M18J3VX038KSYPP5G450WVWWG9F9G6GAZA4Q: 'vinzomniac.btc'
-};
-
-const calculatePoolMetrics = (events: any[], poolData: any) => {
-  // Get LP Rebate percentage from metadata (e.g., 5 for 5%)
-  const lpRebatePercent = Number(poolData.fee / 10000) || 5;
-  const feeRate = lpRebatePercent / 100; // Convert 5 to 0.05 for calculations
-
-  if (!events?.length || !poolData.prices) {
-    return {
-      apy: 0,
-      lpRebate: lpRebatePercent,
-      totalFees: 0,
-      vaultAge: '0 days',
-      volume24h: 0,
-      feesLast30Days: 0,
-      tvl: 0
-    };
-  }
-
-  // Helper to convert token amount to USD value
-  const getTokenUsdValue = (amount: string, assetId: string): number => {
-    if (!assetId) return 0;
-
-    const tokenContractId = assetId.split('::')[0];
-    const tokenMetadata = poolData.liquidity[0];
-
-    if (!tokenMetadata) return 0;
-
-    const price = poolData.prices[tokenContractId] || 0;
-    const normalizedAmount = parseInt(amount) / Math.pow(10, tokenMetadata.decimals);
-    return normalizedAmount * price;
-  };
-
-  // Calculate TVL
-  const tvl =
-    (poolData.liquidity[0].reserves / Math.pow(10, poolData.liquidity[0].decimals)) *
-    (poolData.prices[poolData.liquidity[0].contractId] || 0) +
-    (poolData.liquidity[1].reserves / Math.pow(10, poolData.liquidity[1].decimals)) *
-    (poolData.prices[poolData.liquidity[1].contractId] || 0);
-
-  // Calculate pool age
-  const sortedEvents = [...events].sort((a, b) => a.block_time - b.block_time);
-  const firstEvent = sortedEvents[0];
-  const now = Math.floor(Date.now() / 1000);
-  const poolAgeInDays = Math.ceil((now - firstEvent.block_time) / (24 * 60 * 60));
-
-  // Calculate 24h volume
-  const last24hTimestamp = now - 24 * 60 * 60;
-  const volume24h = events
-    .filter(event => event.block_time >= last24hTimestamp)
-    .reduce((total, event) => {
-      const allTransferEvents = event.events.every(
-        (e: { event_type: string; asset: { asset_event_type: string } }) =>
-          e.event_type === 'stx_asset' || e.event_type === 'fungible_token_asset'
-      );
-
-      if (!allTransferEvents) return total;
-
-      const transferEvents = event.events.filter(
-        (e: { event_type: string; asset: { asset_event_type: string } }) =>
-          e.asset.asset_event_type === 'transfer'
-      );
-
-      const eventVolume = transferEvents.reduce(
-        (sum: number, e: { asset: { amount: string; asset_id: string } }) => {
-          const usdValue = getTokenUsdValue(e.asset.amount, e.asset.asset_id);
-          return sum + usdValue;
-        },
-        0
-      );
-
-      return total + eventVolume;
-    }, 0);
-
-  // Calculate 30-day fees
-  const last30DaysTimestamp = now - 30 * 24 * 60 * 60;
-  const feesLast30Days = events
-    .filter(event => event.block_time >= last30DaysTimestamp)
-    .reduce((total, event) => {
-      const transferEvents = event.events.filter(
-        (e: { event_type: string; asset: { asset_event_type: string } }) =>
-          e.event_type === 'fungible_token_asset' && e.asset.asset_event_type === 'transfer'
-      );
-
-      const eventFees = transferEvents.reduce(
-        (sum: number, e: { asset: { amount: string; asset_id: string } }) => {
-          const usdValue = getTokenUsdValue(e.asset.amount, e.asset.asset_id);
-          return sum + usdValue * feeRate;
-        },
-        0
-      );
-
-      return total + eventFees;
-    }, 0);
-
-  // Calculate total historical fees
-  const totalFees = events.reduce((total, event) => {
-    const transferEvents = event.events.filter(
-      (e: { event_type: string; asset: { asset_event_type: string } }) =>
-        e.event_type === 'fungible_token_asset' && e.asset.asset_event_type === 'transfer'
-    );
-
-    const eventFees = transferEvents.reduce(
-      (sum: number, e: { asset: { amount: string; asset_id: string } }) => {
-        const usdValue = getTokenUsdValue(e.asset.amount, e.asset.asset_id);
-        return sum + usdValue * feeRate;
-      },
-      0
-    );
-
-    return total + eventFees;
-  }, 0);
-
-  // Calculate APY based on 30-day fee rate
-  const annualizedFees = (feesLast30Days / 30) * 365;
-  const apy = tvl > 0 ? (annualizedFees / tvl) * 100 : 0;
-
-  return {
-    apy: parseFloat(apy.toFixed(2)),
-    lpRebate: lpRebatePercent,
-    totalFees,
-    vaultAge: `${poolAgeInDays} days`,
-    volume24h,
-    feesLast30Days,
-    tvl
-  };
 };
 
 const AddressDisplay = ({ address }: { address: string }) => {
@@ -336,52 +205,268 @@ const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number
 };
 
 const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
-  const poolWithPrices = { ...pool, prices };
-  const metrics = calculatePoolMetrics(pool.events, poolWithPrices);
+
+  const { vaultAnalytics, tapTokens, setVaultAnalytics, block, wallet } = useGlobal();
+  const vault = vaultAnalytics[pool.contractId];
+
+  const handleClaim = async () => {
+    if (!pool.engineContractId) return;
+
+    try {
+      // Import the connect library dynamically to avoid require statements
+      const { openContractCall } = await import('@stacks/connect');
+      await openContractCall({
+        contractAddress: pool.engineContractId.split('.')[0],
+        contractName: pool.engineContractId.split('.')[1],
+        functionName: 'tap',
+        functionArgs: [],
+        network: Dexterity.config.network,
+        postConditionMode: PostConditionMode.Deny,
+        onFinish: () => {
+          tapTokens(pool.contractId);
+          setVaultAnalytics((va: any) => ({ ...va, [pool.contractId]: { ...va[pool.contractId], engine: { ...va[pool.contractId].engine, claimableTokens: 0 } } }));
+        }
+      });
+    } catch (error) {
+      console.error('Error claiming rewards:', error);
+      // You may want to add error handling/user feedback here
+    }
+  };
+
+  // If it's an external pool, show a simple message
+  if (pool.externalPoolId) {
+    return (
+      <div className="mt-1 leading-snug">
+        <div className="flex flex-col items-center">
+          <div className="text-sm text-muted-foreground">
+            External Pool
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // If it's a dexterity vault, show a loading message
+  if (!vault) {
+    return (
+      <div className="mt-1 leading-snug">
+        <div className="flex flex-col items-center">
+          <div className="text-sm text-muted-foreground animate-pulse">
+            Loading...
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!vault.generalInfo) {
+    return null;
+  }
+
+
+  const lastTap = vault.engine.lastTap;
+  const holdToEarnAPY = (vault.engine.epy * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0)
+  const resetting = lastTap && block.height - lastTap <= 10
+  const energyPerDay = vault.engine.energyPerBlock * 17280 / 10 ** 6
+  const energyCapacity = 100 + (Number(wallet?.memobots?.count) * 10)
 
   return (
     <TooltipProvider>
       <Tooltip>
         <TooltipTrigger className="w-full">
           <div className="mt-1 leading-snug">
-            <div className="flex justify-center items-center text-lg font-medium text-green-400 whitespace-nowrap">
-              {metrics.apy.toFixed(2)}% APY
-            </div>
-            <div className="text-xs text-gray-400 whitespace-nowrap">
-              30d fees: ${numeral(metrics.feesLast30Days).format('0,0.00')}
+            <div className="flex flex-col items-center">
+              <div className="text-lg font-medium whitespace-nowrap">
+                {(vault.generalInfo.lpRebateAPY + Number(holdToEarnAPY)).toFixed(2)}% APY
+              </div>
+              <div className="flex items-center space-x-1 text-sm text-muted-foreground whitespace-nowrap ">
+                <span className={cn(pool.engineContractId ? 'flex items-center text-yellow-400 animate-pulse-glow' : 'text-muted-foreground')}>
+                  <span>{pool.engineContractId ? 'Energized' : 'Trading Fee'} Yield</span>
+                  {pool.engineContractId && <ZapIcon className="w-3 h-3 ml-1" />}
+                </span>
+              </div>
             </div>
           </div>
         </TooltipTrigger>
-        <TooltipContent side="bottom" className="w-80">
-          <div className="p-1 space-y-3">
-            <div className="font-medium">APY Breakdown</div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span>LP Fee Rate:</span>
-                <span className="font-medium">{metrics.lpRebate}%</span>
+        <TooltipContent side="bottom" className="w-[800px] shadow-lg rounded-lg bg-accent-foreground/20 backdrop-blur-2xl">
+          <div className="p-4 space-y-4">
+            <div className="font-medium text-lg">Yield Sources</div>
+
+            <div className="space-x-4 flex w-full">
+              {/* Trading Fee Rewards Section */}
+              <div className="space-y-2 rounded-lg bg-accent-foreground/70 p-3 w-full">
+                <div className="font-medium text-primary-foreground/90 flex items-center text-base">
+                  <ArrowLeftRight className="w-4 h-4 mr-2 text-primary" />
+                  Trading Fee Rewards
+                  <span className="ml-auto">{vault.generalInfo.lpRebateAPY.toFixed(2)}% APY</span>
+                </div>
+                <div className="space-y-1.5 text-sm">
+                  <div className="flex justify-between">
+                    <span className="text-muted-foreground">LP Rebate</span>
+                    <span>{vault.generalInfo.averageFeePercentage.toFixed(2)}%</span>
+                  </div>
+
+                  {/* 24h Volume Section */}
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground">24h Volume</div>
+                    <div className="ml-2 space-y-0.5">
+                      {vault.summary.last24h.map((tokenData: any, index: number) => (
+                        <div key={index} className="flex justify-between text-xs">
+                          <span>{pool.liquidity[index].symbol}</span>
+                          <span>${numeral(tokenData.volume).format('0,0.00')}</span>
+                        </div>
+                      ))}
+                      <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
+                        <span>Total</span>
+                        <span>
+                          ${numeral(vault.summary.last24h.reduce((acc: number, curr: any) => acc + curr.volume, 0)).format('0,0.00')}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* 30-day Fees Section */}
+                  <div className="space-y-1">
+                    <div className="text-muted-foreground">Overall Fees Earned</div>
+                    <div className="ml-2 space-y-0.5">
+                      {vault.summary.overall.map((tokenData: any, index: number) => (
+                        <div key={index} className="flex justify-between text-xs">
+                          <span>{pool.liquidity[index].symbol}</span>
+                          <div className="space-x-2">
+                            <span>{numeral(tokenData.tokenFee).format('0,0.00')} {pool.liquidity[index].symbol}</span>
+                            <span className="text-muted-foreground">
+                              ${numeral(tokenData.tokenFeeValue).format('0,0.00')}
+                            </span>
+                          </div>
+                        </div>
+                      ))}
+                      <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
+                        <span>Total Value</span>
+                        <span>
+                          ${numeral(vault.summary.overall.reduce((acc: number, curr: any) => acc + curr.tokenFeeValue, 0)).format('0,0.00')}
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div className="text-xs text-muted-foreground mt-2">
+                  Trading fees are automatically reinvested into your position
+                </div>
               </div>
-              <div className="flex justify-between">
-                <span>24h Volume:</span>
-                <span className="font-medium">${numeral(metrics.volume24h).format('0,0')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Total Fees Earned:</span>
-                <span className="font-medium">${numeral(metrics.totalFees).format('0,0.00')}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>30-day Fees:</span>
-                <span className="font-medium">
-                  ${numeral(metrics.feesLast30Days).format('0,0.00')}
-                </span>
-              </div>
-              <div className="flex justify-between">
-                <span>Vault Age:</span>
-                <span className="font-medium">{metrics.vaultAge}</span>
-              </div>
-              <div className="mt-2 text-xs text-gray-400">
-                APY is calculated based on recent trading volume, fees collected, and total
-                liquidity. Past performance does not guarantee future returns.
-              </div>
+
+              {/* Show either active rewards or placeholder explanation */}
+              {pool.engineContractId && vault.energyRate ? (
+                <div className="space-y-4 rounded-lg bg-yellow-400/20 p-4 w-full">
+                  {/* Header */}
+                  <div className="font-medium text-primary-foreground/90 flex items-center text-base">
+                    <ZapIcon className="w-4 h-4 mr-2 text-yellow-400" />
+                    Hold-to-Earn Rewards
+                    <span className="ml-auto">{holdToEarnAPY.toFixed(2)}% APY</span>
+                  </div>
+
+                  {/* Description */}
+                  <div className="text-sm text-primary-foreground/70 leading-tight">
+                    Hold-to-earn is Charisma's way to reward long-term holders like you, without the need to give up custody of your tokens. Just hold LP tokens and earn rewards.
+                    <div className='pt-2' />
+                    When participating in hold-to-earn, you will be rewarded in the <ZapIcon className="w-3 h-3 mb-0.5 text-yellow-400 inline-block" /> Energy token. Energy is soulbound, and cannot be transferred, but you can burn it to receive tokens like HOOT or other rewards.
+                  </div>
+
+                  {/* Stats */}
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-center p-2 rounded-md bg-black/20">
+                      <span className="text-sm text-muted-foreground">Daily Rate</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center">
+                          {/* 5 sec block times, 60/5 = 12 blocks per minute, 12 * 60 = 720 blocks per hour, 720 * 24 = 17280 blocks per day */}
+                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400 animate-pulse-glow" />
+                          <span>{numeral(energyPerDay).format('0,0')}/day</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          ≈ ${numeral(energyPerDay * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Warning message when needed */}
+                  {vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && (
+                    <div className="text-xs text-red-400 bg-red-400/20 p-2 rounded-md flex items-center leading-snug">
+                      <InfoIcon className="h-4 mr-2 w-12" />
+                      Warning: Energy has reached maximum capacity ({energyCapacity}). You can only hold {energyCapacity} Energy at a time, so make sure to spend your tokens before harvesting more.
+                    </div>
+                  )}
+
+                  {/* Show resetting state within 10 blocks of a tap */}
+                  {resetting && (
+                    <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-1">
+                      <span>Resetting</span>
+                      <div className="w-full h-1.5 bg-muted/20 rounded-full overflow-hidden">
+                        <div
+                          className="h-full bg-primary/30 transition-all duration-500"
+                          style={{
+                            width: `${((block.height - lastTap) / 10) * 100}%`
+                          }}
+                        />
+                      </div>
+                      <span>{block.height - lastTap}/10</span>
+                    </div>
+                  )}
+
+                  {/* Footer with claim section */}
+                  <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
+                    <div className="flex flex-col">
+                      {/* show x/10 resettings state within 10 blocks of a tap */}
+                      <span className="text-sm text-muted-foreground">Available to Claim</span>
+                      <div className="flex items-center space-x-2">
+                        <div
+                          key={vault.engine.claimableTokens}
+                          className={cn("flex items-center", "shake")}
+                        >
+                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
+                          <span className="font-medium">
+                            {numeral(Math.min(vault.engine.claimableTokens / 10 ** 6, energyCapacity)).format('0,0.00')}
+                          </span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          ≈ ${numeral(Math.min(vault.engine.claimableTokens / 10 ** 6, energyCapacity) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
+                        </span>
+                      </div>
+                    </div>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className={cn(
+                        "h-8 px-3",
+                        vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && "animate-pulse bg-red-500/20"
+                      )}
+                      onClick={handleClaim}
+                      disabled={vault.engine.claimableTokens <= 0 || resetting}
+                    >
+                      <Gift className="w-4 h-4 mr-1" /> Claim Rewards
+                    </Button>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-2 rounded-lg bg-muted/20 p-3 w-full">
+                  <div className="font-medium text-muted-foreground flex items-center text-base">
+                    <ZapIcon className="w-4 h-4 mr-2" />
+                    Energy Rewards
+                    <span className="ml-auto">Inactive</span>
+                  </div>
+                  <div className="space-y-4 text-xs text-primary-foreground/90">
+                    <p className="leading-snug">
+                      Energy rewards are additional yield incentives that can be enabled for liquidity vaults. When active, liquidity providers earn extra rewards in the form of energy tokens.
+                    </p>
+                    <p className="leading-snug">
+                      This vault currently does not have energy rewards enabled. Check other vaults for earning opportunities.
+                    </p>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="text-xs text-muted-foreground">
+              APY calculations are based on historical data and may vary. Past performance does not guarantee future returns.
             </div>
           </div>
         </TooltipContent>
@@ -408,10 +493,10 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
         <div>
           <div className="flex items-center space-x-1 leading-snug">
             <div className=''>
-              {/* <Link href={`/vaults/${pool.contractId}`} className="hover:text-primary-foreground/80 text-primary-foreground transition-colors"> */}
               <div className="text-lg md:block leading-snug">{pool.name}</div>
-              <div className="text-lg lg:hidden block leading-snug text-gray-400 lg:text-white">{pool.symbol}</div>
-              {/* </Link> */}
+              <div className="text-lg lg:hidden block leading-snug text-gray-400 lg:text-white">
+                {pool.symbol}
+              </div>
             </div>
             <Link
               href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
@@ -422,7 +507,11 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
               <ExternalLink size={14} />
             </Link>
           </div>
-          <div className="text-sm text-gray-400 hidden lg:block leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-64" title={pool.description}>{pool.description}</div>
+          <div className="flex items-center space-x-2">
+            <div className="text-sm text-gray-400 hidden lg:block leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-64" title={pool.description}>
+              {pool.description}
+            </div>
+          </div>
         </div>
       </td>
       <td className="px-4 py-4 text-white">
@@ -444,50 +533,19 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
   );
 };
 
-const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string, number> }) => {
+const DexterityInterface = ({ data }: any) => {
   const [sortField, setSortField] = useState('tvl');
   const [sortOrder, setSortOrder] = useState('desc');
   const [mounted, setMounted] = useState(false);
+  const { vaultAnalytics } = useGlobal();
 
-  const sortedPools = useMemo(() => {
-    const calculateTVL = (pool: LPToken) => {
-      const token0Value =
-        (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
-        (prices[pool.liquidity[0].contractId] || 0);
-      const token1Value =
-        (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
-        (prices[pool.liquidity[1].contractId] || 0);
-      return Number(token0Value) + Number(token1Value);
-    };
 
-    return data.pools.sort((a: any, b: any) => {
-      if (sortField === 'apy') {
-        const metricsA = calculatePoolMetrics(a.events, { ...a, prices });
-        const metricsB = calculatePoolMetrics(b.events, { ...b, prices });
-        return sortOrder === 'asc' ? metricsA.apy - metricsB.apy : metricsB.apy - metricsA.apy;
-      } else if (sortField === 'tvl') {
-        const tvlA = calculateTVL(a);
-        const tvlB = calculateTVL(b);
-        return sortOrder === 'asc' ? tvlA - tvlB : tvlB - tvlA;
-      }
-
-      const nameA = a.name.toUpperCase();
-      const nameB = b.name.toUpperCase();
-      return sortOrder === 'asc' ? nameA.localeCompare(nameB) : nameB.localeCompare(nameA);
-    });
-  }, [data.pools, sortField, sortOrder, prices]);
-
-  const totalTVL = useMemo(() => {
-    return sortedPools.reduce((total: any, pool: any) => {
-      const token0Value =
-        (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
-        (prices[pool.liquidity[0].contractId] || 0);
-      const token1Value =
-        (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
-        (prices[pool.liquidity[1].contractId] || 0);
-      return Number(total) + Number(token0Value) + Number(token1Value);
-    }, 0);
-  }, [sortedPools, prices]);
+  useEffect(() => {
+    Dexterity.configure({ maxHops: 4 }).catch(console.error);
+    const vaults = data.vaults.map((v: any) => new Vault(v));
+    Dexterity.router.loadVaults(vaults);
+    console.log('Router initialized:', Dexterity.router.getGraphStats());
+  }, [data.vaults]);
 
   const handleSort = (field: string) => {
     if (sortField === field) {
@@ -498,9 +556,49 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
     }
   };
 
+
+  const tvl = (pool: any) => {
+    const token0Value =
+      (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
+      (data.prices[pool.liquidity[0].contractId] || 0);
+    const token1Value =
+      (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
+      (data.prices[pool.liquidity[1].contractId] || 0);
+    return token0Value + token1Value;
+  }
+
+  let totalTVL = 0;
+  for (const vault of data.vaults) {
+    const vaultTVL = tvl(vault)
+    if (vaultTVL) {
+      totalTVL += vaultTVL
+    }
+  }
+
   useEffect(() => {
     setMounted(true);
   }, []);
+
+  const sortedPools = useMemo(() => {
+    return [...data.vaults].sort((a, b) => {
+      let comparison = 0;
+
+      switch (sortField) {
+        case 'tvl':
+          comparison = tvl(b) - tvl(a);
+          break;
+        case 'apy':
+          const aAPY = vaultAnalytics[a.contractId]?.generalInfo?.lpRebateAPY || 0;
+          const bAPY = vaultAnalytics[b.contractId]?.generalInfo?.lpRebateAPY || 0;
+          comparison = bAPY - aAPY;
+          break;
+        default:
+          comparison = tvl(b) - tvl(a);
+      }
+
+      return sortOrder === 'asc' ? -comparison : comparison;
+    });
+  }, [data.vaults, sortField, sortOrder, vaultAnalytics]);
 
   return (
     <div className="sm:mx-auto sm:px-4">
@@ -696,7 +794,7 @@ const DexterityInterface = ({ data, prices }: { data: any; prices: Record<string
               </thead>
               <tbody>
                 {sortedPools.map((pool: any, index: number) => (
-                  <PoolRow key={index} pool={pool} prices={prices} />
+                  <PoolRow key={index} pool={pool} prices={data.prices} />
                 ))}
               </tbody>
             </table>

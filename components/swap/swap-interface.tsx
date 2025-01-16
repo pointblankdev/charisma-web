@@ -3,13 +3,12 @@ import Image from 'next/image';
 import { ChevronDown, ArrowUpDown, Coins, Network, TrendingUp } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
-import useWallet from '@lib/hooks/wallet-balance-provider';
-import { useGlobalState } from '@lib/hooks/global-state-context';
 import dynamic from 'next/dynamic';
 import { Dexterity, LPToken, Quote, Token } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { SwapGraphVisualizer } from './swap-graph-visualizer';
 import _ from 'lodash';
+import { useGlobal } from '@lib/hooks/global-context';
 
 const formatUSD = (amount: number, price: number) => {
   const value = amount * price;
@@ -211,8 +210,7 @@ export const SwapInterface = ({
   const [isCalculating, setIsCalculating] = useState(false);
   const [slippage, setSlippage] = useState(0);
   const [swapPath, setSwapPath] = useState<any[]>([]);
-  const { stxAddress } = useGlobalState();
-  const { getBalance, wallet } = useWallet();
+  const { getBalance, wallet, stxAddress } = useGlobal();
   const estimateTimer = useRef<NodeJS.Timeout>();
   const [exploringPaths, setExploringPaths] = useState(0);
   const [showGraph, setShowGraph] = useState(false);
@@ -225,6 +223,7 @@ export const SwapInterface = ({
     const vaults = pools.map(pool => new Vault(pool));
     Dexterity.router.loadVaults(vaults);
     console.log('Router initialized:', Dexterity.router.getGraphStats());
+    console.log('Vaults:', Dexterity.getVaults());
   }, [pools, stxAddress]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);

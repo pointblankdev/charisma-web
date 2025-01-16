@@ -10,16 +10,16 @@ import { Button } from '@components/ui/button';
 import { Slider } from '@components/ui/slider';
 import { AlertCircle } from 'lucide-react';
 import { Alert, AlertDescription } from '@components/ui/alert';
-import useWallet from '@lib/hooks/wallet-balance-provider';
 import { TokenDisplay, BalanceInfo } from '../shared/token-display';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { Opcode } from 'dexterity-sdk/dist/core/opcode';
 import debounce from 'lodash/debounce';
+import { useGlobal } from '@lib/hooks/global-context';
 
 export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, trigger }: { pool: any, tokenPrices: any, onRemoveLiquidity: any, trigger: any }) => {
   const [amount, setAmount] = useState(50);
   const [isQuoting, setIsQuoting] = useState(false);
-  const { getBalance } = useWallet();
+  const { getBalance } = useGlobal();
   const vault = useMemo(() => new Vault(pool), [pool]);
 
   const maxAmount = useMemo(() => {

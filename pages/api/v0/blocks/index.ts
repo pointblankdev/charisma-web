@@ -1,5 +1,7 @@
-import { getGlobalState } from '@lib/db-providers/kv';
+import { getBlocks } from '@lib/hiro/stacks-api';
 import { NextApiRequest, NextApiResponse } from 'next';
+
+export const dynamic = "force-dynamic";
 
 type ErrorResponse = {
   error: {
@@ -8,7 +10,7 @@ type ErrorResponse = {
   };
 };
 
-export default async function getBlocks(
+export default async function getBlockHeight(
   req: NextApiRequest,
   res: NextApiResponse<any | ErrorResponse>
 ) {
@@ -16,7 +18,8 @@ export default async function getBlocks(
     code = 200;
   try {
     if (req.method === 'GET') {
-      response = await getGlobalState(`blocks:latest`);
+      const blocksResponse = await getBlocks();
+      response = blocksResponse?.results[0];
     } else {
       code = 501;
       response = new Object({

@@ -1,4 +1,4 @@
-import { getContractMetadata, setContractMetadata } from '@lib/db-providers/kv';
+import { getContractMetadata, setContractMetadata } from '@lib/redis/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {

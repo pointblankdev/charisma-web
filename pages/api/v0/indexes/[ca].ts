@@ -1,5 +1,5 @@
-import { addIndexContract, getContractMetadata, setContractMetadata } from '@lib/db-providers/kv';
-import { getTokenMetadata } from '@lib/stacks-api';
+import { addIndexContract, getContractMetadata, setContractMetadata } from '@lib/redis/kv';
+import { getTokenMetadata } from '@lib/hiro/stacks-api';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {

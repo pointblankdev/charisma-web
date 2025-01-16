@@ -1,5 +1,5 @@
 // pages/api/nft-ownership.js
-import { getCollectionSize, getNftOwner } from '@lib/stacks-api';
+import { getCollectionSize, getNftOwner } from '@lib/hiro/stacks-api';
 import { kv } from '@vercel/kv';
 
 const CACHE_DURATION = 60 * 60 * 24; // 1 day in seconds

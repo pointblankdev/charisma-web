@@ -11,10 +11,9 @@ import { Ysabeau_Infant } from 'next/font/google'
 import { cn } from '@lib/utils';
 import { Toaster } from "@components/ui/toaster"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { WalletBalancesProvider } from '@lib/hooks/wallet-balance-provider';
-import { GlobalStateProvider } from '@lib/hooks/global-state-context';
 import { appDetails, userSession } from '@components/stacks-session/connect';
 import dynamic from 'next/dynamic'
+import { GlobalProvider } from '@lib/hooks/global-context';
 
 // Create dynamic Connect component with SSR disabled
 const StacksConnect = dynamic(
@@ -39,18 +38,16 @@ export default function App({ Component, pageProps }: AppProps) {
   return (
     <OverlayProvider>
       <StacksConnect authOptions={authOptions}>
-        <GlobalStateProvider>
-          <WalletBalancesProvider>
-            <main className={cn(font.className)}>
-              <Component {...pageProps} />
-            </main>
-            <Toaster />
-            <ResizeHandler />
-            <NProgress />
-            <Analytics />
-            <SpeedInsights />
-          </WalletBalancesProvider>
-        </GlobalStateProvider>
+        <GlobalProvider>
+          <main className={cn(font.className)}>
+            <Component {...pageProps} />
+          </main>
+          <Toaster />
+          <ResizeHandler />
+          <NProgress />
+          <Analytics />
+          <SpeedInsights />
+        </GlobalProvider>
       </StacksConnect>
     </OverlayProvider>
   );

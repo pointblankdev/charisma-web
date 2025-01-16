@@ -4,10 +4,10 @@ import IconStacks from '../icons/icon-stacks';
 import Link from 'next/link';
 import { BsDiscord, BsTwitter, BsBookHalf, BsGithub } from 'react-icons/bs';
 import { BITCOIN_LEARN_MORE_URL, STACKS_LEARN_MORE_URL } from '@lib/constants';
-import { useGlobalState } from '@lib/hooks/global-state-context';
+import { useGlobal } from '@lib/hooks/global-context';
 
 export default function Footer() {
-  const { block } = useGlobalState();
+  const { block } = useGlobal();
 
   return (
     <footer className={cn(styles.footer)}>

@@ -3,8 +3,8 @@ import Page from '@components/page';
 import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
 import { SwapInterface } from '@components/swap/swap-interface';
-import PricesService from '@lib/server/prices/prices-service';
 import { ContractId, Dexterity, LPToken, Token } from 'dexterity-sdk';
+import { Kraxel } from '@lib/kraxel';
 
 Dexterity.configure({ apiKeyRotation: 'loop', parallelRequests: 10 }).catch(console.error);
 
@@ -18,8 +18,7 @@ const blacklist = [
 ] as ContractId[];
 
 export const getStaticProps: GetStaticProps<any> = async () => {
-  const service = PricesService.getInstance();
-  const prices = await service.getAllTokenPrices();
+  const prices = await Kraxel.getAllTokenPrices();
   const pools = await Dexterity.discover({ serialize: true, blacklist });
   const tokens = Dexterity.getTokens();
 

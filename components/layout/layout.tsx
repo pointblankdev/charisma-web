@@ -10,7 +10,6 @@ import Footer from './footer';
 import React, { useEffect, useState } from 'react';
 import Image from 'next/image';
 import ConnectWallet, { userSession } from '@components/stacks-session/connect';
-import { useGlobalState } from '@lib/hooks/global-state-context';
 import {
   NavigationMenu,
   NavigationMenuContent,
@@ -22,6 +21,7 @@ import {
 import { ChartBarIcon, LineChartIcon } from 'lucide-react';
 // import { GlobalDrawer, useGlobalDrawer } from '@components/global/drawer';
 import charisma from '@public/charisma.png';
+import { useGlobal } from '@lib/hooks/global-context';
 
 type Props = {
   children: React.ReactNode;
@@ -57,7 +57,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const router = useRouter();
   const activeRoute = router.asPath;
 
-  const { stxAddress } = useGlobalState();
+  const { stxAddress } = useGlobal();
   // const drawer = useGlobalDrawer();
 
   const [navigationTabs, setNavigationTabs] = useState([] as any[]);

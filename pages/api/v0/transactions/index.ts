@@ -1,4 +1,4 @@
-import { getAllContractTransactions } from '@lib/stacks-api';
+import { getAllContractTransactions } from '@lib/hiro/stacks-api';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 type ErrorResponse = {

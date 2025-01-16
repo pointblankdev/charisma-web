@@ -22,12 +22,12 @@ import {
   ArrowRightLeft
 } from 'lucide-react';
 import numeral from 'numeral';
-import useWallet from '@lib/hooks/wallet-balance-provider';
 import Image from 'next/image';
 import { Dexterity } from 'dexterity-sdk';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@components/ui/use-toast';
+import { useGlobal } from '@lib/hooks/global-context';
 interface FormattedToken {
   contractId: string;
   balance: string;
@@ -206,7 +206,7 @@ const TokenListItem = ({ token, metadata }: { token: FormattedToken; metadata?: 
 const TokenList = () => {
   const [tokenMetadata, setTokenMetadata] = useState({} as any);
   const [isLoading, setIsLoading] = useState(true);
-  const { balances } = useWallet();
+  const { balances } = useGlobal();
 
   const tokens = useMemo(() => {
     const stxToken = {

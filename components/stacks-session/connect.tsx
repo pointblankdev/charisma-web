@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import type { AppConfig, UserSession } from '@stacks/connect-react';
 import { cn } from '@lib/utils';
 import { Button } from '@components/ui/button';
-import { useGlobalState } from '@lib/hooks/global-state-context';
 import * as Sentry from '@sentry/browser';
-import { getNamesFromAddress } from '@lib/stacks-api';
+import { getNamesFromAddress } from '@lib/hiro/stacks-api';
 import { STACKS_MAINNET } from '@stacks/network';
+import { useGlobal } from '@lib/hooks/global-context';
 
 export let appConfig: AppConfig;
 export let userSession: UserSession;
@@ -65,7 +65,7 @@ export function toggleSession() {
 
 const ConnectWallet = () => {
   const [mounted, setMounted] = useState(false);
-  const { stxAddress } = useGlobalState();
+  const { stxAddress } = useGlobal();
 
   const shortAddress = `${stxAddress.slice(0, 4)}...${stxAddress.slice(-4)}`;
 
