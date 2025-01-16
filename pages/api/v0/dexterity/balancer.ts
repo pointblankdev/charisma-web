@@ -46,9 +46,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const filteredTokens = tokens.filter(token => Dexterity.getVaultsForToken(token.contractId).size > 1)
 
         // Pick 3 random tokens
-        const randomTokens = _.sampleSize(filteredTokens, 3)
+        // const randomTokens = _.sampleSize(filteredTokens, 3)
 
-        for (let i = 0; i < randomTokens.length; i++) {
+        for (let i = 0; i < filteredTokens.length; i++) {
             const token = tokens[i];
             try {
                 console.log('Processing token:', token.symbol, `${i + 1}/${tokens.length}`)
