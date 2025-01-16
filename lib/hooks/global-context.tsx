@@ -286,15 +286,16 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 const vaultAnalytics: any = {};
 
                 for (const [vaultId, analytics] of Object.entries(vaults)) {
+                    const vaultContractIdentifier = vaultId + "::" + Dexterity.getVault(vaultId)?.identifier;
                     vaultAnalytics[vaultId] = analytics;
-                    const energyPerBlock = (analytics as any).energyRate * getBalance(vaultId);
+                    const energyPerBlock = (analytics as any).energyRate * getBalance(vaultContractIdentifier);
                     const blocksPerYear = 6311385;
                     const energyPerYear = energyPerBlock * blocksPerYear;
                     vaultAnalytics[vaultId].engine = {
                         energyPerBlockPerToken: (analytics as any).energyRate,
                         energyPerBlock,
                         energyPerYear,
-                        epy: energyPerYear / getBalance(vaultId) * 100,
+                        epy: energyPerYear / getBalance(vaultContractIdentifier) * 100,
                         apy: 0,
                         claimableTokens: (block.height - getLastTap(vaultId)) * energyPerBlock,
                         claimableUSD: 0,
