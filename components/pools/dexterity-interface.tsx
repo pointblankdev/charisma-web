@@ -290,7 +290,20 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
         </TooltipTrigger>
         <TooltipContent side="bottom" className="w-[800px] shadow-lg rounded-lg bg-accent-foreground/20 backdrop-blur-2xl">
           <div className="p-4 space-y-4">
-            <div className="font-medium text-lg">Yield Sources</div>
+            <div className="flex items-center justify-between">
+              <div className="font-medium text-lg">Yield Sources</div>
+              <div className="text-sm text-muted-foreground">
+                This vault generates
+                ${numeral(
+                  // Daily trading fees
+                  (vault.summary.last24h.reduce((acc: number, curr: any) => acc + curr.volume, 0) *
+                    vault.generalInfo.averageFeePercentage / 100) +
+                  // Daily energy rewards in USD (energyPerDay * total supply * HOOT price)
+                  (vault.engine.energyPerBlockPerToken * 17280 * (pool.supply / 10 ** pool.decimals) *
+                    prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'])
+                ).format('0,0.00')}/day for its liquidity providers
+              </div>
+            </div>
 
             <div className="space-x-4 flex w-full">
               {/* Trading Fee Rewards Section */}
@@ -440,7 +453,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                         vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && "animate-pulse bg-red-500/20"
                       )}
                       onClick={handleClaim}
-                      disabled={vault.engine.claimableTokens <= 0 || resetting}
+                      disabled={resetting}
                     >
                       <Gift className="w-4 h-4 mr-1" /> Claim Rewards
                     </Button>
