@@ -40,7 +40,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const tokens = Dexterity.getTokens()
         const txs = []
-        const fee = 1200
+        const fee = 1100
 
         // Filter out tokens with less than 2 vaults
         const filteredTokens = tokens.filter(token => Dexterity.getVaultsForToken(token.contractId).size > 1)
@@ -60,7 +60,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const feeInUSD = fee / 10 ** token.decimals * prices['.stx']
                 // amount out and in are in token units, convert to USD with decimals
                 const grossProfit = quote.amountOut / 10 ** token.decimals * prices[token.contractId] - feeInUSD
-                const errorMargin = 0.005
+                const errorMargin = Dexterity.config.defaultSlippage
                 const grossProfitWithMargin = grossProfit * (1 - errorMargin)
                 const netProfit = grossProfitWithMargin - quote.amountIn / 10 ** token.decimals * prices[token.contractId]
 
