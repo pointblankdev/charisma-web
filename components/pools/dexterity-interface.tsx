@@ -254,66 +254,80 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                 ).format('0,0.00')}/day for its liquidity providers
               </div>
             </div>
-
             <div className="space-x-4 flex w-full">
               {/* Trading Fee Rewards Section */}
-              <div className="space-y-2 rounded-lg bg-accent-foreground/70 p-3 w-full">
-                <div className="font-medium text-primary-foreground/90 flex items-center text-base">
-                  <ArrowLeftRight className="w-4 h-4 mr-2 text-primary" />
-                  Trading Fee Rewards
-                  <span className="ml-auto">{vault.generalInfo.lpRebateAPY.toFixed(2)}% APY</span>
-                </div>
-                <div className="space-y-1.5 text-sm">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">LP Rebate</span>
-                    <span>{vault.generalInfo.averageFeePercentage.toFixed(2)}%</span>
-                  </div>
+              <div className="space-y-2 rounded-lg bg-accent-foreground/70 p-3 w-full relative overflow-hidden">
+                {/* Add background image */}
+                <div
+                  className="absolute inset-0 opacity-5"
+                  style={{
+                    backgroundImage: `url(${pool.image})`,
+                    backgroundSize: 'cover',
+                    backgroundPosition: 'center',
+                    filter: 'grayscale(50%)',
+                    transform: 'scale(1.2)'
+                  }}
+                />
 
-                  {/* 24h Volume Section */}
-                  <div className="space-y-1">
-                    <div className="text-muted-foreground">24h Volume</div>
-                    <div className="ml-2 space-y-0.5">
-                      {vault.summary.last24h.map((tokenData: any, index: number) => (
-                        <div key={index} className="flex justify-between text-xs">
-                          <span>{pool.liquidity[index].symbol}</span>
-                          <span>${numeral(tokenData.volume).format('0,0.00')}</span>
-                        </div>
-                      ))}
-                      <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
-                        <span>Total</span>
-                        <span>
-                          ${numeral(vault.summary.last24h.reduce((acc: number, curr: any) => acc + curr.volume, 0)).format('0,0.00')}
-                        </span>
-                      </div>
+                {/* Existing content with relative positioning */}
+                <div className="relative z-10">
+                  <div className="font-medium text-primary-foreground/90 flex items-center text-base">
+                    <ArrowLeftRight className="w-4 h-4 mr-2 text-primary" />
+                    Trading Fee Rewards
+                    <span className="ml-auto">{vault.generalInfo.lpRebateAPY.toFixed(2)}% APY</span>
+                  </div>
+                  <div className="space-y-1.5 text-sm">
+                    <div className="flex justify-between">
+                      <span className="text-muted-foreground">LP Rebate</span>
+                      <span>{vault.generalInfo.averageFeePercentage.toFixed(2)}%</span>
                     </div>
-                  </div>
 
-                  {/* 30-day Fees Section */}
-                  <div className="space-y-1">
-                    <div className="text-muted-foreground">Overall Fees Earned</div>
-                    <div className="ml-2 space-y-0.5">
-                      {vault.summary.overall.map((tokenData: any, index: number) => (
-                        <div key={index} className="flex justify-between text-xs">
-                          <span>{pool.liquidity[index].symbol}</span>
-                          <div className="space-x-2">
-                            <span>{numeral(tokenData.tokenFee).format('0,0.00')} {pool.liquidity[index].symbol}</span>
-                            <span className="text-muted-foreground">
-                              ${numeral(tokenData.tokenFeeValue).format('0,0.00')}
-                            </span>
+                    {/* 24h Volume Section */}
+                    <div className="space-y-1">
+                      <div className="text-muted-foreground">24h Volume</div>
+                      <div className="ml-2 space-y-0.5">
+                        {vault.summary.last24h.map((tokenData: any, index: number) => (
+                          <div key={index} className="flex justify-between text-xs">
+                            <span>{pool.liquidity[index].symbol}</span>
+                            <span>${numeral(tokenData.volume).format('0,0.00')}</span>
                           </div>
+                        ))}
+                        <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
+                          <span>Total</span>
+                          <span>
+                            ${numeral(vault.summary.last24h.reduce((acc: number, curr: any) => acc + curr.volume, 0)).format('0,0.00')}
+                          </span>
                         </div>
-                      ))}
-                      <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
-                        <span>Total Value</span>
-                        <span>
-                          ${numeral(vault.summary.overall.reduce((acc: number, curr: any) => acc + curr.tokenFeeValue, 0)).format('0,0.00')}
-                        </span>
+                      </div>
+                    </div>
+
+                    {/* 30-day Fees Section */}
+                    <div className="space-y-1">
+                      <div className="text-muted-foreground">Overall Fees Earned</div>
+                      <div className="ml-2 space-y-0.5">
+                        {vault.summary.overall.map((tokenData: any, index: number) => (
+                          <div key={index} className="flex justify-between text-xs">
+                            <span>{pool.liquidity[index].symbol}</span>
+                            <div className="space-x-2">
+                              <span>{numeral(tokenData.tokenFee).format('0,0.00')} {pool.liquidity[index].symbol}</span>
+                              <span className="text-muted-foreground">
+                                ${numeral(tokenData.tokenFeeValue).format('0,0.00')}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                        <div className="flex justify-between text-xs font-medium pt-0.5 border-t border-gray-700/50">
+                          <span>Total Value</span>
+                          <span>
+                            ${numeral(vault.summary.overall.reduce((acc: number, curr: any) => acc + curr.tokenFeeValue, 0)).format('0,0.00')}
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-                <div className="text-xs text-muted-foreground mt-2">
-                  Trading fees are automatically reinvested into your position
+                  <div className="text-xs text-muted-foreground mt-2">
+                    Trading fees are automatically reinvested into your position
+                  </div>
                 </div>
               </div>
 
@@ -438,19 +452,25 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                   </div>
                 </div>
               ) : (
-                <div className="space-y-2 rounded-lg bg-muted/20 p-3 w-full">
+                <div className="space-y-2 rounded-lg p-3 w-full">
                   <div className="font-medium text-muted-foreground flex items-center text-base">
-                    <ZapIcon className="w-4 h-4 mr-2" />
-                    Energy Rewards
-                    <span className="ml-auto">Inactive</span>
+                    <HandCoins className="w-4 h-4 mr-2" />
+                    Hold-to-Earn
+                    <span className="ml-auto">Not Activated</span>
                   </div>
                   <div className="space-y-4 text-sm text-primary-foreground/90">
                     <p className="leading-snug">
-                      Energy rewards are additional yield incentives that can be enabled for liquidity vaults. When active, liquidity providers earn extra rewards in the form of energy tokens.
+                      Hold-to-earn is an additional yield incentive that can be enabled for liquidity vaults. When active, liquidity providers earn extra rewards in the form of energy tokens.
                     </p>
                     <p className="leading-snug">
-                      This vault currently does not have energy rewards enabled. Check other vaults for earning opportunities.
+                      This vault currently does not have hold-to-earn enabled. Check other vaults for earning opportunities.
                     </p>
+                    <p className="leading-snug">
+                      To activate hold-to-earn, you must first add liquidity to the vault. Once enough liquidity from the community has been added, the vault will become eligible for hold-to-earn.
+                    </p>
+                    <Button variant="ghost" size="sm" className="h-8 px-3" onClick={() => setShowQuickAddModal(true)}>
+                      Add Liquidity
+                    </Button>
                   </div>
                 </div>
               )}
