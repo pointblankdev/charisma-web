@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useState, useCallback, useMemo } from 'react';
 import { usePersistedState } from './use-persisted-state';
-import { getLatestBlock } from '@lib/fetchers/user-api';
+import { getBalances, getLatestBlock } from '@lib/fetchers/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { userSession } from '@components/stacks-session/connect';
@@ -86,14 +86,9 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Fetch balances when stxAddress changes
     useEffect(() => {
         if (stxAddress) {
-            fetch(`${siteUrl}/api/v0/balances/${stxAddress}`)
-                .then(async response => {
-                    const data = await response.json();
-                    setBalances(data);
-                }).catch(error => {
-                    console.error('Error fetching balances:', error);
-                });
-
+            getBalances(stxAddress).then(data => {
+                setBalances(data);
+            }).catch(console.error);
         }
     }, [stxAddress]);
 
