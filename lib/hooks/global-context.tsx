@@ -42,6 +42,8 @@ export interface GlobalState {
     setIsMempoolSubscribed: (isMempoolSubscribed: boolean) => void;
     vaultAnalytics: any;
     setVaultAnalytics: (vaultAnalytics: any) => void;
+    maxHops: number;
+    setMaxHops: (maxHops: number) => void;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -52,6 +54,7 @@ const formatTime = (dateString: string) => {
 };
 
 export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [maxHops, setMaxHops] = usePersistedState('maxHops', 4);
     const [stxAddress, setStxAddress] = usePersistedState('address', '');
     const [block, setBlock] = usePersistedState('block', {} as any);
     const [tappedAt, setTappedAt] = usePersistedState('tappedAt', {} as any);
@@ -362,7 +365,9 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 isMempoolSubscribed,
                 setIsMempoolSubscribed,
                 vaultAnalytics,
-                setVaultAnalytics
+                setVaultAnalytics,
+                maxHops,
+                setMaxHops
             }}
         >
             {children}

@@ -210,12 +210,11 @@ export const SwapInterface = ({
   const [isCalculating, setIsCalculating] = useState(false);
   const [slippage, setSlippage] = useState(0);
   const [swapPath, setSwapPath] = useState<any[]>([]);
-  const { getBalance, wallet, stxAddress } = useGlobal();
+  const { getBalance, wallet, stxAddress, maxHops, setMaxHops } = useGlobal();
   const estimateTimer = useRef<NodeJS.Timeout>();
   const [exploringPaths, setExploringPaths] = useState(0);
   const [showGraph, setShowGraph] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
-  const [maxHops, setMaxHops] = useState(4);
   const [lastQuote, setLastQuote] = useState<any>(null as Quote | null);
 
   useEffect(() => {
