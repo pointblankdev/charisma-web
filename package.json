@@ -77,7 +77,7 @@
     "d3": "^7.9.0",
     "d3-force": "^3.0.0",
     "date-fns": "^2.30.0",
-    "dexterity-sdk": "^0.6.9",
+    "dexterity-sdk": "^0.6.10",
     "formidable": "^3.5.2",
     "framer-motion": "^10.15.2",
     "fs": "^0.0.1-security",

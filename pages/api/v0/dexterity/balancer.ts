@@ -75,7 +75,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
 
                 console.log('Executing swap', quote.route.hops.map(hop => hop.vault.contractName).join(' -> '))
-                const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee, disablePostConditions: true })
+                const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee, disablePostConditions: false })
                 txs.push({ tx, grossProfit, netProfit })
 
                 await new Promise(resolve => setTimeout(resolve, 10000));
