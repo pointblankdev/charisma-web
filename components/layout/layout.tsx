@@ -63,10 +63,10 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const [navigationTabs, setNavigationTabs] = useState([] as any[]);
 
   useEffect(() => {
-    if (userSession && userSession.isUserSignedIn()) {
+    if (userSession?.isUserSignedIn()) {
       setNavigationTabs(NAVIGATION);
     }
-  }, [stxAddress]);
+  }, [stxAddress, userSession]);
 
   return (
     <>

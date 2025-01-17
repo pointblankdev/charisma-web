@@ -3,7 +3,6 @@ import type { AppConfig, UserSession } from '@stacks/connect';
 import { cn } from '@lib/utils';
 import { Button } from '@components/ui/button';
 import * as Sentry from '@sentry/browser';
-import { getNamesFromAddress } from '@lib/hiro/stacks-api';
 import { STACKS_MAINNET } from '@stacks/network';
 import { useGlobal } from '@lib/hooks/global-context';
 
@@ -62,6 +61,7 @@ export function toggleSession() {
 const ConnectWallet = () => {
   const [mounted, setMounted] = useState(false);
   const { stxAddress } = useGlobal();
+  const [isHovered, setIsHovered] = useState(false);
 
   const shortAddress = `${stxAddress.slice(0, 4)}...${stxAddress.slice(-4)}`;
 
@@ -77,8 +77,23 @@ const ConnectWallet = () => {
   }, []);
 
   return (
-    <Button onClick={toggleSession} className={cn('whitespace-nowrap', 'w-full', 'bg-transparent')}>
-      {mounted && userSession.isUserSignedIn() ? shortAddress : 'Connect Wallet'}
+    <Button
+      variant={'ghost'}
+      onClick={toggleSession}
+      onMouseEnter={() => setIsHovered(true)}
+      onMouseLeave={() => setIsHovered(false)}
+      className={cn('whitespace-nowrap', 'w-32', 'bg-transparent', 'hover:bg-transparent', 'hover:text-white', 'text-center', 'relative')}
+    >
+      <div className={cn('transition-all duration-300 absolute top-2 opacity-0', {
+        'opacity-100': isHovered
+      })}>
+        {mounted && userSession.isUserSignedIn() ? 'Sign Out' : 'Connect Wallet'}
+      </div>
+      <div className={cn('transition-all duration-300 absolute top-2 opacity-100', {
+        'opacity-0': isHovered
+      })}>
+        {mounted && userSession.isUserSignedIn() ? shortAddress : 'Connect Wallet'}
+      </div>
     </Button>
   );
 };
