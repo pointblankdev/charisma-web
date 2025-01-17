@@ -296,7 +296,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 for (const [vaultId, analytics] of Object.entries(vaults)) {
                     // Skip if we're no longer subscribed
                     if (!isSubscribed) return;
-                    if (!tappedAt[vaultId]?.height) tapTokens(vaultId)
+                    if (!tappedAt[vaultId]?.height || typeof tappedAt[vaultId] === 'number') tapTokens(vaultId)
                     const vault = Dexterity.getVault(vaultId)
                     const totalSupply = Number(vault?.supply || Infinity)
                     vaultAnalytics[vaultId] = analytics;
