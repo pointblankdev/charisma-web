@@ -177,7 +177,7 @@ const TokenInput = ({
 
 interface SwapDetailsProps {
   swapPath: any[];
-  minimumReceived: string;
+  minimumReceived: number;
   toToken: Token;
 }
 
@@ -187,7 +187,7 @@ const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) =
       Swap path: {swapPath.map(token => token?.symbol).join(' → ')}
     </div>
     <div className="text-sm text-gray-400">
-      Minimum received: {minimumReceived} {toToken?.symbol}
+      Minimum received: {minimumReceived.toFixed(toToken?.decimals)} {toToken?.symbol}
     </div>
   </div>
 );
@@ -206,9 +206,8 @@ export const SwapInterface = ({
   const [showToTokens, setShowToTokens] = useState(false);
   const [estimatedAmountOut, setEstimatedAmountOut] = useState('0');
   const [isCalculating, setIsCalculating] = useState(false);
-  const [slippage, setSlippage] = useState(0);
   const [swapPath, setSwapPath] = useState<any[]>([]);
-  const { getBalance, wallet, stxAddress, maxHops, setMaxHops, fromToken, setFromToken, toToken, setToToken } = useGlobal();
+  const { getBalance, wallet, stxAddress, maxHops, setMaxHops, fromToken, setFromToken, toToken, setToToken, slippage, setSlippage } = useGlobal();
   const estimateTimer = useRef<NodeJS.Timeout>();
   const [exploringPaths, setExploringPaths] = useState(0);
   const [showGraph, setShowGraph] = useState(false);
@@ -246,13 +245,10 @@ export const SwapInterface = ({
   }, []);
 
   const handleSlippageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
-      const numValue = parseFloat(value);
-      if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
-        setSlippage(numValue);
-      }
-    }
+    const value = Number(e.target.value);
+    const newSlippage = _.clamp(value / 100, 0, 0.99);
+    Dexterity.configure({ defaultSlippage: newSlippage }).catch(console.error);
+    setSlippage(newSlippage);
   };
 
   const handleEstimateAmount = useCallback(
@@ -342,13 +338,16 @@ export const SwapInterface = ({
 
 
   const handleMaxHopsChange = (value: string) => {
-    setMaxHops(_.clamp(Number(value), 0, 7));
-    Dexterity.configure({ maxHops }).catch(console.error);
+    const newMaxHops = _.clamp(Number(value), 0, 7);
+    Dexterity.configure({ maxHops: newMaxHops }).catch(console.error);
+    setMaxHops(newMaxHops);
     if (fromAmount) handleEstimateAmount(fromAmount)
   }
 
   const isArbitrageTrade = fromToken?.contractId === toToken?.contractId &&
     Number(estimatedAmountOut) > Number(fromAmount);
+
+  const minimumAmountOut = Number(estimatedAmountOut) * (1 - slippage / 100);
 
   return (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4 mt-4">
@@ -367,7 +366,7 @@ export const SwapInterface = ({
           <span className="text-sm text-gray-400">Search Depth:</span>
           <input
             type="text"
-            className="w-2 text-sm text-white bg-transparent outline-none"
+            className="w-3.5 text-sm text-white bg-transparent outline-none"
             value={maxHops}
             onChange={e => handleMaxHopsChange(e.target.value)}
           />
@@ -377,9 +376,8 @@ export const SwapInterface = ({
           <span className="text-sm text-gray-400">Maximum Slippage:</span>
           <input
             type="text"
-            className="w-2 text-sm text-white bg-transparent outline-none"
-            value={slippage}
-            disabled
+            className="w-3.5 text-sm text-white bg-transparent outline-none"
+            value={slippage * 100}
             onChange={handleSlippageChange}
             placeholder="0"
           />
@@ -484,7 +482,7 @@ export const SwapInterface = ({
 
           <SwapDetails
             swapPath={swapPath}
-            minimumReceived={estimatedAmountOut}
+            minimumReceived={minimumAmountOut}
             toToken={toToken}
           />
 

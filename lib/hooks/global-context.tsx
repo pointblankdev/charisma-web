@@ -59,9 +59,11 @@ export interface GlobalState {
     toToken: any;
     setToToken: (toToken: any) => void;
 
-    // Max hops state
+    // Dexterity state
     maxHops: number;
     setMaxHops: (maxHops: number) => void;
+    slippage: number;
+    setSlippage: (slippage: number) => void;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -75,6 +77,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [maxHops, setMaxHops] = usePersistedState('maxHops', 3);
     const [fromToken, setFromToken] = usePersistedState('fromToken', STX);
     const [toToken, setToToken] = usePersistedState('toToken', STX);
+    const [slippage, setSlippage] = usePersistedState('slippage', 0.01);
 
     const [stxAddress, setStxAddress] = usePersistedState('address', '');
     const [block, setBlock] = usePersistedState('block', {} as any);
@@ -394,9 +397,11 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 toToken,
                 setToToken,
 
-                // Max hops state
+                // Dexterity state
                 maxHops,
-                setMaxHops
+                setMaxHops,
+                slippage,
+                setSlippage,
             }}
         >
             {children}
