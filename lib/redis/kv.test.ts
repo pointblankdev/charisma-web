@@ -24,55 +24,50 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-kimchi-premium', {
-      "name": "The Kimchi Premium",
-      "symbol": "KIMCHI",
-      "description": "Liquidity vault wrapper for the ALEX-sBTC trading pair",
-      "identifier": "KIMCHI",
-      "decimals": 6,
-      "properties": {
-        "externalPoolId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01",
-        "tokenAContract": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex",
-        "tokenBContract": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",
-        "lpRebatePercent": 2,
-        "tokenAMetadata": {
-          "contractId": "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.token-alex",
-          "identifier": "alex",
-          "name": "ALEX Token",
-          "symbol": "ALEX",
-          "decimals": 8,
-          "description": "Bring your Bitcoin to Life: launch new projects, earn interest, rewrite finance, reinvent culture",
-          "image": "https://cdn.alexlab.co/logos/ALEX_Token.png"
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.theyre-taking-our-jerbs-ii', {
+      name: "They're Taking Our Jerbs",
+      symbol: 'JERBS',
+      description: 'Liquidity vault wrapper for the STX-sAI trading pair',
+      identifier: 'JERBS',
+      decimals: 6,
+      properties: {
+        tokenAContract: '.stx',
+        tokenBContract: 'SP3M31QFF6S96215K4Y2Z9K5SGHJN384NV6YM6VM8.satoshai',
+        lpRebatePercent: 2,
+        tokenAMetadata: {
+          contractId: '.stx',
+          identifier: 'STX',
+          name: 'Stacks Token',
+          symbol: 'STX',
+          decimals: 6,
+          description: 'The native token of the Stacks blockchain',
+          image: 'https://charisma.rocks/stx-logo.png'
         },
-        "tokenBMetadata": {
-          "contractId": "SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token",
-          "identifier": "sbtc-token",
-          "name": "sBTC",
-          "symbol": "sBTC",
-          "decimals": 8,
-          "description": "BTC is a 1:1 Bitcoin-backed asset on the Stacks Bitcoin L2 that will allow developers to leverage the security, network effects, and .5T in latent capital of the Bitcoin network.",
-          "image": "https://ipfs.io/ipfs/bafkreiffe46h5voimvulxm2s4ddszdm4uli4rwcvx34cgzz3xkfcc2hiwi"
+        tokenBMetadata: {
+          contractId: 'SP3M31QFF6S96215K4Y2Z9K5SGHJN384NV6YM6VM8.satoshai',
+          identifier: 'satoshai',
+          name: 'SatoshAi',
+          symbol: 'sAI',
+          decimals: 6,
+          description: 'SatoshAI',
+          image: 'https://domain-interactive-470.mypinata.cloud/ipfs/bafkreiamqm2tdekb42rwtmu5ch4c6jmdtktif4ohci33pqi7pouf6a2ite'
         },
-        "generated": {
-          "date": "2025-01-12T16:55:11.198Z"
-        },
-        "date": "2025-01-12T16:55:19.690Z"
+        date: '2025-01-17T11:05:15.494Z',
+        externalPoolId: 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0049'
       },
-      "imagePrompt": "A jor of kimchi, electric blue and orange  color theme, black background. Use a limited color palette with maximum 2-3 colors. intense manga art style with bold lines and deep contrast",
-      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-kimchi-premium-1736700910383-1t253q3pBJvLAT8qJd93LyjqOumgfO.png",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-kimchi-premium",
-      "lastUpdated": "2025-01-12T16:55:11.198Z"
+      imagePrompt: "South Park They're Taking Our Jerbs",
+      image: 'https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.theyre-taking-our-jerbs-1737111889340-qYEaZZLyQo338azp0PitalDisC1Sta.png'
     });
-  });
+  })
 
   it('should update contract metadata with external pool id', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm-rewards';
+    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.theyre-taking-our-jerbs';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
       properties: {
         ...existingData.properties,
-        externalPoolId: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm"
+        externalPoolId: "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0049"
       }
     });
     console.log(await kv.get(key));
