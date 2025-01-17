@@ -81,7 +81,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 proxy: `${siteUrl}/api/v0/proxy`,
             }).catch(console.error);
         }
-    }, [setStxAddress]);
+    }, [userSession, setStxAddress]);
 
     // Fetch balances when stxAddress changes
     useEffect(() => {

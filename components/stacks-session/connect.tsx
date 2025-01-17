@@ -68,8 +68,10 @@ const ConnectWallet = () => {
   useEffect(() => {
     try {
       initializeStacks().then(() => {
-        userSession.loadUserData();
         setMounted(true);
+        if (userSession.isUserSignedIn()) {
+          userSession.loadUserData();
+        }
       });
     } catch (error) {
       console.error(error);
