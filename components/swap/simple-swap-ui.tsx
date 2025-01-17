@@ -1,18 +1,17 @@
 import React, { useState, useMemo } from 'react';
 import { Button } from '@components/ui/button';
 import { Card, CardContent } from '@components/ui/card';
-import { ArrowRight, LineChart, ShieldCheck, Wallet } from 'lucide-react';
+import { LineChart, ShieldCheck, Wallet } from 'lucide-react';
 import Image from 'next/image';
-import { useConnect } from '@stacks/connect-react';
 import { uintCV, contractPrincipalCV, PostConditionMode, Pc } from '@stacks/transactions';
 import stxLogo from '@public/stx-logo.png';
 import chaLogo from '@public/new-charisma-logo-2.png';
 import { network } from '@components/stacks-session/connect';
 import { useGlobal } from '@lib/hooks/global-context';
+import { showContractCall } from '@stacks/connect';
 
 const OnboardingSwapInterface = ({ data }: any) => {
   const [isLoading, setIsLoading] = useState(false);
-  const { doContractCall } = useConnect();
   const { stxAddress } = useGlobal();
 
   // Find the STX/CHA pool
@@ -77,7 +76,7 @@ const OnboardingSwapInterface = ({ data }: any) => {
       }
     };
 
-    doContractCall(transaction);
+    showContractCall(transaction);
   };
 
   return (

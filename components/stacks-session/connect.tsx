@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import type { AppConfig, UserSession } from '@stacks/connect-react';
+import type { AppConfig, UserSession } from '@stacks/connect';
 import { cn } from '@lib/utils';
 import { Button } from '@components/ui/button';
 import * as Sentry from '@sentry/browser';
@@ -11,12 +11,10 @@ export let appConfig: AppConfig;
 export let userSession: UserSession;
 
 const initializeStacks = async () => {
-  const { AppConfig, UserSession } = await import('@stacks/connect-react');
+  const { AppConfig, UserSession } = await import('@stacks/connect');
   appConfig = new AppConfig(['store_write', 'publish_data']);
   userSession = new UserSession({ appConfig });
 };
-
-initializeStacks();
 
 export const appDetails = {
   name: 'Charisma',
@@ -26,18 +24,16 @@ export const appDetails = {
 export const network = STACKS_MAINNET;
 
 export async function authenticate() {
-  const { showConnect } = await import('@stacks/connect-react');
+  const { showConnect } = await import('@stacks/connect');
   showConnect({
     appDetails,
     onFinish: async e => {
-      window.location.pathname = '/pools';
+      window.location.pathname = '/vaults';
       try {
         const userData = e.userSession.loadUserData();
         const address = userData.profile.stxAddress.mainnet;
-        const bns = await getNamesFromAddress(address);
         const user = {
           id: address,
-          names: bns,
           ip_address: '{{auto}}',
           email: userData.email
         };
@@ -70,9 +66,11 @@ const ConnectWallet = () => {
   const shortAddress = `${stxAddress.slice(0, 4)}...${stxAddress.slice(-4)}`;
 
   useEffect(() => {
-    setMounted(true);
     try {
-      userSession.loadUserData();
+      initializeStacks().then(() => {
+        userSession.loadUserData();
+        setMounted(true);
+      });
     } catch (error) {
       console.error(error);
     }

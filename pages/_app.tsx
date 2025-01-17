@@ -11,16 +11,7 @@ import { Ysabeau_Infant } from 'next/font/google'
 import { cn } from '@lib/utils';
 import { Toaster } from "@components/ui/toaster"
 import { SpeedInsights } from "@vercel/speed-insights/next"
-import { appDetails, userSession } from '@components/stacks-session/connect';
-import dynamic from 'next/dynamic'
 import { GlobalProvider } from '@lib/hooks/global-context';
-
-// Create dynamic Connect component with SSR disabled
-const StacksConnect = dynamic(
-  () => import('@stacks/connect-react').then(mod => mod.Connect),
-  { ssr: false }
-);
-
 
 // If loading a variable font, you don't need to specify the font weight
 const font = Ysabeau_Infant({ subsets: ['latin'] })
@@ -30,25 +21,19 @@ export default function App({ Component, pageProps }: AppProps) {
     document.body.classList?.remove('loading');
   }, []);
 
-  const authOptions: any = {
-    appDetails,
-    userSession,
-  };
 
   return (
     <OverlayProvider>
-      <StacksConnect authOptions={authOptions}>
-        <GlobalProvider>
-          <main className={cn(font.className)}>
-            <Component {...pageProps} />
-          </main>
-          <Toaster />
-          <ResizeHandler />
-          <NProgress />
-          <Analytics />
-          <SpeedInsights />
-        </GlobalProvider>
-      </StacksConnect>
+      <GlobalProvider>
+        <main className={cn(font.className)}>
+          <Component {...pageProps} />
+        </main>
+        <Toaster />
+        <ResizeHandler />
+        <NProgress />
+        <Analytics />
+        <SpeedInsights />
+      </GlobalProvider>
     </OverlayProvider>
   );
 }
