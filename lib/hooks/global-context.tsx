@@ -90,7 +90,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 setBalances(data);
             }).catch(console.error);
         }
-    }, [stxAddress]);
+    }, [stxAddress, block.height]);
 
     // Wallet helper functions
     const getKeyByContractAddress = useCallback((contractAddress: string) => {
