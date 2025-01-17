@@ -67,7 +67,6 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         stx: {},
         fungible_tokens: {},
         non_fungible_tokens: {},
-        token_offering_locked: {}
     });
 
     // Load user data and configure Dexterity
