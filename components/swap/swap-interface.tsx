@@ -34,7 +34,7 @@ const TokenSelect = ({ token, isFrom, onClick }: TokenSelectProps) => (
     className="flex items-center px-3 py-1 border rounded-full shadow-lg border-primary/30 shadow-primary/10"
     onClick={onClick}
   >
-    {token.image && (
+    {token?.image && (
       <Image
         src={token.image}
         alt={token.symbol}
@@ -43,7 +43,7 @@ const TokenSelect = ({ token, isFrom, onClick }: TokenSelectProps) => (
         className="w-6 mr-2 rounded-full"
       />
     )}
-    <span className="mr-1 text-white">{token.symbol}</span>
+    <span className="mr-1 text-white">{token?.symbol}</span>
     <ChevronDown className="text-gray-400" size={16} />
   </button>
 );
@@ -161,7 +161,7 @@ const TokenInput = ({
           <>
             <span className="mr-2 text-gray-400">
               <span className="mr-1">Balance:</span>
-              {formatBalance(balance, token.decimals)}
+              {formatBalance(balance, token?.decimals)}
             </span>
             {onUseMax && (
               <button className="text-sm text-primary hover:text-primary" onClick={onUseMax}>
@@ -184,10 +184,10 @@ interface SwapDetailsProps {
 const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) => (
   <div className="flex justify-between pt-6">
     <div className="text-sm text-gray-400">
-      Swap path: {swapPath.map(token => token.symbol).join(' → ')}
+      Swap path: {swapPath.map(token => token?.symbol).join(' → ')}
     </div>
     <div className="text-sm text-gray-400">
-      Minimum received: {minimumReceived} {toToken.symbol}
+      Minimum received: {minimumReceived} {toToken?.symbol}
     </div>
   </div>
 );
@@ -201,16 +201,14 @@ export const SwapInterface = ({
   tokens: Token[];
   pools: LPToken[];
 }) => {
-  const [fromToken, setFromToken] = useState(tokens[0]);
-  const [toToken, setToToken] = useState(tokens[1]);
-  const [fromAmount, setFromAmount] = useState('');
+  const [fromAmount, setFromAmount] = useState('1');
   const [showFromTokens, setShowFromTokens] = useState(false);
   const [showToTokens, setShowToTokens] = useState(false);
   const [estimatedAmountOut, setEstimatedAmountOut] = useState('0');
   const [isCalculating, setIsCalculating] = useState(false);
   const [slippage, setSlippage] = useState(0);
   const [swapPath, setSwapPath] = useState<any[]>([]);
-  const { getBalance, wallet, stxAddress, maxHops, setMaxHops } = useGlobal();
+  const { getBalance, wallet, stxAddress, maxHops, setMaxHops, fromToken, setFromToken, toToken, setToToken } = useGlobal();
   const estimateTimer = useRef<NodeJS.Timeout>();
   const [exploringPaths, setExploringPaths] = useState(0);
   const [showGraph, setShowGraph] = useState(false);
@@ -224,6 +222,7 @@ export const SwapInterface = ({
       Dexterity.router.loadVaults(vaults);
       console.log('Router initialized:', Dexterity.router.getGraphStats());
       console.log('Vaults:', Dexterity.getVaults());
+      handleEstimateAmount(fromAmount);
     }
   }, [pools, stxAddress, maxHops]);
 
@@ -348,7 +347,7 @@ export const SwapInterface = ({
     if (fromAmount) handleEstimateAmount(fromAmount)
   }
 
-  const isArbitrageTrade = fromToken.contractId === toToken.contractId &&
+  const isArbitrageTrade = fromToken?.contractId === toToken?.contractId &&
     Number(estimatedAmountOut) > Number(fromAmount);
 
   return (

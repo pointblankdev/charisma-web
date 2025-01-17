@@ -4,7 +4,7 @@ import { getBalances, getLatestBlock } from '@lib/fetchers/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { userSession } from '@components/stacks-session/connect';
-import { Dexterity, Vault } from 'dexterity-sdk';
+import { Dexterity, Token, Vault } from 'dexterity-sdk';
 import { SITE_URL } from '@lib/constants';
 import { hexToCV } from '@stacks/transactions';
 import _ from 'lodash';
@@ -12,6 +12,16 @@ import _ from 'lodash';
 const siteUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : SITE_URL;
 const socketUrl = 'https://api.mainnet.hiro.so';
 const sc = new StacksApiSocketClient({ url: socketUrl });
+
+const STX: Token = {
+    name: 'Stacks',
+    symbol: 'STX',
+    image: '/stx-logo.png',
+    contractId: '.stx',
+    identifier: '.stx',
+    decimals: 6,
+    description: 'Native token of the Stacks blockchain'
+}
 
 export type Wallet = {
     experience: { balance: number; amount: number };
@@ -42,6 +52,14 @@ export interface GlobalState {
     setIsMempoolSubscribed: (isMempoolSubscribed: boolean) => void;
     vaultAnalytics: any;
     setVaultAnalytics: (vaultAnalytics: any) => void;
+
+    // Swap state
+    fromToken: any;
+    setFromToken: (fromToken: any) => void;
+    toToken: any;
+    setToToken: (toToken: any) => void;
+
+    // Max hops state
     maxHops: number;
     setMaxHops: (maxHops: number) => void;
 }
@@ -54,7 +72,10 @@ const formatTime = (dateString: string) => {
 };
 
 export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [maxHops, setMaxHops] = usePersistedState('maxHops', 4);
+    const [maxHops, setMaxHops] = usePersistedState('maxHops', 3);
+    const [fromToken, setFromToken] = usePersistedState('fromToken', STX);
+    const [toToken, setToToken] = usePersistedState('toToken', STX);
+
     const [stxAddress, setStxAddress] = usePersistedState('address', '');
     const [block, setBlock] = usePersistedState('block', {} as any);
     const [tappedAt, setTappedAt] = usePersistedState('tappedAt', {} as any);
@@ -366,6 +387,14 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 setIsMempoolSubscribed,
                 vaultAnalytics,
                 setVaultAnalytics,
+
+                // Swap state
+                fromToken,
+                setFromToken,
+                toToken,
+                setToToken,
+
+                // Max hops state
                 maxHops,
                 setMaxHops
             }}
