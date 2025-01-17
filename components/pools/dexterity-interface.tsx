@@ -369,8 +369,8 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                       You are at maximum energy storage capacity. You're currently holding {wallet.energy.balance.toFixed(0)} energy. If you try to claim more than your capacity, the excess is burned and lost.
                     </div>
                     ) : (
-                      <div className="text-xs text-red-400 bg-red-400/20 p-2 rounded-md flex items-center leading-snug">
-                        <InfoIcon className="h-4 mr-2 w-12" />
+                      <div className="text-xs text-orange-400 bg-orange-400/20 p-2 rounded-md flex items-center leading-snug">
+                        <InfoIcon className="h-4 mr-2 w-12 text-orange-400" />
                         Warning: Claiming will exceed your maximum storage capacity. You can hold up to {energyCapacity} energy, so make sure to spend some of your tokens before trying to claim more.
                       </div>
                     )}
