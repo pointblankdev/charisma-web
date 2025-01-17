@@ -364,19 +364,23 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                       <span>Cooldown</span>
                       <div className="w-full h-1.5 bg-muted/20 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-primary/30 transition-all duration-500"
+                          className="h-full bg-blue-400/40 transition-all duration-500"
                           style={{
+                            animation: 'pulse 1s infinite',
+                            animationDuration: '5s',
+                            animationDirection: 'reverse',
+                            alignSelf: 'flex-end',
                             width: `${((block.height - lastTap) / 10) * 100}%`
                           }}
                         />
                       </div>
-                      <span>{block.height - lastTap}/10</span>
+                      <span>{(block.height - lastTap) * 10}%</span>
                     </div>
                   ) : null}
 
                   {/* Footer with claim section */}
                   <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
-                    {vault.engine.claimableTokens < 0 ? (
+                    {vault.engine.claimableTokens > 0 ? (
                       <>
                         <div className="flex flex-col">
                           <span className="text-sm text-muted-foreground">Available to Claim</span>

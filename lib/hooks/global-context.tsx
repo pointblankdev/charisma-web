@@ -282,14 +282,24 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }, [tappedAt, block]);
 
     useEffect(() => {
+        // Add a cleanup flag to prevent race conditions
+        let isSubscribed = true;
+
         // Helper function to process vault analytics
         const processVaultAnalytics = async (block: any) => {
             try {
                 const response = await fetch(`${siteUrl}/api/v0/vaults/analytics`);
                 const { vaults } = await response.json();
+
+                // Only proceed if we're still subscribed
+                if (!isSubscribed) return;
+
                 const vaultAnalytics: any = {};
 
                 for (const [vaultId, analytics] of Object.entries(vaults)) {
+                    // Skip if we're no longer subscribed
+                    if (!isSubscribed) return;
+
                     const vaultContractIdentifier = `${vaultId}::${Dexterity.getVault(vaultId)?.identifier}`;
                     vaultAnalytics[vaultId] = analytics;
                     const energyPerBlock = (analytics as any).energyRate * getBalance(vaultContractIdentifier);
@@ -305,25 +315,33 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                         claimableUSD: 0,
                         lastTap: getLastTap(vaultId)
                     };
-
                 }
 
-                setVaultAnalytics(vaultAnalytics);
+                // Only update state if we're still subscribed
+                if (isSubscribed) {
+                    setVaultAnalytics(vaultAnalytics);
+                    setBlock(block as any);
+                }
             } catch (error) {
                 console.error('Error processing vault analytics:', error);
             }
         };
 
+        // Debounce the block subscription handler to prevent rapid updates
+        const debouncedProcessVaultAnalytics = _.debounce(processVaultAnalytics, 500);
+
         sc.subscribeBlocks((block) => {
-            processVaultAnalytics(block);
-            setBlock(block as any);
+            if (isSubscribed) {
+                debouncedProcessVaultAnalytics(block);
+            }
         });
 
         const getRealTimeData = async () => {
             try {
                 const block = await getLatestBlock();
-                setBlock(block);
-                await processVaultAnalytics(block);
+                if (isSubscribed) {
+                    await processVaultAnalytics(block);
+                }
             } catch (error) {
                 console.error('Error fetching latest block:', error);
             }
@@ -331,7 +349,9 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         getRealTimeData();
 
+        // Cleanup function
         return () => {
+            isSubscribed = false;
             sc.unsubscribeBlocks();
         };
     }, [stxAddress]);
