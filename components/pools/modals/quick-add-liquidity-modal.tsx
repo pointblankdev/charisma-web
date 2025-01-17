@@ -44,16 +44,30 @@ export const QuickAddLiquidityModal = ({
         const fetchQuote = async () => {
             setIsQuoting(true);
             try {
-                // Calculate how many LP tokens $100 worth would be
-                const totalPoolValue = (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
-                    (tokenPrices[pool.liquidity[0].contractId] || 0) +
-                    (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
-                    (tokenPrices[pool.liquidity[1].contractId] || 0);
+                // Calculate token prices in USD
+                const token0Price = tokenPrices[pool.liquidity[0].contractId] || 0;
+                const token1Price = tokenPrices[pool.liquidity[1].contractId] || 0;
 
-                const lpTokensFor100 = Math.floor((100 / totalPoolValue) * pool.supply);
+                // Get user balances
+                const token0Balance = getBalance(pool.liquidity[0].contractId) || 0;
+                const token1Balance = getBalance(pool.liquidity[1].contractId) || 0;
+
+                // Calculate max USD value user can add based on their token balances
+                const maxToken0USD = (token0Balance / 10 ** pool.liquidity[0].decimals) * token0Price;
+                const maxToken1USD = (token1Balance / 10 ** pool.liquidity[1].decimals) * token1Price;
+
+                // Since we need equal value of both tokens, take the minimum
+                const maxPossibleUSD = Math.min(maxToken0USD, maxToken1USD, 100) / 2;
+                const totalUSDToAdd = maxPossibleUSD * 2; // Double since we're adding both tokens
+
+                // Calculate total pool value and LP tokens
+                const totalPoolValue = (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) * token0Price +
+                    (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) * token1Price;
+
+                const lpTokensForAmount = Math.floor((totalUSDToAdd / totalPoolValue) * pool.supply);
 
                 // Get actual token amounts needed via quote
-                const quote = await vault.quote(lpTokensFor100, Opcode.addLiquidity());
+                const quote = await vault.quote(lpTokensForAmount, Opcode.addLiquidity());
 
                 if (quote instanceof Error) {
                     setQuotedAmounts({
@@ -65,7 +79,7 @@ export const QuickAddLiquidityModal = ({
                 }
 
                 setQuotedAmounts({
-                    lpTokens: lpTokensFor100,
+                    lpTokens: lpTokensForAmount,
                     token0Amount: quote.amountIn,
                     token1Amount: quote.amountOut
                 });
@@ -95,7 +109,7 @@ export const QuickAddLiquidityModal = ({
             <DialogContent className="sm:max-w-lg">
                 <DialogHeader>
                     <DialogTitle className="flex items-center justify-between">
-                        Quick Add $100 Liquidity
+                        Quick Add Liquidity (up to $100)
                         <TooltipProvider>
                             <Tooltip>
                                 <TooltipTrigger>
@@ -103,7 +117,7 @@ export const QuickAddLiquidityModal = ({
                                 </TooltipTrigger>
                                 <TooltipContent>
                                     <p className="w-64 p-2 leading-snug">
-                                        This will add $100 worth of liquidity split evenly between both tokens.
+                                        This will add up to $100 worth of liquidity split evenly between both tokens, limited by your available balance.
                                         You should expect to receive {numeral(quotedAmounts.lpTokens / 10 ** 6).format('0,0')} {vault.symbol} LP tokens.
                                     </p>
                                 </TooltipContent>
@@ -166,7 +180,7 @@ export const QuickAddLiquidityModal = ({
                                 </div>
                             </div>
                         ) : (
-                            'Add $100 Liquidity'
+                            `Add ${numeral(quotedAmounts.token0Amount / 10 ** pool.liquidity[0].decimals * (tokenPrices[pool.liquidity[0].contractId] || 0) * 2).format('$0,0.00')} Liquidity`
                         )}
                     </Button>
                 </div>

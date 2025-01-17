@@ -53,6 +53,7 @@ const Toast = React.forwardRef<
       style={{
         ...style,
         backgroundImage: image ? `linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url(${image})` : undefined,
+        backgroundSize: image ? 'cover' : undefined,
         backgroundColor: image ? 'transparent' : undefined
       }}
       {...props}
