@@ -218,12 +218,14 @@ export const SwapInterface = ({
   const [lastQuote, setLastQuote] = useState<any>(null as Quote | null);
 
   useEffect(() => {
-    Dexterity.configure({ maxHops }).catch(console.error);
-    const vaults = pools.map(pool => new Vault(pool));
-    Dexterity.router.loadVaults(vaults);
-    console.log('Router initialized:', Dexterity.router.getGraphStats());
-    console.log('Vaults:', Dexterity.getVaults());
-  }, [pools, stxAddress]);
+    if (maxHops && pools.length > 0 && stxAddress) {
+      Dexterity.configure({ maxHops }).catch(console.error);
+      const vaults = pools.map(pool => new Vault(pool));
+      Dexterity.router.loadVaults(vaults);
+      console.log('Router initialized:', Dexterity.router.getGraphStats());
+      console.log('Vaults:', Dexterity.getVaults());
+    }
+  }, [pools, stxAddress, maxHops]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
   const toDropdownRef = useRef<HTMLDivElement>(null);
