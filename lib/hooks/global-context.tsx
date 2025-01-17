@@ -86,15 +86,16 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Fetch balances when stxAddress changes
     useEffect(() => {
         if (stxAddress) {
-            try {
-                fetch(`${siteUrl}/api/v0/balances/${stxAddress}`)
-                    .then(async response => {
+            fetch(`${siteUrl}/api/v0/balances/${stxAddress}`)
+                .then(async response => {
+                    if (response.ok) {
                         const data = await response.json();
                         setBalances(data);
-                    });
-            } catch (error) {
-                console.error('Error fetching balances:', error);
-            }
+                    }
+                }).catch(error => {
+                    console.error('Error fetching balances:', error);
+                });
+
         }
     }, [stxAddress]);
 
@@ -277,10 +278,6 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
     }, [toast]);
 
-    const getLastTap = useCallback((vaultId: string) => {
-        return tappedAt[vaultId] || block.height - 1 || 0;
-    }, [tappedAt, block]);
-
     useEffect(() => {
         // Add a cleanup flag to prevent race conditions
         let isSubscribed = true;
@@ -299,28 +296,20 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                 for (const [vaultId, analytics] of Object.entries(vaults)) {
                     // Skip if we're no longer subscribed
                     if (!isSubscribed) return;
-
-                    const vaultContractIdentifier = `${vaultId}::${Dexterity.getVault(vaultId)?.identifier}`;
+                    if (!tappedAt[vaultId]?.height) tapTokens(vaultId)
+                    const vault = Dexterity.getVault(vaultId)
+                    const totalSupply = Number(vault?.supply || Infinity)
                     vaultAnalytics[vaultId] = analytics;
-                    const energyPerBlock = (analytics as any).energyRate * getBalance(vaultContractIdentifier);
-                    const blocksPerYear = 6311385;
-                    const energyPerYear = energyPerBlock * blocksPerYear;
+                    const energyPerBlock = (analytics as any).energyRate * totalSupply;
                     vaultAnalytics[vaultId].engine = {
                         energyPerBlockPerToken: (analytics as any).energyRate,
                         energyPerBlock,
-                        energyPerYear,
-                        epy: energyPerYear / getBalance(vaultContractIdentifier) * 100,
-                        apy: 0,
-                        claimableTokens: (block.height - getLastTap(vaultId)) * energyPerBlock,
-                        claimableUSD: 0,
-                        lastTap: getLastTap(vaultId)
                     };
                 }
 
                 // Only update state if we're still subscribed
                 if (isSubscribed) {
                     setVaultAnalytics(vaultAnalytics);
-                    setBlock(block as any);
                 }
             } catch (error) {
                 console.error('Error processing vault analytics:', error);
@@ -331,14 +320,15 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const debouncedProcessVaultAnalytics = _.debounce(processVaultAnalytics, 500);
 
         sc.subscribeBlocks((block) => {
-            if (isSubscribed) {
-                debouncedProcessVaultAnalytics(block);
-            }
+            // if (isSubscribed) {
+            //     debouncedProcessVaultAnalytics(block);
+            // }
+            setBlock(block as any);
         });
 
         const getRealTimeData = async () => {
             try {
-                const block = await getLatestBlock();
+                // const block = await getLatestBlock();
                 if (isSubscribed) {
                     await processVaultAnalytics(block);
                 }
@@ -358,7 +348,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // function to update record of tapped at
     const tapTokens = (vaultId: string) => {
-        setTappedAt((prev: any) => ({ ...prev, [vaultId]: block.height }));
+        setTappedAt((prev: any) => ({ ...prev, [vaultId]: block }));
     };
 
     return (

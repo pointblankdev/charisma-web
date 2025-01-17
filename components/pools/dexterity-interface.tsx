@@ -13,6 +13,15 @@ import {
   ShieldHalf,
   Lock,
   Gift,
+  CogIcon,
+  Waves,
+  BatteryCharging,
+  HandCoins,
+  HeartHandshake,
+  HandHeart,
+  Activity,
+  AudioLines,
+  AudioWaveform,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
@@ -121,7 +130,7 @@ const calculateTVL = (pool: any, prices: Record<string, number>) => {
 };
 
 const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
-  const { vaultAnalytics, tapTokens, setVaultAnalytics, block, wallet } = useGlobal();
+  const { vaultAnalytics, tapTokens, tappedAt, block, wallet, getBalance } = useGlobal();
   const [showQuickAddModal, setShowQuickAddModal] = useState(false);
   const vault = vaultAnalytics[pool.contractId];
   const tvl = calculateTVL(pool, prices);
@@ -151,16 +160,6 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
         postConditionMode: PostConditionMode.Deny,
         onFinish: () => {
           tapTokens(pool.contractId);
-          setVaultAnalytics((va: any) => ({
-            ...va,
-            [pool.contractId]: {
-              ...va[pool.contractId],
-              engine: {
-                ...va[pool.contractId].engine,
-                claimableTokens: 0
-              }
-            }
-          }));
         }
       });
     } catch (error) {
@@ -206,11 +205,14 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
     );
   }
 
-  const lastTap = vault.engine.lastTap;
-  const holdToEarnAPY = (vault.engine.epy * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0)
-  const resetting = lastTap && block.height - lastTap <= 10
+
+  const lastTap = tappedAt[pool.contractId]
+  const blocksSinceLastTap = block.height - lastTap.height
   const energyPerDay = vault.engine.energyPerBlock * 17280 / 10 ** 6
   const energyCapacity = 100 + (Number(wallet?.memobots?.count || 0) * 10)
+  const claimableTokens = vault.engine.energyPerBlockPerToken * blocksSinceLastTap * getBalance(`${pool.contractId}::${pool.identifier}`) / 10 ** 6
+  // fraction of total
+  const fractionOfTotal = getBalance(`${pool.contractId}::${pool.identifier}`) / pool.supply
 
   return (
     <TooltipProvider>
@@ -219,12 +221,11 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
           <div className="mt-1 leading-snug">
             <div className="flex flex-col items-center">
               <div className="text-lg font-medium whitespace-nowrap">
-                {(vault.generalInfo.lpRebateAPY + Number(holdToEarnAPY)).toFixed(2)}% APY
+                {(vault.generalInfo.lpRebateAPY).toFixed(2)}% APY
               </div>
               <div className="flex items-center space-x-1 text-sm text-muted-foreground whitespace-nowrap ">
                 <span className={cn(pool.engineContractId ? 'flex items-center text-yellow-400 animate-pulse-glow' : 'text-muted-foreground')}>
-                  <span>{pool.engineContractId ? 'Energized' : 'Trading Fee'} Yield</span>
-                  {pool.engineContractId && <ZapIcon className="w-3 h-3 ml-1" />}
+                  <span>{pool.engineContractId ? <span className="ml-auto font-semibold text-yellow-400">+{(vault.engine.energyPerBlockPerToken * 10 ** 6).toFixed(0)} <AudioWaveform className="w-3 h-3 mb-1 inline-block" /></span> : 'Trading Fee Yield'}</span>
                 </span>
               </div>
             </div>
@@ -321,9 +322,9 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                 <div className="space-y-4 rounded-lg bg-yellow-400/20 p-4 w-full">
                   {/* Header */}
                   <div className="font-medium text-primary-foreground/90 flex items-center text-base">
-                    <ZapIcon className="w-4 h-4 mr-2 text-yellow-400" />
-                    Hold-to-Earn Rewards
-                    <span className="ml-auto">{holdToEarnAPY.toFixed(2)}% APY</span>
+                    <HandCoins className="w-4 h-4 mr-2 text-yellow-400" />
+                    Hold-to-Earn
+                    <span className="ml-auto font-semibold">+{(vault.engine.energyPerBlockPerToken * 10 ** 6).toFixed(0)} <AudioWaveform className="w-4 h-4 mb-1 text-yellow-400 inline-block animate-pulse-glow" /></span>
                   </div>
 
                   {/* Description */}
@@ -336,11 +337,11 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                   {/* Stats */}
                   <div className="space-y-2">
                     <div className="flex justify-between items-center p-2 rounded-md bg-black/20">
-                      <span className="text-sm text-muted-foreground">Daily Rate</span>
+                      <span className="text-sm text-muted-foreground">Daily Emissions</span>
                       <div className="flex items-center space-x-2">
                         <div className="flex items-center">
                           {/* 5 sec block times, 60/5 = 12 blocks per minute, 12 * 60 = 720 blocks per hour, 720 * 24 = 17280 blocks per day */}
-                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400 animate-pulse-glow" />
+                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
                           <span>{numeral(energyPerDay).format('0,0')}/day</span>
                         </div>
                         <span className="text-sm text-muted-foreground">
@@ -348,50 +349,47 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                         </span>
                       </div>
                     </div>
+                    <div className="flex justify-between items-center p-2 rounded-md bg-black/20">
+                      <span className="text-sm text-muted-foreground">Your Yield Rate</span>
+                      <div className="flex items-center space-x-2">
+                        <div className="flex items-center">
+                          {/* 5 sec block times, 60/5 = 12 blocks per minute, 12 * 60 = 720 blocks per hour, 720 * 24 = 17280 blocks per day */}
+                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
+                          <span>{numeral(energyPerDay * fractionOfTotal).format('0,0')}/day</span>
+                        </div>
+                        <span className="text-sm text-muted-foreground">
+                          ≈ ${numeral(energyPerDay * fractionOfTotal * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
+                        </span>
+                      </div>
+                    </div>
                   </div>
 
                   {/* Warning message when needed */}
-                  {wallet.energy.balance + vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && (
+                  {wallet.energy.balance + claimableTokens >= energyCapacity && (
                     <div className="text-xs text-red-400 bg-red-400/20 p-2 rounded-md flex items-center leading-snug">
                       <InfoIcon className="h-4 mr-2 w-12" />
                       Warning: Energy has reached maximum capacity ({energyCapacity}). You can only hold {energyCapacity} Energy at a time, so make sure to spend your tokens before harvesting more.
                     </div>
                   )}
 
-                  {/* Show resetting state within 10 blocks of a tap */}
-                  {resetting ? (
-                    <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-1">
-                      <span>Cooldown</span>
-                      <div className="w-full h-1.5 bg-muted/20 rounded-full overflow-hidden">
-                        <div
-                          className="h-full bg-blue-400/40 transition-all duration-500"
-                          style={{
-                            width: `${((block.height - lastTap) / 10) * 100}%`
-                          }}
-                        />
-                      </div>
-                      <span>{(block.height - lastTap) * 10}%</span>
-                    </div>
-                  ) : null}
-
                   {/* Footer with claim section */}
                   <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
-                    {vault.engine.claimableTokens > 0 ? (
+                    {getBalance(`${pool.contractId}::${pool.identifier}`) > 0 ? (
                       <>
                         <div className="flex flex-col">
-                          <span className="text-sm text-muted-foreground">Available to Claim</span>
+                          <span className="text-xs text-muted-foreground">Available to Claim</span>
                           <div className="flex items-center space-x-2">
                             <div
-                              key={vault.engine.claimableTokens}
+                              key={blocksSinceLastTap}
                               className={cn("flex items-center", "shake")}
                             >
                               <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
                               <span className="font-medium">
-                                {numeral(Math.min(vault.engine.claimableTokens, energyCapacity)).format('0,0.00')}
+                                {numeral(Math.min(claimableTokens, energyCapacity)).format('0,0.00')}
                               </span>
                             </div>
                             <span className="text-sm text-muted-foreground">
-                              ≈ ${numeral(Math.min(vault.engine.claimableTokens, energyCapacity) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
+                              ≈ ${numeral(Math.min(claimableTokens, energyCapacity) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
                             </span>
                           </div>
                         </div>
@@ -400,12 +398,11 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                           size="sm"
                           className={cn(
                             "h-8 px-3",
-                            vault.engine.claimableTokens >= energyCapacity && "animate-pulse bg-red-500/20"
+                            claimableTokens >= energyCapacity && "animate-pulse bg-red-500/20"
                           )}
                           onClick={handleClaim}
-                          disabled={resetting}
                         >
-                          <Gift className="w-4 h-4 mr-1" /> Claim Rewards
+                          Claim Energy
                         </Button>
                       </>
                     ) : (
