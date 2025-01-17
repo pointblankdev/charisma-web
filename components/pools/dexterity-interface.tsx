@@ -366,10 +366,6 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                         <div
                           className="h-full bg-blue-400/40 transition-all duration-500"
                           style={{
-                            animation: 'pulse 1s infinite',
-                            animationDuration: '5s',
-                            animationDirection: 'reverse',
-                            alignSelf: 'flex-end',
                             width: `${((block.height - lastTap) / 10) * 100}%`
                           }}
                         />
