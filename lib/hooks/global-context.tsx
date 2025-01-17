@@ -88,10 +88,8 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         if (stxAddress) {
             fetch(`${siteUrl}/api/v0/balances/${stxAddress}`)
                 .then(async response => {
-                    if (response.ok) {
-                        const data = await response.json();
-                        setBalances(data);
-                    }
+                    const data = await response.json();
+                    setBalances(data);
                 }).catch(error => {
                     console.error('Error fetching balances:', error);
                 });
