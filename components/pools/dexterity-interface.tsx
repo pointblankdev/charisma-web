@@ -37,6 +37,7 @@ import { Opcode } from 'dexterity-sdk/dist/core/opcode';
 import { PostConditionMode } from '@stacks/transactions';
 import { useGlobal } from '@lib/hooks/global-context';
 import { toast } from '@components/ui/use-toast';
+import { QuickAddLiquidityModal } from './modals/quick-add-liquidity-modal';
 
 const VERIFIED_ADDRESSES: Record<string, string> = {
   SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS: 'rozar.btc',
@@ -109,119 +110,37 @@ const TokenPairDisplay = ({ liquidity }: { liquidity: any[] }) => {
   );
 };
 
-const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
-  const tvl = useMemo(() => {
-    const token0Value =
-      (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
-      (prices[pool.liquidity[0].contractId] || 0);
-    const token1Value =
-      (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
-      (prices[pool.liquidity[1].contractId] || 0);
-    return token0Value + token1Value;
-  }, [pool, prices]);
-
-  const hasPriceData = prices[pool.liquidity[0].contractId] || prices[pool.liquidity[1].contractId];
-
-  return (
-    <div className="space-y-1">
-      <div className="text-lg font-medium">
-        {hasPriceData ? (
-          `$${numeral(tvl).format('0,0.00')}`
-        ) : (
-          <span className="text-muted-foreground/40 text-sm">No price data</span>
-        )}
-      </div>
-      <div className="text-xs text-gray-400">
-        {numeral(pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals).format('0,0.00')}{' '}
-        {pool.liquidity[0].symbol}
-        {' + '}
-        {numeral(pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals).format(
-          '0,0.00'
-        )}{' '}
-        {pool.liquidity[1].symbol}
-      </div>
-    </div>
-  );
+const calculateTVL = (pool: any, prices: Record<string, number>) => {
+  const token0Value =
+    (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
+    (prices[pool.liquidity[0].contractId] || 0);
+  const token1Value =
+    (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
+    (prices[pool.liquidity[1].contractId] || 0);
+  return token0Value + token1Value;
 };
 
-const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
-  const router = useRouter();
-
-  // If pool has externalPoolId, don't show any actions
-  if (pool.externalPoolId) {
-    return null;
-  }
-
-  const handleRemoveLiquidityClick = async (pool: any, amount: number) => {
-    const amountIn = Math.floor(amount);
-    const vault = await Vault.build(pool.contractId)
-    await vault.executeTransaction(
-      Opcode.removeLiquidity(),
-      amountIn,
-      {}
-    )
-  };
+const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
+  const { vaultAnalytics, tapTokens, setVaultAnalytics, block, wallet } = useGlobal();
+  const [showQuickAddModal, setShowQuickAddModal] = useState(false);
+  const vault = vaultAnalytics[pool.contractId];
+  const tvl = calculateTVL(pool, prices);
 
   const handleAddLiquidityClick = async (pool: any, amount: number) => {
     const amountIn = Math.floor(amount);
-    const vault = await Vault.build(pool.contractId)
+    const vault = await Vault.build(pool.contractId);
 
     await vault.executeTransaction(
       Opcode.addLiquidity(),
       amountIn,
       {}
-    )
+    );
   };
-
-  return (
-    <DropdownMenu>
-      <DropdownMenuTrigger asChild>
-        <Button variant="ghost" size="icon">
-          <MoreHorizontal className="size-5" />
-        </Button>
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        <AddLiquidityModal
-          pool={pool}
-          tokenPrices={prices}
-          onAddLiquidity={handleAddLiquidityClick}
-          trigger={
-            <DropdownMenuItem onSelect={e => e.preventDefault()} className="cursor-pointer">
-              <Plus className="w-4 h-4 mr-2" />
-              Start Earning (Deposit)
-            </DropdownMenuItem>
-          }
-        />
-        <RemoveLiquidityModal
-          pool={pool}
-          tokenPrices={prices}
-          onRemoveLiquidity={handleRemoveLiquidityClick}
-          trigger={
-            <DropdownMenuItem onSelect={e => e.preventDefault()} className="cursor-pointer">
-              <Minus className="w-4 h-4 mr-2" />
-              Stop Earning (Withdraw)
-            </DropdownMenuItem>
-          }
-        />
-        <DropdownMenuSeparator />
-        <DropdownMenuItem onClick={() => router.push(`/swap`)} className="cursor-pointer">
-          <ArrowLeftRight className="w-4 h-4 mr-2" /> Swap Tokens
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
-  );
-};
-
-const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
-
-  const { vaultAnalytics, tapTokens, setVaultAnalytics, block, wallet } = useGlobal();
-  const vault = vaultAnalytics[pool.contractId];
 
   const handleClaim = async () => {
     if (!pool.engineContractId) return;
 
     try {
-      // Import the connect library dynamically to avoid require statements
       const { openContractCall } = await import('@stacks/connect');
       await openContractCall({
         contractAddress: pool.engineContractId.split('.')[0],
@@ -232,12 +151,20 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
         postConditionMode: PostConditionMode.Deny,
         onFinish: () => {
           tapTokens(pool.contractId);
-          setVaultAnalytics((va: any) => ({ ...va, [pool.contractId]: { ...va[pool.contractId], engine: { ...va[pool.contractId].engine, claimableTokens: 0 } } }));
+          setVaultAnalytics((va: any) => ({
+            ...va,
+            [pool.contractId]: {
+              ...va[pool.contractId],
+              engine: {
+                ...va[pool.contractId].engine,
+                claimableTokens: 0
+              }
+            }
+          }));
         }
       });
     } catch (error) {
       console.error('Error claiming rewards:', error);
-      // You may want to add error handling/user feedback here
     }
   };
 
@@ -279,12 +206,11 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
     );
   }
 
-
   const lastTap = vault.engine.lastTap;
   const holdToEarnAPY = (vault.engine.epy * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0)
   const resetting = lastTap && block.height - lastTap <= 10
   const energyPerDay = vault.engine.energyPerBlock * 17280 / 10 ** 6
-  const energyCapacity = 100 + (Number(wallet?.memobots?.count) * 10)
+  const energyCapacity = 100 + (Number(wallet?.memobots?.count || 0) * 10)
 
   return (
     <TooltipProvider>
@@ -303,6 +229,13 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
               </div>
             </div>
           </div>
+          <QuickAddLiquidityModal
+            pool={pool}
+            tokenPrices={prices}
+            onAddLiquidity={handleAddLiquidityClick}
+            isOpen={showQuickAddModal}
+            onClose={() => setShowQuickAddModal(false)}
+          />
         </TooltipTrigger>
         <TooltipContent side="bottom" className="w-[800px] shadow-lg rounded-lg bg-accent-foreground/20 backdrop-blur-2xl">
           <div className="p-4 space-y-4">
@@ -426,7 +359,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                   )}
 
                   {/* Show resetting state within 10 blocks of a tap */}
-                  {resetting && (
+                  {resetting ? (
                     <div className="flex items-center space-x-1 text-xs text-muted-foreground mb-1">
                       <span>Cooldown</span>
                       <div className="w-full h-1.5 bg-muted/20 rounded-full overflow-hidden">
@@ -439,40 +372,68 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                       </div>
                       <span>{block.height - lastTap}/10</span>
                     </div>
-                  )}
+                  ) : null}
 
                   {/* Footer with claim section */}
                   <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
-                    <div className="flex flex-col">
-                      {/* show x/10 resettings state within 10 blocks of a tap */}
-                      <span className="text-sm text-muted-foreground">Available to Claim</span>
-                      <div className="flex items-center space-x-2">
-                        <div
-                          key={vault.engine.claimableTokens}
-                          className={cn("flex items-center", "shake")}
-                        >
-                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
-                          <span className="font-medium">
-                            {numeral(Math.min(vault.engine.claimableTokens / 10 ** 6, energyCapacity)).format('0,0.00')}
-                          </span>
+                    {vault.engine.claimableTokens < 0 ? (
+                      <>
+                        <div className="flex flex-col">
+                          <span className="text-sm text-muted-foreground">Available to Claim</span>
+                          <div className="flex items-center space-x-2">
+                            <div
+                              key={vault.engine.claimableTokens}
+                              className={cn("flex items-center", "shake")}
+                            >
+                              <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
+                              <span className="font-medium">
+                                {numeral(Math.min(vault.engine.claimableTokens, energyCapacity)).format('0,0.00')}
+                              </span>
+                            </div>
+                            <span className="text-sm text-muted-foreground">
+                              ≈ ${numeral(Math.min(vault.engine.claimableTokens, energyCapacity) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
+                            </span>
+                          </div>
                         </div>
-                        <span className="text-sm text-muted-foreground">
-                          ≈ ${numeral(Math.min(vault.engine.claimableTokens / 10 ** 6, energyCapacity) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
-                        </span>
-                      </div>
-                    </div>
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className={cn(
-                        "h-8 px-3",
-                        vault.engine.claimableTokens / 10 ** 6 >= energyCapacity && "animate-pulse bg-red-500/20"
-                      )}
-                      onClick={handleClaim}
-                      disabled={resetting}
-                    >
-                      <Gift className="w-4 h-4 mr-1" /> Claim Rewards
-                    </Button>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className={cn(
+                            "h-8 px-3",
+                            vault.engine.claimableTokens >= energyCapacity && "animate-pulse bg-red-500/20"
+                          )}
+                          onClick={handleClaim}
+                          disabled={resetting}
+                        >
+                          <Gift className="w-4 h-4 mr-1" /> Claim Rewards
+                        </Button>
+                      </>
+                    ) : (
+                      <>
+                        <div className="flex flex-col">
+                          <span className="text-xs text-primary-foreground/70">Estimated Weekly Yield on $100</span>
+                          <div className="flex items-center space-x-2">
+                            <div className="flex items-center">
+                              <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
+                              <span className="font-medium">
+                                {numeral((energyPerDay * 7) * (100 / tvl)).format('0,0.00')}
+                              </span>
+                            </div>
+                            <span className="text-sm text-muted-foreground">
+                              ≈ ${numeral((energyPerDay * 7) * (100 / tvl) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
+                            </span>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-8 px-3"
+                          onClick={() => setShowQuickAddModal(true)}
+                        >
+                          <Plus className="w-4 h-4 mr-1" /> Add $100
+                        </Button>
+                      </>
+                    )}
                   </div>
                 </div>
               ) : (
@@ -562,11 +523,115 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
   );
 };
 
+const TVLDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
+  const tvl = useMemo(() => {
+    const token0Value =
+      (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
+      (prices[pool.liquidity[0].contractId] || 0);
+    const token1Value =
+      (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
+      (prices[pool.liquidity[1].contractId] || 0);
+    return token0Value + token1Value;
+  }, [pool, prices]);
+
+  const hasPriceData = prices[pool.liquidity[0].contractId] || prices[pool.liquidity[1].contractId];
+
+  return (
+    <div className="space-y-1">
+      <div className="text-lg font-medium">
+        {hasPriceData ? (
+          `$${numeral(tvl).format('0,0.00')}`
+        ) : (
+          <span className="text-muted-foreground/40 text-sm">No price data</span>
+        )}
+      </div>
+      <div className="text-xs text-gray-400">
+        {numeral(pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals).format('0,0.00')}{' '}
+        {pool.liquidity[0].symbol}
+        {' + '}
+        {numeral(pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals).format(
+          '0,0.00'
+        )}{' '}
+        {pool.liquidity[1].symbol}
+      </div>
+    </div>
+  );
+};
+
+const ActionMenu = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
+  const router = useRouter();
+
+  // If pool has externalPoolId, don't show any actions
+  if (pool.externalPoolId) {
+    return null;
+  }
+
+  const handleRemoveLiquidityClick = async (pool: any, amount: number) => {
+    const amountIn = Math.floor(amount);
+    const vault = await Vault.build(pool.contractId)
+    await vault.executeTransaction(
+      Opcode.removeLiquidity(),
+      amountIn,
+      {}
+    )
+  };
+
+  const handleAddLiquidityClick = async (pool: any, amount: number) => {
+    const amountIn = Math.floor(amount);
+    const vault = await Vault.build(pool.contractId)
+
+    await vault.executeTransaction(
+      Opcode.addLiquidity(),
+      amountIn,
+      {}
+    )
+  };
+
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button variant="ghost" size="icon">
+          <MoreHorizontal className="size-5" />
+        </Button>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="end">
+        <AddLiquidityModal
+          pool={pool}
+          tokenPrices={prices}
+          onAddLiquidity={handleAddLiquidityClick}
+          trigger={
+            <DropdownMenuItem onSelect={e => e.preventDefault()} className="cursor-pointer">
+              <Plus className="w-4 h-4 mr-2" />
+              Start Earning (Deposit)
+            </DropdownMenuItem>
+          }
+        />
+        <RemoveLiquidityModal
+          pool={pool}
+          tokenPrices={prices}
+          onRemoveLiquidity={handleRemoveLiquidityClick}
+          trigger={
+            <DropdownMenuItem onSelect={e => e.preventDefault()} className="cursor-pointer">
+              <Minus className="w-4 h-4 mr-2" />
+              Stop Earning (Withdraw)
+            </DropdownMenuItem>
+          }
+        />
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={() => router.push(`/swap`)} className="cursor-pointer">
+          <ArrowLeftRight className="w-4 h-4 mr-2" /> Swap Tokens
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  );
+};
+
 const DexterityInterface = ({ data }: any) => {
   const [sortField, setSortField] = useState('tvl');
   const [sortOrder, setSortOrder] = useState('desc');
   const [mounted, setMounted] = useState(false);
   const { vaultAnalytics } = useGlobal();
+  const [showQuickAddModal, setShowQuickAddModal] = useState(false);
 
   useEffect(() => {
     Dexterity.configure({ maxHops: 4 }).catch(console.error);
@@ -584,21 +649,11 @@ const DexterityInterface = ({ data }: any) => {
     }
   };
 
-  const tvl = (pool: any) => {
-    const token0Value =
-      (pool.liquidity[0].reserves / 10 ** pool.liquidity[0].decimals) *
-      (data.prices[pool.liquidity[0].contractId] || 0);
-    const token1Value =
-      (pool.liquidity[1].reserves / 10 ** pool.liquidity[1].decimals) *
-      (data.prices[pool.liquidity[1].contractId] || 0);
-    return token0Value + token1Value;
-  }
-
   let totalTVL = 0;
   for (const vault of data.vaults) {
-    const vaultTVL = tvl(vault)
+    const vaultTVL = calculateTVL(vault, data.prices);
     if (vaultTVL) {
-      totalTVL += vaultTVL
+      totalTVL += vaultTVL;
     }
   }
 
@@ -612,7 +667,7 @@ const DexterityInterface = ({ data }: any) => {
 
       switch (sortField) {
         case 'tvl':
-          comparison = tvl(b) - tvl(a);
+          comparison = calculateTVL(b, data.prices) - calculateTVL(a, data.prices);
           break;
         case 'apy':
           const aAPY = vaultAnalytics[a.contractId]?.generalInfo?.lpRebateAPY || 0;
@@ -620,7 +675,7 @@ const DexterityInterface = ({ data }: any) => {
           comparison = bAPY - aAPY;
           break;
         default:
-          comparison = tvl(b) - tvl(a);
+          comparison = calculateTVL(b, data.prices) - calculateTVL(a, data.prices);
       }
 
       return sortOrder === 'asc' ? -comparison : comparison;

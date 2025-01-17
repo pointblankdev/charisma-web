@@ -86,11 +86,15 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Fetch balances when stxAddress changes
     useEffect(() => {
         if (stxAddress) {
-            fetch(`${siteUrl}/api/v0/balances/${stxAddress}`)
-                .then(async response => {
-                    const data = await response.json();
-                    setBalances(data);
-                });
+            try {
+                fetch(`${siteUrl}/api/v0/balances/${stxAddress}`)
+                    .then(async response => {
+                        const data = await response.json();
+                        setBalances(data);
+                    });
+            } catch (error) {
+                console.error('Error fetching balances:', error);
+            }
         }
     }, [stxAddress]);
 
@@ -304,8 +308,6 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
                 }
 
-                const totalEnergyEarned = Object.values(vaultAnalytics).reduce((acc, v: any) => Number(acc) + Number(v?.engine?.energyPerBlock || 0), 0);
-                if (!totalEnergyEarned) return
                 setVaultAnalytics(vaultAnalytics);
             } catch (error) {
                 console.error('Error processing vault analytics:', error);
