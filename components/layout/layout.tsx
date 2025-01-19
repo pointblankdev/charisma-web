@@ -19,9 +19,16 @@ import {
   NavigationMenuTrigger
 } from '@components/ui/navigation-menu';
 import { ChartBarIcon, LineChartIcon } from 'lucide-react';
-// import { GlobalDrawer, useGlobalDrawer } from '@components/global/drawer';
+import { BreadcrumbPage } from '@components/ui/breadcrumb';
+import { BreadcrumbSeparator } from '@components/ui/breadcrumb';
+import { BreadcrumbLink } from '@components/ui/breadcrumb';
+import { SidebarTrigger } from '@components/ui/sidebar';
+import { BreadcrumbItem } from '@components/ui/breadcrumb';
+import { Separator } from '@components/ui/separator';
+import { Breadcrumb, BreadcrumbList } from '@components/ui/breadcrumb';
 import charisma from '@public/charisma.png';
 import { useGlobal } from '@lib/hooks/global-context';
+import _ from 'lodash';
 
 type Props = {
   children: React.ReactNode;
@@ -58,7 +65,6 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const activeRoute = router.asPath;
 
   const { stxAddress } = useGlobal();
-  // const drawer = useGlobalDrawer();
 
   const [navigationTabs, setNavigationTabs] = useState([] as any[]);
 
@@ -68,116 +74,36 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     }
   }, [stxAddress, userSession]);
 
+
   return (
     <>
       <div className={styles.background}>
-        {!hideNav && (
-          <header className={cn(styles.header, 'h-[42px]')}>
-            <div className={styles['header-logos']}>
-              <MobileMenu key={router.asPath} />
-              <div className={cn(styleUtils['hide-on-mobile'])}>
-                {router.pathname !== '/' && (
-                  <Link href="/" className={cn(styles.logo, 'flex items-center gap-1')}>
-                    <Image src={charisma} alt="Logo" width="50" height="50" className="size-7" />
-                    <span
-                      style={{
-                        color: 'white',
-                        fontSize: '30px',
-                        lineHeight: 1.15,
-                        letterSpacing: '-0.05em',
-                        fontWeight: 700,
-                        textAlign: 'center'
-                      }}
-                    >
-                      {BRAND_NAME}
-                    </span>
-                  </Link>
-                )}
-              </div>
-            </div>
-            <div className={styles.tabs}>
-              <NavigationMenu>
-                <NavigationMenuList>
-                  {navigationTabs.map(({ name, route }, i) => {
-                    if (name === 'Pools') {
-                      return (
-                        <NavigationMenuItem key={i}>
-                          <NavigationMenuTrigger
-                            className={cn('text-md text-[var(--secondary-color)] mx-0')}
-                          >
-                            Pools
-                          </NavigationMenuTrigger>
-                          <NavigationMenuContent>
-                            <ul className="grid gap-3 p-4 w-[500px] grid-cols-2 md:w-[700px]">
-                              <ListItem
-                                className="text-foreground"
-                                href="/pools/spot"
-                                title="Spot Pools"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <ChartBarIcon className="w-4 h-4" />
-                                  <span>Trade and provide liquidity for base token pairs</span>
-                                </div>
-                              </ListItem>
-                              <ListItem
-                                className="text-foreground"
-                                href="/pools/derivatives"
-                                title="Derivative Pools"
-                              >
-                                <div className="flex items-center gap-2">
-                                  <LineChartIcon className="w-4 h-4" />
-                                  <span>Advanced pools featuring swappable liquidity</span>
-                                </div>
-                              </ListItem>
-                            </ul>
-                          </NavigationMenuContent>
-                        </NavigationMenuItem>
-                      );
-                    }
-                    return (
-                      <NavigationMenuItem key={i}>
-                        <Link href={route} legacyBehavior passHref>
-                          <NavigationMenuLink
-                            className={cn(
-                              'px-4 py-2 block',
-                              {
-                                [styles['tab-active']]: activeRoute.endsWith(route)
-                              },
-                              route ===
-                                'https://charisma-3aadc5yyv-pointblankdev.vercel.app/pools/dexterity'
-                                ? 'text-muted-foreground'
-                                : 'text-foreground'
-                            )}
-                          >
-                            {name}
-                          </NavigationMenuLink>
-                        </Link>
-                      </NavigationMenuItem>
-                    );
-                  })}
-                </NavigationMenuList>
-              </NavigationMenu>
-            </div>
-            <div
-              className={cn(
-                styles['header-right'],
-                'items-center',
-                'gap-4',
-                'pr-4',
-                'whitespace-nowrap',
-                'sm:relative'
-              )}
-            // onClick={drawer.open}
-            >
-              <ConnectWallet />
-            </div>
-          </header>
-        )}
         <div className={cn(styles.page)}>
+          <header className="justify-between flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+            <div className="flex items-center gap-2 px-4">
+              {activeRoute !== '/' ? <SidebarTrigger className="-ml-1" /> : <Link href="/swap">Launch App</Link>}
+              {activeRoute !== '/' && <Separator orientation="vertical" className="mr-2 h-4" />}
+              <Breadcrumb>
+                <BreadcrumbList className="text-md">
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink href="#">
+                      {_.capitalize(activeRoute.split('/')[1])}
+                    </BreadcrumbLink>
+                  </BreadcrumbItem>
+                  {activeRoute.split('/').length > 2 && <>
+                    <BreadcrumbSeparator className="hidden md:block" />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage>{_.capitalize(activeRoute.split('/')[2])}</BreadcrumbPage>
+                    </BreadcrumbItem>
+                  </>}
+                </BreadcrumbList>
+              </Breadcrumb>
+            </div>
+            <ConnectWallet />
+          </header>
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />
             <div className={cn(styles.full, className)}>{children}</div>
-            {/* <GlobalDrawer open={drawer.isOpen} onClose={drawer.close} userAddress={stxAddress} /> */}
           </main>
           <Footer />
         </div>

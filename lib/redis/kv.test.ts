@@ -61,24 +61,24 @@ describe('dexterity metadata cache', () => {
   })
 
   it('should update contract metadata with external pool id', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.theyre-taking-our-jerbs';
+    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.biochemical-reaction';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
       properties: {
         ...existingData.properties,
-        externalPoolId: "SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0049"
+        externalPoolId: "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01"
       }
     });
     console.log(await kv.get(key));
   });
 
   it('should update contract image', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.whats-up-dog';
+    const key = 'sip10:SP20VRJRCZ3FQG7RE4QSPFPQC24J92TKDXJVHWEAW.phoenix';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
-      image: "https://charisma.rocks/sip10/up-dog/logo.gif"
+      image: "https://assets.hiro.so/api/mainnet/token-metadata-api/SP20VRJRCZ3FQG7RE4QSPFPQC24J92TKDXJVHWEAW.phoenix/1-thumb.png"
     });
     console.log(await kv.get(key));
   });

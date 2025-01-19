@@ -129,7 +129,7 @@ const ParticleBackground = () => {
     await null;
   }, []);
   return (
-    <div id="particle-background">
+    <div id="particle-background" className='-z-10 relative'>
       <ParticlesFix
         id="tsparticles"
         init={particlesInit}

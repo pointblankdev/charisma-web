@@ -705,7 +705,7 @@ const DexterityInterface = ({ data }: any) => {
 
   return (
     <div className="sm:mx-auto sm:px-4">
-      <div className="mt-6">
+      <div className="mt-0">
         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
           <div className="px-4 mb-4 sm:px-0">
             <div className="flex items-baseline justify-between">

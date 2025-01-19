@@ -1,6 +1,5 @@
 import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
-import Layout from '@components/layout/layout';
 import { GetStaticProps } from 'next';
 import { SwapInterface } from '@components/swap/swap-interface';
 import { ContractId, Dexterity, LPToken, Token } from 'dexterity-sdk';
@@ -49,12 +48,9 @@ export default function SwapPage({
 
   return (
     <Page meta={meta} fullViewport>
-      <SkipNavContent />
-      <Layout>
-        <div className="sm:container sm:mx-auto sm:pb-10 md:max-w-5xl">
-          <SwapInterface prices={prices} tokens={tokens} pools={pools} />
-        </div>
-      </Layout>
+      <div className="md:container md:mx-auto sm:pb-10 md:max-w-5xl">
+        <SwapInterface prices={prices} tokens={tokens} pools={pools} />
+      </div>
     </Page>
   );
 }

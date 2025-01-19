@@ -3,11 +3,22 @@ import { usePersistedState } from './use-persisted-state';
 import { getBalances, getLatestBlock } from '@lib/fetchers/user-api';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
-import { userSession } from '@components/stacks-session/connect';
+import ConnectWallet, { userSession } from '@components/stacks-session/connect';
 import { Dexterity, Token, Vault } from 'dexterity-sdk';
 import { SITE_URL } from '@lib/constants';
 import { hexToCV } from '@stacks/transactions';
 import _ from 'lodash';
+import { SidebarInset, SidebarProvider, SidebarTrigger } from '@components/ui/sidebar';
+import { AppSidebar } from '@components/sidebar/app-sidebar';
+import { BreadcrumbPage } from '@components/ui/breadcrumb';
+import { BreadcrumbSeparator } from '@components/ui/breadcrumb';
+import { BreadcrumbLink } from '@components/ui/breadcrumb';
+import { BreadcrumbItem } from '@components/ui/breadcrumb';
+import { Separator } from '@components/ui/separator';
+import { Breadcrumb, BreadcrumbList } from '@components/ui/breadcrumb';
+import { useRouter } from 'next/router';
+import styles from '../../components/layout/layout.module.css';
+import { cn } from '@lib/utils';
 
 const siteUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : SITE_URL;
 const socketUrl = 'https://api.mainnet.hiro.so';
@@ -78,7 +89,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [fromToken, setFromToken] = usePersistedState('fromToken', STX);
     const [toToken, setToToken] = usePersistedState('toToken', STX);
     const [slippage, setSlippage] = usePersistedState('slippage', 0.01);
-
+    const { pathname } = useRouter();
     const [stxAddress, setStxAddress] = usePersistedState('address', '');
     const [block, setBlock] = usePersistedState('block', {} as any);
     const [tappedAt, setTappedAt] = usePersistedState('tappedAt', {} as any);
@@ -371,41 +382,50 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     };
 
     return (
-        <GlobalContext.Provider
-            value={{
-                // Wallet state
-                balances,
-                wallet,
-                getKeyByContractAddress,
-                getBalanceByKey,
-                getBalance,
+        <SidebarProvider defaultOpen={false}>
+            <AppSidebar />
+            <SidebarInset />
+            <div className={cn('flex flex-col w-full z-10', styles.background)}>
+                <GlobalContext.Provider
+                    value={{
+                        // Wallet state
+                        balances,
+                        wallet,
+                        getKeyByContractAddress,
+                        getBalanceByKey,
+                        getBalance,
 
-                // Global state
-                stxAddress,
-                block,
-                setBlock,
-                tappedAt,
-                tapTokens,
-                isMempoolSubscribed,
-                setIsMempoolSubscribed,
-                vaultAnalytics,
-                setVaultAnalytics,
+                        // Global state
+                        stxAddress,
+                        block,
+                        setBlock,
+                        tappedAt,
+                        tapTokens,
+                        isMempoolSubscribed,
+                        setIsMempoolSubscribed,
+                        vaultAnalytics,
+                        setVaultAnalytics,
 
-                // Swap state
-                fromToken,
-                setFromToken,
-                toToken,
-                setToToken,
+                        // Swap state
+                        fromToken,
+                        setFromToken,
+                        toToken,
+                        setToToken,
 
-                // Dexterity state
-                maxHops,
-                setMaxHops,
-                slippage,
-                setSlippage,
-            }}
-        >
-            {children}
-        </GlobalContext.Provider>
+                        // Dexterity state
+                        maxHops,
+                        setMaxHops,
+                        slippage,
+                        setSlippage,
+                    }}
+                >
+                    <div >
+
+                        {children}
+                    </div>
+                </GlobalContext.Provider>
+            </div>
+        </SidebarProvider>
     );
 };
 
@@ -416,4 +436,4 @@ export const useGlobal = () => {
         throw new Error('useGlobal must be used within a GlobalProvider');
     }
     return context;
-}; 
+};

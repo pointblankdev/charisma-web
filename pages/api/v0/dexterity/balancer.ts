@@ -82,7 +82,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Process tokens in parallel with a concurrency limit of 3
-        const batchSize = 10;
+        const batchSize = 35;
         for (let i = 0; i < filteredTokens.length; i += batchSize) {
             const batch = filteredTokens.slice(i, i + batchSize);
             const results = await Promise.all(

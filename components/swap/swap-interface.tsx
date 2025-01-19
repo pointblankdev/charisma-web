@@ -350,7 +350,7 @@ export const SwapInterface = ({
   const minimumAmountOut = Number(estimatedAmountOut) * (1 - slippage / 100);
 
   return (
-    <div className="max-w-screen-sm sm:mx-auto sm:px-4 mt-4">
+    <div className="max-w-screen-sm sm:mx-auto sm:px-4 mt-0">
       <div className="flex flex-wrap gap-2 mb-4 justify-start">
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
           <button

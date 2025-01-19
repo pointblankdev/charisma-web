@@ -43,39 +43,37 @@ export default function DexterityPoolsPage({ data }: any) {
 
   return (
     <Page meta={meta} fullViewport>
-      <Layout>
-        <div className="flex flex-col w-full max-w-[3000px] mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex flex-col items-start justify-between mt-4 sm:flex-row sm:items-center sm:mt-6">
-            <div className="w-full">
-              <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">
-                Earn Yield 💰
-              </h1>
-              <p className="text-base sm:text-lg text-muted-foreground/90">
-                Collect swap fees by depositing your tokens into a secure vault.
-              </p>
-            </div>
+      <div className="flex flex-col w-full max-w-[3000px] mx-auto">
+        {/* <div className="flex flex-col items-start justify-between mt-4 sm:flex-row sm:items-center sm:mt-6">
+          <div className="w-full">
+            <h1 className="mb-2 text-2xl font-bold tracking-tight sm:text-3xl">
+              Earn Yield 💰
+            </h1>
+            <p className="text-base sm:text-lg text-muted-foreground/90">
+              Collect swap fees by depositing your tokens into a secure vault.
+            </p>
+          </div>
 
-            <div className="flex flex-col items-end w-full mt-4 sm:mt-0">
-              <Link href="/deployer">
-                <div className="inline-block px-6 py-1.5 mx-1 text-white rounded-lg bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
-                  Create New Pool
-                </div>
-              </Link>
-              <div className="mt-2 text-sm text-center text-muted-foreground">
-                Earn trading fees by creating your own liquidity pool
+          <div className="flex flex-col items-end w-full mt-4 sm:mt-0">
+            <Link href="/deployer">
+              <div className="inline-block px-6 py-1.5 mx-1 text-white rounded-lg bg-primary hover:bg-primary-dark focus:outline-none focus:ring-2 focus:ring-primary focus:ring-opacity-50">
+                Create New Pool
               </div>
+            </Link>
+            <div className="mt-2 text-sm text-center text-muted-foreground">
+              Earn trading fees by creating your own liquidity pool
             </div>
           </div>
+        </div> */}
 
-          <DexterityInterface data={data} />
+        <DexterityInterface data={data} />
 
-          <div className="justify-center w-full p-1 m-1 text-center">
-            <Link className="w-full text-sm text-center" href="/deployer">
-              Want to create your own liquidity pool and earn trading fees?
-            </Link>
-          </div>
+        <div className="justify-center w-full p-1 m-1 text-center">
+          <Link className="w-full text-sm text-center" href="/deployer">
+            Want to create your own liquidity pool and earn trading fees?
+          </Link>
         </div>
-      </Layout>
+      </div>
     </Page>
   );
 }

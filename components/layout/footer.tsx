@@ -31,7 +31,8 @@ export default function Footer() {
             <BsBookHalf className="cursor-pointer fill-gray-300 hover:fill-gray-100" size={16} />
           </Link>
         </div>
-        <div className={cn('hidden', 'sm:flex')}>
+        <div className='w-24' />
+        <div className={cn('hidden', 'sm:flex', 'absolute', 'bottom-0', 'right-0')}>
           <p className={styles['footer-paragraph']}>
             <a
               href={STACKS_LEARN_MORE_URL}
