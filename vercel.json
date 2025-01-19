@@ -15,10 +15,6 @@
         {
             "path": "/api/v0/dexterity/salvager",
             "schedule": "*/5 * * * *"
-        },
-        {
-            "path": "/api/v0/dexterity/crafter",
-            "schedule": "*/2 * * * *"
         }
     ]
 }
