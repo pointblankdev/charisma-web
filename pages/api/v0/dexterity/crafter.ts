@@ -3,7 +3,7 @@ import { ContractId, Opcode, Quote, Vault } from 'dexterity-sdk';
 import { Dexterity } from 'dexterity-sdk';
 import _ from 'lodash';
 import { Kraxel } from '@lib/kraxel';
-import { salvage } from '@lib/dexterity/helpers';
+import { craft, salvage } from '@lib/dexterity/helpers';
 
 // Opt out of caching; every request should send a new event
 export const dynamic = "force-dynamic";
@@ -48,7 +48,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         for (let i = 0; i < vaults.length; i += batchSize) {
             const batch = vaults.slice(i, i + batchSize);
             const results = await Promise.all(
-                batch.map((vault, index) => salvage(vault, i + index, tokens, prices))
+                batch.map((vault, index) => craft(vault, i + index, tokens, prices))
             );
             txs.push(...results);
         }
