@@ -262,7 +262,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                                                 {amountInput} {firstHopTokenInput.symbol}
                                             </div>
                                         </div>
-                                        <span className="text-muted-foreground text-xl flex-shrink-0">→</span>
+                                        <span className="text-muted-foreground text-xl flex-shrink-0 px-0.5">→</span>
                                         <div className="flex items-center gap-3 flex-shrink-0">
                                             {vaults.map((vault, index) => (
                                                 <React.Fragment key={vault?.contractId || index}>
@@ -272,7 +272,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                                                         className="w-12 h-12 rounded-md flex-shrink-0"
                                                     />
                                                     {index < vaults.length - 1 && (
-                                                        <span className="text-muted-foreground text-xl flex-shrink-0 mx-0.5">→</span>
+                                                        <span className="text-muted-foreground text-xl flex-shrink-0 px-0.5">→</span>
                                                     )}
                                                 </React.Fragment>
                                             ))}
