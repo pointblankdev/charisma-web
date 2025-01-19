@@ -5055,7 +5055,7 @@
     "@solana/wallet-standard-core" "^1.1.2"
     "@solana/wallet-standard-wallet-adapter" "^1.1.4"
 
-"@solana/web3.js@1", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.63.1":
+"@solana/web3.js@1", "@solana/web3.js@^1.36.0", "@solana/web3.js@^1.63.1", "@solana/web3.js@^1.98.0":
   version "1.98.0"
   resolved "https://registry.yarnpkg.com/@solana/web3.js/-/web3.js-1.98.0.tgz#21ecfe8198c10831df6f0cfde7f68370d0405917"
   integrity sha512-nz3Q5OeyGFpFCR+erX2f6JPt3sKhzhYcSycBCSPkWjzSVDh/Rr1FqTVMRe58FKO16/ivTUcuJjeS5MyBvpkbzA==
@@ -8805,11 +8805,12 @@ detect-node-es@^1.1.0:
   resolved "https://registry.yarnpkg.com/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-dexterity-sdk@^0.6.11:
-  version "0.6.11"
-  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.6.11.tgz#1e3f0d5184b102f63a9056a7f44081b7dbc6b97a"
-  integrity sha512-+KSEHaQPYr6xTtQMdbRAq30Cb4K1QjjnpKiR8jsshs5+n4RX4CgIGIf1fMOb5c8LhFr9t3QSz0ZR7A46Mkc46w==
+dexterity-sdk@^0.6.13:
+  version "0.6.13"
+  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.6.13.tgz#8359c3c170fd8f1105fdecf73edfaca1c1e51b26"
+  integrity sha512-y0WcAUEtePl3p4AvXPaitrb86JH3lAG8YOmgPiJdmWWOMzzjXrGB7+h5B7iq+nBW4xytDCAHANTUoYEJTyVhYw==
   dependencies:
+    "@solana/web3.js" "^1.98.0"
     "@stacks/blockchain-api-client" "8.4.0"
     "@stacks/common" "7.0.2"
     "@stacks/connect" "^7.10.0"
