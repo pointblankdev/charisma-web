@@ -48,18 +48,22 @@ export const craftOrSalvage = async (vault: Vault, index: number, tokens: Token[
         // take action based on the best arbitrage opportunity
         if (result.usd.dx + result.usd.dy > 0) {
             console.log('Taking craft action:', result.usd.dx)
-            // sell the tokens
-            const sellTx1 = await Dexterity.router.executeSwap(swapQuote1.route, halfLpAmount)
-            const sellTx2 = await Dexterity.router.executeSwap(swapQuote2.route, halfLpAmount)
-            const addLiquidityTx = await vault.executeTransaction(Opcode.addLiquidity(), lpAmount, {})
+            // sell the tokens and add liquidity in parallel
+            const [sellTx1, sellTx2, addLiquidityTx] = await Promise.all([
+                Dexterity.router.executeSwap(swapQuote1.route, halfLpAmount),
+                Dexterity.router.executeSwap(swapQuote2.route, halfLpAmount),
+                vault.executeTransaction(Opcode.addLiquidity(), lpAmount, {})
+            ]);
             console.log('Sell and add liquidity transaction:', sellTx1, sellTx2, addLiquidityTx)
 
         } else if (result.usd.dx + result.usd.dy < 0) {
             console.log('Taking salvage action:', result.usd.dx)
-            // salvage the tokens
-            const removeLiquidityTx = await vault.executeTransaction(Opcode.removeLiquidity(), lpAmount, {})
-            const buyTx1 = await Dexterity.executeSwap(vault.tokenA.contractId, vault.contractId, removeLiquidityQuote.amountIn)
-            const buyTx2 = await Dexterity.executeSwap(vault.tokenB.contractId, vault.contractId, removeLiquidityQuote.amountOut)
+            // salvage the tokens and buy in parallel
+            const [removeLiquidityTx, buyTx1, buyTx2] = await Promise.all([
+                vault.executeTransaction(Opcode.removeLiquidity(), lpAmount, {}),
+                Dexterity.executeSwap(vault.tokenA.contractId, vault.contractId, removeLiquidityQuote.amountIn),
+                Dexterity.executeSwap(vault.tokenB.contractId, vault.contractId, removeLiquidityQuote.amountOut)
+            ]);
             console.log('Remove liquidity and buy transaction:', removeLiquidityTx, buyTx1, buyTx2)
         }
         return result
