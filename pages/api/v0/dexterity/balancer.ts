@@ -44,7 +44,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Filter out tokens with less than 2 vaults
         const filteredTokens = tokens.filter(token => Dexterity.getVaultsForToken(token.contractId).size > 1)
-            .slice(0, 10)
 
         // Pick 3 random tokens
         // const randomTokens = _.sampleSize(filteredTokens, 20)
