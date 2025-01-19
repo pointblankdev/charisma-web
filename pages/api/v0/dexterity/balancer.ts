@@ -52,7 +52,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 console.log('Processing token:', token.symbol, `${index + 1}/${tokens.length}`)
 
-                const amount = Math.floor(10 ** token.decimals / prices[token.contractId])
+                const DOLLAR_AMOUNT = 2.00
+                const amount = Math.floor(10 ** token.decimals / (DOLLAR_AMOUNT * prices[token.contractId]))
                 const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
 
                 // Check if the quote is profitable including the fee in uSTX with prices
