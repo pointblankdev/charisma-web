@@ -277,7 +277,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                                                 </React.Fragment>
                                             ))}
                                         </div>
-                                        <span className="text-muted-foreground text-xl flex-shrink-0">→</span>
+                                        <span className="text-muted-foreground text-xl flex-shrink-0 px-0.5">→</span>
                                         <div className="flex flex-col items-center min-w-[80px] flex-shrink-0">
                                             <img
                                                 src={lastHopTokenOutput.image}
