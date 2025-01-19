@@ -33,7 +33,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await Dexterity.configure({
             apiKeyRotation: 'loop',
             parallelRequests: 10,
-            maxHops: 5
+            maxHops: 4
         })
 
         const prices = await Kraxel.getAllTokenPrices();
@@ -41,7 +41,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const tokens = Dexterity.getTokens()
         const txs = []
-        const fee = 1200
+        const fee = 1100
 
         try {
             console.log('Buying CHA with STX')
