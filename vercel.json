@@ -13,7 +13,7 @@
             "schedule": "*/30 * * * *"
         },
         {
-            "path": "/api/v0/dexterity/constructor",
+            "path": "/api/v0/dexterity/salvager",
             "schedule": "*/2 * * * *"
         }
     ]

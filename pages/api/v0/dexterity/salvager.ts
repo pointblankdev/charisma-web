@@ -3,6 +3,7 @@ import { ContractId, Opcode, Quote, Vault } from 'dexterity-sdk';
 import { Dexterity } from 'dexterity-sdk';
 import _ from 'lodash';
 import { Kraxel } from '@lib/kraxel';
+import { salvage } from '@lib/dexterity/helpers';
 
 // Opt out of caching; every request should send a new event
 export const dynamic = "force-dynamic";
@@ -41,58 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const txs = []
         const fee = 1100
 
-        const processVault = async (vault: Vault, index: number) => {
-            console.log({ vault })
-            try {
-                console.log('Processing vault:', vault.contractName, `${index + 1}/${tokens.length}`)
-                const baseTokens = vault.liquidity
 
-                // Get initial amount for LP token
-                const lpAmount = Math.floor(10 ** vault.decimals / prices[vault.contractId])
-                const halfLpAmount = Math.floor(lpAmount / 2)
-
-                // Get all quotes in parallel
-                const [swapQuote1, swapQuote2, removeLiquidityQuote] = await Promise.all([
-                    Dexterity.getQuote(vault.contractId, baseTokens[0].contractId, halfLpAmount),
-                    Dexterity.getQuote(vault.contractId, baseTokens[1].contractId, halfLpAmount),
-                    vault.quote(lpAmount, Opcode.removeLiquidity()) as Promise<Quote>
-                ]);
-
-                const build = {
-                    dx: removeLiquidityQuote.amountIn,
-                    dy: removeLiquidityQuote.amountOut,
-                    dk: lpAmount
-                }
-
-                const sell = {
-                    dx: swapQuote1.amountOut,
-                    dy: swapQuote2.amountOut,
-                    dk: lpAmount
-                }
-
-                const delta = {
-                    dx: sell.dx - build.dx,
-                    dy: sell.dy - build.dy,
-                    dk: sell.dk - build.dk
-                }
-
-                const result = {
-                    build: build,
-                    sell: sell,
-                    delta: delta,
-                    usd: {
-                        dx: delta.dx * prices[baseTokens[0].contractId] + delta.dy * prices[baseTokens[1].contractId],
-                        dy: delta.dy * prices[baseTokens[1].contractId] + delta.dx * prices[baseTokens[0].contractId]
-                    }
-                }
-
-                return result
-
-            } catch (error) {
-                console.error('Error processing vault:', error);
-                return { vault: vault.contractName, error: error }
-            }
-        }
 
         // Process vaults in parallel with a concurrency limit
         const vaults = Dexterity.getVaults()
@@ -100,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         for (let i = 0; i < vaults.length; i += batchSize) {
             const batch = vaults.slice(i, i + batchSize);
             const results = await Promise.all(
-                batch.map((vault, index) => processVault(vault, i + index))
+                batch.map((vault, index) => salvage(vault, i + index, tokens, prices))
             );
             txs.push(...results);
         }
