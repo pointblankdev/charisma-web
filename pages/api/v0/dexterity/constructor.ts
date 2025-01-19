@@ -42,6 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         const fee = 1100
 
         const processVault = async (vault: Vault, index: number) => {
+            console.log(vault)
             try {
                 console.log('Processing vault:', vault.contractName, `${index + 1}/${tokens.length}`)
                 const baseTokens = vault.liquidity
