@@ -50,12 +50,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 const lpAmount = Math.floor(10 ** vault.decimals / prices[vault.contractId])
                 const halfLpAmount = Math.floor(lpAmount / 2)
 
-                // Strategy 1: Swap LP tokens for base tokens
-                const swapQuote1 = await Dexterity.getQuote(vault.contractId, baseTokens[0].contractId, halfLpAmount)
-                const swapQuote2 = await Dexterity.getQuote(vault.contractId, baseTokens[1].contractId, halfLpAmount)
-
-                // Strategy 2: Remove liquidity by deconstructing LP tokens
-                const removeLiquidityQuote = await vault.quote(lpAmount, Opcode.removeLiquidity()) as Quote
+                // Get all quotes in parallel
+                const [swapQuote1, swapQuote2, removeLiquidityQuote] = await Promise.all([
+                    Dexterity.getQuote(vault.contractId, baseTokens[0].contractId, halfLpAmount),
+                    Dexterity.getQuote(vault.contractId, baseTokens[1].contractId, halfLpAmount),
+                    vault.quote(lpAmount, Opcode.removeLiquidity()) as Promise<Quote>
+                ]);
 
                 const build = {
                     dx: removeLiquidityQuote.amountIn,
