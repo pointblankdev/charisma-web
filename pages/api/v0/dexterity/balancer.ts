@@ -44,44 +44,51 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         // Filter out tokens with less than 2 vaults
         const filteredTokens = tokens.filter(token => Dexterity.getVaultsForToken(token.contractId).size > 1)
+            .slice(0, 10)
 
         // Pick 3 random tokens
-        // const randomTokens = _.sampleSize(filteredTokens, 3)
+        // const randomTokens = _.sampleSize(filteredTokens, 20)
 
-        for (let i = 0; i < filteredTokens.length; i++) {
-            const token = tokens[i];
+        const processToken = async (token: any, index: number) => {
             try {
-                console.log('Processing token:', token.symbol, `${i + 1}/${tokens.length}`)
+                console.log('Processing token:', token.symbol, `${index + 1}/${tokens.length}`)
 
                 const amount = Math.floor(10 ** token.decimals / prices[token.contractId])
                 const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
 
                 // Check if the quote is profitable including the fee in uSTX with prices
                 const feeInUSD = fee / 10 ** token.decimals * prices['.stx']
-                // amount out and in are in token units, convert to USD with decimals
                 const grossProfit = quote.amountOut / 10 ** token.decimals * prices[token.contractId] - feeInUSD
                 const errorMargin = Dexterity.config.defaultSlippage
                 const grossProfitWithMargin = grossProfit * (1 - errorMargin)
                 const netProfit = grossProfitWithMargin - quote.amountIn / 10 ** token.decimals * prices[token.contractId]
 
                 if (netProfit < 0) {
-                    txs.push({ token: token.symbol, msg: "not profitable", grossProfit, netProfit })
-                    continue
+                    return { token: token.symbol, msg: "not profitable", grossProfit, netProfit }
                 }
 
                 if (!quote.route.hops.length) {
-                    txs.push({ token: token.symbol, msg: "no routes found" })
-                    continue
+                    return { token: token.symbol, msg: "no routes found" }
                 }
 
                 console.log('Executing swap', quote.route.hops.map(hop => hop.vault.contractName).join(' -> '))
                 const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee, disablePostConditions: false })
-                txs.push({ tx, grossProfit, netProfit })
-
                 await new Promise(resolve => setTimeout(resolve, 10000));
+                return { tx, grossProfit, netProfit }
             } catch (error) {
                 console.error('Error executing swap:', error);
+                return { token: token.symbol, error: error }
             }
+        }
+
+        // Process tokens in parallel with a concurrency limit of 3
+        const batchSize = 10;
+        for (let i = 0; i < filteredTokens.length; i += batchSize) {
+            const batch = filteredTokens.slice(i, i + batchSize);
+            const results = await Promise.all(
+                batch.map((token, index) => processToken(token, i + index))
+            );
+            txs.push(...results);
         }
 
         console.log('Finished processing all tokens')
