@@ -94,7 +94,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // Process vaults in parallel with a concurrency limit
-        const vaults = Array.from(Dexterity.getVaults())
+        const vaults = Dexterity.getVaults()
         const batchSize = 35;
         for (let i = 0; i < vaults.length; i += batchSize) {
             const batch = vaults.slice(i, i + batchSize);
