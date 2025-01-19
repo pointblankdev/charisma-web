@@ -258,7 +258,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                                                 alt={firstHopTokenInput.symbol}
                                                 className="w-8 h-8 rounded-full"
                                             />
-                                            <div className="font-light text-sm">
+                                            <div className="font-light text-xs">
                                                 {amountInput} {firstHopTokenInput.symbol}
                                             </div>
                                         </div>
