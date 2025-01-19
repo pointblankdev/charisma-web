@@ -7,7 +7,7 @@ export default function Progress() {
   const router = useRouter();
 
   useEffect(() => {
-    let timeout: NodeJS.Timeout;
+    let timeout: any;
 
     const start = () => {
       timeout = setTimeout(() => NProgress.start(), 100);
