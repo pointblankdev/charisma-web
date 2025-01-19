@@ -2,7 +2,7 @@ import { Vault } from "dexterity-sdk"
 
 import { Dexterity, Opcode, Quote, Token } from "dexterity-sdk"
 
-export const salvage = async (vault: Vault, index: number, tokens: Token[], prices: Record<string, number>) => {
+export const craftOrSalvage = async (vault: Vault, index: number, tokens: Token[], prices: Record<string, number>) => {
     try {
         console.log('Processing vault:', vault.contractName, `${index + 1}/${tokens.length}`)
 
@@ -47,81 +47,20 @@ export const salvage = async (vault: Vault, index: number, tokens: Token[], pric
 
         // take action based on the best arbitrage opportunity
         if (result.usd.dx + result.usd.dy > 0) {
-            console.log('Taking sell action:', result.usd.dx)
+            console.log('Taking craft action:', result.usd.dx)
             // sell the tokens
             const sellTx1 = await Dexterity.router.executeSwap(swapQuote1.route, halfLpAmount)
             const sellTx2 = await Dexterity.router.executeSwap(swapQuote2.route, halfLpAmount)
-            console.log('Sell transaction:', sellTx1, sellTx2)
+            const addLiquidityTx = await vault.executeTransaction(Opcode.addLiquidity(), lpAmount, {})
+            console.log('Sell and add liquidity transaction:', sellTx1, sellTx2, addLiquidityTx)
 
         } else if (result.usd.dx + result.usd.dy < 0) {
             console.log('Taking salvage action:', result.usd.dx)
             // salvage the tokens
             const removeLiquidityTx = await vault.executeTransaction(Opcode.removeLiquidity(), lpAmount, {})
-            console.log('Salvage transaction:', removeLiquidityTx)
-        }
-        return result
-
-    } catch (error) {
-        console.error('Error processing vault:', error);
-        return { vault: vault.contractName, error: error }
-    }
-}
-
-export const craft = async (vault: Vault, index: number, tokens: Token[], prices: Record<string, number>) => {
-    try {
-        console.log('Processing vault:', vault.contractName, `${index + 1}/${tokens.length}`)
-
-        // Calculate target LP amount based on price
-        const lpAmount = Math.floor(10 ** vault.decimals / prices[vault.contractId])
-        const halfLpAmount = Math.floor(lpAmount / 2)
-
-        // Get all quotes in parallel
-        const [swapQuote1, swapQuote2, addLiquidityQuote] = await Promise.all([
-            Dexterity.getQuote(vault.tokenA.contractId, vault.contractId, halfLpAmount),
-            Dexterity.getQuote(vault.tokenB.contractId, vault.contractId, halfLpAmount),
-            vault.quote(lpAmount, Opcode.addLiquidity()) as Promise<Quote>
-        ]);
-
-        const craft = {
-            dx: addLiquidityQuote.amountIn,
-            dy: addLiquidityQuote.amountOut,
-            dk: lpAmount
-        }
-
-        const buy = {
-            dx: swapQuote1.amountOut,
-            dy: swapQuote2.amountOut,
-            dk: lpAmount
-        }
-
-        const delta = {
-            dx: craft.dx - buy.dx,
-            dy: craft.dy - buy.dy,
-            dk: craft.dk - buy.dk
-        }
-
-        const result = {
-            craft: craft,
-            buy: buy,
-            delta: delta,
-            usd: {
-                dx: (delta.dx * prices[vault.tokenA.contractId]) / 10 ** vault.tokenA.decimals,
-                dy: (delta.dy * prices[vault.tokenB.contractId]) / 10 ** vault.tokenB.decimals
-            }
-        }
-
-        // take action based on the best arbitrage opportunity
-        if (result.usd.dx + result.usd.dy > 0) {
-            console.log('Taking craft action:', result.usd.dx)
-            // add liquidity to the pool
-            const addLiquidityTx = await vault.executeTransaction(Opcode.addLiquidity(), lpAmount, {})
-            console.log('Craft transaction:', addLiquidityTx)
-        } else if (result.usd.dx + result.usd.dy < 0) {
-            console.log('Taking buy action:', result.usd.dx)
-            // buy the tokens
-            const buyTx1 = await Dexterity.router.executeSwap(swapQuote1.route, halfLpAmount)
-            const buyTx2 = await Dexterity.router.executeSwap(swapQuote2.route, halfLpAmount)
-            console.log('Buy transactions:', buyTx1, buyTx2)
+            const buyTx1 = await Dexterity.executeSwap(vault.tokenA.contractId, vault.contractId, removeLiquidityQuote.amountIn)
+            const buyTx2 = await Dexterity.executeSwap(vault.tokenB.contractId, vault.contractId, removeLiquidityQuote.amountOut)
+            console.log('Remove liquidity and buy transaction:', removeLiquidityTx, buyTx1, buyTx2)
         }
         return result
 

@@ -1,5 +1,5 @@
 import { describe, test, expect } from 'vitest';
-import { salvage } from './helpers';
+import { craftOrSalvage } from './helpers';
 import { ContractId, Dexterity } from 'dexterity-sdk';
 import { Kraxel } from '@lib/kraxel';
 
@@ -31,7 +31,7 @@ describe('Dexterity Helpers', () => {
 
         // Process all vaults
         for (const vault of vaults) {
-            const result = await salvage(vault, 0, tokens, prices);
+            const result = await craftOrSalvage(vault, 0, tokens, prices);
             console.log(result);
         }
     }, 50000); // Increased timeout for API calls
