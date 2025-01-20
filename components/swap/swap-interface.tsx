@@ -319,6 +319,7 @@ export const SwapInterface = ({
     try {
       setIsSwapping(true);
       const amount = Number(fromAmount) * 10 ** fromToken.decimals;
+      console.log(Dexterity.config)
       await Dexterity.router.executeSwap(lastQuote.route, amount, {
         // disablePostConditions: true
       });
