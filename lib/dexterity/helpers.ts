@@ -44,21 +44,21 @@ export const craftOrSalvage = async (vault: Vault, index: number, tokens: Token[
         if (deltaPercentA > errorMargin && deltaPercentB > errorMargin) {
             console.log('Taking craft action. Token A delta %:', deltaPercentA * 100, 'Token B delta %:', deltaPercentB * 100)
             // sell the tokens and add liquidity in parallel
-            const [sellTx1, sellTx2, addLiquidityTx] = await Promise.all([
-                Dexterity.router.executeSwap(swapQuote1.route, halfLpAmount),
-                Dexterity.router.executeSwap(swapQuote2.route, halfLpAmount),
-                vault.executeTransaction(Opcode.addLiquidity(), lpAmount, {})
-            ]);
-            console.log('Sell and add liquidity transaction:', sellTx1, sellTx2, addLiquidityTx)
+            // const [sellTx1, sellTx2, addLiquidityTx] = await Promise.all([
+            //     Dexterity.router.executeSwap(swapQuote1.route, halfLpAmount),
+            //     Dexterity.router.executeSwap(swapQuote2.route, halfLpAmount),
+            //     vault.executeTransaction(Opcode.addLiquidity(), lpAmount, {})
+            // ]);
+            // console.log('Sell and add liquidity transaction:', sellTx1, sellTx2, addLiquidityTx)
         } else if (deltaPercentA > errorMargin && deltaPercentB > errorMargin) {
             console.log('Taking salvage action. Token A delta %:', deltaPercentA * 100, 'Token B delta %:', deltaPercentB * 100)
             // salvage the tokens and buy in parallel
-            const [removeLiquidityTx, buyTx1, buyTx2] = await Promise.all([
-                vault.executeTransaction(Opcode.removeLiquidity(), lpAmount, {}),
-                Dexterity.executeSwap(vault.tokenA.contractId, vault.contractId, removeLiquidityQuote.amountIn),
-                Dexterity.executeSwap(vault.tokenB.contractId, vault.contractId, removeLiquidityQuote.amountOut)
-            ]);
-            console.log('Remove liquidity and buy transaction:', removeLiquidityTx, buyTx1, buyTx2)
+            // const [removeLiquidityTx, buyTx1, buyTx2] = await Promise.all([
+            //     vault.executeTransaction(Opcode.removeLiquidity(), lpAmount, {}),
+            //     Dexterity.executeSwap(vault.tokenA.contractId, vault.contractId, removeLiquidityQuote.amountIn),
+            //     Dexterity.executeSwap(vault.tokenB.contractId, vault.contractId, removeLiquidityQuote.amountOut)
+            // ]);
+            // console.log('Remove liquidity and buy transaction:', removeLiquidityTx, buyTx1, buyTx2)
         } else {
             console.log('Difference within error margin. Token A delta %:', deltaPercentA * 100, 'Token B delta %:', deltaPercentB * 100)
         }

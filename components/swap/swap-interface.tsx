@@ -287,7 +287,7 @@ export const SwapInterface = ({
           });
       }, 200); // Reduced to 200ms for better responsiveness
     },
-    [fromToken, toToken, maxHops]
+    [fromToken, toToken, Dexterity.config.maxHops]
   );
 
   useEffect(() => {
@@ -319,7 +319,6 @@ export const SwapInterface = ({
     try {
       setIsSwapping(true);
       const amount = Number(fromAmount) * 10 ** fromToken.decimals;
-      console.log(Dexterity.config)
       await Dexterity.router.executeSwap(lastQuote.route, amount, {
         // disablePostConditions: true
       });
@@ -368,7 +367,7 @@ export const SwapInterface = ({
           <input
             type="text"
             className="w-3.5 text-sm text-white bg-transparent outline-none"
-            value={maxHops}
+            value={Dexterity.config.maxHops}
             onChange={e => handleMaxHopsChange(e.target.value)}
           />
         </div>

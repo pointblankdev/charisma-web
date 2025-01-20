@@ -8787,10 +8787,10 @@ detect-node-es@^1.1.0:
   resolved "https://registry.yarnpkg.com/detect-node-es/-/detect-node-es-1.1.0.tgz#163acdf643330caa0b4cd7c21e7ee7755d6fa493"
   integrity sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==
 
-dexterity-sdk@^0.6.15:
-  version "0.6.15"
-  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.6.15.tgz#8839af3b8af0180c6f867f276846c520f863be62"
-  integrity sha512-K1NUkWsaRgJQ/SYJw549r4z8I+0HHG1CACgAg0qOpwS4qDYYZCXYH027qeilS/ff+bLmZ88Cs2G/0lDAeSaeTg==
+dexterity-sdk@0.6.16:
+  version "0.6.16"
+  resolved "https://registry.yarnpkg.com/dexterity-sdk/-/dexterity-sdk-0.6.16.tgz#7d0bfb8396e281e3fd1a51e07d9b68852f7ff517"
+  integrity sha512-P5R6NfzWmcf+WN6c6H/3JnGwUDP5zjuiQv5wW2gay9gV4csADBu1rgs0HBtZkHet5E/TF5iarUjO/sCIzMFO0g==
   dependencies:
     "@solana/web3.js" "^1.98.0"
     "@stacks/blockchain-api-client" "8.4.0"
