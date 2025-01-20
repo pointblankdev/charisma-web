@@ -14,7 +14,7 @@
         },
         {
             "path": "/api/v0/dexterity/alchemist",
-            "schedule": "*/3 * * * *"
+            "schedule": "*/9 * * * *"
         }
     ]
 }

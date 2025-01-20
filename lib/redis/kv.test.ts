@@ -24,50 +24,52 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.theyre-taking-our-jerbs-ii', {
-      name: "They're Taking Our Jerbs",
-      symbol: 'JERBS',
-      description: 'Liquidity vault wrapper for the STX-sAI trading pair',
-      identifier: 'JERBS',
-      decimals: 6,
-      properties: {
-        tokenAContract: '.stx',
-        tokenBContract: 'SP3M31QFF6S96215K4Y2Z9K5SGHJN384NV6YM6VM8.satoshai',
-        lpRebatePercent: 2,
-        tokenAMetadata: {
-          contractId: '.stx',
-          identifier: 'STX',
-          name: 'Stacks Token',
-          symbol: 'STX',
-          decimals: 6,
-          description: 'The native token of the Stacks blockchain',
-          image: 'https://charisma.rocks/stx-logo.png'
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.founder-mode', {
+      "name": "Founder Mode",
+      "symbol": "FML",
+      "description": "Liquidity vault wrapper for the STX-NOT trading pair on Velar",
+      "identifier": "FML",
+      "decimals": 6,
+      "properties": {
+        "tokenAContract": ".stx",
+        "tokenBContract": "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz",
+        "lpRebatePercent": 2,
+        "tokenAMetadata": {
+          "contractId": ".stx",
+          "identifier": "STX",
+          "name": "Stacks Token",
+          "symbol": "STX",
+          "decimals": 6,
+          "description": "The native token of the Stacks blockchain",
+          "image": "https://charisma.rocks/stx-logo.png"
         },
-        tokenBMetadata: {
-          contractId: 'SP3M31QFF6S96215K4Y2Z9K5SGHJN384NV6YM6VM8.satoshai',
-          identifier: 'satoshai',
-          name: 'SatoshAi',
-          symbol: 'sAI',
-          decimals: 6,
-          description: 'SatoshAI',
-          image: 'https://domain-interactive-470.mypinata.cloud/ipfs/bafkreiamqm2tdekb42rwtmu5ch4c6jmdtktif4ohci33pqi7pouf6a2ite'
+        "tokenBMetadata": {
+          "contractId": "SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope",
+          "identifier": "NOT",
+          "name": "Nothing",
+          "symbol": "NOT",
+          "decimals": 0,
+          "description": "Probably nothing.",
+          "image": "https://charisma.rocks/not-logo.png"
         },
-        date: '2025-01-17T11:05:15.494Z',
-        externalPoolId: 'SP20X3DC5R091J8B6YPQT638J8NR1W83KN6TN5BJY.univ2-pool-v1_0_0-0049'
+        "date": "2025-01-20T05:24:34.634Z",
+        "externalPoolId": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core"
       },
-      imagePrompt: "South Park They're Taking Our Jerbs",
-      image: 'https://kghatiwehgh3dclz.public.blob.vercel-storage.com/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.theyre-taking-our-jerbs-1737111889340-qYEaZZLyQo338azp0PitalDisC1Sta.png'
+      "imagePrompt": "Minimalist, professional logo that represents a liquidity vault between Stacks Token and Unknown. Combine geometric shapes and clean lines to show the connection between these two tokens. Use a limited color palette with maximum 2-3 colors",
+      "customImageUrl": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/pic798666-J8kUnf2EgJxUMKioqz5VXl02grgaBo.webp",
+      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/pic798666-J8kUnf2EgJxUMKioqz5VXl02grgaBo.webp",
+      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.founder-mode"
     });
   })
 
   it('should update contract metadata with external pool id', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.biochemical-reaction';
+    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.skull-island';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
       properties: {
         ...existingData.properties,
-        externalPoolId: "SP102V8P0F7JX67ARQ77WEA3D3CFB5XW39REDT0AM.amm-vault-v2-01"
+        externalPoolId: "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core"
       }
     });
     console.log(await kv.get(key));
