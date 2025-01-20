@@ -32,7 +32,7 @@ describe('dexterity metadata cache', () => {
       "decimals": 6,
       "properties": {
         "tokenAContract": ".stx",
-        "tokenBContract": "SP1Z92MPDQEWZXW36VX71Q25HKF5K2EPCJ304F275.tokensoft-token-v4k68639zxz",
+        "tokenBContract": "SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope",
         "lpRebatePercent": 2,
         "tokenAMetadata": {
           "contractId": ".stx",
