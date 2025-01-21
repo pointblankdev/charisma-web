@@ -4,12 +4,11 @@ import { ChevronDown, ArrowUpDown, Coins, Network, TrendingUp, X, Check } from '
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import dynamic from 'next/dynamic';
-import { Dexterity, LPToken, Opcode, Token } from 'dexterity-sdk';
+import { Dexterity, LPToken, Opcode, Route, Token } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { SwapGraphVisualizer } from './swap-graph-visualizer';
 import _ from 'lodash';
 import { useGlobal } from '@lib/hooks/global-context';
-import { Hop, MultiHop } from 'dexterity-sdk/dist/core/multihop';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -205,18 +204,16 @@ const TokenInput = ({
 );
 
 interface SwapDetailsProps {
-  swapPath: MultiHop;
+  swapPath: Token[];
   minimumReceived: number;
   toToken: Token;
 }
 
 const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) => {
-  if (!swapPath?.hops.length) return null;
-  const firstHop = (swapPath?.hops[0].opcode as any).code === 0 ? swapPath?.hops[0].vault.tokenA : swapPath?.hops[0].vault.tokenB
   return (
     <div className="flex justify-between pt-6">
       <div className="text-sm text-gray-400">
-        Swap path: {firstHop.symbol} → {swapPath?.hops.map((hop: any) => hop.opcode.code === 1 ? hop.vault.tokenA.symbol : hop.vault.tokenB.symbol).join(' → ')}
+        Swap path: {swapPath.map((token) => token.symbol).join(' → ')}
       </div>
       <div className="text-sm text-gray-400">
         Minimum received: {minimumReceived.toFixed(toToken?.decimals)} {toToken?.symbol}
@@ -239,7 +236,7 @@ export const SwapInterface = ({
   const [showToTokens, setShowToTokens] = useState(false);
   const [estimatedAmountOut, setEstimatedAmountOut] = useState('0');
   const [isCalculating, setIsCalculating] = useState(false);
-  const [swapPath, setSwapPath] = useState<MultiHop | null>(null);
+  const [swapPath, setSwapPath] = useState<Token[]>([]);
   const { getBalance, wallet, stxAddress, maxHops, setMaxHops, fromToken, setFromToken, toToken, setToToken, slippage, setSlippage } = useGlobal();
   const estimateTimer = useRef<any>();
   const [exploringPaths, setExploringPaths] = useState(0);
@@ -314,10 +311,9 @@ export const SwapInterface = ({
         })
           .then(response => response.json())
           .then(quote => {
-            const amountOut = quote.hops[quote.hops.length - 1].quote.dy;
-            setSwapPath(quote);
+            setSwapPath(quote.route?.path || []);
             setLastQuote(quote);
-            setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
+            setEstimatedAmountOut((quote.amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
           })
           .catch(error => {
             console.error('Error estimating amount:', error);
@@ -375,13 +371,13 @@ export const SwapInterface = ({
       setIsSwapping(true);
       const amount = Number(fromAmount) * 10 ** fromToken.decimals;
       const hops = [];
-      for (const hop of swapPath.hops) {
+      for (const hop of lastQuote.route.hops) {
         const vault = await Vault.build(hop.vault.contractId);
-        const opcode = new Opcode((hop.opcode as any).code);
-        const quote = hop.quote
-        hops.push(new Hop(vault, opcode, quote));
+        const opcode = new Opcode(hop.opcode.code);
+        hops.push({ ...hop, vault, opcode });
       }
-      await Dexterity.router.executeSwap(hops, amount, { disablePostConditions });
+      lastQuote.route.hops = hops;
+      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {
@@ -477,7 +473,7 @@ export const SwapInterface = ({
           fromToken={fromToken}
           toToken={toToken}
           paths={Dexterity.router.findAllPaths(fromToken.contractId, toToken.contractId)}
-          currentPath={swapPath!}
+          currentPath={lastQuote.route}
           setShowGraph={setShowGraph}
         />
       )}
@@ -570,7 +566,7 @@ export const SwapInterface = ({
           </div>
 
           <SwapDetails
-            swapPath={swapPath!}
+            swapPath={swapPath}
             minimumReceived={minimumAmountOut}
             toToken={toToken}
           />

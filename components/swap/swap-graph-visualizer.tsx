@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
-import { Dexterity, Token } from 'dexterity-sdk';
+import { Dexterity, Route, Token } from 'dexterity-sdk';
 import { Ysabeau_Infant } from 'next/font/google';
-import { MultiHop } from 'dexterity-sdk/dist/core/multihop';
 
 const font = Ysabeau_Infant({ subsets: ['latin'] });
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
@@ -12,8 +11,8 @@ const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
 interface SwapGraphVisualizerProps {
     fromToken: any;
     toToken: any;
-    paths: MultiHop[];
-    currentPath: MultiHop;
+    paths: Token[][];
+    currentPath: Route;
     setShowGraph: (show: boolean) => void;
 }
 
@@ -27,49 +26,33 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
 
         // Process all paths
         paths.reverse().forEach((path, j) => {
-            path.hops.forEach((hop, i) => {
-                if (!nodes.has(hop)) {
-                    nodes.set(hop.tokenIn.contractId, {
-                        image: hop.tokenIn.image,
-                        id: hop.tokenIn.contractId,
-                        name: hop.tokenIn.symbol,
+            path.forEach((hop, i) => {
+                if (!nodes.has(hop.contractId)) {
+                    nodes.set(hop.contractId, {
+                        image: hop.image,
+                        id: hop.contractId,
+                        name: hop.symbol,
                         color: '#000000', // gray for intermediate nodes
                         val: 15
                     });
-                    nodes.set(hop.tokenOut.contractId, {
-                        image: hop.tokenOut.image,
-                        id: hop.tokenOut.contractId,
-                        name: hop.tokenOut.symbol,
+                    nodes.set(hop.contractId, {
+                        image: hop.image,
+                        id: hop.contractId,
+                        name: hop.symbol,
                         color: '#000000', // gray for intermediate nodes
                         val: 15
                     });
 
-                    links.push({
-                        source: hop.tokenIn.contractId,
-                        target: hop.tokenOut.contractId,
-                        color: '#333333',
-                        width: 1
-                    });
+                    // links.push({
+                    //     source: hop.contractId,
+                    //     target: hop.contractId,
+                    //     color: '#333333',
+                    //     width: 1
+                    // });
                 }
-
-                // const source = path.hops[i - 1]?.tokenIn.contractId;
-                // const target = hop.tokenIn.contractId;
-                // const isOptimal = currentPath.some((t, idx) =>
-                //     idx > 0 &&
-                //     currentPath[idx - 1].contractId === source &&
-                //     t.contractId === target
-                // );
-
-                // links.push({
-                //     source,
-                //     target,
-                //     color: isOptimal ? '#3b82f6' : '#374151',
-                //     width: isOptimal ? 20 : 1
-                // });
 
             });
         });
-
 
 
         // Add source and target nodes
@@ -94,6 +77,7 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
             links
         };
     }, [fromToken, toToken, currentPath]);
+
 
     return (
         <div className="fixed inset-0 w-2 h-2 bg-black/50 z-50" onClick={() => setShowGraph(false)}>

@@ -66,8 +66,8 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
 
         setQuotedAmounts({
           lpTokens,
-          token0Amount: quote.dx,
-          token1Amount: quote.dy
+          token0Amount: quote.amountIn,
+          token1Amount: quote.amountOut
         });
       } catch (error) {
         console.error('Error fetching quote:', error);
@@ -187,9 +187,9 @@ export const AddLiquidityModal = ({ pool, tokenPrices, onAddLiquidity, trigger }
               <div className="flex items-center justify-center">
                 <div className="mr-2">Processing</div>
                 <div className="flex space-x-1">
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
-                  <div className="w-1.5 h-1.5 bg-white rounded-full animate-bounce" />
+                  <div className="w-0.5 h-0.5 bg-white rounded-full animate-bounce [animation-delay:-0.3s]" />
+                  <div className="w-0.5 h-0.5 bg-white rounded-full animate-bounce [animation-delay:-0.15s]" />
+                  <div className="w-0.5 h-0.5 bg-white rounded-full animate-bounce" />
                 </div>
               </div>
             ) : (

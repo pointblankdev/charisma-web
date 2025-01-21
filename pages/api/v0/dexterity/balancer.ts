@@ -68,12 +68,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return { token: token.symbol, msg: "not profitable", grossProfit, netProfit }
                 }
 
-                if (!quote.hops.length) {
+                if (!quote.route.hops.length) {
                     return { token: token.symbol, msg: "no routes found" }
                 }
 
-                console.log('Executing swap', quote.hops.map(hop => hop.vault.contractName).join(' -> '))
-                const tx = await Dexterity.router.executeSwap(quote.hops, amount, { fee, disablePostConditions: false })
+                console.log('Executing swap', quote.route.hops.map(hop => hop.vault.contractName).join(' -> '))
+                const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee, disablePostConditions: false })
                 await new Promise(resolve => setTimeout(resolve, 10000));
                 return { tx, grossProfit, netProfit }
             } catch (error) {
