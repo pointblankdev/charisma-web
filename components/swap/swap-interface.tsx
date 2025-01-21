@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { ChevronDown, ArrowUpDown, Coins, Network, TrendingUp } from 'lucide-react';
+import { ChevronDown, ArrowUpDown, Coins, Network, TrendingUp, X, Check } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import dynamic from 'next/dynamic';
@@ -10,6 +10,16 @@ import { SwapGraphVisualizer } from './swap-graph-visualizer';
 import _ from 'lodash';
 import { useGlobal } from '@lib/hooks/global-context';
 import { Hop, MultiHop } from 'dexterity-sdk/dist/core/multihop';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@components/ui/alert-dialog";
 
 const formatUSD = (amount: number, price: number) => {
   const value = amount * price;
@@ -236,6 +246,8 @@ export const SwapInterface = ({
   const [showGraph, setShowGraph] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
   const [lastQuote, setLastQuote] = useState<any>(null);
+  const [disablePostConditions, setDisablePostConditions] = useState(false);
+  const [showPostConditionsModal, setShowPostConditionsModal] = useState(false);
 
   useEffect(() => {
     if (maxHops && pools.length > 0 && stxAddress) {
@@ -343,6 +355,19 @@ export const SwapInterface = ({
     handleEstimateAmount(formattedBalance);
   };
 
+  const handlePostConditionsToggle = () => {
+    if (!disablePostConditions) {
+      setShowPostConditionsModal(true);
+    } else {
+      setDisablePostConditions(false);
+    }
+  };
+
+  const handleConfirmDisablePostConditions = () => {
+    setDisablePostConditions(true);
+    setShowPostConditionsModal(false);
+  };
+
   const handleSwap = async () => {
     if (!fromToken || !toToken || !stxAddress || !swapPath) return;
 
@@ -356,7 +381,7 @@ export const SwapInterface = ({
         const quote = hop.quote
         hops.push(new Hop(vault, opcode, quote));
       }
-      await Dexterity.router.executeSwap(hops, amount);
+      await Dexterity.router.executeSwap(hops, amount, { disablePostConditions });
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {
@@ -386,14 +411,14 @@ export const SwapInterface = ({
 
   return (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4 mt-0">
-      <div className="flex flex-wrap gap-2 mb-4 justify-start">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
+      <div className="flex flex-wrap gap-2 mb-4 justify-around">
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[5.5rem] border-[var(--accents-7)]">
           <button
             className="flex items-center gap-2 text-white text-sm"
             onClick={() => setShowGraph(!showGraph)}
           >
             <Network className="w-4 h-4" />
-            <span>{showGraph ? 'Hide' : 'Show'} Graph</span>
+            <span className="text-sm text-gray-400">{showGraph ? 'Hide' : 'Show'}</span>
           </button>
         </div>
 
@@ -424,7 +449,7 @@ export const SwapInterface = ({
         </div>
 
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
-          <span className="text-sm text-gray-400">Maximum Slippage:</span>
+          <span className="text-sm text-gray-400">Max Slippage:</span>
           <input
             type="text"
             className="w-3.5 text-sm text-white bg-transparent outline-none"
@@ -433,6 +458,17 @@ export const SwapInterface = ({
             placeholder="0"
           />
           <span className="text-sm text-gray-400">%</span>
+        </div>
+
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
+          <span className="text-sm text-gray-400">Post Conditions:</span>
+          <button
+            className={`px-2 py-1 text-sm rounded ${disablePostConditions ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'
+              }`}
+            onClick={handlePostConditionsToggle}
+          >
+            {disablePostConditions ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+          </button>
         </div>
       </div>
 
@@ -566,6 +602,25 @@ export const SwapInterface = ({
           </Button>
         </div>
       </div>
+
+      <AlertDialog open={showPostConditionsModal} onOpenChange={setShowPostConditionsModal}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Disable Post Conditions?</AlertDialogTitle>
+            <AlertDialogDescription>
+              Post conditions are safety checks that protect you from unexpected outcomes in your transactions.
+              Disabling them can be dangerous and should only be done if you fully understand the implications.
+              Are you sure you want to proceed?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction onClick={handleConfirmDisablePostConditions}>
+              Yes, Disable Post Conditions
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 };
