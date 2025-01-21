@@ -4,7 +4,7 @@ import { ChevronDown, ArrowUpDown, Coins, Network, TrendingUp } from 'lucide-rea
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import dynamic from 'next/dynamic';
-import { Dexterity, LPToken, Token } from 'dexterity-sdk';
+import { Dexterity, LPToken, Opcode, Token } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { SwapGraphVisualizer } from './swap-graph-visualizer';
 import _ from 'lodash';
@@ -55,39 +55,57 @@ interface TokenListProps {
   fromToken?: any;
   hasHighExperience: boolean;
   pools: any[];
+  prices: any;
 }
 
-const TokenList = ({ tokens, onSelect, fromToken, pools }: TokenListProps) => {
+const TokenList = ({ tokens, onSelect, fromToken, pools, prices }: TokenListProps) => {
+  const { getBalance } = useGlobal();
+
+  // Filter tokens to only show ones with balance
+  const tokensWithBalance = tokens.filter(token => {
+    const balance = getBalance(token.contractId);
+    return fromToken ? true : balance > 0;
+  });
+
   return (
     <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
-      {tokens.map(token => {
-        const isDisabled = false; //fromToken && !validTokens.has(token.contractId);
+      {tokensWithBalance.map(token => {
+        const isDisabled = false;
         const src = token.image;
+        const balance = getBalance(token.contractId);
+        const formattedBalance = formatBalance(balance, token.decimals);
+        const usdValue = (balance / 10 ** token.decimals) * (prices[token.contractId] || 0);
 
         return (
           <button
             key={token.symbol}
             className={cn(
-              'flex items-center w-full px-4 py-2 text-left',
+              'flex flex-col w-full px-4 py-2 text-left',
               isDisabled ? 'opacity-50 cursor-not-allowed' : 'hover:bg-accent-foreground'
             )}
             onClick={() => !isDisabled && onSelect(token)}
             disabled={isDisabled}
           >
-            {src ? (
-              <Image
-                src={src}
-                alt={token.symbol}
-                width={240}
-                height={240}
-                className="w-6 mr-2 rounded-full"
-              />
-            ) : (
-              <Coins className="mr-2" />
-            )}
-            <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate')}>
-              {token.symbol}
-            </span>
+            <div className="flex items-center">
+              {src ? (
+                <Image
+                  src={src}
+                  alt={token.symbol}
+                  width={240}
+                  height={240}
+                  className="w-6 mr-1.5 rounded-full"
+                />
+              ) : (
+                <Coins className="mr-1.5" />
+              )}
+              <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate', 'flex items-center')}>
+                {token.symbol}
+                <div className="text-gray-500 text-sm ml-2">${usdValue.toFixed(2)}</div>
+              </span>
+            </div>
+            <div className="mt-1 text-xs text-gray-400">
+              Balance: {formattedBalance}
+            </div>
           </button>
         );
       })}
@@ -182,16 +200,20 @@ interface SwapDetailsProps {
   toToken: Token;
 }
 
-const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) => (
-  <div className="flex justify-between pt-6">
-    <div className="text-sm text-gray-400">
-      Swap path: {swapPath?.hops[0].tokenIn.symbol} → {swapPath?.hops.map(hop => hop.tokenOut.symbol).join(' → ')}
+const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) => {
+  if (!swapPath?.hops.length) return null;
+  const firstHop = (swapPath?.hops[0].opcode as any).code === 0 ? swapPath?.hops[0].vault.tokenA : swapPath?.hops[0].vault.tokenB
+  return (
+    <div className="flex justify-between pt-6">
+      <div className="text-sm text-gray-400">
+        Swap path: {firstHop.symbol} → {swapPath?.hops.map((hop: any) => hop.opcode.code === 1 ? hop.vault.tokenA.symbol : hop.vault.tokenB.symbol).join(' → ')}
+      </div>
+      <div className="text-sm text-gray-400">
+        Minimum received: {minimumReceived.toFixed(toToken?.decimals)} {toToken?.symbol}
+      </div>
     </div>
-    <div className="text-sm text-gray-400">
-      Minimum received: {minimumReceived.toFixed(toToken?.decimals)} {toToken?.symbol}
-    </div>
-  </div>
-);
+  )
+};
 
 export const SwapInterface = ({
   prices,
@@ -267,13 +289,20 @@ export const SwapInterface = ({
       estimateTimer.current = setTimeout(() => {
         setIsCalculating(true);
         setExploringPaths(Dexterity.router.findAllPaths(fromToken.contractId, toToken.contractId).length);
-        Dexterity.getQuote(
-          fromToken.contractId,
-          toToken.contractId,
-          Number(amount) * 10 ** fromToken.decimals
-        )
+        fetch('/api/v0/proxy/quote', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            tokenIn: fromToken.contractId,
+            tokenOut: toToken.contractId,
+            amount: Number(amount) * 10 ** fromToken.decimals
+          })
+        })
+          .then(response => response.json())
           .then(quote => {
-            const amountOut = quote.amountOut;
+            const amountOut = quote.hops[quote.hops.length - 1].quote.dy;
             setSwapPath(quote);
             setLastQuote(quote);
             setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
@@ -320,9 +349,14 @@ export const SwapInterface = ({
     try {
       setIsSwapping(true);
       const amount = Number(fromAmount) * 10 ** fromToken.decimals;
-      await Dexterity.router.executeSwap(swapPath.hops, amount, {
-        // disablePostConditions: true
-      });
+      const hops = [];
+      for (const hop of swapPath.hops) {
+        const vault = await Vault.build(hop.vault.contractId);
+        const opcode = new Opcode((hop.opcode as any).code);
+        const quote = hop.quote
+        hops.push(new Hop(vault, opcode, quote));
+      }
+      await Dexterity.router.executeSwap(hops, amount);
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {
@@ -365,12 +399,28 @@ export const SwapInterface = ({
 
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
           <span className="text-sm text-gray-400">Search Depth:</span>
-          <input
-            type="text"
-            className="w-3.5 text-sm text-white bg-transparent outline-none"
-            value={Dexterity.config.maxHops}
-            onChange={e => handleMaxHopsChange(e.target.value)}
-          />
+          <div className="flex items-center">
+            <input
+              type="text"
+              className="w-3.5 text-sm text-white bg-transparent outline-none"
+              value={Dexterity.config.maxHops}
+              disabled
+            />
+            <div className="flex flex-col ml-1">
+              <button
+                className="text-gray-400 hover:text-white"
+                onClick={() => handleMaxHopsChange((Dexterity.config.maxHops + 1).toString())}
+              >
+                <ChevronDown className="w-3 h-3 rotate-180" />
+              </button>
+              <button
+                className="text-gray-400 hover:text-white"
+                onClick={() => handleMaxHopsChange((Dexterity.config.maxHops - 1).toString())}
+              >
+                <ChevronDown className="w-3 h-3" />
+              </button>
+            </div>
+          </div>
         </div>
 
         <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
@@ -419,6 +469,7 @@ export const SwapInterface = ({
                     }}
                     hasHighExperience={hasHighExperience}
                     pools={pools}
+                    prices={prices}
                   />
                 )}
               </div>
@@ -465,6 +516,7 @@ export const SwapInterface = ({
                     fromToken={fromToken}
                     hasHighExperience={hasHighExperience}
                     pools={pools}
+                    prices={prices}
                   />
                 )}
               </div>
