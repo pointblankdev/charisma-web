@@ -50,7 +50,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             const results = await Promise.all(
                 batch.map((vault, index) => craftOrSalvage(vault, i + index, tokens, prices))
             );
-            txs.push(...results);
+            txs.push(...results.filter((r: any) => !r.error));
         }
 
         console.log('Finished processing all vaults')
