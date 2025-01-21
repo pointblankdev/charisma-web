@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 import dynamic from 'next/dynamic';
 import { Dexterity, Token } from 'dexterity-sdk';
 import { Ysabeau_Infant } from 'next/font/google';
+import { MultiHop } from 'dexterity-sdk/dist/core/multihop';
 
 const font = Ysabeau_Infant({ subsets: ['latin'] });
 const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
@@ -11,8 +12,8 @@ const ForceGraph2D = dynamic(() => import('react-force-graph-2d'), {
 interface SwapGraphVisualizerProps {
     fromToken: any;
     toToken: any;
-    paths: any[][];
-    currentPath: any[];
+    paths: MultiHop[];
+    currentPath: MultiHop;
     setShowGraph: (show: boolean) => void;
 }
 
@@ -23,6 +24,53 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
     const graphData = useMemo(() => {
         const nodes = new Map();
         const links: Array<{ source: string, target: string, color: string, width: number }> = [];
+
+        // Process all paths
+        paths.reverse().forEach((path, j) => {
+            path.hops.forEach((hop, i) => {
+                if (!nodes.has(hop)) {
+                    nodes.set(hop.tokenIn.contractId, {
+                        image: hop.tokenIn.image,
+                        id: hop.tokenIn.contractId,
+                        name: hop.tokenIn.symbol,
+                        color: '#000000', // gray for intermediate nodes
+                        val: 15
+                    });
+                    nodes.set(hop.tokenOut.contractId, {
+                        image: hop.tokenOut.image,
+                        id: hop.tokenOut.contractId,
+                        name: hop.tokenOut.symbol,
+                        color: '#000000', // gray for intermediate nodes
+                        val: 15
+                    });
+
+                    links.push({
+                        source: hop.tokenIn.contractId,
+                        target: hop.tokenOut.contractId,
+                        color: '#333333',
+                        width: 1
+                    });
+                }
+
+                // const source = path.hops[i - 1]?.tokenIn.contractId;
+                // const target = hop.tokenIn.contractId;
+                // const isOptimal = currentPath.some((t, idx) =>
+                //     idx > 0 &&
+                //     currentPath[idx - 1].contractId === source &&
+                //     t.contractId === target
+                // );
+
+                // links.push({
+                //     source,
+                //     target,
+                //     color: isOptimal ? '#3b82f6' : '#374151',
+                //     width: isOptimal ? 20 : 1
+                // });
+
+            });
+        });
+
+
 
         // Add source and target nodes
         nodes.set(fromToken.contractId, {
@@ -39,38 +87,6 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
             name: toToken.symbol,
             color: '#00AA00', // green
             val: 20
-        });
-
-        // Process all paths
-        paths.forEach(path => {
-            path.forEach((token, i) => {
-                if (!nodes.has(token.contractId)) {
-                    nodes.set(token.contractId, {
-                        image: token.image,
-                        id: token.contractId,
-                        name: token.symbol,
-                        color: '#000000', // gray for intermediate nodes
-                        val: 15
-                    });
-                }
-
-                if (i > 0) {
-                    const source = path[i - 1].contractId;
-                    const target = token.contractId;
-                    const isOptimal = currentPath.some((t, idx) =>
-                        idx > 0 &&
-                        currentPath[idx - 1].contractId === source &&
-                        t.contractId === target
-                    );
-
-                    links.push({
-                        source,
-                        target,
-                        color: isOptimal ? '#3b82f6' : '#374151',
-                        width: isOptimal ? 20 : 1
-                    });
-                }
-            });
         });
 
         return {

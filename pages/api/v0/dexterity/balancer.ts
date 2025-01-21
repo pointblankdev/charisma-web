@@ -53,7 +53,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 console.log('Processing token:', token.symbol, `${index + 1}/${tokens.length}`)
 
                 const DOLLAR_AMOUNT = 2.00
-                const amount = Math.floor(10 ** token.decimals / (DOLLAR_AMOUNT * prices[token.contractId]))
+                const amount = Math.floor(DOLLAR_AMOUNT * 10 ** token.decimals / prices[token.contractId])
                 const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
 
                 // Check if the quote is profitable including the fee in uSTX with prices
@@ -67,12 +67,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                     return { token: token.symbol, msg: "not profitable", grossProfit, netProfit }
                 }
 
-                if (!quote.route.hops.length) {
+                if (!quote.hops.length) {
                     return { token: token.symbol, msg: "no routes found" }
                 }
 
-                console.log('Executing swap', quote.route.hops.map(hop => hop.vault.contractName).join(' -> '))
-                const tx = await Dexterity.router.executeSwap(quote.route, amount, { fee, disablePostConditions: false })
+                console.log('Executing swap', quote.hops.map(hop => hop.vault.contractName).join(' -> '))
+                const tx = await Dexterity.router.executeSwap(quote.hops, amount, { fee, disablePostConditions: false })
                 await new Promise(resolve => setTimeout(resolve, 10000));
                 return { tx, grossProfit, netProfit }
             } catch (error) {

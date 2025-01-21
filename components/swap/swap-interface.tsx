@@ -4,11 +4,12 @@ import { ChevronDown, ArrowUpDown, Coins, Network, TrendingUp } from 'lucide-rea
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import dynamic from 'next/dynamic';
-import { Dexterity, LPToken, Quote, Token } from 'dexterity-sdk';
+import { Dexterity, LPToken, Token } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { SwapGraphVisualizer } from './swap-graph-visualizer';
 import _ from 'lodash';
 import { useGlobal } from '@lib/hooks/global-context';
+import { Hop, MultiHop } from 'dexterity-sdk/dist/core/multihop';
 
 const formatUSD = (amount: number, price: number) => {
   const value = amount * price;
@@ -176,7 +177,7 @@ const TokenInput = ({
 );
 
 interface SwapDetailsProps {
-  swapPath: any[];
+  swapPath: MultiHop;
   minimumReceived: number;
   toToken: Token;
 }
@@ -184,7 +185,7 @@ interface SwapDetailsProps {
 const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) => (
   <div className="flex justify-between pt-6">
     <div className="text-sm text-gray-400">
-      Swap path: {swapPath.map(token => token?.symbol).join(' → ')}
+      Swap path: {swapPath?.hops[0].tokenIn.symbol} → {swapPath?.hops.map(hop => hop.tokenOut.symbol).join(' → ')}
     </div>
     <div className="text-sm text-gray-400">
       Minimum received: {minimumReceived.toFixed(toToken?.decimals)} {toToken?.symbol}
@@ -206,13 +207,13 @@ export const SwapInterface = ({
   const [showToTokens, setShowToTokens] = useState(false);
   const [estimatedAmountOut, setEstimatedAmountOut] = useState('0');
   const [isCalculating, setIsCalculating] = useState(false);
-  const [swapPath, setSwapPath] = useState<any[]>([]);
+  const [swapPath, setSwapPath] = useState<MultiHop | null>(null);
   const { getBalance, wallet, stxAddress, maxHops, setMaxHops, fromToken, setFromToken, toToken, setToToken, slippage, setSlippage } = useGlobal();
   const estimateTimer = useRef<any>();
   const [exploringPaths, setExploringPaths] = useState(0);
   const [showGraph, setShowGraph] = useState(false);
   const [isSwapping, setIsSwapping] = useState(false);
-  const [lastQuote, setLastQuote] = useState<any>(null as Quote | null);
+  const [lastQuote, setLastQuote] = useState<any>(null);
 
   useEffect(() => {
     if (maxHops && pools.length > 0 && stxAddress) {
@@ -273,7 +274,7 @@ export const SwapInterface = ({
         )
           .then(quote => {
             const amountOut = quote.amountOut;
-            setSwapPath(quote.route.path || []);
+            setSwapPath(quote);
             setLastQuote(quote);
             setEstimatedAmountOut((amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
           })
@@ -314,12 +315,12 @@ export const SwapInterface = ({
   };
 
   const handleSwap = async () => {
-    if (!fromToken || !toToken || !stxAddress || swapPath.length <= 1) return;
+    if (!fromToken || !toToken || !stxAddress || !swapPath) return;
 
     try {
       setIsSwapping(true);
       const amount = Number(fromAmount) * 10 ** fromToken.decimals;
-      await Dexterity.router.executeSwap(lastQuote.route, amount, {
+      await Dexterity.router.executeSwap(swapPath.hops, amount, {
         // disablePostConditions: true
       });
     } catch (error) {
@@ -390,7 +391,7 @@ export const SwapInterface = ({
           fromToken={fromToken}
           toToken={toToken}
           paths={Dexterity.router.findAllPaths(fromToken.contractId, toToken.contractId)}
-          currentPath={swapPath}
+          currentPath={swapPath!}
           setShowGraph={setShowGraph}
         />
       )}
@@ -481,7 +482,7 @@ export const SwapInterface = ({
           </div>
 
           <SwapDetails
-            swapPath={swapPath}
+            swapPath={swapPath!}
             minimumReceived={minimumAmountOut}
             toToken={toToken}
           />
@@ -489,7 +490,7 @@ export const SwapInterface = ({
           <Button
             className="w-full px-4 py-3 mt-4 font-bold rounded-lg"
             onClick={handleSwap}
-            disabled={isCalculating || estimatedAmountOut === '0' || !fromAmount || isSwapping || swapPath.length <= 1}
+            disabled={isCalculating || estimatedAmountOut === '0' || !fromAmount || isSwapping || !swapPath}
           >
             {isCalculating ? <div className="flex items-center justify-center gap-2">
               <span className="animate-pulse">Finding the best rate</span>

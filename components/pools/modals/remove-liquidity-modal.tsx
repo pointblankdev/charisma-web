@@ -45,8 +45,8 @@ export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, tri
 
         setAmounts({
           lpTokens,
-          token0Amount: quote.amountIn,
-          token1Amount: quote.amountOut
+          token0Amount: quote.dx,
+          token1Amount: quote.dy
         });
       } catch (error) {
         console.error('Error fetching quote:', error);

@@ -1,6 +1,7 @@
 import { Vault } from "dexterity-sdk"
 
-import { Dexterity, Opcode, Quote, Token } from "dexterity-sdk"
+import { Dexterity, Opcode, Token } from "dexterity-sdk"
+import { MultiHop } from "dexterity-sdk/dist/core/multihop"
 
 export const craftOrSalvage = async (vault: Vault, index: number, tokens: Token[], prices: Record<string, number>) => {
     try {
@@ -14,12 +15,12 @@ export const craftOrSalvage = async (vault: Vault, index: number, tokens: Token[
         const [swapQuote1, swapQuote2, removeLiquidityQuote] = await Promise.all([
             Dexterity.getQuote(vault.contractId, vault.tokenA.contractId, halfLpAmount),
             Dexterity.getQuote(vault.contractId, vault.tokenB.contractId, halfLpAmount),
-            vault.quote(lpAmount, Opcode.removeLiquidity()) as Promise<Quote>
+            vault.quote(lpAmount, Opcode.removeLiquidity())
         ]);
 
         const salvage = {
-            dx: removeLiquidityQuote.amountIn,
-            dy: removeLiquidityQuote.amountOut,
+            dx: removeLiquidityQuote.dx,
+            dy: removeLiquidityQuote.dy,
             dk: lpAmount
         }
 
