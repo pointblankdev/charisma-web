@@ -1,4 +1,4 @@
-import { TrendingUp } from "lucide-react"
+import { ChartLine, ExternalLink, Github, TrendingUp } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -34,6 +34,12 @@ const items = [
         title: "Earn Yield",
         url: "/vaults",
         icon: TrendingUp,
+    },
+    {
+        title: "Chart Prices",
+        url: "https://kraxel.io/analysis",
+        icon: ChartLine,
+        external: true,
     },
 ]
 
@@ -77,9 +83,9 @@ export function AppSidebar() {
                             {items.map((item) => (
                                 <SidebarMenuItem key={item.title}>
                                     <SidebarMenuButton asChild>
-                                        <Link href={item.url}>
+                                        <Link href={item.url} target={item.external ? '_blank' : ''} >
                                             <item.icon />
-                                            <span className="text-md">{item.title}</span>
+                                            <span className="text-md"><div className="flex items-center gap-2">{item.title} {item.external ? <ExternalLink className="size-3 mt-0.5" /> : ''}</div></span>
                                         </Link>
                                     </SidebarMenuButton>
                                 </SidebarMenuItem>
