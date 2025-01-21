@@ -68,7 +68,7 @@ const TokenList = ({ tokens, onSelect, fromToken, pools, prices }: TokenListProp
   });
 
   return (
-    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[40rem] grid grid-cols-2 sm:grid-cols-4">
+    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[44rem] grid grid-cols-2 sm:grid-cols-4">
       {tokensWithBalance.map(token => {
         const isDisabled = false;
         const src = token.image;
@@ -100,12 +100,12 @@ const TokenList = ({ tokens, onSelect, fromToken, pools, prices }: TokenListProp
               )}
               <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate', 'flex items-center')}>
                 {token.symbol}
-                <div className="text-gray-500 text-sm ml-2">${usdValue.toFixed(2)}</div>
+                {!fromToken ? <div className="text-gray-500 text-sm ml-2">${usdValue.toFixed(2)}</div> : null}
               </span>
             </div>
-            <div className="mt-1 text-xs text-gray-400">
+            {!fromToken ? <div className="mt-1 text-xs text-gray-400">
               Balance: {formattedBalance}
-            </div>
+            </div> : null}
           </button>
         );
       })}

@@ -96,22 +96,24 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
     }, [fromToken, toToken, currentPath]);
 
     return (
-        <div className="fixed inset-0 w-screen h-screen bg-black/5 z-50" onClick={() => setShowGraph(false)}>
+        <div className="fixed inset-0 w-2 h-2 bg-black/50 z-50" onClick={() => setShowGraph(false)}>
             <ForceGraph2D
                 graphData={graphData}
-                width={window.innerWidth}
-                height={window.innerHeight}
+                width={window.outerWidth}
+                height={window.outerHeight}
                 nodeLabel={(node: any) => {
                     const routerNode = Dexterity.router.nodes.get(node.id);
                     const token = routerNode?.token as Token
                     const vaults = Array.from(Dexterity.getVaultsForToken(token.contractId).values());
 
                     return `
-                        <div class="${font.className}" style="
+                        <div class="${font.className} w-auto" style="
                             padding: 16px;
                             font-size: 13px;
                             position: relative;
                             overflow: hidden;
+                            background: linear-gradient(to bottom, hsl(var(--accent-foreground) / 0.99), hsl(var(--accent-foreground) / 0.95)),
+                                        url('${token.image}') center/cover;
                         ">
                             <div style="
                                 display: flex;
@@ -127,7 +129,6 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                     background-size: cover;
                                     background-position: center;
                                     border-radius: 8px;
-                                    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
                                 "></div>
                                 <div style="flex: 1;">
                                     <div style="
@@ -149,6 +150,9 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                         font-size: 11px;
                                         color: rgba(255, 255, 255, 0.5);
                                         margin-top: 4px;
+                                        overflow: hidden;
+                                        text-overflow: ellipsis;
+                                        white-space: nowrap;
                                     ">${token.contractId}</div>
                                 </div>
                             </div>
@@ -162,65 +166,18 @@ export function SwapGraphVisualizer({ fromToken, toToken, paths, currentPath, se
                                         color: #ffd700;
                                         letter-spacing: 0.05em;
                                     ">Dexterity Vaults</div>
-                                    <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;));">
+                                    <div style="display: grid; grid-template-columns: repeat(8, 1fr); gap: 12px;));">
                                         ${vaults.map(vault => `
                                             <div class="border border-b-0 border-x-0 border-t-[var(--accents-7)]" style="
-                                                background: linear-gradient(to bottom, hsl(var(--accent-foreground) / 0.95), hsl(var(--accent-foreground) / 0.9)),
-                                                            url('${vault.image}') center/cover;
+                                                background: url('${vault.image}') center/cover;
                                                 padding: 16px;
-                                                border-radius: 8px;
+                                                opacity: 0.9;
+                                                border-radius: 12px;
                                                 position: relative;
-                                                backdrop-filter: blur(10px);
-                                                min-width: 240px;
+                                                min-width: 120px;
+                                                min-height: 120px;
                                             ">
-                                                <div style="
-                                                    font-weight: 500;
-                                                    font-size: 14px;
-                                                    margin-bottom: 8px;
-                                                    display: flex;
-                                                    justify-content: space-between;
-                                                    align-items: center;
-                                                ">
-                                                    <span style="font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%;">${vault.name}</span>
-                                                    <span style="
-                                                        font-size: 11px;
-                                                        color: #94a3b8;
-                                                        background: rgba(148, 163, 184, 0.1);
-                                                        padding: 4px 8px;
-                                                        border-radius: 12px;
-                                                        white-space: nowrap;
-                                                    ">Fee: ${(vault.fee / 1000000 * 100).toFixed(2)}%</span>
-                                                </div>
-                                                <div style="
-                                                    display: flex;
-                                                    justify-content: space-between;
-                                                    align-items: center;
-                                                    padding: 8px;
-                                                    background: rgba(255, 255, 255, 0.03);
-                                                    margin-top: 8px;
-                                                    border-radius: 6px;
-                                                ">
-                                                    <span style="color: #94a3b8;">${vault.tokenA.symbol}</span>
-                                                    <span style="
-                                                        color: #e2e8f0;
-                                                        font-family: 'SF Mono', monospace;
-                                                    ">${(vault.tokenA.reserves / Math.pow(10, vault.tokenA.decimals)).toLocaleString()}</span>
-                                                </div>
-                                                <div style="
-                                                    display: flex;
-                                                    justify-content: space-between;
-                                                    align-items: center;
-                                                    padding: 8px;
-                                                    background: rgba(255, 255, 255, 0.03);
-                                                    margin-top: 8px;
-                                                    border-radius: 6px;
-                                                ">
-                                                    <span style="color: #94a3b8;">${vault.tokenB.symbol}</span>
-                                                    <span style="
-                                                        color: #e2e8f0;
-                                                        font-family: 'SF Mono', monospace;
-                                                    ">${(vault.tokenB.reserves / Math.pow(10, vault.tokenB.decimals)).toLocaleString()}</span>
-                                                </div>
+
                                             </div>
                                         `).join('')}
                                     </div>
