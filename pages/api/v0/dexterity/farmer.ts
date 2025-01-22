@@ -16,11 +16,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         console.log('Dexterity Farmer Cron Job Running')
         // Initialize Dexterity SDK
-        await Dexterity.configure({
-            apiKeyRotation: 'loop',
-            parallelRequests: 10,
-            maxHops: 3
-        })
+        await Dexterity.configure()
 
         const tx = await makeContractCall({
             senderKey: Dexterity.config.privateKey,
@@ -31,6 +27,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             functionArgs: [],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
+            fee: 1000,
         });
 
         console.log('Farmer transaction executed:', tx)
