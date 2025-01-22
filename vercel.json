@@ -18,7 +18,7 @@
         },
         {
             "path": "/api/v0/dexterity/farmer",
-            "schedule": "*/5 * * * *"
+            "schedule": "*/10 * * * *"
         }
     ]
 }
