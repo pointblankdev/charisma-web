@@ -22,6 +22,7 @@ import {
   Activity,
   AudioLines,
   AudioWaveform,
+  Zap,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
@@ -43,7 +44,7 @@ import { cn } from '@lib/utils';
 import { Dexterity } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { Opcode } from 'dexterity-sdk/dist/core/opcode';
-import { PostConditionMode } from '@stacks/transactions';
+import { cvToHex, Pc, PostConditionMode, principalCV, stringAsciiCV } from '@stacks/transactions';
 import { useGlobal } from '@lib/hooks/global-context';
 import { toast } from '@components/ui/use-toast';
 import { QuickAddLiquidityModal } from './modals/quick-add-liquidity-modal';
@@ -130,7 +131,7 @@ const calculateTVL = (pool: any, prices: Record<string, number>) => {
 };
 
 const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
-  const { vaultAnalytics, tapTokens, tappedAt, block, wallet, getBalance } = useGlobal();
+  const { stxAddress, vaultAnalytics, tapTokens, tappedAt, block, wallet, getBalance } = useGlobal();
   const [showQuickAddModal, setShowQuickAddModal] = useState(false);
   const vault = vaultAnalytics[pool.contractId];
   const tvl = calculateTVL(pool, prices);
@@ -167,7 +168,70 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
     }
   };
 
-  // If it's an external pool, show a simple message
+  if (pool.liquidity[0].symbol === 'ENERGY') {
+    const energyBalance = wallet?.energy?.balance || 0;
+
+    const handleEnergyClaimRewards = async () => {
+      try {
+        const { openContractCall } = await import('@stacks/connect');
+        await openContractCall({
+          contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
+          contractName: 'hooter-farm',
+          functionName: 'execute',
+          functionArgs: [principalCV('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-rulebook-v0'), stringAsciiCV('CLAIM_TOKENS')],
+          network: Dexterity.config.network,
+          postConditionMode: PostConditionMode.Deny,
+          postConditions: [
+            Pc.principal(stxAddress).willSendEq(100000000).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.energy', 'energy'),
+            Pc.principal('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-farm').willSendEq(100000000).ft('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl', 'hooter')
+          ],
+          onFinish: () => {
+            toast({
+              title: "Transaction submitted",
+              description: "Your claim request has been submitted.",
+            });
+          }
+        });
+      } catch (error) {
+        console.error('Error claiming rewards:', error);
+        toast({
+          title: "Error",
+          description: "Failed to submit claim transaction",
+          variant: "destructive"
+        });
+      }
+    };
+
+    return (
+      <div className="mt-1 leading-snug">
+        <div className="flex flex-col items-center">
+          {energyBalance >= 100 ?
+
+            <div className="flex flex-col items-center">
+              <Button
+                variant="ghost"
+                size="sm"
+                onClick={handleEnergyClaimRewards}
+                className={cn(
+                  energyBalance < 100 && "animate-pulse-glow"
+                )}
+              >
+                Claim Rewards
+              </Button>
+              <div className="text-sm text-primary mt-0.5">
+                100 <Image src="/sip10/hooter/logo.png" alt="Hooter" width={16} height={16} className='inline-block rounded-full mb-0.5' /> tokens available
+              </div>
+            </div>
+            :
+            <div className="text-sm text-muted-foreground mt-0.5 text-center">
+              Need more energy
+            </div>
+          }
+        </div>
+      </div>
+    );
+  }
+
   if (pool.externalPoolId) {
     return (
       <div className="mt-1 leading-snug">

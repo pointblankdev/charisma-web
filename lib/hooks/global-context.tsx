@@ -181,37 +181,41 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             if (
                 tx?.contract_call?.function_name === 'execute'
             ) {
-                console.log('Dexterity Vault Update:', tx);
-                const functionName = tx?.contract_call?.function_name;
-                const shortAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`;
+                try {
+                    console.log('Dexterity Vault Update:', tx);
+                    const functionName = tx?.contract_call?.function_name;
+                    const shortAddress = `${tx.sender_address.slice(0, 4)}...${tx.sender_address.slice(-4)}`;
 
-                const description = (
-                    <div className="space-y-2">
-                        <p className="flex justify-between w-full text-sm">
-                            <span>Address: {shortAddress}</span>
-                            <span>Action: {functionName.toUpperCase()}</span>
-                        </p>
-                        <p className="text-xs text-primary-foreground/80">{formatTime(tx.receipt_time_iso)}</p>
-                    </div>
-                );
+                    const description = (
+                        <div className="space-y-2">
+                            <p className="flex justify-between w-full text-sm">
+                                <span>Address: {shortAddress}</span>
+                                <span>Action: {functionName.toUpperCase()}</span>
+                            </p>
+                            <p className="text-xs text-primary-foreground/80">{formatTime(tx.receipt_time_iso)}</p>
+                        </div>
+                    );
 
-                Dexterity.getTokenInfo(tx.contract_call.contract_id).then(async metadata => {
-                    try {
-                        toast({
-                            image: metadata.image,
-                            title: 'Degen Activity Detected in the Dexterity Vaults',
-                            description,
-                            duration: 10000
-                        });
-                    } catch (error) {
-                        toast({
-                            image: '/charisma.png',
-                            title: 'Degen Activity Detected in the Dexterity Vaults',
-                            description,
-                            duration: 10000
-                        });
-                    }
-                });
+                    Dexterity.getTokenInfo(tx.contract_call.contract_id).then(async metadata => {
+                        try {
+                            toast({
+                                image: metadata.image,
+                                title: 'Degen Activity Detected in the Dexterity Vaults',
+                                description,
+                                duration: 10000
+                            });
+                        } catch (error) {
+                            toast({
+                                image: '/charisma.png',
+                                title: 'Degen Activity Detected in the Dexterity Vaults',
+                                description,
+                                duration: 10000
+                            });
+                        }
+                    }).catch(console.error);
+                } catch (error) {
+                    console.error('Non-Dexterity execute transaction:', error);
+                }
             } else if (tx?.contract_call?.contract_id === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.multihop') {
                 try {
                     const args = tx.contract_call.function_args.map((arg: any) => arg.hex);
