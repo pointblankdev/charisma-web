@@ -1,4 +1,4 @@
-import { ChartLine, ExternalLink, Github, TrendingUp } from "lucide-react"
+import { ChartLine, ExternalLink, Github, MessageCircle, TrendingUp } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -40,6 +40,11 @@ const items = [
         url: "https://kraxel.io/analysis",
         icon: ChartLine,
         external: true,
+    },
+    {
+        title: "Meme Tools",
+        url: "/meme-tools",
+        icon: MessageCircle,
     },
 ]
 

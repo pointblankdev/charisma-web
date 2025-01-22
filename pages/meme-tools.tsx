@@ -16,11 +16,11 @@ export async function getStaticProps() {
     };
 }
 
-export default function ShillingTools({ legends }: { legends: any }) {
+export default function MemeTools({ legends }: { legends: any }) {
 
     return (
         <div className="container mx-auto p-6 max-w-4xl">
-            <h1 className="text-3xl font-bold mb-6">Shilling Tools</h1>
+            <h1 className="text-3xl font-bold mb-6">Meme Tools</h1>
             <div className="space-y-6">
                 <div>
                     <h2 className="text-xl font-semibold mb-4">Tweet Builder</h2>
