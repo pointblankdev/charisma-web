@@ -1,92 +1,32 @@
-// Starring the #1 Dog in Crypto...
-// @Welsh_Community
+import { TweetBuilder } from '@components/shilling/TweetBuilder';
+import { kv } from '@vercel/kv';
 
+export async function getStaticProps() {
+    const handles: string[] = await kv.get('twitter-legends') || [];
 
-// Featuring the legends...
-// @aibtcdev
+    const legends = handles.map((handle: string) => ({
+        handle,
+    }));
 
-// @ALEXLabBTC
+    return {
+        props: {
+            legends
+        },
+        revalidate: 60 // Revalidate every minute
+    };
+}
 
-// @aphillyatd420
+export default function ShillingTools({ legends }: { legends: any }) {
 
-// @ArkadikoFinance
-
-// @binxbtc
-
-// @bitcoin
-
-// @Bitflow_Finance
-
-// @BowhunterBtc
-
-// @btc_el34
- 
-// @CharismaBTC
-
-// @dogbtc_
-
-// @DrySockSTX
-
-// @enjoywithouthey
-
-// @FredCat2024
-
-// @GavSledge
-// @GusTheStacks
-
-// @honeybadgerstx
-
-// @irmisssima
-
-// @realkaraban
-
-// @KillerOfSupply
-
-// @LeatherBTC
-
-// @LeoCoinSTX
-
-// @LongCoinCrypto
-
-// @lordrozar
-
-// @magoo_btc
-
-// @memecoinstx
-
-// @MoistSockSTX
-
-// @mooneebstx
-
-// @mrwagmibtc
-
-// @PepeCoinSTX
-
-// @playpenguinstx
-
-// @pocowelsh
-
-// @PombooSTX
-
-// @roocoinbtc
-
-// @StackingDao
-
-// @Stacks
-
-// @stackwealth21
-
-// @StaxxoBTC
-
-// @VelarBTC
-
-// @vinzomniac
-
-// @WailordBtc
-// @WealthyWelsh
-
-// @wrappednothing
-
-// @XverseApp
-
-// @ZestProtocol
+    return (
+        <div className="container mx-auto p-6 max-w-4xl">
+            <h1 className="text-3xl font-bold mb-6">Shilling Tools</h1>
+            <div className="space-y-6">
+                <div>
+                    <h2 className="text-xl font-semibold mb-4">Tweet Builder</h2>
+                    <TweetBuilder initialLegends={legends} />
+                </div>
+            </div>
+        </div>
+    );
+}
