@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Dexterity } from 'dexterity-sdk';
-import { makeContractCall, PostConditionMode, principalCV, stringAsciiCV } from '@stacks/transactions';
+import { broadcastTransaction, makeContractCall, PostConditionMode, principalCV, stringAsciiCV } from '@stacks/transactions';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.writeHead(200, {
@@ -30,9 +30,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             fee: 1000,
         });
 
-        console.log('Farmer transaction executed:', tx)
+        console.log('Farmer transaction created:', tx)
 
-        return res.status(200).json({ tx: tx.serialize() });
+        const broadcastTx = await broadcastTransaction({ transaction: tx });
+
+        return res.status(200).json({ tx: broadcastTx });
 
     } catch (error) {
         console.error('Farmer execution error:', error);
