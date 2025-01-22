@@ -15,6 +15,10 @@
         {
             "path": "/api/v0/dexterity/alchemist",
             "schedule": "*/9 * * * *"
+        },
+        {
+            "path": "/api/v0/dexterity/farmer",
+            "schedule": "*/5 * * * *"
         }
     ]
 }
