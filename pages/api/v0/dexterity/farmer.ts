@@ -32,7 +32,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         console.log('Farmer transaction executed:', tx)
 
-        return res.status(200).json({ tx });
+        return res.status(200).json({ tx: tx.serialize() });
 
     } catch (error) {
         console.error('Farmer execution error:', error);
