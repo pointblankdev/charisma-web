@@ -17,6 +17,10 @@ const blacklist = [
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.stx-lp-token'
 ] as ContractId[];
 
+const tokenImages: Record<string, string> = {
+  'SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token': 'https://app.arkadiko.finance/assets/tokens/usda.svg',
+};
+
 export const getStaticProps: GetStaticProps<any> = async () => {
   // Get contracts and prices in parallel using cached functions
   const [vaults, prices] = await Promise.all([
@@ -25,6 +29,15 @@ export const getStaticProps: GetStaticProps<any> = async () => {
   ]);
 
   const uniqueVaults = _.uniqBy(vaults, 'contractId');
+
+  // patch missing images
+  uniqueVaults.forEach((vault) => {
+    vault.liquidity?.forEach((liquidityItem) => {
+      if (!liquidityItem?.image && liquidityItem?.contractId) {
+        liquidityItem.image = tokenImages[liquidityItem.contractId];
+      }
+    });
+  });
 
   return {
     props: {

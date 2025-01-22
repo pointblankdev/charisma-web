@@ -19,46 +19,19 @@ import {
 
 describe('dexterity metadata cache', () => {
   it('should get dexterity metadata by id', async () => {
-    const token = await kv.get('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.the-kimchi-premium');
+    const token = await kv.get('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
     console.log(token);
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.founder-mode', {
-      "name": "Founder Mode",
-      "symbol": "FML",
-      "description": "Liquidity vault wrapper for the STX-NOT trading pair on Velar",
-      "identifier": "FML",
-      "decimals": 6,
-      "properties": {
-        "tokenAContract": ".stx",
-        "tokenBContract": "SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope",
-        "lpRebatePercent": 2,
-        "tokenAMetadata": {
-          "contractId": ".stx",
-          "identifier": "STX",
-          "name": "Stacks Token",
-          "symbol": "STX",
-          "decimals": 6,
-          "description": "The native token of the Stacks blockchain",
-          "image": "https://charisma.rocks/stx-logo.png"
-        },
-        "tokenBMetadata": {
-          "contractId": "SP32AEEF6WW5Y0NMJ1S8SBSZDAY8R5J32NBZFPKKZ.nope",
-          "identifier": "NOT",
-          "name": "Nothing",
-          "symbol": "NOT",
-          "decimals": 0,
-          "description": "Probably nothing.",
-          "image": "https://charisma.rocks/not-logo.png"
-        },
-        "date": "2025-01-20T05:24:34.634Z",
-        "externalPoolId": "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core"
-      },
-      "imagePrompt": "Minimalist, professional logo that represents a liquidity vault between Stacks Token and Unknown. Combine geometric shapes and clean lines to show the connection between these two tokens. Use a limited color palette with maximum 2-3 colors",
-      "customImageUrl": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/pic798666-J8kUnf2EgJxUMKioqz5VXl02grgaBo.webp",
-      "image": "https://kghatiwehgh3dclz.public.blob.vercel-storage.com/pic798666-J8kUnf2EgJxUMKioqz5VXl02grgaBo.webp",
-      "contractId": "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.founder-mode"
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', {
+      contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo',
+      identifier: 'synthetic-roo',
+      name: 'Synthetic Roo',
+      symbol: 'iouROO',
+      decimals: 6,
+      description: 'Roo Synthetic Asset',
+      image: 'https://charisma.rocks/roo-logo.png'
     });
   })
 
