@@ -267,7 +267,7 @@ export const SwapInterface = ({
 
   useEffect(() => {
     if (maxHops && pools.length > 0 && stxAddress) {
-      Dexterity.configure({ maxHops }).catch(console.error);
+      Dexterity.configure({ maxHops, sponsored: true, sponsor: 'http://localhost:3000/api/v0/sponsor' }).catch(console.error);
       const vaults = pools.map(pool => new Vault(pool));
       Dexterity.router.loadVaults(vaults);
       console.log('Router initialized:', Dexterity.router.getGraphStats());
@@ -396,7 +396,24 @@ export const SwapInterface = ({
         hops.push({ ...hop, vault, opcode });
       }
       lastQuote.route.hops = hops;
-      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
+      console.log(Dexterity.config)
+      const tx = Dexterity.router.buildRouterTransaction(lastQuote.route, amount);
+      const c = await import('@stacks/connect')
+      c.showContractCall({
+        ...tx, sponsored: true, onFinish: async (data) => {
+          data.stacksTransaction
+          fetch('/api/v0/sponsor', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              serializedTx: data.txRaw
+            })
+          }).then(response => response.json()).then(console.log).catch(console.error)
+        }
+      })
+      // await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {

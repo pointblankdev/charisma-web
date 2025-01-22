@@ -1,4 +1,3 @@
-import { SkipNavContent } from '@reach/skip-nav';
 import Page from '@components/page';
 import { GetStaticProps } from 'next';
 import { SwapInterface } from '@components/swap/swap-interface';
