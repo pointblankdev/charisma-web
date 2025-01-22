@@ -49,11 +49,12 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should update contract image', async () => {
-    const key = 'sip10:SP20VRJRCZ3FQG7RE4QSPFPQC24J92TKDXJVHWEAW.phoenix';
+    const key = 'sip10:SP1KMAA7TPZ5AZZ4W67X74MJNFKMN576604CWNBQS.dmghoot-lp-token';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
-      image: "https://assets.hiro.so/api/mainnet/token-metadata-api/SP20VRJRCZ3FQG7RE4QSPFPQC24J92TKDXJVHWEAW.phoenix/1-thumb.png"
+      // name: "Hooter Dex",
+      image: "https://charisma.rocks/sip10/hooter/body.png"
     });
     console.log(await kv.get(key));
   });

@@ -774,21 +774,13 @@ const DexterityInterface = ({ data }: any) => {
           <div className="px-4 mb-4 sm:px-0">
             <div className="flex items-baseline justify-between">
               <div>
-                <div className='flex items-center space-x-1.5'>
-                  <h1 className="text-2xl font-bold text-white/95">
-                    Liquidity Vaults
-                  </h1>
+                <div className='flex items-center space-x-2'>
                   <TooltipProvider>
                     <Tooltip>
-                      <TooltipTrigger asChild>
-                        <Link
-                          href="https://github.com/stacksgov/sips/pull/204"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="ml-1 mt-2"
-                        >
-                          <InfoIcon className="w-4 h-4 text-gray-400/80 hover:text-gray-200" />
-                        </Link>
+                      <TooltipTrigger>
+                        <h1 className="text-2xl font-bold text-white/95">
+                          Liquidity Vaults
+                        </h1>
                       </TooltipTrigger>
                       <TooltipContent
                         side="right"
@@ -836,15 +828,20 @@ const DexterityInterface = ({ data }: any) => {
                       </TooltipContent>
                     </Tooltip>
                   </TooltipProvider>
+                  <Link href="/deployer">
+                    <Button variant="outline" size="sm" className="ml-2 text-sm px-2">
+                      <Plus className="w-4 h-4 mr-1" />
+                      Create Vault
+                    </Button>
+                  </Link>
                 </div>
                 <div className="flex items-center text-sm text-muted-foreground">
                   Liquidity vaults are a more secure and decentralized form of liquidity pools.
-
                 </div>
               </div >
               <div className="text-right">
                 <div className="text-2xl font-bold text-white/95">
-                  ${numeral(totalTVL).format('0,0.00')}
+                  ${numeral(totalTVL).format('0,0.00a')}
                 </div>
                 <div className="text-sm text-muted-foreground">Total Value Locked</div>
               </div>
