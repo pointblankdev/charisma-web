@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Dexterity } from 'dexterity-sdk';
-import { makeContractCall, PostConditionMode } from '@stacks/transactions';
+import { makeContractCall, PostConditionMode, principalCV, stringAsciiCV } from '@stacks/transactions';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.writeHead(200, {
@@ -15,6 +15,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     try {
         console.log('Dexterity Farmer Cron Job Running')
+        // Initialize Dexterity SDK
+        await Dexterity.configure({
+            apiKeyRotation: 'loop',
+            parallelRequests: 10,
+            maxHops: 3
+        })
 
         const tx = await makeContractCall({
             senderKey: Dexterity.config.privateKey,
