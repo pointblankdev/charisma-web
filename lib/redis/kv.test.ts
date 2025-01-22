@@ -24,7 +24,7 @@ describe('dexterity metadata cache', () => {
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo', {
+    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.old-faithful', {
       contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo',
       identifier: 'synthetic-roo',
       name: 'Synthetic Roo',
@@ -36,13 +36,13 @@ describe('dexterity metadata cache', () => {
   })
 
   it('should update contract metadata with external pool id', async () => {
-    const key = 'sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.skull-island';
+    const key = 'sip10:SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.old-faithful';
     const existingData = await kv.get(key) as any;
     await kv.set(key, {
       ...existingData,
       properties: {
         ...existingData.properties,
-        externalPoolId: "SP1Y5YSTAHZ88XYK1VPDH24GY0HPX5J4JECTMY4A1.univ2-core"
+        externalPoolId: "SPQC38PW542EQJ5M11CR25P7BS1CA6QT4TBXGB3M.stableswap-usda-aeusdc-v-1-4"
       }
     });
     console.log(await kv.get(key));

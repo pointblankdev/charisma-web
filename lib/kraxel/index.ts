@@ -26,6 +26,7 @@ async function getAllTokenPrices() {
       const { data } = await response.json();
       const cmcPriceData = await cmc.getQuotes({ symbol: ['STX'] });
       data.prices['.stx'] = cmcPriceData.data['STX'].quote.USD.price;
+      data.prices['SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token'] = 0.967;
 
       return data.prices;
     } catch (error) {

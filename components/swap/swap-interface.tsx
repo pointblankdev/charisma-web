@@ -19,6 +19,7 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@components/ui/alert-dialog";
+import numeral from 'numeral';
 
 const formatUSD = (amount: number, price: number) => {
   const value = amount * price;
@@ -70,6 +71,20 @@ interface TokenListProps {
 const TokenList = ({ tokens, onSelect, fromToken, pools, prices }: TokenListProps) => {
   const { getBalance } = useGlobal();
 
+  const formatTokenPrice = (price: number) => {
+    if (price >= 1000) {
+      return numeral(price).format('0,0');
+    } else if (price >= 1) {
+      return numeral(price).format('0,0.00');
+    } else if (price >= 0.01) {
+      return numeral(price).format('0.000');
+    } else if (price >= 0.0001) {
+      return numeral(price).format('0.0000');
+    } else {
+      return numeral(price).format('0.000000');
+    }
+  };
+
   // Filter tokens to only show ones with balance
   const tokensWithBalance = tokens.filter(token => {
     const balance = getBalance(token.contractId);
@@ -77,7 +92,7 @@ const TokenList = ({ tokens, onSelect, fromToken, pools, prices }: TokenListProp
   });
 
   return (
-    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[44rem] grid grid-cols-2 sm:grid-cols-4">
+    <div className="absolute right-0 z-10 w-full mt-2 overflow-hidden rounded-md shadow-lg bg-[var(--sidebar)] border border-primary/30 min-w-[22rem] sm:min-w-[48rem] grid grid-cols-2 sm:grid-cols-4">
       {tokensWithBalance.map(token => {
         const isDisabled = false;
         const src = token.image;
@@ -95,25 +110,29 @@ const TokenList = ({ tokens, onSelect, fromToken, pools, prices }: TokenListProp
             onClick={() => !isDisabled && onSelect(token)}
             disabled={isDisabled}
           >
-            <div className="flex items-center">
-              {src ? (
-                <Image
-                  src={src}
-                  alt={token.symbol}
-                  width={240}
-                  height={240}
-                  className="w-6 mr-1.5 rounded-full"
-                />
-              ) : (
-                <Coins className="mr-1.5" />
-              )}
-              <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate', 'flex items-center')}>
-                {token.symbol}
-                {!fromToken ? <div className="text-gray-500 text-sm ml-2">${usdValue.toFixed(2)}</div> : null}
-              </span>
+            <div className="flex justify-between w-full items-center">
+              <div className="flex items-center">
+                {src ? (
+                  <Image
+                    src={src}
+                    alt={token.symbol}
+                    width={240}
+                    height={240}
+                    className="w-6 mr-1.5 rounded-full"
+                  />
+                ) : (
+                  <Coins className="mr-1.5" />
+                )}
+                <span className={cn(isDisabled ? 'text-gray-500' : 'text-white', 'truncate', 'flex items-center font-semibold')}>
+                  {token.symbol}
+                </span>
+              </div>
+              <div className="text-xs text-white/80 font-semibold mt-0.5">
+                ${formatTokenPrice(prices[token.contractId])}
+              </div>
             </div>
-            {!fromToken ? <div className="mt-1 text-xs text-gray-400">
-              Balance: {formattedBalance}
+            {!fromToken ? <div className="mt-0.5 text-xs text-gray-400 flex items-center mx-auto">
+              {formattedBalance} ≈ ${usdValue.toFixed(2)}
             </div> : null}
           </button>
         );

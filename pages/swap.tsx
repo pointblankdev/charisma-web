@@ -16,10 +16,22 @@ const blacklist = [
   'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex'
 ] as ContractId[];
 
+const tokenImages: Record<string, string> = {
+  'SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token': 'https://app.arkadiko.finance/assets/tokens/usda.svg',
+};
+
 export const getStaticProps: GetStaticProps<any> = async () => {
   const prices = await Kraxel.getAllTokenPrices();
   const pools = await Dexterity.discover({ serialize: true, blacklist });
   const tokens = Dexterity.getTokens();
+
+
+  // patch missing images
+  tokens.forEach((token) => {
+    if (!token?.image && token?.contractId) {
+      token.image = tokenImages[token.contractId];
+    }
+  });
 
   return {
     props: {
