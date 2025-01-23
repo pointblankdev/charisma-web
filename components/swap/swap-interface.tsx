@@ -396,7 +396,25 @@ export const SwapInterface = ({
         hops.push({ ...hop, vault, opcode });
       }
       lastQuote.route.hops = hops;
-      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
+      const tx = Dexterity.router.buildRouterTransaction(lastQuote.route, amount);
+      const c = await import('@stacks/connect')
+      c.showContractCall({
+        ...tx,
+        sponsored: true,
+        onFinish: async (data) => {
+          data.stacksTransaction
+          fetch('/api/v0/sponsor', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+              serializedTx: data.txRaw
+            })
+          }).then(response => response.json()).then(console.log).catch(console.error)
+        }
+      })
+      // await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {
