@@ -36,7 +36,7 @@ const items = [
         icon: TrendingUp,
     },
     {
-        title: "Chart Prices",
+        title: "Token Analytics",
         url: "https://kraxel.io/analysis",
         icon: ChartLine,
         external: true,
