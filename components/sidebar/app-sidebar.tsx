@@ -1,4 +1,4 @@
-import { ChartLine, ExternalLink, Github, MessageCircle, TrendingUp } from "lucide-react"
+import { BookOpen, ChartLine, ExternalLink, Github, MessageCircle, TrendingUp } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -45,6 +45,11 @@ const items = [
         title: "Meme Tools",
         url: "/meme-tools",
         icon: MessageCircle,
+    },
+    {
+        title: "The Rulebook",
+        url: "/rulebook",
+        icon: BookOpen,
     },
 ]
 
