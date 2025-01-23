@@ -402,7 +402,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                   <div className="font-medium text-primary-foreground/90 flex items-center text-base">
                     <HandCoins className="w-4 h-4 mr-2 text-yellow-400" />
                     Hold-to-Earn
-                    <span className="ml-auto font-semibold">+{(vault.engine.energyPerBlock / 10 ** 6).toFixed(2)} <AudioWaveform className="w-4 h-4 mb-1 text-yellow-400 inline-block animate-pulse-glow" /></span>
+                    <span className="ml-auto font-semibold cursor-help" title='Total energy emissions per block'>+{(vault.engine.energyPerBlock / 10 ** 6).toFixed(2)} <AudioWaveform className="w-4 h-4 mb-1 text-yellow-400 inline-block animate-pulse-glow" /></span>
                   </div>
 
                   {/* Description */}
