@@ -11,7 +11,7 @@ export default function Footer() {
 
   return (
     <footer className={cn(styles.footer)}>
-      <div className={cn('flex', 'items-center', 'justify-between', 'w-full', 'm-4', 'relative')}>
+      <div className={cn('flex', 'items-center', 'justify-between', 'w-full', 'm-4')}>
         <div className={cn(styles['footer-block-height'])}>
           <IconStacks size={16} />
           <div>Block {block.height}</div>
@@ -31,7 +31,7 @@ export default function Footer() {
             <BsBookHalf className="cursor-pointer fill-gray-300 hover:fill-gray-100" size={16} />
           </Link>
         </div>
-        <div className={cn('hidden', 'sm:flex', 'absolute', 'bottom-4', 'right-4')}>
+        <div className={cn('hidden', 'sm:flex')}>
           <p className={styles['footer-paragraph']}>
             <a
               href={STACKS_LEARN_MORE_URL}
