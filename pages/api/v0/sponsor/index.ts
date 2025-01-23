@@ -63,8 +63,6 @@ export default async function sponsorAndBroadcast(
             fee: 1000,
         };
 
-        console.log('Sponsor Options:', sponsorOptions);
-
         // Sponsor the transaction
         const sponsoredTx = await sponsorTransaction(sponsorOptions);
 
