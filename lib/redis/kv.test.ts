@@ -19,19 +19,24 @@ import {
 
 describe('dexterity metadata cache', () => {
   it('should get dexterity metadata by id', async () => {
-    const token = await kv.get('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-welsh');
+    const token = await kv.get('sip10:SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ.old-faithful');
     console.log(token);
   });
 
   it('should set contract metadata by id vault wrapper', async () => {
-    await kv.set('sip10:SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.old-faithful', {
-      contractId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.synthetic-roo',
-      identifier: 'synthetic-roo',
-      name: 'Synthetic Roo',
-      symbol: 'iouROO',
+    await kv.set('sip10:SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chabtz-lp-token', {
+      contractId: 'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chabtz-lp-token',
+      identifier: 'BTZ',
+      name: 'Betrezen Legion LP',
+      symbol: 'BTZ',
       decimals: 6,
-      description: 'Roo Synthetic Asset',
-      image: 'https://charisma.rocks/roo-logo.png'
+      description: 'Betrezen Legion LP',
+      image: 'https://pdakhjpwkuwtadzmpnjm.supabase.co/storage/v1/object/public/token_logo/KCUTgfeZ-channels4-profile.jpg',
+      properties: {
+        tokenAContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token',
+        tokenBContract: 'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.betrezen-legion-of-the-damned',
+        lpRebatePercent: 2
+      }
     });
   })
 
