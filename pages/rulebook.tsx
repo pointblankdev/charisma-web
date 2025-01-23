@@ -72,9 +72,7 @@ export default function RulebookPage() {
                     <div className="space-y-4">
                         <h1 className="text-4xl font-bold">Charisma Rulebook</h1>
                         <p className="text-lg text-muted-foreground leading-relaxed">
-                            The central security and orchestration hub of the Charisma protocol,
-                            managing all token operations through a sophisticated system of verified
-                            interactions, multi-owner authorization, and dynamic modifications.
+                            The central security and orchestration contract of the Charisma protocol.
                         </p>
                     </div>
 
