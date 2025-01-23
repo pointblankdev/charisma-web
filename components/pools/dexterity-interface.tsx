@@ -533,7 +533,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                       To activate hold-to-earn, you must first add liquidity to the vault. Once enough liquidity from the community has been added, the vault will become eligible for hold-to-earn.
                     </p>
                     <Button variant="ghost" size="sm" className="h-8 px-3" onClick={() => setShowQuickAddModal(true)}>
-                      Add Liquidity
+                      <Plus className="w-4 h-4 mr-1" /> Add Liquidity
                     </Button>
                   </div>
                 </div>
