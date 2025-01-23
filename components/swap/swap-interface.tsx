@@ -21,6 +21,9 @@ import {
 } from "@components/ui/alert-dialog";
 import numeral from 'numeral';
 
+export const HOST =
+  process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://charisma.rocks';
+
 const formatUSD = (amount: number, price: number) => {
   const value = amount * price;
   return value;
@@ -267,7 +270,7 @@ export const SwapInterface = ({
 
   useEffect(() => {
     if (maxHops && pools.length > 0 && stxAddress) {
-      Dexterity.configure({ maxHops, sponsored: true, sponsor: 'http://localhost:3000/api/v0/sponsor' }).catch(console.error);
+      Dexterity.configure({ maxHops, sponsored: true, sponsor: `${HOST}/api/v0/sponsor` }).catch(console.error);
       const vaults = pools.map(pool => new Vault(pool));
       Dexterity.router.loadVaults(vaults);
       console.log('Router initialized:', Dexterity.router.getGraphStats());
@@ -396,25 +399,25 @@ export const SwapInterface = ({
         hops.push({ ...hop, vault, opcode });
       }
       lastQuote.route.hops = hops;
-      const tx = Dexterity.router.buildRouterTransaction(lastQuote.route, amount);
-      const c = await import('@stacks/connect')
-      c.showContractCall({
-        ...tx,
-        sponsored: true,
-        onFinish: async (data) => {
-          data.stacksTransaction
-          fetch('/api/v0/sponsor', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-              serializedTx: data.txRaw
-            })
-          }).then(response => response.json()).then(console.log).catch(console.error)
-        }
-      })
-      // await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
+      // const tx = Dexterity.router.buildRouterTransaction(lastQuote.route, amount);
+      // const c = await import('@stacks/connect')
+      // c.showContractCall({
+      //   ...tx,
+      //   sponsored: true,
+      //   onFinish: async (data) => {
+      //     data.stacksTransaction
+      //     fetch('/api/v0/sponsor', {
+      //       method: 'POST',
+      //       headers: {
+      //         'Content-Type': 'application/json'
+      //       },
+      //       body: JSON.stringify({
+      //         serializedTx: data.txRaw,
+      //       })
+      //     }).then(response => response.json()).then(console.log).catch(console.error)
+      //   }
+      // })
+      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {
