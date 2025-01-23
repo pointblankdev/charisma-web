@@ -281,7 +281,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
   return (
     <TooltipProvider>
       <Tooltip>
-        <TooltipTrigger className="w-full">
+        <TooltipTrigger className="w-full cursor-help">
           <div className="mt-1 leading-snug">
             <div className="flex flex-col items-center">
               <div className="text-lg font-medium whitespace-nowrap">
