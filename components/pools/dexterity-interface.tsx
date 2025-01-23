@@ -289,7 +289,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
               </div>
               <div className="flex items-center space-x-1 text-sm text-muted-foreground whitespace-nowrap ">
                 <span className={cn(pool.engineContractId ? 'flex items-center text-yellow-400 animate-pulse-glow' : 'text-muted-foreground')}>
-                  <span>{pool.engineContractId ? <span className="ml-auto font-semibold text-yellow-400">+{(vault.engine.energyPerBlockPerToken * 10 ** 6).toFixed(0)} <AudioWaveform className="w-3 h-3 mb-1 inline-block" /></span> : 'Trading Fee Yield'}</span>
+                  <span>{pool.engineContractId ? <span className="ml-auto font-semibold text-yellow-400">+{(vault.engine.energyPerBlock / 10 ** 6).toFixed(2)} <AudioWaveform className="w-3 h-3 mb-1 inline-block" /></span> : 'Trading Fee Yield'}</span>
                 </span>
               </div>
             </div>
