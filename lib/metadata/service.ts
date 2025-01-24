@@ -1,5 +1,6 @@
 import { z } from 'zod';
 import { kv } from '@vercel/kv';
+import _ from 'lodash';
 
 const PropertiesSchema = z.object({
     lpRebatePercent: z.number(),
@@ -16,14 +17,14 @@ const MetadataSchema = z.object({
     identifier: z.string(),
     description: z.string(),
     image: z.string(),
-    properties: PropertiesSchema
+    properties: PropertiesSchema.optional()
 }).passthrough();
 
 export class MetadataService {
     static async get(contractId: string) {
         const metadata = await kv.get(`sip10:${contractId}`);
         if (!metadata) {
-            throw new Error('Metadata not found');
+            console.error('Metadata not found', contractId);
         }
         return metadata;
     }
@@ -35,15 +36,7 @@ export class MetadataService {
             const existingMetadata: any = await kv.get(`sip10:${contractId}`);
 
             // Merge with existing metadata if it exists
-            const mergedMetadata = existingMetadata ? {
-                ...existingMetadata,
-                ...metadata,
-                properties: {
-                    ...existingMetadata.properties,
-                    ...metadata.properties,
-                    lastUpdated: new Date().toISOString()
-                }
-            } : metadata;
+            const mergedMetadata = _.merge(existingMetadata, metadata, { lastUpdated: new Date().toISOString() });
 
             // Validate metadata
             console.log('Validating metadata', mergedMetadata);

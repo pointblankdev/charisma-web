@@ -105,3 +105,10 @@ export async function getBalances(stxAddress: string) {
   });
   return response.json();
 }
+
+export async function uploadImage(formData: FormData) {
+  return fetch('/api/v0/upload', {
+    method: 'POST',
+    body: formData
+  });
+}

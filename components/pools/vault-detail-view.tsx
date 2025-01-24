@@ -4,12 +4,6 @@ import { Button } from '@components/ui/button';
 import { Shield, Wallet, LineChart, ArrowUpDown, Users, Info, Settings } from 'lucide-react';
 import { AddLiquidityModal } from './modals/add-liquidity-modal';
 import { RemoveLiquidityModal } from './modals/remove-liquidity-modal';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@components/ui/tooltip';
 import Image from 'next/image';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { Liquidity } from 'dexterity-sdk';
