@@ -30,9 +30,6 @@ export class MetadataService {
 
     static async set(contractId: string, metadata: z.infer<typeof MetadataSchema>) {
         try {
-            // Validate metadata
-            console.log('Validating metadata', metadata);
-            const validatedMetadata = MetadataSchema.parse(metadata);
 
             // Get existing metadata if it exists
             const existingMetadata: any = await kv.get(`sip10:${contractId}`);
@@ -40,21 +37,25 @@ export class MetadataService {
             // Merge with existing metadata if it exists
             const mergedMetadata = existingMetadata ? {
                 ...existingMetadata,
-                ...validatedMetadata,
+                ...metadata,
                 properties: {
                     ...existingMetadata.properties,
-                    ...validatedMetadata.properties,
+                    ...metadata.properties,
                     lastUpdated: new Date().toISOString()
                 }
-            } : validatedMetadata;
+            } : metadata;
+
+            // Validate metadata
+            console.log('Validating metadata', mergedMetadata);
+            const validatedMetadata = MetadataSchema.parse(mergedMetadata);
 
             // Save to KV store
-            await kv.set(`sip10:${contractId}`, mergedMetadata);
+            await kv.set(`sip10:${contractId}`, validatedMetadata);
 
             return {
                 success: true,
                 contractId,
-                metadata: mergedMetadata
+                metadata: validatedMetadata
             };
         } catch (error) {
             if (error instanceof z.ZodError) {

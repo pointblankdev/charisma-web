@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { Card } from '@components/ui/card';
 import { Button } from '@components/ui/button';
-import { Shield, Wallet, LineChart, ArrowUpDown, Users, Info } from 'lucide-react';
+import { Shield, Wallet, LineChart, ArrowUpDown, Users, Info, Settings } from 'lucide-react';
 import { AddLiquidityModal } from './modals/add-liquidity-modal';
 import { RemoveLiquidityModal } from './modals/remove-liquidity-modal';
 import {
@@ -13,6 +13,9 @@ import {
 import Image from 'next/image';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { Liquidity } from 'dexterity-sdk';
+import { useGlobal } from '@lib/hooks/global-context';
+import { MetadataEditForm } from './metadata-edit-form';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@components/ui/tabs";
 
 interface VaultDetailProps {
     vault: Vault & { events: any[] }; // Updated to include events
@@ -20,7 +23,23 @@ interface VaultDetailProps {
 }
 
 export function VaultDetailView({ vault, prices }: VaultDetailProps) {
-    // Calculate real stats using vault data
+    const { stxAddress, vaultAnalytics } = useGlobal();
+    const [currentMetadata, setCurrentMetadata] = useState(vault);
+
+    // Check if the connected user is the contract owner
+    const isContractOwner = stxAddress === vault.contractId.split('.')[0];
+
+    const handleMetadataUpdate = (newMetadata: any) => {
+        setCurrentMetadata(prev => ({
+            ...prev,
+            ...newMetadata
+        }));
+    };
+
+    // Get analytics data for this vault
+    const vaultData = vaultAnalytics[vault.contractId];
+
+    // Calculate stats using vault analytics
     const stats = useMemo(() => {
         const token0Value = (vault.tokenA.reserves / 10 ** vault.tokenA.decimals) *
             (prices[vault.tokenA.contractId] || 0);
@@ -30,24 +49,9 @@ export function VaultDetailView({ vault, prices }: VaultDetailProps) {
         // Calculate TVL
         const tvl = token0Value + token1Value;
 
-        // Calculate 24h volume and fees from events
-        const oneDayAgo = Date.now() - 24 * 60 * 60 * 1000;
-        const recentEvents = vault.events?.filter(e =>
-            new Date(e.timestamp).getTime() > oneDayAgo) || [];
-
-        const volume24h = recentEvents.reduce((sum, event) => {
-            if (event.type === 'swap') {
-                const amount = event.tokenInAmount * prices[event.tokenIn] || 0;
-                return Number(sum) + amount;
-            }
-            return sum;
-        }, 0);
-
-        const fees24h = volume24h * (vault.fee / 1000000); // Convert fee to decimal
-
-        // Calculate APY based on fees and TVL
-        const dailyFeeRate = fees24h / tvl;
-        const apy = dailyFeeRate * 365 * 100; // Annualized and converted to percentage
+        // Get volume and APY from vault analytics
+        const volume24h = vaultData?.summary?.last24h?.reduce((acc: number, curr: any) => acc + curr.volume, 0) || 0;
+        const apy = vaultData?.generalInfo?.lpRebateAPY || 0;
 
         // Count unique LP holders from events
         const lpHolders = new Set(
@@ -56,18 +60,13 @@ export function VaultDetailView({ vault, prices }: VaultDetailProps) {
                 .map(e => e.sender)
         ).size;
 
-        // Count 24h swaps
-        const swaps24h = recentEvents.filter(e => e.type === 'swap').length;
-
         return {
             tvl,
             volume24h,
-            fees24h,
             apy: Number.isFinite(apy) ? apy : 0,
-            lpHolders: lpHolders || 0,
-            swaps24h
+            lpHolders: lpHolders || 0
         };
-    }, [vault, prices]);
+    }, [vault, prices, vaultData]);
 
     return (
         <div className="container mx-auto p-6">
@@ -111,7 +110,7 @@ export function VaultDetailView({ vault, prices }: VaultDetailProps) {
                                         </div>
                                     </div>
                                 </div>
-                                <div className="flex gap-4">
+                                {/* <div className="flex gap-4">
                                     <AddLiquidityModal
                                         pool={vault}
                                         tokenPrices={prices}
@@ -134,50 +133,76 @@ export function VaultDetailView({ vault, prices }: VaultDetailProps) {
                                             </Button>
                                         }
                                     />
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>
                 </div>
 
                 {/* Right Panel - Stats & Info */}
-                <div className="lg:col-span-3 space-y-6">
-                    {/* Stats Grid */}
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <StatCard
-                            title="Total Value Locked"
-                            value={`$${stats.tvl.toLocaleString()}`}
-                            change="+5.2%"
-                            icon={<Wallet className="w-5 h-5" />}
-                        />
-                        <StatCard
-                            title="24h Volume"
-                            value={`$${stats.volume24h.toLocaleString()}`}
-                            change="+12.3%"
-                            icon={<ArrowUpDown className="w-5 h-5" />}
+                <div className="lg:col-span-3">
+                    <Tabs defaultValue="stats" className="space-y-6">
+                        <TabsList className="grid w-full grid-cols-2">
+                            <TabsTrigger value="stats" className="space-x-2">
+                                <LineChart className="h-4 w-4" />
+                                <span>Stats & Info</span>
+                            </TabsTrigger>
+                            {isContractOwner && (
+                                <TabsTrigger value="settings" className="space-x-2">
+                                    <Settings className="h-4 w-4" />
+                                    <span>Settings</span>
+                                </TabsTrigger>
+                            )}
+                        </TabsList>
 
-                        />
-                        <StatCard
-                            title="APY"
-                            value={`${stats.apy.toFixed(2)}%`}
-                            change="+2.1%"
-                            icon={<LineChart className="w-5 h-5" />}
-                        />
-                    </div>
+                        <TabsContent value="stats" className="space-y-6">
+                            {/* Stats Grid */}
+                            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                                <StatCard
+                                    title="Total Value Locked"
+                                    value={`$${stats.tvl.toLocaleString()}`}
+                                    change="+5.2%"
+                                    icon={<Wallet className="w-5 h-5" />}
+                                />
+                                <StatCard
+                                    title="24h Volume"
+                                    value={`$${stats.volume24h.toLocaleString()}`}
+                                    change="+12.3%"
+                                    icon={<ArrowUpDown className="w-5 h-5" />}
+                                />
+                                <StatCard
+                                    title="APY"
+                                    value={`${stats.apy.toFixed(2)}%`}
+                                    change="+2.1%"
+                                    icon={<LineChart className="w-5 h-5" />}
+                                />
+                            </div>
 
-                    {/* Token Pair Info */}
-                    <div className="grid grid-cols-2 gap-4">
-                        <TokenInfoCard token={vault.tokenA} reserves={vault.tokenA.reserves} price={prices[vault.tokenA.contractId]} />
-                        <TokenInfoCard token={vault.tokenB} reserves={vault.tokenB.reserves} price={prices[vault.tokenB.contractId]} />
-                    </div>
+                            {/* Token Pair Info */}
+                            <div className="grid grid-cols-2 gap-4">
+                                <TokenInfoCard token={vault.tokenA} reserves={vault.tokenA.reserves} price={prices[vault.tokenA.contractId]} />
+                                <TokenInfoCard token={vault.tokenB} reserves={vault.tokenB.reserves} price={prices[vault.tokenB.contractId]} />
+                            </div>
 
-                    {/* Activity Chart */}
-                    <Card className="p-6">
-                        <h2 className="text-xl font-semibold mb-4">Activity</h2>
-                        <div className="h-[240px] flex items-center justify-center text-muted-foreground">
-                            Chart placeholder - Will implement with real data
-                        </div>
-                    </Card>
+                            {/* Activity Chart */}
+                            <Card className="p-6">
+                                <h2 className="text-xl font-semibold mb-4">Activity</h2>
+                                <div className="h-[240px] flex items-center justify-center text-muted-foreground">
+                                    Chart placeholder - Will implement with real data
+                                </div>
+                            </Card>
+                        </TabsContent>
+
+                        {isContractOwner && (
+                            <TabsContent value="settings" className="space-y-6">
+                                <MetadataEditForm
+                                    metadata={currentMetadata}
+                                    contractId={vault.contractId}
+                                    onMetadataUpdate={handleMetadataUpdate}
+                                />
+                            </TabsContent>
+                        )}
+                    </Tabs>
                 </div>
             </div>
         </div>

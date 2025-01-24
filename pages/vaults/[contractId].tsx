@@ -3,6 +3,7 @@ import Layout from '@components/layout/layout';
 import { ContractId, Dexterity } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { Kraxel } from '@lib/kraxel';
+import { VaultDetailView } from '@components/pools/vault-detail-view';
 
 
 // Initialize SDK
@@ -30,25 +31,7 @@ export default function VaultDetailPage({ vault, prices }: Props) {
     return (
         <Layout>
             <div className="min-h-screen bg-gradient-to-b from-background/10 to-background/0">
-                <div className="relative">
-                    {/* Optional: Background pattern/effect */}
-                    <div className="absolute inset-0 bg-grid-white/5 [mask-image:linear-gradient(0deg,transparent,black)]" />
-
-                    {/* Back button and breadcrumbs could go here */}
-                    <div className="relative container mx-auto pt-6 px-4">
-                        <nav className="flex mb-6 text-sm text-muted-foreground">
-                            <a href="/pools" className="hover:text-foreground transition-colors">
-                                Vaults
-                            </a>
-                            <span className="mx-2">→</span>
-                            <span className="text-foreground">{vault.name || 'Vault Details'}</span>
-                        </nav>
-                    </div>
-                </div>
-
-                {/* Main content */}
-                <div className="container mx-auto px-4">Coming soon...</div>
-                {/* <VaultDetailView vault={vault} prices={prices} /> */}
+                <VaultDetailView vault={vault} prices={prices} />
             </div>
         </Layout>
     );

@@ -19,7 +19,6 @@ export async function setContractMetadata(ca: string, metadata: any) {
   if (!userSession.isUserSignedIn()) {
     throw new Error('User must be signed in');
   }
-  console.log('Signing contract ID', ca);
 
   // Sign the contract ID
   const { showSignMessage } = await import('@stacks/connect');

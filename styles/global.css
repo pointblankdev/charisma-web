@@ -206,7 +206,7 @@ body {
 html,
 body {
   color: var(--foreground);
-  background-color: var(--accents-8);
+  background-color: black;
 }
 ::selection {
   background-color: hsl(var(--accent-foreground));

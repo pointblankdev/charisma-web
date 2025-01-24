@@ -74,6 +74,19 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     }
   }, [stxAddress, userSession]);
 
+  // Add helper function to check if string is a contract address
+  const isContractAddress = (str: string) => {
+    return str && str.length > 34 && (str.startsWith('SP') || str.startsWith('ST') || str.startsWith('SM'));
+  };
+
+  // Add helper function to format path segment
+  const formatPathSegment = (segment: string) => {
+    if (isContractAddress(segment)) {
+      const contractId = segment.split('.')[0];
+      return `${contractId.slice(0, 4)}...${contractId.slice(-4)}.${segment.split('.')[1]}`;
+    }
+    return _.capitalize(segment);
+  };
 
   return (
     <>
@@ -86,14 +99,14 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
               <Breadcrumb>
                 <BreadcrumbList className="text-md">
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="#">
-                      {_.capitalize(activeRoute.split('/')[1])}
+                    <BreadcrumbLink href={`/${activeRoute.split('/')[1]}`}>
+                      {formatPathSegment(activeRoute.split('/')[1])}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   {activeRoute.split('/').length > 2 && <>
                     <BreadcrumbSeparator className="hidden md:block" />
                     <BreadcrumbItem>
-                      <BreadcrumbPage>{_.capitalize(activeRoute.split('/')[2])}</BreadcrumbPage>
+                      <BreadcrumbPage>{formatPathSegment(activeRoute.split('/')[2])}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </>}
                 </BreadcrumbList>

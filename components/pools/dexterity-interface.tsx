@@ -551,38 +551,45 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
 const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }) => {
   const [poolImgError, setPoolImgError] = useState(false);
   const deployerAddress = pool.contractId.split('.')[0];
+  const router = useRouter();
 
   return (
-    <tr className="border-t border-gray-700/50">
-      <td className="flex px-4 py-4 text-white items-center">
-        <Image
-          src={poolImgError ? '/charisma.png' : pool.image}
-          alt={pool.name}
-          width={44}
-          height={44}
-          className="object-cover mt-0.5 mr-3 rounded-md h-32 sm:h-24 lg:h-16 xl:h-12"
-          onError={() => setPoolImgError(true)}
-        />
-        <div>
-          <div className="flex items-center space-x-1 leading-snug">
-            <div className=''>
-              <div className="text-lg md:block leading-snug">{pool.name}</div>
-              <div className="text-lg lg:hidden block leading-snug text-gray-400 lg:text-white">
-                {pool.symbol}
+    <tr
+      className="border-t border-gray-700/50 group hover:bg-gray-700/20 cursor-pointer transition-colors"
+      onClick={() => router.push(`/vaults/${pool.contractId}`)}
+    >
+      <td className="flex px-2 py-2 text-white items-center">
+        <div className="px-2 py-2 flex items-center rounded-md p-1">
+          <Image
+            src={poolImgError ? '/charisma.png' : pool.image}
+            alt={pool.name}
+            width={44}
+            height={44}
+            className="object-cover mt-0.5 mr-3 rounded-md h-32 sm:h-24 lg:h-16 xl:h-12"
+            onError={() => setPoolImgError(true)}
+          />
+          <div>
+            <div className="flex items-center space-x-1 leading-snug">
+              <div className=''>
+                <div className="text-lg md:block leading-snug">{pool.name}</div>
+                <div className="text-lg lg:hidden block leading-snug text-gray-400 lg:text-white">
+                  {pool.symbol}
+                </div>
               </div>
+              <Link
+                href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mt-1 hidden lg:inline-block"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <ExternalLink size={14} />
+              </Link>
             </div>
-            <Link
-              href={`https://explorer.stxer.xyz/txid/${pool.contractId}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-block mt-1 hidden lg:block"
-            >
-              <ExternalLink size={14} />
-            </Link>
-          </div>
-          <div className="flex items-center space-x-2">
-            <div className="text-sm text-gray-400 hidden lg:block leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-64" title={pool.description}>
-              {pool.description}
+            <div className="flex items-center space-x-2">
+              <div className="text-sm text-gray-400 hidden lg:block leading-tight whitespace-nowrap overflow-hidden text-ellipsis max-w-64" title={pool.description}>
+                {pool.description}
+              </div>
             </div>
           </div>
         </div>
@@ -599,7 +606,7 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
       <td className="px-4 py-4 space-x-2 text-lg leading-snug text-white">
         <AddressDisplay address={deployerAddress} />
       </td>
-      <td className="px-4 py-4 text-right">
+      <td className="px-4 py-4 text-right" onClick={(e) => e.stopPropagation()}>
         <ActionMenu pool={pool} prices={prices} />
       </td>
     </tr>
