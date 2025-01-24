@@ -10,7 +10,7 @@ describe('User API', () => {
   });
 
   it('should set metadata', async () => {
-    const response = await setContractMetadata(
+    await setContractMetadata(
       'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.magic-mojo',
       {
         name: 'Magic Mojo',
@@ -36,6 +36,5 @@ describe('User API', () => {
         ]
       }
     );
-    console.log(await response.text());
   });
 });

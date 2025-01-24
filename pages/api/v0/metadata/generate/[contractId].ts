@@ -1,4 +1,3 @@
-import { kv } from '@vercel/kv';
 import { NextApiRequest, NextApiResponse } from 'next';
 import OpenAI from 'openai';
 import { put } from '@vercel/blob';
@@ -28,7 +27,7 @@ interface GenerateMetadataRequest {
 }
 
 const isValidContractId = (contractId: string) => {
-    return /^SP[A-Z0-9]+\.[^\/]+$/.test(contractId);
+    return /^S[A-Z0-9]+\.[^\/]+$/.test(contractId);
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -57,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
                 }
             };
 
-            await kv.set(`sip10:${contractId}`, metadata);
+            // await kv.set(`sip10:${contractId}`, metadata);
             return res.status(200).json({ success: true, contractId, metadata });
         }
 
@@ -93,7 +92,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             }
         };
 
-        await kv.set(`sip10:${contractId}`, metadata);
+        // await kv.set(`sip10:${contractId}`, metadata);
         return res.status(200).json({ success: true, contractId, metadata });
     } catch (error) {
         console.error('Failed to generate metadata:', error);

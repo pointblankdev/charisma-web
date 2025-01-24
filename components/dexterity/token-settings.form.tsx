@@ -89,6 +89,20 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
     return (impliedRatio - 1) * 100;
   };
 
+  const handleImageUpload = (file: File) => {
+    setValue('customImage', file);
+
+    // Create a temporary object URL for immediate display
+    const objectUrl = URL.createObjectURL(file);
+    onMetadataChange({
+      ...metadata,
+      image: objectUrl
+    });
+
+    // Call generateMetadata to handle the actual upload
+    onGenerateImage();
+  };
+
   return (
     <div className="grid gap-6 lg:grid-cols-2">
       {/* Left Panel - Token Identity */}
@@ -113,7 +127,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                     e.preventDefault();
                     e.stopPropagation();
                     const file = e.dataTransfer.files[0];
-                    if (file) setValue('customImage', file);
+                    if (file) handleImageUpload(file);
                   }}
                 >
                   {isGenerating ? (
@@ -205,7 +219,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
                 accept="image/*"
                 onChange={(e) => {
                   const file = e.target.files?.[0];
-                  if (file) setValue('customImage', file);
+                  if (file) handleImageUpload(file);
                 }}
                 className="hidden"
               />
@@ -360,7 +374,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
             </div>
 
             {/* Price and TVL Information */}
-            <div className="space-y-2 p-4 rounded-lg border border-border/50">
+            <div className="space-y-2 p-4 rounded-lg border border-primary/20">
               {/* Exchange Rate */}
               <div className="flex items-center justify-between text-sm">
                 <div className="flex items-center space-x-2">
@@ -393,7 +407,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
               )}
 
               {/* Total Value Display */}
-              <div className="flex items-center justify-between pt-2 border-t border-border/50">
+              <div className="flex items-center justify-between pt-2 border-t border-primary/10">
                 <div className="flex items-center space-x-2 text-sm">
                   <DollarSign className="w-4 h-4 text-muted-foreground" />
                   <span className="text-muted-foreground">Total Value Locked</span>

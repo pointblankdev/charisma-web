@@ -1,3 +1,7 @@
+import { userSession } from '@components/stacks-session/connect';
+import { bytesToHex } from '@stacks/common';
+import { STACKS_MAINNET } from '@stacks/network';
+
 export const HOST =
   process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : 'https://charisma.rocks';
 
@@ -11,12 +15,43 @@ export async function getContractMetadata(ca: string) {
 }
 
 export async function setContractMetadata(ca: string, metadata: any) {
-  return await fetch(`${HOST}/api/metadata/${ca}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(metadata)
+  // Get user data from session
+  if (!userSession.isUserSignedIn()) {
+    throw new Error('User must be signed in');
+  }
+  console.log('Signing contract ID', ca);
+
+  // Sign the contract ID
+  const { showSignMessage } = await import('@stacks/connect');
+
+  // Create a promise that resolves with the fetch response
+  return new Promise((resolve, reject) => {
+    showSignMessage({
+      message: ca,
+      network: STACKS_MAINNET,
+      appDetails: {
+        name: 'Charisma',
+        icon: window.location.origin + '/charisma.png',
+      },
+      onFinish: async (data) => {
+        try {
+          console.log('Signature of the message', data.signature);
+          console.log('Use public key:', data.publicKey);
+          const response = await fetch(`${HOST}/api/v0/metadata/${ca}`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'x-signature': data.signature,
+              'x-public-key': data.publicKey,
+            },
+            body: JSON.stringify(metadata)
+          });
+          resolve(response);
+        } catch (error) {
+          reject(error);
+        }
+      },
+    });
   });
 }
 

@@ -12,6 +12,8 @@ import { useForm } from 'react-hook-form';
 import { Loader2Icon } from 'lucide-react';
 import { Kraxel } from '@lib/kraxel';
 import { useGlobal } from '@lib/hooks/global-context';
+import { setContractMetadata } from '@lib/fetchers/user-api';
+import { toast } from '@components/ui/use-toast';
 
 export function sanitizeContractName(name: string): string {
   const sanitized = name
@@ -164,6 +166,16 @@ export default function ContractDeployer({ prices }: Props) {
         });
         const { url } = await uploadResponse.json();
         imageUrl = url;
+
+        // Immediately update metadata with the new image URL
+        setMetadata((prevMetadata: any) => ({
+          ...prevMetadata,
+          image: url
+        }));
+
+        // Early return since we don't need to generate an image
+        setIsGenerating(false);
+        return;
       }
 
       // Build the enhanced prompt
@@ -280,16 +292,17 @@ export default function ContractDeployer({ prices }: Props) {
         },
       };
 
-      const response = await fetch(`/api/v0/metadata/update/${fullContractName}`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(currentMetadata)
-      });
+      const response: any = await setContractMetadata(fullContractName, currentMetadata);
 
       if (!response.ok) throw new Error('Failed to save metadata');
       const result = await response.json();
 
       if (result.success && result.metadata) {
+        toast({
+          title: 'Metadata saved successfully',
+          description: 'Your vault contract metadata has been updated.',
+          variant: 'default'
+        });
         setMetadata(result.metadata);
         setHasUnsavedChanges(false);
       } else {
