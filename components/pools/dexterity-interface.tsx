@@ -852,7 +852,7 @@ const DexterityInterface = ({ data }: any) => {
                       {total24hVolume > 0 ? (
                         `$${numeral(total24hVolume).format('0,0.00a')}`
                       ) : (
-                        <div className="h-7 w-20 bg-muted/10 rounded animate-pulse" />
+                        <div className="h-8 w-20 bg-muted/10 rounded animate-pulse" />
                       )}
                     </div>
                     <div className="text-sm text-muted-foreground flex items-center justify-end space-x-1">
