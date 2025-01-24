@@ -27,7 +27,7 @@ export function TokenGrid({ tokens, prices }: TokenGridProps) {
                             <div className="flex justify-center mb-4">
                                 <div className="relative h-24 w-24 overflow-hidden rounded-xl">
                                     <Image
-                                        src={token.image || '/placeholder.png'}
+                                        src={token.image || '/charisma.png'}
                                         alt={token.name}
                                         width={96}
                                         height={96}
@@ -38,7 +38,7 @@ export function TokenGrid({ tokens, prices }: TokenGridProps) {
 
                             {/* Token Info */}
                             <div className="text-center space-y-2">
-                                <h3 className="font-semibold text-lg text-white/95">{token.name}</h3>
+                                <h3 className="font-semibold text-lg text-white/95 whitespace-nowrap overflow-hidden text-ellipsis">{token.name}</h3>
                                 <div className="flex items-center justify-center gap-4 text-sm text-muted-foreground">
                                     <div className="flex items-center gap-2">
                                         <Shield className="w-4 h-4" />
@@ -47,9 +47,13 @@ export function TokenGrid({ tokens, prices }: TokenGridProps) {
                                 </div>
 
                                 {/* Price if available */}
-                                {prices[token.contractId] > 0 && (
-                                    <div className="text-xl font-bold text-white/90">
-                                        ${prices[token.contractId].toLocaleString()}
+                                {prices[token.contractId] > 0 ? (
+                                    <div className="text-xl font-semibold text-white/90">
+                                        ${Number(prices[token.contractId]).toFixed(8).toLocaleString()}
+                                    </div>
+                                ) : (
+                                    <div className="text-xl font-semibold text-white/90">
+                                        -
                                     </div>
                                 )}
                             </div>

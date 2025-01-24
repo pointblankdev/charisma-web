@@ -1,4 +1,4 @@
-import { BookOpen, ChartLine, ExternalLink, Github, MessageCircle, TrendingUp } from "lucide-react"
+import { BookOpen, ChartLine, Coins, ExternalLink, Github, MessageCircle, TrendingUp } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -50,6 +50,11 @@ const items = [
         title: "The Rulebook",
         url: "/rulebook",
         icon: BookOpen,
+    },
+    {
+        title: "Tokens",
+        url: "/tokens",
+        icon: Coins,
     },
 ]
 

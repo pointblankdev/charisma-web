@@ -57,7 +57,7 @@ export function TokenDetailView({ token, prices }: TokenDetailProps) {
                             <div className="relative flex flex-col items-center gap-8 p-8">
                                 <div className="h-64 w-64 overflow-hidden rounded-xl">
                                     <Image
-                                        src={token.image || '/placeholder.png'}
+                                        src={token.image || '/charisma.png'}
                                         alt={token.name}
                                         width={256}
                                         height={256}
