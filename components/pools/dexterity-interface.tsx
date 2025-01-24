@@ -395,122 +395,138 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
 
               {/* Show either active rewards or placeholder explanation */}
               {pool.engineContractId ? (
-                <div className="space-y-4 rounded-lg bg-yellow-400/20 p-4 w-full">
-                  {/* Header */}
-                  <div className="font-medium text-primary-foreground/90 flex items-center text-base">
-                    <HandCoins className="w-4 h-4 mr-2 text-yellow-400" />
-                    Hold-to-Earn
-                    <span className="ml-auto font-semibold cursor-help" title='Total energy generated per block'>+{(vault.engine.energyPerBlock / 10 ** 6).toFixed(2)} <AudioWaveform className="w-4 h-4 mb-1 text-yellow-400 inline-block animate-pulse-glow" /></span>
-                  </div>
+                <div className="rounded-lg bg-yellow-400/20 p-4 w-full relative overflow-hidden">
+                  {/* Add background image */}
+                  <div
+                    className="absolute inset-0 opacity-5"
+                    style={{
+                      backgroundImage: `url(/lands/img/energy.png)`,
+                      backgroundSize: 'cover',
+                      backgroundPosition: 'center',
+                      filter: 'grayscale(50%)',
+                      transform: 'scale(1.2)'
+                    }}
+                  />
 
-                  {/* Description */}
-                  <div className="text-sm text-primary-foreground/70 leading-tight">
-                    Hold-to-earn is Charisma's way to reward long-term holders like you, without the need to give up custody of your tokens. Just hold LP tokens and earn rewards.
-                    <div className='pt-2' />
-                    When participating in hold-to-earn, you will be rewarded in the <ZapIcon className="w-3 h-3 mb-0.5 text-yellow-400 inline-block" /> Energy token. Energy is soulbound, and cannot be transferred, but you can burn it to receive tokens like HOOT or other rewards.
-                  </div>
+                  {/* Existing content with relative positioning */}
+                  <div className="relative z-10 space-y-2">
+                    {/* Header */}
+                    <div className="font-medium text-primary-foreground/90 flex items-center text-base">
+                      <HandCoins className="w-4 h-4 mr-2 text-yellow-400" />
+                      Hold-to-Earn
+                      <span className="ml-auto font-semibold cursor-help" title='Total energy generated per block'>+{(vault.engine.energyPerBlock / 10 ** 6).toFixed(2)} <AudioWaveform className="w-4 h-4 mb-1 text-yellow-400 inline-block animate-pulse-glow" /></span>
+                    </div>
 
-                  {/* Stats */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center p-2 rounded-md bg-black/20">
-                      <span className="text-sm text-muted-foreground">Daily Emissions</span>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex items-center">
-                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
-                          <span>{numeral(energyPerDay).format('0,0')}/day</span>
+                    {/* Description */}
+                    <div className="text-sm text-primary-foreground/70 leading-tight">
+                      Hold-to-earn is Charisma's way to reward long-term holders like you, without the need to give up custody of your tokens. Just hold LP tokens and earn rewards.
+                      <div className='pt-2' />
+                      When participating in hold-to-earn, you will be rewarded in the <ZapIcon className="w-3 h-3 mb-0.5 text-yellow-400 inline-block" /> Energy token. Energy is soulbound, and cannot be transferred, but you can burn it to receive tokens like HOOT or other rewards.
+                    </div>
+
+                    {/* Stats */}
+                    <div className="space-y-0 border border-primary-foreground/5 rounded-lg">
+                      <div className="flex justify-between items-center p-2 px-4 rounded-t-md bg-black/20">
+                        <span className="text-sm text-muted-foreground">Daily Emissions</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center">
+                            <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
+                            <span>{numeral(energyPerDay).format('0,0')}/day</span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            ≈ ${numeral(energyPerDay * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
+                          </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">
-                          ≈ ${numeral(energyPerDay * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
-                        </span>
                       </div>
-                    </div>
-                    <div className="flex justify-between items-center p-2 rounded-md bg-black/20">
-                      <span className="text-sm text-muted-foreground">Your Yield Rate</span>
-                      <div className="flex items-center space-x-2">
-                        <div className="flex items-center">
-                          <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
-                          <span>{numeral(energyPerDay * fractionOfTotal).format('0,0')}/day</span>
+                      <div className="border-t border-primary-foreground/5" />
+                      <div className="flex justify-between items-center p-2 px-4 rounded-b-md bg-black/20">
+                        <span className="text-sm text-muted-foreground">Your Yield Rate</span>
+                        <div className="flex items-center space-x-2">
+                          <div className="flex items-center">
+                            <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
+                            <span>{numeral(energyPerDay * fractionOfTotal).format('0,0')}/day</span>
+                          </div>
+                          <span className="text-sm text-muted-foreground">
+                            ≈ ${numeral(energyPerDay * fractionOfTotal * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
+                          </span>
                         </div>
-                        <span className="text-sm text-muted-foreground">
-                          ≈ ${numeral(energyPerDay * fractionOfTotal * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
-                        </span>
                       </div>
                     </div>
-                  </div>
 
-                  {/* Warning message when needed */}
-                  {wallet.energy.balance + claimableTokens >= energyCapacity && Math.max(0, energyCapacity - wallet.energy.balance) <= 0 ?
-                    (<div className="text-xs text-red-400 bg-red-400/20 p-2 rounded-md flex items-center leading-snug">
-                      <InfoIcon className="h-4 mr-2 w-12" />
-                      You are at maximum energy storage capacity. You're currently holding {wallet.energy.balance.toFixed(0)} energy. If you try to claim more than your capacity, the excess is burned and lost.
-                    </div>
-                    ) : (
-                      <div className="text-xs text-orange-400 bg-orange-400/20 p-2 rounded-md flex items-center leading-snug">
-                        <InfoIcon className="h-4 mr-2 w-12 text-orange-400" />
-                        Warning: Claiming will exceed your maximum storage capacity. You can hold up to {energyCapacity} energy, so make sure to spend some of your tokens before trying to claim more.
+                    {/* Warning message when needed */}
+                    {wallet.energy.balance + claimableTokens >= energyCapacity && Math.max(0, energyCapacity - wallet.energy.balance) <= 0 ?
+                      (<div className="text-xs text-red-400 bg-red-400/20 p-2 rounded-md flex items-center leading-snug">
+                        <InfoIcon className="h-4 mr-2 w-12" />
+                        You are at maximum energy storage capacity. You're currently holding {wallet.energy.balance.toFixed(0)} energy. If you try to claim more than your capacity, the excess is burned and lost.
                       </div>
-                    )}
+                      ) : (
+                        <div className="text-xs text-orange-400 bg-orange-400/20 p-2 rounded-md flex items-center leading-snug">
+                          <InfoIcon className="h-4 mr-2 w-12 text-orange-400" />
+                          Warning: Claiming will exceed your maximum storage capacity. You can hold up to {energyCapacity} energy, so make sure to spend some of your tokens before trying to claim more.
+                        </div>
+                      )}
 
-                  {/* Footer with claim section */}
-                  <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
-                    {lpTokenAmount > 0 ? (
-                      <>
-                        <div className="flex flex-col">
-                          <span className="text-xs text-muted-foreground">Available to Claim</span>
-                          <div className="flex items-center space-x-2">
-                            <div
-                              key={blocksSinceLastTap}
-                              className={cn("flex items-center", "shake")}
-                            >
-                              <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
-                              <span className="font-medium">
-                                {numeral(claimableTokens).format('0,0.00')}
+                    {/* Footer with claim section */}
+                    <div className="flex items-center justify-between pt-2 mt-2 border-t border-white/10">
+                      {lpTokenAmount > 0 ? (
+                        <>
+                          <div className="flex flex-col">
+                            <span className="text-xs text-muted-foreground">Available to Claim</span>
+                            <div className="flex items-center space-x-2">
+                              <div
+                                key={blocksSinceLastTap}
+                                className={cn("flex items-center", "shake")}
+                              >
+                                <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
+                                <span className="font-medium">
+                                  {numeral(claimableTokens).format('0,0.00')}
+                                </span>
+                              </div>
+                              <span className="text-sm text-muted-foreground">
+                                ≈ ${numeral(claimableTokens * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
                               </span>
                             </div>
-                            <span className="text-sm text-muted-foreground">
-                              ≈ ${numeral(claimableTokens * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
-                            </span>
                           </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className={cn(
-                            "h-8 px-3",
-                            claimableTokens >= energyCapacity && "animate-pulse bg-red-500/20"
-                          )}
-                          onClick={handleClaim}
-                          disabled={claimableTokens <= 0 || Math.max(0, energyCapacity - wallet.energy.balance) <= 0}
-                        >
-                          Claim Energy
-                        </Button>
-                      </>
-                    ) : (
-                      <>
-                        <div className="flex flex-col">
-                          <span className="text-xs text-primary-foreground/70">Estimated Weekly Yield on $100</span>
-                          <div className="flex items-center space-x-2">
-                            <div className="flex items-center">
-                              <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
-                              <span className="font-medium">
-                                {numeral((energyPerDay * 7) * (100 / tvl)).format('0,0.00')}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className={cn(
+                              "h-8 px-3",
+                              claimableTokens >= energyCapacity && "animate-pulse bg-red-500/20"
+                            )}
+                            onClick={handleClaim}
+                            disabled={claimableTokens <= 0 || Math.max(0, energyCapacity - wallet.energy.balance) <= 0}
+                          >
+                            Claim Energy
+                          </Button>
+                        </>
+                      ) : (
+                        <>
+                          <div className="flex flex-col">
+                            <span className="text-xs text-primary-foreground/70">Estimated Weekly Yield on $100</span>
+                            <div className="flex items-center space-x-2">
+                              <div className="flex items-center">
+                                <ZapIcon className="w-3 h-3 mr-1 text-yellow-400" />
+                                <span className="font-medium">
+                                  {numeral((energyPerDay * 7) * (100 / tvl)).format('0,0.00')}
+                                </span>
+                              </div>
+                              <span className="text-sm text-muted-foreground">
+                                ≈ ${numeral((energyPerDay * 7) * (100 / tvl) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
                               </span>
                             </div>
-                            <span className="text-sm text-muted-foreground">
-                              ≈ ${numeral((energyPerDay * 7) * (100 / tvl) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
-                            </span>
                           </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          className="h-8 px-3"
-                          onClick={() => setShowQuickAddModal(true)}
-                        >
-                          <Plus className="w-4 h-4 mr-1" /> Add $100
-                        </Button>
-                      </>
-                    )}
+                          <Button
+                            variant="ghost"
+                            size="sm"
+                            className="h-8 px-3"
+                            onClick={() => setShowQuickAddModal(true)}
+                          >
+                            <Plus className="w-4 h-4 mr-1" /> Add $100
+                          </Button>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               ) : (

@@ -50,7 +50,7 @@ export function VaultDetailView({ vault, prices }: VaultDetailProps) {
         const tvl = token0Value + token1Value;
 
         // Get volume and APY from vault analytics
-        const volume24h = vaultData?.summary?.last24h?.reduce((acc: number, curr: any) => acc + curr.volume, 0) || 0;
+        const volume24h = vaultData?.summary?.last24h?.reduce((acc: number, curr: any) => acc + Number(curr.volume), 0) || 0;
         const apy = vaultData?.generalInfo?.lpRebateAPY || 0;
 
         // Count unique LP holders from events
@@ -161,19 +161,19 @@ export function VaultDetailView({ vault, prices }: VaultDetailProps) {
                                 <StatCard
                                     title="Total Value Locked"
                                     value={`$${stats.tvl.toLocaleString()}`}
-                                    change="+5.2%"
+                                    // change="+5.2%"
                                     icon={<Wallet className="w-5 h-5" />}
                                 />
                                 <StatCard
                                     title="24h Volume"
                                     value={`$${stats.volume24h.toLocaleString()}`}
-                                    change="+12.3%"
+                                    // change="+12.3%"
                                     icon={<ArrowUpDown className="w-5 h-5" />}
                                 />
                                 <StatCard
                                     title="APY"
                                     value={`${stats.apy.toFixed(2)}%`}
-                                    change="+2.1%"
+                                    // change="+2.1%"
                                     icon={<LineChart className="w-5 h-5" />}
                                 />
                             </div>
@@ -209,7 +209,7 @@ export function VaultDetailView({ vault, prices }: VaultDetailProps) {
     );
 }
 
-function StatCard({ title, value, change, icon, highlight }: any) {
+function StatCard({ title, value, change = '', icon, highlight }: any) {
     return (
         <Card className={`relative overflow-hidden ${highlight ? 'bg-[var(--sidebar)] border-primary/20' : 'bg-[var(--sidebar)]'
             }`}>
