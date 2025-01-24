@@ -867,7 +867,7 @@ const DexterityInterface = ({ data }: any) => {
                     <div className="text-2xl font-bold text-white/95">
                       ${numeral(totalTVL).format('0,0.00a')}
                     </div>
-                    <div className="text-sm text-muted-foreground">Total Value Locked</div>
+                    <div className="text-sm text-muted-foreground">Tradable TVL</div>
                   </div>
                 </div>
               </div>
