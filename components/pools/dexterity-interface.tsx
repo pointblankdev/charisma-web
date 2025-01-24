@@ -733,11 +733,14 @@ const DexterityInterface = ({ data }: any) => {
   };
 
   let totalTVL = 0;
+  let total24hVolume = 0;
   for (const vault of data.vaults) {
     const vaultTVL = calculateTVL(vault, data.prices);
     if (vaultTVL) {
       totalTVL += vaultTVL;
     }
+    const vault24hVolume = vaultAnalytics[vault.contractId]?.summary?.last24h?.reduce((acc: number, curr: any) => acc + curr.volume, 0) || 0;
+    total24hVolume += vault24hVolume;
   }
 
   useEffect(() => {
@@ -770,9 +773,9 @@ const DexterityInterface = ({ data }: any) => {
       <div className="mt-0">
         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
           <div className="px-4 mb-4 sm:px-0">
-            <div className="flex items-baseline justify-between">
+            <div className="flex items-baseline justify-between sm:flex-row flex-col gap-4">
               <div>
-                <div className='flex items-center space-x-2'>
+                <div className='flex items-center space-x-2 w-full min-w-96 sm:min-w-[32rem]'>
                   <TooltipProvider>
                     <Tooltip>
                       <TooltipTrigger>
@@ -782,7 +785,7 @@ const DexterityInterface = ({ data }: any) => {
                       </TooltipTrigger>
                       <TooltipContent
                         side="right"
-                        className="max-w-lg p-4 text-white bg-gray-800 border-none rounded-lg shadow-lg translate-y-24"
+                        className="max-w-lg p-4 text-white bg-gray-800 border-none rounded-lg shadow-lg translate-y-12"
                       >
                         <div className="space-y-4 leading-snug">
                           <div className="flex items-center space-x-2">
@@ -833,15 +836,40 @@ const DexterityInterface = ({ data }: any) => {
                     </Button>
                   </Link>
                 </div>
-                <div className="flex items-center text-sm text-muted-foreground">
+                <div className="flex mt-1 items-center text-xs sm:text-sm text-muted-foreground">
                   Liquidity vaults are a more secure and decentralized form of liquidity pools.
                 </div>
               </div >
-              <div className="text-right">
-                <div className="text-2xl font-bold text-white/95">
-                  ${numeral(totalTVL).format('0,0.00a')}
+              <div className="text-right space-x-4 flex w-full justify-end">
+                <div className={cn(
+                  "relative overflow-hidden bg-[var(--sidebar)] rounded-lg px-4 py-3 border-b border-accent/20 shadow-[0_2px_40px_-4px] shadow-accent/10",
+                  total24hVolume === 0 && "animate-pulse"
+                )}>
+                  <div className="absolute inset-0 bg-gradient-to-b from-background/10 to-background/0" />
+                  <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_var(--accent)_0%,_transparent_50%)] opacity-20" />
+                  <div className="relative">
+                    <div className="text-2xl font-bold text-white/95">
+                      {total24hVolume > 0 ? (
+                        `$${numeral(total24hVolume).format('0,0.00a')}`
+                      ) : (
+                        <div className="h-7 w-20 bg-muted/10 rounded animate-pulse" />
+                      )}
+                    </div>
+                    <div className="text-sm text-muted-foreground flex items-center justify-end space-x-1">
+                      <span>24h Volume</span>
+                    </div>
+                  </div>
                 </div>
-                <div className="text-sm text-muted-foreground">Total Value Locked</div>
+                <div className="relative overflow-hidden bg-[var(--sidebar)] rounded-lg px-4 py-3 border-b border-accent/20 shadow-[0_2px_40px_-4px] shadow-accent/10">
+                  <div className="absolute inset-0 bg-gradient-to-b from-background/10 to-background/0" />
+                  <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_var(--accent)_0%,_transparent_50%)] opacity-20" />
+                  <div className="relative">
+                    <div className="text-2xl font-bold text-white/95">
+                      ${numeral(totalTVL).format('0,0.00a')}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Total Value Locked</div>
+                  </div>
+                </div>
               </div>
             </div >
           </div >
