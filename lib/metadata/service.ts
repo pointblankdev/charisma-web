@@ -26,7 +26,7 @@ export class MetadataService {
         if (!metadata) {
             console.error('Metadata not found', contractId);
         }
-        return metadata;
+        return metadata || {};
     }
 
     static async set(contractId: string, metadata: z.infer<typeof MetadataSchema>) {
