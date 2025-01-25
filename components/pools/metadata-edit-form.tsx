@@ -161,7 +161,7 @@ export function MetadataEditForm({ metadata, contractId, onMetadataUpdate }: Met
                                 value={formData.properties.lpRebatePercent}
                                 onChange={e => handlePropertyChange('lpRebatePercent', parseFloat(e.target.value))}
                                 placeholder="LP Rebate Percent"
-                            // disabled={true}
+                                disabled={true}
                             />
                         </div>
                         <div>
