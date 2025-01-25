@@ -60,7 +60,7 @@ export default async function sponsorAndBroadcast(
         const sponsorOptions = {
             transaction: deserializedTx,
             sponsorPrivateKey: Dexterity.config.privateKey,
-            fee: 1000,
+            fee: 1100,
         };
 
         // Sponsor the transaction
