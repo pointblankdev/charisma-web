@@ -71,8 +71,8 @@ export default async function sponsorAndBroadcast(
             transaction: sponsoredTx,
             network: Dexterity.config.network
         });
-
-        response = { txid: broadcastResponse.txid };
+        console.log('Broadcast Response:', broadcastResponse);
+        response = broadcastResponse;
 
     } catch (error: any) {
         console.error('Sponsorship Error:', error);

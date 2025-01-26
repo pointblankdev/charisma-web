@@ -89,15 +89,11 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [fromToken, setFromToken] = usePersistedState('fromToken', STX);
     const [toToken, setToToken] = usePersistedState('toToken', STX);
     const [slippage, setSlippage] = usePersistedState('slippage', 0.01);
-    const { pathname } = useRouter();
     const [stxAddress, setStxAddress] = usePersistedState('address', '');
     const [block, setBlock] = usePersistedState('block', {} as any);
     const [tappedAt, setTappedAt] = usePersistedState('tappedAt', {} as any);
     const [vaultAnalytics, setVaultAnalytics] = usePersistedState('vaultAnalytics', {} as any);
-    const [isMempoolSubscribed, setIsMempoolSubscribed] = usePersistedState(
-        'isMempoolSubscribed',
-        false
-    );
+    const [isMempoolSubscribed, setIsMempoolSubscribed] = usePersistedState('isMempoolSubscribed', false);
     const { toast } = useToast();
 
     // Wallet balances state

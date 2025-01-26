@@ -267,17 +267,18 @@ export const SwapInterface = ({
   const [lastQuote, setLastQuote] = useState<any>(null);
   const [disablePostConditions, setDisablePostConditions] = useState(false);
   const [showPostConditionsModal, setShowPostConditionsModal] = useState(false);
+  const [isSponsored, setIsSponsored] = useState(false);
 
   useEffect(() => {
     if (maxHops && pools.length > 0 && stxAddress) {
-      Dexterity.configure({ maxHops, sponsored: true, sponsor: `${HOST}/api/v0/sponsor` }).catch(console.error);
+      Dexterity.configure({ maxHops, sponsored: isSponsored, sponsor: `${HOST}/api/v0/sponsor` }).catch(console.error);
       const vaults = pools.map(pool => new Vault(pool));
       Dexterity.router.loadVaults(vaults);
       console.log('Router initialized:', Dexterity.router.getGraphStats());
       console.log('Vaults:', Dexterity.getVaults());
       handleEstimateAmount(fromAmount);
     }
-  }, [pools, stxAddress, maxHops]);
+  }, [pools, stxAddress, maxHops, isSponsored]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
   const toDropdownRef = useRef<HTMLDivElement>(null);
@@ -399,8 +400,8 @@ export const SwapInterface = ({
         hops.push({ ...hop, vault, opcode });
       }
       lastQuote.route.hops = hops;
-      Dexterity.config.sponsored = true;
-      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
+      Dexterity.config.sponsored = isSponsored;
+      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions, sponsored: isSponsored });
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {
@@ -431,7 +432,7 @@ export const SwapInterface = ({
   return (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4 mt-0">
       <div className="flex flex-wrap gap-2 mb-4 justify-around">
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[5.5rem] border-[var(--accents-7)]">
+        {/* <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[5.5rem] border-[var(--accents-7)]">
           <button
             className="flex items-center gap-2 text-white text-sm"
             onClick={() => setShowGraph(!showGraph)}
@@ -439,10 +440,10 @@ export const SwapInterface = ({
             <Network className="w-4 h-4" />
             <span className="text-sm text-gray-400">{showGraph ? 'Hide' : 'Show'}</span>
           </button>
-        </div>
+        </div> */}
 
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
-          <span className="text-sm text-gray-400">Search Depth:</span>
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
+          <span className="text-sm text-gray-400">Depth:</span>
           <div className="flex items-center">
             <input
               type="text"
@@ -487,6 +488,16 @@ export const SwapInterface = ({
             onClick={handlePostConditionsToggle}
           >
             {disablePostConditions ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
+          </button>
+        </div>
+
+        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
+          <span className="text-sm text-gray-400">Sponsored:</span>
+          <button
+            className={`px-2 py-1 text-sm rounded ${!isSponsored ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'}`}
+            onClick={() => setIsSponsored(!isSponsored)}
+          >
+            {!isSponsored ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
           </button>
         </div>
       </div>
