@@ -796,7 +796,7 @@ const DexterityInterface = ({ data }: any) => {
       <div className="mt-0">
         <div className="relative sm:px-6 pb-4 pt-5 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
           <div className="px-4 mb-4 sm:px-0">
-            <div className="flex items-baseline justify-between sm:flex-row flex-col gap-4">
+            <div className="flex justify-between sm:flex-row flex-col gap-4 items-start">
               <div>
                 <div className='flex items-center space-x-2 w-full min-w-96 sm:min-w-[32rem]'>
                   <TooltipProvider>
