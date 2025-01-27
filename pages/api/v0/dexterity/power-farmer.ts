@@ -30,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             functionArgs: [],
             postConditionMode: PostConditionMode.Allow,
             postConditions: [],
-            fee: 1000,
+            fee: 1100,
         });
 
         console.log('Farmer transaction created:', tx)
