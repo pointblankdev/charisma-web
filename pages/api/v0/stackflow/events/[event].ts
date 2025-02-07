@@ -32,6 +32,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     console.log('Event:', event);
     console.log('Body:', req.body);
-
     return handlers[event as keyof typeof handlers](req, res);
 }
