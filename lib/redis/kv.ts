@@ -1,4 +1,4 @@
-import { getDecimals, getSymbol, getTokenMetadata } from '@lib/hiro/stacks-api';
+import { getDecimals, getSymbol } from '@lib/hiro/stacks-api';
 import { kv } from '@vercel/kv';
 import _ from 'lodash';
 

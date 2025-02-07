@@ -1,10 +1,10 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { ChevronDown, ArrowUpDown, Coins, Network, TrendingUp, X, Check } from 'lucide-react';
+import { ChevronDown, ArrowUpDown, Coins, TrendingUp, X, Check } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import dynamic from 'next/dynamic';
-import { Dexterity, LPToken, Opcode, Route, Token } from 'dexterity-sdk';
+import { Dexterity, LPToken, Opcode, Token } from 'dexterity-sdk';
 import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { SwapGraphVisualizer } from './swap-graph-visualizer';
 import _ from 'lodash';
@@ -43,7 +43,7 @@ interface TokenSelectProps {
   onClick: () => void;
 }
 
-const TokenSelect = ({ token, isFrom, onClick }: TokenSelectProps) => (
+const TokenSelect = ({ token, onClick }: TokenSelectProps) => (
   <button
     className="flex items-center px-3 py-1 border rounded-full shadow-lg border-primary/30 shadow-primary/10"
     onClick={onClick}
@@ -71,7 +71,7 @@ interface TokenListProps {
   prices: any;
 }
 
-const TokenList = ({ tokens, onSelect, fromToken, pools, prices }: TokenListProps) => {
+const TokenList = ({ tokens, onSelect, fromToken, prices }: TokenListProps) => {
   const { getBalance } = useGlobal();
 
   const formatTokenPrice = (price: number) => {
@@ -401,7 +401,7 @@ export const SwapInterface = ({
       }
       lastQuote.route.hops = hops;
       Dexterity.config.sponsored = isSponsored;
-      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions, sponsored: isSponsored });
+      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
     } catch (error) {
       console.error('Swap failed:', error);
     } finally {
