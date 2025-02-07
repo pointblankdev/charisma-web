@@ -57,7 +57,7 @@ const items = [
         icon: Coins,
     },
     {
-        title: "Stackflow",
+        title: "Stackflow (Preview)",
         url: "/stackflow",
         icon: Network,
     },
