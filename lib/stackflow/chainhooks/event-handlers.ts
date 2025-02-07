@@ -71,6 +71,7 @@ async function processEvent(
                             continue;
                         }
 
+                        console.log('Chainhooks Event:', event.data.value);
                         await processor(event.data.value);
                     }
                 }
