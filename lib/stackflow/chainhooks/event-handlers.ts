@@ -71,6 +71,7 @@ async function handleFundChannel(data: EventData) {
         // Add to principal's channel list
         await kv.sadd(`channels:list:${principal1}`, channelKey);
         await kv.sadd(`channels:list:${principal2}`, channelKey);
+        console.log('Channel created:', channelKey);
     }
 }
 
