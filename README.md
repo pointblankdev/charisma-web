@@ -1,35 +1,21 @@
-# Charisma Web Client
-
+---
+description: >-
+  Welcome to the Liquidity Pools & Tokens API documentation. This API powers our
+  decentralized finance (DeFi) data layer on the Stacks blockchain, aggregating
+  detailed information about liquidity vaults
 ---
 
-## Built With
+# Introduction
 
-- Framework: [Next.js](https://nextjs.org/)
-  - [CSS Modules](https://nextjs.org/docs/basic-features/built-in-css-support)
-  - [TypeScript](https://nextjs.org/docs/basic-features/typescript)
-- CMS: [Multiple Options](https://github.com/vercel/virtual-event-starter-kit#cms)
-- Deployment: [Vercel](https://vercel.com/)
+### What This API Does
 
-## Running Locally
+* **Aggregates Liquidity Pool Data:**\
+  Retrieve comprehensive details about liquidity vaults—including reserves, fees, supply, and more—across various trading pairs.
+* **Provides Token Metadata:**\
+  Access up-to-date metadata for tokens used across the ecosystem. This includes names, symbols, decimals, images, and descriptions.
+* **Optimized for Performance:**\
+  Utilizes the Dexterity SDK with parallel requests (up to 10) and API key rotation to ensure fast and reliable data fetching.
 
-First, to set local environment variables you can either use Vercel CLI [vercel env pull](https://vercel.com/docs/cli#commands/env) or just manually copy paste them.
+### Who Should Use This API
 
-```bash
-
-cp .env.local.example .env.local
-```
-
-Then install the package and run the development server:
-
-```bash
-yarn install
-yarn dev
-```
-
-Open [http://localhost:3000](http://localhost:3000/) to see the landing page.
-
-### **Constants**
-
-`lib/constants.ts` contains a list of variables you should customize.
-
----
+This documentation is intended for developers integrating DeFi data into DEXs, portfolio trackers, analytics dashboards, or any other application that benefits from real-time liquidity and token insights on the Stacks blockchain.
