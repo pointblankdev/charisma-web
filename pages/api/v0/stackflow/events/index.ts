@@ -1,5 +1,4 @@
 import { verifySecret } from '@lib/stackflow/auth';
-import { createEventHandler } from '@lib/stackflow/chainhooks/authorizer';
 import {
     handleFundChannel,
     handleCloseChannel,
@@ -27,10 +26,12 @@ const handlers = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     if (!verifySecret(req.headers)) {
+        console.error('Forbidden: Invalid authorization');
         return res.status(403).json({ error: 'Forbidden: Invalid authorization' });
     }
 
     if (req.method !== 'POST') {
+        console.error('Method not allowed');
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
@@ -63,9 +64,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
                         console.log('Chainhooks Event:', event.data.value);
                         await handlers[event.data.value.event as keyof typeof handlers](event.data.value);
-                        return res.status(200).json({ message: 'Event processed successfully' });
                     }
                 }
+                return res.status(200).json({ message: 'Events processed successfully' });
             }
         }
     } catch (error) {

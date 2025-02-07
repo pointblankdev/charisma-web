@@ -1,26 +1,10 @@
 // lib/hooks/events.ts
 import { kv } from '@vercel/kv';
-import {
-    Pc,
-    Cl,
-    makeContractCall,
-    broadcastTransaction
-} from '@stacks/transactions';
+import { Pc, Cl, makeContractCall, broadcastTransaction } from '@stacks/transactions';
 import { CONFIG, CHANNEL_STATE, ACTION } from '@lib/stackflow/config';
 import type { Channel, Signature } from '@lib/stackflow/types';
 import { getChannelKey, getSignatureKey } from '@lib/stackflow/utils';
 import { network } from '@components/stacks-session/connect';
-
-const EVENTS = {
-    FUND_CHANNEL: 'fund-channel',
-    CLOSE_CHANNEL: 'close-channel',
-    FORCE_CANCEL: 'force-cancel',
-    FORCE_CLOSE: 'force-close',
-    FINALIZE: 'finalize',
-    DEPOSIT: 'deposit',
-    WITHDRAW: 'withdraw',
-    DISPUTE_CLOSURE: 'dispute-closure',
-} as const;
 
 type EventData = {
     channel: {
@@ -38,50 +22,6 @@ type EventData = {
     'my-signature'?: string;
     'their-signature'?: string;
 };
-
-async function processEvent(
-    eventType: keyof typeof EVENTS,
-    processor: (data: EventData) => Promise<void>,
-    apply: any[]
-) {
-    if (!apply || !Array.isArray(apply)) {
-        throw new Error('Invalid payload structure');
-    }
-
-    try {
-        for (const block of apply) {
-            const transactions = block.transactions || [];
-            for (const tx of transactions) {
-                const events = tx.metadata?.receipt?.events || [];
-                for (const event of events) {
-                    if (
-                        event.type === 'SmartContractEvent' &&
-                        event.data?.value?.event === eventType
-                    ) {
-                        const {
-                            'channel-key': {
-                                'principal-1': principal1,
-                                'principal-2': principal2,
-                            },
-                        } = event.data.value;
-
-                        // Skip if not involving owner
-                        if (principal1 !== CONFIG.OWNER && principal2 !== CONFIG.OWNER) {
-                            console.info('Ignoring event not involving owner');
-                            continue;
-                        }
-
-                        console.log('Chainhooks Event:', event.data.value);
-                        await processor(event.data.value);
-                    }
-                }
-            }
-        }
-    } catch (error) {
-        console.error(`Error processing ${eventType} event:`, error);
-        throw error;
-    }
-}
 
 async function handleFundChannel(data: EventData) {
     const {
@@ -571,8 +511,6 @@ async function handleDisputeClosure(data: EventData) {
 
 // Export all handlers
 export {
-    EVENTS,
-    processEvent,
     handleFundChannel,
     handleCloseChannel,
     handleForceCancel,
