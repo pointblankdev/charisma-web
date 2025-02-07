@@ -9,7 +9,6 @@ import { SITE_URL } from '@lib/constants';
 import { hexToCV } from '@stacks/transactions';
 import { SidebarInset, SidebarProvider } from '@components/ui/sidebar';
 import { AppSidebar } from '@components/sidebar/app-sidebar';
-import { useRouter } from 'next/router';
 import styles from '../../components/layout/layout.module.css';
 import { cn } from '@lib/utils';
 import _ from 'lodash';
