@@ -1,4 +1,4 @@
-import { BookOpen, ChartLine, Coins, ExternalLink, Github, MessageCircle, TrendingUp } from "lucide-react"
+import { BookOpen, ChartLine, Coins, ExternalLink, Github, MessageCircle, Network, TrendingUp } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -55,6 +55,11 @@ const items = [
         title: "Tokens",
         url: "/tokens",
         icon: Coins,
+    },
+    {
+        title: "Stackflow",
+        url: "/stackflow",
+        icon: Network,
     },
 ]
 
