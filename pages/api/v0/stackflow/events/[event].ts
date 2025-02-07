@@ -10,6 +10,7 @@ import {
     handleWithdraw,
     handleDisputeClosure
 } from '@lib/stackflow/chainhooks/event-handlers';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 const handlers = {
     'fund-channel': createEventHandler('FUND_CHANNEL', handleFundChannel),
@@ -22,15 +23,12 @@ const handlers = {
     'dispute-closure': createEventHandler('DISPUTE_CLOSURE', handleDisputeClosure),
 };
 
-export default async function handler(req: NextRequest) {
-    const event = req.nextUrl.pathname.split('/').pop();
+export default async function handler(req: NextApiRequest, res: NextApiResponse) {
+    const event = req.query.event;
 
-    if (!event || !(event in handlers)) {
-        return new Response(
-            JSON.stringify({ error: 'Invalid event type' }),
-            { status: 400, headers: { 'Content-Type': 'application/json' } }
-        );
+    if (!event) {
+        return res.status(400).json({ error: 'Invalid event type' });
     }
 
-    return handlers[event as keyof typeof handlers](req);
+    return handlers[event as keyof typeof handlers](req, res);
 }
