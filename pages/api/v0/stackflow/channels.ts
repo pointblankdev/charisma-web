@@ -36,7 +36,7 @@ export default async function handler(
         // Fetch channel details in parallel
         const channels = await Promise.all(
             pageIds.map(async (id) => {
-                const channel = await kv.get<Channel>(`channels:${id}`);
+                const channel = await kv.get<Channel>(id);
                 if (!channel) return null;
 
                 // Add extra metadata

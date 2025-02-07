@@ -32,6 +32,9 @@ import { Cl, PostConditionMode, Pc } from "@stacks/transactions";
 const ProtocolDashboard = () => {
     const [isOpenChannel, setIsOpenChannel] = useState(false);
     const [isCloseChannel, setIsCloseChannel] = useState(false);
+    const [isTransferModal, setIsTransferModal] = useState(false);
+    const [isDepositModal, setIsDepositModal] = useState(false);
+    const [isWithdrawModal, setIsWithdrawModal] = useState(false);
     const [channels, setChannels] = useState([]);
     const [selectedChannel, setSelectedChannel] = useState(null);
     const [amount, setAmount] = useState('');
@@ -109,16 +112,27 @@ const ProtocolDashboard = () => {
         });
     };
 
-    const handleAction = (channel: any, action: any) => {
+    const handleAction = (channel: any, action: string) => {
         setSelectedChannel(channel);
         openModal(action);
     };
 
-    const openModal = (type: any) => {
-        if (type === 'close') {
-            setIsCloseChannel(true);
-        } else {
-            setIsOpenChannel(true);
+    const openModal = (type: string) => {
+        switch (type) {
+            case 'close':
+                setIsCloseChannel(true);
+                break;
+            case 'transfer':
+                setIsTransferModal(true);
+                break;
+            case 'deposit':
+                setIsDepositModal(true);
+                break;
+            case 'withdraw':
+                setIsWithdrawModal(true);
+                break;
+            default:
+                setIsOpenChannel(true);
         }
     };
 
@@ -129,7 +143,7 @@ const ProtocolDashboard = () => {
     };
 
     return (
-        <div className="max-w-screen-xl px-4 py-8 mx-auto">
+        <div className="container px-4 py-8 mx-auto">
             <div className="mb-8 text-center">
                 <h1 className="mb-4 text-3xl font-bold text-white">Payment Channel Dashboard</h1>
                 <p className="text-gray-400">Manage your payment channels and transactions</p>
@@ -284,6 +298,69 @@ const ProtocolDashboard = () => {
                             // Handle close channel logic
                             setIsCloseChannel(false);
                         }}>Close Channel</AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Transfer Modal */}
+            <AlertDialog open={isTransferModal} onOpenChange={setIsTransferModal}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Transfer Funds</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Transfer funds from this channel.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => {
+                            // Implement the transfer logic here.
+                            setIsTransferModal(false);
+                        }}>
+                            Transfer
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Deposit Modal */}
+            <AlertDialog open={isDepositModal} onOpenChange={setIsDepositModal}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Deposit Funds</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Deposit funds into this channel.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => {
+                            // Implement deposit logic here.
+                            setIsDepositModal(false);
+                        }}>
+                            Deposit
+                        </AlertDialogAction>
+                    </AlertDialogFooter>
+                </AlertDialogContent>
+            </AlertDialog>
+
+            {/* Withdraw Modal */}
+            <AlertDialog open={isWithdrawModal} onOpenChange={setIsWithdrawModal}>
+                <AlertDialogContent>
+                    <AlertDialogHeader>
+                        <AlertDialogTitle>Withdraw Funds</AlertDialogTitle>
+                        <AlertDialogDescription>
+                            Withdraw funds from this channel.
+                        </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
+                        <AlertDialogAction onClick={() => {
+                            // Implement withdrawal logic here.
+                            setIsWithdrawModal(false);
+                        }}>
+                            Withdraw
+                        </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
