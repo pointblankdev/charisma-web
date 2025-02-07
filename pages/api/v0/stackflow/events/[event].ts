@@ -1,0 +1,36 @@
+import { NextRequest } from 'next/server';
+import { createEventHandler } from '@lib/stackflow/chainhooks/authorizer';
+import {
+    handleFundChannel,
+    handleCloseChannel,
+    handleForceCancel,
+    handleForceClose,
+    handleFinalize,
+    handleDeposit,
+    handleWithdraw,
+    handleDisputeClosure
+} from '@lib/stackflow/chainhooks/event-handlers';
+
+const handlers = {
+    'fund-channel': createEventHandler('FUND_CHANNEL', handleFundChannel),
+    'close-channel': createEventHandler('CLOSE_CHANNEL', handleCloseChannel),
+    'force-cancel': createEventHandler('FORCE_CANCEL', handleForceCancel),
+    'force-close': createEventHandler('FORCE_CLOSE', handleForceClose),
+    'finalize': createEventHandler('FINALIZE', handleFinalize),
+    'deposit': createEventHandler('DEPOSIT', handleDeposit),
+    'withdraw': createEventHandler('WITHDRAW', handleWithdraw),
+    'dispute-closure': createEventHandler('DISPUTE_CLOSURE', handleDisputeClosure),
+};
+
+export default async function handler(req: NextRequest) {
+    const event = req.nextUrl.pathname.split('/').pop();
+
+    if (!event || !(event in handlers)) {
+        return new Response(
+            JSON.stringify({ error: 'Invalid event type' }),
+            { status: 400, headers: { 'Content-Type': 'application/json' } }
+        );
+    }
+
+    return handlers[event as keyof typeof handlers](req);
+}
