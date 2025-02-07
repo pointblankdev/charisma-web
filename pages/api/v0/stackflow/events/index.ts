@@ -1,3 +1,4 @@
+import { verifySecret } from '@lib/stackflow/auth';
 import { createEventHandler } from '@lib/stackflow/chainhooks/authorizer';
 import {
     handleFundChannel,
@@ -24,15 +25,22 @@ const handlers = {
 };
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-    const apply = req.body.apply[0];
 
-    if (!apply || !Array.isArray(apply)) {
+    if (!verifySecret(req.headers)) {
+        return res.status(403).json({ error: 'Forbidden: Invalid authorization' });
+    }
+
+    if (req.method !== 'POST') {
+        return res.status(405).json({ error: 'Method not allowed' });
+    }
+
+    if (!req.body.apply || !Array.isArray(req.body.apply)) {
         console.error('Invalid payload structure');
         return res.status(400).json({ message: 'Invalid payload structure' });
     }
 
     try {
-        for (const block of apply) {
+        for (const block of req.body.apply) {
             const transactions = block.transactions || [];
             for (const tx of transactions) {
                 const events = tx.metadata?.receipt?.events || [];
