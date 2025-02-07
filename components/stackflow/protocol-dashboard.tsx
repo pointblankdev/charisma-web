@@ -29,6 +29,9 @@ import {
 import { STACKS_MAINNET } from "@stacks/network";
 import { Cl, PostConditionMode, Pc } from "@stacks/transactions";
 
+// Import Tooltip components (adjust the path if necessary)
+import { Tooltip, TooltipTrigger, TooltipContent } from '@components/ui/tooltip';
+
 const ProtocolDashboard = () => {
     const [isOpenChannel, setIsOpenChannel] = useState(false);
     const [isCloseChannel, setIsCloseChannel] = useState(false);
@@ -139,7 +142,7 @@ const ProtocolDashboard = () => {
     const getTotalLocked = () => {
         return channels.reduce((sum: number, channel: any) =>
             sum + parseInt(channel.balance_1) + parseInt(channel.balance_2), 0
-        );
+        ) / 1000000;
     };
 
     return (
@@ -193,13 +196,28 @@ const ProtocolDashboard = () => {
                 <CardContent className="p-6">
                     <div className="flex justify-between items-center mb-4">
                         <h2 className="text-xl font-bold">Active Channels</h2>
-                        <Button
-                            className="p-2"
-                            onClick={() => setIsOpenChannel(true)}
-                        >
-                            <Plus className="w-4 h-4 mr-2" />
-                            New Channel
-                        </Button>
+                        {/* Wrapped the New Channel button with a tooltip */}
+                        <Tooltip>
+                            <TooltipTrigger asChild>
+                                <span className="inline-block">
+                                    <Button
+                                        className="p-2"
+                                        onClick={() => setIsOpenChannel(true)}
+                                        disabled={channels.length > 0}
+                                    >
+                                        <Plus className="w-4 h-4 mr-2" />
+                                        New Channel
+                                    </Button>
+                                </span>
+                            </TooltipTrigger>
+                            <TooltipContent>
+                                <p>
+                                    {channels.length > 0
+                                        ? "You already have an open channel"
+                                        : "Click to open a new channel"}
+                                </p>
+                            </TooltipContent>
+                        </Tooltip>
                     </div>
                     <div className="space-y-4">
                         {channels.map((channel: any) => (
@@ -208,38 +226,80 @@ const ProtocolDashboard = () => {
                                     <Wallet className="w-6 h-6 mr-4 text-primary" />
                                     <div>
                                         <p className="font-semibold">Channel with {channel.principal_2}</p>
-                                        <p className="text-sm text-gray-400">Balance: {channel.balance_1} / {channel.balance_2} STX</p>
+                                        <p className="text-sm text-gray-400">
+                                            Balance: {channel.balance_1 / 1000000} / {channel.balance_2 / 1000000} STX
+                                        </p>
                                     </div>
                                 </div>
                                 <div className="flex space-x-2">
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => handleAction(channel, 'transfer')}
-                                    >
-                                        <Send className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => handleAction(channel, 'deposit')}
-                                    >
-                                        <Download className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="outline"
-                                        onClick={() => handleAction(channel, 'withdraw')}
-                                    >
-                                        <Upload className="w-4 h-4" />
-                                    </Button>
-                                    <Button
-                                        size="sm"
-                                        variant="destructive"
-                                        onClick={() => handleAction(channel, 'close')}
-                                    >
-                                        <Unlock className="w-4 h-4" />
-                                    </Button>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="inline-block">
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => handleAction(channel, 'transfer')}
+                                                    disabled={true}
+                                                >
+                                                    <Send className="w-4 h-4" />
+                                                </Button>
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Transfer funds from this channel</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="inline-block">
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => handleAction(channel, 'deposit')}
+                                                    disabled={true}
+                                                >
+                                                    <Download className="w-4 h-4" />
+                                                </Button>
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Deposit funds into this channel</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="inline-block">
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => handleAction(channel, 'withdraw')}
+                                                    disabled={true}
+                                                >
+                                                    <Upload className="w-4 h-4" />
+                                                </Button>
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Withdraw funds from this channel</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                    <Tooltip>
+                                        <TooltipTrigger asChild>
+                                            <span className="inline-block">
+                                                <Button
+                                                    size="sm"
+                                                    variant="destructive"
+                                                    onClick={() => handleAction(channel, 'close')}
+                                                    disabled={true}
+                                                >
+                                                    <Unlock className="w-4 h-4" />
+                                                </Button>
+                                            </span>
+                                        </TooltipTrigger>
+                                        <TooltipContent>
+                                            <p>Close this channel (coming soon)</p>
+                                        </TooltipContent>
+                                    </Tooltip>
                                 </div>
                             </div>
                         ))}
