@@ -25,7 +25,11 @@ const handlers = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
     for (const transaction of req.body.apply[0].transactions) {
-        console.log('Transaction:', transaction.metadata.receipt.events);
+        for (const event of transaction.metadata.receipt.events) {
+            if (event.type === 'SmartContractEvent') {
+                console.log('Event:', event.data.value);
+            }
+        }
     }
 
     return res.status(200).json({ message: 'Event processed successfully' });
