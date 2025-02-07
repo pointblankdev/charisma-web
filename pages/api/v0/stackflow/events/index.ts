@@ -24,7 +24,10 @@ const handlers = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
 
-    console.log('Body:', req.body.apply[0].transactions[0].metadata);
+    for (const transaction of req.body.apply[0].transactions) {
+        console.log('Transaction:', transaction.metadata.receipt.events);
+    }
+
     return res.status(200).json({ message: 'Event processed successfully' });
     // return handlers[event as keyof typeof handlers](req, res);
 }
