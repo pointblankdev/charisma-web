@@ -1,8 +1,7 @@
 ---
 description: >-
   This endpoint provides detailed information on liquidity vaults (pools) and
-  tokens. It’s built using the Dexterity SDK and applies a blacklist to filter
-  out unwanted contracts.
+  tokens.
 ---
 
 # Liquidity Pools & Tokens API
@@ -10,7 +9,7 @@ description: >-
 ### Endpoint Details
 
 * **URL:**\
-  `GET https://charisma.rocks/api/v0/dexterity/vaults`
+  `GET https://charisma.rocks/api/v0/vaults`
 * **Method:**\
   `GET`
 * **Headers:**\
@@ -88,7 +87,7 @@ Each token object includes:
 ### Example Request
 
 ```bash
-curl https://charisma.rocks/api/v0/dexterity/vaults
+curl https://charisma.rocks/api/v0/vaults
 ```
 
 ***
