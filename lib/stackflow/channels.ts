@@ -109,7 +109,7 @@ async function updateChannel(
     channelId: string,
     balance1: string,
     balance2: string,
-    nonce: string,
+    nonce: number,
     expiresAt: string | null,
     state: string
 ) {

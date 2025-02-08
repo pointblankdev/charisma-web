@@ -1,4 +1,4 @@
-import { verifySecret } from '@lib/stackflow/auth';
+import { verifySecret } from '@lib/stackflow/chainhooks/auth';
 import {
     handleFundChannel,
     handleCloseChannel,

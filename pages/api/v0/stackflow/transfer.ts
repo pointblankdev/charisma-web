@@ -56,11 +56,8 @@ export default async function handler(
         }
 
         // Verify signature
-        const signatureBuffer = new Uint8Array(Buffer.from(signature, 'hex'));
-        const hashedSecretBuffer = hashedSecret ? new Uint8Array(Buffer.from(hashedSecret, 'hex')) : null;
-
         const isValid = await verifySignature(
-            signatureBuffer,
+            signature,
             sender,
             token,
             CONFIG.OWNER!,
@@ -70,7 +67,7 @@ export default async function handler(
             nonce,
             ACTION.TRANSFER,
             sender,
-            hashedSecretBuffer,
+            hashedSecret,
             getNetwork()
         );
 
@@ -89,7 +86,7 @@ export default async function handler(
             nonce,
             ACTION.TRANSFER,
             sender,
-            hashedSecretBuffer,
+            hashedSecret,
             getNetwork()
         );
 
@@ -116,9 +113,9 @@ export default async function handler(
                 nonce: nonce,
                 action: ACTION.TRANSFER,
                 sender: sender,
-                hashedSecret: hashedSecret,
-                ownerSignature: ownerSignature.toString('hex'),
-                signature: signature.toString('hex')
+                hashedSecret,
+                ownerSignature,
+                signature
             });
         } else {
             if (hashedSecret) {
@@ -133,14 +130,14 @@ export default async function handler(
                 balance_2: balance2,
                 nonce: nonce,
                 action: ACTION.TRANSFER,
-                sender: sender,
-                ownerSignature: ownerSignature.toString('hex'),
-                signature: signature.toString('hex')
+                sender,
+                ownerSignature,
+                signature
             });
         }
 
         return res.status(200).json({
-            signature: ownerSignature.toString('hex')
+            signature: ownerSignature
         });
 
     } catch (error) {

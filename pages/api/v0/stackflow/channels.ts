@@ -46,7 +46,7 @@ export default async function handler(
                         principal1: channel.balance_1,
                         principal2: channel.balance_2,
                     },
-                    lastUpdated: new Date(parseInt(channel.nonce) * 1000).toISOString()
+                    lastUpdated: new Date().toISOString()
                 };
             })
         );

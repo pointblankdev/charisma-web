@@ -11,7 +11,7 @@ type EventData = {
         'balance-1': string;
         'balance-2': string;
         'expires-at': string;
-        nonce: string;
+        nonce: number;
     };
     'channel-key': {
         'principal-1': string;

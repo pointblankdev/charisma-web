@@ -50,9 +50,8 @@ export default async function handler(
         }
 
         // Verify signature
-        const signatureBuffer = new Uint8Array(Buffer.from(signature, 'hex'));
         const isValid = await verifySignature(
-            signatureBuffer,
+            signature,
             sender,
             token,
             CONFIG.OWNER!,
@@ -86,7 +85,7 @@ export default async function handler(
         );
 
         return res.status(200).json({
-            signature: ownerSignature.toString('hex')
+            signature: ownerSignature
         });
 
     } catch (error) {

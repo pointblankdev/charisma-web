@@ -5,7 +5,7 @@ export interface Channel {
     token: string | null;
     balance_1: string;
     balance_2: string;
-    nonce: string;
+    nonce: number;
     expires_at: string | null;
     state: 'open' | 'closing' | 'closed';
 }
@@ -14,7 +14,7 @@ export interface Signature {
     channel: string;
     balance_1: string;
     balance_2: string;
-    nonce: string;
+    nonce: number;
     action: number;
     actor: string;
     secret?: string;

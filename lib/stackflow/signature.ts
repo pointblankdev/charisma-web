@@ -17,17 +17,17 @@ function createTokenCV(token: string | null) {
 }
 
 export async function verifySignature(
-    signatureBuffer: Uint8Array,
+    signature: string,
     signer: string,
     token: string | null,
     myPrincipal: string,
     theirPrincipal: string,
     myBalance: bigint,
     theirBalance: bigint,
-    nonce: string,
+    nonce: number,
     action: number,
     actor: string | null = null,
-    hashedSecret: Uint8Array | null = null,
+    hashedSecret: string | null = null,
     network: StacksNetwork
 ) {
     const meFirst = myPrincipal < theirPrincipal;
@@ -43,25 +43,31 @@ export async function verifySignature(
         } : undefined
     });
 
+    const functionArgs = [
+        Cl.bufferFromHex(signature),
+        Cl.principal(signer),
+        Cl.tuple({
+            'principal-1': Cl.principal(principal1),
+            'principal-2': Cl.principal(principal2),
+            token: token ? createTokenCV(token) : Cl.none()
+        }),
+        Cl.uint(balance1),
+        Cl.uint(balance2),
+        Cl.uint(nonce),
+        Cl.uint(action),
+        actor ? Cl.some(Cl.principal(actor)) : Cl.none(),
+        hashedSecret ? Cl.some(Cl.bufferFromHex(hashedSecret)) : Cl.none()
+    ];
+
+    console.log({
+        functionArgs
+    });
+
     const options = {
         contractAddress: CONFIG.CONTRACT_ADDRESS!,
         contractName: CONFIG.CONTRACT_NAME!,
         functionName: 'verify-signature',
-        functionArgs: [
-            Cl.buffer(signatureBuffer),
-            Cl.principal(signer),
-            Cl.tuple({
-                token: createTokenCV(token),
-                'principal-1': Cl.principal(principal1),
-                'principal-2': Cl.principal(principal2)
-            }),
-            Cl.uint(balance1),
-            Cl.uint(balance2),
-            Cl.uint(nonce),
-            Cl.uint(action),
-            actor ? Cl.some(Cl.principal(actor)) : Cl.none(),
-            hashedSecret ? Cl.some(Cl.buffer(hashedSecret)) : Cl.none()
-        ],
+        functionArgs,
         network,
         senderAddress: CONFIG.OWNER!
     };
@@ -80,9 +86,9 @@ export function generateSignature(
     nonce: string,
     action: number,
     actor: string | null = null,
-    hashedSecret: Uint8Array | null = null,
+    hashedSecret: string | null = null,
     network: StacksNetwork
-): Buffer {
+): string {
     const meFirst = myPrincipal < theirPrincipal;
     const principal1 = meFirst ? myPrincipal : theirPrincipal;
     const principal2 = meFirst ? theirPrincipal : myPrincipal;
@@ -90,7 +96,7 @@ export function generateSignature(
     const balance2 = meFirst ? theirBalance : myBalance;
 
     const message = Cl.tuple({
-        token: createTokenCV(token),
+        token: token ? createTokenCV(token) : Cl.none(),
         'principal-1': Cl.principal(principal1),
         'principal-2': Cl.principal(principal2),
         'balance-1': Cl.uint(balance1),
@@ -98,7 +104,7 @@ export function generateSignature(
         nonce: Cl.uint(nonce),
         action: Cl.uint(action),
         actor: actor ? Cl.some(Cl.principal(actor)) : Cl.none(),
-        'hashed-secret': hashedSecret ? Cl.some(Cl.buffer(hashedSecret)) : Cl.none()
+        'hashed-secret': hashedSecret ? Cl.some(Cl.bufferFromHex(hashedSecret)) : Cl.none()
     });
 
     const domain = Cl.tuple({
@@ -107,11 +113,13 @@ export function generateSignature(
         'chain-id': Cl.uint(network.chainId)
     });
 
-    const signature = signStructuredData({ message, domain, privateKey });
-    return Buffer.from(signature, 'hex');
+    return signStructuredData({ message, domain, privateKey });
 }
 
-// Optional: Contract-based signature generation
+// Generate a signature for a message with these parameters by calling the
+// `make-structured-data-hash` read-only function on the contract.
+// Note: if you have the secret, you can generate the `hashedSecret` by calling
+// `sha256(Buffer.from(secret, "hex"))`
 export async function generateSignatureContract(
     privateKey: string,
     token: string | null,
@@ -122,7 +130,7 @@ export async function generateSignatureContract(
     nonce: string,
     action: number,
     actor: string | null = null,
-    hashedSecret: Uint8Array | null = null,
+    hashedSecret: string | null = null,
     network: StacksNetwork
 ): Promise<Buffer> {
     const meFirst = myPrincipal < theirPrincipal;
@@ -137,16 +145,16 @@ export async function generateSignatureContract(
         functionName: 'make-structured-data-hash',
         functionArgs: [
             Cl.tuple({
-                token: createTokenCV(token),
                 'principal-1': Cl.principal(principal1),
-                'principal-2': Cl.principal(principal2)
+                'principal-2': Cl.principal(principal2),
+                token: createTokenCV(token),
             }),
             Cl.uint(balance1),
             Cl.uint(balance2),
             Cl.uint(nonce),
             Cl.uint(action),
             actor ? Cl.some(Cl.principal(actor)) : Cl.none(),
-            hashedSecret ? Cl.some(Cl.buffer(hashedSecret)) : Cl.none()
+            hashedSecret ? Cl.some(Cl.bufferFromHex(hashedSecret)) : Cl.none()
         ],
         network,
         senderAddress: CONFIG.OWNER!
@@ -158,6 +166,6 @@ export async function generateSignatureContract(
     }
 
     const hash = result.value;
-    const signature = signWithKey(privateKey, (hash as any).value.toString('hex'));
+    const signature = signWithKey(privateKey, hash.toString());
     return Buffer.from(signature.slice(2) + signature.slice(0, 2), 'hex');
 }

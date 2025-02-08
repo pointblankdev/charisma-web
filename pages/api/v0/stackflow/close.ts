@@ -1,9 +1,13 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
 import { ACTION, CONFIG, getNetwork, CHANNEL_STATE } from '@lib/stackflow/config';
-import { verifySignature, generateSignature } from '@lib/stackflow/signature';
+import { verifySignature, generateSignature, generateSignatureContract } from '@lib/stackflow/signature';
 import { identifyBalances, getChannelKey } from '@lib/stackflow/utils';
 import type { Channel } from '@lib/stackflow/types';
+import { bufferCV, Cl } from '@stacks/transactions';
+import { verifyMessageSignature, verifyMessageSignatureRsv } from '@stacks/encryption';
+import { doSignaturesMatchPublicKeys } from '@stacks/connect';
+import { getPublicKey } from '@noble/secp256k1';
 
 export default async function handler(
     req: NextApiRequest,
@@ -31,12 +35,12 @@ export default async function handler(
             return res.status(404).json({ error: 'Channel does not exist.' });
         }
 
-        const sender = principal1 === CONFIG.OWNER ? principal2 : principal1;
-
         // Validate nonce
         if (BigInt(nonce) <= BigInt(channel.nonce)) {
             return res.status(409).json({ error: 'Nonce conflict.' });
         }
+
+        const sender = principal1 === CONFIG.OWNER ? principal2 : principal1;
 
         // Verify balances
         const { myBalance, theirBalance, myPrevBalance, theirPrevBalance } =
@@ -57,9 +61,8 @@ export default async function handler(
         }
 
         // Verify signature
-        const signatureBuffer = new Uint8Array(Buffer.from(signature, 'hex'));
         const isValid = await verifySignature(
-            signatureBuffer,
+            signature,
             sender,
             token,
             CONFIG.OWNER!,
@@ -68,7 +71,7 @@ export default async function handler(
             theirBalance,
             nonce,
             ACTION.CLOSE,
-            sender,
+            null,
             null,
             getNetwork()
         );
@@ -87,19 +90,13 @@ export default async function handler(
             theirBalance,
             nonce,
             ACTION.CLOSE,
-            sender,
+            null,
             null,
             getNetwork()
         );
 
-        // Update channel state
-        await kv.hset(channelKey, {
-            state: CHANNEL_STATE.CLOSING,
-            nonce: nonce
-        });
-
         return res.status(200).json({
-            signature: ownerSignature.toString('hex'),
+            signature: ownerSignature,
             state: CHANNEL_STATE.CLOSING
         });
 

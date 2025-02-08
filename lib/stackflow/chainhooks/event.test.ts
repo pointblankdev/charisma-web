@@ -2,7 +2,8 @@ import { describe, it, expect } from 'vitest';
 import { kv } from '@vercel/kv';
 // These helpers should generate the exact keys used by your event handlers.
 import { getChannelKey, getSignatureKey } from '@lib/stackflow/utils';
-import { fetchChannels } from '../channels';
+import { fetchChannels, updateChannel } from '../channels';
+import { Channel } from '../types';
 
 // These sample principals and token should match those used when events are handled.
 const principal1 = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
@@ -49,5 +50,22 @@ describe('Event Handlers KV Data', () => {
         const allChannels = await fetchChannels();
         console.log(`All channels:`, allChannels);
         expect(Array.isArray(allChannels)).toBe(true);
+    });
+});
+
+describe('Channel Updater', () => {
+    it('updates channel data', async () => {
+        const channelData = await kv.get(channelKey) as Channel;
+        console.log(`Channel data for key ${channelKey}:`, channelData);
+        await updateChannel(
+            'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS:SP3619DGWH08262BJAG0NPFHZQDPN4TKMXHC0ZQDN:null',
+            channelData.balance_1,
+            channelData.balance_2,
+            0,
+            channelData.expires_at,
+            'open'
+        );
+        const updatedChannelData = await kv.get(channelKey) as Channel;
+        console.log(`Updated channel data for key ${channelKey}:`, updatedChannelData);
     });
 });
