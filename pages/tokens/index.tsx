@@ -26,22 +26,33 @@ interface Props {
 }
 
 export const getStaticProps: GetStaticProps<Props> = async () => {
-    // Get prices and discover tokens
-    const [, prices] = await Promise.all([
-        Dexterity.discover({ blacklist: blacklist, reserves: false }),
-        Kraxel.getAllTokenPrices()
-    ]);
+    try {
 
-    // Get all tokens from Dexterity
-    const tokens = Dexterity.getTokens()
+        // Get prices and discover tokens
+        const [, prices] = await Promise.all([
+            Dexterity.discover({ blacklist: blacklist, reserves: false }),
+            Kraxel.getAllTokenPrices()
+        ]);
 
-    return {
-        props: {
-            tokens: JSON.parse(JSON.stringify(tokens)), // Serialize for Next.js
-            prices
-        },
-        revalidate: 60
-    };
+        // Get all tokens from Dexterity
+        const tokens = Dexterity.getTokens()
+
+        return {
+            props: {
+                tokens: JSON.parse(JSON.stringify(tokens)), // Serialize for Next.js
+                prices
+            },
+            revalidate: 60
+        };
+    } catch (error) {
+        console.error('Error fetching data', error);
+        return {
+            props: {
+                tokens: [],
+                prices: {}
+            }
+        };
+    }
 };
 
 export default function TokensPage({ tokens, prices }: Props) {
