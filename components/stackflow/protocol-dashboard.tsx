@@ -797,7 +797,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                 <div className="grid gap-6 md:grid-cols-3 mt-6">
                     <InfoCard
                         icon={Zap}
-                        title="Instant & Free"
+                        title="Blazing Fast"
                         content={
                             <div className="space-y-4 text-sm text-muted-foreground">
                                 <p>
