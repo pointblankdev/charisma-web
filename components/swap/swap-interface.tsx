@@ -270,18 +270,22 @@ export const SwapInterface = ({
   const [isSponsored, setIsSponsored] = useState(false);
 
   useEffect(() => {
-    try {
-      if (maxHops && pools.length > 0 && stxAddress) {
-        Dexterity.configure({ maxHops, sponsored: isSponsored, sponsor: `${HOST}/api/v0/sponsor` }).catch(console.error);
-        const vaults = pools.map(pool => new Vault(pool));
-        Dexterity.router.loadVaults(vaults);
-        console.log('Router initialized:', Dexterity.router.getGraphStats());
-        console.log('Vaults:', Dexterity.getVaults());
-        handleEstimateAmount(fromAmount);
+    const initializeRouter = async () => {
+      try {
+        if (maxHops && pools.length > 0 && stxAddress) {
+          await Dexterity.configure({ maxHops, sponsored: isSponsored, sponsor: `${HOST}/api/v0/sponsor` });
+          const vaults = pools.map(pool => new Vault(pool));
+          Dexterity.router.loadVaults(vaults);
+          console.log('Router initialized:', Dexterity.router.getGraphStats());
+          console.log('Vaults:', Dexterity.getVaults());
+          handleEstimateAmount(fromAmount);
+        }
+      } catch (error) {
+        console.error('Error initializing router:', error);
       }
-    } catch (error) {
-      console.error('Error initializing router:', error);
-    }
+    };
+
+    initializeRouter();
   }, [pools, stxAddress, maxHops, isSponsored]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
