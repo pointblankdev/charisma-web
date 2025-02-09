@@ -29,6 +29,7 @@ export default function Stackflow({ prices }: { prices: Record<string, number> }
         <Page meta={{
             title: 'Blaze',
             description: 'Blaze is a Bitcoin L2 scaling solution with near-unlimited TPS and throughput.',
+            image: '/celebration-2.png'
         }}>
             <ProtocolDashboard prices={prices} />
         </Page>
