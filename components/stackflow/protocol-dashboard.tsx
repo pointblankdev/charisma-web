@@ -733,7 +733,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                         Deposit
                                     </Button>
                                 </TooltipTrigger>
-                                <TooltipContent className="w-80 p-4">
+                                <TooltipContent className="w-96 p-4">
                                     <div className="flex items-center gap-2 mb-2 pb-2 border-b">
                                         <Download className="w-5 h-5" />
                                         <span className="font-semibold">Deposit to Charisma</span>
