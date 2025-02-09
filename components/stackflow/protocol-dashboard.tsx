@@ -72,6 +72,7 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
     const { channels, stxAddress } = useGlobal();
     const [structuredDataHash, setStructuredDataHash] = useState<string | null>(null);
     const [isPending, setIsPending] = useState(false);
+    const [pendingAmount, setPendingAmount] = useState<number>(0);
     const lastBalanceRef = useRef(balance);
 
     // Use color-thief to extract colors from the token logo
@@ -80,20 +81,13 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
         quality: 10,
     });
 
-    // Check for balance changes and manage pending state
-    useEffect(() => {
-        if (lastBalanceRef.current !== balance) {
-            setIsPending(false);
-            lastBalanceRef.current = balance;
-        }
-    }, [balance]);
-
     // Listen for deposit/withdraw events
     useEffect(() => {
         const handleTransaction = (event: CustomEvent) => {
             // Only set pending if this event is for this token
             if (event.detail?.token === token) {
                 setIsPending(true);
+                setPendingAmount(event.detail.amount * (event.detail.action === 'withdraw' ? -1 : 1));
             }
         };
 
@@ -106,19 +100,28 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
         };
     }, [token]);
 
+    // Check for balance changes and manage pending state
+    useEffect(() => {
+        if (lastBalanceRef.current !== balance) {
+            setIsPending(false);
+            setPendingAmount(0);
+            lastBalanceRef.current = balance;
+        }
+    }, [balance]);
+
     // Format balance based on token type
     const formattedBalance = token === 'sBTC'
-        ? balance.toFixed(8)
+        ? (balance + pendingAmount).toFixed(8)
         : token === 'WELSH'
-            ? balance.toLocaleString(undefined, { maximumFractionDigits: 2 })
-            : balance.toLocaleString(undefined, { maximumFractionDigits: 6 });
+            ? (balance + pendingAmount).toLocaleString(undefined, { maximumFractionDigits: 2 })
+            : (balance + pendingAmount).toLocaleString(undefined, { maximumFractionDigits: 6 });
 
     // Calculate fiat value (dummy prices for demo)
     const fiatValue = token === 'sBTC'
-        ? (balance * 100000).toFixed(2) // Assuming $100k BTC price
+        ? ((balance + pendingAmount) * 100000).toFixed(2) // Assuming $100k BTC price
         : token === 'WELSH'
-            ? (balance * 0.0005).toFixed(2) // Fun price point for WCC
-            : (balance * 0.85).toFixed(2); // Assuming $0.85 STX price
+            ? ((balance + pendingAmount) * 0.0005).toFixed(2) // Fun price point for WCC
+            : ((balance + pendingAmount) * 0.85).toFixed(2); // Assuming $0.85 STX price
 
     // Fetch hash for this token's channel
     const fetchTokenChannelHash = async () => {
@@ -584,7 +587,9 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                 // Dispatch custom event after contract call finishes
                                 window.dispatchEvent(new CustomEvent(`blaze${action.charAt(0).toUpperCase() + action.slice(1)}`, {
                                     detail: {
-                                        token: selectedChannel?.token || 'STX'
+                                        token: selectedChannel?.token || 'STX',
+                                        amount: Number(amount),
+                                        action: action
                                     }
                                 }));
                                 toast({
