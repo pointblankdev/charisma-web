@@ -879,8 +879,8 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                         content={
                             <div className="space-y-4 text-sm text-muted-foreground">
                                 <p>
-                                    Built on Bitcoin, secured by the world's strongest network. Your keys, your coins -
-                                    always in control while enjoying institutional-grade settlement.
+                                    Built on Bitcoin, the world's strongest network. Your keys, your coins -
+                                    always in control with irreversible and immutable settlement.
                                 </p>
                             </div>
                         }
