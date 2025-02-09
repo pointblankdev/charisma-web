@@ -20,26 +20,36 @@ const tokenImages: Record<string, string> = {
 };
 
 export const getStaticProps: GetStaticProps<any> = async () => {
-  const prices = await Kraxel.getAllTokenPrices();
-  const pools = await Dexterity.discover({ serialize: true, blacklist });
-  const tokens = Dexterity.getTokens();
+  try {
+    const prices = await Kraxel.getAllTokenPrices();
+    const pools = await Dexterity.discover({ serialize: true, blacklist });
+    const tokens = Dexterity.getTokens();
 
+    // patch missing images
+    tokens.forEach((token) => {
+      if (!token?.image && token?.contractId) {
+        token.image = tokenImages[token.contractId];
+      }
+    });
 
-  // patch missing images
-  tokens.forEach((token) => {
-    if (!token?.image && token?.contractId) {
-      token.image = tokenImages[token.contractId];
-    }
-  });
-
-  return {
-    props: {
-      prices,
-      tokens: tokens,
-      pools: pools
-    },
-    revalidate: 60
-  };
+    return {
+      props: {
+        prices,
+        tokens: tokens,
+        pools: pools
+      },
+      revalidate: 60
+    };
+  } catch (error) {
+    console.error('Error fetching data', error);
+    return {
+      props: {
+        prices: {},
+        tokens: [],
+        pools: []
+      }
+    };
+  }
 };
 
 export default function SwapPage({
