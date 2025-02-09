@@ -71,12 +71,40 @@ const API_BASE_URL = '/api/v0/stackflow';
 const TokenCard = ({ token, balance, icon }: { token: string, balance: number, icon: string }) => {
     const { channels, stxAddress } = useGlobal();
     const [structuredDataHash, setStructuredDataHash] = useState<string | null>(null);
+    const [isPending, setIsPending] = useState(false);
+    const lastBalanceRef = useRef(balance);
 
     // Use color-thief to extract colors from the token logo
     const { data: dominantColor } = useColor(icon, 'hex', {
         crossOrigin: 'anonymous',
         quality: 10,
     });
+
+    // Check for balance changes and manage pending state
+    useEffect(() => {
+        if (lastBalanceRef.current !== balance) {
+            setIsPending(false);
+            lastBalanceRef.current = balance;
+        }
+    }, [balance]);
+
+    // Listen for deposit/withdraw events
+    useEffect(() => {
+        const handleTransaction = (event: CustomEvent) => {
+            // Only set pending if this event is for this token
+            if (event.detail?.token === token) {
+                setIsPending(true);
+            }
+        };
+
+        window.addEventListener('blazeDeposit', handleTransaction as EventListener);
+        window.addEventListener('blazeWithdraw', handleTransaction as EventListener);
+
+        return () => {
+            window.removeEventListener('blazeDeposit', handleTransaction as EventListener);
+            window.removeEventListener('blazeWithdraw', handleTransaction as EventListener);
+        };
+    }, [token]);
 
     // Format balance based on token type
     const formattedBalance = token === 'sBTC'
@@ -166,8 +194,20 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
                 <div className="flex items-center z-10">
                     <Image src={icon} alt={token} className="w-12 h-12 m-4 rounded-sm" width={200} height={200} />
                     <div className='leading-tight'>
-                        <p className="text-sm text-gray-400">{token} Balance</p>
-                        <p className="text-2xl font-bold">{formattedBalance} {token}</p>
+                        <div className="flex items-center gap-2">
+                            <p className="text-sm text-gray-400">{token} Balance</p>
+                            {isPending && (
+                                <div className="relative">
+                                    <Flame className="w-4 h-4 text-primary animate-pulse" />
+                                    <div className="absolute inset-0">
+                                        <Flame className="w-4 h-4 text-primary/30 animate-ping" />
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <p className={`text-2xl font-bold ${isPending ? 'animate-pulse' : ''}`}>
+                            {formattedBalance} {token}
+                        </p>
                         <p className="text-sm text-muted-foreground">${fiatValue} USD</p>
                     </div>
                 </div>
@@ -541,6 +581,12 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                             postConditionMode: PostConditionMode.Deny,
                             network: STACKS_MAINNET,
                             onFinish: (txResult: any) => {
+                                // Dispatch custom event after contract call finishes
+                                window.dispatchEvent(new CustomEvent(`blaze${action.charAt(0).toUpperCase() + action.slice(1)}`, {
+                                    detail: {
+                                        token: selectedChannel?.token || 'STX'
+                                    }
+                                }));
                                 toast({
                                     title: `${action} transaction submitted`,
                                     description: "The transaction has been submitted to the network."
