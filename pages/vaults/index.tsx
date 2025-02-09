@@ -21,61 +21,70 @@ const tokenImages: Record<string, string> = {
 };
 
 export const getStaticProps: GetStaticProps<any> = async () => {
-  // Get contracts and prices in parallel using cached functions
-  const [vaults, prices] = await Promise.all([
-    Dexterity.discover({ blacklist, serialize: true }),
-    Kraxel.getAllTokenPrices(),
-  ]);
+  try {
+    // Get contracts and prices in parallel using cached functions
+    const [vaults, prices] = await Promise.all([
+      Dexterity.discover({ blacklist, serialize: true }),
+      Kraxel.getAllTokenPrices(),
+    ]);
 
-  const uniqueVaults = _.uniqBy(vaults, 'contractId');
+    const uniqueVaults = _.uniqBy(vaults, 'contractId');
 
-  // patch missing images
-  uniqueVaults.forEach((vault) => {
-    vault.liquidity?.forEach((liquidityItem) => {
-      if (!liquidityItem?.image && liquidityItem?.contractId) {
-        liquidityItem.image = tokenImages[liquidityItem.contractId];
-      }
+    // patch missing images
+    uniqueVaults.forEach((vault) => {
+      vault.liquidity?.forEach((liquidityItem) => {
+        if (!liquidityItem?.image && liquidityItem?.contractId) {
+          liquidityItem.image = tokenImages[liquidityItem.contractId];
+        }
+      });
     });
-  });
 
-  // uniqueVaults.push(
-  //   new Vault({
-  //     name: "WELSH MEXC Orderbook",
-  //     description: "Trade USDT/WELSH on MEXC from Charisma DEX",
-  //     contractId: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-usdt-pool" as ContractId,
-  //     symbol: "WELSHUSDT",
-  //     image: "https://altcoinsbox.com/wp-content/uploads/2023/01/mexc-logo.png",
-  //     externalPoolId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-usdt-pool',
-  //     liquidity: [
-  //       {
-  //         contractId: 'SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt',
-  //         name: 'aUSD',
-  //         symbol: 'aUSD',
-  //         decimals: 8,
-  //         identifier: 'bridged-usdt',
-  //         description: 'aUSD',
-  //         image: 'https://token-images.alexlab.co/token-susdt',
-  //         reserves: 992307081182
-  //       },
-  //       {
-  //         contractId: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
-  //         name: 'Welshcorgicoin',
-  //         symbol: 'WELSH',
-  //         decimals: 6,
-  //         identifier: 'welshcorgicoin',
-  //         description: '$WELSH is the first memecoin built on Stacks blockchain',
-  //         image: 'https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png',
-  //         reserves: 213416083800000
-  //       }
-  //     ]
-  //   }).toLPToken())
+    // uniqueVaults.push(
+    //   new Vault({
+    //     name: "WELSH MEXC Orderbook",
+    //     description: "Trade USDT/WELSH on MEXC from Charisma DEX",
+    //     contractId: "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-usdt-pool" as ContractId,
+    //     symbol: "WELSHUSDT",
+    //     image: "https://altcoinsbox.com/wp-content/uploads/2023/01/mexc-logo.png",
+    //     externalPoolId: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.welsh-usdt-pool',
+    //     liquidity: [
+    //       {
+    //         contractId: 'SP2XD7417HGPRTREMKF748VNEQPDRR0RMANB7X1NK.token-susdt',
+    //         name: 'aUSD',
+    //         symbol: 'aUSD',
+    //         decimals: 8,
+    //         identifier: 'bridged-usdt',
+    //         description: 'aUSD',
+    //         image: 'https://token-images.alexlab.co/token-susdt',
+    //         reserves: 992307081182
+    //       },
+    //       {
+    //         contractId: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
+    //         name: 'Welshcorgicoin',
+    //         symbol: 'WELSH',
+    //         decimals: 6,
+    //         identifier: 'welshcorgicoin',
+    //         description: '$WELSH is the first memecoin built on Stacks blockchain',
+    //         image: 'https://raw.githubusercontent.com/Welshcorgicoin/Welshcorgicoin/main/logos/welsh_tokenlogo.png',
+    //         reserves: 213416083800000
+    //       }
+    //     ]
+    //   }).toLPToken())
 
-  return {
-    props: {
-      data: { prices, vaults: uniqueVaults }
-    },
-    revalidate: 60
-  };
+    return {
+      props: {
+        data: { prices, vaults: uniqueVaults }
+      },
+      revalidate: 60
+    };
+  } catch (error) {
+    console.error('Error fetching data', error);
+    return {
+      props: {
+        data: { prices: {}, vaults: [] }
+      },
+    }
+  }
 };
 
 export default function DexterityPoolsPage({ data }: any) {
