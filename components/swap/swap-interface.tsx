@@ -270,13 +270,17 @@ export const SwapInterface = ({
   const [isSponsored, setIsSponsored] = useState(false);
 
   useEffect(() => {
-    if (maxHops && pools.length > 0 && stxAddress) {
-      Dexterity.configure({ maxHops, sponsored: isSponsored, sponsor: `${HOST}/api/v0/sponsor` }).catch(console.error);
-      const vaults = pools.map(pool => new Vault(pool));
-      Dexterity.router.loadVaults(vaults);
-      console.log('Router initialized:', Dexterity.router.getGraphStats());
-      console.log('Vaults:', Dexterity.getVaults());
-      handleEstimateAmount(fromAmount);
+    try {
+      if (maxHops && pools.length > 0 && stxAddress) {
+        Dexterity.configure({ maxHops, sponsored: isSponsored, sponsor: `${HOST}/api/v0/sponsor` }).catch(console.error);
+        const vaults = pools.map(pool => new Vault(pool));
+        Dexterity.router.loadVaults(vaults);
+        console.log('Router initialized:', Dexterity.router.getGraphStats());
+        console.log('Vaults:', Dexterity.getVaults());
+        handleEstimateAmount(fromAmount);
+      }
+    } catch (error) {
+      console.error('Error initializing router:', error);
     }
   }, [pools, stxAddress, maxHops, isSponsored]);
 
