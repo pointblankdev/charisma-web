@@ -1,13 +1,36 @@
 import Page from '@components/page';
 import ProtocolDashboard from '@components/stackflow/protocol-dashboard';
+import { Kraxel } from '@lib/kraxel';
+import { GetStaticProps } from 'next';
 
-export default function Stackflow() {
+export const getStaticProps: GetStaticProps = async () => {
+    try {
+        const prices = await Kraxel.getAllTokenPrices();
+
+        return {
+            props: {
+                prices
+            },
+            revalidate: 60 // Revalidate every minute
+        };
+    } catch (error) {
+        console.error('Error fetching prices:', error);
+        return {
+            props: {
+                prices: {}
+            },
+            revalidate: 60
+        };
+    }
+};
+
+export default function Stackflow({ prices }: { prices: Record<string, number> }) {
     return (
         <Page meta={{
             title: 'Charisma Unleashed',
             description: 'Charisma Unleashed is a Bitcoin L2 scaling solution with unlimited TPS and throughput.',
         }}>
-            <ProtocolDashboard />
+            <ProtocolDashboard prices={prices} />
         </Page>
     );
 }

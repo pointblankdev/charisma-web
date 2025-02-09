@@ -34,7 +34,14 @@ import {
     Bitcoin,
     Landmark,
     Fingerprint,
-    Check
+    Check,
+    Code,
+    Zap,
+    Banknote,
+    Gamepad2,
+    Sparkles,
+    Shield,
+    Blocks
 } from 'lucide-react';
 import { STACKS_MAINNET } from "@stacks/network";
 import { Cl, PostConditionMode, Pc } from "@stacks/transactions";
@@ -49,6 +56,8 @@ import {
 import Blockies from 'react-blockies';
 import Image from 'next/image';
 import axios from 'axios';
+import { useColor } from 'color-thief-react';
+import { LucideIcon } from "lucide-react";
 
 // Constants
 const CONTRACT_ADDRESS = "SP126XFZQ3ZHYM6Q6KAQZMMJSDY91A8BTT6AD08RV";
@@ -60,6 +69,26 @@ const API_BASE_URL = '/api/v0/stackflow';
 const TokenCard = ({ token, balance, icon }: { token: string, balance: number, icon: string }) => {
     const { channels, stxAddress } = useGlobal();
     const [structuredDataHash, setStructuredDataHash] = useState<string | null>(null);
+
+    // Use color-thief to extract colors from the token logo
+    const { data: dominantColor } = useColor(icon, 'hex', {
+        crossOrigin: 'anonymous',
+        quality: 10,
+    });
+
+    // Format balance based on token type
+    const formattedBalance = token === 'sBTC'
+        ? balance.toFixed(8)
+        : token === 'WELSH'
+            ? balance.toLocaleString(undefined, { maximumFractionDigits: 2 })
+            : balance.toLocaleString(undefined, { maximumFractionDigits: 6 });
+
+    // Calculate fiat value (dummy prices for demo)
+    const fiatValue = token === 'sBTC'
+        ? (balance * 100000).toFixed(2) // Assuming $100k BTC price
+        : token === 'WELSH'
+            ? (balance * 0.0005).toFixed(2) // Fun price point for WCC
+            : (balance * 0.85).toFixed(2); // Assuming $0.85 STX price
 
     // Fetch hash for this token's channel
     const fetchTokenChannelHash = async () => {
@@ -131,50 +160,52 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
 
     return (
         <Card className="bg-accent/5 border-primary/20 relative overflow-hidden">
-            {/* Card Content */}
-            <CardContent className="flex items-center justify-between p-0 relative z-10">
-                <div className="flex items-center">
+            <CardContent className="flex items-center justify-between p-0">
+                <div className="flex items-center z-10">
                     <Image src={icon} alt={token} className="w-12 h-12 m-4 rounded-sm" width={200} height={200} />
-                    <div>
+                    <div className='leading-tight'>
                         <p className="text-sm text-gray-400">{token} Balance</p>
-                        <p className="text-2xl font-bold">{balance} {token}</p>
+                        <p className="text-2xl font-bold">{formattedBalance} {token}</p>
+                        <p className="text-sm text-muted-foreground">${fiatValue} USD</p>
                     </div>
                 </div>
-                {structuredDataHash && (
-                    <TooltipProvider>
-                        <Tooltip delayDuration={300}>
-                            <TooltipTrigger asChild>
-                                <div className="w-16 h-16">
-                                    <Blockies
-                                        seed={structuredDataHash}
-                                        size={20}
-                                        scale={4}
-                                        color="#0C0C0D"
-                                        bgColor="#0C0C0D"
-                                        spotColor="#c1121f"
-                                        className="cursor-pointer rounded-none absolute -right-[40px] top-0 transition-all duration-300 ease-in-out hover:animate-pulse hover:brightness-110"
-                                    />
-                                </div>
-                            </TooltipTrigger>
-                            <TooltipContent
-                                side="right"
-                                align="start"
-                                className="max-w-[600px] p-0 overflow-hidden"
-                            >
-                                {/* Header Section */}
-                                <div className="bg-muted/30 p-4 border-b border-border">
-                                    <div className="flex items-center gap-3">
-                                        <div className="p-2 bg-background rounded-md">
-                                            <Fingerprint className="w-6 h-6 text-primary" />
-                                        </div>
-                                        <div>
-                                            <h4 className="font-semibold text-md">Channel Fingerprint</h4>
-                                            <code className="text-xs font-mono mt-1 text-muted-foreground">{structuredDataHash}</code>
-                                        </div>
+                <TooltipProvider>
+                    <Tooltip delayDuration={300}>
+                        <TooltipTrigger asChild>
+                            <div className="w-16 h-16 z-20">
+                                <Blockies
+                                    seed={structuredDataHash || `${token}-default-seed`}
+                                    size={20}
+                                    scale={4}
+                                    color="#0C0C0D"
+                                    bgColor="#0C0C0D"
+                                    spotColor={dominantColor || '#0C0C0D'}
+                                    className="cursor-pointer rounded-none absolute -right-[40px] top-0 transition-all duration-300 ease-in-out hover:animate-pulse hover:brightness-110"
+                                />
+                            </div>
+                        </TooltipTrigger>
+                        <TooltipContent
+                            side="right"
+                            align="start"
+                            className="max-w-[550px] p-0 overflow-hidden"
+                        >
+                            {/* Header Section */}
+                            <div className="bg-muted/30 p-4 border-b border-border">
+                                <div className="flex items-center gap-3">
+                                    <div className="p-2 bg-background rounded-md">
+                                        <Fingerprint className="w-6 h-6 text-primary" />
+                                    </div>
+                                    <div>
+                                        <h4 className="font-semibold text-md">Balance Hash</h4>
+                                        <code className="text-xs font-mono mt-1 text-muted-foreground">
+                                            {structuredDataHash || 'No active channel'}
+                                        </code>
                                     </div>
                                 </div>
+                            </div>
 
-                                {/* Content Sections */}
+                            {structuredDataHash ? (
+                                // Show full tooltip content for active channels
                                 <div className="p-4 space-y-4">
                                     {/* What is this? */}
                                     <div className="space-y-1.5">
@@ -183,7 +214,7 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
                                             What is this?
                                         </div>
                                         <p className="text-sm text-muted-foreground pl-3">
-                                            This unique visual pattern represents the current state of your payment channel with Charisma. Think of it as a fingerprint that uniquely identifies your channel's current configuration.
+                                            This unique visual pattern represents the current state of your token balances in Charisma. Think of it as a fingerprint that identifies your balances's current state.
                                         </p>
                                     </div>
 
@@ -230,16 +261,56 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
                                         </div>
                                     </div>
                                 </div>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-                )}
+                            ) : (
+                                // Show placeholder content for inactive channels
+                                <div className="p-4 space-y-4">
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center gap-2 text-sm font-medium">
+                                            <div className="w-1 h-1 rounded-full bg-primary" />
+                                            No Active Channel
+                                        </div>
+                                        <p className="text-sm text-muted-foreground pl-3">
+                                            Deposit {token} to create a payment channel and enable instant, fee-less transfers.
+                                        </p>
+                                    </div>
+                                    <div className="w-fit flex items-center gap-2 text-xs bg-muted/30 p-2 rounded-md">
+                                        <Info className="w-3 h-3 text-primary shrink-0" />
+                                        <span className="text-muted-foreground">Click "Deposit" to get started</span>
+                                    </div>
+                                </div>
+                            )}
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
             </CardContent>
         </Card>
     );
 };
 
-const ProtocolDashboard = () => {
+interface InfoCardProps {
+    icon: LucideIcon;
+    title: string;
+    content: React.ReactNode;
+}
+
+export function InfoCard({ icon: Icon, title, content }: InfoCardProps) {
+    return (
+        <Card className="relative overflow-hidden">
+            <div className="absolute inset-0 bg-gradient-to-b from-background/10 to-background/0" />
+            <div className="relative p-6">
+                <div className="flex items-center gap-3 mb-3">
+                    <div className="p-2 bg-primary/10 rounded-md">
+                        <Icon className="w-5 h-5 text-primary" />
+                    </div>
+                    <h3 className="font-semibold">{title}</h3>
+                </div>
+                {content}
+            </div>
+        </Card>
+    );
+}
+
+const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
     const [isDepositModal, setIsDepositModal] = useState(false);
     const [isWithdrawModal, setIsWithdrawModal] = useState(false);
     const [isTransferModal, setIsTransferModal] = useState(false);
@@ -526,185 +597,268 @@ const ProtocolDashboard = () => {
     return (
         <div className="container px-4 py-8 mx-auto">
             {/* Header with Quick Actions */}
-            <div className="mb-8 flex justify-between items-center">
-                <div className="text-left">
-                    <h1 className="mb-2 text-3xl font-bold text-white">Charisma Unleashed</h1>
-                    <p className="text-gray-400">Bitcoin L2 scaling solution with unlimited TPS and throughput</p>
+            <div className="mb-8 space-y-6">
+                {/* Header Content */}
+                <div className="text-left space-y-2">
+                    <h1 className="text-3xl font-bold text-white">Charisma Unleashed</h1>
+                    <p className="text-gray-400 max-w-prose leading-tight">
+                        Your gateway to the future of Bitcoin apps, games, and finance.
+                        <br className="hidden md:block" />
+                        Experience instant transactions, zero fees, and unlimited scalability.
+                    </p>
                 </div>
-                <div className="flex gap-2">
-                    <TooltipProvider>
-                        <Tooltip delayDuration={300}>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                >
-                                    <Bitcoin className="w-4 h-4 mr-2" />
-                                    Buy Bitcoin
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="w-96 p-4">
-                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
-                                    <Bitcoin className="w-5 h-5" />
-                                    <span className="font-semibold">Buy Bitcoin with Card</span>
-                                </div>
-                                <p className="text-sm opacity-90 mb-2">
-                                    Purchase bitcoin directly using your credit or debit card.
-                                    Instantly convert your local currency into bitcoin.
-                                </p>
-                                <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
-                                    <span className="w-2 h-2 rounded-full bg-yellow-500" />
-                                    Coming soon: Direct fiat-to-bitcoin purchases
-                                </div>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
 
-                    <TooltipProvider>
-                        <Tooltip delayDuration={300}>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    variant="outline"
-                                    size="sm"
-                                >
-                                    <Landmark className="w-4 h-4 mr-2" />
-                                    Cash Out
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="w-96 p-4">
-                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
-                                    <Landmark className="w-5 h-5" />
-                                    <span className="font-semibold">Convert to Cash</span>
-                                </div>
-                                <p className="text-sm opacity-90 mb-2">
-                                    Convert your cryptocurrency back to your local currency and withdraw
-                                    directly to your bank account.
-                                </p>
-                                <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
-                                    <span className="w-2 h-2 rounded-full bg-yellow-500" />
-                                    Coming soon: Direct crypto-to-fiat withdrawals
-                                </div>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <div className="w-[1px] bg-border mx-2" />
-
-                    <TooltipProvider>
-                        <Tooltip delayDuration={300}>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    onClick={() => setIsTransferModal(true)}
-                                    variant="outline"
-                                    size="sm"
-                                    disabled={channels.length === 0}
-                                >
-                                    <Send className="w-4 h-4 mr-2" />
-                                    Send STX
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="w-96 p-4">
-                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
-                                    <Send className="w-5 h-5" />
-                                    <span className="font-semibold">Send STX to Charisma User</span>
-                                </div>
-                                <p className="text-sm opacity-90 mb-2">
-                                    Send STX instantly to any Charisma user with near-zero fees.
-                                    No gas fees, no waiting for confirmations.
-                                </p>
-                                <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
-                                    <Flame className="w-4 h-4 rounded-full text-primary" />
-                                    Instant transfers, near-zero fees, no gas fees.
-                                </div>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <div className="w-[1px] bg-border mx-2" />
-
-                    <TooltipProvider>
-                        <Tooltip delayDuration={300}>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    onClick={() => setIsDepositModal(true)}
-                                    variant="outline"
-                                    size="sm"
-                                >
-                                    <Download className="w-4 h-4 mr-2" />
-                                    Deposit
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="w-96 p-4">
-                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
-                                    <Download className="w-5 h-5" />
-                                    <span className="font-semibold">Deposit to Charisma</span>
-                                </div>
-                                <p className="text-sm opacity-90 mb-2">
-                                    Move your cryptocurrency from your Stacks wallet into your Charisma account
-                                    for instant transfers, low-fee trading and nearly unlimited transactions per second.
-                                </p>
-                                <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
-                                    <span className="w-2 h-2 rounded-full bg-green-500" />
-                                    Deposits require gas fees, and take a few seconds to confirm.
-                                </div>
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
-
-                    <TooltipProvider>
-                        <Tooltip delayDuration={300}>
-                            <TooltipTrigger asChild>
-                                <Button
-                                    onClick={() => setIsWithdrawModal(true)}
-                                    variant="outline"
-                                    size="sm"
-                                    disabled={getTokenBalance(null) === 0}
-                                >
-                                    <Upload className="w-4 h-4 mr-2" />
-                                    Withdraw
-                                </Button>
-                            </TooltipTrigger>
-                            <TooltipContent className="w-96 p-4">
-                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
-                                    <Upload className="w-5 h-5" />
-                                    <span className="font-semibold">Withdraw from Charisma</span>
-                                </div>
-                                <p className="text-sm opacity-90 mb-2">
-                                    Move your cryptocurrency from your Charisma account back to your
-                                    Stacks wallet. Perfect for when you want to hold or trade elsewhere.
-                                </p>
-                                {getTokenBalance(null) === 0 ? (
-                                    <div className="inline-flex text-xs bg-destructive/10 text-destructive p-2 rounded items-center gap-2 mt-4">
-                                        <span className="w-2 h-2 rounded-full bg-destructive" />
-                                        Deposit some STX first to enable withdrawals
+                {/* Action Buttons */}
+                <div className="flex flex-col sm:flex-row gap-3">
+                    <div className="flex gap-2">
+                        <TooltipProvider>
+                            <Tooltip delayDuration={300}>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-full sm:w-auto"
+                                    >
+                                        <Bitcoin className="w-4 h-4 mr-2" />
+                                        Buy Bitcoin
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="w-80 p-4">
+                                    <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                        <Bitcoin className="w-5 h-5" />
+                                        <span className="font-semibold">Buy Bitcoin with Card</span>
                                     </div>
-                                ) : (
+                                    <p className="text-sm opacity-90 mb-2">
+                                        Purchase bitcoin directly using your credit or debit card.
+                                        Instantly convert your local currency into bitcoin.
+                                    </p>
+                                    <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                        <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                                        Coming soon: Direct fiat-to-bitcoin purchases
+                                    </div>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                            <Tooltip delayDuration={300}>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-full sm:w-auto"
+                                    >
+                                        <Landmark className="w-4 h-4 mr-2" />
+                                        Cash Out
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="w-80 p-4">
+                                    <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                        <Landmark className="w-5 h-5" />
+                                        <span className="font-semibold">Convert to Cash</span>
+                                    </div>
+                                    <p className="text-sm opacity-90 mb-2">
+                                        Convert your cryptocurrency back to your local currency and withdraw
+                                        directly to your bank account.
+                                    </p>
+                                    <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                        <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                                        Coming soon: Direct crypto-to-fiat withdrawals
+                                    </div>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </div>
+
+                    <div className="hidden sm:block w-[1px] bg-border" />
+
+                    <div className="flex gap-2">
+                        <TooltipProvider>
+                            <Tooltip delayDuration={300}>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        onClick={() => setIsTransferModal(true)}
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-full sm:w-auto"
+                                        disabled={channels.length === 0}
+                                    >
+                                        <Send className="w-4 h-4 mr-2" />
+                                        Send STX
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="w-80 p-4">
+                                    <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                        <Send className="w-5 h-5" />
+                                        <span className="font-semibold">Send STX to Charisma User</span>
+                                    </div>
+                                    <p className="text-sm opacity-90 mb-2">
+                                        Send STX instantly to any Charisma user with near-zero fees.
+                                        No gas fees, no waiting for confirmations.
+                                    </p>
+                                    <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                        <Flame className="w-4 h-4 rounded-full text-primary" />
+                                        Instant transfers, near-zero fees, no gas fees.
+                                    </div>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </div>
+
+                    <div className="hidden sm:block w-[1px] bg-border" />
+
+                    <div className="flex gap-2">
+                        <TooltipProvider>
+                            <Tooltip delayDuration={300}>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        onClick={() => setIsDepositModal(true)}
+                                        size="sm"
+                                        className="w-full sm:w-auto"
+                                    >
+                                        <Download className="w-4 h-4 mr-2" />
+                                        Deposit
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="w-80 p-4">
+                                    <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                        <Download className="w-5 h-5" />
+                                        <span className="font-semibold">Deposit to Charisma</span>
+                                    </div>
+                                    <p className="text-sm opacity-90 mb-2">
+                                        Move your cryptocurrency from your Stacks wallet into your Charisma account
+                                        for instant transfers, low-fee trading and nearly unlimited transactions per second.
+                                    </p>
                                     <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
                                         <span className="w-2 h-2 rounded-full bg-green-500" />
-                                        Available balance: {getTokenBalance(null)} STX
+                                        Deposits require gas fees, and take a few seconds to confirm.
                                     </div>
-                                )}
-                            </TooltipContent>
-                        </Tooltip>
-                    </TooltipProvider>
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+
+                        <TooltipProvider>
+                            <Tooltip delayDuration={300}>
+                                <TooltipTrigger asChild>
+                                    <Button
+                                        onClick={() => setIsWithdrawModal(true)}
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-full sm:w-auto"
+                                        disabled={getTokenBalance(null) === 0}
+                                    >
+                                        <Upload className="w-4 h-4 mr-2" />
+                                        Withdraw
+                                    </Button>
+                                </TooltipTrigger>
+                                <TooltipContent className="w-80 p-4">
+                                    <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                        <Upload className="w-5 h-5" />
+                                        <span className="font-semibold">Withdraw from Charisma</span>
+                                    </div>
+                                    <p className="text-sm opacity-90 mb-2">
+                                        Move your cryptocurrency from your Charisma account back to your
+                                        Stacks wallet. Perfect for when you want to hold or trade elsewhere.
+                                    </p>
+                                    {getTokenBalance(null) === 0 ? (
+                                        <div className="inline-flex text-xs bg-destructive/10 text-destructive p-2 rounded items-center gap-2 mt-4">
+                                            <span className="w-2 h-2 rounded-full bg-destructive" />
+                                            Deposit some STX first to enable withdrawals
+                                        </div>
+                                    ) : (
+                                        <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                            <span className="w-2 h-2 rounded-full bg-green-500" />
+                                            Available balance: {getTokenBalance(null)} STX
+                                        </div>
+                                    )}
+                                </TooltipContent>
+                            </Tooltip>
+                        </TooltipProvider>
+                    </div>
+                </div>
+            </div>
+
+            {/* Platform Overview */}
+            <div className="mb-12">
+
+                <div className="grid gap-6 md:grid-cols-3 mt-6">
+                    <InfoCard
+                        icon={Zap}
+                        title="Lightning-Fast"
+                        content={
+                            <div className="space-y-4 text-sm text-muted-foreground">
+                                <p>
+                                    Experience the future of Bitcoin with instant transactions and low fees.
+                                    No more waiting for confirmations or paying gas fees - just seamless,
+                                    instant interactions.
+                                </p>
+                            </div>
+                        }
+                    />
+
+                    <InfoCard
+                        icon={Gamepad2}
+                        title="Apps & Games"
+                        content={
+                            <div className="space-y-4 text-sm text-muted-foreground">
+                                <p>
+                                    Play games, use apps, and earn rewards in real-time. Built for developers
+                                    and gamers who need instant finality and unlimited throughput.
+                                </p>
+                            </div>
+                        }
+                    />
+
+                    <InfoCard
+                        icon={Shield}
+                        title="Bitcoin Security"
+                        content={
+                            <div className="space-y-4 text-sm text-muted-foreground">
+                                <p>
+                                    Built on Bitcoin, secured by the world's strongest network. Your keys, your coins -
+                                    always in control while enjoying instant settlement.
+                                </p>
+                            </div>
+                        }
+                    />
                 </div>
             </div>
 
             {/* Token Balances */}
-            <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
-                {tokens.map(token => (
+            <div className="mb-8 mt-16">
+                <div className="flex items-center justify-between mb-4">
+                    <h2 className="text-xl font-bold">Your Wallet</h2>
+                    <div className="text-sm text-muted-foreground">
+                        Total Balance: ${((getTokenBalance(null) * prices['.stx']).toFixed(8))}
+                    </div>
+                </div>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    {/* STX Card */}
                     <TokenCard
-                        key={token.symbol}
-                        token={token.symbol}
-                        balance={getTokenBalance(token.symbol === 'STX' ? null : token.symbol)}
-                        icon={token.icon}
+                        token="STX"
+                        balance={getTokenBalance(null)}
+                        icon="/stx-logo.png"
                     />
-                ))}
+
+                    {/* sBTC Card */}
+                    <TokenCard
+                        token="sBTC"
+                        balance={0}
+                        icon="/sbtc.png"
+                    />
+
+                    {/* Welsh Corgi Coin Card */}
+                    <TokenCard
+                        token="WELSH"
+                        balance={0}
+                        icon="/welsh-logo.png"
+                    />
+                </div>
             </div>
 
             {/* Apps Grid */}
-            <div className="mb-8">
-                <h2 className="text-xl font-bold mb-4">App Marketplace</h2>
+            <div className="mb-8 mt-32">
+                <h2 className="text-xl font-bold mb-4">App Marketplace (coming soon)</h2>
                 <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                     <TooltipProvider>
                         <Tooltip delayDuration={300}>
@@ -790,6 +944,45 @@ const ProtocolDashboard = () => {
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger>
+                                <Card className="p-6 bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20 hover:border-primary/30 transition-colors cursor-pointer">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <div className="p-2 bg-primary/10 rounded-md">
+                                            <Code className="w-5 h-5 text-primary" />
+                                        </div>
+                                        <h3 className="font-semibold">Build Your Own App</h3>
+                                    </div>
+                                    <p className="text-sm text-muted-foreground">Join the ecosystem and build on top of Charisma's infrastructure</p>
+                                </Card>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-96 p-4">
+                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                    <Code className="w-5 h-5" />
+                                    <span className="font-semibold">Developer Resources</span>
+                                </div>
+                                <p className="text-sm opacity-90 mb-4">
+                                    Build scalable applications on Bitcoin using our developer toolkit and infrastructure.
+                                </p>
+                                <div className="space-y-2">
+                                    <div className="w-fit flex items-center gap-2 text-xs bg-muted/30 p-2 rounded-md">
+                                        <Rocket className="w-3 h-3 text-primary shrink-0" />
+                                        <span className="text-muted-foreground">Quick start guides and tutorials</span>
+                                    </div>
+                                    <div className="w-fit flex items-center gap-2 text-xs bg-muted/30 p-2 rounded-md">
+                                        <BookMarked className="w-3 h-3 text-primary shrink-0" />
+                                        <span className="text-muted-foreground">Comprehensive API documentation</span>
+                                    </div>
+                                    <div className="w-fit flex items-center gap-2 text-xs bg-muted/30 p-2 rounded-md">
+                                        <TrendingUp className="w-3 h-3 text-primary shrink-0" />
+                                        <span className="text-muted-foreground">Scale to millions of users</span>
+                                    </div>
+                                </div>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
                 </div>
             </div>
 
@@ -799,7 +992,7 @@ const ProtocolDashboard = () => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Deposit STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Deposit STX into your Charisma Wallet
+                            Deposit STX into your Charisma account
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
@@ -832,7 +1025,7 @@ const ProtocolDashboard = () => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Withdraw STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Withdraw STX from your Charisma Wallet to your Stacks Wallet
+                            Withdraw STX from your Charisma account to your Stacks Wallet
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
