@@ -5,8 +5,12 @@ export function usePersistedState<T>(key: string, defaultValue: T): [T, (value: 
 
     useEffect(() => {
         const storedValue = localStorage.getItem(key);
-        if (storedValue !== null) {
-            setState(JSON.parse(storedValue));
+        try {
+            if (storedValue !== null) {
+                setState(JSON.parse(storedValue));
+            }
+        } catch (error) {
+            console.error('Error parsing stored value', error);
         }
     }, [key]);
 

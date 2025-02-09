@@ -64,7 +64,7 @@ import { LucideIcon } from "lucide-react";
 // Constants
 const CONTRACT_ADDRESS = "SP126XFZQ3ZHYM6Q6KAQZMMJSDY91A8BTT6AD08RV";
 const CONTRACT_NAME = "stackflow-0-2-2";
-const OWNER = "SP3619DGWH08262BJAG0NPFN4TKMXHC0ZQDN";
+const OWNER = "SP3619DGWH08262BJAG0NPFHZQDPN4TKMXHC0ZQDN";
 const API_BASE_URL = '/api/v0/stackflow';
 
 
@@ -113,8 +113,8 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
     const formattedBalance = token === 'sBTC'
         ? (balance + pendingAmount).toFixed(8)
         : token === 'WELSH'
-            ? (balance + pendingAmount).toLocaleString(undefined, { maximumFractionDigits: 2 })
-            : (balance + pendingAmount).toLocaleString(undefined, { maximumFractionDigits: 6 });
+            ? (balance + pendingAmount).toFixed(6)
+            : (balance + pendingAmount).toFixed(6);
 
     // Calculate fiat value (dummy prices for demo)
     const fiatValue = token === 'sBTC'
@@ -368,7 +368,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
     // Set the default channel when channels are loaded
     useEffect(() => {
-        if (channels.length) {
+        if (channels && channels.length > 0) {
             // Find STX channel first
             const stxChannel = channels.find(c =>
                 (c.principal_1 === stxAddress || c.principal_2 === stxAddress) &&
@@ -381,6 +381,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
     // Calculate total balances across all channels
     const getTokenBalance = (token: string | null = null) => {
+        if (!channels || channels.length === 0) return 0;
         return channels.reduce((sum: number, channel: Channel) => {
             if (channel.token === token) {
                 // If user is principal_1, use balance_1, else use balance_2
@@ -455,12 +456,58 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
     const confirmAction = async (action: string) => {
         const { openStructuredDataSignatureRequestPopup, openContractCall } = await import("@stacks/connect");
-        if (!selectedChannel) return alert("No channel selected");
+        if (!selectedChannel && action !== "deposit") return alert("No channel selected");
         if (action !== "close" && !amount) return alert("Enter an amount");
 
-        selectedChannel.nonce++
-
         try {
+            if (action === "deposit" && !selectedChannel) {
+                // If no channel exists, call fund-channel instead
+                const txOptions = {
+                    contractAddress: CONTRACT_ADDRESS,
+                    contractName: CONTRACT_NAME,
+                    functionName: "fund-channel",
+                    functionArgs: [
+                        Cl.none(), // token (none for STX)
+                        Cl.uint(Number(amount) * 1000000), // amount in uSTX
+                        Cl.principal(OWNER), // with (contract owner)
+                        Cl.uint(0), // initial nonce
+                    ],
+                    postConditions: [
+                        Pc.principal(stxAddress).willSendEq(Number(amount) * 1000000).ustx()
+                    ],
+                    postConditionMode: PostConditionMode.Deny,
+                    network: STACKS_MAINNET,
+                    onFinish: (data: any) => {
+                        window.dispatchEvent(new CustomEvent('blazeDeposit', {
+                            detail: {
+                                token: 'STX',
+                                amount: Number(amount),
+                                action: 'deposit'
+                            }
+                        }));
+                        toast({
+                            title: "Channel creation submitted",
+                            description: "The transaction has been submitted to the network."
+                        });
+                        setIsDepositModal(false);
+                        fetchChannels();
+                    },
+                    onCancel: () => {
+                        toast({
+                            title: "Transaction cancelled",
+                            description: "The user cancelled the transaction.",
+                            variant: "destructive"
+                        });
+                    }
+                };
+                await openContractCall(txOptions);
+                return;
+            }
+
+            if (!selectedChannel) return alert("No channel selected");
+
+            selectedChannel.nonce++
+
             const payload: any = {
                 "principal-1": selectedChannel.principal_1,
                 "principal-2": selectedChannel.principal_2,
