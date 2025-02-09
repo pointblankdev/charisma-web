@@ -702,12 +702,12 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                 <div className="text-left space-y-2">
                     <div className="flex items-center gap-2">
                         <div className="relative">
-                            <Flame className="w-10 h-10 text-primary font-bold relative z-10" strokeWidth={1} />
+                            <Flame className="w-10 h-10 text-primary/90 font-bold relative z-10" strokeWidth={3} />
                             <div className="absolute inset-0 z-0">
                                 <Flame className="w-10 h-10 text-primary/10 animate-ping" strokeWidth={8} />
                             </div>
                             <div className="absolute inset-0 z-0">
-                                <Flame className="w-10 h-10 text-primary/50 animate-pulse-glow" strokeWidth={4} />
+                                <Flame className="w-10 h-10 text-primary/40 animate-pulse-glow" strokeWidth={6} />
                             </div>
                         </div>
                         <h1 className="text-5xl font-bold text-white">Blaze</h1>
