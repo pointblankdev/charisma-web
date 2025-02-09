@@ -682,6 +682,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                         variant="outline"
                                         size="sm"
                                         className="w-full sm:w-auto"
+                                        disabled={true}
                                     >
                                         <Bitcoin className="w-4 h-4 mr-2" />
                                         Buy Bitcoin
@@ -711,6 +712,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                         variant="outline"
                                         size="sm"
                                         className="w-full sm:w-auto"
+                                        disabled={true}
                                     >
                                         <Landmark className="w-4 h-4 mr-2" />
                                         Cash Out
@@ -745,7 +747,8 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                         variant="outline"
                                         size="sm"
                                         className="w-full sm:w-auto"
-                                        disabled={channels.length === 0}
+                                        // disabled={channels.length === 0}
+                                        disabled={true}
                                     >
                                         <Send className="w-4 h-4 mr-2" />
                                         Send STX
@@ -1056,10 +1059,20 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Deposit STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Deposit STX into your Blaze account
+                            Deposit STX into your Blaze account for instant, fee-less transfers
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
+                        <div className="rounded-lg bg-muted/30 p-4 mb-2">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Flame className="w-4 h-4 text-primary" />
+                                <span className="font-medium">How it works</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                                Your STX will be locked in a secure payment channel, enabling instant transfers with zero gas fees.
+                                You can withdraw your funds back to your wallet at any time.
+                            </p>
+                        </div>
                         <div className="grid items-center grid-cols-4 gap-4">
                             <Label htmlFor="amount-deposit" className="text-right">
                                 Amount (STX)
@@ -1070,13 +1083,27 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                 placeholder="Enter amount"
                                 className="col-span-3"
                                 value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    const numValue = Number(value);
+                                    if (numValue <= 1 && (!value.includes('.') || value.split('.')[1]?.length <= 6)) {
+                                        setAmount(value);
+                                    }
+                                }}
+                                max={1}
+                                min={0}
                             />
+                        </div>
+                        <div className="text-xs text-muted-foreground px-4">
+                            Maximum deposit: 1 STX (up to 6 decimal places)
                         </div>
                     </div>
                     <AlertDialogFooter>
                         <AlertDialogCancel onClick={() => setIsDepositModal(false)}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => confirmAction("deposit")}>
+                        <AlertDialogAction
+                            onClick={() => confirmAction("deposit")}
+                            disabled={!amount || Number(amount) > 1}
+                        >
                             Deposit
                         </AlertDialogAction>
                     </AlertDialogFooter>
@@ -1089,10 +1116,20 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Withdraw STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Withdraw STX from your Blaze account to your Stacks Wallet
+                            Withdraw STX from your Blaze account back to your Stacks wallet
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
+                        <div className="rounded-lg bg-muted/30 p-4 mb-2">
+                            <div className="flex items-center gap-2 mb-2">
+                                <Wallet className="w-4 h-4 text-primary" />
+                                <span className="font-medium">How it works</span>
+                            </div>
+                            <p className="text-sm text-muted-foreground">
+                                Your STX will be withdrawn from the payment channel back to your Stacks wallet.
+                                This requires a blockchain transaction and may take a few seconds to complete.
+                            </p>
+                        </div>
                         <div className="grid items-center grid-cols-4 gap-4">
                             <Label htmlFor="amount-withdraw" className="text-right">
                                 Amount (STX)
