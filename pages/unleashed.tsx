@@ -4,8 +4,8 @@ import ProtocolDashboard from '@components/stackflow/protocol-dashboard';
 export default function Stackflow() {
     return (
         <Page meta={{
-            title: 'Stackflow',
-            description: 'Stackflow is a protocol for building and managing payment channels on the Stacks blockchain.',
+            title: 'Charisma Unleashed',
+            description: 'Charisma Unleashed is a Bitcoin L2 scaling solution with unlimited TPS and throughput.',
         }}>
             <ProtocolDashboard />
         </Page>
