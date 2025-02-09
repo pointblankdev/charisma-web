@@ -666,9 +666,9 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                         <h1 className="text-5xl font-bold text-white">Blaze</h1>
                     </div>
                     <p className="text-gray-400 max-w-prose leading-tight">
-                        Your gateway to the future of Bitcoin finance and decentralized applications.
+                        Your gateway to the future of web3 finance and decentralized applications.
                         <br className="hidden md:block" />
-                        Experience instant transactions, zero fees, and unlimited scalability.
+                        Experience instant transactions, low fees, and limitless scaling with Bitcoin finality.
                     </p>
                 </div>
 
