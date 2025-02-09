@@ -216,7 +216,7 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
                                             What is this?
                                         </div>
                                         <p className="text-sm text-muted-foreground pl-3">
-                                            This unique visual pattern represents the current state of your token balances in Charisma. Think of it as a fingerprint that identifies your balances's current state.
+                                            This unique visual pattern represents the current state of your token balances in Blaze. Think of it as a fingerprint that identifies your balances's current state.
                                         </p>
                                     </div>
 
@@ -249,7 +249,7 @@ const TokenCard = ({ token, balance, icon }: { token: string, balance: number, i
                                             <div className="space-y-1">
                                                 <span className="text-sm font-medium">Channel State Verification</span>
                                                 <p className="text-xs text-muted-foreground">
-                                                    This visual pattern helps you verify your channel's state at a glance. It updates with each transaction and is secured by cryptographic signatures from both you and Charisma, ensuring the integrity of your payment channel.
+                                                    This visual pattern helps you verify your channel's state at a glance. It updates with each transaction and is secured by cryptographic signatures from both you and Blaze, ensuring the integrity of your payment channel.
                                                 </p>
                                                 <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
                                                     <Check className="w-3 h-3 text-green-500" />
@@ -703,10 +703,10 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                 <TooltipContent className="w-80 p-4">
                                     <div className="flex items-center gap-2 mb-2 pb-2 border-b">
                                         <Send className="w-5 h-5" />
-                                        <span className="font-semibold">Send STX to Charisma User</span>
+                                        <span className="font-semibold">Send STX to Blaze User</span>
                                     </div>
                                     <p className="text-sm opacity-90 mb-2">
-                                        Send STX instantly to any Charisma user with near-zero fees.
+                                        Send STX instantly to any Blaze user with near-zero fees.
                                         No gas fees, no waiting for confirmations.
                                     </p>
                                     <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
@@ -736,10 +736,10 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                 <TooltipContent className="w-96 p-4">
                                     <div className="flex items-center gap-2 mb-2 pb-2 border-b">
                                         <Download className="w-5 h-5" />
-                                        <span className="font-semibold">Deposit to Charisma</span>
+                                        <span className="font-semibold">Deposit to Blaze</span>
                                     </div>
                                     <p className="text-sm opacity-90 mb-2">
-                                        Move your cryptocurrency from your Stacks wallet into your Charisma account
+                                        Move your cryptocurrency from your Stacks wallet into your Blaze account
                                         for instant transfers, low-fee trading and nearly unlimited transactions per second.
                                     </p>
                                     <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
@@ -767,10 +767,10 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                 <TooltipContent className="w-80 p-4">
                                     <div className="flex items-center gap-2 mb-2 pb-2 border-b">
                                         <Upload className="w-5 h-5" />
-                                        <span className="font-semibold">Withdraw from Charisma</span>
+                                        <span className="font-semibold">Withdraw from Blaze</span>
                                     </div>
                                     <p className="text-sm opacity-90 mb-2">
-                                        Move your cryptocurrency from your Charisma account back to your
+                                        Move your cryptocurrency from your Blaze account back to your
                                         Stacks wallet. Perfect for when you want to hold or trade elsewhere.
                                     </p>
                                     {getTokenBalance(null) === 0 ? (
@@ -898,7 +898,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                         <Rocket className="w-5 h-5" />
                                         <h3 className="font-semibold">Bonding Curve</h3>
                                     </div>
-                                    <p className="text-sm text-gray-400">Launch your token on Charisma and trade at lighning speed</p>
+                                    <p className="text-sm text-gray-400">Launch your token on Blaze and trade at lighning speed</p>
                                 </Card>
                             </TooltipTrigger>
                             <TooltipContent className="w-80 p-4">
@@ -953,7 +953,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                 </Card>
                             </TooltipTrigger>
                             <TooltipContent className="w-80 p-4">
-                                <p className="text-sm opacity-90">Coming soon: Earn yield by providing liquidity to various Charisma protocols.</p>
+                                <p className="text-sm opacity-90">Coming soon: Earn yield by providing liquidity to various Blaze protocols.</p>
                             </TooltipContent>
                         </Tooltip>
                     </TooltipProvider>
@@ -968,7 +968,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                         </div>
                                         <h3 className="font-semibold">Build Your Own App</h3>
                                     </div>
-                                    <p className="text-sm text-muted-foreground">Join the ecosystem and build on top of Charisma's infrastructure</p>
+                                    <p className="text-sm text-muted-foreground">Join the ecosystem and build on top of Blaze's infrastructure</p>
                                 </Card>
                             </TooltipTrigger>
                             <TooltipContent className="w-96 p-4">
@@ -1005,7 +1005,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Deposit STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Deposit STX into your Charisma account
+                            Deposit STX into your Blaze account
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
@@ -1038,7 +1038,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Withdraw STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Withdraw STX from your Charisma account to your Stacks Wallet
+                            Withdraw STX from your Blaze account to your Stacks Wallet
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
@@ -1078,7 +1078,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <AlertDialogHeader>
                         <AlertDialogTitle>Transfer STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Transfer STX to another Charisma user instantly
+                            Transfer STX to another Blaze user instantly
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
