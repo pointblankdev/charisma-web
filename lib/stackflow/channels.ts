@@ -107,8 +107,8 @@ async function insertChannel(
  */
 async function updateChannel(
     channelId: string,
-    balance1: string,
-    balance2: string,
+    balance1: number,
+    balance2: number,
     nonce: number,
     expiresAt: string | null,
     state: string

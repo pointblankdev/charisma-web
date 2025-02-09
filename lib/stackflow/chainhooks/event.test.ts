@@ -59,9 +59,9 @@ describe('Channel Updater', () => {
         console.log(`Channel data for key ${channelKey}:`, channelData);
         await updateChannel(
             'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS:SP3619DGWH08262BJAG0NPFHZQDPN4TKMXHC0ZQDN:null',
-            channelData.balance_1,
-            channelData.balance_2,
-            0,
+            1500, //Number(channelData.balance_1),
+            100, //Number(channelData.balance_2),
+            15, //channelData.nonce,
             channelData.expires_at,
             'open'
         );

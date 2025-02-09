@@ -59,10 +59,6 @@ export async function verifySignature(
         hashedSecret ? Cl.some(Cl.bufferFromHex(hashedSecret)) : Cl.none()
     ];
 
-    console.log({
-        functionArgs
-    });
-
     const options = {
         contractAddress: CONFIG.CONTRACT_ADDRESS!,
         contractName: CONFIG.CONTRACT_NAME!,

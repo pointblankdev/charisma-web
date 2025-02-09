@@ -68,6 +68,10 @@ export interface GlobalState {
     setMaxHops: (maxHops: number) => void;
     slippage: number;
     setSlippage: (slippage: number) => void;
+
+    // Add channels to the global state
+    channels: any[];
+    fetchChannels: () => Promise<void>;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -96,6 +100,25 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         non_fungible_tokens: {},
     });
 
+    // Add channels state
+    const [channels, setChannels] = usePersistedState<any[]>('channels', []);
+
+    // Add fetchChannels function
+    const fetchChannels = useCallback(async () => {
+        const { getUserSession } = await import("@stacks/connect");
+        const session = getUserSession();
+        if (session.isUserSignedIn()) {
+            const userAddress = session.loadUserData().profile.stxAddress.mainnet;
+            try {
+                const response = await fetch(`/api/v0/stackflow/channels?principal=${userAddress}`);
+                const data = await response.json();
+                setChannels(data.channels);
+            } catch (error) {
+                console.error('Error fetching channels:', error);
+            }
+        }
+    }, [setChannels]);
+
     // Load user data and configure Dexterity
     useEffect(() => {
         if (userSession?.isUserSignedIn()) {
@@ -109,9 +132,10 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         }
     }, [userSession, setStxAddress]);
 
-    // Fetch balances when stxAddress changes
+    // RUN ON EVERY FAST BLOCK
     useEffect(() => {
         if (stxAddress) {
+            fetchChannels();
             getBalances(stxAddress).then(data => {
                 setBalances(data);
             }).catch(console.error);
@@ -294,12 +318,20 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                     console.error('Error processing multihop transaction:', error);
                 }
             }
+
         });
 
         return () => {
             sc.unsubscribeMempool();
         };
-    }, [toast]);
+    }, [toast, fetchChannels]);
+
+    // Add initial channel fetch when address changes
+    useEffect(() => {
+        if (stxAddress) {
+            fetchChannels();
+        }
+    }, [stxAddress, fetchChannels]);
 
     useEffect(() => {
         // Add a cleanup flag to prevent race conditions
@@ -410,6 +442,10 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                         setMaxHops,
                         slippage,
                         setSlippage,
+
+                        // Add channels to the context
+                        channels,
+                        fetchChannels,
                     }}
                 >
                     <div >

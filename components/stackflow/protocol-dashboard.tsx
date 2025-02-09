@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Button } from '@components/ui/button';
 import { Card, CardContent } from '@components/ui/card';
 import {
@@ -13,135 +13,271 @@ import {
 } from "@components/ui/alert-dialog";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
-import { useToast } from "@components/ui/use-toast";
+import { toast, useToast } from "@components/ui/use-toast";
 import {
-    Wallet,
-    ArrowRightLeft,
-    Router,
     Lock,
-    Unlock,
-    Plus,
-    History,
-    Send,
     Download,
-    Upload
+    Upload,
+    BookMarked,
+    BookmarkCheck,
+    CreditCard,
+    DollarSign,
+    Send,
+    ArrowLeftRight,
+    Rocket,
+    TrendingUp,
+    Wallet,
+    Coins,
+    Info,
+    Flame,
+    PiggyBank,
+    Bitcoin,
+    Landmark,
+    Fingerprint,
+    Check
 } from 'lucide-react';
 import { STACKS_MAINNET } from "@stacks/network";
-import { Cl, PostConditionMode, Pc, signWithKey, FungibleConditionCode } from "@stacks/transactions";
-import { Tooltip, TooltipTrigger, TooltipContent } from '@components/ui/tooltip';
-import axios from 'axios';
+import { Cl, PostConditionMode, Pc } from "@stacks/transactions";
 import { Channel } from '@lib/stackflow/types';
+import { useGlobal } from '@lib/hooks/global-context';
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+} from "@components/ui/tooltip";
+import Blockies from 'react-blockies';
+import Image from 'next/image';
+import axios from 'axios';
 
-const ProtocolDashboard = () => {
-    const [isOpenChannel, setIsOpenChannel] = useState(false);
-    const [isCloseChannel, setIsCloseChannel] = useState(false);
-    const [isTransferModal, setIsTransferModal] = useState(false);
-    const [isDepositModal, setIsDepositModal] = useState(false);
-    const [isWithdrawModal, setIsWithdrawModal] = useState(false);
-    const [isHashModal, setIsHashModal] = useState(false);
-    const [isVerifySignatureModal, setIsVerifySignatureModal] = useState(false);
-    const [signatureToVerify, setSignatureToVerify] = useState('');
-    const [verificationResult, setVerificationResult] = useState<boolean | null>(null);
+// Constants
+const CONTRACT_ADDRESS = "SP126XFZQ3ZHYM6Q6KAQZMMJSDY91A8BTT6AD08RV";
+const CONTRACT_NAME = "stackflow-0-2-2";
+const OWNER = "SP3619DGWH08262BJAG0NPFN4TKMXHC0ZQDN";
+const API_BASE_URL = '/api/v0/stackflow';
+
+
+const TokenCard = ({ token, balance, icon }: { token: string, balance: number, icon: string }) => {
+    const { channels, stxAddress } = useGlobal();
     const [structuredDataHash, setStructuredDataHash] = useState<string | null>(null);
-    const [channels, setChannels] = useState([]);
-    const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
-    const [amount, setAmount] = useState('');
-    const { toast } = useToast();
 
-    const CONTRACT_ADDRESS = "SP126XFZQ3ZHYM6Q6KAQZMMJSDY91A8BTT6AD08RV";
-    const CONTRACT_NAME = "stackflow-0-2-2";
-    const OWNER = "SP3619DGWH08262BJAG0NPFHZQDPN4TKMXHC0ZQDN";
-    const API_BASE_URL = "/api/v0/stackflow";
+    // Fetch hash for this token's channel
+    const fetchTokenChannelHash = async () => {
+        const channel = channels.find(c =>
+            (c.principal_1 === stxAddress || c.principal_2 === stxAddress) &&
+            c.token === (token === 'STX' ? null : token)
+        );
 
-    // Domain and action map for signature requests
-    const domain = Cl.tuple({
-        name: Cl.stringAscii("StackFlow"),
-        version: Cl.stringAscii("0.2.2"),
-        "chain-id": Cl.uint(STACKS_MAINNET.chainId),
-    });
+        if (channel) {
+            try {
+                await fetchStructuredDataHash(channel);
+            } catch (error) {
+                console.error(`Error fetching hash for ${token}:`, error);
+            }
+        }
+    };
 
-    const actionMap = {
-        close: 0,
-        transfer: 1,
-        deposit: 2,
-        withdraw: 3,
+    // Re-fetch hash when channels update
+    useEffect(() => {
+        fetchTokenChannelHash();
+    }, [channels, token, stxAddress]);
+
+    const fetchStructuredDataHash = async (channel: Channel) => {
+        try {
+            const { getUserSession } = await import("@stacks/connect");
+            const session = getUserSession();
+            const currentAddress = session.loadUserData().profile.stxAddress.mainnet;
+            const [contractAddress, contractName] = channel.token ? channel.token.split(".") : ["", ""];
+            const tokenCV = !channel.token ? Cl.none() : Cl.some(Cl.contractPrincipal(contractAddress, contractName));
+
+            const options = {
+                contractAddress: CONTRACT_ADDRESS,
+                contractName: CONTRACT_NAME,
+                functionName: "make-structured-data-hash",
+                functionArgs: [
+                    Cl.tuple({
+                        "principal-1": Cl.principal(channel.principal_1),
+                        "principal-2": Cl.principal(channel.principal_2),
+                        token: tokenCV,
+                    }),
+                    Cl.uint(channel.balance_1),
+                    Cl.uint(channel.balance_2),
+                    Cl.uint(channel.nonce),
+                    Cl.uint(0), // Assuming action is close
+                    Cl.some(Cl.principal(currentAddress)),
+                    Cl.none() // No hashed-secret in this demo.
+                ],
+                network: STACKS_MAINNET,
+                senderAddress: currentAddress,
+            };
+
+            const { fetchCallReadOnlyFunction, ClarityType } = await import("@stacks/transactions");
+            const result = await fetchCallReadOnlyFunction(options);
+            if (result.type !== ClarityType.ResponseOk) {
+                throw new Error("Error fetching structured data hash");
+            }
+            // Assuming result.value holds a buffer; convert it to a hex string.
+            const hashHex = (result.value as any).value.toString('hex');
+            setStructuredDataHash(hashHex);
+        } catch (error) {
+            console.error("Error fetching structured data hash:", error);
+            toast({ title: "Failed to fetch structured data hash", variant: "destructive" });
+        }
     };
 
     useEffect(() => {
-        fetchChannels();
-    }, []);
+        fetchTokenChannelHash();
+    }, [channels, token, stxAddress]);
 
-    const fetchChannels = async () => {
-        const { getUserSession } = await import("@stacks/connect");
-        const session = getUserSession();
-        if (session.isUserSignedIn()) {
-            const userAddress = session.loadUserData().profile.stxAddress.mainnet;
-            try {
-                const response = await fetch(`/api/v0/stackflow/channels?principal=${userAddress}`);
-                const data = await response.json();
-                setChannels(data.channels);
-            } catch (error) {
-                console.error('Error fetching channels:', error);
-            }
+    return (
+        <Card className="bg-accent/5 border-primary/20 relative overflow-hidden">
+            {/* Card Content */}
+            <CardContent className="flex items-center justify-between p-0 relative z-10">
+                <div className="flex items-center">
+                    <Image src={icon} alt={token} className="w-12 h-12 m-4 rounded-sm" width={200} height={200} />
+                    <div>
+                        <p className="text-sm text-gray-400">{token} Balance</p>
+                        <p className="text-2xl font-bold">{balance} {token}</p>
+                    </div>
+                </div>
+                {structuredDataHash && (
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger asChild>
+                                <div className="w-16 h-16">
+                                    <Blockies
+                                        seed={structuredDataHash}
+                                        size={20}
+                                        scale={4}
+                                        color="#0C0C0D"
+                                        bgColor="#0C0C0D"
+                                        spotColor="#c1121f"
+                                        className="cursor-pointer rounded-none absolute -right-[40px] top-0 transition-all duration-300 ease-in-out hover:animate-pulse hover:brightness-110"
+                                    />
+                                </div>
+                            </TooltipTrigger>
+                            <TooltipContent
+                                side="right"
+                                align="start"
+                                className="max-w-[600px] p-0 overflow-hidden"
+                            >
+                                {/* Header Section */}
+                                <div className="bg-muted/30 p-4 border-b border-border">
+                                    <div className="flex items-center gap-3">
+                                        <div className="p-2 bg-background rounded-md">
+                                            <Fingerprint className="w-6 h-6 text-primary" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-semibold text-md">Channel Fingerprint</h4>
+                                            <code className="text-xs font-mono mt-1 text-muted-foreground">{structuredDataHash}</code>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {/* Content Sections */}
+                                <div className="p-4 space-y-4">
+                                    {/* What is this? */}
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center gap-2 text-sm font-medium">
+                                            <div className="w-1 h-1 rounded-full bg-primary" />
+                                            What is this?
+                                        </div>
+                                        <p className="text-sm text-muted-foreground pl-3">
+                                            This unique visual pattern represents the current state of your payment channel with Charisma. Think of it as a fingerprint that uniquely identifies your channel's current configuration.
+                                        </p>
+                                    </div>
+
+                                    {/* Security Features */}
+                                    <div className="space-y-1.5">
+                                        <div className="flex items-center gap-2 text-sm font-medium">
+                                            <div className="w-1 h-1 rounded-full bg-primary" />
+                                            Security Features
+                                        </div>
+                                        <div className="pl-3 space-y-2">
+                                            <div className="w-fit flex items-center gap-2 text-sm bg-muted/30 p-2 px-4 rounded-md">
+                                                <Lock className="w-4 h-4 text-primary shrink-0" />
+                                                <span className="text-muted-foreground">Cryptographically secure state verification</span>
+                                            </div>
+                                            <div className="w-fit flex items-center gap-2 text-sm bg-muted/30 p-2 px-4 rounded-md">
+                                                <Info className="w-4 h-4 text-primary shrink-0" />
+                                                <span className="text-muted-foreground">Visual state monitoring for quick verification</span>
+                                            </div>
+                                            <div className="w-fit flex items-center gap-2 text-sm bg-muted/30 p-2 px-4 rounded-md">
+                                                <Flame className="w-4 h-4 text-primary shrink-0" />
+                                                <span className="text-muted-foreground">Real-time state change detection</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Important Note */}
+                                    <div className="bg-background border border-border rounded-md p-3">
+                                        <div className="flex items-start gap-2">
+                                            <Info className="w-4 h-4 text-primary mt-1 min-w-6" />
+                                            <div className="space-y-1">
+                                                <span className="text-sm font-medium">Channel State Verification</span>
+                                                <p className="text-xs text-muted-foreground">
+                                                    This visual pattern helps you verify your channel's state at a glance. It updates with each transaction and is secured by cryptographic signatures from both you and Charisma, ensuring the integrity of your payment channel.
+                                                </p>
+                                                <div className="flex items-center gap-2 text-xs text-muted-foreground mt-2">
+                                                    <Check className="w-3 h-3 text-green-500" />
+                                                    <span>All state changes are cryptographically signed</span>
+                                                </div>
+                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                    <Check className="w-3 h-3 text-green-500" />
+                                                    <span>Pattern changes indicate successful transactions</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                )}
+            </CardContent>
+        </Card>
+    );
+};
+
+const ProtocolDashboard = () => {
+    const [isDepositModal, setIsDepositModal] = useState(false);
+    const [isWithdrawModal, setIsWithdrawModal] = useState(false);
+    const [isTransferModal, setIsTransferModal] = useState(false);
+    const [isCloseModal, setIsCloseModal] = useState(false);
+    const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
+    const [amount, setAmount] = useState('');
+    const { stxAddress, channels, fetchChannels } = useGlobal();
+    const [recipientAddress, setRecipientAddress] = useState('');
+    const { toast } = useToast();
+
+    // Set the default channel when channels are loaded
+    useEffect(() => {
+        if (channels.length) {
+            // Find STX channel first
+            const stxChannel = channels.find(c =>
+                (c.principal_1 === stxAddress || c.principal_2 === stxAddress) &&
+                c.token === null
+            );
+            // Default to STX channel if exists, otherwise use first channel
+            setSelectedChannel(stxChannel || channels[0]);
         }
-    };
+    }, [channels, stxAddress]);
 
-    const handleOpenChannel = async () => {
-        const { showConnect, openContractCall, getUserSession } = await import("@stacks/connect");
-        const session = getUserSession();
-        if (!session.isUserSignedIn()) {
-            showConnect({
-                appDetails: {
-                    name: 'Charisma',
-                    icon: 'https://charisma.rocks/charisma.png'
-                }
-            });
-            return;
-        }
-
-        const userAddress = session.loadUserData().profile.stxAddress.mainnet;
-        const tokenAmount = BigInt(Number(amount) * 1000000);
-
-        openContractCall({
-            contractAddress: CONTRACT_ADDRESS,
-            contractName: CONTRACT_NAME,
-            functionName: "fund-channel",
-            functionArgs: [
-                Cl.none(),
-                Cl.uint(tokenAmount),
-                Cl.principal(OWNER),
-                Cl.uint(0)
-            ],
-            postConditionMode: PostConditionMode.Deny,
-            postConditions: [
-                Pc.principal(userAddress).willSendEq(tokenAmount).ustx(),
-            ],
-            network: STACKS_MAINNET,
-            onFinish: (data) => {
-                toast({
-                    title: "Channel Created",
-                    description: "Transaction submitted successfully",
-                });
-                setIsOpenChannel(false);
-                fetchChannels();
-            },
-            onCancel: () => {
-                toast({
-                    title: "Cancelled",
-                    description: "Channel creation cancelled",
-                    variant: "destructive"
-                });
+    // Calculate total balances across all channels
+    const getTokenBalance = (token: string | null = null) => {
+        return channels.reduce((sum: number, channel: Channel) => {
+            if (channel.token === token) {
+                // If user is principal_1, use balance_1, else use balance_2
+                const balance = channel.principal_1 === stxAddress ?
+                    channel.balance_1 : channel.balance_2;
+                return sum + parseInt(balance);
             }
-        });
+            return sum;
+        }, 0) / 1000000; // Convert to STX
     };
-
-    // ---- Merged Functions for Balance Adjustment & API Message Building ---- //
 
     const adjustBalances = async (channel: Channel, action: string) => {
-        const { getUserSession } = await import("@stacks/connect");
-        const session = getUserSession();
-        const currentAddress = session.loadUserData().profile.stxAddress.mainnet;
-        const senderFirst = channel.principal_1 === currentAddress;
+        const senderFirst = channel.principal_1 === stxAddress;
         const amountInt = Number(amount) * 1000000;
 
         const balanceAdjustments = {
@@ -165,14 +301,26 @@ const ProtocolDashboard = () => {
         };
     };
 
+    // Domain and action map for signature requests
+    const domain = Cl.tuple({
+        name: Cl.stringAscii("StackFlow"),
+        version: Cl.stringAscii("0.2.2"),
+        "chain-id": Cl.uint(STACKS_MAINNET.chainId),
+    });
+
+    const actionMap = {
+        close: 0,
+        transfer: 1,
+        deposit: 2,
+        withdraw: 3,
+    };
+
     const buildMessage = async (action: string, channel: Channel) => {
-        const { getUserSession } = await import("@stacks/connect");
         const { balance_1, balance_2 } = await adjustBalances(channel, action);
+        console.log(channel);
         const [contractAddress, contractName] = channel.token ? channel.token.split(".") : ["", ""];
 
         const tokenCV = !channel.token ? Cl.none() : Cl.some(Cl.contractPrincipal(contractAddress, contractName));
-        const session = getUserSession();
-        const currentAddress = session.loadUserData().profile.stxAddress.mainnet;
 
         const message = Cl.tuple({
             token: tokenCV,
@@ -182,58 +330,14 @@ const ProtocolDashboard = () => {
             "balance-2": Cl.uint(balance_2),
             nonce: Cl.uint(channel.nonce),
             action: Cl.uint(actionMap[action as keyof typeof actionMap]),
-            actor: action === "close" ? Cl.none() : Cl.some(Cl.principal(currentAddress)),
+            actor: action === "close" ? Cl.none() : Cl.some(Cl.principal(stxAddress)),
             "hashed-secret": Cl.none() // TODO: handle secrets
         });
 
         return message;
     };
 
-    const fetchStructuredDataHash = async (channel: Channel) => {
-        try {
-            const { getUserSession } = await import("@stacks/connect");
-            const session = getUserSession();
-            const currentAddress = session.loadUserData().profile.stxAddress.mainnet;
-            const [contractAddress, contractName] = channel.token ? channel.token.split(".") : ["", ""];
-            const tokenCV = !channel.token ? Cl.none() : Cl.some(Cl.contractPrincipal(contractAddress, contractName));
-
-            const options = {
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: CONTRACT_NAME,
-                functionName: "make-structured-data-hash",
-                functionArgs: [
-                    Cl.tuple({
-                        "principal-1": Cl.principal(channel.principal_1),
-                        "principal-2": Cl.principal(channel.principal_2),
-                        token: tokenCV,
-                    }),
-                    Cl.uint(channel.balance_1),
-                    Cl.uint(channel.balance_2),
-                    Cl.uint(channel.nonce),
-                    Cl.uint(actionMap.close),
-                    Cl.some(Cl.principal(currentAddress)),
-                    Cl.none() // No hashed-secret in this demo.
-                ],
-                network: STACKS_MAINNET,
-                senderAddress: currentAddress,
-            };
-
-            const { fetchCallReadOnlyFunction, ClarityType } = await import("@stacks/transactions");
-            const result = await fetchCallReadOnlyFunction(options);
-            if (result.type !== ClarityType.ResponseOk) {
-                throw new Error("Error fetching structured data hash");
-            }
-            // Assuming result.value holds a buffer; convert it to a hex string.
-            const hashHex = (result.value as any).value.toString('hex');
-            setStructuredDataHash(hashHex);
-            setIsHashModal(true);
-        } catch (error) {
-            console.error("Error fetching structured data hash:", error);
-            toast({ title: "Failed to fetch structured data hash", variant: "destructive" });
-        }
-    };
-
-    const confirmChannelAction = async (action: string) => {
+    const confirmAction = async (action: string) => {
         const { openStructuredDataSignatureRequestPopup, openContractCall } = await import("@stacks/connect");
         if (!selectedChannel) return alert("No channel selected");
         if (action !== "close" && !amount) return alert("Enter an amount");
@@ -296,6 +400,16 @@ const ProtocolDashboard = () => {
                                     Cl.bufferFromHex(ownerSignature),
                                     Cl.uint(payload.nonce),
                                 ];
+
+                                if (selectedChannel.token) {
+                                    // For SIP-010 tokens
+                                    postConditions = [];
+                                } else {
+                                    // For STX
+                                    postConditions = [
+                                        Pc.principal(stxAddress).willSendEq(payload.amount).ustx()
+                                    ];
+                                }
                                 break;
 
                             case "withdraw":
@@ -320,7 +434,6 @@ const ProtocolDashboard = () => {
                                         Pc.principal(`${CONTRACT_ADDRESS}.${CONTRACT_NAME}`).willSendEq(payload.amount).ustx()
                                     ];
                                 }
-
                                 break;
 
                             case "close":
@@ -338,9 +451,10 @@ const ProtocolDashboard = () => {
 
                             default:
                                 // For transfer or other actions that don't need contract calls
-                                await axios.post(`${API_BASE_URL}/${action}`, payload);
                                 toast({ title: `${action} successful` });
-                                if (action === "transfer") setIsTransferModal(false);
+                                setTimeout(() => {
+                                    fetchChannels();
+                                }, 500);
                                 return;
                         }
 
@@ -351,7 +465,7 @@ const ProtocolDashboard = () => {
                             functionName,
                             functionArgs,
                             postConditions,
-                            postConditionMode: PostConditionMode.Deny, // Enforce all post-conditions
+                            postConditionMode: PostConditionMode.Deny,
                             network: STACKS_MAINNET,
                             onFinish: (txResult: any) => {
                                 toast({
@@ -375,7 +489,7 @@ const ProtocolDashboard = () => {
                         // Close the corresponding modal
                         if (action === "deposit") setIsDepositModal(false);
                         if (action === "withdraw") setIsWithdrawModal(false);
-                        if (action === "close") setIsCloseChannel(false);
+                        if (action === "close") setIsCloseModal(false);
 
                     } catch (error) {
                         console.error(`Error in ${action} contract call:`, error);
@@ -400,382 +514,292 @@ const ProtocolDashboard = () => {
         }
     };
 
-    // -------------------------------------------------------------------------- //
-
-    // When an action button is clicked, remember the channel and open the proper modal.
-    const handleAction = (channel: Channel, action: string) => {
-        setSelectedChannel(channel);
-        openModal(action);
-    };
-
-    const openModal = (type: string) => {
-        switch (type) {
-            case 'close':
-                setIsCloseChannel(true);
-                break;
-            case 'transfer':
-                setIsTransferModal(true);
-                break;
-            case 'deposit':
-                setIsDepositModal(true);
-                break;
-            case 'withdraw':
-                setIsWithdrawModal(true);
-                break;
-            default:
-                setIsOpenChannel(true);
-        }
-    };
-
-    const getTotalLocked = () => {
-        return channels.reduce((sum: number, channel: Channel) =>
-            sum + parseInt(channel.balance_1) + parseInt(channel.balance_2), 0
-        ) / 1000000;
-    };
-
-    const verifySignature = async (channel: Channel, signature: string) => {
-        try {
-            const { getUserSession } = await import("@stacks/connect");
-            const session = getUserSession();
-            const currentAddress = session.loadUserData().profile.stxAddress.mainnet;
-            const [contractAddress, contractName] = channel.token ? channel.token.split(".") : ["", ""];
-            const tokenCV = !channel.token ? Cl.none() : Cl.some(Cl.contractPrincipal(contractAddress, contractName));
-
-            const options = {
-                contractAddress: CONTRACT_ADDRESS,
-                contractName: CONTRACT_NAME,
-                functionName: "verify-signature",
-                functionArgs: [
-                    Cl.bufferFromHex(signature),
-                    Cl.principal(currentAddress), // signer
-                    Cl.tuple({
-                        token: tokenCV,
-                        "principal-1": Cl.principal(channel.principal_1),
-                        "principal-2": Cl.principal(channel.principal_2),
-                    }),
-                    Cl.uint(channel.balance_1),
-                    Cl.uint(channel.balance_2),
-                    Cl.uint(channel.nonce),
-                    Cl.uint(actionMap.close), // Using 'close' as example action
-                    Cl.some(Cl.principal(currentAddress)), // actor
-                    Cl.none(), // No hashed-secret in this example
-                ],
-                network: STACKS_MAINNET,
-                senderAddress: currentAddress,
-            };
-
-            const { fetchCallReadOnlyFunction, ClarityType } = await import("@stacks/transactions");
-            const result: any = await fetchCallReadOnlyFunction(options);
-
-            console.log({
-                result: result.type
-            });
-
-            // The verify-signature function returns a boolean
-            setVerificationResult(result.type === ClarityType.BoolTrue);
-
-        } catch (error) {
-            console.error("Error verifying signature:", error);
-            toast({
-                title: "Failed to verify signature",
-                description: error instanceof Error ? error.message : "Unknown error",
-                variant: "destructive"
-            });
-        }
-    };
+    const tokens = [
+        {
+            symbol: 'STX',
+            icon: '/stx-logo.png',
+            balance: getTokenBalance(null)
+        },
+        // Add more tokens here as needed
+    ];
 
     return (
         <div className="container px-4 py-8 mx-auto">
-            <div className="mb-8 text-center">
-                <h1 className="mb-4 text-3xl font-bold text-white">Payment Channel Dashboard</h1>
-                <p className="text-gray-400">Manage your payment channels and transactions</p>
-            </div>
-
-            {/* Channel Stats */}
-            <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
-                <Card className="bg-accent/5 border-primary/20">
-                    <CardContent className="flex items-center p-6">
-                        <div className="p-4 mr-4 rounded-lg bg-primary/10">
-                            <Lock className="w-8 h-8 text-primary" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-400">Total Locked</p>
-                            <p className="text-2xl font-bold">{getTotalLocked()} STX</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="bg-accent/5 border-primary/20">
-                    <CardContent className="flex items-center p-6">
-                        <div className="p-4 mr-4 rounded-lg bg-primary/10">
-                            <Router className="w-8 h-8 text-primary" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-400">Active Channels</p>
-                            <p className="text-2xl font-bold">{channels.length}</p>
-                        </div>
-                    </CardContent>
-                </Card>
-
-                <Card className="bg-accent/5 border-primary/20">
-                    <CardContent className="flex items-center p-6">
-                        <div className="p-4 mr-4 rounded-lg bg-primary/10">
-                            <ArrowRightLeft className="w-8 h-8 text-primary" />
-                        </div>
-                        <div>
-                            <p className="text-sm text-gray-400">24h Volume</p>
-                            <p className="text-2xl font-bold">--</p>
-                        </div>
-                    </CardContent>
-                </Card>
-            </div>
-
-            {/* Channel List */}
-            <Card className="mb-8 bg-accent/5 border-primary/20">
-                <CardContent className="p-6">
-                    <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-xl font-bold">Active Channels</h2>
-                        {/* New Channel Button with Tooltip */}
-                        <Tooltip>
+            {/* Header with Quick Actions */}
+            <div className="mb-8 flex justify-between items-center">
+                <div className="text-left">
+                    <h1 className="mb-2 text-3xl font-bold text-white">Charisma Unleashed</h1>
+                    <p className="text-gray-400">Bitcoin L2 scaling solution with unlimited TPS and throughput</p>
+                </div>
+                <div className="flex gap-2">
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
                             <TooltipTrigger asChild>
-                                <span className="inline-block">
-                                    <Button
-                                        className="p-2"
-                                        onClick={() => setIsOpenChannel(true)}
-                                        disabled={channels.length > 0}
-                                    >
-                                        <Plus className="w-4 h-4 mr-2" />
-                                        New Channel
-                                    </Button>
-                                </span>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                >
+                                    <Bitcoin className="w-4 h-4 mr-2" />
+                                    Buy Bitcoin
+                                </Button>
                             </TooltipTrigger>
-                            <TooltipContent>
-                                <p>
-                                    {channels.length > 0
-                                        ? "You already have an open channel"
-                                        : "Click to open a new channel"}
+                            <TooltipContent className="w-96 p-4">
+                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                    <Bitcoin className="w-5 h-5" />
+                                    <span className="font-semibold">Buy Bitcoin with Card</span>
+                                </div>
+                                <p className="text-sm opacity-90 mb-2">
+                                    Purchase bitcoin directly using your credit or debit card.
+                                    Instantly convert your local currency into bitcoin.
                                 </p>
+                                <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                    <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                                    Coming soon: Direct fiat-to-bitcoin purchases
+                                </div>
                             </TooltipContent>
                         </Tooltip>
-                    </div>
-                    <div className="space-y-4">
-                        {channels.map((channel: Channel) => (
-                            <div key={channel.id} className="flex items-center justify-between p-4 border rounded-lg border-primary/20">
-                                <div className="flex items-center">
-                                    <Wallet className="w-6 h-6 mr-4 text-primary" />
-                                    <div>
-                                        <p className="font-semibold">Channel with {channel.principal_2}</p>
-                                        <p className="text-sm text-gray-400">
-                                            Balance: {Number(channel.balance_1) / 1000000} / {Number(channel.balance_2) / 1000000} STX
-                                        </p>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                >
+                                    <Landmark className="w-4 h-4 mr-2" />
+                                    Cash Out
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-96 p-4">
+                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                    <Landmark className="w-5 h-5" />
+                                    <span className="font-semibold">Convert to Cash</span>
+                                </div>
+                                <p className="text-sm opacity-90 mb-2">
+                                    Convert your cryptocurrency back to your local currency and withdraw
+                                    directly to your bank account.
+                                </p>
+                                <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                    <span className="w-2 h-2 rounded-full bg-yellow-500" />
+                                    Coming soon: Direct crypto-to-fiat withdrawals
+                                </div>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <div className="w-[1px] bg-border mx-2" />
+
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    onClick={() => setIsTransferModal(true)}
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={channels.length === 0}
+                                >
+                                    <Send className="w-4 h-4 mr-2" />
+                                    Send STX
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-96 p-4">
+                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                    <Send className="w-5 h-5" />
+                                    <span className="font-semibold">Send STX to Charisma User</span>
+                                </div>
+                                <p className="text-sm opacity-90 mb-2">
+                                    Send STX instantly to any Charisma user with near-zero fees.
+                                    No gas fees, no waiting for confirmations.
+                                </p>
+                                <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                    <Flame className="w-4 h-4 rounded-full text-primary" />
+                                    Instant transfers, near-zero fees, no gas fees.
+                                </div>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <div className="w-[1px] bg-border mx-2" />
+
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    onClick={() => setIsDepositModal(true)}
+                                    variant="outline"
+                                    size="sm"
+                                >
+                                    <Download className="w-4 h-4 mr-2" />
+                                    Deposit
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-96 p-4">
+                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                    <Download className="w-5 h-5" />
+                                    <span className="font-semibold">Deposit to Charisma</span>
+                                </div>
+                                <p className="text-sm opacity-90 mb-2">
+                                    Move your cryptocurrency from your Stacks wallet into your Charisma account
+                                    for instant transfers, low-fee trading and nearly unlimited transactions per second.
+                                </p>
+                                <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                    <span className="w-2 h-2 rounded-full bg-green-500" />
+                                    Deposits require gas fees, and take a few seconds to confirm.
+                                </div>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger asChild>
+                                <Button
+                                    onClick={() => setIsWithdrawModal(true)}
+                                    variant="outline"
+                                    size="sm"
+                                    disabled={getTokenBalance(null) === 0}
+                                >
+                                    <Upload className="w-4 h-4 mr-2" />
+                                    Withdraw
+                                </Button>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-96 p-4">
+                                <div className="flex items-center gap-2 mb-2 pb-2 border-b">
+                                    <Upload className="w-5 h-5" />
+                                    <span className="font-semibold">Withdraw from Charisma</span>
+                                </div>
+                                <p className="text-sm opacity-90 mb-2">
+                                    Move your cryptocurrency from your Charisma account back to your
+                                    Stacks wallet. Perfect for when you want to hold or trade elsewhere.
+                                </p>
+                                {getTokenBalance(null) === 0 ? (
+                                    <div className="inline-flex text-xs bg-destructive/10 text-destructive p-2 rounded items-center gap-2 mt-4">
+                                        <span className="w-2 h-2 rounded-full bg-destructive" />
+                                        Deposit some STX first to enable withdrawals
                                     </div>
-                                </div>
-                                <div className="flex space-x-2">
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <span className="inline-block">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => handleAction(channel, 'transfer')}
-                                                    disabled
-                                                >
-                                                    <Send className="w-4 h-4" />
-                                                </Button>
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Transfer funds from this channel (coming soon)</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <span className="inline-block">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => handleAction(channel, 'deposit')}
-                                                    disabled
-                                                >
-                                                    <Download className="w-4 h-4" />
-                                                </Button>
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Deposit funds into this channel (coming soon)</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <span className="inline-block">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => handleAction(channel, 'withdraw')}
-                                                    disabled={channel.balance_1 === '0' || channel.balance_2 === '0'}
-                                                >
-                                                    <Upload className="w-4 h-4" />
-                                                </Button>
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Withdraw funds from this channel</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <span className="inline-block">
-                                                <Button
-                                                    size="sm"
-                                                    variant="destructive"
-                                                    onClick={() => handleAction(channel, 'close')}
-                                                    disabled
-                                                >
-                                                    <Unlock className="w-4 h-4" />
-                                                </Button>
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Close this channel (coming soon)</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <span className="inline-block">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => fetchStructuredDataHash(channel)}
-                                                >
-                                                    Show Data Hash
-                                                </Button>
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Show structured data hash</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <span className="inline-block">
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => {
-                                                        setSelectedChannel(channel);
-                                                        setIsVerifySignatureModal(true);
-                                                    }}
-                                                >
-                                                    Verify Signature
-                                                </Button>
-                                            </span>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            <p>Verify signature</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </div>
-                            </div>
-                        ))}
-                        {channels.length === 0 && (
-                            <div className="text-center py-8 text-gray-400">
-                                No active channels. Create one to get started!
-                            </div>
-                        )}
-                    </div>
-                </CardContent>
-            </Card>
+                                ) : (
+                                    <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
+                                        <span className="w-2 h-2 rounded-full bg-green-500" />
+                                        Available balance: {getTokenBalance(null)} STX
+                                    </div>
+                                )}
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+            </div>
 
-            {/* Open Channel Dialog */}
-            <AlertDialog open={isOpenChannel} onOpenChange={setIsOpenChannel}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Open New Channel</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Create a new payment channel with the hub
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid items-center grid-cols-4 gap-4">
-                            <Label htmlFor="amount" className="text-right">
-                                Amount (STX)
-                            </Label>
-                            <Input
-                                id="amount"
-                                type="number"
-                                placeholder="100"
-                                className="col-span-3"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={handleOpenChannel}>Open Channel</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            {/* Token Balances */}
+            <div className="grid grid-cols-1 gap-4 mb-8 md:grid-cols-3">
+                {tokens.map(token => (
+                    <TokenCard
+                        key={token.symbol}
+                        token={token.symbol}
+                        balance={getTokenBalance(token.symbol === 'STX' ? null : token.symbol)}
+                        icon={token.icon}
+                    />
+                ))}
+            </div>
 
-            {/* Close Channel Dialog */}
-            <AlertDialog open={isCloseChannel} onOpenChange={setIsCloseChannel}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Close Channel</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Are you sure you want to close this channel?
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => {
-                            setIsCloseChannel(false);
-                            confirmChannelAction("close");
-                        }}>Close Channel</AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+            {/* Apps Grid */}
+            <div className="mb-8">
+                <h2 className="text-xl font-bold mb-4">App Marketplace</h2>
+                <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger>
+                                <Card className="p-6 bg-accent/5 border-primary/20 cursor-not-allowed opacity-75">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <ArrowLeftRight className="w-5 h-5" />
+                                        <h3 className="font-semibold">Trade</h3>
+                                    </div>
+                                    <p className="text-sm text-gray-400">Trade tokens with zero slippage using our orderbook</p>
+                                </Card>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-80 p-4">
+                                <p className="text-sm opacity-90">Coming soon: Professional trading with an orderbook. Place limit orders and trade with zero slippage.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
 
-            {/* Transfer Modal */}
-            <AlertDialog open={isTransferModal} onOpenChange={setIsTransferModal}>
-                <AlertDialogContent>
-                    <AlertDialogHeader>
-                        <AlertDialogTitle>Transfer Funds</AlertDialogTitle>
-                        <AlertDialogDescription>
-                            Transfer funds from this channel.
-                        </AlertDialogDescription>
-                    </AlertDialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid items-center grid-cols-4 gap-4">
-                            <Label htmlFor="amount-transfer" className="text-right">
-                                Amount (STX)
-                            </Label>
-                            <Input
-                                id="amount-transfer"
-                                type="number"
-                                placeholder="Enter amount"
-                                className="col-span-3"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                            />
-                        </div>
-                    </div>
-                    <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setIsTransferModal(false)}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => confirmChannelAction("transfer")}>
-                            Transfer
-                        </AlertDialogAction>
-                    </AlertDialogFooter>
-                </AlertDialogContent>
-            </AlertDialog>
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger>
+                                <Card className="p-6 bg-accent/5 border-primary/20 cursor-not-allowed opacity-75">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <Rocket className="w-5 h-5" />
+                                        <h3 className="font-semibold">Bonding Curve</h3>
+                                    </div>
+                                    <p className="text-sm text-gray-400">Launch your token on Charisma and trade at lighning speed</p>
+                                </Card>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-80 p-4">
+                                <p className="text-sm opacity-90">Just kidding! We have no interest in launching a bonding curve. We're not that kind of project.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger>
+                                <Card className="p-6 bg-accent/5 border-primary/20 cursor-not-allowed opacity-75">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <TrendingUp className="w-5 h-5" />
+                                        <h3 className="font-semibold">Perpetuals</h3>
+                                    </div>
+                                    <p className="text-sm text-gray-400">Trade perpetual futures with up to 100x leverage</p>
+                                </Card>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-80 p-4">
+                                <p className="text-sm opacity-90">Coming soon: Trade perpetual futures with leverage, powered by our instant settlement engine.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger>
+                                <Card className="p-6 bg-accent/5 border-primary/20 cursor-not-allowed opacity-75">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <Wallet className="w-5 h-5" />
+                                        <h3 className="font-semibold">Borrow</h3>
+                                    </div>
+                                    <p className="text-sm text-gray-400">Get instant loans using your tokens as collateral</p>
+                                </Card>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-80 p-4">
+                                <p className="text-sm opacity-90">Coming soon: Borrow against your tokens instantly with competitive rates.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+
+                    <TooltipProvider>
+                        <Tooltip delayDuration={300}>
+                            <TooltipTrigger>
+                                <Card className="p-6 bg-accent/5 border-primary/20 cursor-not-allowed opacity-75">
+                                    <div className="flex items-center gap-3 mb-3">
+                                        <Coins className="w-5 h-5" />
+                                        <h3 className="font-semibold">Earn</h3>
+                                    </div>
+                                    <p className="text-sm text-gray-400">Earn yield by providing liquidity to our protocols</p>
+                                </Card>
+                            </TooltipTrigger>
+                            <TooltipContent className="w-80 p-4">
+                                <p className="text-sm opacity-90">Coming soon: Earn yield by providing liquidity to various Charisma protocols.</p>
+                            </TooltipContent>
+                        </Tooltip>
+                    </TooltipProvider>
+                </div>
+            </div>
 
             {/* Deposit Modal */}
             <AlertDialog open={isDepositModal} onOpenChange={setIsDepositModal}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Deposit Funds</AlertDialogTitle>
+                        <AlertDialogTitle>Deposit STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Deposit funds into this channel.
+                            Deposit STX into your Charisma Wallet
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
@@ -795,7 +819,7 @@ const ProtocolDashboard = () => {
                     </div>
                     <AlertDialogFooter>
                         <AlertDialogCancel onClick={() => setIsDepositModal(false)}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => confirmChannelAction("deposit")}>
+                        <AlertDialogAction onClick={() => confirmAction("deposit")}>
                             Deposit
                         </AlertDialogAction>
                     </AlertDialogFooter>
@@ -806,9 +830,9 @@ const ProtocolDashboard = () => {
             <AlertDialog open={isWithdrawModal} onOpenChange={setIsWithdrawModal}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Withdraw Funds</AlertDialogTitle>
+                        <AlertDialogTitle>Withdraw STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Withdraw funds from this channel.
+                            Withdraw STX from your Charisma Wallet to your Stacks Wallet
                         </AlertDialogDescription>
                     </AlertDialogHeader>
                     <div className="grid gap-4 py-4">
@@ -823,82 +847,105 @@ const ProtocolDashboard = () => {
                                 className="col-span-3"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
+                                max={getTokenBalance(null)}
                             />
+                        </div>
+                        <div className="text-xs text-muted-foreground px-4">
+                            Available balance: {getTokenBalance(null)} STX
                         </div>
                     </div>
                     <AlertDialogFooter>
                         <AlertDialogCancel onClick={() => setIsWithdrawModal(false)}>Cancel</AlertDialogCancel>
-                        <AlertDialogAction onClick={() => confirmChannelAction("withdraw")}>
+                        <AlertDialogAction
+                            onClick={() => confirmAction("withdraw")}
+                            disabled={!amount || Number(amount) > getTokenBalance(null)}
+                        >
                             Withdraw
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
-            <AlertDialog open={isHashModal} onOpenChange={setIsHashModal}>
+            {/* Transfer Modal */}
+            <AlertDialog open={isTransferModal} onOpenChange={setIsTransferModal}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Structured Data Hash</AlertDialogTitle>
+                        <AlertDialogTitle>Transfer STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This hash is generated by the smart contract's <code>make-structured-data-hash</code> function. It represents a unique fingerprint of the channel's current state—including its principals, balances, nonce, action, and any hashed secret. This hash is used for binding off-chain signatures to the correct channel state and ensures data integrity.
+                            Transfer STX to another Charisma user instantly
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className="my-4">
-                        <Label htmlFor="structured-data-hash">Hash:</Label>
-                        <Input id="structured-data-hash" type="text" readOnly value={structuredDataHash || ""} />
+                    <div className="grid gap-4 py-4">
+                        <div className="grid items-center grid-cols-4 gap-4">
+                            <Label htmlFor="recipient" className="text-right">
+                                Recipient
+                            </Label>
+                            <Input
+                                id="recipient"
+                                type="text"
+                                placeholder="SP..."
+                                className="col-span-3"
+                                value={recipientAddress}
+                                onChange={(e) => setRecipientAddress(e.target.value)}
+                            />
+                        </div>
+                        <div className="grid items-center grid-cols-4 gap-4">
+                            <Label htmlFor="amount-transfer" className="text-right">
+                                Amount (STX)
+                            </Label>
+                            <Input
+                                id="amount-transfer"
+                                type="number"
+                                placeholder="Enter amount"
+                                className="col-span-3"
+                                value={amount}
+                                onChange={(e) => setAmount(e.target.value)}
+                                max={getTokenBalance(null)}
+                            />
+                        </div>
+                        <div className="text-xs text-muted-foreground px-4">
+                            Available balance: {getTokenBalance(null)} STX
+                        </div>
                     </div>
                     <AlertDialogFooter>
-                        <AlertDialogAction onClick={() => setIsHashModal(false)}>
-                            Close
+                        <AlertDialogCancel onClick={() => setIsTransferModal(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogAction
+                            onClick={() => confirmAction("transfer")}
+                            disabled={!amount || !recipientAddress || Number(amount) > getTokenBalance(null)}
+                        >
+                            Transfer
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
 
-            <AlertDialog open={isVerifySignatureModal} onOpenChange={setIsVerifySignatureModal}>
+            {/* Close Channel Modal */}
+            <AlertDialog open={isCloseModal} onOpenChange={setIsCloseModal}>
                 <AlertDialogContent>
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Verify Signature</AlertDialogTitle>
+                        <AlertDialogTitle>Close Channel</AlertDialogTitle>
                         <AlertDialogDescription>
-                            This tool verifies if a signature is valid for the current channel state.
-                            The signature must have been generated by signing the structured data hash
-                            that represents the channel's current state (principals, balances, nonce, etc.).
+                            Close your payment channel and withdraw all funds to your Stacks wallet
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid gap-2">
-                            <Label htmlFor="signature">Signature (hex):</Label>
-                            <Input
-                                id="signature"
-                                value={signatureToVerify}
-                                onChange={(e) => setSignatureToVerify(e.target.value)}
-                                placeholder="Enter 65-byte signature in hex format"
-                            />
-                        </div>
-                        {verificationResult !== null && (
-                            <div className={`p-4 rounded-md ${verificationResult
-                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-100"
-                                : "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-100"
-                                }`}>
-                                Signature is {verificationResult ? "valid" : "invalid"}
+                    <div className="py-4">
+                        <div className="rounded-lg bg-muted p-4">
+                            <div className="flex justify-between mb-2">
+                                <span>Current Balance:</span>
+                                <span className="font-medium">{getTokenBalance(null)} STX</span>
                             </div>
-                        )}
+                            <p className="text-sm text-muted-foreground">
+                                Closing the channel will withdraw all funds to your Stacks wallet. This action cannot be undone.
+                            </p>
+                        </div>
                     </div>
                     <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => {
-                            setSignatureToVerify('');
-                            setVerificationResult(null);
-                        }}>
-                            Cancel
-                        </AlertDialogCancel>
+                        <AlertDialogCancel onClick={() => setIsCloseModal(false)}>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={() => {
-                                if (!selectedChannel) return;
-                                verifySignature(selectedChannel, signatureToVerify);
-                            }}
-                            disabled={!signatureToVerify || signatureToVerify.length !== 130} // 65 bytes = 130 hex chars
+                            onClick={() => confirmAction("close")}
+                            className="bg-destructive hover:bg-destructive/90"
                         >
-                            Verify
+                            Close Channel
                         </AlertDialogAction>
                     </AlertDialogFooter>
                 </AlertDialogContent>

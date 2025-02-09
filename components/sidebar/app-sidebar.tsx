@@ -1,4 +1,4 @@
-import { BookOpen, ChartLine, Coins, ExternalLink, Github, MessageCircle, Network, TrendingUp } from "lucide-react"
+import { BookOpen, ChartLine, Coins, ExternalLink, Flame, Github, MessageCircle, Network, TrendingUp } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -57,9 +57,9 @@ const items = [
         icon: Coins,
     },
     {
-        title: "Stackflow (Preview)",
-        url: "/stackflow",
-        icon: Network,
+        title: "Unleashed (Preview)",
+        url: "/unleashed",
+        icon: Flame,
     },
 ]
 

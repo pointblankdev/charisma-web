@@ -41,7 +41,7 @@ export default async function handler(
 
         // Validate nonce
         if (BigInt(nonce) <= BigInt(channel.nonce)) {
-            return res.status(409).json({ error: 'Nonce conflict.', channel });
+            return res.status(409).json({ error: 'Nonce conflict.', channel, message: `Nonce: ${nonce} <= ${channel.nonce}` });
         }
 
         // Validate balances
@@ -91,7 +91,8 @@ export default async function handler(
         );
 
         // Update channel state atomically
-        await kv.hset(channelKey, {
+        await kv.set(channelKey, {
+            ...channel,
             balance_1: balance1,
             balance_2: balance2,
             nonce: nonce,

@@ -367,7 +367,8 @@ async function handleDeposit(data: EventData) {
             return;
         }
 
-        pipeline.hset(channelKey, {
+        pipeline.set(channelKey, {
+            ...channel,
             balance_1: balance1,
             balance_2: balance2,
             nonce,
@@ -432,7 +433,8 @@ async function handleWithdraw(data: EventData) {
             return;
         }
 
-        pipeline.hset(channelKey, {
+        pipeline.set(channelKey, {
+            ...channel,
             balance_1: balance1,
             balance_2: balance2,
             nonce,
@@ -487,7 +489,8 @@ async function handleDisputeClosure(data: EventData) {
             return;
         }
 
-        await kv.hset(channelKey, {
+        await kv.set(channelKey, {
+            ...channel,
             balance_1: balance1,
             balance_2: balance2,
             nonce,
