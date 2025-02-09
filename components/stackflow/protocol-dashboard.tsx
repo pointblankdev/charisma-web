@@ -41,7 +41,9 @@ import {
     Gamepad2,
     Sparkles,
     Shield,
-    Blocks
+    Blocks,
+    Badge,
+    BarChart3
 } from 'lucide-react';
 import { STACKS_MAINNET } from "@stacks/network";
 import { Cl, PostConditionMode, Pc } from "@stacks/transactions";
@@ -600,9 +602,20 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
             <div className="mb-8 space-y-6">
                 {/* Header Content */}
                 <div className="text-left space-y-2">
-                    <h1 className="text-3xl font-bold text-white">Charisma Unleashed</h1>
+                    <div className="flex items-center gap-2">
+                        <div className="relative">
+                            <Flame className="w-10 h-10 text-primary font-bold relative z-10" strokeWidth={1} />
+                            <div className="absolute inset-0 z-0">
+                                <Flame className="w-10 h-10 text-primary/10 animate-ping" strokeWidth={8} />
+                            </div>
+                            <div className="absolute inset-0 z-0">
+                                <Flame className="w-10 h-10 text-primary/50 animate-pulse-glow" strokeWidth={4} />
+                            </div>
+                        </div>
+                        <h1 className="text-5xl font-bold text-white">Blaze</h1>
+                    </div>
                     <p className="text-gray-400 max-w-prose leading-tight">
-                        Your gateway to the future of Bitcoin apps, games, and finance.
+                        Your gateway to the future of Bitcoin finance and decentralized applications.
                         <br className="hidden md:block" />
                         Experience instant transactions, zero fees, and unlimited scalability.
                     </p>
@@ -784,26 +797,26 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                 <div className="grid gap-6 md:grid-cols-3 mt-6">
                     <InfoCard
                         icon={Zap}
-                        title="Lightning-Fast"
+                        title="Instant & Free"
                         content={
                             <div className="space-y-4 text-sm text-muted-foreground">
                                 <p>
                                     Experience the future of Bitcoin with instant transactions and low fees.
                                     No more waiting for confirmations or paying gas fees - just seamless,
-                                    instant interactions.
+                                    instant trading.
                                 </p>
                             </div>
                         }
                     />
 
                     <InfoCard
-                        icon={Gamepad2}
-                        title="Apps & Games"
+                        icon={BarChart3}
+                        title="DeFi & Trading"
                         content={
                             <div className="space-y-4 text-sm text-muted-foreground">
                                 <p>
-                                    Play games, use apps, and earn rewards in real-time. Built for developers
-                                    and gamers who need instant finality and unlimited throughput.
+                                    Access professional-grade DeFi tools and trading features with bitcoin finality.
+                                    Built for traders who demand speed and reliability.
                                 </p>
                             </div>
                         }
@@ -816,7 +829,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                             <div className="space-y-4 text-sm text-muted-foreground">
                                 <p>
                                     Built on Bitcoin, secured by the world's strongest network. Your keys, your coins -
-                                    always in control while enjoying instant settlement.
+                                    always in control while enjoying institutional-grade settlement.
                                 </p>
                             </div>
                         }

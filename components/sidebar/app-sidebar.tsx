@@ -57,8 +57,8 @@ const items = [
         icon: Coins,
     },
     {
-        title: "Unleashed (Preview)",
-        url: "/unleashed",
+        title: "Blaze (Preview)",
+        url: "/blaze",
         icon: Flame,
     },
 ]

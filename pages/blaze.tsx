@@ -27,8 +27,8 @@ export const getStaticProps: GetStaticProps = async () => {
 export default function Stackflow({ prices }: { prices: Record<string, number> }) {
     return (
         <Page meta={{
-            title: 'Charisma Unleashed',
-            description: 'Charisma Unleashed is a Bitcoin L2 scaling solution with unlimited TPS and throughput.',
+            title: 'Blaze',
+            description: 'Blaze is a Bitcoin L2 scaling solution with near-unlimited TPS and throughput.',
         }}>
             <ProtocolDashboard prices={prices} />
         </Page>
