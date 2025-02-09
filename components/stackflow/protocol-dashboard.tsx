@@ -710,7 +710,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                 <Flame className="w-10 h-10 text-primary/40 animate-pulse-glow" strokeWidth={6} />
                             </div>
                         </div>
-                        <h1 className="text-5xl font-bold text-white">Blaze</h1>
+                        <h1 className="text-5xl font-bold text-white">blaze</h1>
                     </div>
                     <p className="text-gray-400 max-w-prose leading-tight">
                         Your gateway to the future of web3 finance and decentralized applications.
