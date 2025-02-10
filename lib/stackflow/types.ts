@@ -1,10 +1,12 @@
+import { IntegerType } from "@stacks/common";
+
 export interface Channel {
     id: string;
     principal_1: string;
     principal_2: string;
     token: string | null;
-    balance_1: string;
-    balance_2: string;
+    balance_1: number;
+    balance_2: number;
     nonce: number;
     expires_at: string | null;
     state: 'open' | 'closing' | 'closed';
@@ -12,8 +14,8 @@ export interface Channel {
 
 export interface Signature {
     channel: string;
-    balance_1: string;
-    balance_2: string;
+    balance_1: number;
+    balance_2: number;
     nonce: number;
     action: number;
     actor: string;

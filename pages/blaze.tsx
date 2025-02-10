@@ -24,11 +24,11 @@ export const getStaticProps: GetStaticProps = async () => {
     }
 };
 
-export default function Stackflow({ prices }: { prices: Record<string, number> }) {
+export default function BlazePage({ prices }: { prices: Record<string, number> }) {
     return (
         <Page meta={{
             title: 'Blaze',
-            description: 'Blaze is a Bitcoin L2 scaling solution with near-unlimited TPS and throughput.',
+            description: 'Blaze is a Bitcoin L2 that unlocks massive TPS and throughput using off-chain cryptographic signatures. Blazing-fast transactions, low fees, high scalability, and bitcoin finality.',
             image: 'https://charisma.rocks/celebration-2.png'
         }}>
             <ProtocolDashboard prices={prices} />

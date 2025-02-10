@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Button } from '@components/ui/button';
 import { Card, CardContent } from '@components/ui/card';
 import {
@@ -43,7 +43,8 @@ import {
     Shield,
     Blocks,
     Badge,
-    BarChart3
+    BarChart3,
+    Loader2,
 } from 'lucide-react';
 import { STACKS_MAINNET } from "@stacks/network";
 import { Cl, PostConditionMode, Pc } from "@stacks/transactions";
@@ -60,13 +61,21 @@ import Image from 'next/image';
 import axios from 'axios';
 import { useColor } from 'color-thief-react';
 import { LucideIcon } from "lucide-react";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@components/ui/command";
+import { ScrollArea } from "@components/ui/scroll-area";
+import { Search } from "lucide-react";
+import { ACTION } from '@lib/stackflow/config';
+
+const shortenAddress = (address: string) => {
+    if (!address) return '';
+    return `${address.slice(0, 6)}...${address.slice(-4)}`;
+};
 
 // Constants
 const CONTRACT_ADDRESS = "SP126XFZQ3ZHYM6Q6KAQZMMJSDY91A8BTT6AD08RV";
 const CONTRACT_NAME = "stackflow-0-2-2";
 const OWNER = "SP3619DGWH08262BJAG0NPFHZQDPN4TKMXHC0ZQDN";
 const API_BASE_URL = '/api/v0/stackflow';
-
 
 const TokenCard = ({ token, balance, icon }: { token: string, balance: number, icon: string }) => {
     const { channels, stxAddress } = useGlobal();
@@ -355,6 +364,15 @@ export function InfoCard({ icon: Icon, title, content }: InfoCardProps) {
     );
 }
 
+// Add new types and utilities
+interface Hop {
+    receiver: string;
+    amount: number;
+    fee: number;
+    secret: Uint8Array;
+    nextHop: number;
+}
+
 const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
     const [isDepositModal, setIsDepositModal] = useState(false);
     const [isWithdrawModal, setIsWithdrawModal] = useState(false);
@@ -365,6 +383,11 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
     const { stxAddress, channels, fetchChannels } = useGlobal();
     const [recipientAddress, setRecipientAddress] = useState('');
     const { toast } = useToast();
+    const [destinations, setDestinations] = useState<Channel[]>([]);
+    const [searchResults, setSearchResults] = useState<Channel[]>([]);
+    const [isLoadingDestinations, setIsLoadingDestinations] = useState(false);
+    const [previewHops, setPreviewHops] = useState<Hop[]>([]);
+    const [previewHash, setPreviewHash] = useState<string>('');
 
     // Set the default channel when channels are loaded
     useEffect(() => {
@@ -387,7 +410,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                 // If user is principal_1, use balance_1, else use balance_2
                 const balance = channel.principal_1 === stxAddress ?
                     channel.balance_1 : channel.balance_2;
-                return sum + parseInt(balance);
+                return sum + balance;
             }
             return sum;
         }, 0) / 1000000; // Convert to STX
@@ -413,8 +436,8 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
         const [adjust1, adjust2] = senderFirst ? adjustments : adjustments.slice().reverse();
 
         return {
-            balance_1: parseInt(channel.balance_1) + adjust1,
-            balance_2: parseInt(channel.balance_2) + adjust2,
+            balance_1: channel.balance_1 + adjust1,
+            balance_2: channel.balance_2 + adjust2,
         };
     };
 
@@ -432,26 +455,35 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
         withdraw: 3,
     };
 
-    const buildMessage = async (action: string, channel: Channel) => {
-        const { balance_1, balance_2 } = await adjustBalances(channel, action);
-        console.log(channel);
-        const [contractAddress, contractName] = channel.token ? channel.token.split(".") : ["", ""];
+    const buildMessage = async (action: string, msgInput: any, hashedSecret?: string) => {
+        const { balance_1, balance_2 } = await adjustBalances(msgInput, action);
+        const [contractAddress, contractName] = msgInput.token ? msgInput.token.split(".") : ["", ""];
 
-        const tokenCV = !channel.token ? Cl.none() : Cl.some(Cl.contractPrincipal(contractAddress, contractName));
+        const tokenCV = !msgInput.token ? Cl.none() : Cl.some(Cl.contractPrincipal(contractAddress, contractName));
 
         const message = Cl.tuple({
             token: tokenCV,
-            "principal-1": Cl.principal(channel.principal_1),
-            "principal-2": Cl.principal(channel.principal_2),
+            "principal-1": Cl.principal(msgInput.principal_1),
+            "principal-2": Cl.principal(msgInput.principal_2),
             "balance-1": Cl.uint(balance_1),
             "balance-2": Cl.uint(balance_2),
-            nonce: Cl.uint(channel.nonce),
+            nonce: Cl.uint(msgInput.nonce),
             action: Cl.uint(actionMap[action as keyof typeof actionMap]),
             actor: action === "close" ? Cl.none() : Cl.some(Cl.principal(stxAddress)),
-            "hashed-secret": Cl.none() // TODO: handle secrets
+            "hashed-secret": hashedSecret ? Cl.some(Cl.bufferFromHex(hashedSecret)) : Cl.none()
         });
 
         return message;
+    };
+
+    const generateTransferSecret = (): Uint8Array => {
+        return crypto.getRandomValues(new Uint8Array(32));
+    };
+
+    const hashSecret = async (secret: Uint8Array): Promise<string> => {
+        const hashBuffer = await crypto.subtle.digest('SHA-256', secret);
+        const hashArray = Array.from(new Uint8Array(hashBuffer));
+        return '0x' + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
     };
 
     const confirmAction = async (action: string) => {
@@ -506,7 +538,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
             if (!selectedChannel) return alert("No channel selected");
 
-            selectedChannel.nonce++
+            selectedChannel.nonce++;
 
             const payload: any = {
                 "principal-1": selectedChannel.principal_1,
@@ -527,8 +559,11 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
             } else {
                 computedBalances = await adjustBalances(selectedChannel, action);
             }
+
             payload["balance-1"] = computedBalances.balance_1;
             payload["balance-2"] = computedBalances.balance_2;
+            payload['next-hops'] = previewHops;
+            payload['next-hop'] = 1;
 
             const message = await buildMessage(action, selectedChannel);
             const signOptions = {
@@ -685,14 +720,133 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
         }
     };
 
-    const tokens = [
-        {
-            symbol: 'STX',
-            icon: '/stx-logo.png',
-            balance: getTokenBalance(null)
-        },
-        // Add more tokens here as needed
-    ];
+    const fetchDestinations = async () => {
+        setIsLoadingDestinations(true);
+        try {
+            const response = await fetch(`/api/v0/stackflow/channels?principal=${OWNER}`);
+            const data = await response.json();
+            setDestinations(data.channels);
+            setSearchResults(data.channels);
+        } catch (error) {
+            console.error('Error fetching destinations:', error);
+            toast({
+                title: "Error fetching destinations",
+                description: "Could not load available destinations",
+                variant: "destructive"
+            });
+        }
+        setIsLoadingDestinations(false);
+    };
+
+    useEffect(() => {
+        if (isTransferModal) {
+            fetchDestinations();
+        }
+    }, [isTransferModal]);
+
+    const handleSearch = (value: string) => {
+        if (!value) {
+            setSearchResults(destinations);
+            return;
+        }
+
+        const filtered = destinations.filter(channel =>
+            channel.principal_1.toUpperCase().includes(value.toUpperCase()) ||
+            channel.principal_2.toUpperCase().includes(value.toUpperCase())
+        );
+        setSearchResults(filtered);
+    };
+
+    // Add function to generate preview
+    const generatePreview = useCallback(async (recipient: string, amount: string) => {
+        if (!recipient || !amount) {
+            setPreviewHops([]);
+            setPreviewHash('');
+            return;
+        }
+
+        try {
+            // Get the first hop channel (from sender to OWNER)
+            const firstHopChannel = channels.find(c =>
+                c.principal_1 === stxAddress && c.principal_2 === OWNER && c.token === null
+            );
+
+            // Get the second hop channel (from OWNER to recipient)
+            const secondHopChannel = destinations.find(c =>
+                c.principal_1 === recipient && c.principal_2 === OWNER && c.token === null
+            );
+
+            if (!firstHopChannel || !secondHopChannel) {
+                setPreviewHops([]);
+                setPreviewHash('');
+                return;
+            }
+
+            // Generate random secret for preview
+            const secret = crypto.getRandomValues(new Uint8Array(32));
+            const transferAmount = parseFloat(amount) * 1_000_000; // Convert to microSTX
+
+            // Create basic hop array (8 slots required)
+            const hops: Hop[] = new Array(8).fill(null).map((_, i) => {
+                if (i === 0) {
+                    // First hop (sender to OWNER)
+                    return {
+                        receiver: OWNER,
+                        amount: transferAmount,
+                        fee: 0,
+                        secret,
+                        nextHop: 1
+                    };
+                } else if (i === 1) {
+                    // Second hop (OWNER to recipient)
+                    return {
+                        receiver: recipient,
+                        amount: transferAmount,
+                        fee: 0,
+                        secret,
+                        nextHop: 2
+                    };
+                } else {
+                    // Padding hops with random data
+                    return {
+                        receiver: "0x" + crypto.getRandomValues(new Uint8Array(20)).toString(),
+                        amount: 0,
+                        fee: 0,
+                        secret: crypto.getRandomValues(new Uint8Array(32)),
+                        nextHop: i + 1
+                    };
+                }
+            });
+
+            // Generate hash of the hops array
+            const hopsBuffer = new TextEncoder().encode(JSON.stringify(hops.map(hop => ({
+                ...hop,
+                amount: hop.amount.toString(),
+                fee: hop.fee.toString(),
+                secret: Array.from(hop.secret)
+            }))));
+            const hashBuffer = await crypto.subtle.digest('SHA-256', hopsBuffer);
+            const hashArray = Array.from(new Uint8Array(hashBuffer));
+            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+
+            // setPreviewHops(hops);
+            setPreviewHops(hops.slice(0, 2));
+            setPreviewHash(hashHex);
+
+        } catch (error) {
+            console.error('Error generating preview:', error);
+            toast({
+                title: "Preview generation failed",
+                description: error instanceof Error ? error.message : "Unknown error occurred",
+                variant: "destructive"
+            });
+        }
+    }, [channels, destinations, stxAddress]);
+
+    // Add useEffect to update preview when recipient or amount changes
+    useEffect(() => {
+        generatePreview(recipientAddress, amount);
+    }, [recipientAddress, amount, generatePreview]);
 
     return (
         <div className="container px-4 py-8 mx-auto">
@@ -794,8 +948,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                         variant="outline"
                                         size="sm"
                                         className="w-full sm:w-auto"
-                                        // disabled={channels.length === 0}
-                                        disabled={true}
+                                        disabled={channels.length === 0}
                                     >
                                         <Send className="w-4 h-4 mr-2" />
                                         Send STX
@@ -1209,47 +1362,106 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
             {/* Transfer Modal */}
             <AlertDialog open={isTransferModal} onOpenChange={setIsTransferModal}>
-                <AlertDialogContent>
+                <AlertDialogContent className="sm:max-w-[500px]">
                     <AlertDialogHeader>
                         <AlertDialogTitle>Transfer STX</AlertDialogTitle>
                         <AlertDialogDescription>
-                            Transfer STX to another Blaze user instantly
+                            Send STX instantly to any Blaze user with near-zero fees.
                         </AlertDialogDescription>
                     </AlertDialogHeader>
-                    <div className="grid gap-4 py-4">
-                        <div className="grid items-center grid-cols-4 gap-4">
-                            <Label htmlFor="recipient" className="text-right">
-                                Recipient
-                            </Label>
-                            <Input
-                                id="recipient"
-                                type="text"
-                                placeholder="SP..."
-                                className="col-span-3"
-                                value={recipientAddress}
-                                onChange={(e) => setRecipientAddress(e.target.value)}
-                            />
+
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label>Recipient</Label>
+                            <Command className="border rounded-lg">
+                                <CommandInput
+                                    placeholder="Search addresses..."
+                                    onValueChange={handleSearch}
+                                    value={recipientAddress}
+                                />
+                                <CommandEmpty>No addresses found.</CommandEmpty>
+                                <CommandGroup>
+                                    <ScrollArea className="h-48">
+                                        {isLoadingDestinations ? (
+                                            <div className="flex items-center justify-center p-4">
+                                                <Loader2 className="w-4 h-4 animate-spin" />
+                                            </div>
+                                        ) : (
+                                            searchResults.map((channel) => {
+                                                const address = channel.principal_1 === OWNER ?
+                                                    channel.principal_2 : channel.principal_1;
+                                                return (
+                                                    <CommandItem
+                                                        key={address}
+                                                        value={address}
+                                                        onSelect={(currentValue) => {
+                                                            setRecipientAddress(currentValue.toUpperCase());
+                                                            setSearchResults([]);
+                                                        }}
+                                                        className="cursor-pointer"
+                                                    >
+                                                        <Search className="w-4 h-4 mr-2" />
+                                                        <span>{shortenAddress(address)}</span>
+                                                    </CommandItem>
+                                                );
+                                            })
+                                        )}
+                                    </ScrollArea>
+                                </CommandGroup>
+                            </Command>
                         </div>
-                        <div className="grid items-center grid-cols-4 gap-4">
-                            <Label htmlFor="amount-transfer" className="text-right">
-                                Amount (STX)
-                            </Label>
+
+                        <div className="space-y-2">
+                            <Label>Amount</Label>
                             <Input
-                                id="amount-transfer"
                                 type="number"
-                                placeholder="Enter amount"
-                                className="col-span-3"
+                                placeholder="0.0"
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
-                                max={getTokenBalance(null)}
                             />
                         </div>
-                        <div className="text-xs text-muted-foreground px-4">
-                            Available balance: {getTokenBalance(null)} STX
-                        </div>
                     </div>
+
+                    {/* Add preview section */}
+                    {previewHops.length > 0 && (
+                        <div className="space-y-4 mt-4">
+                            <div className="flex items-center justify-between">
+                                <h3 className="text-sm font-medium">Transfer Preview</h3>
+                                <span className="text-xs text-muted-foreground">
+                                    Hash: {previewHash.slice(0, 8)}...{previewHash.slice(-8)}
+                                </span>
+                            </div>
+
+                            <div className="rounded-md border bg-muted/50">
+                                <ScrollArea className="h-[200px] w-full">
+                                    <pre className="p-4 text-xs">
+                                        {JSON.stringify(previewHops.map((hop, index) => ({
+                                            index,
+                                            receiver: shortenAddress(hop.receiver),
+                                            amount: hop.amount.toString(),
+                                            fee: hop.fee.toString(),
+                                            nextHop: hop.nextHop,
+                                            secret: `0x${Array.from(hop.secret)
+                                                .map(b => b.toString(16).padStart(2, '0'))
+                                                .join('')
+                                                .slice(0, 8)}...`
+                                        })), null, 2)}
+                                    </pre>
+                                </ScrollArea>
+                            </div>
+
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                <Info className="w-4 h-4" />
+                                <span>
+                                    Preview shows the hops array that will be used for the transfer.
+                                    Padding hops are filled with random data for privacy.
+                                </span>
+                            </div>
+                        </div>
+                    )}
+
                     <AlertDialogFooter>
-                        <AlertDialogCancel onClick={() => setIsTransferModal(false)}>Cancel</AlertDialogCancel>
+                        <AlertDialogCancel>Cancel</AlertDialogCancel>
                         <AlertDialogAction
                             onClick={() => confirmAction("transfer")}
                             disabled={!amount || !recipientAddress || Number(amount) > getTokenBalance(null)}

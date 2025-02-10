@@ -12,7 +12,8 @@ const blacklist = [
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.uahdmg',
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.dmg-lp-token',
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.stx-lp-token',
-  'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex'
+  'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.abtc-dog-vault-wrapper-alex',
+  'SP23B2ZSDG9WKWPCKRERP6PV81FWNB4NECV6MKKAC.stxcha-lp-token'
 ] as ContractId[];
 
 const tokenImages: Record<string, string> = {
@@ -47,9 +48,10 @@ export const getStaticProps: GetStaticProps<any> = async () => {
         prices: {},
         tokens: [],
         pools: []
-      }
-    };
-  }
+      },
+      revalidate: 60
+    }
+  };
 };
 
 export default function SwapPage({

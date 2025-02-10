@@ -90,40 +90,57 @@ export default async function handler(
             getNetwork()
         );
 
-        // Update channel state atomically
-        await kv.set(channelKey, {
-            ...channel,
-            balance_1: balance1,
-            balance_2: balance2,
-            nonce: nonce,
-            state: 'open'
-        });
-
         // Handle next hops if present
         if (nextHops && nextHop !== null) {
             if (!hashedSecret) {
-                return res.status(400).json({
-                    error: 'Hashed secret required for transfer flow.'
+                // subtract amount from owner balance and move to destination channel
+                const destination = nextHops[nextHop];
+                const destinationKey = `channels:${destination.receiver}:${CONFIG.OWNER}:${token || 'null'}`;
+                const destinationChannel = await kv.get<Channel>(destinationKey);
+
+                if (!destinationChannel) {
+                    return res.status(404).json({ error: 'Destination channel does not exist.' });
+                }
+
+                // Update channel state atomically
+                await kv.set(channelKey, {
+                    ...channel,
+                    balance_1: balance1,
+                    nonce: nonce,
+                });
+
+                await kv.set(destinationKey, {
+                    ...destinationChannel,
+                    balance_1: destinationChannel.balance_1 + amount,
+                });
+            } else {
+                // todo: hash secret auth flow
+                // Store pending signatures
+                await kv.set(`pending:${channelKey}`, {
+                    balance_1: balance1,
+                    balance_2: balance2,
+                    nonce: nonce,
+                    action: ACTION.TRANSFER,
+                    sender: sender,
+                    hashedSecret,
+                    ownerSignature,
+                    signature
                 });
             }
-
-            // Store pending signatures
-            await kv.set(`pending:${channelKey}`, {
-                balance_1: balance1,
-                balance_2: balance2,
-                nonce: nonce,
-                action: ACTION.TRANSFER,
-                sender: sender,
-                hashedSecret,
-                ownerSignature,
-                signature
-            });
         } else {
             if (hashedSecret) {
                 return res.status(400).json({
                     error: 'Cannot require secret without next hops.'
                 });
             }
+
+            // Update channel state atomically
+            await kv.set(channelKey, {
+                ...channel,
+                balance_1: balance1,
+                balance_2: balance2,
+                nonce: nonce,
+            });
 
             // Store completed signatures
             await kv.set(`signatures:${channelKey}`, {
@@ -138,7 +155,8 @@ export default async function handler(
         }
 
         return res.status(200).json({
-            signature: ownerSignature
+            signature: ownerSignature,
+            message: 'Transfer completed.'
         });
 
     } catch (error) {
