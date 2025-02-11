@@ -8,7 +8,7 @@ import Blockies from "react-blockies";
 import { Button } from "@components/ui/button";
 import { Search } from "lucide-react";
 import { Pc, PostConditionMode, fetchCallReadOnlyFunction, ClarityType } from "@stacks/transactions";
-import { BLAZE_CONTRACT } from "@lib/blaze/helpers";
+import { BLAZE_CONTRACT, SIP10_TOKEN } from "@lib/blaze/helpers";
 import { Token } from "./action-dialogs";
 
 const [BLAZE_CONTRACT_ADDRESS, BLAZE_CONTRACT_NAME] = BLAZE_CONTRACT.split(".");
@@ -381,4 +381,61 @@ export async function getNonce(address: string): Promise<number> {
         console.error("Error fetching nonce:", error);
         throw error;
     }
+}
+
+export async function handleCoinFlip({ choice, amount, stxAddress }: {
+    choice: 'heads' | 'tails';
+    amount: number;
+    stxAddress: string;
+}): Promise<{
+    won: boolean;
+    result: string;
+    newBalance: string;
+}> {
+
+    const amountMicros = amount * 1_000_000;
+    const nonce = 1 //await getNonce(stxAddress);
+
+    // Create domain matching contract
+    const domain = Cl.tuple({
+        name: Cl.stringAscii("blaze"),
+        version: Cl.stringAscii("0.1.0"),
+        "chain-id": Cl.uint(STACKS_MAINNET.chainId),
+    });
+
+    const gameHost = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+
+    // Create message tuple
+    const message = Cl.tuple({
+        token: Cl.principal(SIP10_TOKEN),
+        to: Cl.principal(gameHost),
+        amount: Cl.uint(amountMicros),
+        nonce: Cl.uint(nonce)
+    });
+
+    console.log(message);
+
+    const { openStructuredDataSignatureRequestPopup } = await import("@stacks/connect");
+
+    return new Promise((resolve, reject) => {
+        openStructuredDataSignatureRequestPopup({
+            domain,
+            message,
+            network: STACKS_MAINNET,
+            onFinish: async (data) => {
+                try {
+                    const response = await axios.post('/api/v0/blaze/coinflip', {
+                        signature: data.signature,
+                        from: stxAddress,
+                        amount: amountMicros,
+                        choice,
+                        nonce
+                    });
+                    resolve(response.data);
+                } catch (error) {
+                    reject(error);
+                }
+            },
+        });
+    });
 }

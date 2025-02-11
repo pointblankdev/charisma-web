@@ -6,6 +6,7 @@ import { getBalance, handleDeposit, handleTransfer, handleWithdraw } from './act
 import { PortfolioCards } from './portfolio-cards';
 import { useGlobal } from '@lib/hooks/global-context';
 import { Features } from './features';
+import { CoinFlipCard } from './coin-flip';
 
 
 const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
@@ -26,7 +27,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
     return (
 
-        <div className="container px-4 py-8 mx-auto">
+        <div className="container px-4 py-8 mx-auto space-y-8">
             {/* Header with Quick Actions */}
             <div className="mb-8 space-y-6">
                 {/* Header Content */}
@@ -75,6 +76,11 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
             <Features />
 
             <PortfolioCards balances={balances} prices={prices} />
+
+            {/* dApp card grid */}
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                <CoinFlipCard />
+            </div>
 
             <TransferDialog prices={prices} open={openTransfer} onOpenChange={setOpenTransfer} onConfirm={handleTransfer} />
             <DepositDialog open={openDeposit} onOpenChange={setOpenDeposit} onConfirm={handleDeposit} />

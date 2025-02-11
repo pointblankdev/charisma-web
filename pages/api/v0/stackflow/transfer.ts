@@ -24,6 +24,16 @@ export default async function handler(
         nonce,
         'hashed-secret': hashedSecret,
         signature,
+    }: {
+        amount: number;
+        token: string;
+        'principal-1': string;
+        'principal-2': string;
+        'balance-1': number;
+        'balance-2': number;
+        nonce: number;
+        'hashed-secret': string;
+        signature: string;
     } = req.body;
 
     try {

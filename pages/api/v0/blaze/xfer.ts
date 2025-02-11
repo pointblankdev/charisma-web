@@ -7,7 +7,7 @@ import { verifyBlazeSignature } from '@lib/blaze/helpers';
 import { network } from '@components/stacks-session/connect';
 
 const BATCH_SIZE = 200;
-const TRANSFER_QUEUE_KEY = 'blaze:transfer:queue';
+export const TRANSFER_QUEUE_KEY = 'blaze:transfer:queue';
 
 type Transfer = {
     to: string;
@@ -45,7 +45,7 @@ export default async function handler(
             to,
             amount,
             nonce,
-            signature: signature.slice(0, 10) + '...'
+            signature: `${signature.slice(0, 10)}...`
         });
 
         // Verify signature matches the message structure

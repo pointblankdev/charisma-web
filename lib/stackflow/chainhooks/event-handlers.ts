@@ -8,8 +8,8 @@ import { network } from '@components/stacks-session/connect';
 
 type EventData = {
     channel: {
-        'balance-1': string;
-        'balance-2': string;
+        'balance-1': number;
+        'balance-2': number;
         'expires-at': string;
         nonce: number;
     };
@@ -178,8 +178,8 @@ async function handleForceCancel(data: EventData) {
 async function disputeClosure(
     token: string | null,
     sender: string,
-    myBalance: string,
-    theirBalance: string,
+    myBalance: number,
+    theirBalance: number,
     signatures: Signature
 ) {
     const withdrawPc = Pc.principal(CONFIG.CONTRACT_ADDRESS!).willSendGte(

@@ -451,3 +451,109 @@ input {
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.4);
   scale: 0.9;
 }
+
+@keyframes float {
+    0% {
+        transform: translateY(0px) rotate(0deg);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: translateY(-40px) rotate(20deg);
+        opacity: 0;
+    }
+}
+
+.animate-float {
+    animation: float 3s ease-in-out infinite;
+}
+
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes ping-slow {
+    0% {
+        transform: scale(1);
+        opacity: 0.5;
+    }
+    100% {
+        transform: scale(1.5);
+        opacity: 0;
+    }
+}
+
+@keyframes bounce-slow {
+    0%, 100% {
+        transform: translateY(-5%);
+        animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+    }
+    50% {
+        transform: translateY(0);
+        animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+    }
+}
+
+@keyframes particle {
+    0% {
+        transform: translate(0, 0);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(var(--tw-translate-x), var(--tw-translate-y));
+        opacity: 0;
+    }
+}
+
+.animate-shimmer {
+    animation: shimmer 2s infinite;
+}
+
+.animate-ping-slow {
+    animation: ping-slow 2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+
+.animate-bounce-slow {
+    animation: bounce-slow 2s infinite;
+}
+
+.animate-particle {
+    animation: particle 1s ease-out forwards;
+}
+
+.perspective-1000 {
+    perspective: 1000px;
+}
+
+.backface-hidden {
+    backface-visibility: hidden;
+}
+
+.rotate-y-0 {
+    transform: rotateY(0deg);
+}
+
+.rotate-y-180 {
+    transform: rotateY(180deg);
+}
+
+.rotate-y-360 {
+    transform: rotateY(360deg);
+}
+
+/* Generate particle positions */
+.particle-0 { --tw-translate-x: 20px; --tw-translate-y: -20px; }
+.particle-1 { --tw-translate-x: 20px; --tw-translate-y: 20px; }
+.particle-2 { --tw-translate-x: -20px; --tw-translate-y: -20px; }
+.particle-3 { --tw-translate-x: -20px; --tw-translate-y: 20px; }
+.particle-4 { --tw-translate-x: 25px; --tw-translate-y: 0px; }
+.particle-5 { --tw-translate-x: -25px; --tw-translate-y: 0px; }
+.particle-6 { --tw-translate-x: 0px; --tw-translate-y: 25px; }
+.particle-7 { --tw-translate-x: 0px; --tw-translate-y: -25px; }
