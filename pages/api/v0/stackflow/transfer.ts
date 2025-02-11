@@ -24,35 +24,31 @@ export default async function handler(
         nonce,
         'hashed-secret': hashedSecret,
         signature,
-        'next-hops': nextHops,
-        'next-hop': nextHop,
     } = req.body;
 
     try {
-        // Get channel from KV
-        const channelKey = `channels:${principal1}:${principal2}:${token || 'null'}`;
-        const channel = await kv.get<Channel>(channelKey);
-
-        if (!channel) {
+        // Get channels from KV
+        const senderChannelKey = `channels:${principal1}:${CONFIG.OWNER}:${token || 'null'}`;
+        const recipientChannelKey = `channels:${principal2}:${CONFIG.OWNER}:${token || 'null'}`;
+        const senderChannel = await kv.get<Channel>(senderChannelKey);
+        const recipientChannel = await kv.get<Channel>(recipientChannelKey);
+        if (!senderChannel || !recipientChannel) {
             return res.status(404).json({ error: 'Channel does not exist.' });
         }
 
         const sender = principal1 === CONFIG.OWNER ? principal2 : principal1;
 
         // Validate nonce
-        if (BigInt(nonce) <= BigInt(channel.nonce)) {
-            return res.status(409).json({ error: 'Nonce conflict.', channel, message: `Nonce: ${nonce} <= ${channel.nonce}` });
+        if ((nonce) <= (senderChannel.nonce)) {
+            return res.status(409).json({ error: 'Nonce conflict.', senderChannel, message: `Nonce: ${nonce} <= ${senderChannel.nonce}` });
         }
 
         // Validate balances
-        const { myBalance, theirBalance, myPrevBalance, theirPrevBalance } =
-            identifyBalances(principal1, CONFIG.OWNER!, balance1, balance2, channel);
-
         if (
-            myPrevBalance + BigInt(amount) !== myBalance ||
-            theirPrevBalance - BigInt(amount) !== theirBalance
+            senderChannel.balance_1 - amount !== balance1 ||
+            recipientChannel.balance_1 + amount !== balance2
         ) {
-            return res.status(409).json({ error: 'Invalid transfer balance.', channel });
+            return res.status(409).json({ error: 'Invalid transfer balance.', senderChannel, recipientChannel });
         }
 
         // Verify signature
@@ -60,10 +56,10 @@ export default async function handler(
             signature,
             sender,
             token,
-            CONFIG.OWNER!,
-            sender,
-            myBalance,
-            theirBalance,
+            principal1,
+            principal2,
+            balance1,
+            balance2,
             nonce,
             ACTION.TRANSFER,
             sender,
@@ -79,10 +75,10 @@ export default async function handler(
         const ownerSignature = generateSignature(
             CONFIG.PRIVATE_KEY!,
             token,
-            CONFIG.OWNER!,
-            sender,
-            myBalance,
-            theirBalance,
+            principal1,
+            principal2,
+            balance1,
+            balance2,
             nonce,
             ACTION.TRANSFER,
             sender,
@@ -90,69 +86,28 @@ export default async function handler(
             getNetwork()
         );
 
-        // Handle next hops if present
-        if (nextHops && nextHop !== null) {
-            if (!hashedSecret) {
-                // subtract amount from owner balance and move to destination channel
-                const destination = nextHops[nextHop];
-                const destinationKey = `channels:${destination.receiver}:${CONFIG.OWNER}:${token || 'null'}`;
-                const destinationChannel = await kv.get<Channel>(destinationKey);
+        // Update channel states
+        await kv.set(senderChannelKey, {
+            ...senderChannel,
+            balance_1: balance1,
+            nonce: nonce,
+        });
 
-                if (!destinationChannel) {
-                    return res.status(404).json({ error: 'Destination channel does not exist.' });
-                }
+        await kv.set(recipientChannelKey, {
+            ...recipientChannel,
+            balance_1: balance2,
+        });
 
-                // Update channel state atomically
-                await kv.set(channelKey, {
-                    ...channel,
-                    balance_1: balance1,
-                    nonce: nonce,
-                });
-
-                await kv.set(destinationKey, {
-                    ...destinationChannel,
-                    balance_1: destinationChannel.balance_1 + amount,
-                });
-            } else {
-                // todo: hash secret auth flow
-                // Store pending signatures
-                await kv.set(`pending:${channelKey}`, {
-                    balance_1: balance1,
-                    balance_2: balance2,
-                    nonce: nonce,
-                    action: ACTION.TRANSFER,
-                    sender: sender,
-                    hashedSecret,
-                    ownerSignature,
-                    signature
-                });
-            }
-        } else {
-            if (hashedSecret) {
-                return res.status(400).json({
-                    error: 'Cannot require secret without next hops.'
-                });
-            }
-
-            // Update channel state atomically
-            await kv.set(channelKey, {
-                ...channel,
-                balance_1: balance1,
-                balance_2: balance2,
-                nonce: nonce,
-            });
-
-            // Store completed signatures
-            await kv.set(`signatures:${channelKey}`, {
-                balance_1: balance1,
-                balance_2: balance2,
-                nonce: nonce,
-                action: ACTION.TRANSFER,
-                sender,
-                ownerSignature,
-                signature
-            });
-        }
+        // Store completed signatures
+        await kv.set(`signatures:${senderChannelKey}`, {
+            balance_1: balance1,
+            balance_2: balance2,
+            nonce: nonce,
+            action: ACTION.TRANSFER,
+            sender,
+            ownerSignature,
+            signature
+        });
 
         return res.status(200).json({
             signature: ownerSignature,

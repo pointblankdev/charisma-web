@@ -1,13 +1,9 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
 import { ACTION, CONFIG, getNetwork, CHANNEL_STATE } from '@lib/stackflow/config';
-import { verifySignature, generateSignature, generateSignatureContract } from '@lib/stackflow/signature';
+import { verifySignature, generateSignature } from '@lib/stackflow/signature';
 import { identifyBalances, getChannelKey } from '@lib/stackflow/utils';
 import type { Channel } from '@lib/stackflow/types';
-import { bufferCV, Cl } from '@stacks/transactions';
-import { verifyMessageSignature, verifyMessageSignatureRsv } from '@stacks/encryption';
-import { doSignaturesMatchPublicKeys } from '@stacks/connect';
-import { getPublicKey } from '@noble/secp256k1';
 
 export default async function handler(
     req: NextApiRequest,
@@ -65,10 +61,10 @@ export default async function handler(
             signature,
             sender,
             token,
-            CONFIG.OWNER!,
-            sender,
-            myBalance,
-            theirBalance,
+            principal1,
+            principal2,
+            balance1,
+            balance2,
             nonce,
             ACTION.CLOSE,
             null,
@@ -84,10 +80,10 @@ export default async function handler(
         const ownerSignature = generateSignature(
             CONFIG.PRIVATE_KEY!,
             token,
-            CONFIG.OWNER!,
-            sender,
-            myBalance,
-            theirBalance,
+            principal1,
+            principal2,
+            balance1,
+            balance2,
             nonce,
             ACTION.CLOSE,
             null,

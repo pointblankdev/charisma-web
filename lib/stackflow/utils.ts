@@ -3,8 +3,8 @@ import { type Channel } from '@lib/stackflow/types'
 export function identifyBalances(
     principal1: string,
     owner: string,
-    balance1: string,
-    balance2: string,
+    balance1: number,
+    balance2: number,
     channel: Channel
 ) {
     const isOwnerFirst = principal1 === owner;
@@ -28,4 +28,8 @@ export function getSignatureKey(channelKey: string): string {
 
 export function getPendingKey(channelKey: string): string {
     return `pending:${channelKey}`
+}
+
+export function getBalanceKey(principal: string, token: string): string {
+    return `balances:${principal}:${token}`
 }

@@ -1,5 +1,5 @@
 import Page from '@components/page';
-import ProtocolDashboard from '@components/stackflow/protocol-dashboard';
+import BlazeDashboard from '@components/blaze/dashboard';
 import { Kraxel } from '@lib/kraxel';
 import { GetStaticProps } from 'next';
 
@@ -31,7 +31,7 @@ export default function BlazePage({ prices }: { prices: Record<string, number> }
             description: 'Blaze is a Bitcoin L2 that unlocks massive TPS and throughput using off-chain cryptographic signatures. Blazing-fast transactions, low fees, high scalability, and bitcoin finality.',
             image: 'https://charisma.rocks/celebration-2.png'
         }}>
-            <ProtocolDashboard prices={prices} />
+            <BlazeDashboard prices={prices} />
         </Page>
     );
 }

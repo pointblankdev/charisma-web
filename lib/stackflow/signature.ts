@@ -20,21 +20,25 @@ export async function verifySignature(
     signature: string,
     signer: string,
     token: string | null,
-    myPrincipal: string,
-    theirPrincipal: string,
-    myBalance: bigint,
-    theirBalance: bigint,
+    // myPrincipal: string,
+    // theirPrincipal: string,
+    // myBalance: bigint,
+    // theirBalance: bigint,
+    principal1: string,
+    principal2: string,
+    balance1: bigint,
+    balance2: bigint,
     nonce: number,
     action: number,
     actor: string | null = null,
     hashedSecret: string | null = null,
     network: StacksNetwork
 ) {
-    const meFirst = myPrincipal < theirPrincipal;
-    const principal1 = meFirst ? myPrincipal : theirPrincipal;
-    const principal2 = meFirst ? theirPrincipal : myPrincipal;
-    const balance1 = meFirst ? myBalance : theirBalance;
-    const balance2 = meFirst ? theirBalance : myBalance;
+    // const meFirst = myPrincipal < theirPrincipal;
+    // const principal1 = meFirst ? myPrincipal : theirPrincipal;
+    // const principal2 = meFirst ? theirPrincipal : myPrincipal;
+    // const balance1 = meFirst ? myBalance : theirBalance;
+    // const balance2 = meFirst ? theirBalance : myBalance;
 
     // Setup API key
     setFetchOptions({
@@ -75,21 +79,25 @@ export async function verifySignature(
 export function generateSignature(
     privateKey: string,
     token: string | null,
-    myPrincipal: string,
-    theirPrincipal: string,
-    myBalance: bigint,
-    theirBalance: bigint,
+    // myPrincipal: string,
+    // theirPrincipal: string,
+    // myBalance: bigint,
+    // theirBalance: bigint,
+    principal1: string,
+    principal2: string,
+    balance1: bigint,
+    balance2: bigint,
     nonce: string,
     action: number,
     actor: string | null = null,
     hashedSecret: string | null = null,
     network: StacksNetwork
 ): string {
-    const meFirst = myPrincipal < theirPrincipal;
-    const principal1 = meFirst ? myPrincipal : theirPrincipal;
-    const principal2 = meFirst ? theirPrincipal : myPrincipal;
-    const balance1 = meFirst ? myBalance : theirBalance;
-    const balance2 = meFirst ? theirBalance : myBalance;
+    // const meFirst = myPrincipal < theirPrincipal;
+    // const principal1 = meFirst ? myPrincipal : theirPrincipal;
+    // const principal2 = meFirst ? theirPrincipal : myPrincipal;
+    // const balance1 = meFirst ? myBalance : theirBalance;
+    // const balance2 = meFirst ? theirBalance : myBalance;
 
     const message = Cl.tuple({
         token: token ? createTokenCV(token) : Cl.none(),

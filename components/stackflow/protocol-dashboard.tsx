@@ -45,6 +45,8 @@ import {
     Badge,
     BarChart3,
     Loader2,
+    X,
+    AlertTriangle,
 } from 'lucide-react';
 import { STACKS_MAINNET } from "@stacks/network";
 import { Cl, PostConditionMode, Pc } from "@stacks/transactions";
@@ -64,7 +66,6 @@ import { LucideIcon } from "lucide-react";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem } from "@components/ui/command";
 import { ScrollArea } from "@components/ui/scroll-area";
 import { Search } from "lucide-react";
-import { ACTION } from '@lib/stackflow/config';
 
 const shortenAddress = (address: string) => {
     if (!address) return '';
@@ -364,30 +365,19 @@ export function InfoCard({ icon: Icon, title, content }: InfoCardProps) {
     );
 }
 
-// Add new types and utilities
-interface Hop {
-    receiver: string;
-    amount: number;
-    fee: number;
-    secret: Uint8Array;
-    nextHop: number;
-}
-
 const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
+    const [amount, setAmount] = useState('');
     const [isDepositModal, setIsDepositModal] = useState(false);
     const [isWithdrawModal, setIsWithdrawModal] = useState(false);
     const [isTransferModal, setIsTransferModal] = useState(false);
     const [isCloseModal, setIsCloseModal] = useState(false);
     const [selectedChannel, setSelectedChannel] = useState<Channel | null>(null);
-    const [amount, setAmount] = useState('');
     const { stxAddress, channels, fetchChannels } = useGlobal();
     const [recipientAddress, setRecipientAddress] = useState('');
-    const { toast } = useToast();
     const [destinations, setDestinations] = useState<Channel[]>([]);
     const [searchResults, setSearchResults] = useState<Channel[]>([]);
     const [isLoadingDestinations, setIsLoadingDestinations] = useState(false);
-    const [previewHops, setPreviewHops] = useState<Hop[]>([]);
-    const [previewHash, setPreviewHash] = useState<string>('');
+    const { toast } = useToast();
 
     // Set the default channel when channels are loaded
     useEffect(() => {
@@ -476,16 +466,6 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
         return message;
     };
 
-    const generateTransferSecret = (): Uint8Array => {
-        return crypto.getRandomValues(new Uint8Array(32));
-    };
-
-    const hashSecret = async (secret: Uint8Array): Promise<string> => {
-        const hashBuffer = await crypto.subtle.digest('SHA-256', secret);
-        const hashArray = Array.from(new Uint8Array(hashBuffer));
-        return '0x' + hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-    };
-
     const confirmAction = async (action: string) => {
         const { openStructuredDataSignatureRequestPopup, openContractCall } = await import("@stacks/connect");
         if (!selectedChannel && action !== "deposit") return alert("No channel selected");
@@ -562,10 +542,26 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
             payload["balance-1"] = computedBalances.balance_1;
             payload["balance-2"] = computedBalances.balance_2;
-            payload['next-hops'] = previewHops;
-            payload['next-hop'] = 1;
 
-            const message = await buildMessage(action, selectedChannel);
+            let message;
+            // If the recipient is not the owner, we need to add the destination channel to the payload
+            if (action === "transfer" && recipientAddress !== OWNER) {
+                payload['principal-2'] = recipientAddress;
+                payload['balance-2'] = destinations.find(c => c.principal_1 === recipientAddress)!.balance_1
+
+                message = await buildMessage(action, {
+                    balance_1: selectedChannel.balance_1,
+                    balance_2: payload["balance-2"],
+                    nonce: selectedChannel.nonce,
+                    principal_1: payload["principal-1"],
+                    principal_2: payload["principal-2"],
+                    token: selectedChannel.token,
+                });
+                payload['balance-2'] += Number(amount) * 1000000;
+            } else {
+                message = await buildMessage(action, selectedChannel);
+            }
+
             const signOptions = {
                 message,
                 domain,
@@ -647,12 +643,67 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                 ];
                                 break;
 
+                            case "transfer":
+                                toast({
+                                    title: "Transfer Successful",
+                                    description: (
+                                        <div className="space-y-3 pt-3 w-80">
+                                            {/* Amount and Value */}
+                                            <div className="flex items-center justify-between p-2">
+                                                <div className="flex items-center gap-3">
+                                                    <Image
+                                                        src="/stx-logo.png"
+                                                        alt="STX"
+                                                        width={24}
+                                                        height={24}
+                                                        className="rounded-sm"
+                                                    />
+                                                    <span className="font-medium text-base">{amount} STX</span>
+                                                </div>
+                                                <span className="text-sm text-muted-foreground">
+                                                    ≈ ${(Number(amount) * prices['.stx']).toFixed(2)}
+                                                </span>
+                                            </div>
+
+                                            {/* Recipient */}
+                                            <div className="flex items-center justify-between gap-3 bg-muted/30 p-3 rounded-md">
+                                                <div className="flex items-center gap-3">
+                                                    <Blockies
+                                                        seed={recipientAddress}
+                                                        size={6}
+                                                        scale={3}
+                                                        className="rounded-sm"
+                                                    />
+                                                    <span className="text-sm font-mono">{shortenAddress(recipientAddress)}</span>
+                                                </div>
+                                                <Check className="w-5 h-5 text-primary" />
+                                            </div>
+
+                                            {/* Stats */}
+                                            <div className="flex gap-3 text-sm text-muted-foreground">
+                                                <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 rounded-md">
+                                                    <Zap className="w-4 h-4 text-primary" />
+                                                    Instant
+                                                </div>
+                                                <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 rounded-md">
+                                                    <Banknote className="w-4 h-4 text-primary" />
+                                                    No Fees
+                                                </div>
+                                            </div>
+
+                                            <Button
+                                                variant="ghost"
+                                                className="w-full mt-2"
+                                                onClick={() => setIsTransferModal(true)}
+                                            >
+                                                Create New Transfer
+                                            </Button>
+                                        </div>
+                                    ),
+                                });
+                                return;
+
                             default:
-                                // For transfer or other actions that don't need contract calls
-                                toast({ title: `${action} successful` });
-                                setTimeout(() => {
-                                    fetchChannels();
-                                }, 500);
                                 return;
                         }
 
@@ -675,15 +726,71 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                     }
                                 }));
                                 toast({
-                                    title: `${action} transaction submitted`,
-                                    description: "The transaction has been submitted to the network."
+                                    title: `${action.charAt(0).toUpperCase() + action.slice(1)} Transaction Submitted`,
+                                    description: (
+                                        <div className="space-y-4 pt-3">
+                                            {/* Transaction Details */}
+                                            <div className="flex items-center justify-between p-2">
+                                                <div className="flex items-center gap-3">
+                                                    <Image
+                                                        src="/stx-logo.png"
+                                                        alt="STX"
+                                                        width={24}
+                                                        height={24}
+                                                        className="rounded-sm"
+                                                    />
+                                                    <span className="font-medium text-base">{amount} STX</span>
+                                                </div>
+                                                <span className="text-sm text-muted-foreground">
+                                                    ≈ ${(Number(amount) * prices['.stx']).toFixed(2)}
+                                                </span>
+                                            </div>
+
+                                            {/* Status */}
+                                            <div className="flex items-center justify-between gap-3 bg-muted/30 p-3 rounded-md">
+                                                <div className="flex items-center gap-3">
+                                                    <div className="p-1.5 bg-primary/10 rounded-md">
+                                                        <Loader2 className="w-4 h-4 text-primary animate-spin" />
+                                                    </div>
+                                                    <div className="space-y-0.5">
+                                                        <div className="text-sm">Transaction Pending</div>
+                                                        <div className="text-xs text-muted-foreground">Waiting for confirmation...</div>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            {/* View Transaction */}
+                                            <Button
+                                                variant="outline"
+                                                className="w-full"
+                                                onClick={() => window.open(`https://explorer.stacks.co/txid/${txResult.txId}?chain=mainnet`, '_blank')}
+                                            >
+                                                <Search className="w-4 h-4 mr-2" />
+                                                View Transaction
+                                            </Button>
+                                        </div>
+                                    )
                                 });
                                 fetchChannels();
                             },
                             onCancel: () => {
                                 toast({
-                                    title: "Transaction cancelled",
-                                    description: "The user cancelled the transaction.",
+                                    title: "Transaction Cancelled",
+                                    description: (
+                                        <div className="space-y-4 pt-3">
+                                            <div className="flex items-center gap-3 text-destructive">
+                                                <div className="p-2 bg-destructive/10 rounded-md">
+                                                    <X className="w-4 h-4" />
+                                                </div>
+                                                <div className="space-y-1">
+                                                    <div className="font-medium">User Cancelled Transaction</div>
+                                                    <div className="text-sm text-muted-foreground">
+                                                        The transaction was cancelled and no funds were moved.
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    ),
                                     variant: "destructive"
                                 });
                             }
@@ -700,8 +807,35 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     } catch (error) {
                         console.error(`Error in ${action} contract call:`, error);
                         toast({
-                            title: `${action} failed`,
-                            description: error instanceof Error ? error.message : "Unknown error occurred",
+                            title: `${action.charAt(0).toUpperCase() + action.slice(1)} Failed`,
+                            description: (
+                                <div className="space-y-4 pt-3">
+                                    <div className="flex items-center gap-3 text-destructive">
+                                        <div className="p-2 bg-destructive/10 rounded-md">
+                                            <AlertTriangle className="w-4 h-4" />
+                                        </div>
+                                        <div className="space-y-1">
+                                            <div className="font-medium">Transaction Failed</div>
+                                            <div className="text-sm text-muted-foreground">
+                                                {error instanceof Error ? error.message : "An unknown error occurred"}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <Button
+                                        variant="outline"
+                                        className="w-full"
+                                        onClick={() => {
+                                            // Re-open the corresponding modal
+                                            if (action === "deposit") setIsDepositModal(true);
+                                            if (action === "withdraw") setIsWithdrawModal(true);
+                                            if (action === "close") setIsCloseModal(true);
+                                        }}
+                                    >
+                                        Try Again
+                                    </Button>
+                                </div>
+                            ),
                             variant: "destructive"
                         });
                     }
@@ -757,96 +891,299 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
         setSearchResults(filtered);
     };
 
-    // Add function to generate preview
-    const generatePreview = useCallback(async (recipient: string, amount: string) => {
-        if (!recipient || !amount) {
-            setPreviewHops([]);
-            setPreviewHash('');
-            return;
-        }
+    const handleDeposit = async (amount: string) => {
+        const { openContractCall } = await import("@stacks/connect");
+        const blazeContract = "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-t1"; // Your blaze contract
+        const tokenContract = "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token"; // Your token contract
 
         try {
-            // Get the first hop channel (from sender to OWNER)
-            const firstHopChannel = channels.find(c =>
-                c.principal_1 === stxAddress && c.principal_2 === OWNER && c.token === null
-            );
+            // Convert amount to micros (assuming 6 decimals)
+            const amountMicros = Number(amount) * 1_000_000;
 
-            // Get the second hop channel (from OWNER to recipient)
-            const secondHopChannel = destinations.find(c =>
-                c.principal_1 === recipient && c.principal_2 === OWNER && c.token === null
-            );
+            // First approve the token transfer
+            const approveOptions = {
+                contractAddress: blazeContract.split(".")[0],
+                contractName: blazeContract.split(".")[1],
+                functionName: "deposit",
+                functionArgs: [
+                    Cl.uint(amountMicros)
+                ],
+                postConditions: [
+                    Pc.principal(stxAddress).willSendEq(amountMicros).ft(tokenContract, 'welshcorgicoin')
+                ],
+                network: STACKS_MAINNET,
+                onFinish: async (data: any) => {
+                    toast({
+                        title: "Deposit Successful",
+                        description: (
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <div className="p-1.5 bg-green-500/10 rounded-md">
+                                        <Check className="w-4 h-4 text-green-500" />
+                                    </div>
+                                    <div>
+                                        <div className="font-medium">Tokens Deposited</div>
+                                        <div className="text-sm text-muted-foreground">
+                                            {amount} tokens have been deposited to your account
+                                        </div>
+                                    </div>
+                                </div>
 
-            if (!firstHopChannel || !secondHopChannel) {
-                setPreviewHops([]);
-                setPreviewHash('');
-                return;
-            }
+                                <Button
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={() => window.open(`https://explorer.stacks.co/txid/${data.txId}?chain=mainnet`, '_blank')}
+                                >
+                                    <Search className="w-4 h-4 mr-2" />
+                                    View Transaction
+                                </Button>
+                            </div>
+                        )
+                    });
 
-            // Generate random secret for preview
-            const secret = crypto.getRandomValues(new Uint8Array(32));
-            const transferAmount = parseFloat(amount) * 1_000_000; // Convert to microSTX
+                    // Close the deposit modal
+                    setIsDepositModal(false);
 
-            // Create basic hop array (8 slots required)
-            const hops: Hop[] = new Array(8).fill(null).map((_, i) => {
-                if (i === 0) {
-                    // First hop (sender to OWNER)
-                    return {
-                        receiver: OWNER,
-                        amount: transferAmount,
-                        fee: 0,
-                        secret,
-                        nextHop: 1
-                    };
-                } else if (i === 1) {
-                    // Second hop (OWNER to recipient)
-                    return {
-                        receiver: recipient,
-                        amount: transferAmount,
-                        fee: 0,
-                        secret,
-                        nextHop: 2
-                    };
-                } else {
-                    // Padding hops with random data
-                    return {
-                        receiver: "0x" + crypto.getRandomValues(new Uint8Array(20)).toString(),
-                        amount: 0,
-                        fee: 0,
-                        secret: crypto.getRandomValues(new Uint8Array(32)),
-                        nextHop: i + 1
-                    };
+                    // Optimistically update UI balance
+                    // Note: You should properly sync this with chain state
+                    // setBalance(prev => prev + Number(amount));
+                },
+                onCancel: () => {
+                    toast({
+                        title: "Deposit Cancelled",
+                        description: "The token deposit was cancelled.",
+                        variant: "destructive"
+                    });
                 }
-            });
+            };
 
-            // Generate hash of the hops array
-            const hopsBuffer = new TextEncoder().encode(JSON.stringify(hops.map(hop => ({
-                ...hop,
-                amount: hop.amount.toString(),
-                fee: hop.fee.toString(),
-                secret: Array.from(hop.secret)
-            }))));
-            const hashBuffer = await crypto.subtle.digest('SHA-256', hopsBuffer);
-            const hashArray = Array.from(new Uint8Array(hashBuffer));
-            const hashHex = hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
-
-            // setPreviewHops(hops);
-            setPreviewHops(hops.slice(0, 2));
-            setPreviewHash(hashHex);
-
+            await openContractCall(approveOptions);
         } catch (error) {
-            console.error('Error generating preview:', error);
+            console.error('Deposit error:', error);
             toast({
-                title: "Preview generation failed",
+                title: "Deposit Failed",
                 description: error instanceof Error ? error.message : "Unknown error occurred",
                 variant: "destructive"
             });
         }
-    }, [channels, destinations, stxAddress]);
+    };
 
-    // Add useEffect to update preview when recipient or amount changes
-    useEffect(() => {
-        generatePreview(recipientAddress, amount);
-    }, [recipientAddress, amount, generatePreview]);
+    const handleWithdraw = async (amount: string) => {
+        const { openContractCall } = await import("@stacks/connect");
+        const blazeContract = "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-t1"; // Your blaze contract
+        const tokenContract = "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token"; // Your token contract
+
+        try {
+            // Convert amount to micros (assuming 6 decimals)
+            const amountMicros = Number(amount) * 1_000_000;
+
+            // First approve the token transfer
+            const approveOptions = {
+                contractAddress: blazeContract.split(".")[0],
+                contractName: blazeContract.split(".")[1],
+                functionName: "withdraw",
+                functionArgs: [
+                    Cl.uint(amountMicros)
+                ],
+                postConditions: [
+                    Pc.principal(blazeContract).willSendEq(amountMicros).ft(tokenContract, 'welshcorgicoin')
+                ],
+                network: STACKS_MAINNET,
+                onFinish: async (data: any) => {
+                    toast({
+                        title: "Deposit Successful",
+                        description: (
+                            <div className="space-y-2">
+                                <div className="flex items-center gap-2">
+                                    <div className="p-1.5 bg-green-500/10 rounded-md">
+                                        <Check className="w-4 h-4 text-green-500" />
+                                    </div>
+                                    <div>
+                                        <div className="font-medium">Tokens Withdrawn</div>
+                                        <div className="text-sm text-muted-foreground">
+                                            {amount} tokens have been withdrawn from your account
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <Button
+                                    variant="outline"
+                                    className="w-full"
+                                    onClick={() => window.open(`https://explorer.stacks.co/txid/${data.txId}?chain=mainnet`, '_blank')}
+                                >
+                                    <Search className="w-4 h-4 mr-2" />
+                                    View Transaction
+                                </Button>
+                            </div>
+                        )
+                    });
+
+                    // Close the deposit modal
+                    setIsWithdrawModal(false);
+
+                    // Optimistically update UI balance
+                    // Note: You should properly sync this with chain state
+                    // setBalance(prev => prev + Number(amount));
+                },
+                onCancel: () => {
+                    toast({
+                        title: "Withdrawal Cancelled",
+                        description: "The token withdrawal was cancelled.",
+                        variant: "destructive"
+                    });
+                }
+            };
+
+            await openContractCall(approveOptions);
+        } catch (error) {
+            console.error('Withdrawal error:', error);
+            toast({
+                title: "Withdrawal Failed",
+                description: error instanceof Error ? error.message : "Unknown error occurred",
+                variant: "destructive"
+            });
+        }
+    };
+
+    const handleTransfer = async (amount: string, to: string) => {
+        const { openStructuredDataSignatureRequestPopup } = await import("@stacks/connect");
+        const blazeContract = "SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-t1"; // Your blaze contract
+        const tokenContract = "SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token"; // Your token contract
+
+        try {
+            // Convert amount to micros (assuming 6 decimals)
+            const amountMicros = Number(amount) * 1_000_000;
+
+            // Get current nonce
+            const response = await fetch(`/api/v0/stackflow/nonce?address=${stxAddress}`);
+            const { nonce } = await response.json();
+
+            // Create the structured message
+            const domain = Cl.tuple({
+                name: Cl.stringAscii("blaze"),
+                version: Cl.stringAscii("1.0.0"),
+                "chain-id": Cl.uint(STACKS_MAINNET.chainId),
+            });
+
+            const message = Cl.tuple({
+                token: Cl.principal(tokenContract),
+                amount: Cl.uint(amountMicros),
+                to: Cl.principal(to),
+                nonce: Cl.uint(nonce)
+            });
+
+            // Request signature from user
+            const signatureOptions = {
+                message,
+                domain,
+                network: STACKS_MAINNET,
+                onFinish: async (data: any) => {
+                    try {
+                        // Send signature to backend
+                        const transferResponse = await fetch('/api/v0/stackflow/xfer', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json',
+                            },
+                            body: JSON.stringify({
+                                token: tokenContract,
+                                from: stxAddress,
+                                to,
+                                amount: amountMicros,
+                                nonce,
+                                signature: data.signature
+                            }),
+                        });
+
+                        if (!transferResponse.ok) {
+                            throw new Error('Transfer failed on backend');
+                        }
+
+                        const result = await transferResponse.json();
+
+                        console.log(result);
+
+                        toast({
+                            title: "Transfer Successful",
+                            description: (
+                                <div className="space-y-2">
+                                    <div className="flex items-center gap-2">
+                                        <div className="p-1.5 bg-green-500/10 rounded-md">
+                                            <Check className="w-4 h-4 text-green-500" />
+                                        </div>
+                                        <div>
+                                            <div className="font-medium">Transfer Complete</div>
+                                            <div className="text-sm text-muted-foreground">
+                                                {amount} tokens sent to {shortenAddress(to)}
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    {/* Transaction Details */}
+                                    <div className="rounded-md bg-muted p-3 text-sm space-y-2">
+                                        <div className="flex justify-between">
+                                            <span className="text-muted-foreground">Amount:</span>
+                                            <span className="font-medium">{amount} tokens</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-muted-foreground">To:</span>
+                                            <span className="font-mono">{shortenAddress(to)}</span>
+                                        </div>
+                                        <div className="flex justify-between">
+                                            <span className="text-muted-foreground">Status:</span>
+                                            <span className="text-green-500">Confirmed</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            ),
+                        });
+
+                        // Close modal and update local state
+                        setIsTransferModal(false);
+                        // setBalance(prev => prev - Number(amount));
+
+                    } catch (error) {
+                        console.error('Backend transfer error:', error);
+                        toast({
+                            title: "Transfer Failed",
+                            description: (
+                                <div className="space-y-4 pt-3">
+                                    <div className="flex items-center gap-3 text-destructive">
+                                        <AlertTriangle className="w-5 h-5" />
+                                        <div className="space-y-1">
+                                            <div className="font-medium">Backend Error</div>
+                                            <div className="text-sm text-muted-foreground">
+                                                {error instanceof Error ? error.message : "Failed to process transfer"}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            ),
+                            variant: "destructive"
+                        });
+                    }
+                },
+                onCancel: () => {
+                    toast({
+                        title: "Transfer Cancelled",
+                        description: "You cancelled the signature request.",
+                        variant: "destructive"
+                    });
+                }
+            };
+
+            await openStructuredDataSignatureRequestPopup(signatureOptions);
+
+        } catch (error) {
+            console.error('Transfer error:', error);
+            toast({
+                title: "Transfer Failed",
+                description: error instanceof Error ? error.message : "Unknown error occurred",
+                variant: "destructive"
+            });
+        }
+    };
+
 
     return (
         <div className="container px-4 py-8 mx-auto">
@@ -1301,7 +1638,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <AlertDialogFooter>
                         <AlertDialogCancel onClick={() => setIsDepositModal(false)}>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={() => confirmAction("deposit")}
+                            onClick={() => handleDeposit(amount)}
                             disabled={!amount || Number(amount) > 1}
                         >
                             Deposit
@@ -1351,7 +1688,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <AlertDialogFooter>
                         <AlertDialogCancel onClick={() => setIsWithdrawModal(false)}>Cancel</AlertDialogCancel>
                         <AlertDialogAction
-                            onClick={() => confirmAction("withdraw")}
+                            onClick={() => handleWithdraw(amount)}
                             disabled={!amount || Number(amount) > getTokenBalance(null)}
                         >
                             Withdraw
@@ -1376,7 +1713,10 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                             <Command className="border rounded-lg">
                                 <CommandInput
                                     placeholder="Search addresses..."
-                                    onValueChange={handleSearch}
+                                    onValueChange={(value) => {
+                                        setRecipientAddress(value);
+                                        handleSearch(value);
+                                    }}
                                     value={recipientAddress}
                                 />
                                 <CommandEmpty>No addresses found.</CommandEmpty>
@@ -1396,12 +1736,18 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                                                         value={address}
                                                         onSelect={(currentValue) => {
                                                             setRecipientAddress(currentValue.toUpperCase());
-                                                            setSearchResults([]);
                                                         }}
                                                         className="cursor-pointer"
                                                     >
-                                                        <Search className="w-4 h-4 mr-2" />
-                                                        <span>{shortenAddress(address)}</span>
+                                                        <div className="flex items-center justify-between w-full">
+                                                            <div className="flex items-center">
+                                                                <Search className="w-4 h-4 mr-2" />
+                                                                <span>{shortenAddress(address)}</span>
+                                                            </div>
+                                                            {recipientAddress.toUpperCase() === address.toUpperCase() && (
+                                                                <Check className="w-4 h-4 text-primary" />
+                                                            )}
+                                                        </div>
                                                     </CommandItem>
                                                 );
                                             })
@@ -1412,53 +1758,35 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                         </div>
 
                         <div className="space-y-2">
-                            <Label>Amount</Label>
-                            <Input
-                                type="number"
-                                placeholder="0.0"
-                                value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
-                            />
+                            <div className="flex items-center justify-between h-6">
+                                <Label>Amount</Label>
+                                {amount && (
+                                    <div className="text-xs text-muted-foreground flex items-center gap-2">
+                                        <span>≈ ${(Number(amount) * prices['.stx']).toFixed(2)} USD</span>
+                                    </div>
+                                )}
+                            </div>
+                            <div className="relative">
+                                <div className="absolute left-3 top-1/2 -translate-y-1/2 flex items-center gap-2">
+                                    <Image
+                                        src="/stx-logo.png"
+                                        alt="STX"
+                                        width={20}
+                                        height={20}
+                                        className="rounded-sm"
+                                    />
+                                    <span className="text-sm font-medium">STX</span>
+                                </div>
+                                <Input
+                                    type="number"
+                                    placeholder="0.0"
+                                    value={amount}
+                                    onChange={(e) => setAmount(e.target.value)}
+                                    className="pl-24"
+                                />
+                            </div>
                         </div>
                     </div>
-
-                    {/* Add preview section */}
-                    {previewHops.length > 0 && (
-                        <div className="space-y-4 mt-4">
-                            <div className="flex items-center justify-between">
-                                <h3 className="text-sm font-medium">Transfer Preview</h3>
-                                <span className="text-xs text-muted-foreground">
-                                    Hash: {previewHash.slice(0, 8)}...{previewHash.slice(-8)}
-                                </span>
-                            </div>
-
-                            <div className="rounded-md border bg-muted/50">
-                                <ScrollArea className="h-[200px] w-full">
-                                    <pre className="p-4 text-xs">
-                                        {JSON.stringify(previewHops.map((hop, index) => ({
-                                            index,
-                                            receiver: shortenAddress(hop.receiver),
-                                            amount: hop.amount.toString(),
-                                            fee: hop.fee.toString(),
-                                            nextHop: hop.nextHop,
-                                            secret: `0x${Array.from(hop.secret)
-                                                .map(b => b.toString(16).padStart(2, '0'))
-                                                .join('')
-                                                .slice(0, 8)}...`
-                                        })), null, 2)}
-                                    </pre>
-                                </ScrollArea>
-                            </div>
-
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                                <Info className="w-4 h-4" />
-                                <span>
-                                    Preview shows the hops array that will be used for the transfer.
-                                    Padding hops are filled with random data for privacy.
-                                </span>
-                            </div>
-                        </div>
-                    )}
 
                     <AlertDialogFooter>
                         <AlertDialogCancel>Cancel</AlertDialogCancel>

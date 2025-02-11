@@ -7,16 +7,17 @@ telemetry = false
 cache_dir = "./.cache"
 
 
-[contracts.token-a]
-path = "contracts/dexterity/token-a.clar"
+
+[contracts.charisma-traits-v1]
+path = "contracts/traits/charisma-traits-v1.clar"
 depends_on = []
 
-[contracts.token-b]
-path = "contracts/dexterity/token-b.clar"
+[contracts.token]
+path = "contracts/stackflow/token.clar"
 depends_on = []
 
-[contracts.genesis]
-path = "contracts/dexterity/genesis.clar"
+[contracts.blaze]
+path = "contracts/stackflow/blaze.clar"
 depends_on = []
 
 
