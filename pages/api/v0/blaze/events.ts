@@ -70,8 +70,11 @@ export default async function handler(
                     message: 'Processing transaction',
                     eventCount: tx.metadata?.receipt?.events?.length || 0,
                     transaction_identifier: tx.transaction_identifier,
-                    operations: JSON.stringify(tx.operations),
                 });
+
+                for (const operation of tx.operations) {
+                    console.info(operation);
+                }
 
                 const events = tx.metadata?.receipt?.events || [];
                 for (const event of events) {
