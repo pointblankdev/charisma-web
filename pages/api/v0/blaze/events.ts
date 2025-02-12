@@ -79,9 +79,9 @@ export default async function handler(
                         console.info({
                             requestId,
                             message: 'Processing contract event',
-                            eventType: event.data.value.event,
-                            data: event.data.value,
-                            __keys: Object.keys(event),
+                            data: event.data,
+                            position: event.position,
+                            type: event.type,
                         });
 
                         switch (event.data.value.event) {
