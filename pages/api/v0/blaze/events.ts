@@ -61,7 +61,6 @@ export default async function handler(
                 message: 'Processing block',
                 transactionCount: block.transactions?.length || 0,
                 block_identifier: block.block_identifier,
-                metadata: block.metadata,
             });
 
             const transactions = block.transactions || [];
@@ -71,7 +70,7 @@ export default async function handler(
                     message: 'Processing transaction',
                     eventCount: tx.metadata?.receipt?.events?.length || 0,
                     transaction_identifier: tx.transaction_identifier,
-                    operations: tx.operations,
+                    operations: JSON.stringify(tx.operations),
                 });
 
                 const events = tx.metadata?.receipt?.events || [];
