@@ -163,7 +163,7 @@ export async function handleTransfer({ token, from, to, amount, nonce }: SignTra
 }
 
 export async function handleDeposit({ token, amount, stxAddress }: TransactionParams): Promise<void> {
-    const [contractAddress, contractName] = getBlazeContractForToken(token.contract);
+    const [contractAddress, contractName] = getBlazeContractForToken(token.contract).split('.');
     try {
         // Convert amount to micros (assuming 6 decimals)
         const amountMicros = Number(amount) * 1_000_000;
@@ -240,7 +240,7 @@ export async function handleDeposit({ token, amount, stxAddress }: TransactionPa
 }
 
 export async function handleWithdraw({ token, amount }: TransactionParams): Promise<void> {
-    const [contractAddress, contractName] = getBlazeContractForToken(token.contract);
+    const [contractAddress, contractName] = getBlazeContractForToken(token.contract).split('.');
     try {
         // Convert amount to micros (assuming 6 decimals)
         const amountMicros = Number(amount) * 1_000_000;
@@ -325,7 +325,7 @@ export async function handleWithdraw({ token, amount }: TransactionParams): Prom
  * @throws Error if the balance fetch fails
  */
 export async function getBalance(address: string, tokenContract: string): Promise<number> {
-    const [contractAddress, contractName] = getBlazeContractForToken(tokenContract);
+    const [contractAddress, contractName] = getBlazeContractForToken(tokenContract).split('.');
     try {
         const options = {
             contractAddress,

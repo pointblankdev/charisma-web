@@ -60,7 +60,8 @@ export default async function handler(
                 requestId,
                 message: 'Processing block',
                 transactionCount: block.transactions?.length || 0,
-                __keys: Object.keys(block),
+                block_identifier: block.block_identifier,
+                metadata: block.metadata,
             });
 
             const transactions = block.transactions || [];
@@ -69,7 +70,8 @@ export default async function handler(
                     requestId,
                     message: 'Processing transaction',
                     eventCount: tx.metadata?.receipt?.events?.length || 0,
-                    __keys: Object.keys(tx),
+                    transaction_identifier: tx.transaction_identifier,
+                    operations: tx.operations,
                 });
 
                 const events = tx.metadata?.receipt?.events || [];
