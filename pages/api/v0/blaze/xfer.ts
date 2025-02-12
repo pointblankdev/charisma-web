@@ -79,8 +79,8 @@ export default async function handler(
 
         // Update off-chain balances immediately
         const pipeline = kv.pipeline();
-        const fromBalance = await kv.get<string>(`balance:${from}:${token}`) || '0';
-        const toBalance = await kv.get<string>(`balance:${to}:${token}`) || '0';
+        const fromBalance = await kv.get<string>(`balance:${contract}:${from}`) || '0';
+        const toBalance = await kv.get<string>(`balance:${contract}:${to}`) || '0';
 
         // Verify sufficient balance
         if (BigInt(fromBalance) < BigInt(amount)) {
@@ -97,8 +97,8 @@ export default async function handler(
             amount
         });
 
-        pipeline.set(`balance:${from}:${token}`, (BigInt(fromBalance) - BigInt(amount)).toString());
-        pipeline.set(`balance:${to}:${token}`, (BigInt(toBalance) + BigInt(amount)).toString());
+        pipeline.set(`balance:${contract}:${from}`, (BigInt(fromBalance) - BigInt(amount)).toString());
+        pipeline.set(`balance:${contract}:${to}`, (BigInt(toBalance) + BigInt(amount)).toString());
         await pipeline.exec();
 
         console.log('Off-chain balances updated successfully');
@@ -127,8 +127,8 @@ export default async function handler(
         }
 
         // Get updated balances for response
-        const newFromBalance = await kv.get<string>(`balance:${from}:${token}`);
-        const newToBalance = await kv.get<string>(`balance:${to}:${token}`);
+        const newFromBalance = await kv.get<string>(`balance:${contract}:${from}`);
+        const newToBalance = await kv.get<string>(`balance:${contract}:${to}`);
 
         return res.status(200).json({
             success: true,

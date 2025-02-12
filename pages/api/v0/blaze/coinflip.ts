@@ -90,7 +90,7 @@ export default async function handler(
         }
 
         // Verify sufficient balance
-        const balance = await kv.get<string>(`balance:${from}:${token}`) || '0';
+        const balance = await kv.get<string>(`balance:${contract}:${from}`) || '0';
         console.info({
             requestId,
             message: 'Current balance',
@@ -186,7 +186,7 @@ export default async function handler(
             });
         }
 
-        await kv.set(`balance:${from}:${token}`, newBalance);
+        await kv.set(`balance:${contract}:${from}`, newBalance);
 
         const response = {
             success: true,

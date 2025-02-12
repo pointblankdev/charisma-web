@@ -91,15 +91,16 @@ export default async function handler(
                             type: event.type,
                         });
 
+                        const contract = event.data.contract_identifier;
                         switch (event.data.value.event) {
                             case 'deposit':
-                                await handleDeposit(event.data.value);
+                                await processDeposit(contract, event.data.value);
                                 break;
                             case 'withdraw':
-                                await handleWithdraw(event.data.value);
+                                await processWithdraw(contract, event.data.value);
                                 break;
                             case 'transfer':
-                                await handleTransfer(event.data.value);
+                                await processTransfer(contract, event.data.value);
                                 break;
                             default:
                                 console.warn({
@@ -134,36 +135,32 @@ export default async function handler(
     }
 }
 
-// TODO: ADD TOKEN/CONTRACT SUPPORT
-// Currently, we don't know the token/contract for the event, so we can't store it properly.
-// We should store the contract address in the balance key, and then use that to look up the token.
-
-async function handleDeposit(data: EventData) {
+async function processDeposit(contract: string, data: EventData) {
     const { user, amount } = data;
-    const currentBalance = await kv.get<string>(`balance:${user}`) || '0';
+    const currentBalance = await kv.get<string>(`balance:${contract}:${user}`) || '0';
 
     // Update balance atomically
-    await kv.set(`balance:${user}`, (BigInt(currentBalance) + BigInt(amount)).toString());
+    await kv.set(`balance:${contract}:${user}`, (BigInt(currentBalance) + BigInt(amount)).toString());
 }
 
-async function handleWithdraw(data: EventData) {
+async function processWithdraw(contract: string, data: EventData) {
     const { user, amount } = data;
-    const currentBalance = await kv.get<string>(`balance:${user}`) || '0';
+    const currentBalance = await kv.get<string>(`balance:${contract}:${user}`) || '0';
 
     if (BigInt(currentBalance) < BigInt(amount)) {
         throw new Error('Insufficient balance');
     }
 
     // Update balance atomically
-    await kv.set(`balance:${user}`, (BigInt(currentBalance) - BigInt(amount)).toString());
+    await kv.set(`balance:${contract}:${user}`, (BigInt(currentBalance) - BigInt(amount)).toString());
 }
 
-async function handleTransfer(data: EventData) {
+async function processTransfer(contract: string, data: EventData) {
     const { from, to, amount, nonce } = data;
     if (!from || !to || !nonce) throw new Error('Missing required fields');
 
-    const fromBalance = await kv.get<string>(`balance:${from}`) || '0';
-    const currentNonce = await kv.get<number>(`nonce:${from}`) || 0;
+    const fromBalance = await kv.get<string>(`balance:${contract}:${from}`) || '0';
+    const currentNonce = await kv.get<number>(`nonce:${contract}:${from}`) || 0;
 
     // Verify nonce is greater than current
     if (nonce <= currentNonce) {
