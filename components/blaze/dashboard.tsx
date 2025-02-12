@@ -2,28 +2,20 @@ import React, { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
 import { BuyBitcoinButton, CashOutButton, DepositButton, SendStxButton, WithdrawButton } from './action-buttons';
 import { TransferDialog, WithdrawDialog, DepositDialog } from './action-dialogs';
-import { getBalance, handleDeposit, handleTransfer, handleWithdraw } from './action-helpers';
+import { handleDeposit, handleTransfer, handleWithdraw } from './action-helpers';
 import { PortfolioCards } from './portfolio-cards';
 import { useGlobal } from '@lib/hooks/global-context';
 import { Features } from './features';
 import { CoinFlipCard } from './coin-flip';
+import { FaucetButton } from './faucet-button';
+import { FaucetCard } from './faucet-card';
 
 
 const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
     const [openDeposit, setOpenDeposit] = useState(false);
     const [openWithdraw, setOpenWithdraw] = useState(false);
     const [openTransfer, setOpenTransfer] = useState(false);
-
-    const [balances, setBalances] = useState<Record<string, number>>({});
-    const { stxAddress } = useGlobal();
-
-    useEffect(() => {
-        const fetchBalances = async () => {
-            const welshBalance = await getBalance(stxAddress, 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token');
-            setBalances({ '.welsh': welshBalance });
-        };
-        fetchBalances();
-    }, [stxAddress]);
+    const { blazeBalances } = useGlobal();
 
     return (
 
@@ -62,6 +54,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
                     <div className="flex gap-2">
                         <SendStxButton onClick={() => setOpenTransfer(true)} disabled={false} />
+                        <FaucetButton />
                     </div>
 
                     <div className="hidden sm:block w-[1px] bg-border" />
@@ -75,11 +68,12 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
             <Features />
 
-            <PortfolioCards balances={balances} prices={prices} />
+            <PortfolioCards balances={blazeBalances} prices={prices} />
 
             {/* dApp card grid */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 <CoinFlipCard />
+                <FaucetCard />
             </div>
 
             <TransferDialog prices={prices} open={openTransfer} onOpenChange={setOpenTransfer} onConfirm={handleTransfer} />

@@ -72,6 +72,20 @@ export interface GlobalState {
     // Kraxel prices
     prices: any;
     setPrices: (prices: any) => void;
+
+    // Blaze state
+    blazeBalances: Record<string, {
+        balance: number;
+        credit: number;
+        nonce: number;
+        contract: string;
+    }>;
+    setBlazeBalances: (blazeBalances: Record<string, {
+        balance: number;
+        credit: number;
+        nonce: number;
+        contract: string;
+    }>) => void;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -102,6 +116,10 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // Prices state
     const [prices, setPrices] = usePersistedState<any>('prices', {});
+
+    // Blaze balances state
+    const [blazeBalances, setBlazeBalances] = usePersistedState('blaze-balances', {});
+
 
     // Load user data and configure Dexterity
     useEffect(() => {
@@ -300,11 +318,25 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
     }, [toast]);
 
+    // Add this function before the useEffect blocks
+    const fetchBlazeBalances = useCallback(async () => {
+        if (!stxAddress) return;
+        try {
+            const response = await fetch(`/api/v0/blaze/user/${stxAddress}`);
+            const data = await response.json();
+            setBlazeBalances(data.blazeBalance);
+        } catch (error) {
+            console.error('Error fetching blaze balances:', error);
+        }
+    }, [stxAddress, setBlazeBalances]);
+
     useEffect(() => {
-        // Add a cleanup flag to prevent race conditions
         let isSubscribed = true;
 
-        // Helper function to process vault analytics
+        sc.subscribeBlocks((block) => {
+            setBlock(block as any);
+        });
+
         const processVaultAnalytics = async (block: any) => {
             try {
                 const response = await fetch(`${siteUrl}/api/v0/vaults/analytics`);
@@ -334,34 +366,21 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                     setVaultAnalytics(vaultAnalytics);
                 }
             } catch (error) {
-                console.error('Error processing vault analytics:', error);
+                console.error('Error processing data:', error);
             }
         };
 
-        // Debounce the block subscription handler to prevent rapid updates
-        const debouncedProcessVaultAnalytics = _.debounce(processVaultAnalytics, 500);
-
-        sc.subscribeBlocks((block) => {
-            // if (isSubscribed) {
-            //     debouncedProcessVaultAnalytics(block);
-            // }
-            setBlock(block as any);
-        });
-
         const getRealTimeData = async () => {
             try {
-                // const block = await getLatestBlock();
-                if (isSubscribed) {
-                    await processVaultAnalytics(block);
-                }
+                await processVaultAnalytics(block);
+                await fetchBlazeBalances();
             } catch (error) {
-                console.error('Error fetching latest block:', error);
+                console.error('Error fetching latest data:', error);
             }
         };
 
         getRealTimeData();
 
-        // Cleanup function
         return () => {
             isSubscribed = false;
             sc.unsubscribeBlocks();
@@ -413,6 +432,12 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                         // Prices state
                         prices,
                         setPrices,
+
+                        // Blaze state
+                        blazeBalances,
+                        setBlazeBalances: (balances) => {
+                            setBlazeBalances(Object.assign({}, balances));
+                        }
                     }}
                 >
                     <div >

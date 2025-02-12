@@ -4,7 +4,7 @@ import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
 import { Coins, Loader2, PartyPopper, DollarSign, X, Sparkles, Flame } from 'lucide-react';
 import { useGlobal } from '@lib/hooks/global-context';
-import { handleCoinFlip } from './action-helpers';
+import { fetchBlazeBalances, handleCoinFlip } from './action-helpers';
 import { toast } from '@components/ui/use-toast';
 import Image from 'next/image';
 import { cn } from '@lib/utils';
@@ -14,6 +14,9 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@components/ui/tooltip";
+
+
+const gameToken = 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'
 
 export const CoinFlipGame = () => {
     const [choice, setChoice] = useState<'heads' | 'tails' | null>(null);
@@ -26,7 +29,7 @@ export const CoinFlipGame = () => {
         amount: string;
         lastChoice: 'heads' | 'tails';
     } | null>(null);
-    const { stxAddress } = useGlobal();
+    const { stxAddress, setBlazeBalances, blazeBalances } = useGlobal();
 
     // Add new state for hover effects
     const [hoveredCoin, setHoveredCoin] = useState<'heads' | 'tails' | null>(null);
@@ -51,7 +54,7 @@ export const CoinFlipGame = () => {
 
         try {
             // Add a minimum flip time for better UX
-            const result = await Promise.all([
+            const result: any = await Promise.all([
                 handleCoinFlip({
                     choice: playChoice,
                     amount: parseFloat(playAmount),
@@ -65,6 +68,16 @@ export const CoinFlipGame = () => {
                 result: result.result as 'heads' | 'tails',
                 amount: playAmount,
                 lastChoice: playChoice
+            });
+
+            setBlazeBalances({
+                ...blazeBalances,
+                [gameToken]: {
+                    balance: parseFloat(result.newBalance),
+                    credit: parseFloat(result.newBalance),
+                    nonce: result.nextNonce,
+                    contract: gameToken
+                }
             });
 
             // Show success toast

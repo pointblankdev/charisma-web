@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
-import { generateBlazeSignature, getBlazeBalance, getBlazeContractForToken, setBlazeBalance, verifyBlazeSignature } from '@lib/blaze/helpers';
+import { generateBlazeSignature, getBlazeBalance, getBlazeContractForToken, setBlazeBalance, setBlazeNonce, verifyBlazeSignature } from '@lib/blaze/helpers';
 import { getNonce } from '@components/blaze/action-helpers';
 import { getTransferQueueKey } from './xfer';
 
@@ -88,6 +88,9 @@ export default async function handler(
             });
             return res.status(401).json({ error: 'Invalid signature' });
         }
+
+        // Increment nonce
+        await setBlazeNonce(contract, from, nonce + 1);
 
         // Verify sufficient balance
         const balance = await getBlazeBalance(contract, from);

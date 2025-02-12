@@ -14,7 +14,7 @@ type TokenCardProps = {
     token: string;
     balance: number;
     icon: string;
-    price?: number;
+    price: number;
 };
 
 const TokenCard = ({ token, balance, icon, price }: TokenCardProps) => {
@@ -58,18 +58,10 @@ const TokenCard = ({ token, balance, icon, price }: TokenCardProps) => {
     }, [balance]);
 
     // Format balance based on token type
-    const formattedBalance = token === 'sBTC'
-        ? (balance + pendingAmount).toFixed(8)
-        : token === 'WELSH'
-            ? (balance + pendingAmount).toFixed(6)
-            : (balance + pendingAmount).toFixed(6);
+    const formattedBalance = (balance + pendingAmount)
 
-    // Calculate fiat value (dummy prices for demo)
-    const fiatValue = token === 'sBTC'
-        ? ((balance + pendingAmount) * 100000).toFixed(2) // Assuming $100k BTC price
-        : token === 'WELSH'
-            ? ((balance + pendingAmount) * 0.0005).toFixed(2) // Fun price point for WCC
-            : ((balance + pendingAmount) * 0.85).toFixed(2); // Assuming $0.85 STX price
+    // Calculate fiat value 
+    const fiatValue = ((balance + pendingAmount) * price).toFixed(2)
 
     return (
         <Card className="bg-accent/5 border-primary/20 relative overflow-hidden">
@@ -214,13 +206,18 @@ const TokenCard = ({ token, balance, icon, price }: TokenCardProps) => {
 };
 
 type PortfolioCardsProps = {
-    balances: Record<string, number>;
+    balances: Record<string, {
+        balance: number;
+        credit: number;
+        nonce: number;
+        contract: string;
+    }>;
     prices: Record<string, number>;
 };
 
 export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
     const totalBalance = Object.entries(balances).reduce(
-        (acc, [token, balance]) => acc + balance * (prices[token] || 0),
+        (acc, [token, state]) => acc + state.credit / 10 ** 6 * (prices[token] || 0),
         0
     );
 
@@ -236,7 +233,7 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
                 {/* STX Card */}
                 <TokenCard
                     token="STX"
-                    balance={balances['.stx'] || 0}
+                    balance={balances['.stx']?.credit / 10 ** 6 || 0}
                     icon="/stx-logo.png"
                     price={prices['.stx'] || 0}
                 />
@@ -244,17 +241,17 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
                 {/* sBTC Card */}
                 <TokenCard
                     token="sBTC"
-                    balance={balances['.sbtc'] || 0}
+                    balance={balances['SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token']?.credit / 10 ** 8 || 0}
                     icon="/sbtc.png"
-                    price={prices['.sbtc'] || 0}
+                    price={prices['SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'] || 0}
                 />
 
                 {/* Welsh Corgi Coin Card */}
                 <TokenCard
                     token="WELSH"
-                    balance={balances['.welsh'] || 0}
+                    balance={balances['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token']?.credit / 10 ** 6 || 0}
                     icon="/welsh-logo.png"
-                    price={prices['.welsh'] || 0}
+                    price={prices['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'] || 0}
                 />
             </div>
         </div>

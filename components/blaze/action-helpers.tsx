@@ -346,7 +346,7 @@ export async function getBalance(address: string, tokenContract: string): Promis
         }
 
         // Convert from micros to base units
-        return Number(result.value) / 1_000_000;
+        return Number(result.value);
     } catch (error) {
         console.error("Error fetching balance:", error);
         return 0;
@@ -418,8 +418,6 @@ export async function handleCoinFlip({ choice, amount, stxAddress }: {
         nonce: Cl.uint(nonce)
     });
 
-    console.log(message);
-
     const { openStructuredDataSignatureRequestPopup } = await import("@stacks/connect");
 
     return new Promise((resolve, reject) => {
@@ -444,4 +442,10 @@ export async function handleCoinFlip({ choice, amount, stxAddress }: {
             },
         });
     });
+}
+
+export async function fetchBlazeBalances(user: string) {
+    const response = await fetch(`/api/v0/blaze/user/${user}`);
+    const data = await response.json();
+    return data.blazeBalance;
 }

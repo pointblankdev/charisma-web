@@ -54,11 +54,6 @@ export const CoinFlipCard = () => {
                                         <div className="p-3 bg-primary/10 rounded-xl transition-transform duration-500 group-hover:scale-110">
                                             <Coins className="w-6 h-6 text-primary" />
                                         </div>
-                                        <div className="absolute -bottom-1 -right-1">
-                                            <div className="p-1.5 bg-yellow-500 rounded-full">
-                                                <Flame className="w-3 h-3 text-background" />
-                                            </div>
-                                        </div>
                                     </div>
 
                                     <div className="space-y-1">
