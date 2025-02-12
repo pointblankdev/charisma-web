@@ -26,7 +26,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 const [credit, balance, nonce] = await Promise.all([
                     getBlazeBalance(contract, user as string),
-                    getBalance(user as string, token as string),
+                    getBalance(user as string, token),
                     getBlazeNonce(contract, user as string),
                 ]);
 
