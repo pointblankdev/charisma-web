@@ -69,9 +69,9 @@ export interface GlobalState {
     slippage: number;
     setSlippage: (slippage: number) => void;
 
-    // Add channels to the global state
-    channels: any[];
-    fetchChannels: () => Promise<void>;
+    // Kraxel prices
+    prices: any;
+    setPrices: (prices: any) => void;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -100,24 +100,8 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         non_fungible_tokens: {},
     });
 
-    // Add channels state
-    const [channels, setChannels] = usePersistedState<any[]>('channels', []);
-
-    // Add fetchChannels function
-    const fetchChannels = useCallback(async () => {
-        const { getUserSession } = await import("@stacks/connect");
-        const session = getUserSession();
-        if (session.isUserSignedIn()) {
-            const userAddress = session.loadUserData().profile.stxAddress.mainnet;
-            try {
-                const response = await fetch(`/api/v0/stackflow/channels?principal=${userAddress}`);
-                const data = await response.json();
-                setChannels(data.channels);
-            } catch (error) {
-                console.error('Error fetching channels:', error);
-            }
-        }
-    }, [setChannels]);
+    // Prices state
+    const [prices, setPrices] = usePersistedState<any>('prices', {});
 
     // Load user data and configure Dexterity
     useEffect(() => {
@@ -131,16 +115,6 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             }).catch(console.error);
         }
     }, [userSession, setStxAddress]);
-
-    // RUN ON EVERY FAST BLOCK
-    useEffect(() => {
-        if (stxAddress) {
-            fetchChannels();
-            getBalances(stxAddress).then(data => {
-                setBalances(data);
-            }).catch(console.error);
-        }
-    }, [stxAddress, block]);
 
     // Wallet helper functions
     const getKeyByContractAddress = useCallback((contractAddress: string) => {
@@ -324,14 +298,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         return () => {
             sc.unsubscribeMempool();
         };
-    }, [toast, fetchChannels]);
-
-    // Add initial channel fetch when address changes
-    useEffect(() => {
-        if (stxAddress) {
-            fetchChannels();
-        }
-    }, [stxAddress, fetchChannels]);
+    }, [toast]);
 
     useEffect(() => {
         // Add a cleanup flag to prevent race conditions
@@ -443,9 +410,9 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                         slippage,
                         setSlippage,
 
-                        // Add channels to the context
-                        channels,
-                        fetchChannels,
+                        // Prices state
+                        prices,
+                        setPrices,
                     }}
                 >
                     <div >

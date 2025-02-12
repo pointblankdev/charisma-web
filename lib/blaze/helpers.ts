@@ -65,3 +65,36 @@ export async function generateBlazeSignature(
 
     return signStructuredData({ message, domain, privateKey: process.env.PRIVATE_KEY! });
 }
+
+export async function signBlazeTransfer({ token, from, to, amount, nonce }: any) {
+    // Convert amount to tokens
+    const tokens = amount * 1_000_000;
+    const lastNonce = 0
+    const nextNonce = nonce ? nonce : lastNonce + 1;
+
+    // Create domain matching contract
+    const domain = Cl.tuple({
+        name: Cl.stringAscii("blaze"),
+        version: Cl.stringAscii("0.1.0"),
+        "chain-id": Cl.uint(STACKS_MAINNET.chainId),
+    });
+
+    // Create message tuple matching contract's make-message-hash
+    const message = Cl.tuple({
+        token: Cl.principal(token.contract),
+        to: Cl.principal(to),
+        amount: Cl.uint(tokens),
+        nonce: Cl.uint(nextNonce)
+    });
+    const { openStructuredDataSignatureRequestPopup } = await import("@stacks/connect");
+    return new Promise((resolve) => {
+        openStructuredDataSignatureRequestPopup({
+            domain,
+            message,
+            network: STACKS_MAINNET,
+            onFinish: async (data) => {
+                resolve(data);
+            },
+        });
+    });
+}

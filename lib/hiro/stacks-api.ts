@@ -31,7 +31,7 @@ export const client = createClient({
 client.use({
   onRequest({ request }) {
     const apiKey = getNextApiKey();
-    request.headers.set('x-hiro-api-key', apiKey);
+    request.headers.set('x-api-key', apiKey);
     return request;
   }
 });

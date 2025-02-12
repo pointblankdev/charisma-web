@@ -18,7 +18,6 @@ type TokenCardProps = {
 };
 
 const TokenCard = ({ token, balance, icon, price }: TokenCardProps) => {
-    const { channels, stxAddress } = useGlobal();
     const [structuredDataHash, setStructuredDataHash] = useState<string | null>(null);
     const [isPending, setIsPending] = useState(false);
     const [pendingAmount, setPendingAmount] = useState<number>(0);
@@ -71,14 +70,6 @@ const TokenCard = ({ token, balance, icon, price }: TokenCardProps) => {
         : token === 'WELSH'
             ? ((balance + pendingAmount) * 0.0005).toFixed(2) // Fun price point for WCC
             : ((balance + pendingAmount) * 0.85).toFixed(2); // Assuming $0.85 STX price
-
-    // Fetch hash for this token's channel
-    const fetchTokenChannelHash = async () => {
-        const channel = channels.find(c =>
-            (c.principal_1 === stxAddress || c.principal_2 === stxAddress) &&
-            c.token === (token === 'STX' ? null : token)
-        );
-    };
 
     return (
         <Card className="bg-accent/5 border-primary/20 relative overflow-hidden">
