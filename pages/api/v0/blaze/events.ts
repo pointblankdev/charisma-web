@@ -73,7 +73,11 @@ export default async function handler(
                 });
 
                 for (const operation of tx.operations) {
-                    console.info(operation);
+                    console.info({
+                        requestId,
+                        message: 'Processing operation',
+                        operation: operation,
+                    });
                 }
 
                 const events = tx.metadata?.receipt?.events || [];
