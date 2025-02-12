@@ -15,7 +15,6 @@ import {
 } from "@components/ui/dialog";
 import { userSession } from '@components/stacks-session/connect';
 import axios from 'axios';
-import { SIP10_TOKEN } from '@lib/blaze/helpers';
 
 const TestSigningDialog = () => {
     const [open, setOpen] = useState(false);
@@ -36,7 +35,7 @@ const TestSigningDialog = () => {
             // Create message tuple matching contract's make-message-hash
             // IMPORTANT: This is the structured data hash!
             const message = Cl.tuple({
-                token: Cl.principal(SIP10_TOKEN),
+                token: Cl.principal('SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'),
                 to: Cl.principal(to),
                 amount: Cl.uint(amountMicros),
                 nonce: Cl.uint(1) // Using static nonce=1 for testing

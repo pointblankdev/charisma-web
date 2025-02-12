@@ -19,7 +19,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
     useEffect(() => {
         const fetchBalances = async () => {
-            const welshBalance = await getBalance(stxAddress);
+            const welshBalance = await getBalance(stxAddress, 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token');
             setBalances({ '.welsh': welshBalance });
         };
         fetchBalances();

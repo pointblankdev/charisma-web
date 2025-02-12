@@ -1,20 +1,20 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
-import { generateBlazeSignature, SIP10_TOKEN, verifyBlazeSignature } from '@lib/blaze/helpers';
-import { CONFIG } from '@lib/stackflow/config';
-import { generateSignature } from '@lib/stackflow/signature';
-import { TRANSFER_QUEUE_KEY } from './xfer';
+import { generateBlazeSignature, getBlazeContractForToken, verifyBlazeSignature } from '@lib/blaze/helpers';
 import { getNonce } from '@components/blaze/action-helpers';
+import { getTransferQueueKey } from './xfer';
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
     const requestId = crypto.randomUUID();
+    const gameHostAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
 
     console.info({
         requestId,
         message: 'Received coinflip request',
+        gameHostAddress,
         method: req.method,
         url: req.url,
         headers: {
@@ -37,16 +37,20 @@ export default async function handler(
         const {
             signature,
             from,
+            token,
             amount,
             choice,
             nonce,
         }: {
             signature: string;
             from: string;
+            token: string;
             amount: number;
             choice: string;
             nonce: number;
         } = req.body;
+
+        const contract = getBlazeContractForToken(token);
 
         console.info({
             requestId,
@@ -60,10 +64,11 @@ export default async function handler(
 
         // Verify signature
         const isValid = await verifyBlazeSignature(
+            contract,
             signature,
             from,
-            'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
-            BigInt(amount),
+            gameHostAddress,
+            amount,
             nonce
         );
 
@@ -85,7 +90,7 @@ export default async function handler(
         }
 
         // Verify sufficient balance
-        const balance = await kv.get<string>(`balance:${from}`) || '0';
+        const balance = await kv.get<string>(`balance:${from}:${token}`) || '0';
         console.info({
             requestId,
             message: 'Current balance',
@@ -125,17 +130,18 @@ export default async function handler(
 
         if (won) {
             // Generate server signature for the winning amount
-            const winningAmount = BigInt(amount) * 2n;
+            const winningAmount = amount * 2;
 
             // Order principals lexicographically as required by the contract
-            const [principal1, principal2] = [CONFIG.OWNER, from].sort();
-            const [balance1, balance2] = principal1 === CONFIG.OWNER
-                ? [winningAmount, 0n]
-                : [0n, winningAmount];
+            const [principal1, principal2] = [gameHostAddress, from].sort();
+            const [balance1, balance2] = principal1 === gameHostAddress
+                ? [winningAmount, 0]
+                : [0, winningAmount];
 
-            const hostNonce = await getNonce(CONFIG.OWNER!);
+
+            const hostNonce = await getNonce(gameHostAddress, contract);
             const serverSignature = await generateBlazeSignature(
-                SIP10_TOKEN,
+                token,
                 from,
                 winningAmount,
                 hostNonce
@@ -145,29 +151,29 @@ export default async function handler(
                 requestId,
                 message: 'Generated winning signature',
                 from,
-                winningAmount: winningAmount.toString(),
+                winningAmount,
                 nextNonce: nonce + 1,
                 signaturePrefix: serverSignature.slice(0, 10),
                 principals: {
                     principal1,
                     principal2,
-                    balance1: balance1.toString(),
-                    balance2: balance2.toString()
+                    balance1,
+                    balance2
                 }
             });
 
             // Add transfer to queue for on-chain settlement
             const transfer = {
                 to: from, // Sending back to the player
-                amount: winningAmount.toString(),
+                amount: winningAmount,
                 nonce: nonce + 1,
                 signature: serverSignature
             };
 
-            await kv.lpush(TRANSFER_QUEUE_KEY, JSON.stringify(transfer));
+            await kv.lpush(getTransferQueueKey(token), JSON.stringify(transfer));
 
             // Check queue length and log status
-            const queueLength = await kv.llen(TRANSFER_QUEUE_KEY);
+            const queueLength = await kv.llen(getTransferQueueKey(token));
             console.info({
                 requestId,
                 message: 'Added winning transfer to settlement queue',
@@ -175,18 +181,18 @@ export default async function handler(
                 queueLength,
                 transfer: {
                     ...transfer,
-                    signature: transfer.signature.slice(0, 10) + '...'
+                    signature: `${transfer.signature.slice(0, 10)}...`
                 }
             });
         }
 
-        await kv.set(`balance:${from}`, newBalance.toString());
+        await kv.set(`balance:${from}:${token}`, newBalance);
 
         const response = {
             success: true,
             result,
             won,
-            newBalance: newBalance.toString(),
+            newBalance,
             nextNonce: won ? nonce + 1 : nonce
         };
 

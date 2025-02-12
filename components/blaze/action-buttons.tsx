@@ -138,7 +138,7 @@ export function DepositButton({ onClick }: ActionButtonProps) {
 
     useEffect(() => {
         const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress);
+            const balance = await getBalance(stxAddress, 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token');
             setBalance(balance);
         };
         fetchBalance();
@@ -189,7 +189,7 @@ export function WithdrawButton({ onClick }: ActionButtonProps) {
 
     useEffect(() => {
         const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress);
+            const balance = await getBalance(stxAddress, 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token');
             setBalance(balance);
         };
         fetchBalance();

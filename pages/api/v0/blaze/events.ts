@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
-import { verifySecret } from '@lib/stackflow/chainhooks/auth';
+import { verifySecret } from '@lib/blaze/auth';
 
 type EventData = {
     user: string;
@@ -24,7 +24,6 @@ export default async function handler(
         headers: {
             'content-type': req.headers['content-type'],
             'content-length': req.headers['content-length'],
-            'user-agent': req.headers['user-agent'],
         }
     });
 
@@ -60,9 +59,8 @@ export default async function handler(
             console.info({
                 requestId,
                 message: 'Processing block',
-                blockHeight: block.height,
-                blockHash: block.hash,
-                transactionCount: block.transactions?.length || 0
+                transactionCount: block.transactions?.length || 0,
+                __keys: Object.keys(block),
             });
 
             const transactions = block.transactions || [];
@@ -70,8 +68,8 @@ export default async function handler(
                 console.info({
                     requestId,
                     message: 'Processing transaction',
-                    txId: tx.tx_id,
-                    eventCount: tx.metadata?.receipt?.events?.length || 0
+                    eventCount: tx.metadata?.receipt?.events?.length || 0,
+                    __keys: Object.keys(tx),
                 });
 
                 const events = tx.metadata?.receipt?.events || [];
@@ -81,8 +79,8 @@ export default async function handler(
                             requestId,
                             message: 'Processing contract event',
                             eventType: event.data.value.event,
-                            contractId: event.contract_identifier,
-                            data: event.data.value
+                            data: event.data.value,
+                            __keys: Object.keys(event),
                         });
 
                         switch (event.data.value.event) {
@@ -127,6 +125,10 @@ export default async function handler(
         });
     }
 }
+
+// TODO: ADD TOKEN/CONTRACT SUPPORT
+// Currently, we don't know the token/contract for the event, so we can't store it properly.
+// We should store the contract address in the balance key, and then use that to look up the token.
 
 async function handleDeposit(data: EventData) {
     const { user, amount } = data;

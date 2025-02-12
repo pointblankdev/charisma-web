@@ -1,20 +1,28 @@
 // pages/api/transfer.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
-import { makeContractCall, broadcastTransaction, Cl, ClarityValue } from '@stacks/transactions';
-import { CONFIG } from '@lib/stackflow/config';
-import { verifyBlazeSignature } from '@lib/blaze/helpers';
+import { makeContractCall, broadcastTransaction, Cl } from '@stacks/transactions';
+import { getBlazeContractForToken, verifyBlazeSignature } from '@lib/blaze/helpers';
 import { network } from '@components/stacks-session/connect';
 
-const BATCH_SIZE = 200;
-export const TRANSFER_QUEUE_KEY = 'blaze:transfer:queue';
+const TOKEN_BATCH_SIZES: Record<string, number> = {
+    'default': 100,
+    'token-with-high-volume': 200,
+    'token-with-low-volume': 10
+};
+
+const getBatchSize = (token: string) => TOKEN_BATCH_SIZES[token] || TOKEN_BATCH_SIZES.default;
+
+export const getTransferQueueKey = (token: string) => `blaze:transfer:queue:${token}`;
 
 type Transfer = {
     to: string;
-    amount: string;
+    amount: number;
     nonce: number;
     signature: string;
 };
+
+const MINIMUM_BATCH_SIZE = 10;
 
 export default async function handler(
     req: NextApiRequest,
@@ -35,12 +43,24 @@ export default async function handler(
         const {
             signature,
             from,
+            token,
             amount,
             to,
             nonce,
+        }: {
+            signature: string;
+            from: string;
+            token: string;
+            amount: number;
+            to: string;
+            nonce: number;
         } = req.body;
 
+        const contract = getBlazeContractForToken(token);
+
         console.log('Processing transfer:', {
+            contract,
+            token,
             from,
             to,
             amount,
@@ -49,7 +69,7 @@ export default async function handler(
         });
 
         // Verify signature matches the message structure
-        const isValid = await verifyBlazeSignature(signature, from, to, amount, nonce);
+        const isValid = await verifyBlazeSignature(contract, signature, from, to, amount, nonce);
         console.log('Signature verification:', { isValid, from });
 
         if (!isValid) {
@@ -59,8 +79,8 @@ export default async function handler(
 
         // Update off-chain balances immediately
         const pipeline = kv.pipeline();
-        const fromBalance = await kv.get<string>(`balance:${from}`) || '0';
-        const toBalance = await kv.get<string>(`balance:${to}`) || '0';
+        const fromBalance = await kv.get<string>(`balance:${from}:${token}`) || '0';
+        const toBalance = await kv.get<string>(`balance:${to}:${token}`) || '0';
 
         // Verify sufficient balance
         if (BigInt(fromBalance) < BigInt(amount)) {
@@ -77,8 +97,8 @@ export default async function handler(
             amount
         });
 
-        pipeline.set(`balance:${from}`, (BigInt(fromBalance) - BigInt(amount)).toString());
-        pipeline.set(`balance:${to}`, (BigInt(toBalance) + BigInt(amount)).toString());
+        pipeline.set(`balance:${from}:${token}`, (BigInt(fromBalance) - BigInt(amount)).toString());
+        pipeline.set(`balance:${to}:${token}`, (BigInt(toBalance) + BigInt(amount)).toString());
         await pipeline.exec();
 
         console.log('Off-chain balances updated successfully');
@@ -91,27 +111,31 @@ export default async function handler(
             signature
         };
 
-        await kv.lpush(TRANSFER_QUEUE_KEY, JSON.stringify(transfer));
-        console.log('Transfer added to settlement queue:', { from, to, queueKey: TRANSFER_QUEUE_KEY });
+        // Use token-specific queue
+        const queueKey = getTransferQueueKey(token);
+        await kv.lpush(queueKey, JSON.stringify(transfer));
+        console.log('Transfer added to settlement queue:', { from, to, token, queueKey });
 
-        // Check queue length
-        const queueLength = await kv.llen(TRANSFER_QUEUE_KEY);
-        console.log('Current queue status:', { queueLength, batchSize: BATCH_SIZE });
+        // Check queue length for this specific token
+        const queueLength = await kv.llen(queueKey);
+        console.log('Current queue status:', { token, queueLength, batchSize: getBatchSize(token) });
 
-        // If we've hit batch size, process the batch
-        if (queueLength >= BATCH_SIZE) {
-            console.log('Batch size reached, processing batch...');
-            await processBatch();
+        // If we've hit batch size for this token, process its batch
+        if (queueLength >= getBatchSize(token)) {
+            console.log('Batch size reached for token, processing batch...', { token });
+            await processBatch(contract, token);
         }
 
         // Get updated balances for response
-        const newFromBalance = await kv.get<string>(`balance:${from}`);
-        const newToBalance = await kv.get<string>(`balance:${to}`);
+        const newFromBalance = await kv.get<string>(`balance:${from}:${token}`);
+        const newToBalance = await kv.get<string>(`balance:${to}:${token}`);
 
         return res.status(200).json({
             success: true,
             queued: true,
             queueLength,
+            contract,
+            token,
             balances: {
                 from: newFromBalance,
                 to: newToBalance
@@ -128,11 +152,13 @@ export default async function handler(
     }
 }
 
-async function processBatch() {
-    console.log('Starting batch processing');
+async function processBatch(contract: string, token: string) {
+    console.log('Starting batch processing', { token });
+    const [contractAddress, contractName] = contract.split('.');
 
-    // Get BATCH_SIZE transfers from queue
-    const transfers = await kv.lrange(TRANSFER_QUEUE_KEY, 0, BATCH_SIZE - 1);
+    const queueKey = getTransferQueueKey(token);
+    // Get BATCH_SIZE transfers from token-specific queue
+    const transfers = await kv.lrange(queueKey, 0, getBatchSize(token) - 1);
     console.log('Retrieved transfers from queue:', {
         count: transfers?.length || 0,
         firstTransfer: transfers?.[0] ? JSON.parse(transfers[0]) : null
@@ -148,10 +174,12 @@ async function processBatch() {
     const operations = transfers.map((transfer, index) => {
         const { to, amount, nonce, signature } = JSON.parse(transfer) as Transfer;
         console.log(`Converting transfer ${index + 1}/${transfers.length}:`, {
+            contractAddress,
+            contractName,
             to,
             amount,
             nonce,
-            signaturePrefix: signature.slice(0, 10) + '...'
+            signaturePrefix: `${signature.slice(0, 10)}...`
         });
         return Cl.tuple({
             to: Cl.principal(to),
@@ -163,17 +191,18 @@ async function processBatch() {
 
     // Prepare contract call
     const txOptions = {
-        contractAddress: CONFIG.CONTRACT_ADDRESS!,
-        contractName: CONFIG.CONTRACT_NAME!,
+        contractAddress,
+        contractName,
         functionName: 'batch-transfer',
         functionArgs: [Cl.list(operations)],
-        senderKey: CONFIG.PRIVATE_KEY!,
-        network: network,
+        senderKey: process.env.PRIVATE_KEY!,
+        network,
         fee: 1500
     };
 
     console.log('Prepared contract call:', {
-        contract: `${CONFIG.CONTRACT_ADDRESS}.${CONFIG.CONTRACT_NAME}`,
+        contractAddress,
+        contractName,
         function: 'batch-transfer',
         operationCount: operations.length,
     });
@@ -186,7 +215,7 @@ async function processBatch() {
         console.log('Broadcasting transaction...');
         const response: any = await broadcastTransaction({
             transaction,
-            network: network,
+            network,
         });
 
         if (response.error) {
@@ -201,7 +230,7 @@ async function processBatch() {
 
         // Remove processed transfers from queue
         console.log('Removing processed transfers from queue');
-        await kv.ltrim(TRANSFER_QUEUE_KEY, BATCH_SIZE, -1);
+        await kv.ltrim(queueKey, getBatchSize(token), -1);
 
         console.log('Batch processed successfully:', {
             txid: response.txid,
@@ -214,5 +243,21 @@ async function processBatch() {
             timestamp: new Date().toISOString()
         });
         throw error;
+    }
+}
+
+async function processTokenQueues() {
+    // Get all queue keys
+    const keys = await kv.keys('blaze:transfer:queue:*');
+
+    for (const queueKey of keys) {
+        const token = queueKey.split(':').pop()!;
+        const queueLength = await kv.llen(queueKey);
+
+        // Process if we have at least the minimum batch size
+        if (queueLength >= MINIMUM_BATCH_SIZE) {
+            const contract = getBlazeContractForToken(token);
+            await processBatch(contract, token);
+        }
     }
 }

@@ -8,10 +8,9 @@ import Blockies from "react-blockies";
 import { Button } from "@components/ui/button";
 import { Search } from "lucide-react";
 import { Pc, PostConditionMode, fetchCallReadOnlyFunction, ClarityType } from "@stacks/transactions";
-import { BLAZE_CONTRACT, SIP10_TOKEN } from "@lib/blaze/helpers";
 import { Token } from "./action-dialogs";
+import { getBlazeContractForToken } from "@lib/blaze/helpers";
 
-const [BLAZE_CONTRACT_ADDRESS, BLAZE_CONTRACT_NAME] = BLAZE_CONTRACT.split(".");
 
 export interface SignTransferParams {
     token: Token;
@@ -48,7 +47,7 @@ export function shortenAddress(address: string, chars: number = 4): string {
 export async function handleTransfer({ token, from, to, amount, nonce }: SignTransferParams): Promise<any> {
     // Convert amount to tokens
     const tokens = amount * 1_000_000;
-    const lastNonce = await getNonce(from);
+    const lastNonce = await getNonce(from, token.contract);
     const nextNonce = nonce ? nonce : lastNonce + 1;
 
     // Create domain matching contract
@@ -76,6 +75,7 @@ export async function handleTransfer({ token, from, to, amount, nonce }: SignTra
                     const response = await axios.post('/api/v0/blaze/xfer', {
                         signature: data.signature,
                         from,
+                        token: token.contract,
                         to,
                         amount: tokens,
                         nonce: nextNonce
@@ -163,13 +163,14 @@ export async function handleTransfer({ token, from, to, amount, nonce }: SignTra
 }
 
 export async function handleDeposit({ token, amount, stxAddress }: TransactionParams): Promise<void> {
+    const [contractAddress, contractName] = getBlazeContractForToken(token.contract);
     try {
         // Convert amount to micros (assuming 6 decimals)
         const amountMicros = Number(amount) * 1_000_000;
 
         const contractCall = {
-            contractAddress: BLAZE_CONTRACT_ADDRESS,
-            contractName: BLAZE_CONTRACT_NAME,
+            contractAddress,
+            contractName,
             functionName: "deposit",
             functionArgs: [
                 Cl.uint(amountMicros)
@@ -239,19 +240,20 @@ export async function handleDeposit({ token, amount, stxAddress }: TransactionPa
 }
 
 export async function handleWithdraw({ token, amount }: TransactionParams): Promise<void> {
+    const [contractAddress, contractName] = getBlazeContractForToken(token.contract);
     try {
         // Convert amount to micros (assuming 6 decimals)
         const amountMicros = Number(amount) * 1_000_000;
 
         const contractCall = {
-            contractAddress: BLAZE_CONTRACT_ADDRESS,
-            contractName: BLAZE_CONTRACT_NAME,
+            contractAddress,
+            contractName,
             functionName: "withdraw",
             functionArgs: [
                 Cl.uint(amountMicros)
             ],
             postConditions: [
-                Pc.principal(BLAZE_CONTRACT)
+                Pc.principal(`${contractAddress}.${contractName}`)
                     .willSendEq(amountMicros)
                     .ft(token.contract as any, token.identifier)
             ],
@@ -322,11 +324,12 @@ export async function handleWithdraw({ token, amount }: TransactionParams): Prom
  * @returns Promise<number> Balance in base units (not micros)
  * @throws Error if the balance fetch fails
  */
-export async function getBalance(address: string): Promise<number> {
+export async function getBalance(address: string, tokenContract: string): Promise<number> {
+    const [contractAddress, contractName] = getBlazeContractForToken(tokenContract);
     try {
         const options = {
-            contractAddress: BLAZE_CONTRACT_ADDRESS,
-            contractName: BLAZE_CONTRACT_NAME,
+            contractAddress,
+            contractName,
             functionName: "get-balance",
             functionArgs: [
                 Cl.principal(address)
@@ -356,11 +359,12 @@ export async function getBalance(address: string): Promise<number> {
  * @returns Promise<number> Current nonce value
  * @throws Error if the nonce fetch fails
  */
-export async function getNonce(address: string): Promise<number> {
+export async function getNonce(address: string, blazeContract: string): Promise<number> {
+    const [contractAddress, contractName] = blazeContract.split('.');
     try {
         const options = {
-            contractAddress: BLAZE_CONTRACT_ADDRESS,
-            contractName: BLAZE_CONTRACT_NAME,
+            contractAddress,
+            contractName,
             functionName: "get-nonce",
             functionArgs: [
                 Cl.principal(address)
@@ -404,10 +408,11 @@ export async function handleCoinFlip({ choice, amount, stxAddress }: {
     });
 
     const gameHost = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    const gameToken = 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'
 
     // Create message tuple
     const message = Cl.tuple({
-        token: Cl.principal(SIP10_TOKEN),
+        token: Cl.principal(gameToken),
         to: Cl.principal(gameHost),
         amount: Cl.uint(amountMicros),
         nonce: Cl.uint(nonce)
@@ -427,6 +432,7 @@ export async function handleCoinFlip({ choice, amount, stxAddress }: {
                     const response = await axios.post('/api/v0/blaze/coinflip', {
                         signature: data.signature,
                         from: stxAddress,
+                        token: gameToken,
                         amount: amountMicros,
                         choice,
                         nonce

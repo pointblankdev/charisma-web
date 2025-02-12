@@ -34,7 +34,7 @@ export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean
 
     useEffect(() => {
         const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress);
+            const balance = await getBalance(stxAddress, selectedToken.contract);
             setBalance(balance);
         };
         fetchBalance();
@@ -168,7 +168,7 @@ export const WithdrawDialog = ({
 
     useEffect(() => {
         const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress);
+            const balance = await getBalance(stxAddress, selectedToken.contract);
             setBalance(balance);
         };
         fetchBalance();
@@ -297,7 +297,7 @@ export const TransferDialog = ({
 
     useEffect(() => {
         const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress);
+            const balance = await getBalance(stxAddress, selectedToken.contract);
             setBalance(balance);
         };
         fetchBalance();
