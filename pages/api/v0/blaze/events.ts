@@ -1,10 +1,11 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
 import { verifySecret } from '@lib/blaze/auth';
+import { getBlazeBalance, getBlazeNonce, setBlazeBalance } from '@lib/blaze/helpers';
 
 type EventData = {
     user: string;
-    amount: string;
+    amount: number;
     nonce?: number;
     from?: string;
     to?: string;
@@ -137,30 +138,30 @@ export default async function handler(
 
 async function processDeposit(contract: string, data: EventData) {
     const { user, amount } = data;
-    const currentBalance = await kv.get<string>(`balance:${contract}:${user}`) || '0';
+    const currentBalance = await getBlazeBalance(contract, user);
 
     // Update balance atomically
-    await kv.set(`balance:${contract}:${user}`, (BigInt(currentBalance) + BigInt(amount)).toString());
+    await setBlazeBalance(contract, user, currentBalance + amount);
 }
 
 async function processWithdraw(contract: string, data: EventData) {
     const { user, amount } = data;
-    const currentBalance = await kv.get<string>(`balance:${contract}:${user}`) || '0';
+    const currentBalance = await getBlazeBalance(contract, user);
 
     if (BigInt(currentBalance) < BigInt(amount)) {
         throw new Error('Insufficient balance');
     }
 
     // Update balance atomically
-    await kv.set(`balance:${contract}:${user}`, (BigInt(currentBalance) - BigInt(amount)).toString());
+    await setBlazeBalance(contract, user, currentBalance - amount);
 }
 
 async function processTransfer(contract: string, data: EventData) {
     const { from, to, amount, nonce } = data;
     if (!from || !to || !nonce) throw new Error('Missing required fields');
 
-    const fromBalance = await kv.get<string>(`balance:${contract}:${from}`) || '0';
-    const currentNonce = await kv.get<number>(`nonce:${contract}:${from}`) || 0;
+    const fromBalance = await getBlazeBalance(contract, from);
+    const currentNonce = await getBlazeNonce(contract, from);
 
     // Verify nonce is greater than current
     if (nonce <= currentNonce) {

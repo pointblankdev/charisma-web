@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
-import { generateBlazeSignature, getBlazeContractForToken, verifyBlazeSignature } from '@lib/blaze/helpers';
+import { generateBlazeSignature, getBlazeBalance, getBlazeContractForToken, setBlazeBalance, verifyBlazeSignature } from '@lib/blaze/helpers';
 import { getNonce } from '@components/blaze/action-helpers';
 import { getTransferQueueKey } from './xfer';
 
@@ -90,7 +90,7 @@ export default async function handler(
         }
 
         // Verify sufficient balance
-        const balance = await kv.get<string>(`balance:${contract}:${from}`) || '0';
+        const balance = await getBlazeBalance(contract, from);
         console.info({
             requestId,
             message: 'Current balance',
@@ -99,7 +99,7 @@ export default async function handler(
             requestedAmount: amount
         });
 
-        if (BigInt(balance) < BigInt(amount)) {
+        if (balance < amount) {
             console.warn({
                 requestId,
                 message: 'Insufficient balance',
@@ -125,8 +125,8 @@ export default async function handler(
 
         // Update balances
         const newBalance = won
-            ? BigInt(balance) + BigInt(amount)
-            : BigInt(balance) - BigInt(amount);
+            ? balance + amount
+            : balance - amount;
 
         if (won) {
             // Generate server signature for the winning amount
@@ -186,7 +186,7 @@ export default async function handler(
             });
         }
 
-        await kv.set(`balance:${contract}:${from}`, newBalance);
+        await setBlazeBalance(contract, from, newBalance);
 
         const response = {
             success: true,

@@ -1,6 +1,7 @@
 import { fetchCallReadOnlyFunction, signStructuredData } from "@stacks/transactions";
 import { Cl, ClarityType } from "@stacks/transactions";
 import { STACKS_MAINNET } from "@stacks/network";
+import { kv } from "@vercel/kv";
 
 export const TOKEN_CONTRACT_MAP: Record<string, string> = {
     'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2',
@@ -97,4 +98,22 @@ export async function signBlazeTransfer({ token, from, to, amount, nonce }: any)
             },
         });
     });
+}
+
+export async function getBlazeNonce(contract: string, user: string) {
+    const currentNonce = await kv.get<number>(`nonce:${contract}:${user}`) || 0;
+    return currentNonce;
+}
+
+export async function setBlazeNonce(contract: string, user: string, nonce: number) {
+    await kv.set(`nonce:${contract}:${user}`, nonce);
+}
+
+export async function getBlazeBalance(contract: string, user: string) {
+    const balance = await kv.get<number>(`balance:${contract}:${user}`) || 0;
+    return balance;
+}
+
+export async function setBlazeBalance(contract: string, user: string, balance: number) {
+    await kv.set(`balance:${contract}:${user}`, balance);
 }

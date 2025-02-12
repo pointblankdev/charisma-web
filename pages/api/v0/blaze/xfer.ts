@@ -2,7 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
 import { makeContractCall, broadcastTransaction, Cl } from '@stacks/transactions';
-import { getBlazeContractForToken, verifyBlazeSignature } from '@lib/blaze/helpers';
+import { getBlazeBalance, getBlazeContractForToken, verifyBlazeSignature } from '@lib/blaze/helpers';
 import { network } from '@components/stacks-session/connect';
 
 const TOKEN_BATCH_SIZES: Record<string, number> = {
@@ -79,8 +79,8 @@ export default async function handler(
 
         // Update off-chain balances immediately
         const pipeline = kv.pipeline();
-        const fromBalance = await kv.get<string>(`balance:${contract}:${from}`) || '0';
-        const toBalance = await kv.get<string>(`balance:${contract}:${to}`) || '0';
+        const fromBalance = await getBlazeBalance(contract, from);
+        const toBalance = await getBlazeBalance(contract, to);
 
         // Verify sufficient balance
         if (BigInt(fromBalance) < BigInt(amount)) {
@@ -127,8 +127,8 @@ export default async function handler(
         }
 
         // Get updated balances for response
-        const newFromBalance = await kv.get<string>(`balance:${contract}:${from}`);
-        const newToBalance = await kv.get<string>(`balance:${contract}:${to}`);
+        const newFromBalance = await getBlazeBalance(contract, from);
+        const newToBalance = await getBlazeBalance(contract, to);
 
         return res.status(200).json({
             success: true,
