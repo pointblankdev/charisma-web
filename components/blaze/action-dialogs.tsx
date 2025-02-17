@@ -1,12 +1,15 @@
 import { AlertDialog, AlertDialogTitle, AlertDialogContent, AlertDialogHeader, AlertDialogDescription, AlertDialogCancel, AlertDialogFooter, AlertDialogAction } from "@components/ui/alert-dialog";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
-import { Check, Flame, Wallet, Zap } from "lucide-react";
+import { Check, Flame, Wallet, Zap, PlusCircle, UserPlus, X } from "lucide-react";
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useGlobal } from "@lib/hooks/global-context";
 import { getBalance, SignTransferParams, TransactionParams } from "./action-helpers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
+import { Button } from "@components/ui/button";
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/ui/dialog";
+import type { Friend } from "@lib/hooks/global-context";
 
 export interface Token {
     symbol: string;
@@ -121,28 +124,28 @@ export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     const numValue = Number(value);
-                                    if (numValue <= 1 && (!value.includes('.') || value.split('.')[1]?.length <= 6)) {
+                                    if (numValue <= 10 && (!value.includes('.') || value.split('.')[1]?.length <= 6)) {
                                         setAmount(value);
                                     }
                                 }}
                                 className="pl-24"
-                                max={1}
+                                max={10}
                                 min={0}
                             />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Maximum deposit: 1 {selectedToken.symbol} (up to 6 decimal places)
+                            Maximum deposit: 10 {selectedToken.symbol} (up to 6 decimal places)
                         </p>
                     </div>
                     <p className="text-xs text-muted-foreground">
-                        Current balance: {balance} {selectedToken.symbol}
+                        Current balance: {balance / 1_000_000} {selectedToken.symbol}
                     </p>
                 </div>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={() => onConfirm({ token: selectedToken, amount, stxAddress })}
-                        disabled={!amount || Number(amount) > 1}
+                        disabled={!amount || Number(amount) > 10}
                     >
                         Deposit
                     </AlertDialogAction>
@@ -259,7 +262,7 @@ export const WithdrawDialog = ({
                             />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Available balance: {balance} {selectedToken.symbol}
+                            Available balance: {balance / 1_000_000} {selectedToken.symbol}
                         </p>
                     </div>
                 </div>
@@ -292,7 +295,7 @@ export const TransferDialog = ({
     const [recipientAddress, setRecipientAddress] = useState<string>("");
     const [isValidAddress, setIsValidAddress] = useState(false);
     const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0]);
-    const { stxAddress } = useGlobal();
+    const { stxAddress, friends, addFriend, removeFriend, updateFriendLastUsed } = useGlobal();
     const [balance, setBalance] = useState<number>(0);
 
     useEffect(() => {
@@ -305,7 +308,6 @@ export const TransferDialog = ({
 
     const validateStacksAddress = (address: string) => {
         try {
-
             // Check that address isn't the same as the sender
             if (address === stxAddress) {
                 return false;
@@ -316,6 +318,17 @@ export const TransferDialog = ({
             return false;
         }
     };
+
+    const handleSelectFriend = (friend: Friend) => {
+        setRecipientAddress(friend.address);
+        setIsValidAddress(validateStacksAddress(friend.address));
+        updateFriendLastUsed(friend.address);
+    };
+
+    // Sort friends by last used, most recent first
+    const sortedFriends = [...friends].sort((a, b) =>
+        (b.lastUsed || 0) - (a.lastUsed || 0)
+    );
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -336,6 +349,31 @@ export const TransferDialog = ({
                         <p className="text-sm text-muted-foreground">
                             Send tokens instantly to any Stacks address. No gas fees, no waiting for confirmations.
                         </p>
+                    </div>
+
+                    {/* Friends List */}
+                    <div className="space-y-2">
+                        <Label>Recent Recipients</Label>
+                        <div className="flex flex-wrap gap-2">
+                            {sortedFriends.map((friend) => (
+                                <Button
+                                    key={friend.address}
+                                    variant={recipientAddress === friend.address ? "default" : "outline"}
+                                    size="sm"
+                                    onClick={() => handleSelectFriend(friend)}
+                                    className="flex items-center gap-2"
+                                >
+                                    <span>{friend.address.slice(0, 4)}...{friend.address.slice(-4)}</span>
+                                    <X
+                                        className="w-3 h-3 opacity-50 hover:opacity-100"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            removeFriend(friend.address);
+                                        }}
+                                    />
+                                </Button>
+                            ))}
+                        </div>
                     </div>
 
                     <div className="space-y-2">
@@ -380,7 +418,20 @@ export const TransferDialog = ({
                     </div>
 
                     <div className="space-y-2">
-                        <Label>Recipient</Label>
+                        <div className="flex items-center justify-between">
+                            <Label>Recipient</Label>
+                            {isValidAddress && !friends.some(f => f.address === recipientAddress) && (
+                                <Button
+                                    variant="ghost"
+                                    size="sm"
+                                    onClick={() => addFriend(recipientAddress)}
+                                    className="h-6 px-2"
+                                >
+                                    <UserPlus className="w-4 h-4 mr-1" />
+                                    Save
+                                </Button>
+                            )}
+                        </div>
                         <div className="relative">
                             <Input
                                 placeholder="Enter Stacks address..."
@@ -428,7 +479,7 @@ export const TransferDialog = ({
                             />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Available balance: {balance} {selectedToken.symbol}
+                            Available balance: {balance / 1_000_000} {selectedToken.symbol}
                         </p>
                     </div>
                 </div>

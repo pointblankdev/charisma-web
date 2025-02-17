@@ -1,6 +1,4 @@
-import React, { createContext, useContext, useEffect, useCallback, useMemo } from 'react';
-import { usePersistedState } from './use-persisted-state';
-import { getBalances } from '@lib/fetchers/user-api';
+import React, { createContext, useContext, useEffect, useCallback, useMemo, useState } from 'react';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { userSession } from '@components/stacks-session/connect';
@@ -12,6 +10,7 @@ import { AppSidebar } from '@components/sidebar/app-sidebar';
 import styles from '../../components/layout/layout.module.css';
 import { cn } from '@lib/utils';
 import _ from 'lodash';
+import { usePersistedState } from './use-persisted-state';
 
 const siteUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : SITE_URL;
 const socketUrl = 'https://api.mainnet.hiro.so';
@@ -36,6 +35,11 @@ export type Wallet = {
     bluePilled: boolean;
     ravens: any;
     memobots: any;
+};
+
+export type Friend = {
+    address: string;
+    lastUsed?: number;
 };
 
 export interface GlobalState {
@@ -86,6 +90,12 @@ export interface GlobalState {
         nonce: number;
         contract: string;
     }>) => void;
+
+    // Friends list state
+    friends: Friend[];
+    addFriend: (address: string) => void;
+    removeFriend: (address: string) => void;
+    updateFriendLastUsed: (address: string) => void;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -118,8 +128,10 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [prices, setPrices] = usePersistedState<any>('prices', {});
 
     // Blaze balances state
-    const [blazeBalances, setBlazeBalances] = usePersistedState('blaze-balances', {});
+    const [blazeBalances, setBlazeBalances] = usePersistedState<any>('blaze-balances', {});
 
+    // Friends list state
+    const [friends, setFriends] = usePersistedState<Friend[]>('blaze-friends', [{ address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', lastUsed: Date.now() }]);
 
     // Load user data and configure Dexterity
     useEffect(() => {
@@ -392,6 +404,32 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setTappedAt((prev: any) => ({ ...prev, [vaultId]: block }));
     };
 
+    const addFriend = useCallback((address: string) => {
+        setFriends((currentFriends: Friend[]) => {
+            // Don't add if address already exists
+            if (currentFriends.some((f: Friend) => f.address === address)) {
+                return currentFriends;
+            }
+            return [...currentFriends, { address, lastUsed: Date.now() }];
+        });
+    }, [setFriends]);
+
+    const removeFriend = useCallback((address: string) => {
+        setFriends((currentFriends: Friend[]) =>
+            currentFriends.filter((f: Friend) => f.address !== address)
+        );
+    }, [setFriends]);
+
+    const updateFriendLastUsed = useCallback((address: string) => {
+        setFriends((currentFriends: Friend[]) =>
+            currentFriends.map((f: Friend) =>
+                f.address === address
+                    ? { ...f, lastUsed: Date.now() }
+                    : f
+            )
+        );
+    }, [setFriends]);
+
     return (
         <SidebarProvider defaultOpen={false}>
             <AppSidebar />
@@ -437,7 +475,13 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                         blazeBalances,
                         setBlazeBalances: (balances) => {
                             setBlazeBalances(Object.assign({}, balances));
-                        }
+                        },
+
+                        // Friends list state
+                        friends,
+                        addFriend,
+                        removeFriend,
+                        updateFriendLastUsed,
                     }}
                 >
                     <div >

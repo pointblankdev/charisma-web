@@ -1,55 +1,21 @@
-import { getBlazeBalance, getBlazeNonce, TOKEN_CONTRACT_MAP } from '@lib/blaze/helpers';
 import { NextApiRequest, NextApiResponse } from 'next';
-import { getBalance } from '@components/blaze/action-helpers';
+import { Subnet } from 'blaze-sdk';
 
-interface BlazeUserInfo {
-    address: string;
-    blazeBalance: Record<string, {
-        credit: number;
-        balance: number;
-        nonce: number;
-        contract: string;
-    }>;
-}
+const subnet = new Subnet('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2');
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     const { user } = req.query;
 
     try {
-        const userInfo: BlazeUserInfo = {
-            address: user as string,
-            blazeBalance: {},
-        };
-
-        // Get all token balances and nonces
-        for (const [token, contract] of Object.entries(TOKEN_CONTRACT_MAP)) {
-            try {
-                const [credit, balance, nonce] = await Promise.all([
-                    getBlazeBalance(contract, user as string),
-                    getBalance(user as string, token),
-                    getBlazeNonce(contract, user as string),
-                ]);
-
-                userInfo.blazeBalance[token] = {
-                    credit,
-                    balance,
-                    nonce,
-                    contract,
-                };
-            } catch (error) {
-                console.error(`Error fetching data for token ${token}:`, error);
-                userInfo.blazeBalance[token] = {
-                    balance: 0,
-                    credit: 0,
-                    nonce: 0,
-                    contract,
-                };
-            }
-        }
-
+        const balance = await subnet.getBalance(user as string);
+        const nonce = await subnet.getNextNonce(user as string);
         // Add cache control headers
         res.setHeader('Cache-Control', 's-maxage=10');
-        res.status(200).json(userInfo);
+        res.status(200).json({
+            ...balance,
+            nonce,
+            contract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2',
+        });
 
     } catch (error) {
         console.error('Error fetching user info:', error);

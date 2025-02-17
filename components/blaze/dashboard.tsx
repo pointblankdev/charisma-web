@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
-import { BuyBitcoinButton, CashOutButton, DepositButton, SendStxButton, WithdrawButton } from './action-buttons';
+import { BuyBitcoinButton, CashOutButton, DepositButton, SendTokensButton, WithdrawButton } from './action-buttons';
 import { TransferDialog, WithdrawDialog, DepositDialog } from './action-dialogs';
 import { handleDeposit, handleTransfer, handleWithdraw } from './action-helpers';
 import { PortfolioCards } from './portfolio-cards';
@@ -53,8 +53,8 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <div className="hidden sm:block w-[1px] bg-border" />
 
                     <div className="flex gap-2">
-                        <SendStxButton onClick={() => setOpenTransfer(true)} disabled={false} />
-                        <FaucetButton />
+                        <SendTokensButton onClick={() => setOpenTransfer(true)} disabled={true} />
+                        {/* <FaucetButton /> */}
                     </div>
 
                     <div className="hidden sm:block w-[1px] bg-border" />
@@ -66,14 +66,14 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                 </div>
             </div>
 
-            <Features />
+            {/* <Features /> */}
 
-            <PortfolioCards balances={blazeBalances} prices={prices} />
+            {/* <PortfolioCards balances={blazeBalances} prices={prices} /> */}
 
             {/* dApp card grid */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-                <CoinFlipCard />
-                <FaucetCard />
+                {/* <CoinFlipCard /> */}
+                {/* <FaucetCard /> */}
             </div>
 
             <TransferDialog prices={prices} open={openTransfer} onOpenChange={setOpenTransfer} onConfirm={handleTransfer} />

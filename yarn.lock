@@ -3926,6 +3926,11 @@
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.9.tgz#e5e142fbbfe251091f9c5f1dd4c834ac04c3dbd1"
   integrity sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==
 
+"@scure/base@^1.2.4":
+  version "1.2.4"
+  resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.2.4.tgz#002eb571a35d69bdb4c214d0995dff76a8dcd2a9"
+  integrity sha512-5Yy9czTO47mqz+/J8GM6GIId4umdCk1wc1q8rKERQulIoc8VP9pzDcghv10Tl2E7R96ZUx/PhND3ESYUQX8NuQ==
+
 "@scure/bip32@1.1.3":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@scure/bip32/-/bip32-1.1.3.tgz#c92ebf476f7bdaf8db01b459e3144179642ba37e"
@@ -5314,6 +5319,13 @@
   dependencies:
     "@stencil/core" "^2.17.1"
 
+"@stacks/connect-ui@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-7.0.0.tgz#d361e0cc26da5f457cb15342436ea9a4b3c9c77d"
+  integrity sha512-Aal6lMy45rurQsJ3MvTkRybYL6MgaKBB7zpXTllL8P6lzGFYwTdBTZTvewxA4P4M1TyVKZWJYe03DQsfc1MwEA==
+  dependencies:
+    "@stencil/core" "^2.17.1"
+
 "@stacks/connect@^7.10.0":
   version "7.10.0"
   resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.10.0.tgz#f82d5f6990d337b646cb8443cba2d5089399c826"
@@ -5328,6 +5340,20 @@
     "@stacks/transactions" "^7.0.0"
     "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
     jsontokens "^4.0.1"
+
+"@stacks/connect@latest":
+  version "8.0.1"
+  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.0.1.tgz#a06fb1abc09735ea87a746792fd99ff136fc0776"
+  integrity sha512-9assgRB+tTt9dP5r/NBy0bHn5V5mNq/N4jO1VPYFMcjbSxwiWbO1TaGpJwuvY5dKm6f1ca+sWC8OFR+9wx8OZQ==
+  dependencies:
+    "@scure/base" "^1.2.4"
+    "@stacks/common" "^7.0.0"
+    "@stacks/connect-ui" "7.0.0"
+    "@stacks/network" "^7.0.0"
+    "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
+    "@stacks/profile" "^7.0.0"
+    "@stacks/transactions" "^7.0.0"
+    "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
 
 "@stacks/encryption@^6.7.0":
   version "6.17.0"
@@ -7506,6 +7532,15 @@ blakejs@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/blakejs/-/blakejs-1.2.1.tgz#5057e4206eadb4a97f7c0b6e197a505042fc3814"
   integrity sha512-QXUSXI3QVc/gJME0dBpXrag1kbzOqCjCX8/b54ntNyW6sjtoqxqRk3LTmXzaJoh71zMsDCjM+47jS7XiwN/+fQ==
+
+blaze-sdk@^0.1.7:
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/blaze-sdk/-/blaze-sdk-0.1.7.tgz#53a698a239000c78bc23a4fb91e6832b6e0118e9"
+  integrity sha512-0+XArvH6YQG0P47rQ48Qu4ysC6CmObwVIa3FZqa8EqahEu8DiXRLKp+L43k+TBcUuwvrUh4EyGHzwGzmjbzb6A==
+  dependencies:
+    "@stacks/connect" latest
+    "@stacks/network" latest
+    "@stacks/transactions" latest
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.11.8, bn.js@^4.11.9:
   version "4.12.1"

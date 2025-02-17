@@ -12,10 +12,10 @@ export default function Footer() {
   return (
     <footer className={cn(styles.footer)}>
       <div className={cn('flex', 'items-center', 'justify-between', 'w-full', 'm-4')}>
-        <div className={cn(styles['footer-block-height'])}>
+        {/* <div className={cn(styles['footer-block-height'])}>
           <IconStacks size={16} />
           <div>Block {block.height}</div>
-        </div>
+        </div> */}
 
         <div className={cn('items-center', 'gap-4', 'flex')}>
           <Link href={'https://twitter.com/CharismaBTC'}>

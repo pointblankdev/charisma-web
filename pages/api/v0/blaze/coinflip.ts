@@ -2,7 +2,7 @@ import type { NextApiRequest, NextApiResponse } from 'next';
 import { kv } from '@vercel/kv';
 import { generateBlazeSignature, getBlazeBalance, getBlazeContractForToken, setBlazeBalance, setBlazeNonce, verifyBlazeSignature } from '@lib/blaze/helpers';
 import { getNonce } from '@components/blaze/action-helpers';
-import { getTransferQueueKey } from './xfer';
+import { Subnet } from 'blaze-sdk';
 
 export default async function handler(
     req: NextApiRequest,
@@ -10,7 +10,7 @@ export default async function handler(
 ) {
     const requestId = crypto.randomUUID();
     const gameHostAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
-
+    const subnet = new Subnet('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2');
     console.info({
         requestId,
         message: 'Received coinflip request',
@@ -167,16 +167,17 @@ export default async function handler(
 
             // Add transfer to queue for on-chain settlement
             const transfer = {
+                signer: gameHostAddress,
                 to: from, // Sending back to the player
                 amount: winningAmount,
                 nonce: nonce + 1,
                 signature: serverSignature
             };
 
-            await kv.lpush(getTransferQueueKey(token), JSON.stringify(transfer));
+            subnet.addTransferToQueue(transfer);
 
             // Check queue length and log status
-            const queueLength = await kv.llen(getTransferQueueKey(token));
+            const queueLength = subnet.queue.length;
             console.info({
                 requestId,
                 message: 'Added winning transfer to settlement queue',

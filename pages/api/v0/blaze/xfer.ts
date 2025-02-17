@@ -1,8 +1,9 @@
 // pages/api/transfer.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { getBlazeContractForToken, verifyBlazeSignature } from '@lib/blaze/helpers';
-import { BlazeTransferService, Transfer, BlazeBalanceService } from '@lib/blaze/node';
-import { BlazeContractService } from '@lib/blaze/node';
+import { Subnet, Transfer } from 'blaze-sdk';
+
+const contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2';
+const subnet = new Subnet(contract);
 
 export default async function handler(
     req: NextApiRequest,
@@ -20,20 +21,16 @@ export default async function handler(
     }
 
     try {
+
         const {
             signature,
             from,
-            token,
             amount,
             to,
             nonce,
         } = req.body;
 
-        const contract = getBlazeContractForToken(token);
-
         console.log('Processing transfer:', {
-            contract,
-            token,
             from,
             to,
             amount,
@@ -42,58 +39,43 @@ export default async function handler(
         });
 
         // Verify signature
-        const isValid = await verifyBlazeSignature(contract, signature, from, to, amount, nonce);
+        const isValid = await subnet.verifySignature({ signature, signer: from, to, amount, nonce });
         if (!isValid) {
             console.warn('Invalid signature for transfer:', { from, to, nonce });
             return res.status(401).json({ error: 'Invalid signature' });
         }
 
-        console.log('Signature verified');
+        console.log('Signature verified!');
 
         // Get and verify balances
-        const fromBalance = await BlazeBalanceService.getBalance(contract, from);
-        const toBalance = await BlazeBalanceService.getBalance(contract, to);
+        const fromBalance = await subnet.getBalance(from);
+        const toBalance = await subnet.getBalance(to);
 
-        if (fromBalance < amount) {
+        if (fromBalance.total < amount) {
             console.warn('Insufficient balance:', { from, amount, balance: fromBalance });
             return res.status(400).json({ error: 'Insufficient balance' });
         }
 
-        console.log('Balances verified');
+        console.log('Balances verified!');
 
         // Update balances
-        await BlazeBalanceService.updateBalances(contract, [
-            { address: from, amount: fromBalance - amount },
-            { address: to, amount: toBalance + amount }
-        ]);
+        await subnet.updateBalance(from, fromBalance.total - amount);
+        await subnet.updateBalance(to, toBalance.total + amount);
 
         // Add transfer to queue
-        const transfer: Transfer = { to, amount, nonce, signature };
-        await BlazeTransferService.addTransferToQueue(token, transfer);
+        const transfer: Transfer = { to, amount, nonce, signature, signer: from };
+        await subnet.addTransferToQueue(transfer);
 
         // Check queue length and process if needed
-        const queueLength = await BlazeTransferService.getQueueLength(token);
-        if (queueLength >= BlazeTransferService.getBatchSize(token)) {
-            await processBatch(contract, token);
-        }
-
-        // Get updated balances for response
-        const newFromBalance = await BlazeBalanceService.getBalance(contract, from);
-        const newToBalance = await BlazeBalanceService.getBalance(contract, to);
-
-        // increment nonce
-        const newNonce = await BlazeBalanceService.incrementNonce(contract, from);
+        await subnet.processTransfers();
 
         return res.status(200).json({
             success: true,
             queued: true,
-            queueLength,
-            contract,
-            token,
-            nonce: newNonce,
+            nonce: subnet.nextNonce.get(from),
             balances: {
-                from: newFromBalance,
-                to: newToBalance
+                from: subnet.getBalance(from),
+                to: subnet.getBalance(to)
             }
         });
 
@@ -107,12 +89,10 @@ export default async function handler(
     }
 }
 
-async function processBatch(contract: string, token: string) {
-    console.log('Starting batch processing', { token });
-    const [contractAddress, contractName] = contract.split('.');
+async function processBatch() {
+    console.log('Starting batch processing...');
 
-    // Get BATCH_SIZE transfers from token-specific queue
-    const transfers = await BlazeTransferService.getTransfersFromQueue(token);
+    const transfers = subnet.queue;
     console.log('Retrieved transfers from queue:', {
         count: transfers?.length || 0,
         firstTransfer: transfers?.[0] ? transfers[0] : null
@@ -125,22 +105,12 @@ async function processBatch(contract: string, token: string) {
 
     try {
         // Execute batch transfer
-        const result = await BlazeContractService.executeBatchTransfer(
-            contractAddress,
-            contractName,
-            transfers
-        );
-
+        const result = await subnet.executeBatchTransfer(transfers);
         console.log('Transaction broadcast successful:', {
             txid: result.txid,
             status: result.status,
             processedCount: transfers.length
         });
-
-        // Remove processed transfers from queue
-        console.log('Removing processed transfers from queue');
-        await BlazeTransferService.removeProcessedTransfers(token);
-
     } catch (error) {
         console.error('Batch processing error:', {
             error: error instanceof Error ? error.message : error,

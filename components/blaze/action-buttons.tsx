@@ -95,8 +95,8 @@ export function CashOutButton({ disabled = true }: ActionButtonProps) {
     );
 }
 
-// Send STX Button
-export function SendStxButton({ onClick, disabled }: ActionButtonProps) {
+// Send Tokens Button
+export function SendTokensButton({ onClick, disabled }: ActionButtonProps) {
     return (
         <TooltipProvider>
             <Tooltip delayDuration={300}>

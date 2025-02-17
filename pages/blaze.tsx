@@ -4,24 +4,14 @@ import { Kraxel } from '@lib/kraxel';
 import { GetStaticProps } from 'next';
 
 export const getStaticProps: GetStaticProps = async () => {
-    try {
-        const prices = await Kraxel.getAllTokenPrices();
+    const prices = await Kraxel.getAllTokenPrices();
 
-        return {
-            props: {
-                prices
-            },
-            revalidate: 60 // Revalidate every minute
-        };
-    } catch (error) {
-        console.error('Error fetching prices:', error);
-        return {
-            props: {
-                prices: {}
-            },
-            revalidate: 60
-        };
-    }
+    return {
+        props: {
+            prices
+        },
+        revalidate: 60 // Revalidate every minute
+    };
 };
 
 export default function BlazePage({ prices }: { prices: Record<string, number> }) {

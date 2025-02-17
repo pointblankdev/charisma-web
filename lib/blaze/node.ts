@@ -11,12 +11,10 @@ export type Transfer = {
 
 export class BlazeTransferService {
     private static readonly TOKEN_BATCH_SIZES: Record<string, number> = {
-        'default': 10,
-        'token-with-high-volume': 20,
-        'token-with-low-volume': 1
+        'default': 1
     };
 
-    private static readonly MINIMUM_BATCH_SIZE = 10;
+    private static readonly MINIMUM_BATCH_SIZE = 1;
 
     static getBatchSize(token: string): number {
         return this.TOKEN_BATCH_SIZES[token] || this.TOKEN_BATCH_SIZES.default;

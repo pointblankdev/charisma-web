@@ -45,10 +45,9 @@ export function shortenAddress(address: string, chars: number = 4): string {
 }
 
 export async function handleTransfer({ token, from, to, amount, nonce }: SignTransferParams): Promise<any> {
-    // Convert amount to tokens
-    const tokens = amount * 1_000_000;
+    const tokens = amount;
     const balances = await fetchBlazeBalances(from);
-    const nextNonce = nonce ? nonce : balances[token.contract].nonce + 1;
+    const nextNonce = nonce ? nonce : balances.nonce + 1;
 
     // Create domain matching contract
     const domain = Cl.tuple({
@@ -447,5 +446,6 @@ export async function handleCoinFlip({ choice, amount, stxAddress }: {
 export async function fetchBlazeBalances(user: string) {
     const response = await fetch(`/api/v0/blaze/user/${user}`);
     const data = await response.json();
-    return data.blazeBalance;
+    console.log(data);
+    return data.total;
 }
