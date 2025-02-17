@@ -109,21 +109,21 @@ export function SendStxButton({ onClick, disabled }: ActionButtonProps) {
                         disabled={disabled}
                     >
                         <Send className="w-4 h-4 mr-2" />
-                        Send STX
+                        Send Tokens
                     </Button>
                 </TooltipTrigger>
                 <TooltipContent className="w-80 p-4">
                     <div className="flex items-center gap-2 mb-2 pb-2 border-b">
                         <Send className="w-5 h-5" />
-                        <span className="font-semibold">Send STX to Blaze User</span>
+                        <span className="font-semibold">Send tokens to Blaze User</span>
                     </div>
                     <p className="text-sm opacity-90 mb-2">
-                        Send STX instantly to any Blaze user with near-zero fees.
+                        Send tokens instantly to any Blaze user with zero fees.
                         No gas fees, no waiting for confirmations.
                     </p>
                     <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
                         <Flame className="w-4 h-4 rounded-full text-primary" />
-                        Instant transfers, near-zero fees, no gas fees.
+                        Instant transfers, no fees, no gas.
                     </div>
                 </TooltipContent>
             </Tooltip>

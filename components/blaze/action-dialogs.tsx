@@ -321,7 +321,7 @@ export const TransferDialog = ({
         <AlertDialog open={open} onOpenChange={onOpenChange}>
             <AlertDialogContent className="sm:max-w-[500px]">
                 <AlertDialogHeader>
-                    <AlertDialogTitle>Send</AlertDialogTitle>
+                    <AlertDialogTitle>Send Tokens</AlertDialogTitle>
                     <AlertDialogDescription>
                         Send tokens instantly to any Stacks address
                     </AlertDialogDescription>
