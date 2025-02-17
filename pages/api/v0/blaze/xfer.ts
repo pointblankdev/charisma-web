@@ -133,17 +133,14 @@ async function processBatch(contract: string, token: string) {
 
         console.log('Transaction broadcast successful:', {
             txid: result.txid,
-            status: result.status
+            status: result.status,
+            processedCount: transfers.length
         });
 
         // Remove processed transfers from queue
         console.log('Removing processed transfers from queue');
         await BlazeTransferService.removeProcessedTransfers(token);
 
-        console.log('Batch processed successfully:', {
-            txid: result.txid,
-            processedCount: transfers.length
-        });
     } catch (error) {
         console.error('Batch processing error:', {
             error: error instanceof Error ? error.message : error,
