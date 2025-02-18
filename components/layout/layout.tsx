@@ -30,6 +30,9 @@ import charisma from '@public/charisma.png';
 import { useGlobal } from '@lib/hooks/global-context';
 import _ from 'lodash';
 import { SseStatus } from '@components/ui/sse-status';
+import { NotificationBell } from '@components/ui/notification-bell';
+import { NotificationPanel } from '@components/ui/notification-panel';
+import { useNotifications } from '@lib/hooks/use-notifications';
 
 type Props = {
   children: React.ReactNode;
@@ -66,6 +69,8 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const activeRoute = router.asPath;
 
   const { stxAddress } = useGlobal();
+  const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
+  const { notifications, markAsRead } = useNotifications(stxAddress);
 
   const [navigationTabs, setNavigationTabs] = useState([] as any[]);
 
@@ -113,7 +118,15 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 </BreadcrumbList>
               </Breadcrumb>
             </div>
-            <ConnectWallet />
+            <div className="flex items-center gap-2">
+              {stxAddress && (
+                <NotificationBell
+                  notifications={notifications}
+                  onClick={() => setIsNotificationPanelOpen(true)}
+                />
+              )}
+              <ConnectWallet />
+            </div>
           </header>
           <main className={styles.main} style={layoutStyles}>
             <SkipNavContent />
@@ -121,6 +134,12 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           </main>
           <Footer />
           <SseStatus />
+          <NotificationPanel
+            notifications={notifications}
+            onMarkAsRead={markAsRead}
+            isOpen={isNotificationPanelOpen}
+            onClose={() => setIsNotificationPanelOpen(false)}
+          />
         </div>
       </div>
     </>

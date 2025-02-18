@@ -1,6 +1,7 @@
 // pages/api/transfer.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Subnet, Transfer } from 'blaze-sdk';
+import { addTransferNotification, generateNotificationId } from '@lib/blaze/notifications';
 
 const contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
 const subnet = new Subnet(contract);
@@ -119,16 +120,18 @@ export default async function handler(
 
         let processResult = null;
 
-        // Check if we should process this transfer immediately
-        if (shouldProcessImmediately(transferMessage)) {
-            processResult = await subnet.executeTransfer(transferMessage);
-            return res.status(200).json({
-                success: true,
-                queued: false,
-                immediate: true,
-                processResult
-            });
-        }
+        // Create initial transfer notification
+        await addTransferNotification({
+            id: generateNotificationId(),
+            type: 'transfer',
+            from: transferMessage.signer,
+            to: transferMessage.to,
+            amount: transferMessage.amount,
+            contract,
+            timestamp: Date.now(),
+            status: 'processing',
+            description: 'Transfer in Blaze Subnet'
+        });
 
         // Add transfer to queue
         await subnet.addTransferToQueue(transferMessage);
@@ -139,10 +142,26 @@ export default async function handler(
         console.log('Queue size:', queueSize);
 
         // Check if we should process the batch
-        if (shouldProcessBatch(queueSize || 0)) {
+        if (shouldProcessBatch(queueSize || 0) || shouldProcessImmediately(transferMessage)) {
             processResult = await subnet.processTransfers();
             lastBatchProcessTime = Date.now();
             console.log('Batch process result:', processResult);
+
+            // Create confirmed transfer notification if batch was processed
+            if (processResult?.txid) {
+                await addTransferNotification({
+                    id: generateNotificationId(),
+                    type: 'transfer',
+                    from: transferMessage.signer,
+                    to: transferMessage.to,
+                    amount: transferMessage.amount,
+                    contract,
+                    timestamp: Date.now(),
+                    status: 'completed',
+                    txId: processResult.txid,
+                    description: 'Transfer completed'
+                });
+            }
         }
 
         return res.status(200).json({

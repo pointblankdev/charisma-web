@@ -5,6 +5,11 @@ export const config = {
     runtime: 'edge'
 };
 
+// shorten wallet address helper
+function shortenAddress(address: string): string {
+    return address.slice(0, 6) + '...' + address.slice(-4);
+}
+
 interface BalanceUpdate {
     contract: string;
     address: string;
@@ -14,6 +19,15 @@ interface BalanceUpdate {
 
 function getBalanceKey(contract: string, user: string, type: 'confirmed' | 'unconfirmed'): string {
     return `${contract}:${user}:${type}`;
+}
+
+async function getCurrentBalance(subnet: string, userAddress: string): Promise<number> {
+    const [confirmedBalance, unconfirmedBalance] = await Promise.all([
+        kv.get<number>(getBalanceKey(subnet, userAddress, 'confirmed')),
+        kv.get<number>(getBalanceKey(subnet, userAddress, 'unconfirmed'))
+    ]);
+
+    return (confirmedBalance || 0) + (unconfirmedBalance || 0);
 }
 
 export default async function handler(req: NextRequest) {
@@ -36,7 +50,7 @@ export default async function handler(req: NextRequest) {
     };
 
     const encoder = new TextEncoder();
-    let lastTimestamp = Date.now();
+    let lastBalance: number | null = null;
     let messageCount = 0;
     let isConnectionClosed = false;
 
@@ -45,14 +59,11 @@ export default async function handler(req: NextRequest) {
             async start(controller) {
                 // Send initial balances for the user
                 try {
-                    // Get confirmed and unconfirmed balances
-                    const [confirmedBalance, unconfirmedBalance] = await Promise.all([
-                        kv.get<number>(getBalanceKey(subnet, userAddress, 'confirmed')),
-                        kv.get<number>(getBalanceKey(subnet, userAddress, 'unconfirmed'))
-                    ]);
+                    // Get initial balance
+                    const total = await getCurrentBalance(subnet, userAddress);
+                    lastBalance = total;
 
-                    const total = (confirmedBalance || 0) + (unconfirmedBalance || 0);
-                    console.log(`[SSE] Balance for ${userAddress} on ${subnet}: ${total} (confirmed: ${confirmedBalance || 0}, unconfirmed: ${unconfirmedBalance || 0})`);
+                    console.log(`[SSE] Initial balance for ${shortenAddress(userAddress)} on ${subnet}: ${total}`);
 
                     const update: BalanceUpdate = {
                         contract: subnet,
@@ -64,8 +75,6 @@ export default async function handler(req: NextRequest) {
                     const data = `data: ${JSON.stringify(update)}\n\n`;
                     controller.enqueue(encoder.encode(data));
                     messageCount++;
-
-                    console.log(`[SSE] Sent initial balance for ${userAddress} on ${subnet}: ${total}`);
                 } catch (error) {
                     console.error('[SSE] Error sending initial balance:', error);
                 }
@@ -74,36 +83,25 @@ export default async function handler(req: NextRequest) {
                     if (isConnectionClosed) return;
 
                     try {
-                        // Get updates since last check using zrange with min/max scores
-                        const rawUpdates = await kv.zrange(
-                            'blaze-balance-updates',
-                            lastTimestamp,
-                            '+inf',
-                            { byScore: true }
-                        ) as string[];
+                        // Get current balance
+                        const currentBalance = await getCurrentBalance(subnet, userAddress);
 
-                        if (rawUpdates && rawUpdates.length > 0) {
-                            // Parse and send each update to the client
-                            for (const rawUpdate of rawUpdates) {
-                                if (isConnectionClosed) break;
+                        // Only send update if balance has changed
+                        if (lastBalance !== currentBalance) {
+                            const update: BalanceUpdate = {
+                                contract: subnet,
+                                address: userAddress,
+                                balance: currentBalance,
+                                timestamp: Date.now()
+                            };
 
-                                try {
-                                    const update = JSON.parse(rawUpdate) as BalanceUpdate;
+                            const data = `data: ${JSON.stringify(update)}\n\n`;
+                            controller.enqueue(encoder.encode(data));
+                            messageCount++;
+                            lastBalance = currentBalance;
 
-                                    // Only send updates for the connected user and specific subnet
-                                    if (update.address === userAddress && update.contract === subnet) {
-                                        const data = `data: ${JSON.stringify(update)}\n\n`;
-                                        controller.enqueue(encoder.encode(data));
-                                        lastTimestamp = Math.max(lastTimestamp, update.timestamp);
-                                        messageCount++;
-
-                                        // Log each update
-                                        console.log(`[SSE] Sent update #${messageCount} to ${userAddress} for ${subnet}: balance=${update.balance}`);
-                                    }
-                                } catch (parseError) {
-                                    console.error('[SSE] Error parsing update:', parseError);
-                                }
-                            }
+                            // Log balance change
+                            console.log(`[SSE] Balance changed for ${shortenAddress(userAddress)} on ${subnet}: ${currentBalance}`);
                         }
 
                         // Send heartbeat to keep connection alive
@@ -118,10 +116,6 @@ export default async function handler(req: NextRequest) {
                         }
                     }
                 };
-
-                // Initial check
-                await checkForUpdates();
-                console.log('[SSE] Initial check completed');
 
                 // Set up polling interval (every 1 second)
                 const interval = setInterval(async () => {
