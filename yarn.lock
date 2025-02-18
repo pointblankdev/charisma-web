@@ -7536,10 +7536,10 @@ blakejs@^1.2.1:
   resolved "https://registry.yarnpkg.com/blakejs/-/blakejs-1.2.1.tgz#5057e4206eadb4a97f7c0b6e197a505042fc3814"
   integrity sha512-QXUSXI3QVc/gJME0dBpXrag1kbzOqCjCX8/b54ntNyW6sjtoqxqRk3LTmXzaJoh71zMsDCjM+47jS7XiwN/+fQ==
 
-blaze-sdk@0.1.25:
-  version "0.1.25"
-  resolved "https://registry.yarnpkg.com/blaze-sdk/-/blaze-sdk-0.1.25.tgz#852c89a776ed6d3fe1e227394b19afbcf6c6b9fb"
-  integrity sha512-uIwOtb6jMmwwmiRiEV+kasMXwBT9I2Ks+MUT+YbJuKFh+3DniSMqYdJq2i8RqxxKs+To2Is5+xHP4ZFHSyCYIw==
+blaze-sdk@0.1.26:
+  version "0.1.26"
+  resolved "https://registry.yarnpkg.com/blaze-sdk/-/blaze-sdk-0.1.26.tgz#ba29d095fd8f5f877467fb303f6668ecc55598c0"
+  integrity sha512-Ru3ftjhS2e0KPZKONM9/SDx1QD26jNE46e179aoDVjO8QFPVp0/p65OJesLUipIKpNKY7OckOdtUJXILd9gg4g==
   dependencies:
     "@stacks/connect" "^7.0.2"
     "@stacks/network" "^7.0.2"
