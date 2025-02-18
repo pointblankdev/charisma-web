@@ -1,13 +1,14 @@
 import { TransferNotification, getStatusDescription, getTypeDescription } from '@lib/blaze/notifications';
 import { cn } from '@lib/utils';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ArrowRight, Bell, Check, Clock, ExternalLink, ArrowDownToLine, ArrowUpFromLine } from 'lucide-react';
+import { ArrowRight, Bell, Check, Clock, ExternalLink, ArrowDownToLine, ArrowUpFromLine, Trash2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { ScrollArea } from './scroll-area';
 
 interface NotificationPanelProps {
     notifications: TransferNotification[];
     onMarkAsRead: (ids: string[]) => void;
+    onDeleteNotifications: (ids: string[]) => void;
     isOpen: boolean;
     onClose: () => void;
 }
@@ -73,7 +74,7 @@ function getStatusIcon(status: string) {
     }
 }
 
-export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose }: NotificationPanelProps) {
+export function NotificationPanel({ notifications, onMarkAsRead, onDeleteNotifications, isOpen, onClose }: NotificationPanelProps) {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const hasUnread = notifications.some(n => !n.read);
     const hasSelected = selectedIds.length > 0;
@@ -123,10 +124,20 @@ export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose
                                 {hasSelected ? (
                                     <>
                                         <button
+                                            onClick={() => {
+                                                onDeleteNotifications(selectedIds);
+                                                setSelectedIds([]);
+                                            }}
+                                            className="inline-flex items-center gap-1.5 px-2 py-1 text-xs text-red-500 hover:text-red-600 hover:bg-red-500/10 rounded"
+                                        >
+                                            <Trash2 className="w-3 h-3" />
+                                            Delete ({selectedIds.length})
+                                        </button>
+                                        <button
                                             onClick={() => setSelectedIds([])}
                                             className="text-xs text-muted-foreground hover:text-foreground"
                                         >
-                                            Clear selection ({selectedIds.length})
+                                            Clear selection
                                         </button>
                                     </>
                                 ) : notifications.length > 0 && (

@@ -70,7 +70,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
 
   const { stxAddress } = useGlobal();
   const [isNotificationPanelOpen, setIsNotificationPanelOpen] = useState(false);
-  const { notifications, markAsRead } = useNotifications(stxAddress);
+  const { notifications, markAsRead, deleteNotifications } = useNotifications(stxAddress);
 
   const [navigationTabs, setNavigationTabs] = useState([] as any[]);
 
@@ -137,6 +137,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
           <NotificationPanel
             notifications={notifications}
             onMarkAsRead={markAsRead}
+            onDeleteNotifications={deleteNotifications}
             isOpen={isNotificationPanelOpen}
             onClose={() => setIsNotificationPanelOpen(false)}
           />

@@ -42,6 +42,35 @@ export function useNotifications(address: string | undefined) {
         }
     }, [address]);
 
+    // Delete notifications
+    const deleteNotifications = useCallback(async (notificationIds: string[]) => {
+        if (!address || notificationIds.length === 0) return;
+        try {
+            const response = await fetch('/api/v0/blaze/notifications/delete', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ address, notificationIds })
+            });
+            if (!response.ok) throw new Error('Failed to delete notifications');
+
+            // Update local state
+            setNotifications(prev => prev.filter(n => !notificationIds.includes(n.id)));
+
+            toast({
+                title: 'Notifications Deleted',
+                description: `Successfully deleted ${notificationIds.length} notification${notificationIds.length === 1 ? '' : 's'}`,
+                duration: 3000
+            });
+        } catch (error) {
+            console.error('Error deleting notifications:', error);
+            toast({
+                title: 'Error',
+                description: 'Failed to delete notifications',
+                duration: 3000
+            });
+        }
+    }, [address, toast]);
+
     // Set up SSE connection for real-time notifications
     useEffect(() => {
         if (!address) return;
@@ -113,6 +142,7 @@ export function useNotifications(address: string | undefined) {
         notifications,
         isLoading,
         markAsRead,
+        deleteNotifications,
         refetch: fetchNotifications
     };
 } 
