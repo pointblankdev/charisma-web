@@ -292,7 +292,7 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
                     ) : null}
                 </div>
             </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 sm:grid-cols-1 lg:grid-cols-3">
                 {tokens.map(({ tokenContract, tokenSymbol, tokenIcon, tokenPrice, tokenBalance, tokenDecimals }) => {
                     return (
                         <TokenCard
