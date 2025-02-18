@@ -76,6 +76,7 @@ function getStatusIcon(status: string) {
 export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose }: NotificationPanelProps) {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const hasUnread = notifications.some(n => !n.read);
+    const hasSelected = selectedIds.length > 0;
 
     // Auto mark notifications as read when panel is opened
     useEffect(() => {
@@ -108,19 +109,38 @@ export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose
                             "w-[380px] rounded-lg border bg-card text-card-foreground shadow-lg"
                         )}
                     >
+                        {/* Header with dynamic actions */}
                         <div className="flex items-center justify-between p-4 border-b">
-                            <h2 className="text-lg font-semibold">Notifications</h2>
-                            {notifications.length > 0 && (
-                                <button
-                                    onClick={() => setSelectedIds(notifications.map(n => n.id))}
-                                    className="text-xs text-muted-foreground hover:text-foreground"
-                                >
-                                    Select all
-                                </button>
-                            )}
+                            <div className="flex items-center gap-2">
+                                <h2 className="text-lg font-semibold">Notifications</h2>
+                                {notifications.length > 0 && (
+                                    <span className="text-sm text-muted-foreground">
+                                        ({notifications.length})
+                                    </span>
+                                )}
+                            </div>
+                            <div className="flex items-center gap-2">
+                                {hasSelected ? (
+                                    <>
+                                        <button
+                                            onClick={() => setSelectedIds([])}
+                                            className="text-xs text-muted-foreground hover:text-foreground"
+                                        >
+                                            Clear selection ({selectedIds.length})
+                                        </button>
+                                    </>
+                                ) : notifications.length > 0 && (
+                                    <button
+                                        onClick={() => setSelectedIds(notifications.map(n => n.id))}
+                                        className="text-xs text-muted-foreground hover:text-foreground"
+                                    >
+                                        Select all
+                                    </button>
+                                )}
+                            </div>
                         </div>
 
-                        <ScrollArea className="h-[400px] p-4">
+                        <ScrollArea className="h-[400px]">
                             {notifications.length === 0 ? (
                                 <div className="flex flex-col items-center justify-center h-full text-center p-4">
                                     <Bell className="w-12 h-12 text-muted-foreground/30" />
@@ -129,7 +149,7 @@ export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose
                                     </p>
                                 </div>
                             ) : (
-                                <div className="space-y-3">
+                                <div className="p-4 space-y-2">
                                     {notifications.map((notification) => (
                                         <motion.div
                                             key={notification.id}
@@ -137,10 +157,15 @@ export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose
                                             animate={{ opacity: 1, y: 0 }}
                                             exit={{ opacity: 0, y: -10 }}
                                             className={cn(
-                                                "p-3 rounded-lg border",
-                                                "transition-colors duration-200",
-                                                notification.read ? "bg-card" : "bg-accent/5",
-                                                selectedIds.includes(notification.id) && "ring-2 ring-primary"
+                                                "p-3 rounded-lg",
+                                                "transition-all duration-200",
+                                                "hover:bg-accent/5 cursor-pointer",
+                                                "border border-transparent",
+                                                {
+                                                    "bg-accent/5": !notification.read,
+                                                    "border-accent": selectedIds.includes(notification.id),
+                                                    "opacity-75": notification.read && !selectedIds.includes(notification.id),
+                                                }
                                             )}
                                             onClick={() => {
                                                 if (selectedIds.includes(notification.id)) {
@@ -150,35 +175,47 @@ export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose
                                                 }
                                             }}
                                         >
-                                            <div className="flex items-start justify-between gap-2">
-                                                <div className="flex-1 space-y-1">
-                                                    <div className="flex items-center gap-1.5">
-                                                        {getNotificationIcon(notification.type)}
-                                                        <span className="text-sm font-medium">
-                                                            {getTypeDescription(notification.type, notification.to === notification.from)}
-                                                        </span>
-                                                    </div>
-                                                    <p className="text-sm">
-                                                        <span className="font-medium">
-                                                            {shortenAddress(notification.from)}
-                                                        </span>
-                                                        <ArrowRight className="inline-block w-4 h-4 mx-1" />
-                                                        <span className="font-medium">
-                                                            {shortenAddress(notification.to)}
-                                                        </span>
-                                                    </p>
-                                                    <p className="text-sm font-medium">
-                                                        {formatAmount(notification.amount)} tokens
-                                                    </p>
-                                                    <div className="flex items-center gap-2 text-xs">
-                                                        <Clock className="w-3 h-3" />
-                                                        {formatTimeAgo(notification.timestamp)}
-                                                        <span>•</span>
-                                                        {getStatusIcon(notification.status)}
-                                                        <span className={getStatusColor(notification.status)}>
-                                                            {getStatusDescription(notification.status)}
-                                                        </span>
-                                                    </div>
+                                            {/* Status indicator */}
+                                            <div className="flex items-center gap-2 mb-1.5">
+                                                <div className="flex items-center gap-1.5">
+                                                    {getNotificationIcon(notification.type)}
+                                                    <span className="text-sm font-medium">
+                                                        {getTypeDescription(notification.type, notification.to === notification.from)}
+                                                    </span>
+                                                </div>
+                                                {!notification.read && (
+                                                    <span className="px-1.5 py-0.5 text-[10px] font-medium rounded-full bg-primary/10 text-primary">
+                                                        New
+                                                    </span>
+                                                )}
+                                            </div>
+
+                                            {/* Content */}
+                                            <div className="space-y-1.5">
+                                                <p className="text-sm">
+                                                    <span className="font-medium">
+                                                        {shortenAddress(notification.from)}
+                                                    </span>
+                                                    <ArrowRight className="inline-block w-4 h-4 mx-1" />
+                                                    <span className="font-medium">
+                                                        {shortenAddress(notification.to)}
+                                                    </span>
+                                                </p>
+                                                <p className="text-sm font-medium">
+                                                    {formatAmount(notification.amount)} tokens
+                                                </p>
+                                            </div>
+
+                                            {/* Footer */}
+                                            <div className="flex items-center justify-between mt-2">
+                                                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                                                    <Clock className="w-3 h-3" />
+                                                    {formatTimeAgo(notification.timestamp)}
+                                                    <span>•</span>
+                                                    {getStatusIcon(notification.status)}
+                                                    <span className={getStatusColor(notification.status)}>
+                                                        {getStatusDescription(notification.status)}
+                                                    </span>
                                                 </div>
                                                 {notification.txId && (
                                                     <a
@@ -188,7 +225,7 @@ export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose
                                                         className={cn(
                                                             "p-1.5 rounded-md",
                                                             "text-muted-foreground hover:text-foreground",
-                                                            "hover:bg-accent transition-colors duration-200"
+                                                            "hover:bg-accent/10 transition-colors duration-200"
                                                         )}
                                                         onClick={e => e.stopPropagation()}
                                                     >
@@ -206,4 +243,4 @@ export function NotificationPanel({ notifications, onMarkAsRead, isOpen, onClose
             )}
         </AnimatePresence>
     );
-} 
+}

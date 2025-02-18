@@ -57,7 +57,8 @@ export default async function handler(req: NextRequest) {
 
                                     // Only send if it's newer than our last check
                                     if (notification.timestamp > lastTimestamp) {
-                                        const data = `data: ${notificationJson}\n\n`;
+                                        // Ensure proper JSON stringification
+                                        const data = `data: ${JSON.stringify(notification)}\n\n`;
                                         controller.enqueue(encoder.encode(data));
                                         lastTimestamp = Math.max(lastTimestamp, notification.timestamp);
                                         messageCount++;

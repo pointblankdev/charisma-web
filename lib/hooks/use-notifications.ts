@@ -55,26 +55,38 @@ export function useNotifications(address: string | undefined) {
                     // Handle heartbeat
                     if (event.data.trim() === 'heartbeat') return;
 
-                    const notification = event.data as TransferNotification;
-                    console.log('Notification:', notification);
+                    // Parse the JSON data properly
+                    const notification = JSON.parse(event.data) as TransferNotification;
 
-                    // Add new notification to state
-                    // setNotifications(prev => {
-                    //     // Check if we already have this notification
-                    //     if (prev.some(n => n.id === notification.id)) return prev;
+                    // Add new notification to state, ensuring no duplicates
+                    setNotifications(prev => {
+                        // Check if we already have this notification by ID
+                        const existingIndex = prev.findIndex(n => n.id === notification.id);
 
-                    //     // Show toast for new notification
-                    //     toast({
-                    //         title: 'New Transfer',
-                    //         description: `${notification.from.slice(0, 6)}...${notification.from.slice(-4)} → ${notification.to.slice(0, 6)}...${notification.to.slice(-4)}: ${notification.amount.toLocaleString()} tokens`,
-                    //         duration: 5000
-                    //     });
+                        if (existingIndex !== -1) {
+                            // If status hasn't changed, don't update
+                            if (prev[existingIndex].status === notification.status) {
+                                return prev;
+                            }
 
-                    //     // Add new notification at the beginning
-                    //     return [notification, ...prev];
-                    // });
+                            // If it exists and status changed, update it
+                            const updated = [...prev];
+                            updated[existingIndex] = { ...prev[existingIndex], ...notification };
+                            return updated;
+                        }
+
+                        // Show toast for new notification only
+                        toast({
+                            title: 'New Transfer',
+                            description: `${notification.from.slice(0, 6)}...${notification.from.slice(-4)} → ${notification.to.slice(0, 6)}...${notification.to.slice(-4)}: ${notification.amount.toLocaleString()} tokens`,
+                            duration: 5000
+                        });
+
+                        // Add new notification at the beginning
+                        return [notification, ...prev];
+                    });
                 } catch (error) {
-                    console.error('Error processing notification:', error);
+                    console.error('Error processing notification:', error, 'Raw data:', event.data);
                 }
             };
 
@@ -84,7 +96,10 @@ export function useNotifications(address: string | undefined) {
             };
         };
 
+        // Initial connection
         connect();
+
+        // Only fetch initial notifications once when component mounts
         fetchNotifications();
 
         return () => {
