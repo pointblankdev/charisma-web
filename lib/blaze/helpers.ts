@@ -67,11 +67,10 @@ export async function generateBlazeSignature(
     return signStructuredData({ message, domain, privateKey: process.env.PRIVATE_KEY! });
 }
 
-export async function signBlazeTransfer({ token, from, to, amount, nonce }: any) {
+export async function signBlazeTransfer({ token, to, amount }: any) {
     // Convert amount to tokens
     const tokens = amount * 1_000_000;
-    const lastNonce = 0
-    const nextNonce = nonce ? nonce : lastNonce + 1;
+    const nextNonce = Date.now();
 
     // Create domain matching contract
     const domain = Cl.tuple({

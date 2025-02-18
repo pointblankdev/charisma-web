@@ -1,6 +1,6 @@
 import { BlazeTransferService, BlazeBalanceService } from "./node";
 import { generateBlazeSignature, getBlazeContractForToken } from "./helpers";
-import { fetchCallReadOnlyFunction, Cl, ClarityType, UIntCV } from "@stacks/transactions";
+import { fetchCallReadOnlyFunction, Cl, ClarityType } from "@stacks/transactions";
 import { STACKS_MAINNET } from "@stacks/network";
 import axios from 'axios';
 import { kv } from '@vercel/kv';
@@ -37,7 +37,7 @@ describe('Blaze Node Queue Tests', () => {
             });
 
             console.log(response.data);
-            lastQueueLength = response.data.queueLength;
+            // lastQueueLength = response.data.queueLength;
         }
 
         // Queue should have been processed at least once

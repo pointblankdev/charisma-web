@@ -11,6 +11,7 @@ import styles from '../../components/layout/layout.module.css';
 import { cn } from '@lib/utils';
 import _ from 'lodash';
 import { usePersistedState } from './use-persisted-state';
+import { Balance } from 'blaze-sdk';
 
 const siteUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : SITE_URL;
 const socketUrl = 'https://api.mainnet.hiro.so';
@@ -78,18 +79,8 @@ export interface GlobalState {
     setPrices: (prices: any) => void;
 
     // Blaze state
-    blazeBalances: Record<string, {
-        balance: number;
-        credit: number;
-        nonce: number;
-        contract: string;
-    }>;
-    setBlazeBalances: (blazeBalances: Record<string, {
-        balance: number;
-        credit: number;
-        nonce: number;
-        contract: string;
-    }>) => void;
+    blazeBalances: Record<string, Balance>;
+    setBlazeBalances: (blazeBalances: Record<string, Balance>) => void;
 
     // Friends list state
     friends: Friend[];
@@ -129,6 +120,8 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
     // Blaze balances state
     const [blazeBalances, setBlazeBalances] = usePersistedState<any>('blaze-balances', {});
+
+    console.log(blazeBalances)
 
     // Friends list state
     const [friends, setFriends] = usePersistedState<Friend[]>('blaze-friends', [{ address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', lastUsed: Date.now() }]);
@@ -334,9 +327,10 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const fetchBlazeBalances = useCallback(async () => {
         if (!stxAddress) return;
         try {
-            const response = await fetch(`/api/v0/blaze/user/${stxAddress}`);
+            const response = await fetch(`/api/v0/blaze/subnets/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2/balances/${stxAddress}`);
             const data = await response.json();
-            setBlazeBalances(data.blazeBalance);
+            console.log(data)
+            setBlazeBalances({ 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2': data });
         } catch (error) {
             console.error('Error fetching blaze balances:', error);
         }

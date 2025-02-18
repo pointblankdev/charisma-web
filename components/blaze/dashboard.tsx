@@ -68,7 +68,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
 
             {/* <Features /> */}
 
-            {/* <PortfolioCards balances={blazeBalances} prices={prices} /> */}
+            {blazeBalances && <PortfolioCards balances={blazeBalances} prices={prices} />}
 
             {/* dApp card grid */}
             <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">

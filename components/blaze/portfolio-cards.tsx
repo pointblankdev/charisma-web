@@ -9,15 +9,19 @@ import { Fingerprint, Flame, Lock } from "lucide-react";
 import Image from "next/image";
 import Blockies from "react-blockies";
 import { useEffect, useRef, useState } from "react";
+import { TOKEN_CONTRACT_MAP } from "@lib/blaze/helpers";
+import { Skeleton } from "@components/ui/skeleton";
+import { Balance } from "blaze-sdk";
 
 type TokenCardProps = {
     token: string;
     balance: number;
     icon: string;
     price: number;
+    isLoading?: boolean;
 };
 
-const TokenCard = ({ token, balance, icon, price }: TokenCardProps) => {
+const TokenCard = ({ token, balance, icon, price, isLoading }: TokenCardProps) => {
     const [structuredDataHash, setStructuredDataHash] = useState<string | null>(null);
     const [isPending, setIsPending] = useState(false);
     const [pendingAmount, setPendingAmount] = useState<number>(0);
@@ -62,6 +66,26 @@ const TokenCard = ({ token, balance, icon, price }: TokenCardProps) => {
 
     // Calculate fiat value 
     const fiatValue = ((balance + pendingAmount) * price).toFixed(2)
+
+    if (isLoading) {
+        return (
+            <Card className="bg-accent/5 border-primary/20 relative overflow-hidden">
+                <CardContent className="flex items-center justify-between p-0">
+                    <div className="flex items-center z-10 w-full">
+                        <Skeleton className="w-12 h-12 m-4 rounded-sm" />
+                        <div className='leading-tight w-full pr-16'>
+                            <Skeleton className="h-4 w-24 mb-2" />
+                            <Skeleton className="h-8 w-32 mb-2" />
+                            <Skeleton className="h-4 w-20" />
+                        </div>
+                    </div>
+                    <div className="w-16 h-16 absolute -right-[40px] top-0">
+                        <Skeleton className="w-full h-full" />
+                    </div>
+                </CardContent>
+            </Card>
+        )
+    }
 
     return (
         <Card className="bg-accent/5 border-primary/20 relative overflow-hidden">
@@ -206,53 +230,79 @@ const TokenCard = ({ token, balance, icon, price }: TokenCardProps) => {
 };
 
 type PortfolioCardsProps = {
-    balances: Record<string, {
-        balance: number;
-        credit: number;
-        nonce: number;
-        contract: string;
-    }>;
+    balances: Record<string, Balance>;
     prices: Record<string, number>;
 };
 
+
+
 export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
-    const totalBalance = Object.entries(balances).reduce(
-        (acc, [token, state]) => acc + state.credit / 10 ** 6 * (prices[token] || 0),
-        0
-    );
+    const tokens = [{
+        tokenContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2',
+        tokenSymbol: 'WELSH',
+        tokenIcon: '/welsh-logo.png',
+        tokenPrice: prices['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'] || 0,
+        tokenBalance: balances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2']?.total / 10 ** 6 || 0,
+    }]
+
+    const [mounted, setMounted] = useState(false);
+
+    // if balances is empty, set isLoading to true
+    const isLoading = !mounted || Object.keys(balances).length === 0;
+
+    // Calculate total balance
+    const totalBalance = tokens.reduce((acc, token) => acc + token.tokenBalance * token.tokenPrice, 0);
+
+    // Handle mounting to prevent hydration mismatch
+    useEffect(() => {
+        setMounted(true);
+    }, []);
 
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
                 <h2 className="text-xl font-bold">Your Wallet</h2>
                 <div className="text-sm text-muted-foreground">
-                    Total Balance: ${totalBalance.toFixed(2)}
+                    {isLoading ? (
+                        <Skeleton className="h-4 w-32" />
+                    ) : mounted ? (
+                        `Total Balance: $${totalBalance.toFixed(2)}`
+                    ) : null}
                 </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {/* STX Card */}
-                <TokenCard
-                    token="STX"
-                    balance={balances['.stx']?.credit / 10 ** 6 || 0}
-                    icon="/stx-logo.png"
-                    price={prices['.stx'] || 0}
-                />
-
-                {/* sBTC Card */}
-                <TokenCard
-                    token="sBTC"
-                    balance={balances['SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token']?.credit / 10 ** 8 || 0}
-                    icon="/sbtc.png"
-                    price={prices['SM3VDXK3WZZSA84XXFKAFAF15NNZX32CTSG82JFQ4.sbtc-token'] || 0}
-                />
-
-                {/* Welsh Corgi Coin Card */}
-                <TokenCard
-                    token="WELSH"
-                    balance={balances['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token']?.credit / 10 ** 6 || 0}
-                    icon="/welsh-logo.png"
-                    price={prices['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'] || 0}
-                />
+                {isLoading ? (
+                    // Show skeleton cards while loading
+                    Array.from({ length: 3 }).map((_, i) => (
+                        <TokenCard
+                            key={`skeleton-${i}`}
+                            token=""
+                            balance={0}
+                            icon=""
+                            price={0}
+                            isLoading={true}
+                        />
+                    ))
+                ) : (
+                    // Map through available tokens
+                    [{
+                        tokenContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2',
+                        tokenSymbol: 'WELSH',
+                        tokenIcon: '/welsh-logo.png',
+                        tokenPrice: prices['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'] || 0,
+                        tokenBalance: balances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2']?.total / 10 ** 6 || 0,
+                    }].map(({ tokenContract, tokenSymbol, tokenIcon, tokenPrice, tokenBalance }) => {
+                        return (
+                            <TokenCard
+                                key={tokenContract}
+                                token={tokenSymbol}
+                                balance={tokenBalance}
+                                icon={tokenIcon}
+                                price={tokenPrice}
+                            />
+                        );
+                    })
+                )}
             </div>
         </div>
     );

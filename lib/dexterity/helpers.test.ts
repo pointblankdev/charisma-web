@@ -1,4 +1,4 @@
-import { describe, test, expect } from 'vitest';
+import { describe, test } from 'vitest';
 import { craftOrSalvage } from './helpers';
 import { ContractId, Dexterity } from 'dexterity-sdk';
 import { Kraxel } from '@lib/kraxel';

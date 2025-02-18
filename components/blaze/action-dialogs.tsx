@@ -19,29 +19,21 @@ export interface Token {
     identifier: string;
 }
 
-const SUPPORTED_TOKENS: Token[] = [
+const SUPPORTED_TOKENS: any[] = [
     {
         symbol: 'WELSH',
         name: 'Welsh',
         icon: '/welsh-logo.png',
         contract: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
-        identifier: 'welshcorgicoin'
+        identifier: 'welshcorgicoin',
+        blazeContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2'
     }
 ];
 
 export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean, onOpenChange: (open: boolean) => void, onConfirm: (params: TransactionParams) => void }) => {
-    const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0]);
+    const [selectedToken, setSelectedToken] = useState<any>(SUPPORTED_TOKENS[0]);
     const [amount, setAmount] = useState<string>("");
-    const [balance, setBalance] = useState<number>(0);
-    const { stxAddress } = useGlobal();
-
-    useEffect(() => {
-        const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress, selectedToken.contract);
-            setBalance(balance);
-        };
-        fetchBalance();
-    }, [stxAddress]);
+    const { stxAddress, blazeBalances, getBalance } = useGlobal();
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -137,8 +129,11 @@ export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean
                             Maximum deposit: 10 {selectedToken.symbol} (up to 6 decimal places)
                         </p>
                     </div>
-                    <p className="text-xs text-muted-foreground">
-                        Current balance: {balance / 1_000_000} {selectedToken.symbol}
+                    <p className="text-xs text-muted-foreground leading-none">
+                        In Blaze Wallet: {blazeBalances[selectedToken.blazeContract]?.total / 1_000_000} {selectedToken.symbol}
+                    </p>
+                    <p className="text-xs text-muted-foreground leading-none">
+                        In Stacks Wallet: {getBalance(selectedToken.contract) / 1_000_000} {selectedToken.symbol}
                     </p>
                 </div>
                 <AlertDialogFooter>
