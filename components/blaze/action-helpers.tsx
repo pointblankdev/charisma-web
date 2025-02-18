@@ -10,6 +10,16 @@ import { Search } from "lucide-react";
 import { Pc, PostConditionMode, fetchCallReadOnlyFunction, ClarityType } from "@stacks/transactions";
 import { Token } from "./action-dialogs";
 import { getBlazeContractForToken } from "@lib/blaze/helpers";
+import {
+    showTransferSuccessToast,
+    showTransferErrorToast,
+    showDepositSuccessToast,
+    showDepositCancelledToast,
+    showDepositErrorToast,
+    showWithdrawSuccessToast,
+    showWithdrawCancelledToast,
+    showWithdrawErrorToast
+} from "./toast-confirmations";
 
 
 export interface SignTransferParams {
@@ -79,80 +89,10 @@ export async function handleTransfer({ token, from, to, amount }: SignTransferPa
                         nonce: nextNonce
                     });
 
-                    // Success toast with detailed transfer information
-                    toast({
-                        title: "Transfer Successful",
-                        description: (
-                            <div className="space-y-3 pt-3 w-80">
-                                {/* Amount and Value */}
-                                <div className="flex items-center justify-between p-2">
-                                    <div className="flex items-center gap-3">
-                                        <Image
-                                            src={token.icon}
-                                            alt={token.symbol}
-                                            width={24}
-                                            height={24}
-                                            className="rounded-sm"
-                                        />
-                                        <span className="font-medium text-base">{amount} {token.symbol}</span>
-                                    </div>
-                                    {/* <span className="text-sm text-muted-foreground">
-                                        ≈ ${(amount * prices[token]).toFixed(2)}
-                                    </span> */}
-                                </div>
-
-                                {/* Recipient */}
-                                <div className="flex items-center justify-between gap-3 bg-muted/30 p-3 rounded-md">
-                                    <div className="flex items-center gap-3">
-                                        <Blockies
-                                            seed={to}
-                                            size={6}
-                                            scale={3}
-                                            className="rounded-sm"
-                                        />
-                                        <span className="text-sm font-mono">{shortenAddress(to)}</span>
-                                    </div>
-                                    <Check className="w-5 h-5 text-primary" />
-                                </div>
-
-                                {/* Stats */}
-                                <div className="flex gap-3 text-sm text-muted-foreground">
-                                    <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 rounded-md">
-                                        <Zap className="w-4 h-4 text-primary" />
-                                        Instant
-                                    </div>
-                                    <div className="flex items-center gap-2 bg-muted/30 px-3 py-1.5 rounded-md">
-                                        <Banknote className="w-4 h-4 text-primary" />
-                                        No Fees
-                                    </div>
-                                </div>
-                            </div>
-                        )
-                    });
-
+                    showTransferSuccessToast({ token, amount: tokens, to });
                     resolve(response.data);
                 } catch (error) {
-                    // Error toast with detailed error information
-                    toast({
-                        title: "Transfer Failed",
-                        description: (
-                            <div className="space-y-4 pt-3">
-                                <div className="flex items-center gap-3 text-destructive">
-                                    <div className="p-2 bg-destructive/10 rounded-md">
-                                        <AlertTriangle className="w-4 h-4" />
-                                    </div>
-                                    <div className="space-y-1">
-                                        <div className="font-medium">Transaction Error</div>
-                                        <div className="text-sm text-muted-foreground">
-                                            {error instanceof AxiosError ? error?.response?.data?.error : "Failed to process transfer"}
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                        ),
-                    });
-
-                    console.error("Error transferring tokens", error);
+                    showTransferErrorToast(error);
                     resolve(error);
                 }
             },
@@ -164,19 +104,13 @@ export async function handleDeposit({ token, amount, stxAddress }: TransactionPa
     const [contractAddress, contractName] = getBlazeContractForToken(token.contract).split('.');
     try {
         // Convert amount to micros (assuming 6 decimals)
-        const amountMicros = Number(amount) * 1_000_000;
+        const tokens = Number(amount) * 10 ** token.decimals;
 
         const contractCall = {
             contractAddress,
             contractName,
-            functionName: "deposit",
-            functionArgs: [
-                Cl.uint(amountMicros)
-            ],
-            postConditions: [
-                Pc.principal(stxAddress).willSendEq(amountMicros).ft(token.contract as any, token.identifier)
-            ],
-            postConditionMode: PostConditionMode.Deny,
+            functionName: 'deposit',
+            functionArgs: [Cl.uint(tokens)],
             network: STACKS_MAINNET,
             onFinish: (data: any) => {
                 // Dispatch event for optimistic updates
@@ -188,42 +122,10 @@ export async function handleDeposit({ token, amount, stxAddress }: TransactionPa
                     }
                 }));
 
-                console.log('Deposit successful', data);
-
-                toast({
-                    title: "Deposit Successful",
-                    description: (
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <div className="p-1.5 bg-green-500/10 rounded-md">
-                                    <Check className="w-4 h-4 text-green-500" />
-                                </div>
-                                <div>
-                                    <div className="font-medium">Tokens Deposited</div>
-                                    <div className="text-sm text-muted-foreground">
-                                        {amount} {token.symbol} have been deposited to your account
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Button
-                                variant="outline"
-                                className="w-full"
-                                onClick={() => window.open(`https://explorer.stacks.co/txid/${data.txId}?chain=mainnet`, '_blank')}
-                            >
-                                <Search className="w-4 h-4 mr-2" />
-                                View Transaction
-                            </Button>
-                        </div>
-                    )
-                });
+                showDepositSuccessToast({ token, amount: Number(amount), txId: data.txId });
             },
             onCancel: () => {
-                toast({
-                    title: "Deposit Cancelled",
-                    description: "The token deposit was cancelled.",
-                    variant: "destructive"
-                });
+                showDepositCancelledToast();
             }
         };
 
@@ -231,33 +133,21 @@ export async function handleDeposit({ token, amount, stxAddress }: TransactionPa
         await openContractCall(contractCall);
     } catch (error) {
         console.error('Deposit error:', error);
-        toast({
-            title: "Deposit Failed",
-            description: error instanceof Error ? error.message : "Unknown error occurred",
-            variant: "destructive"
-        });
+        showDepositErrorToast(error);
     }
 }
 
-export async function handleWithdraw({ token, amount }: TransactionParams): Promise<void> {
+export async function handleWithdraw({ token, amount, stxAddress }: TransactionParams): Promise<void> {
     const [contractAddress, contractName] = getBlazeContractForToken(token.contract).split('.');
     try {
         // Convert amount to micros (assuming 6 decimals)
-        const amountMicros = Number(amount) * 1_000_000;
+        const tokens = Number(amount) * 10 ** token.decimals;
 
         const contractCall = {
             contractAddress,
             contractName,
-            functionName: "withdraw",
-            functionArgs: [
-                Cl.uint(amountMicros)
-            ],
-            postConditions: [
-                Pc.principal(`${contractAddress}.${contractName}`)
-                    .willSendEq(amountMicros)
-                    .ft(token.contract as any, token.identifier)
-            ],
-            postConditionMode: PostConditionMode.Deny,
+            functionName: 'withdraw',
+            functionArgs: [Cl.uint(tokens)],
             network: STACKS_MAINNET,
             onFinish: (data: any) => {
                 // Dispatch event for optimistic updates
@@ -269,40 +159,10 @@ export async function handleWithdraw({ token, amount }: TransactionParams): Prom
                     }
                 }));
 
-                toast({
-                    title: "Withdrawal Successful",
-                    description: (
-                        <div className="space-y-2">
-                            <div className="flex items-center gap-2">
-                                <div className="p-1.5 bg-green-500/10 rounded-md">
-                                    <Check className="w-4 h-4 text-green-500" />
-                                </div>
-                                <div>
-                                    <div className="font-medium">Tokens Withdrawn</div>
-                                    <div className="text-sm text-muted-foreground">
-                                        {amount} {token.symbol} have been withdrawn to your wallet
-                                    </div>
-                                </div>
-                            </div>
-
-                            <Button
-                                variant="outline"
-                                className="w-full"
-                                onClick={() => window.open(`https://explorer.stacks.co/txid/${data.txId}?chain=mainnet`, '_blank')}
-                            >
-                                <Search className="w-4 h-4 mr-2" />
-                                View Transaction
-                            </Button>
-                        </div>
-                    )
-                });
+                showWithdrawSuccessToast({ token, amount: Number(amount), txId: data.txId });
             },
             onCancel: () => {
-                toast({
-                    title: "Withdrawal Cancelled",
-                    description: "The token withdrawal was cancelled.",
-                    variant: "destructive"
-                });
+                showWithdrawCancelledToast();
             }
         };
 
@@ -310,11 +170,7 @@ export async function handleWithdraw({ token, amount }: TransactionParams): Prom
         await openContractCall(contractCall);
     } catch (error) {
         console.error('Withdrawal error:', error);
-        toast({
-            title: "Withdrawal Failed",
-            description: error instanceof Error ? error.message : "Unknown error occurred",
-            variant: "destructive"
-        });
+        showWithdrawErrorToast(error);
     }
 }
 
@@ -385,63 +241,6 @@ export async function getNonce(address: string, blazeContract: string): Promise<
         console.error("Error fetching nonce:", error);
         throw error;
     }
-}
-
-export async function handleCoinFlip({ choice, amount, stxAddress }: {
-    choice: 'heads' | 'tails';
-    amount: number;
-    stxAddress: string;
-}): Promise<{
-    won: boolean;
-    result: string;
-    newBalance: string;
-}> {
-
-    const amountMicros = amount * 1_000_000;
-    const nonce = 1 //await getNonce(stxAddress);
-
-    // Create domain matching contract
-    const domain = Cl.tuple({
-        name: Cl.stringAscii("blaze"),
-        version: Cl.stringAscii("0.1.0"),
-        "chain-id": Cl.uint(STACKS_MAINNET.chainId),
-    });
-
-    const gameHost = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
-    const gameToken = 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'
-
-    // Create message tuple
-    const message = Cl.tuple({
-        token: Cl.principal(gameToken),
-        to: Cl.principal(gameHost),
-        amount: Cl.uint(amountMicros),
-        nonce: Cl.uint(nonce)
-    });
-
-    const { openStructuredDataSignatureRequestPopup } = await import("@stacks/connect");
-
-    return new Promise((resolve, reject) => {
-        openStructuredDataSignatureRequestPopup({
-            domain,
-            message,
-            network: STACKS_MAINNET,
-            onFinish: async (data) => {
-                try {
-                    const response = await axios.post('/api/v0/blaze/coinflip', {
-                        signature: data.signature,
-                        from: stxAddress,
-                        token: gameToken,
-                        amount: amountMicros,
-                        choice,
-                        nonce
-                    });
-                    resolve(response.data);
-                } catch (error) {
-                    reject(error);
-                }
-            },
-        });
-    });
 }
 
 export async function fetchBlazeBalances(user: string) {

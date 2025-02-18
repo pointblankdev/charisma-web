@@ -4,7 +4,6 @@ import { Input } from '@components/ui/input';
 import { Label } from '@components/ui/label';
 import { Coins, Loader2, PartyPopper, DollarSign, X, Sparkles, Flame } from 'lucide-react';
 import { useGlobal } from '@lib/hooks/global-context';
-import { fetchBlazeBalances, handleCoinFlip } from './action-helpers';
 import { toast } from '@components/ui/use-toast';
 import Image from 'next/image';
 import { cn } from '@lib/utils';
@@ -15,6 +14,66 @@ import {
     TooltipTrigger,
 } from "@components/ui/tooltip";
 import { getBlazeContractForToken } from '@lib/blaze/helpers';
+import { Cl } from '@stacks/transactions';
+import { STACKS_MAINNET } from '@stacks/network';
+import axios from 'axios';
+
+export async function handleCoinFlip({ choice, amount, stxAddress }: {
+    choice: 'heads' | 'tails';
+    amount: number;
+    stxAddress: string;
+}): Promise<{
+    won: boolean;
+    result: string;
+    newBalance: string;
+}> {
+
+    const amountMicros = amount * 1_000_000;
+    const nonce = 1 //await getNonce(stxAddress);
+
+    // Create domain matching contract
+    const domain = Cl.tuple({
+        name: Cl.stringAscii("blaze"),
+        version: Cl.stringAscii("0.1.0"),
+        "chain-id": Cl.uint(STACKS_MAINNET.chainId),
+    });
+
+    const gameHost = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
+    const gameToken = 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'
+
+    // Create message tuple
+    const message = Cl.tuple({
+        token: Cl.principal(gameToken),
+        to: Cl.principal(gameHost),
+        amount: Cl.uint(amountMicros),
+        nonce: Cl.uint(nonce)
+    });
+
+    const { openStructuredDataSignatureRequestPopup } = await import("@stacks/connect");
+
+    return new Promise((resolve, reject) => {
+        openStructuredDataSignatureRequestPopup({
+            domain,
+            message,
+            network: STACKS_MAINNET,
+            onFinish: async (data) => {
+                try {
+                    const response = await axios.post('/api/v0/blaze/coinflip', {
+                        signature: data.signature,
+                        from: stxAddress,
+                        token: gameToken,
+                        amount: amountMicros,
+                        choice,
+                        nonce
+                    });
+                    resolve(response.data);
+                } catch (error) {
+                    reject(error);
+                }
+            },
+        });
+    });
+}
 
 const gameToken = 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'
 const gameContract = getBlazeContractForToken(gameToken);
