@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useCallback, useMemo } from 'react';
+import React, { createContext, useContext, useEffect, useCallback, useMemo, useState } from 'react';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { userSession } from '@components/stacks-session/connect';
@@ -119,7 +119,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [prices, setPrices] = usePersistedState<any>('prices', {});
 
     // Blaze balances state
-    const [blazeBalances, setBlazeBalances] = usePersistedState<any>('blaze-balances', {});
+    const [blazeBalances, setBlazeBalances] = useState<any>({});
 
     console.log(blazeBalances)
 
@@ -378,8 +378,8 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
         const getRealTimeData = async () => {
             try {
-                await processVaultAnalytics(block);
                 await fetchBlazeBalances();
+                // await processVaultAnalytics(block);
             } catch (error) {
                 console.error('Error fetching latest data:', error);
             }

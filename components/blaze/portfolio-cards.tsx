@@ -39,7 +39,6 @@ const TokenCard = ({ token, balance, icon, price, isLoading, blazeContract, deci
     // Listen for deposit/withdraw events
     useEffect(() => {
         const handleTransaction = (event: CustomEvent) => {
-            console.log('event', event);
             // Only set pending if this event is for this token
             if (event.detail?.token.blazeContract === blazeContract) {
                 setIsPending(true);

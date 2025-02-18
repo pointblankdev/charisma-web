@@ -9,6 +9,10 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@components/ui/button";
 import type { Friend } from "@lib/hooks/global-context";
 import { Blaze } from "blaze-sdk";
+import { PostConditionMode } from "@stacks/transactions";
+import { Pc } from "@stacks/transactions";
+import { Cl } from "@stacks/transactions";
+import { STACKS_MAINNET } from "@stacks/network";
 
 export interface Token {
     symbol: string;
@@ -33,19 +37,24 @@ const SUPPORTED_TOKENS: Token[] = [
 ];
 
 export const DepositDialog = ({ open, onOpenChange, }: any) => {
-    const [selectedToken, setSelectedToken] = useState<any>(SUPPORTED_TOKENS[0]);
+    const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0]);
     const [amount, setAmount] = useState<string>("");
     const { stxAddress, blazeBalances, getBalance } = useGlobal();
 
     // Initialize Blaze client
     const blaze = new Blaze(selectedToken.blazeContract, stxAddress);
 
-    const handleDeposit = () => {
+    const handleDeposit = async () => {
         // Convert decimal amount to uint with proper decimals
         const uintAmount = Number(amount) * (10 ** selectedToken.decimals);
-
-        console.log(uintAmount);
-        blaze.deposit(uintAmount);
+        await blaze.deposit(uintAmount);
+        window.dispatchEvent(new CustomEvent('blazeDeposit', {
+            detail: {
+                token: selectedToken,
+                amount: Number(amount),
+                action: 'deposit'
+            }
+        }));
     };
 
     return (

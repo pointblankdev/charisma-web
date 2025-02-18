@@ -3926,11 +3926,6 @@
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.1.9.tgz#e5e142fbbfe251091f9c5f1dd4c834ac04c3dbd1"
   integrity sha512-8YKhl8GHiNI/pU2VMaofa2Tor7PJRAjwQLBBuilkJ9L5+13yVbC7JO/wS7piioAvPSwR3JKM1IJ/u4xQzbcXKg==
 
-"@scure/base@^1.2.4":
-  version "1.2.4"
-  resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.2.4.tgz#002eb571a35d69bdb4c214d0995dff76a8dcd2a9"
-  integrity sha512-5Yy9czTO47mqz+/J8GM6GIId4umdCk1wc1q8rKERQulIoc8VP9pzDcghv10Tl2E7R96ZUx/PhND3ESYUQX8NuQ==
-
 "@scure/bip32@1.1.3":
   version "1.1.3"
   resolved "https://registry.yarnpkg.com/@scure/bip32/-/bip32-1.1.3.tgz#c92ebf476f7bdaf8db01b459e3144179642ba37e"
@@ -5319,12 +5314,20 @@
   dependencies:
     "@stencil/core" "^2.17.1"
 
-"@stacks/connect-ui@7.0.0":
-  version "7.0.0"
-  resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-7.0.0.tgz#d361e0cc26da5f457cb15342436ea9a4b3c9c77d"
-  integrity sha512-Aal6lMy45rurQsJ3MvTkRybYL6MgaKBB7zpXTllL8P6lzGFYwTdBTZTvewxA4P4M1TyVKZWJYe03DQsfc1MwEA==
+"@stacks/connect@^7.0.2":
+  version "7.10.1"
+  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.10.1.tgz#9273925a34e48342c7b40c8fbdc776c01e1ba983"
+  integrity sha512-8TO5hU3W/hF57zBgKh9e9/K+9Nrj7ALQKHNH/ZgXVukDjCd6PkZVyZk9j1G8uIGW0v+gS6bK0nhxd/WGZaR8Bg==
   dependencies:
-    "@stencil/core" "^2.17.1"
+    "@stacks/auth" "^7.0.0"
+    "@stacks/common" "^7.0.0"
+    "@stacks/connect-ui" "6.6.0"
+    "@stacks/network" "^7.0.0"
+    "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
+    "@stacks/profile" "^7.0.0"
+    "@stacks/transactions" "^7.0.0"
+    "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
+    jsontokens "^4.0.1"
 
 "@stacks/connect@^7.10.0":
   version "7.10.0"
@@ -5340,20 +5343,6 @@
     "@stacks/transactions" "^7.0.0"
     "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
     jsontokens "^4.0.1"
-
-"@stacks/connect@latest":
-  version "8.0.1"
-  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.0.1.tgz#a06fb1abc09735ea87a746792fd99ff136fc0776"
-  integrity sha512-9assgRB+tTt9dP5r/NBy0bHn5V5mNq/N4jO1VPYFMcjbSxwiWbO1TaGpJwuvY5dKm6f1ca+sWC8OFR+9wx8OZQ==
-  dependencies:
-    "@scure/base" "^1.2.4"
-    "@stacks/common" "^7.0.0"
-    "@stacks/connect-ui" "7.0.0"
-    "@stacks/network" "^7.0.0"
-    "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
-    "@stacks/profile" "^7.0.0"
-    "@stacks/transactions" "^7.0.0"
-    "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
 
 "@stacks/encryption@^6.7.0":
   version "6.17.0"
@@ -6629,7 +6618,7 @@
   dependencies:
     "@upstash/redis" "1.24.3"
 
-"@vercel/kv@latest":
+"@vercel/kv@^3.0.0":
   version "3.0.0"
   resolved "https://registry.yarnpkg.com/@vercel/kv/-/kv-3.0.0.tgz#4579153536c9fc0ca8c52d3d7cfe944ccffd08c0"
   integrity sha512-pKT8fRnfyYk2MgvyB6fn6ipJPCdfZwiKDdw7vB+HL50rjboEBHDVBEcnwfkEpVSp2AjNtoaOUH7zG+bVC/rvSg==
@@ -7547,15 +7536,15 @@ blakejs@^1.2.1:
   resolved "https://registry.yarnpkg.com/blakejs/-/blakejs-1.2.1.tgz#5057e4206eadb4a97f7c0b6e197a505042fc3814"
   integrity sha512-QXUSXI3QVc/gJME0dBpXrag1kbzOqCjCX8/b54ntNyW6sjtoqxqRk3LTmXzaJoh71zMsDCjM+47jS7XiwN/+fQ==
 
-blaze-sdk@^0.1.18:
-  version "0.1.18"
-  resolved "https://registry.yarnpkg.com/blaze-sdk/-/blaze-sdk-0.1.18.tgz#9035e9ba6edaac20007df51d640ec7b0d0dea9df"
-  integrity sha512-f/IS2P2a+SU8OAD7QZroZCaVHM0GZBlMSugIWb/8rGBB5VU//pyoLIDr7i7TrbrZcnjBnpb4KvNEQ9+VXawHOg==
+blaze-sdk@0.1.24:
+  version "0.1.24"
+  resolved "https://registry.yarnpkg.com/blaze-sdk/-/blaze-sdk-0.1.24.tgz#1e829864f0d263e305086a893b9f46a6458a6bc5"
+  integrity sha512-mnZQU1JA0i+HZPfcMiuQq8uNEHkJwrg7ftb9AyHiWtIt/AotKZZsr+rADLJ9cwvglUGqu+MlczqtKBEE4qDFdQ==
   dependencies:
-    "@stacks/connect" latest
-    "@stacks/network" latest
-    "@stacks/transactions" latest
-    "@vercel/kv" latest
+    "@stacks/connect" "^7.0.2"
+    "@stacks/network" "^7.0.2"
+    "@stacks/transactions" "^7.0.2"
+    "@vercel/kv" "^3.0.0"
     dotenv "^16.4.7"
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.11.8, bn.js@^4.11.9:
