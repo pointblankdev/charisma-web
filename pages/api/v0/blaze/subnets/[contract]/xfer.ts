@@ -2,58 +2,39 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { Subnet, Transfer } from 'blaze-sdk';
 
-const contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2';
+const contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
 const subnet = new Subnet(contract);
 
 export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
-    console.log('Transfer request received:', {
-        method: req.method,
-        body: req.body,
-        timestamp: new Date().toISOString()
-    });
-
     if (req.method !== 'POST') {
         console.warn('Invalid method:', req.method);
         return res.status(405).json({ error: 'Method not allowed' });
     }
 
     try {
-
-        const {
-            signature,
-            from,
-            amount,
-            to,
-            nonce,
-        } = req.body;
-
+        const transferMessage: Transfer = req.body;
         console.log('Processing transfer:', {
-            from,
-            to,
-            amount,
-            nonce,
-            signature: `${signature.slice(0, 10)}...`
+            ...transferMessage,
+            signature: `${transferMessage.signature.slice(0, 10)}...`
         });
-
-        const transferMessage: Transfer = { to, amount, nonce, signature, signer: from };
 
         // Verify signature
         const isValid = await subnet.verifySignature(transferMessage);
         if (!isValid) {
-            console.warn('Invalid signature for transfer:', { from, to, nonce });
+            console.warn('Invalid signature for transfer:', transferMessage.signer);
             return res.status(401).json({ error: 'Invalid signature' });
         }
 
         console.log('Signature verified!');
 
         // Get and verify balances
-        const fromBalance = await subnet.getBalance(from);
+        const fromBalance = await subnet.getBalance(transferMessage.signer);
 
-        if (fromBalance.total < amount) {
-            console.warn('Insufficient balance:', { from, amount, balance: fromBalance });
+        if (fromBalance.total < transferMessage.amount) {
+            console.warn('Insufficient balance:', { signer: transferMessage.signer, amount: transferMessage.amount, balance: fromBalance });
             return res.status(400).json({ error: 'Insufficient balance' });
         }
 

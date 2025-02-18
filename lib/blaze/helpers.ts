@@ -4,7 +4,7 @@ import { STACKS_MAINNET } from "@stacks/network";
 import { kv } from "@vercel/kv";
 
 export const TOKEN_CONTRACT_MAP: Record<string, string> = {
-    'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2',
+    'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token': 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0',
 };
 
 export function getBlazeContractForToken(token: string): string {

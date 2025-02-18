@@ -5,7 +5,7 @@ import { BlazeTransferService } from './node';
 
 describe('Blaze Signature Tests', () => {
     const mockToken = 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token';
-    const mockContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2';
+    const mockContract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
     const mockSender = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
     const mockRecipient = 'SP2D5BGGJ956A635JG7CJQ59FTRFRB0893514EZPJ';
     const mockAmount = 1000000; // 1 token with 6 decimals

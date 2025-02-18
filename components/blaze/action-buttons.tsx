@@ -133,7 +133,7 @@ export function SendTokensButton({ onClick, disabled }: ActionButtonProps) {
 // Deposit Button
 export function DepositButton({ onClick }: ActionButtonProps) {
     const { stxAddress, blazeBalances } = useGlobal();
-    const balance = blazeBalances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2']?.total || 0;
+    const balance = blazeBalances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0']?.total || 0;
 
     return (
         <TooltipProvider>
@@ -177,7 +177,7 @@ export function DepositButton({ onClick }: ActionButtonProps) {
 // Withdraw Button
 export function WithdrawButton({ onClick }: ActionButtonProps) {
     const { stxAddress, blazeBalances } = useGlobal();
-    const balance = blazeBalances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2']?.total || 0;
+    const balance = blazeBalances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0']?.total || 0;
 
     return (
         <TooltipProvider>

@@ -8,7 +8,7 @@ export default async function handler(
 ) {
     const requestId = crypto.randomUUID();
     const gameHostAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
-    const subnet = new Subnet('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2');
+    const subnet = new Subnet('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0');
     console.info({
         requestId,
         message: 'Received coinflip request',
