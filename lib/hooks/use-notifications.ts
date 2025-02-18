@@ -55,7 +55,7 @@ export function useNotifications(address: string | undefined) {
                     // Handle heartbeat
                     if (event.data.trim() === 'heartbeat') return;
 
-                    const notification = event.data as TransferNotification;
+                    const notification = JSON.parse(event.data) as TransferNotification;
 
                     // Add new notification to state
                     setNotifications(prev => {
