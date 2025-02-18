@@ -29,6 +29,7 @@ import { Breadcrumb, BreadcrumbList } from '@components/ui/breadcrumb';
 import charisma from '@public/charisma.png';
 import { useGlobal } from '@lib/hooks/global-context';
 import _ from 'lodash';
+import { SseStatus } from '@components/ui/sse-status';
 
 type Props = {
   children: React.ReactNode;
@@ -119,6 +120,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
             <div className={cn(styles.full, className)}>{children}</div>
           </main>
           <Footer />
+          <SseStatus />
         </div>
       </div>
     </>

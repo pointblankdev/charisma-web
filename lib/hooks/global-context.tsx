@@ -13,6 +13,11 @@ import _ from 'lodash';
 import { usePersistedState } from './use-persisted-state';
 import { Balance } from 'blaze-sdk';
 
+// Extend the Balance type to include lastUpdated
+interface ExtendedBalance extends Balance {
+    lastUpdated: number;
+}
+
 const siteUrl = process.env.NODE_ENV === 'development' ? 'http://localhost:3000' : SITE_URL;
 const socketUrl = 'https://api.mainnet.hiro.so';
 const sc = new StacksApiSocketClient({ url: socketUrl });
@@ -79,14 +84,18 @@ export interface GlobalState {
     setPrices: (prices: any) => void;
 
     // Blaze state
-    blazeBalances: Record<string, Balance>;
-    setBlazeBalances: (blazeBalances: Record<string, Balance>) => void;
+    blazeBalances: Record<string, ExtendedBalance>;
+    setBlazeBalances: (blazeBalances: Record<string, ExtendedBalance>) => void;
 
     // Friends list state
     friends: Friend[];
     addFriend: (address: string) => void;
     removeFriend: (address: string) => void;
     updateFriendLastUsed: (address: string) => void;
+
+    // SSE connection state
+    sseStatus: 'connecting' | 'connected' | 'disconnected';
+    lastUpdateTime: Date | null;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -94,6 +103,13 @@ const GlobalContext = createContext<GlobalState | undefined>(undefined);
 const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+};
+
+// Add debug logging utility
+const debug = (message: string, ...args: any[]) => {
+    if (process.env.NODE_ENV === 'development') {
+        console.log(`[Blaze SSE] ${message}`, ...args);
+    }
 };
 
 export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -119,10 +135,14 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [prices, setPrices] = usePersistedState<any>('prices', {});
 
     // Blaze balances state
-    const [blazeBalances, setBlazeBalances] = useState<Record<string, Balance>>({});
+    const [blazeBalances, setBlazeBalances] = useState<Record<string, ExtendedBalance>>({});
 
     // Friends list state
     const [friends, setFriends] = usePersistedState<Friend[]>('blaze-friends', [{ address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', lastUsed: Date.now() }]);
+
+    // Add connection status state
+    const [sseStatus, setSseStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
+    const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
 
     // Add fetchBlazeBalances function
     const fetchBlazeBalances = useCallback(async () => {
@@ -337,43 +357,131 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     useEffect(() => {
         if (!stxAddress) return;
 
-        const eventSource = new EventSource('/api/v0/blaze/balance-stream');
+        let eventSource: EventSource | null = null;
+        let reconnectTimeout: ReturnType<typeof setTimeout>;
+        let reconnectAttempts = 0;
+        const MAX_RECONNECT_ATTEMPTS = 5;
+        const RECONNECT_DELAY = 5000; // 5 seconds
 
-        eventSource.onmessage = (event) => {
-            try {
-                if (event.data === ' heartbeat') return;
+        const connect = () => {
+            debug('Initializing SSE connection...');
+            setSseStatus('connecting');
 
-                const update = JSON.parse(event.data);
-                if (!update || typeof update !== 'object') return;
+            // Close existing connection if any
+            if (eventSource) {
+                eventSource.close();
+            }
 
-                setBlazeBalances((prev: Record<string, Balance>) => ({
-                    ...prev,
-                    [update.contract]: {
-                        ...prev[update.contract],
-                        total: update.balance,
-                        confirmed: update.balance,
-                        unconfirmed: 0
+            const subnet = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
+            eventSource = new EventSource(`/api/v0/blaze/balance-stream?address=${stxAddress}&subnet=${subnet}`);
+            let heartbeatTimeout: ReturnType<typeof setTimeout>;
+
+            const resetHeartbeatTimer = () => {
+                if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
+                heartbeatTimeout = setTimeout(() => {
+                    debug('No heartbeat received, reconnecting...');
+                    reconnect();
+                }, 5000); // Wait 5 seconds for heartbeat
+            };
+
+            eventSource.onopen = () => {
+                debug('SSE connection established');
+                setSseStatus('connected');
+                reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+                resetHeartbeatTimer();
+            };
+
+            eventSource.onmessage = (event) => {
+                try {
+                    resetHeartbeatTimer();
+
+                    // Check for heartbeat message
+                    if (event.data.trim() === 'heartbeat') {
+                        debug('Heartbeat received');
+                        return;
                     }
-                }));
-            } catch (error) {
-                console.error('Error processing SSE message:', error);
+
+                    console.log('Blaze SSE message:', event.data.trim());
+                    const update = JSON.parse(event.data);
+                    if (!update || typeof update !== 'object') {
+                        debug('Invalid update received', update);
+                        return;
+                    }
+
+                    debug('Balance update received', update);
+                    setLastUpdateTime(new Date());
+
+                    // Only update if the balance is for the current user
+                    if (update.address === stxAddress) {
+                        setBlazeBalances(prev => {
+                            // If we already have a balance for this contract and the update is older, ignore it
+                            const currentBalance = prev[update.contract];
+                            if (currentBalance && currentBalance.lastUpdated > update.timestamp) {
+                                debug('Ignoring older update', update);
+                                return prev;
+                            }
+
+                            return {
+                                ...prev,
+                                [update.contract]: {
+                                    total: update.balance,
+                                    confirmed: update.balance,
+                                    unconfirmed: 0,
+                                    lastUpdated: update.timestamp
+                                }
+                            };
+                        });
+                    }
+                } catch (error) {
+                    console.error('[Blaze SSE] Error processing message:', error);
+                }
+            };
+
+            eventSource.onerror = (error) => {
+                console.error('[Blaze SSE] Connection error:', error);
+                if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
+                reconnect();
+            };
+        };
+
+        const reconnect = () => {
+            setSseStatus('disconnected');
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+
+            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+                reconnectAttempts++;
+                debug(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
+
+                // Clear any existing reconnect timeout
+                if (reconnectTimeout) clearTimeout(reconnectTimeout);
+
+                // Exponential backoff: 5s, 10s, 20s, 40s, 80s
+                const delay = RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1);
+                reconnectTimeout = setTimeout(() => {
+                    connect();
+                    fetchBlazeBalances();
+                }, delay);
+            } else {
+                console.error('[Blaze SSE] Max reconnection attempts reached');
+                setSseStatus('disconnected');
             }
         };
 
-        eventSource.onerror = (error) => {
-            console.error('SSE Error:', error);
-            eventSource.close();
-            // Attempt to reconnect after a delay
-            setTimeout(() => {
-                fetchBlazeBalances();
-            }, 5000);
-        };
+        // Initial connection
+        connect();
 
-        // Initial balance fetch
-        fetchBlazeBalances();
-
+        // Cleanup function
         return () => {
-            eventSource.close();
+            debug('Cleaning up SSE connection');
+            if (reconnectTimeout) clearTimeout(reconnectTimeout);
+            if (eventSource) {
+                eventSource.close();
+                eventSource = null;
+            }
+            setSseStatus('disconnected');
         };
     }, [stxAddress, fetchBlazeBalances]);
 
@@ -418,42 +526,49 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         );
     }, [setFriends]);
 
+    // Add SSE status to context value
+    const contextValue = {
+        sseStatus,
+        lastUpdateTime,
+        balances,
+        wallet,
+        getKeyByContractAddress,
+        getBalanceByKey,
+        getBalance,
+        stxAddress,
+        block,
+        setBlock,
+        tappedAt,
+        tapTokens,
+        isMempoolSubscribed,
+        setIsMempoolSubscribed,
+        vaultAnalytics,
+        setVaultAnalytics,
+        fromToken,
+        setFromToken,
+        toToken,
+        setToToken,
+        maxHops,
+        setMaxHops,
+        slippage,
+        setSlippage,
+        prices,
+        setPrices,
+        blazeBalances,
+        setBlazeBalances,
+        friends,
+        addFriend,
+        removeFriend,
+        updateFriendLastUsed,
+    };
+
     return (
         <SidebarProvider defaultOpen={false}>
             <AppSidebar />
             <SidebarInset />
             <div className={cn('flex flex-col w-full z-10', styles.background)}>
                 <GlobalContext.Provider value={{
-                    balances,
-                    wallet,
-                    getKeyByContractAddress,
-                    getBalanceByKey,
-                    getBalance,
-                    stxAddress,
-                    block,
-                    setBlock,
-                    tappedAt,
-                    tapTokens,
-                    isMempoolSubscribed,
-                    setIsMempoolSubscribed,
-                    vaultAnalytics,
-                    setVaultAnalytics,
-                    fromToken,
-                    setFromToken,
-                    toToken,
-                    setToToken,
-                    maxHops,
-                    setMaxHops,
-                    slippage,
-                    setSlippage,
-                    prices,
-                    setPrices,
-                    blazeBalances,
-                    setBlazeBalances,
-                    friends,
-                    addFriend,
-                    removeFriend,
-                    updateFriendLastUsed,
+                    ...contextValue,
                 }}>
                     <div>
                         {children}
