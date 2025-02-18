@@ -62,7 +62,7 @@ export default async function handler(
         await subnet.addTransferToQueue(transfer);
 
         // Check queue length and process if queue is longer than 10
-        const status = await subnet.getStatus();
+        const status = subnet.getStatus();
         console.log('Queue length:', status);
         if (status.queueSizes[contract] > 10) {
             await subnet.processTransfers();
