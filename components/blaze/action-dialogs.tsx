@@ -41,7 +41,7 @@ export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean
                 <AlertDialogHeader>
                     <AlertDialogTitle>Deposit {selectedToken.symbol}</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Add {selectedToken.symbol} to the Blaze layer for instant, zero-fee transfers
+                        Add {selectedToken.symbol} to the Blaze subnet for instant, zero-fee transfers
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="space-y-4 py-4">
@@ -51,7 +51,7 @@ export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean
                             <span className="font-medium">How it works</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                            Your {selectedToken.symbol} will be added to the Blaze layer, enabling instant transfers with zero fees.
+                            Your {selectedToken.symbol} will be added to the Blaze subnet, enabling instant transfers with zero fees.
                             You can withdraw your funds back to your wallet at any time.
                         </p>
                     </div>
@@ -170,7 +170,7 @@ export const WithdrawDialog = ({
                 <AlertDialogHeader>
                     <AlertDialogTitle>Withdraw</AlertDialogTitle>
                     <AlertDialogDescription>
-                        Move tokens from the Blaze layer back to your wallet
+                        Move tokens from the Blaze subnet back to your wallet
                     </AlertDialogDescription>
                 </AlertDialogHeader>
                 <div className="space-y-4 py-4">
@@ -180,7 +180,7 @@ export const WithdrawDialog = ({
                             <span className="font-medium">How it works</span>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                            Your tokens will be moved from the Blaze layer back to your wallet.
+                            Your tokens will be moved from the Blaze subnet back to your wallet.
                             This requires a blockchain transaction and may take a few minutes.
                         </p>
                     </div>

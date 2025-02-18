@@ -20,9 +20,10 @@ type TokenCardProps = {
     price: number;
     isLoading?: boolean;
     blazeContract: string;
+    decimals: number;
 };
 
-const TokenCard = ({ token, balance, icon, price, isLoading, blazeContract }: TokenCardProps) => {
+const TokenCard = ({ token, balance, icon, price, isLoading, blazeContract, decimals }: TokenCardProps) => {
     const [structuredDataHash, setStructuredDataHash] = useState<string | null>(null);
     const [isPending, setIsPending] = useState(false);
     const [pendingAmount, setPendingAmount] = useState<number>(0);
@@ -126,7 +127,7 @@ const TokenCard = ({ token, balance, icon, price, isLoading, blazeContract }: To
                             )}
                         </div>
                         <p className={`text-2xl font-bold ${isPending ? 'animate-pulse' : ''}`}>
-                            {formattedBalance} {token}
+                            {formattedBalance.toFixed(decimals)} {token}
                         </p>
                         <p className="text-sm text-muted-foreground">${fiatValue} USD</p>
                     </div>
@@ -262,6 +263,7 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
         tokenIcon: '/welsh-logo.png',
         tokenPrice: prices['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'] || 0,
         tokenBalance: balances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2']?.total / 10 ** 6 || 0,
+        tokenDecimals: 6,
     }]
 
     const [mounted, setMounted] = useState(false);
@@ -280,7 +282,7 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center justify-between">
-                <h2 className="text-xl font-bold">Your Wallet</h2>
+                <h2 className="text-xl font-bold">Your Balances</h2>
                 <div className="text-sm text-muted-foreground">
                     {isLoading ? (
                         <Skeleton className="h-4 w-32" />
@@ -290,7 +292,7 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
                 </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {tokens.map(({ tokenContract, tokenSymbol, tokenIcon, tokenPrice, tokenBalance }) => {
+                {tokens.map(({ tokenContract, tokenSymbol, tokenIcon, tokenPrice, tokenBalance, tokenDecimals }) => {
                     return (
                         <TokenCard
                             key={tokenContract}
@@ -300,6 +302,7 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
                             price={tokenPrice}
                             isLoading={isLoading}
                             blazeContract={tokenContract}
+                            decimals={tokenDecimals}
                         />
                     );
                 })}
