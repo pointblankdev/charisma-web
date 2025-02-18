@@ -80,7 +80,7 @@ describe('Blaze Balance Management Tests', () => {
             senderAddress: address
         };
 
-        const result = await fetchCallReadOnlyFunction(options);
+        const result = await fetchCallReadOnlyFunction(options as any);
         if (result.type === ClarityType.UInt) {
             return Number(result.value);
         }

@@ -21,7 +21,7 @@ function getNextApiKey(): string {
 
   const key = apiKeys[currentKeyIndex];
   currentKeyIndex = (currentKeyIndex + 1) % apiKeys.length;
-  return key;
+  return key as any;
 }
 
 export const client = createClient({

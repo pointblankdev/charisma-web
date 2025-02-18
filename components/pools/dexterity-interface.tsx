@@ -12,17 +12,8 @@ import {
   ZapIcon,
   ShieldHalf,
   Lock,
-  Gift,
-  CogIcon,
-  Waves,
-  BatteryCharging,
   HandCoins,
-  HeartHandshake,
-  HandHeart,
-  Activity,
-  AudioLines,
   AudioWaveform,
-  Zap,
 } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@components/ui/tooltip';
 import Image from 'next/image';
@@ -41,8 +32,8 @@ import { AddLiquidityModal } from './modals/add-liquidity-modal';
 import { RemoveLiquidityModal } from './modals/remove-liquidity-modal';
 import numeral from 'numeral';
 import { cn } from '@lib/utils';
-import { Dexterity, Vault, Opcode, ContractId } from 'dexterity-sdk';
-import { cvToHex, Pc, PostConditionMode, principalCV, stringAsciiCV } from '@stacks/transactions';
+import { Dexterity, Vault, Opcode } from 'dexterity-sdk';
+import { Pc, PostConditionMode, principalCV, stringAsciiCV } from '@stacks/transactions';
 import { useGlobal } from '@lib/hooks/global-context';
 import { toast } from '@components/ui/use-toast';
 import { QuickAddLiquidityModal } from './modals/quick-add-liquidity-modal';
@@ -312,7 +303,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                     vault.generalInfo.averageFeePercentage / 100) +
                   // Daily energy rewards in USD (energyPerDay * total supply * HOOT price)
                   (vault.engine.energyPerBlockPerToken * 17280 * (pool.supply / 10 ** pool.decimals) *
-                    prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'])
+                    (prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0))
                 ).format('0,0.00')}/day for its liquidity providers
               </div>
             </div>
@@ -434,7 +425,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                             <span>{numeral(energyPerDay).format('0,0')}/day</span>
                           </div>
                           <span className="text-sm text-muted-foreground">
-                            ≈ ${numeral(energyPerDay * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
+                            ≈ ${numeral(energyPerDay * (prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0)).format('0,0.00')}/day
                           </span>
                         </div>
                       </div>
@@ -447,7 +438,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                             <span>{numeral(energyPerDay * fractionOfTotal).format('0,0')}/day</span>
                           </div>
                           <span className="text-sm text-muted-foreground">
-                            ≈ ${numeral(energyPerDay * fractionOfTotal * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}/day
+                            ≈ ${numeral(energyPerDay * fractionOfTotal * (prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0)).format('0,0.00')}/day
                           </span>
                         </div>
                       </div>
@@ -483,7 +474,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                                 </span>
                               </div>
                               <span className="text-sm text-muted-foreground">
-                                ≈ ${numeral(claimableTokens * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
+                                ≈ ${numeral(claimableTokens * (prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0)).format('0,0.00')}
                               </span>
                             </div>
                           </div>
@@ -512,7 +503,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                                 </span>
                               </div>
                               <span className="text-sm text-muted-foreground">
-                                ≈ ${numeral((energyPerDay * 7) * (100 / tvl) * prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl']).format('0,0.00')}
+                                ≈ ${numeral((energyPerDay * 7) * (100 / tvl) * (prices['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.hooter-the-owl'] || 0)).format('0,0.00')}
                               </span>
                             </div>
                           </div>

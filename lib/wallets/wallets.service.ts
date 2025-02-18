@@ -38,5 +38,5 @@ export const getStxPrivateKey = async (ownerAddress: string): Promise<string> =>
         password: String(process.env.ENCRYPTION_KEY)
     });
 
-    return wallet.accounts[0].stxPrivateKey;
+    return wallet.accounts[0]?.stxPrivateKey || '';
 }

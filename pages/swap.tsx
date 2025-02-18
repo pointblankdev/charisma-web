@@ -51,7 +51,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
       },
       revalidate: 60
     }
-  };
+  }
 };
 
 export default function SwapPage({

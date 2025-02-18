@@ -83,7 +83,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
   const formatPathSegment = (segment: string) => {
     if (isContractAddress(segment)) {
       const contractId = segment.split('.')[0];
-      return `${contractId.slice(0, 4)}...${contractId.slice(-4)}.${segment.split('.')[1]}`;
+      return `${contractId?.slice(0, 4)}...${contractId?.slice(-4)}.${segment.split('.')[1]}`;
     }
     return _.capitalize(segment);
   };
@@ -100,13 +100,13 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                 <BreadcrumbList className="text-md">
                   <BreadcrumbItem className="hidden md:block">
                     <BreadcrumbLink href={`/${activeRoute.split('/')[1]}`}>
-                      {formatPathSegment(activeRoute.split('/')[1])}
+                      {formatPathSegment(activeRoute.split('/')[1] || '')}
                     </BreadcrumbLink>
                   </BreadcrumbItem>
                   {activeRoute.split('/').length > 2 && <>
                     <BreadcrumbSeparator className="hidden md:block" />
                     <BreadcrumbItem>
-                      <BreadcrumbPage>{formatPathSegment(activeRoute.split('/')[2])}</BreadcrumbPage>
+                      <BreadcrumbPage>{formatPathSegment(activeRoute.split('/')[2] || '')}</BreadcrumbPage>
                     </BreadcrumbItem>
                   </>}
                 </BreadcrumbList>

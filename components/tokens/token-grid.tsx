@@ -47,7 +47,7 @@ export function TokenGrid({ tokens, prices }: TokenGridProps) {
                                 </div>
 
                                 {/* Price if available */}
-                                {prices[token.contractId] > 0 ? (
+                                {prices[token.contractId]! > 0 ? (
                                     <div className="text-xl font-semibold text-white/90">
                                         ${Number(prices[token.contractId]).toFixed(8).toLocaleString()}
                                     </div>

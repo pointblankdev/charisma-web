@@ -37,7 +37,7 @@ const SUPPORTED_TOKENS: Token[] = [
 ];
 
 export const DepositDialog = ({ open, onOpenChange, }: any) => {
-    const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0]);
+    const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0] as Token);
     const [amount, setAmount] = useState<string>("");
     const { stxAddress, blazeBalances, getBalance } = useGlobal();
 
@@ -138,7 +138,7 @@ export const DepositDialog = ({ open, onOpenChange, }: any) => {
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     const numValue = Number(value);
-                                    if (numValue <= 10 && (!value.includes('.') || value.split('.')[1]?.length <= selectedToken.decimals)) {
+                                    if (numValue <= 10 && (!value.includes('.') || value.split('.')[1]!.length <= selectedToken.decimals)) {
                                         setAmount(value);
                                     }
                                 }}
@@ -270,7 +270,7 @@ export const WithdrawDialog = ({ open, onOpenChange, }: any) => {
                                 value={amount}
                                 onChange={(e) => {
                                     const value = e.target.value;
-                                    if (!value.includes('.') || value.split('.')[1]?.length <= selectedToken.decimals) {
+                                    if (!value.includes('.') || value.split('.')[1]!.length <= selectedToken.decimals) {
                                         setAmount(value);
                                     }
                                 }}
@@ -303,7 +303,7 @@ export const TransferDialog = ({ open, onOpenChange, prices, }: any) => {
     const [amount, setAmount] = useState<string>("");
     const [recipientAddress, setRecipientAddress] = useState<string>("");
     const [isValidAddress, setIsValidAddress] = useState(false);
-    const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0]);
+    const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0] as Token);
     const { stxAddress, friends, addFriend, removeFriend, updateFriendLastUsed, blazeBalances } = useGlobal();
 
     // Initialize Blaze client
@@ -489,7 +489,7 @@ export const TransferDialog = ({ open, onOpenChange, prices, }: any) => {
                                 value={amount}
                                 onChange={(e) => {
                                     const value = e.target.value;
-                                    if (!value.includes('.') || value.split('.')[1]?.length <= selectedToken.decimals) {
+                                    if (!value.includes('.') || value.split('.')[1]!.length <= selectedToken.decimals) {
                                         setAmount(value);
                                     }
                                 }}

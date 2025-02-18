@@ -263,7 +263,7 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
         tokenSymbol: 'WELSH',
         tokenIcon: '/welsh-logo.png',
         tokenPrice: prices['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'] || 0,
-        tokenBalance: balances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0']?.total / 10 ** 6 || 0,
+        tokenBalance: balances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0']!.total / 10 ** 6 || 0,
         tokenDecimals: 6,
     }]
 

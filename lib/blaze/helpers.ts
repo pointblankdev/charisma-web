@@ -39,7 +39,7 @@ export async function verifyBlazeSignature(
         senderAddress: signer
     };
 
-    const result = await fetchCallReadOnlyFunction(options);
+    const result = await fetchCallReadOnlyFunction(options as any);
     return result.type === ClarityType.BoolTrue;
 }
 

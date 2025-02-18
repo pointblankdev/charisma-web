@@ -56,12 +56,14 @@ const TokenListItem = ({ token, metadata }: { token: FormattedToken; metadata?: 
     if (e.button === 2) return;
 
     const baseContractId = token.contractId.split('::')[0];
-    navigator.clipboard.writeText(baseContractId);
-    toast({
-      title: 'Contract ID copied to clipboard',
-      description: baseContractId,
-      duration: 2000
-    });
+    if (baseContractId) {
+      navigator.clipboard.writeText(baseContractId);
+      toast({
+        title: 'Contract ID copied to clipboard',
+        description: baseContractId,
+        duration: 2000
+      });
+    }
   };
 
   // If no metadata yet, show placeholder content

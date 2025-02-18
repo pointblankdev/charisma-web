@@ -16,11 +16,11 @@ const HealthBar = React.forwardRef<
     let baseColor;
     if (value <= 50) {
       baseColor = darkRed.map((channel, index) =>
-        Math.round(channel + (darkYellow[index] - channel) * (value / 50))
+        Math.round(channel + (darkYellow[index]! - channel) * (value / 50))
       );
     } else {
       baseColor = darkYellow.map((channel, index) =>
-        Math.round(channel + (darkGreen[index] - channel) * ((value - 50) / 50))
+        Math.round(channel + (darkGreen[index]! - channel) * ((value - 50) / 50))
       );
     }
 

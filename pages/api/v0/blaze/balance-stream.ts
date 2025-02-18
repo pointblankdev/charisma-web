@@ -28,16 +28,17 @@ export default async function handler(req: NextRequest) {
                 const checkForUpdates = async () => {
                     try {
                         // Get updates since last check using zrange with min/max scores
-                        const updates = await kv.zrange(
+                        const rawUpdates = await kv.zrange(
                             'blaze-balance-updates',
                             lastTimestamp,
                             '+inf',
                             { byScore: true }
-                        ) as BalanceUpdate[];
+                        ) as string[];
 
-                        if (updates && updates.length > 0) {
-                            // Send each update to the client
-                            for (const update of updates) {
+                        if (rawUpdates && rawUpdates.length > 0) {
+                            // Parse and send each update to the client
+                            for (const rawUpdate of rawUpdates) {
+                                const update = JSON.parse(rawUpdate) as BalanceUpdate;
                                 const data = `data: ${JSON.stringify(update)}\n\n`;
                                 controller.enqueue(encoder.encode(data));
                                 lastTimestamp = Math.max(lastTimestamp, update.timestamp);

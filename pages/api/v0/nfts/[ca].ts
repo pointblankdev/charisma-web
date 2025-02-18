@@ -17,7 +17,7 @@ type NFTItem = {
 function shuffleArray<T>(array: T[]): T[] {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
-        [array[i], array[j]] = [array[j], array[i]];
+        [array[i] as any, array[j] as any] = [array[j], array[i]];
     }
     return array;
 }
@@ -53,7 +53,7 @@ export default async function nftCollectionMetadataApi(
                 // Assign IDs and set metadata for each NFT
                 for (let i = 0; i < allNFTs.length; i++) {
                     const nftId = (i + 1).toString();
-                    const { name, image } = allNFTs[i];
+                    const { name, image } = allNFTs[i] as { name: string; image: string };
                     setNftMetadata(ca, nftId, {
                         name: `${name} #${nftId}`,
                         image: image

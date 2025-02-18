@@ -22,7 +22,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         });
 
         const tx = await makeContractCall({
-            senderKey: wallet.accounts[0].stxPrivateKey,
+            senderKey: wallet.accounts[0]?.stxPrivateKey || '',
             network: 'mainnet',
             contractAddress: 'SPGYCP878RYFVT03ZT8TWGPKNYTSQB1578VVXHGE',
             contractName: 'powerful-farmer',

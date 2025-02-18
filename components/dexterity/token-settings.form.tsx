@@ -344,7 +344,7 @@ export function TokenSettingsForm({ prices, isGenerating, tokenAMetadata, tokenB
               max={5}
               step={0.01}
               value={[formValues.lpRebatePercent]}
-              onValueChange={([value]) => setValue('lpRebatePercent', value)}
+              onValueChange={([value]) => setValue('lpRebatePercent', value || 0)}
               className="my-4"
             />
             <div className="flex justify-between text-xs text-muted-foreground">

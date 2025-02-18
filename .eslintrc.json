@@ -3,15 +3,21 @@
   "plugins": ["@typescript-eslint", "react-hooks"],
   "parserOptions": {
     "project": "./tsconfig.json",
-    "project2": "/next.config.js"
+    "ecmaVersion": 2020,
+    "sourceType": "module",
+    "ecmaFeatures": {
+      "jsx": true
+    }
+  },
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
   },
   "extends": [
-    "plugin:@typescript-eslint/eslint-recommended",
     "plugin:@typescript-eslint/recommended",
-    "plugin:@typescript-eslint/recommended-requiring-type-checking",
-    "prettier",
-    "prettier/@typescript-eslint",
-    "prettier/react"
+    "plugin:react-hooks/recommended",
+    "prettier"
   ],
   "rules": {
     "@typescript-eslint/no-unused-vars": [
@@ -32,6 +38,12 @@
     "@typescript-eslint/no-unsafe-assignment": 0,
     "@typescript-eslint/restrict-template-expressions": 0,
     "@typescript-eslint/no-empty-function": 0,
-    "@typescript-eslint/restrict-plus-operands": "error"
+    "@typescript-eslint/restrict-plus-operands": "error",
+    "@typescript-eslint/no-misused-promises": [
+      "error",
+      {
+        "checksVoidReturn": false
+      }
+    ]
   }
 }

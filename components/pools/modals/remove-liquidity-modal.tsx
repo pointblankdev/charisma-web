@@ -132,8 +132,8 @@ export const RemoveLiquidityModal = ({ pool, tokenPrices, onRemoveLiquidity, tri
             <Slider
               value={[amount]}
               onValueChange={async ([val]) => {
-                setAmount(val);
-                debouncedFetchQuote(val);
+                setAmount(val || 0);
+                debouncedFetchQuote(val || 0);
               }}
               max={maxAmount}
               step={0.001}

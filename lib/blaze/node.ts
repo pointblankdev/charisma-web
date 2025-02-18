@@ -16,7 +16,7 @@ export class BlazeTransferService {
 
     private static readonly MINIMUM_BATCH_SIZE = 1;
 
-    static getBatchSize(token: string): number {
+    static getBatchSize(token: string): any {
         return this.TOKEN_BATCH_SIZES[token] || this.TOKEN_BATCH_SIZES.default;
     }
 
@@ -71,12 +71,14 @@ export class BlazeBalanceService {
                 timestamp
             };
 
-            await kv.zadd('blaze-balance-updates', {
+            // Add to pipeline instead of immediate execution
+            pipeline.zadd('blaze-balance-updates', {
                 score: timestamp,
-                member: balanceUpdate
+                member: JSON.stringify(balanceUpdate) // Serialize the object for storage
             });
         }
 
+        // Execute all operations atomically
         await pipeline.exec();
     }
 

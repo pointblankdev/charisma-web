@@ -13,7 +13,7 @@ interface Props {
 export default function LoadingDots({ size = 2, height, children, reverse }: Props) {
   return (
     <span
-      className={cn(styles.loading, { [styles.reverse]: reverse })}
+      className={cn(styles.loading, { [styles.reverse as any]: reverse })}
       style={{
         ['--loading-dots-height' as string]: height ? px(height) : undefined,
         ['--loading-dots-size' as string]: size !== 2 ? px(size) : undefined

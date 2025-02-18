@@ -263,13 +263,13 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                     })
                     // Only proceed if we have valid vaults
                     if (vaults.length > 0) {
-                        const firstHopTokenInput = vaults[0].liquidity[opcodes[0]];
-                        const lastHopTokenOutput = vaults[vaults.length - 1].liquidity[Math.abs(opcodes[opcodes.length - 1] - 1)];
-                        const amountInput = (Number(firstArg.value) / 10 ** firstHopTokenInput.decimals).toLocaleString(
-                            undefined, { maximumFractionDigits: firstHopTokenInput.decimals }
+                        const firstHopTokenInput = vaults[0]!.liquidity[opcodes[0]!];
+                        const lastHopTokenOutput = vaults[vaults.length - 1]!.liquidity[Math.abs(opcodes[opcodes.length - 1]! - 1)];
+                        const amountInput = (Number(firstArg.value) / 10 ** firstHopTokenInput!.decimals).toLocaleString(
+                            undefined, { maximumFractionDigits: firstHopTokenInput!.decimals }
                         );
-                        const amountOutput = (Number(lastArg.value) / 10 ** lastHopTokenOutput.decimals).toLocaleString(
-                            undefined, { maximumFractionDigits: lastHopTokenOutput.decimals }
+                        const amountOutput = (Number(lastArg.value) / 10 ** lastHopTokenOutput!.decimals).toLocaleString(
+                            undefined, { maximumFractionDigits: lastHopTokenOutput!.decimals }
                         );
 
                         const description = (
@@ -278,12 +278,12 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                                     <div className="flex items-center gap-3 whitespace-nowrap w-max m-2">
                                         <div className="flex flex-col items-center min-w-[80px] flex-shrink-0">
                                             <img
-                                                src={firstHopTokenInput.image}
-                                                alt={firstHopTokenInput.symbol}
+                                                src={firstHopTokenInput!.image}
+                                                alt={firstHopTokenInput!.symbol}
                                                 className="w-8 h-8 rounded-full"
                                             />
                                             <div className="font-light text-xs">
-                                                {amountInput} {firstHopTokenInput.symbol}
+                                                {amountInput} {firstHopTokenInput!.symbol}
                                             </div>
                                         </div>
                                         <span className="text-muted-foreground text-xl flex-shrink-0 px-1.5">→</span>
@@ -304,8 +304,8 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                                         <span className="text-muted-foreground text-xl flex-shrink-0 px-1.5">→</span>
                                         <div className="flex flex-col items-center min-w-[80px] flex-shrink-0">
                                             <img
-                                                src={lastHopTokenOutput.image}
-                                                alt={lastHopTokenOutput.symbol}
+                                                src={lastHopTokenOutput!.image}
+                                                alt={lastHopTokenOutput!.symbol}
                                                 className="w-8 h-8 rounded-full"
                                             />
                                         </div>
@@ -316,7 +316,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                         );
 
                         toast({
-                            title: `Multihop Swap ${firstHopTokenInput.symbol} → ${lastHopTokenOutput.symbol}: ${_.capitalize(tx.tx_status)}`,
+                            title: `Multihop Swap ${firstHopTokenInput!.symbol} → ${lastHopTokenOutput!.symbol}: ${_.capitalize(tx.tx_status)}`,
                             description,
                             duration: 8000
                         });
@@ -340,22 +340,33 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         const eventSource = new EventSource('/api/v0/blaze/balance-stream');
 
         eventSource.onmessage = (event) => {
-            const update = JSON.parse(event.data);
+            try {
+                if (event.data === ' heartbeat') return;
 
-            setBlazeBalances((prev: Record<string, Balance>) => ({
-                ...prev,
-                [update.contract]: {
-                    ...prev[update.contract],
-                    total: update.balance,
-                    confirmed: update.balance,
-                    unconfirmed: 0
-                }
-            }));
+                const update = JSON.parse(event.data);
+                if (!update || typeof update !== 'object') return;
+
+                setBlazeBalances((prev: Record<string, Balance>) => ({
+                    ...prev,
+                    [update.contract]: {
+                        ...prev[update.contract],
+                        total: update.balance,
+                        confirmed: update.balance,
+                        unconfirmed: 0
+                    }
+                }));
+            } catch (error) {
+                console.error('Error processing SSE message:', error);
+            }
         };
 
         eventSource.onerror = (error) => {
             console.error('SSE Error:', error);
             eventSource.close();
+            // Attempt to reconnect after a delay
+            setTimeout(() => {
+                fetchBlazeBalances();
+            }, 5000);
         };
 
         // Initial balance fetch
@@ -412,55 +423,39 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             <AppSidebar />
             <SidebarInset />
             <div className={cn('flex flex-col w-full z-10', styles.background)}>
-                <GlobalContext.Provider
-                    value={{
-                        // Wallet state
-                        balances,
-                        wallet,
-                        getKeyByContractAddress,
-                        getBalanceByKey,
-                        getBalance,
-
-                        // Global state
-                        stxAddress,
-                        block,
-                        setBlock,
-                        tappedAt,
-                        tapTokens,
-                        isMempoolSubscribed,
-                        setIsMempoolSubscribed,
-                        vaultAnalytics,
-                        setVaultAnalytics,
-
-                        // Swap state
-                        fromToken,
-                        setFromToken,
-                        toToken,
-                        setToToken,
-
-                        // Dexterity state
-                        maxHops,
-                        setMaxHops,
-                        slippage,
-                        setSlippage,
-
-                        // Prices state
-                        prices,
-                        setPrices,
-
-                        // Blaze state
-                        blazeBalances,
-                        setBlazeBalances,
-
-                        // Friends list state
-                        friends,
-                        addFriend,
-                        removeFriend,
-                        updateFriendLastUsed,
-                    }}
-                >
-                    <div >
-
+                <GlobalContext.Provider value={{
+                    balances,
+                    wallet,
+                    getKeyByContractAddress,
+                    getBalanceByKey,
+                    getBalance,
+                    stxAddress,
+                    block,
+                    setBlock,
+                    tappedAt,
+                    tapTokens,
+                    isMempoolSubscribed,
+                    setIsMempoolSubscribed,
+                    vaultAnalytics,
+                    setVaultAnalytics,
+                    fromToken,
+                    setFromToken,
+                    toToken,
+                    setToToken,
+                    maxHops,
+                    setMaxHops,
+                    slippage,
+                    setSlippage,
+                    prices,
+                    setPrices,
+                    blazeBalances,
+                    setBlazeBalances,
+                    friends,
+                    addFriend,
+                    removeFriend,
+                    updateFriendLastUsed,
+                }}>
+                    <div>
                         {children}
                     </div>
                 </GlobalContext.Provider>

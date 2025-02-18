@@ -7,7 +7,7 @@ export const craftOrSalvage = async (vault: Vault, index: number, tokens: Token[
         console.log('Processing vault:', vault.contractName, `${index + 1}/${tokens.length}`)
 
         // Get initial amount for LP token
-        const lpAmount = Math.floor(10 ** vault.decimals / prices[vault.contractId])
+        const lpAmount = Math.floor(10 ** vault.decimals / prices[vault.contractId]!)
         const halfLpAmount = Math.floor(lpAmount / 2)
 
         // Get all quotes in parallel
@@ -68,8 +68,8 @@ export const craftOrSalvage = async (vault: Vault, index: number, tokens: Token[
             sell: sell,
             delta: delta,
             usd: {
-                dx: (delta.dx * prices[vault.tokenA.contractId]) / 10 ** vault.tokenA.decimals,
-                dy: (delta.dy * prices[vault.tokenB.contractId]) / 10 ** vault.tokenB.decimals
+                dx: (delta.dx * prices[vault.tokenA.contractId]!) / 10 ** vault.tokenA.decimals,
+                dy: (delta.dy * prices[vault.tokenB.contractId]!) / 10 ** vault.tokenB.decimals
             }
         }
 

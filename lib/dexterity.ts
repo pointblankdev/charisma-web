@@ -163,7 +163,7 @@ export async function getIsVerifiedInteraction(
     const [address, name] = contract.split('.');
     const path = `/v2/contracts/call-read/${rulesAddress}/${rulesName}/is-verified-interaction` as any;
     const response = await client.POST(path, {
-      body: { sender: address, arguments: [cvToHex(contractPrincipalCV(address, name))] }
+      body: { sender: address, arguments: [cvToHex(contractPrincipalCV(address as any, name as any))] }
     });
     const verifiedCV = cvToValue(hexToCV(response.data.result)).value;
 

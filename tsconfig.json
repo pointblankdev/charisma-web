@@ -40,16 +40,19 @@
       {
         "name": "next"
       }
-    ]
+    ],
   },
   "exclude": [
     "node_modules",
-    "dungeon-master"
+    "dungeon-master",
+    ".next",
+    "out"
   ],
   "include": [
     "next-env.d.ts",
     "**/*.ts",
     "**/*.tsx",
-    ".next/types/**/*.ts"
+    ".next/types/**/*.ts",
+    "*.config.js"
   ]
 }

@@ -73,10 +73,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             response_format: "url"
         });
 
-        const imageUrl = response.data[0].url;
+        const imageUrl = response.data[0]?.url;
+
+        if (!imageUrl) {
+            return res.status(500).json({ error: 'Failed to generate image' });
+        }
 
         // Upload the generated image to Vercel Blob
-        const imageResponse = await fetch(imageUrl!);
+        const imageResponse = await fetch(imageUrl);
         const imageBuffer = await imageResponse.arrayBuffer();
         const blob = new Blob([imageBuffer]);
         const { url } = await put(`${contractId}-${Date.now()}.png`, blob, {

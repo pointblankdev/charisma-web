@@ -139,7 +139,7 @@ export default async function handler(
         console.log('Queue size:', queueSize);
 
         // Check if we should process the batch
-        if (shouldProcessBatch(queueSize)) {
+        if (shouldProcessBatch(queueSize || 0)) {
             processResult = await subnet.processTransfers();
             lastBatchProcessTime = Date.now();
             console.log('Batch process result:', processResult);
