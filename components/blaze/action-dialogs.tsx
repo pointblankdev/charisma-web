@@ -17,6 +17,7 @@ export interface Token {
     icon: string;
     contract: string;
     identifier: string;
+    decimals: number;
 }
 
 const SUPPORTED_TOKENS: any[] = [
@@ -26,7 +27,8 @@ const SUPPORTED_TOKENS: any[] = [
         icon: '/welsh-logo.png',
         contract: 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token',
         identifier: 'welshcorgicoin',
-        blazeContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2'
+        blazeContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2',
+        decimals: 6
     }
 ];
 
