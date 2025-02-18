@@ -53,7 +53,7 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                     <div className="hidden sm:block w-[1px] bg-border" />
 
                     <div className="flex gap-2">
-                        <SendTokensButton onClick={() => setOpenTransfer(true)} disabled={true} />
+                        <SendTokensButton onClick={() => setOpenTransfer(true)} disabled={false} />
                         {/* <FaucetButton /> */}
                     </div>
 

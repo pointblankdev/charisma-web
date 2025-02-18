@@ -19,12 +19,14 @@ type TokenCardProps = {
     icon: string;
     price: number;
     isLoading?: boolean;
+    blazeContract: string;
 };
 
-const TokenCard = ({ token, balance, icon, price, isLoading }: TokenCardProps) => {
+const TokenCard = ({ token, balance, icon, price, isLoading, blazeContract }: TokenCardProps) => {
     const [structuredDataHash, setStructuredDataHash] = useState<string | null>(null);
     const [isPending, setIsPending] = useState(false);
     const [pendingAmount, setPendingAmount] = useState<number>(0);
+    const [pendingAction, setPendingAction] = useState<'deposit' | 'withdraw' | null>(null);
     const lastBalanceRef = useRef(balance);
 
     // Use color-thief to extract colors from the token logo
@@ -36,10 +38,19 @@ const TokenCard = ({ token, balance, icon, price, isLoading }: TokenCardProps) =
     // Listen for deposit/withdraw events
     useEffect(() => {
         const handleTransaction = (event: CustomEvent) => {
+            console.log('event', event);
             // Only set pending if this event is for this token
-            if (event.detail?.token === token) {
+            if (event.detail?.token.blazeContract === blazeContract) {
                 setIsPending(true);
+                setPendingAction(event.detail.action);
                 setPendingAmount(event.detail.amount * (event.detail.action === 'withdraw' ? -1 : 1));
+
+                // Reset pending state after animation (2 minutes)
+                setTimeout(() => {
+                    setIsPending(false);
+                    setPendingAction(null);
+                    setPendingAmount(0);
+                }, 120000);
             }
         };
 
@@ -56,6 +67,7 @@ const TokenCard = ({ token, balance, icon, price, isLoading }: TokenCardProps) =
     useEffect(() => {
         if (lastBalanceRef.current !== balance) {
             setIsPending(false);
+            setPendingAction(null);
             setPendingAmount(0);
             lastBalanceRef.current = balance;
         }
@@ -88,20 +100,29 @@ const TokenCard = ({ token, balance, icon, price, isLoading }: TokenCardProps) =
     }
 
     return (
-        <Card className="bg-accent/5 border-primary/20 relative overflow-hidden">
+        <Card className={`bg-accent/5 border-primary/20 relative overflow-hidden ${isPending ? 'ring-1 ring-primary/20' : ''}`}>
             <CardContent className="flex items-center justify-between p-0">
                 <div className="flex items-center z-10">
-                    <Image src={icon} alt={token} className="w-12 h-12 m-4 rounded-sm" width={200} height={200} />
-                    <div className='leading-tight'>
-                        <div className="flex items-center gap-2">
-                            <p className="text-sm text-gray-400">{token} Balance</p>
-                            {isPending && (
+                    <div className="relative">
+                        <Image src={icon} alt={token} className="w-12 h-12 m-4 rounded-sm" width={200} height={200} />
+                        {isPending && (
+                            <div className="absolute top-2 right-2 bg-background/80 rounded-full p-1 shadow-md">
                                 <div className="relative">
                                     <Flame className="w-4 h-4 text-primary animate-pulse" />
                                     <div className="absolute inset-0">
                                         <Flame className="w-4 h-4 text-primary/30 animate-ping" />
                                     </div>
                                 </div>
+                            </div>
+                        )}
+                    </div>
+                    <div className='leading-tight'>
+                        <div className="flex items-center gap-2">
+                            <p className="text-sm text-gray-400">{token} Balance</p>
+                            {isPending && (
+                                <span className="text-xs text-primary animate-pulse">
+                                    {pendingAction === 'deposit' ? 'Depositing...' : 'Withdrawing...'}
+                                </span>
                             )}
                         </div>
                         <p className={`text-2xl font-bold ${isPending ? 'animate-pulse' : ''}`}>
@@ -234,8 +255,6 @@ type PortfolioCardsProps = {
     prices: Record<string, number>;
 };
 
-
-
 export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
     const tokens = [{
         tokenContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2',
@@ -271,38 +290,19 @@ export function PortfolioCards({ balances, prices }: PortfolioCardsProps) {
                 </div>
             </div>
             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                {isLoading ? (
-                    // Show skeleton cards while loading
-                    Array.from({ length: 3 }).map((_, i) => (
+                {tokens.map(({ tokenContract, tokenSymbol, tokenIcon, tokenPrice, tokenBalance }) => {
+                    return (
                         <TokenCard
-                            key={`skeleton-${i}`}
-                            token=""
-                            balance={0}
-                            icon=""
-                            price={0}
-                            isLoading={true}
+                            key={tokenContract}
+                            token={tokenSymbol}
+                            balance={tokenBalance}
+                            icon={tokenIcon}
+                            price={tokenPrice}
+                            isLoading={isLoading}
+                            blazeContract={tokenContract}
                         />
-                    ))
-                ) : (
-                    // Map through available tokens
-                    [{
-                        tokenContract: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2',
-                        tokenSymbol: 'WELSH',
-                        tokenIcon: '/welsh-logo.png',
-                        tokenPrice: prices['SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'] || 0,
-                        tokenBalance: balances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2']?.total / 10 ** 6 || 0,
-                    }].map(({ tokenContract, tokenSymbol, tokenIcon, tokenPrice, tokenBalance }) => {
-                        return (
-                            <TokenCard
-                                key={tokenContract}
-                                token={tokenSymbol}
-                                balance={tokenBalance}
-                                icon={tokenIcon}
-                                price={tokenPrice}
-                            />
-                        );
-                    })
-                )}
+                    );
+                })}
             </div>
         </div>
     );

@@ -226,7 +226,7 @@ export function WithdrawButton({ onClick }: ActionButtonProps) {
                     ) : (
                         <div className="inline-flex text-xs bg-muted/50 p-2 rounded items-center gap-2 mt-4">
                             <span className="w-2 h-2 rounded-full bg-green-500" />
-                            Available balance: {balance} WELSH
+                            Available balance: {balance / 1_000_000} WELSH
                         </div>
                     )}
                 </TooltipContent>

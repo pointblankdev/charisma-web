@@ -70,7 +70,7 @@ export async function handleTransfer({ token, from, to, amount }: SignTransferPa
             network: STACKS_MAINNET,
             onFinish: async (data) => {
                 try {
-                    const response = await axios.post('/api/v0/blaze/xfer', {
+                    const response = await axios.post(`/api/v0/blaze/subnets/${getBlazeContractForToken(token.contract)}/xfer`, {
                         signature: data.signature,
                         from,
                         token: token.contract,
@@ -187,6 +187,8 @@ export async function handleDeposit({ token, amount, stxAddress }: TransactionPa
                         action: 'deposit'
                     }
                 }));
+
+                console.log('Deposit successful', data);
 
                 toast({
                     title: "Deposit Successful",

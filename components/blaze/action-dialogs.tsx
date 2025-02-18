@@ -159,18 +159,10 @@ export const WithdrawDialog = ({
     onOpenChange: (open: boolean) => void;
     onConfirm: (params: TransactionParams) => void;
 }) => {
-    const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0]);
+    const [selectedToken, setSelectedToken] = useState<any>(SUPPORTED_TOKENS[0]);
     const [amount, setAmount] = useState<string>("");
-    const [balance, setBalance] = useState<number>(0);
-    const { stxAddress } = useGlobal();
+    const { stxAddress, blazeBalances, getBalance } = useGlobal();
 
-    useEffect(() => {
-        const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress, selectedToken.contract);
-            setBalance(balance);
-        };
-        fetchBalance();
-    }, [stxAddress]);
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -253,11 +245,11 @@ export const WithdrawDialog = ({
                                 value={amount}
                                 onChange={(e) => setAmount(e.target.value)}
                                 className="pl-24"
-                                max={balance}
+                                max={blazeBalances[selectedToken.blazeContract]?.total / 1_000_000}
                             />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Available balance: {balance / 1_000_000} {selectedToken.symbol}
+                            Available balance: {blazeBalances[selectedToken.blazeContract]?.total / 1_000_000} {selectedToken.symbol}
                         </p>
                     </div>
                 </div>
@@ -265,7 +257,7 @@ export const WithdrawDialog = ({
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
                         onClick={() => onConfirm({ token: selectedToken, amount, stxAddress })}
-                        disabled={!amount || Number(amount) > balance}
+                        disabled={!amount || Number(amount) > blazeBalances[selectedToken.blazeContract]?.total / 1_000_000}
                     >
                         Withdraw
                     </AlertDialogAction>

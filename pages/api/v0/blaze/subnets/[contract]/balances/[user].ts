@@ -8,8 +8,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     try {
         const subnet = new Subnet(contract as string);
         const balance = await subnet.getBalance(user as string);
-        // Add cache control headers
-        res.setHeader('Cache-Control', 's-maxage=10');
         res.status(200).json(balance);
 
     } catch (error) {
