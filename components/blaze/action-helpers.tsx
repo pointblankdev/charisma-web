@@ -89,6 +89,16 @@ export async function handleTransfer({ token, from, to, amount }: SignTransferPa
                         nonce: nextNonce
                     });
 
+                    // Dispatch event for optimistic updates
+                    window.dispatchEvent(new CustomEvent('blazeTransfer', {
+                        detail: {
+                            token,
+                            amount: tokens / 10 ** token.decimals,
+                            to,
+                            action: 'transfer'
+                        }
+                    }));
+
                     showTransferSuccessToast({ token, amount: tokens, to });
                     resolve(response.data);
                 } catch (error) {
@@ -172,80 +182,4 @@ export async function handleWithdraw({ token, amount, stxAddress }: TransactionP
         console.error('Withdrawal error:', error);
         showWithdrawErrorToast(error);
     }
-}
-
-/**
- * Fetches the balance of a given address from the Blaze contract
- * @param address The Stacks address to check balance for
- * @returns Promise<number> Balance in base units (not micros)
- * @throws Error if the balance fetch fails
- */
-export async function getBalance(address: string, tokenContract: string): Promise<number> {
-    const [contractAddress, contractName] = getBlazeContractForToken(tokenContract).split('.');
-    try {
-        const options = {
-            contractAddress,
-            contractName,
-            functionName: "get-balance",
-            functionArgs: [
-                Cl.principal(address)
-            ],
-            network: STACKS_MAINNET,
-            senderAddress: address,
-        };
-
-        const result = await fetchCallReadOnlyFunction(options);
-
-        // Check if we got a valid uint response
-        if (result.type !== ClarityType.UInt) {
-            throw new Error("Unexpected response type from contract");
-        }
-
-        // Convert from micros to base units
-        return Number(result.value);
-    } catch (error) {
-        console.error("Error fetching balance:", error);
-        return 0;
-    }
-}
-
-/**
- * Fetches the current nonce for a given address from the Blaze contract
- * @param address The Stacks address to check nonce for
- * @returns Promise<number> Current nonce value
- * @throws Error if the nonce fetch fails
- */
-export async function getNonce(address: string, blazeContract: string): Promise<number> {
-    const [contractAddress, contractName] = blazeContract.split('.');
-    try {
-        const options = {
-            contractAddress,
-            contractName,
-            functionName: "get-nonce",
-            functionArgs: [
-                Cl.principal(address)
-            ],
-            network: STACKS_MAINNET,
-            senderAddress: address,
-        };
-
-        const result = await fetchCallReadOnlyFunction(options);
-
-        // Check if we got a valid uint response
-        if (result.type !== ClarityType.UInt) {
-            throw new Error("Unexpected response type from contract");
-        }
-
-        return Number(result.value);
-    } catch (error) {
-        console.error("Error fetching nonce:", error);
-        throw error;
-    }
-}
-
-export async function fetchBlazeBalances(user: string) {
-    const response = await fetch(`/api/v0/blaze/user/${user}`);
-    const data = await response.json();
-    console.log(data);
-    return data.total;
 }

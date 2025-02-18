@@ -44,7 +44,7 @@ const TokenCard = ({ token, balance, icon, price, isLoading, blazeContract, deci
             if (event.detail?.token.blazeContract === blazeContract) {
                 setIsPending(true);
                 setPendingAction(event.detail.action);
-                setPendingAmount(event.detail.amount * (event.detail.action === 'withdraw' ? -1 : 1));
+                setPendingAmount(event.detail.amount * (event.detail.action === 'deposit' ? 1 : -1));
 
                 // Reset pending state after animation (2 minutes)
                 setTimeout(() => {
@@ -57,10 +57,12 @@ const TokenCard = ({ token, balance, icon, price, isLoading, blazeContract, deci
 
         window.addEventListener('blazeDeposit', handleTransaction as EventListener);
         window.addEventListener('blazeWithdraw', handleTransaction as EventListener);
+        window.addEventListener('blazeTransfer', handleTransaction as EventListener);
 
         return () => {
             window.removeEventListener('blazeDeposit', handleTransaction as EventListener);
             window.removeEventListener('blazeWithdraw', handleTransaction as EventListener);
+            window.removeEventListener('blazeTransfer', handleTransaction as EventListener);
         };
     }, [token]);
 
@@ -122,7 +124,7 @@ const TokenCard = ({ token, balance, icon, price, isLoading, blazeContract, deci
                             <p className="text-sm text-gray-400">{token} Balance</p>
                             {isPending && (
                                 <span className="text-xs text-primary animate-pulse">
-                                    {pendingAction === 'deposit' ? 'Depositing...' : 'Withdrawing...'}
+                                    {pendingAction === 'deposit' ? 'Depositing...' : 'Transferring...'}
                                 </span>
                             )}
                         </div>

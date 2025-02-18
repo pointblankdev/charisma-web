@@ -5,10 +5,9 @@ import { Check, Flame, Wallet, Zap, PlusCircle, UserPlus, X } from "lucide-react
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { useGlobal } from "@lib/hooks/global-context";
-import { getBalance, SignTransferParams, TransactionParams } from "./action-helpers";
+import { SignTransferParams, TransactionParams } from "./action-helpers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 import { Button } from "@components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@components/ui/dialog";
 import type { Friend } from "@lib/hooks/global-context";
 
 export interface Token {
@@ -18,9 +17,10 @@ export interface Token {
     contract: string;
     identifier: string;
     decimals: number;
+    blazeContract: string;
 }
 
-const SUPPORTED_TOKENS: any[] = [
+const SUPPORTED_TOKENS: Token[] = [
     {
         symbol: 'WELSH',
         name: 'Welsh',
@@ -284,16 +284,8 @@ export const TransferDialog = ({
     const [recipientAddress, setRecipientAddress] = useState<string>("");
     const [isValidAddress, setIsValidAddress] = useState(false);
     const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0]);
-    const { stxAddress, friends, addFriend, removeFriend, updateFriendLastUsed } = useGlobal();
-    const [balance, setBalance] = useState<number>(0);
-
-    useEffect(() => {
-        const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress, selectedToken.contract);
-            setBalance(balance);
-        };
-        fetchBalance();
-    }, [stxAddress]);
+    const { stxAddress, friends, addFriend, removeFriend, updateFriendLastUsed, blazeBalances } = useGlobal();
+    const balance = blazeBalances[selectedToken.blazeContract]?.total || 0;
 
     const validateStacksAddress = (address: string) => {
         try {

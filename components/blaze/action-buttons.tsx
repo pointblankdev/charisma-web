@@ -18,7 +18,6 @@ import {
 import Image from 'next/image';
 import { useEffect } from 'react';
 import { useState } from 'react';
-import { getBalance } from './action-helpers';
 
 interface ActionButtonProps {
     onClick?: () => void;
@@ -133,16 +132,9 @@ export function SendTokensButton({ onClick, disabled }: ActionButtonProps) {
 
 // Deposit Button
 export function DepositButton({ onClick }: ActionButtonProps) {
-    const [balance, setBalance] = useState<number>(0);
-    const { stxAddress } = useGlobal();
+    const { stxAddress, blazeBalances } = useGlobal();
+    const balance = blazeBalances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2']?.total || 0;
 
-    useEffect(() => {
-        const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress, 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token');
-            setBalance(balance);
-        };
-        fetchBalance();
-    }, [stxAddress]);
     return (
         <TooltipProvider>
             <Tooltip delayDuration={300}>
@@ -184,16 +176,9 @@ export function DepositButton({ onClick }: ActionButtonProps) {
 
 // Withdraw Button
 export function WithdrawButton({ onClick }: ActionButtonProps) {
-    const [balance, setBalance] = useState<number>(0);
-    const { stxAddress } = useGlobal();
+    const { stxAddress, blazeBalances } = useGlobal();
+    const balance = blazeBalances['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-test-2']?.total || 0;
 
-    useEffect(() => {
-        const fetchBalance = async () => {
-            const balance = await getBalance(stxAddress, 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token');
-            setBalance(balance);
-        };
-        fetchBalance();
-    }, [stxAddress]);
     return (
         <TooltipProvider>
             <Tooltip delayDuration={300}>

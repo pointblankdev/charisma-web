@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { generateBlazeSignature, getBlazeBalance, getBlazeContractForToken, setBlazeBalance, setBlazeNonce, verifyBlazeSignature } from '@lib/blaze/helpers';
-import { getNonce } from '@components/blaze/action-helpers';
 import { Subnet } from 'blaze-sdk';
 
 export default async function handler(
@@ -141,12 +140,12 @@ export default async function handler(
                 : [0, winningAmount];
 
 
-            const hostNonce = await getNonce(gameHostAddress, contract);
+            const serverNonce = Date.now();
             const serverSignature = await generateBlazeSignature(
                 token,
                 from,
                 winningAmount,
-                hostNonce
+                serverNonce
             );
 
             console.info({
@@ -154,7 +153,6 @@ export default async function handler(
                 message: 'Generated winning signature',
                 from,
                 winningAmount,
-                nextNonce: nonce + 1,
                 signaturePrefix: serverSignature.slice(0, 10),
                 principals: {
                     principal1,
@@ -169,7 +167,7 @@ export default async function handler(
                 signer: gameHostAddress,
                 to: from, // Sending back to the player
                 amount: winningAmount,
-                nonce: nonce + 1,
+                nonce: serverNonce,
                 signature: serverSignature
             };
 
@@ -196,7 +194,6 @@ export default async function handler(
             result,
             won,
             newBalance,
-            nextNonce: won ? nonce + 1 : nonce
         };
 
         console.info({
