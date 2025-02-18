@@ -14,9 +14,10 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from "@components/ui/tooltip";
-
+import { getBlazeContractForToken } from '@lib/blaze/helpers';
 
 const gameToken = 'SP3NE50GEXFG9SZGTT51P40X2CKYSZ5CC4ZTZ7A2G.welshcorgicoin-token'
+const gameContract = getBlazeContractForToken(gameToken);
 
 export const CoinFlipGame = () => {
     const [choice, setChoice] = useState<'heads' | 'tails' | null>(null);
@@ -70,15 +71,7 @@ export const CoinFlipGame = () => {
                 lastChoice: playChoice
             });
 
-            setBlazeBalances({
-                ...blazeBalances,
-                [gameToken]: {
-                    balance: parseFloat(result.newBalance),
-                    credit: parseFloat(result.newBalance),
-                    nonce: result.nextNonce,
-                    contract: gameToken
-                }
-            });
+            console.log("UPDATE BALANCES HERE", blazeBalances)
 
             // Show success toast
             toast({
