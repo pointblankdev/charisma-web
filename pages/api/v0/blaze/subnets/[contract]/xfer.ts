@@ -38,8 +38,10 @@ export default async function handler(
             signature: `${signature.slice(0, 10)}...`
         });
 
+        const transferMessage: Transfer = { to, amount, nonce, signature, signer: from };
+
         // Verify signature
-        const isValid = await subnet.verifySignature({ signature, signer: from, to, amount, nonce });
+        const isValid = await subnet.verifySignature(transferMessage);
         if (!isValid) {
             console.warn('Invalid signature for transfer:', { from, to, nonce });
             return res.status(401).json({ error: 'Invalid signature' });
@@ -58,19 +60,23 @@ export default async function handler(
         console.log('Balances verified!');
 
         // Add transfer to queue
-        const transfer: Transfer = { to, amount, nonce, signature, signer: from };
-        await subnet.addTransferToQueue(transfer);
+        await subnet.addTransferToQueue(transferMessage);
 
         // Check queue length and process if queue is longer than 10
         const status = subnet.getStatus();
         console.log('Queue length:', status);
+
+        // Process transfers if queue is longer than 5
+        let processResult = null;
         if (status.queueSizes[contract] >= 5) {
-            await subnet.processTransfers();
+            processResult = await subnet.processTransfers();
+            console.log('Process transfers result:', processResult);
         }
 
         return res.status(200).json({
             success: true,
             queued: true,
+            processResult
         });
 
     } catch (error) {
