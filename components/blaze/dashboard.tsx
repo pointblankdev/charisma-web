@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { Flame } from 'lucide-react';
 import { BuyBitcoinButton, CashOutButton, DepositButton, SendTokensButton, WithdrawButton } from './action-buttons';
 import { TransferDialog, WithdrawDialog, DepositDialog } from './action-dialogs';
-import { handleDeposit, handleTransfer, handleWithdraw } from './action-helpers';
 import { PortfolioCards } from './portfolio-cards';
 import { useGlobal } from '@lib/hooks/global-context';
 import { Features } from './features';
@@ -76,9 +75,9 @@ const ProtocolDashboard = ({ prices }: { prices: Record<string, number> }) => {
                 {/* <FaucetCard /> */}
             </div>
 
-            <TransferDialog prices={prices} open={openTransfer} onOpenChange={setOpenTransfer} onConfirm={handleTransfer} />
-            <DepositDialog open={openDeposit} onOpenChange={setOpenDeposit} onConfirm={handleDeposit} />
-            <WithdrawDialog open={openWithdraw} onOpenChange={setOpenWithdraw} onConfirm={handleWithdraw} />
+            <TransferDialog prices={prices} open={openTransfer} onOpenChange={setOpenTransfer} />
+            <DepositDialog open={openDeposit} onOpenChange={setOpenDeposit} />
+            <WithdrawDialog open={openWithdraw} onOpenChange={setOpenWithdraw} />
         </div>
     );
 };

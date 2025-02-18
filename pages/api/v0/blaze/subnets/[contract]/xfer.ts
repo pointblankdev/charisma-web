@@ -68,7 +68,7 @@ export default async function handler(
 
         // Process transfers if queue is longer than 5
         let processResult = null;
-        if (status.queueSizes[contract] >= 5) {
+        if (status.queueSizes[contract] >= 2) {
             processResult = await subnet.processTransfers();
             console.log('Process transfers result:', processResult);
         }

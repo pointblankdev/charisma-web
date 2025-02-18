@@ -72,7 +72,7 @@
     "@vercel/blob": "^0.27.0",
     "@vercel/kv": "^0.2.2",
     "@vercel/speed-insights": "^1.0.10",
-    "blaze-sdk": "^0.1.15",
+    "blaze-sdk": "^0.1.18",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.0.0",
     "cmdk": "^0.2.0",

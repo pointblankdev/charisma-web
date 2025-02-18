@@ -1,14 +1,14 @@
 import { AlertDialog, AlertDialogTitle, AlertDialogContent, AlertDialogHeader, AlertDialogDescription, AlertDialogCancel, AlertDialogFooter, AlertDialogAction } from "@components/ui/alert-dialog";
 import { Input } from "@components/ui/input";
 import { Label } from "@components/ui/label";
-import { Check, Flame, Wallet, Zap, PlusCircle, UserPlus, X } from "lucide-react";
+import { Check, Flame, Wallet, Zap, UserPlus, X } from "lucide-react";
 import Image from "next/image";
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useGlobal } from "@lib/hooks/global-context";
-import { SignTransferParams, TransactionParams } from "./action-helpers";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@components/ui/select";
 import { Button } from "@components/ui/button";
 import type { Friend } from "@lib/hooks/global-context";
+import { Blaze } from "blaze-sdk";
 
 export interface Token {
     symbol: string;
@@ -32,10 +32,21 @@ const SUPPORTED_TOKENS: Token[] = [
     }
 ];
 
-export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean, onOpenChange: (open: boolean) => void, onConfirm: (params: TransactionParams) => void }) => {
+export const DepositDialog = ({ open, onOpenChange, }: any) => {
     const [selectedToken, setSelectedToken] = useState<any>(SUPPORTED_TOKENS[0]);
     const [amount, setAmount] = useState<string>("");
     const { stxAddress, blazeBalances, getBalance } = useGlobal();
+
+    // Initialize Blaze client
+    const blaze = new Blaze(selectedToken.blazeContract, stxAddress);
+
+    const handleDeposit = () => {
+        // Convert decimal amount to uint with proper decimals
+        const uintAmount = Number(amount) * (10 ** selectedToken.decimals);
+
+        console.log(uintAmount);
+        blaze.deposit(uintAmount);
+    };
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -118,30 +129,31 @@ export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean
                                 onChange={(e) => {
                                     const value = e.target.value;
                                     const numValue = Number(value);
-                                    if (numValue <= 10 && (!value.includes('.') || value.split('.')[1]?.length <= 6)) {
+                                    if (numValue <= 10 && (!value.includes('.') || value.split('.')[1]?.length <= selectedToken.decimals)) {
                                         setAmount(value);
                                     }
                                 }}
                                 className="pl-24"
                                 max={10}
                                 min={0}
+                                step={1 / (10 ** selectedToken.decimals)}
                             />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Maximum deposit: 10 {selectedToken.symbol} (up to 6 decimal places)
+                            Maximum deposit: 10 {selectedToken.symbol} (up to {selectedToken.decimals} decimal places)
                         </p>
                     </div>
                     <p className="text-xs text-muted-foreground leading-none">
-                        In Blaze Wallet: {blazeBalances[selectedToken.blazeContract]?.total / 1_000_000} {selectedToken.symbol}
+                        In Blaze Wallet: {(blazeBalances[selectedToken.blazeContract]?.total || 0) / (10 ** selectedToken.decimals)} {selectedToken.symbol}
                     </p>
                     <p className="text-xs text-muted-foreground leading-none">
-                        In Stacks Wallet: {getBalance(selectedToken.contract) / 1_000_000} {selectedToken.symbol}
+                        In Stacks Wallet: {(getBalance(selectedToken.contract) || 0) / (10 ** selectedToken.decimals)} {selectedToken.symbol}
                     </p>
                 </div>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                        onClick={() => onConfirm({ token: selectedToken, amount, stxAddress })}
+                        onClick={handleDeposit}
                         disabled={!amount || Number(amount) > 10}
                     >
                         Deposit
@@ -152,19 +164,21 @@ export const DepositDialog = ({ open, onOpenChange, onConfirm }: { open: boolean
     );
 };
 
-export const WithdrawDialog = ({
-    open,
-    onOpenChange,
-    onConfirm,
-}: {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    onConfirm: (params: TransactionParams) => void;
-}) => {
+export const WithdrawDialog = ({ open, onOpenChange, }: any) => {
     const [selectedToken, setSelectedToken] = useState<any>(SUPPORTED_TOKENS[0]);
     const [amount, setAmount] = useState<string>("");
-    const { stxAddress, blazeBalances, getBalance } = useGlobal();
+    const { stxAddress, blazeBalances } = useGlobal();
 
+    // Initialize Blaze client
+    const blaze = new Blaze(selectedToken.blazeContract, stxAddress);
+
+    const handleWithdraw = () => {
+        // Convert decimal amount to uint with proper decimals
+        const uintAmount = Number(amount) * (10 ** selectedToken.decimals);
+        blaze.withdraw(uintAmount);
+    };
+
+    const maxBalance = (blazeBalances[selectedToken.blazeContract]?.total || 0) / (10 ** selectedToken.decimals);
 
     return (
         <AlertDialog open={open} onOpenChange={onOpenChange}>
@@ -245,21 +259,28 @@ export const WithdrawDialog = ({
                                 type="number"
                                 placeholder="0.0"
                                 value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (!value.includes('.') || value.split('.')[1]?.length <= selectedToken.decimals) {
+                                        setAmount(value);
+                                    }
+                                }}
                                 className="pl-24"
-                                max={blazeBalances[selectedToken.blazeContract]?.total / 1_000_000}
+                                max={maxBalance}
+                                min={0}
+                                step={1 / (10 ** selectedToken.decimals)}
                             />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Available balance: {blazeBalances[selectedToken.blazeContract]?.total / 1_000_000} {selectedToken.symbol}
+                            Available balance: {maxBalance} {selectedToken.symbol}
                         </p>
                     </div>
                 </div>
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                        onClick={() => onConfirm({ token: selectedToken, amount, stxAddress })}
-                        disabled={!amount || Number(amount) > blazeBalances[selectedToken.blazeContract]?.total / 1_000_000}
+                        onClick={handleWithdraw}
+                        disabled={!amount || Number(amount) > maxBalance}
                     >
                         Withdraw
                     </AlertDialogAction>
@@ -269,23 +290,26 @@ export const WithdrawDialog = ({
     );
 };
 
-export const TransferDialog = ({
-    open,
-    onOpenChange,
-    onConfirm,
-    prices,
-}: {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
-    onConfirm: (params: SignTransferParams) => void;
-    prices: Record<string, number>;
-}) => {
+export const TransferDialog = ({ open, onOpenChange, prices, }: any) => {
     const [amount, setAmount] = useState<string>("");
     const [recipientAddress, setRecipientAddress] = useState<string>("");
     const [isValidAddress, setIsValidAddress] = useState(false);
     const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0]);
     const { stxAddress, friends, addFriend, removeFriend, updateFriendLastUsed, blazeBalances } = useGlobal();
-    const balance = blazeBalances[selectedToken.blazeContract]?.total || 0;
+
+    // Initialize Blaze client
+    const blaze = new Blaze(selectedToken.blazeContract, stxAddress);
+
+    const handleTransfer = () => {
+        // Convert decimal amount to uint with proper decimals
+        const uintAmount = Number(amount) * (10 ** selectedToken.decimals);
+        blaze.transfer({
+            to: recipientAddress,
+            amount: uintAmount
+        });
+    };
+
+    const maxBalance = (blazeBalances[selectedToken.blazeContract]?.total || 0) / (10 ** selectedToken.decimals);
 
     const validateStacksAddress = (address: string) => {
         try {
@@ -454,13 +478,20 @@ export const TransferDialog = ({
                                 type="number"
                                 placeholder="0.0"
                                 value={amount}
-                                onChange={(e) => setAmount(e.target.value)}
+                                onChange={(e) => {
+                                    const value = e.target.value;
+                                    if (!value.includes('.') || value.split('.')[1]?.length <= selectedToken.decimals) {
+                                        setAmount(value);
+                                    }
+                                }}
                                 className="pl-24"
-                                max={balance}
+                                max={maxBalance}
+                                min={0}
+                                step={1 / (10 ** selectedToken.decimals)}
                             />
                         </div>
                         <p className="text-xs text-muted-foreground">
-                            Available balance: {balance / 1_000_000} {selectedToken.symbol}
+                            Available balance: {maxBalance} {selectedToken.symbol}
                         </p>
                     </div>
                 </div>
@@ -468,13 +499,8 @@ export const TransferDialog = ({
                 <AlertDialogFooter>
                     <AlertDialogCancel>Cancel</AlertDialogCancel>
                     <AlertDialogAction
-                        onClick={() => onConfirm({
-                            token: selectedToken,
-                            from: stxAddress,
-                            amount: Number(amount),
-                            to: recipientAddress
-                        })}
-                        disabled={!amount || !isValidAddress || Number(amount) > balance}
+                        onClick={handleTransfer}
+                        disabled={!amount || !isValidAddress || Number(amount) > maxBalance}
                     >
                         Send
                     </AlertDialogAction>
