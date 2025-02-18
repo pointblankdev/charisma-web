@@ -55,24 +55,24 @@ export function useNotifications(address: string | undefined) {
                     // Handle heartbeat
                     if (event.data.trim() === 'heartbeat') return;
 
-                    console.log('Notification:', event.data);
-                    const notification = JSON.parse(event.data) as TransferNotification;
+                    const notification = event.data as TransferNotification;
+                    console.log('Notification:', notification);
 
                     // Add new notification to state
-                    setNotifications(prev => {
-                        // Check if we already have this notification
-                        if (prev.some(n => n.id === notification.id)) return prev;
+                    // setNotifications(prev => {
+                    //     // Check if we already have this notification
+                    //     if (prev.some(n => n.id === notification.id)) return prev;
 
-                        // Show toast for new notification
-                        toast({
-                            title: 'New Transfer',
-                            description: `${notification.from.slice(0, 6)}...${notification.from.slice(-4)} → ${notification.to.slice(0, 6)}...${notification.to.slice(-4)}: ${notification.amount.toLocaleString()} tokens`,
-                            duration: 5000
-                        });
+                    //     // Show toast for new notification
+                    //     toast({
+                    //         title: 'New Transfer',
+                    //         description: `${notification.from.slice(0, 6)}...${notification.from.slice(-4)} → ${notification.to.slice(0, 6)}...${notification.to.slice(-4)}: ${notification.amount.toLocaleString()} tokens`,
+                    //         duration: 5000
+                    //     });
 
-                        // Add new notification at the beginning
-                        return [notification, ...prev];
-                    });
+                    //     // Add new notification at the beginning
+                    //     return [notification, ...prev];
+                    // });
                 } catch (error) {
                     console.error('Error processing notification:', error);
                 }
