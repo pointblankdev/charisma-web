@@ -119,12 +119,22 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [prices, setPrices] = usePersistedState<any>('prices', {});
 
     // Blaze balances state
-    const [blazeBalances, setBlazeBalances] = useState<any>({});
-
-    console.log(blazeBalances)
+    const [blazeBalances, setBlazeBalances] = useState<Record<string, Balance>>({});
 
     // Friends list state
     const [friends, setFriends] = usePersistedState<Friend[]>('blaze-friends', [{ address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', lastUsed: Date.now() }]);
+
+    // Add fetchBlazeBalances function
+    const fetchBlazeBalances = useCallback(async () => {
+        if (!stxAddress) return;
+        try {
+            const response = await fetch(`/api/v0/blaze/subnets/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0/balances/${stxAddress}`);
+            const data = await response.json();
+            setBlazeBalances({ 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0': data });
+        } catch (error) {
+            console.error('Error fetching blaze balances:', error);
+        }
+    }, [stxAddress]);
 
     // Load user data and configure Dexterity
     useEffect(() => {
@@ -323,81 +333,54 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
     }, [toast]);
 
-    // Add this function before the useEffect blocks
-    const fetchBlazeBalances = useCallback(async () => {
-        if (!stxAddress) return;
-        try {
-            const response = await fetch(`/api/v0/blaze/subnets/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0/balances/${stxAddress}`);
-            const data = await response.json();
-            console.log(data)
-            setBlazeBalances({ 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0': data });
-        } catch (error) {
-            console.error('Error fetching blaze balances:', error);
-        }
-    }, [stxAddress, setBlazeBalances]);
-
+    // Set up SSE connection for real-time balance updates
     useEffect(() => {
-        let isSubscribed = true;
+        if (!stxAddress) return;
 
-        sc.subscribeBlocks((block) => {
-            setBlock(block as any);
-        });
+        const eventSource = new EventSource('/api/v0/blaze/balance-stream');
 
-        const processVaultAnalytics = async (block: any) => {
-            try {
-                const response = await fetch(`${siteUrl}/api/v0/vaults/analytics`);
-                const { vaults } = await response.json();
+        eventSource.onmessage = (event) => {
+            const update = JSON.parse(event.data);
 
-                // Only proceed if we're still subscribed
-                if (!isSubscribed) return;
-
-                const vaultAnalytics: any = {};
-
-                for (const [vaultId, analytics] of Object.entries(vaults)) {
-                    // Skip if we're no longer subscribed
-                    if (!isSubscribed) return;
-                    if (!tappedAt[vaultId]?.height || typeof tappedAt[vaultId] === 'number') tapTokens(vaultId)
-                    const vault = Dexterity.getVault(vaultId)
-                    const totalSupply = Number(vault?.supply || Infinity)
-                    vaultAnalytics[vaultId] = analytics;
-                    const energyPerBlock = (analytics as any).energyRate * totalSupply;
-                    vaultAnalytics[vaultId].engine = {
-                        energyPerBlockPerToken: (analytics as any).energyRate,
-                        energyPerBlock,
-                    };
+            setBlazeBalances((prev: Record<string, Balance>) => ({
+                ...prev,
+                [update.contract]: {
+                    ...prev[update.contract],
+                    total: update.balance,
+                    confirmed: update.balance,
+                    unconfirmed: 0
                 }
-
-                // Only update state if we're still subscribed
-                if (isSubscribed) {
-                    setVaultAnalytics(vaultAnalytics);
-                }
-            } catch (error) {
-                console.error('Error processing data:', error);
-            }
+            }));
         };
 
-        const getRealTimeData = async () => {
-            try {
-                await fetchBlazeBalances();
-                // await processVaultAnalytics(block);
-            } catch (error) {
-                console.error('Error fetching latest data:', error);
-            }
+        eventSource.onerror = (error) => {
+            console.error('SSE Error:', error);
+            eventSource.close();
         };
 
-        getRealTimeData();
+        // Initial balance fetch
+        fetchBlazeBalances();
 
         return () => {
-            isSubscribed = false;
-            sc.unsubscribeBlocks();
+            eventSource.close();
         };
-    }, [stxAddress]);
+    }, [stxAddress, fetchBlazeBalances]);
+
+    // Remove the polling interval from getRealTimeData
+    // const getRealTimeData = async () => {
+    //     try {
+    //         await fetchBlazeBalances();
+    //     } catch (error) {
+    //         console.error('Error fetching latest data:', error);
+    //     }
+    // };
 
     // function to update record of tapped at
     const tapTokens = (vaultId: string) => {
         setTappedAt((prev: any) => ({ ...prev, [vaultId]: block }));
     };
 
+    // Friends list functions
     const addFriend = useCallback((address: string) => {
         setFriends((currentFriends: Friend[]) => {
             // Don't add if address already exists
@@ -467,9 +450,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
 
                         // Blaze state
                         blazeBalances,
-                        setBlazeBalances: (balances) => {
-                            setBlazeBalances(Object.assign({}, balances));
-                        },
+                        setBlazeBalances,
 
                         // Friends list state
                         friends,

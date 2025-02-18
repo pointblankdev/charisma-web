@@ -57,9 +57,24 @@ export class BlazeTransferService {
 export class BlazeBalanceService {
     static async updateBalances(contract: string, updates: { address: string, amount: number }[]): Promise<void> {
         const pipeline = kv.pipeline();
+        const timestamp = Date.now();
 
         for (const update of updates) {
+            // Update the balance in KV store
             pipeline.set(`balance:${contract}:${update.address}`, Number(update.amount));
+
+            // Add update to sorted set for real-time updates
+            const balanceUpdate = {
+                contract,
+                address: update.address,
+                balance: Number(update.amount),
+                timestamp
+            };
+
+            await kv.zadd('blaze-balance-updates', {
+                score: timestamp,
+                member: balanceUpdate
+            });
         }
 
         await pipeline.exec();
