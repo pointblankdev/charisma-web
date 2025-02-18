@@ -17,8 +17,6 @@ describe('Blaze Node Queue Tests', () => {
         const batchSize = 10; // Minimum batch size from the API
         const initialNonce = mockNonce;
 
-        let lastQueueLength = 0;
-
         for (let i = 0; i < batchSize; i++) {
             const signature = await generateBlazeSignature(
                 mockToken,
