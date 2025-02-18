@@ -1,5 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import { broadcastTransaction, makeContractCall, PostConditionMode, principalCV, stringAsciiCV } from '@stacks/transactions';
+import { broadcastTransaction, makeContractCall, PostConditionMode } from '@stacks/transactions';
 import { generateWallet } from '@stacks/wallet-sdk';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {

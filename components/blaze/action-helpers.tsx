@@ -44,10 +44,9 @@ export function shortenAddress(address: string, chars: number = 4): string {
     return `${prefix}...${suffix}`;
 }
 
-export async function handleTransfer({ token, from, to, amount, nonce }: SignTransferParams): Promise<any> {
+export async function handleTransfer({ token, from, to, amount }: SignTransferParams): Promise<any> {
     const tokens = amount;
-    const balances = await fetchBlazeBalances(from);
-    const nextNonce = nonce ? nonce : balances.nonce + 1;
+    const nextNonce = Date.now();
 
     // Create domain matching contract
     const domain = Cl.tuple({

@@ -1,5 +1,4 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { kv } from '@vercel/kv';
 import { generateBlazeSignature, getBlazeBalance, getBlazeContractForToken, setBlazeBalance, setBlazeNonce, verifyBlazeSignature } from '@lib/blaze/helpers';
 import { getNonce } from '@components/blaze/action-helpers';
 import { Subnet } from 'blaze-sdk';

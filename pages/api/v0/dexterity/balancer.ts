@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ContractId } from 'dexterity-sdk';
 import { Dexterity } from 'dexterity-sdk';
-import _ from 'lodash';
 import { Kraxel } from '@lib/kraxel';
 
 // Opt out of caching; every request should send a new event

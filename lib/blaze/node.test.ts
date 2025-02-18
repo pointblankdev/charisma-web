@@ -84,7 +84,7 @@ describe('Blaze Balance Management Tests', () => {
 
         const result = await fetchCallReadOnlyFunction(options);
         if (result.type === ClarityType.UInt) {
-            return Number((result as UIntCV).value);
+            return Number(result.value);
         }
         return 0;
     }

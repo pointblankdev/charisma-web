@@ -1,6 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { Dexterity } from 'dexterity-sdk';
-import { broadcastTransaction, makeContractCall, PostConditionMode, principalCV, stringAsciiCV } from '@stacks/transactions';
+import { broadcastTransaction, makeContractCall, PostConditionMode } from '@stacks/transactions';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     res.writeHead(200, {

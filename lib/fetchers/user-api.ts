@@ -1,5 +1,4 @@
 import { userSession } from '@components/stacks-session/connect';
-import { bytesToHex } from '@stacks/common';
 import { STACKS_MAINNET } from '@stacks/network';
 
 export const HOST =

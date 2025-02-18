@@ -78,35 +78,3 @@ export default async function handler(
         return res.status(500).json({ error: 'Internal server error' });
     }
 }
-
-async function processBatch() {
-    console.log('Starting batch processing...');
-
-    const transfers = subnet.queue;
-    console.log('Retrieved transfers from queue:', {
-        count: transfers?.length || 0,
-        firstTransfer: transfers?.[0] ? transfers[0] : null
-    });
-
-    if (!transfers || transfers.length === 0) {
-        console.log('No transfers to process');
-        return;
-    }
-
-    try {
-        // Execute batch transfer
-        const result = await subnet.executeBatchTransfer(transfers);
-        console.log('Transaction broadcast successful:', {
-            txid: result.txid,
-            status: result.status,
-            processedCount: transfers.length
-        });
-    } catch (error) {
-        console.error('Batch processing error:', {
-            error: error instanceof Error ? error.message : error,
-            stack: error instanceof Error ? error.stack : undefined,
-            timestamp: new Date().toISOString()
-        });
-        throw error;
-    }
-}

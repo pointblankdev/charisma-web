@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useCallback, useMemo, useState } from 'react';
+import React, { createContext, useContext, useEffect, useCallback, useMemo } from 'react';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
 import { userSession } from '@components/stacks-session/connect';
@@ -118,7 +118,7 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const { toast } = useToast();
 
     // Wallet balances state
-    const [balances, setBalances] = usePersistedState<any>('balances', {
+    const [balances] = usePersistedState<any>('balances', {
         stx: {},
         fungible_tokens: {},
         non_fungible_tokens: {},

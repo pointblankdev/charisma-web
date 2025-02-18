@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { ContractId } from 'dexterity-sdk';
 import { Dexterity } from 'dexterity-sdk';
-import _ from 'lodash';
 import { Kraxel } from '@lib/kraxel';
 import { craftOrSalvage } from '@lib/dexterity/helpers';
 
@@ -40,7 +39,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
         const tokens = Dexterity.getTokens()
         const txs = []
-        const fee = 1100
 
         // Process vaults in parallel with a concurrency limit
         const vaults = Dexterity.getVaults()
