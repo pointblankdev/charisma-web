@@ -1,15 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { kv } from '@vercel/kv';
 import { verifySecret } from '@lib/blaze/auth';
-import { getBlazeBalance, getBlazeNonce, setBlazeBalance } from '@lib/blaze/helpers';
-
-type EventData = {
-    user: string;
-    amount: number;
-    nonce?: number;
-    from?: string;
-    to?: string;
-};
+import { processDepositEvent, processWithdrawEvent, processTransferEvent } from 'blaze-sdk';
 
 export default async function handler(
     req: NextApiRequest,
@@ -73,14 +64,6 @@ export default async function handler(
                     transaction_identifier: tx.transaction_identifier,
                 });
 
-                for (const operation of tx.operations) {
-                    console.info({
-                        requestId,
-                        message: 'Processing operation',
-                        operation: operation,
-                    });
-                }
-
                 const events = tx.metadata?.receipt?.events || [];
                 for (const event of events) {
                     if (event.type === 'SmartContractEvent') {
@@ -93,22 +76,37 @@ export default async function handler(
                         });
 
                         const contract = event.data.contract_identifier;
-                        switch (event.data.value.event) {
-                            case 'deposit':
-                                await processDeposit(contract, event.data.value);
-                                break;
-                            case 'withdraw':
-                                await processWithdraw(contract, event.data.value);
-                                break;
-                            case 'transfer':
-                                await processTransfer(contract, event.data.value);
-                                break;
-                            default:
-                                console.warn({
-                                    requestId,
-                                    message: 'Unknown event type',
-                                    eventType: event.data.value.event
-                                });
+                        const eventData = event.data.value;
+
+                        try {
+                            switch (eventData.event) {
+                                case 'deposit':
+                                    await processDepositEvent(contract, eventData.user, eventData.amount);
+                                    break;
+                                case 'withdraw':
+                                    await processWithdrawEvent(contract, eventData.user, eventData.amount);
+                                    break;
+                                case 'transfer':
+                                    if (!eventData.from || !eventData.to) {
+                                        throw new Error('Missing from/to in transfer event');
+                                    }
+                                    await processTransferEvent(contract, eventData.from, eventData.to, eventData.amount);
+                                    break;
+                                default:
+                                    console.warn({
+                                        requestId,
+                                        message: 'Unknown event type',
+                                        eventType: eventData.event
+                                    });
+                            }
+                        } catch (error) {
+                            console.error({
+                                requestId,
+                                message: 'Error processing event',
+                                event: eventData,
+                                error
+                            });
+                            // Continue processing other events even if one fails
                         }
                     }
                 }
@@ -133,43 +131,5 @@ export default async function handler(
             message: 'Error processing event',
             requestId
         });
-    }
-}
-
-async function processDeposit(contract: string, data: EventData) {
-    const { user, amount } = data;
-    const currentBalance = await getBlazeBalance(contract, user);
-
-    // Update balance atomically
-    await setBlazeBalance(contract, user, currentBalance + amount);
-}
-
-async function processWithdraw(contract: string, data: EventData) {
-    const { user, amount } = data;
-    const currentBalance = await getBlazeBalance(contract, user);
-
-    if (BigInt(currentBalance) < BigInt(amount)) {
-        throw new Error('Insufficient balance');
-    }
-
-    // Update balance atomically
-    await setBlazeBalance(contract, user, currentBalance - amount);
-}
-
-async function processTransfer(contract: string, data: EventData) {
-    const { from, to, amount, nonce } = data;
-    if (!from || !to || !nonce) throw new Error('Missing required fields');
-
-    const fromBalance = await getBlazeBalance(contract, from);
-    const currentNonce = await getBlazeNonce(contract, from);
-
-    // Verify nonce is greater than current
-    if (nonce <= currentNonce) {
-        throw new Error('Nonce too low');
-    }
-
-    // Verify sufficient balance
-    if (BigInt(fromBalance) < BigInt(amount)) {
-        throw new Error('Insufficient balance');
     }
 }

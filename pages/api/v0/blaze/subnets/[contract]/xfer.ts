@@ -49,7 +49,6 @@ export default async function handler(
 
         // Get and verify balances
         const fromBalance = await subnet.getBalance(from);
-        const toBalance = await subnet.getBalance(to);
 
         if (fromBalance.total < amount) {
             console.warn('Insufficient balance:', { from, amount, balance: fromBalance });
@@ -57,10 +56,6 @@ export default async function handler(
         }
 
         console.log('Balances verified!');
-
-        // Update balances
-        await subnet.updateBalance(from, fromBalance.total - amount);
-        await subnet.updateBalance(to, toBalance.total + amount);
 
         // Add transfer to queue
         const transfer: Transfer = { to, amount, nonce, signature, signer: from };
@@ -72,11 +67,6 @@ export default async function handler(
         return res.status(200).json({
             success: true,
             queued: true,
-            nonce: subnet.nextNonce.get(from),
-            balances: {
-                from: subnet.getBalance(from),
-                to: subnet.getBalance(to)
-            }
         });
 
     } catch (error) {
