@@ -42,7 +42,7 @@ export const DepositDialog = ({ open, onOpenChange, }: any) => {
     const { stxAddress, blazeBalances, getBalance } = useGlobal();
 
     // Initialize Blaze client
-    const blaze = new Blaze(selectedToken.blazeContract, stxAddress);
+    const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
 
     const handleDeposit = async () => {
         // Convert decimal amount to uint with proper decimals
@@ -179,7 +179,7 @@ export const WithdrawDialog = ({ open, onOpenChange, }: any) => {
     const { stxAddress, blazeBalances } = useGlobal();
 
     // Initialize Blaze client
-    const blaze = new Blaze(selectedToken.blazeContract, stxAddress);
+    const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
 
     const handleWithdraw = () => {
         // Convert decimal amount to uint with proper decimals
@@ -307,7 +307,7 @@ export const TransferDialog = ({ open, onOpenChange, prices, }: any) => {
     const { stxAddress, friends, addFriend, removeFriend, updateFriendLastUsed, blazeBalances } = useGlobal();
 
     // Initialize Blaze client
-    const blaze = new Blaze(selectedToken.blazeContract, stxAddress);
+    const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
 
     const handleTransfer = () => {
         // Convert decimal amount to uint with proper decimals
