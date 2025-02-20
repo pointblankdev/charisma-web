@@ -3741,7 +3741,7 @@
   resolved "https://registry.yarnpkg.com/@rollup/rollup-win32-x64-msvc/-/rollup-win32-x64-msvc-4.34.8.tgz#4cdb2cfae69cdb7b1a3cc58778e820408075e928"
   integrity sha512-U0FaE5O1BCpZSeE6gBl3c5ObhePQSfk9vDRToMmTkbhCOgW4jqvtS5LGyQ76L1fH8sM0keRp4uDTsbjiUyjk0g==
 
-"@scure/base@^1.1.1", "@scure/base@^1.1.3", "@scure/base@~1.2.2":
+"@scure/base@^1.1.1", "@scure/base@^1.1.3", "@scure/base@^1.2.4", "@scure/base@~1.2.2":
   version "1.2.4"
   resolved "https://registry.yarnpkg.com/@scure/base/-/base-1.2.4.tgz#002eb571a35d69bdb4c214d0995dff76a8dcd2a9"
   integrity sha512-5Yy9czTO47mqz+/J8GM6GIId4umdCk1wc1q8rKERQulIoc8VP9pzDcghv10Tl2E7R96ZUx/PhND3ESYUQX8NuQ==
@@ -4966,7 +4966,28 @@
   dependencies:
     "@stencil/core" "^2.17.1"
 
-"@stacks/connect@^7.0.2", "@stacks/connect@^7.10.0":
+"@stacks/connect-ui@7.0.0":
+  version "7.0.0"
+  resolved "https://registry.yarnpkg.com/@stacks/connect-ui/-/connect-ui-7.0.0.tgz#d361e0cc26da5f457cb15342436ea9a4b3c9c77d"
+  integrity sha512-Aal6lMy45rurQsJ3MvTkRybYL6MgaKBB7zpXTllL8P6lzGFYwTdBTZTvewxA4P4M1TyVKZWJYe03DQsfc1MwEA==
+  dependencies:
+    "@stencil/core" "^2.17.1"
+
+"@stacks/connect@>=7.0.0":
+  version "8.0.2"
+  resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-8.0.2.tgz#763f7be3dc3a670fe545171482c3bee065d154bb"
+  integrity sha512-Vd+Z+NwZaH6M9dl3jQxGPRmG3tu4JP7hCr+Lkxa45/QyY6XKflQ3D57RP1kUiaFCrtrF8+6DTZ4H165LxYgK2g==
+  dependencies:
+    "@scure/base" "^1.2.4"
+    "@stacks/common" "^7.0.0"
+    "@stacks/connect-ui" "7.0.0"
+    "@stacks/network" "^7.0.0"
+    "@stacks/network-v6" "npm:@stacks/network@^6.16.0"
+    "@stacks/profile" "^7.0.0"
+    "@stacks/transactions" "^7.0.0"
+    "@stacks/transactions-v6" "npm:@stacks/transactions@^6.16.0"
+
+"@stacks/connect@^7.10.0":
   version "7.10.1"
   resolved "https://registry.yarnpkg.com/@stacks/connect/-/connect-7.10.1.tgz#9273925a34e48342c7b40c8fbdc776c01e1ba983"
   integrity sha512-8TO5hU3W/hF57zBgKh9e9/K+9Nrj7ALQKHNH/ZgXVukDjCd6PkZVyZk9j1G8uIGW0v+gS6bK0nhxd/WGZaR8Bg==
@@ -5094,7 +5115,7 @@
     c32check "^2.0.0"
     lodash.clonedeep "^4.5.0"
 
-"@stacks/transactions@^7.0.0", "@stacks/transactions@^7.0.2", "@stacks/transactions@^7.0.4", "@stacks/transactions@latest":
+"@stacks/transactions@^7.0.0", "@stacks/transactions@^7.0.4", "@stacks/transactions@latest":
   version "7.0.4"
   resolved "https://registry.yarnpkg.com/@stacks/transactions/-/transactions-7.0.4.tgz#b9bc5fd2351c58edfc192ba98ffdd4b45f5e6833"
   integrity sha512-OTQSqb+xaq+QeHB1m83SONVjVs9DD1SMqX7UvvLmzQx3ppZNoRqbWx9UGjm1bVwpQ+mw44TVOe7w3Zm0HRYFfw==
@@ -6887,7 +6908,7 @@ aws4@^1.8.0:
   resolved "https://registry.yarnpkg.com/aws4/-/aws4-1.13.2.tgz#0aa167216965ac9474ccfa83892cfb6b3e1e52ef"
   integrity sha512-lHe62zvbTB5eEABUVi/AwVh0ZKY9rMMDhmm+eeyuuUQbQ3+J+fONVQOZyj+DdrvD4BY33uYniyRJ4UJIaSKAfw==
 
-axios@^1.2.1, axios@^1.7.9:
+axios@^1.0.0, axios@^1.2.1:
   version "1.7.9"
   resolved "https://registry.yarnpkg.com/axios/-/axios-1.7.9.tgz#d7d071380c132a24accda1b2cfc1535b79ec650a"
   integrity sha512-LhLcE7Hbiryz8oMDdDptSrWowmB4Bl6RCt6sIJKpRB4XtVf0iEgewX3au/pJqm+Py1kCASkb/FFKjxQaLtxJvw==
@@ -7090,17 +7111,16 @@ blakejs@^1.2.1:
   resolved "https://registry.yarnpkg.com/blakejs/-/blakejs-1.2.1.tgz#5057e4206eadb4a97f7c0b6e197a505042fc3814"
   integrity sha512-QXUSXI3QVc/gJME0dBpXrag1kbzOqCjCX8/b54ntNyW6sjtoqxqRk3LTmXzaJoh71zMsDCjM+47jS7XiwN/+fQ==
 
-blaze-sdk@0.1.43:
-  version "0.1.43"
-  resolved "https://registry.yarnpkg.com/blaze-sdk/-/blaze-sdk-0.1.43.tgz#57a53df860ac89b6f4690ccb5cec84a2bc608b10"
-  integrity sha512-nFXmihMxtTF/FpDOecnjTOvJG0ETnVJMAAovMRHz2UMojozi/O7Y9WSrJGpdAkCLUh7QRvBsawwQ9n1VJysGfg==
+blaze-sdk@^0.2.23:
+  version "0.2.23"
+  resolved "https://registry.yarnpkg.com/blaze-sdk/-/blaze-sdk-0.2.23.tgz#48f44048667d05ff94c46c4e515565a768377648"
+  integrity sha512-Y3l0y4+U2eS+UXx3Pzphf2MQweYKQtpHpuXgGahnT/ANSkDAJVweoZkS1aXTiE9LeuSujIPYFXL00DOwKtkM6Q==
   dependencies:
-    "@stacks/connect" "^7.0.2"
+    "@stacks/connect" ">=7.0.0"
     "@stacks/network" "^7.0.2"
-    "@stacks/transactions" "^7.0.2"
+    "@stacks/transactions" "^7.0.4"
     "@vercel/kv" "^3.0.0"
-    axios "^1.7.9"
-    dotenv "^16.4.7"
+    axios "^1.0.0"
 
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.11.8, bn.js@^4.11.9:
   version "4.12.1"

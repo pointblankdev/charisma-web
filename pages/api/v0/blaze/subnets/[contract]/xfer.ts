@@ -1,10 +1,11 @@
 // pages/api/transfer.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { Subnet, Transfer } from 'blaze-sdk';
+import { Subnet } from 'blaze-sdk';
+import type { Transfer } from 'blaze-sdk';
 import { addTransferNotification, generateNotificationId } from '@lib/blaze/notifications';
 
 const contract = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
-const subnet = new Subnet(contract);
+const subnet = new Subnet(contract, process.env.STACKS_ORACLE_ADDRESS!);
 
 // Configuration for transfer processing
 const CONFIG = {

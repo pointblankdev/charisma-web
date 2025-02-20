@@ -6,9 +6,10 @@ export default async function handler(
     req: NextApiRequest,
     res: NextApiResponse
 ) {
+    const { contract } = req.query;
     const requestId = crypto.randomUUID();
-    const gameHostAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS';
-    const subnet = new Subnet('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0');
+    const gameHostAddress = process.env.STACKS_ORACLE_ADDRESS!;
+    const subnet = new Subnet(contract as string, gameHostAddress);
     console.info({
         requestId,
         message: 'Received coinflip request',
@@ -174,7 +175,7 @@ export default async function handler(
             subnet.addTransferToQueue(transfer);
 
             // Check queue length and log status
-            const queueLength = subnet.queue.length;
+            const queueLength = subnet.getStatus().queueSizes[contract as string];
             console.info({
                 requestId,
                 message: 'Added winning transfer to settlement queue',

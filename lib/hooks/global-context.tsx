@@ -11,7 +11,7 @@ import styles from '../../components/layout/layout.module.css';
 import { cn } from '@lib/utils';
 import _ from 'lodash';
 import { usePersistedState } from './use-persisted-state';
-import { Balance } from 'blaze-sdk';
+import { Balance, Blaze, BlazeEvent } from 'blaze-sdk';
 
 // Extend the Balance type to include lastUpdated
 interface ExtendedBalance extends Balance {
@@ -353,146 +353,38 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         };
     }, [toast]);
 
-    // Set up SSE connection for real-time balance updates
+
     useEffect(() => {
         if (!stxAddress) return;
+        const blaze = new Blaze('SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0', stxAddress, 'http://localhost:3000/api/v0/blaze');
 
-        let eventSource: EventSource | null = null;
-        let reconnectTimeout: ReturnType<typeof setTimeout>;
-        let reconnectAttempts = 0;
-        const MAX_RECONNECT_ATTEMPTS = 5;
-        const RECONNECT_DELAY = 5000; // 5 seconds
+        blaze.getBalance().then((balance) => {
+            console.log('Blaze balance:', balance);
+            setBlazeBalances({ 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0': { ...balance, lastUpdated: Date.now() } });
+        });
 
-        const connect = () => {
-            debug('Initializing SSE connection...');
-            setSseStatus('connecting');
+        blaze.subscribe('balance', (event: BlazeEvent) => {
+            console.log('Blaze balance:', event);
+            setBlazeBalances({ 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0': { ...event.data.balance!, lastUpdated: Date.now() } });
+        });
 
-            // Close existing connection if any
-            if (eventSource) {
-                eventSource.close();
-            }
+        blaze.subscribe('transfer', (event: BlazeEvent) => {
+            console.log('Blaze transfer:', event);
+        });
 
-            const subnet = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
-            eventSource = new EventSource(`/api/v0/blaze/balance-stream?address=${stxAddress}&subnet=${subnet}`);
-            let heartbeatTimeout: ReturnType<typeof setTimeout>;
+        blaze.subscribe('deposit', (event: BlazeEvent) => {
+            console.log('Blaze deposit:', event);
+        });
 
-            const resetHeartbeatTimer = () => {
-                if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
-                heartbeatTimeout = setTimeout(() => {
-                    debug('No heartbeat received, reconnecting...');
-                    reconnect();
-                }, 5000); // Wait 5 seconds for heartbeat
-            };
+        blaze.subscribe('withdraw', (event: BlazeEvent) => {
+            console.log('Blaze withdraw:', event);
+        });
 
-            eventSource.onopen = () => {
-                debug('SSE connection established');
-                setSseStatus('connected');
-                reconnectAttempts = 0; // Reset reconnect attempts on successful connection
-                resetHeartbeatTimer();
-            };
+        blaze.subscribe('batch', (event: BlazeEvent) => {
+            console.log('Blaze batch:', event);
+        });
 
-            eventSource.onmessage = (event) => {
-                try {
-                    resetHeartbeatTimer();
-
-                    // Check for heartbeat message
-                    if (event.data.trim() === 'heartbeat') {
-                        debug('Heartbeat received');
-                        return;
-                    }
-
-                    console.log('Blaze SSE message:', event.data.trim());
-                    const update = JSON.parse(event.data);
-                    if (!update || typeof update !== 'object') {
-                        debug('Invalid update received', update);
-                        return;
-                    }
-
-                    debug('Balance update received', update);
-                    setLastUpdateTime(new Date());
-
-                    // Only update if the balance is for the current user
-                    if (update.address === stxAddress) {
-                        setBlazeBalances(prev => {
-                            // If we already have a balance for this contract and the update is older, ignore it
-                            const currentBalance = prev[update.contract];
-                            if (currentBalance && currentBalance.lastUpdated > update.timestamp) {
-                                debug('Ignoring older update', update);
-                                return prev;
-                            }
-
-                            return {
-                                ...prev,
-                                [update.contract]: {
-                                    total: update.balance,
-                                    confirmed: update.balance,
-                                    unconfirmed: 0,
-                                    lastUpdated: update.timestamp
-                                }
-                            };
-                        });
-                    }
-                } catch (error) {
-                    console.error('[Blaze SSE] Error processing message:', error);
-                }
-            };
-
-            eventSource.onerror = (error) => {
-                console.error('[Blaze SSE] Connection error:', error);
-                if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
-                reconnect();
-            };
-        };
-
-        const reconnect = () => {
-            setSseStatus('disconnected');
-            if (eventSource) {
-                eventSource.close();
-                eventSource = null;
-            }
-
-            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                reconnectAttempts++;
-                debug(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
-
-                // Clear any existing reconnect timeout
-                if (reconnectTimeout) clearTimeout(reconnectTimeout);
-
-                // Exponential backoff: 5s, 10s, 20s, 40s, 80s
-                const delay = RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1);
-                reconnectTimeout = setTimeout(() => {
-                    connect();
-                    fetchBlazeBalances();
-                }, delay);
-            } else {
-                console.error('[Blaze SSE] Max reconnection attempts reached');
-                setSseStatus('disconnected');
-            }
-        };
-
-        // Initial connection
-        connect();
-
-        // Cleanup function
-        return () => {
-            debug('Cleaning up SSE connection');
-            if (reconnectTimeout) clearTimeout(reconnectTimeout);
-            if (eventSource) {
-                eventSource.close();
-                eventSource = null;
-            }
-            setSseStatus('disconnected');
-        };
-    }, [stxAddress, fetchBlazeBalances]);
-
-    // Remove the polling interval from getRealTimeData
-    // const getRealTimeData = async () => {
-    //     try {
-    //         await fetchBlazeBalances();
-    //     } catch (error) {
-    //         console.error('Error fetching latest data:', error);
-    //     }
-    // };
+    }, [stxAddress]);
 
     // function to update record of tapped at
     const tapTokens = (vaultId: string) => {

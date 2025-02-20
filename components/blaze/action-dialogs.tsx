@@ -9,10 +9,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@components/ui/button";
 import type { Friend } from "@lib/hooks/global-context";
 import { Blaze } from "blaze-sdk";
-import { PostConditionMode } from "@stacks/transactions";
-import { Pc } from "@stacks/transactions";
-import { Cl } from "@stacks/transactions";
-import { STACKS_MAINNET } from "@stacks/network";
 
 export interface Token {
     symbol: string;
@@ -41,12 +37,11 @@ export const DepositDialog = ({ open, onOpenChange, }: any) => {
     const [amount, setAmount] = useState<string>("");
     const { stxAddress, blazeBalances, getBalance } = useGlobal();
 
-    // Initialize Blaze client
-    const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
-
     const handleDeposit = async () => {
         // Convert decimal amount to uint with proper decimals
         const uintAmount = Number(amount) * (10 ** selectedToken.decimals);
+        // Initialize Blaze client
+        const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
         await blaze.deposit(uintAmount);
         window.dispatchEvent(new CustomEvent('blazeDeposit', {
             detail: {
@@ -178,12 +173,12 @@ export const WithdrawDialog = ({ open, onOpenChange, }: any) => {
     const [amount, setAmount] = useState<string>("");
     const { stxAddress, blazeBalances } = useGlobal();
 
-    // Initialize Blaze client
-    const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
 
-    const handleWithdraw = () => {
+    const handleWithdraw = async () => {
         // Convert decimal amount to uint with proper decimals
         const uintAmount = Number(amount) * (10 ** selectedToken.decimals);
+        // Initialize Blaze client
+        const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
         blaze.withdraw(uintAmount);
     };
 
@@ -306,12 +301,12 @@ export const TransferDialog = ({ open, onOpenChange, prices, }: any) => {
     const [selectedToken, setSelectedToken] = useState<Token>(SUPPORTED_TOKENS[0] as Token);
     const { stxAddress, friends, addFriend, removeFriend, updateFriendLastUsed, blazeBalances } = useGlobal();
 
-    // Initialize Blaze client
-    const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
 
-    const handleTransfer = () => {
+    const handleTransfer = async () => {
         // Convert decimal amount to uint with proper decimals
         const uintAmount = Number(amount) * (10 ** selectedToken.decimals);
+        // Initialize Blaze client
+        const blaze = new Blaze(selectedToken.blazeContract, stxAddress, '/api/v0/blaze');
         blaze.transfer({
             to: recipientAddress,
             amount: uintAmount

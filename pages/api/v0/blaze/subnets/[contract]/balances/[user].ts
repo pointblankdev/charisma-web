@@ -6,7 +6,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const { user, contract } = req.query;
 
     try {
-        const subnet = new Subnet(contract as string);
+        const subnet = new Subnet(contract as string, process.env.STACKS_ORACLE_ADDRESS!);
         const balance = await subnet.getBalance(user as string);
         res.status(200).json(balance);
 

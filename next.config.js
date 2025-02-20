@@ -1,3 +1,6 @@
+/** @type {import('next').NextConfig} */
+
+
 module.exports = {
   async headers() {
     return [
@@ -24,6 +27,23 @@ module.exports = {
           {
             key: 'Access-Control-Max-Age',
             value: '86400'
+          }
+        ]
+      },
+      {
+        source: '/api/v0/blaze/subnets/:contract/events',
+        headers: [
+          {
+            key: 'Connection',
+            value: 'keep-alive'
+          },
+          {
+            key: 'Cache-Control',
+            value: 'no-cache'
+          },
+          {
+            key: 'Content-Type',
+            value: 'text/event-stream'
           }
         ]
       }

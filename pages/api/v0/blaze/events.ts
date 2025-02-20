@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { verifySecret } from '@lib/blaze/auth';
-import { processDepositEvent, processWithdrawEvent, processTransferEvent } from 'blaze-sdk';
+import { Subnet } from 'blaze-sdk';
 
 export default async function handler(
     req: NextApiRequest,
@@ -77,20 +77,18 @@ export default async function handler(
 
                         const contract = event.data.contract_identifier;
                         const eventData = event.data.value;
+                        const subnet = new Subnet(contract, process.env.STACKS_ORACLE_ADDRESS!);
 
                         try {
                             switch (eventData.event) {
                                 case 'deposit':
-                                    await processDepositEvent(contract, eventData.user, eventData.amount);
+                                    await subnet.processDepositEvent(eventData.user, eventData.amount);
                                     break;
                                 case 'withdraw':
-                                    await processWithdrawEvent(contract, eventData.user, eventData.amount);
+                                    await subnet.processWithdrawEvent(eventData.user, eventData.amount);
                                     break;
                                 case 'transfer':
-                                    if (!eventData.from || !eventData.to) {
-                                        throw new Error('Missing from/to in transfer event');
-                                    }
-                                    await processTransferEvent(contract, eventData.from, eventData.to, eventData.amount);
+                                    await subnet.processTransferEvent(eventData.from, eventData.to, eventData.amount);
                                     break;
                                 default:
                                     console.warn({
