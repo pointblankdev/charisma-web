@@ -81,9 +81,9 @@ const TokenPairDisplay = ({ liquidity }: { liquidity: any[] }) => {
           <Image
             src={img0Error ? '/charisma.png' : liquidity[0].image}
             alt={liquidity[0].symbol}
-            width={24}
-            height={24}
-            className={cn(`rounded-full`, img0Error ? 'blur-sm' : '')}
+            width={96}
+            height={96}
+            className={cn(`rounded-full size-6`, img0Error ? 'blur-sm' : '')}
             onError={handleImg0Error}
           />
         </div>
@@ -95,9 +95,9 @@ const TokenPairDisplay = ({ liquidity }: { liquidity: any[] }) => {
           <Image
             src={img1Error ? '/charisma.png' : liquidity[1].image}
             alt={liquidity[1].symbol}
-            width={24}
-            height={24}
-            className={cn(`rounded-full`, img1Error ? 'blur-sm' : '')}
+            width={96}
+            height={96}
+            className={cn(`rounded-full size-6`, img1Error ? 'blur-sm' : '')}
             onError={handleImg1Error}
           />
         </div>
@@ -565,14 +565,14 @@ const PoolRow = ({ pool, prices }: { pool: any; prices: Record<string, number> }
       className="border-t border-gray-700/50 group hover:bg-gray-700/20 cursor-pointer transition-colors"
       onClick={() => router.push(`/vaults/${pool.contractId}`)}
     >
-      <td className="flex px-2 py-2 text-white items-center">
+      <td className="flex px-2 py-2 text-white items-center min-w-64">
         <div className="px-2 py-2 flex items-center rounded-md p-1">
           <Image
             src={poolImgError ? '/charisma.png' : pool.image}
             alt={pool.name}
-            width={44}
-            height={44}
-            className="object-cover mt-0.5 mr-3 rounded-md h-32 sm:h-24 lg:h-16 xl:h-12"
+            width={96}
+            height={96}
+            className="object-cover mt-0.5 mr-3 rounded-md size-20 md:size-18 md:size-16 lg:size-14 xl:size-12"
             onError={() => setPoolImgError(true)}
           />
           <div>

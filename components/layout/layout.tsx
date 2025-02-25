@@ -133,14 +133,14 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
             <div className={cn(styles.full, className)}>{children}</div>
           </main>
           <Footer />
-          <SseStatus />
-          <NotificationPanel
+          {/* <SseStatus /> */}
+          {/* <NotificationPanel
             notifications={notifications}
             onMarkAsRead={markAsRead}
             onDeleteNotifications={deleteNotifications}
             isOpen={isNotificationPanelOpen}
             onClose={() => setIsNotificationPanelOpen(false)}
-          />
+          /> */}
         </div>
       </div>
     </>
