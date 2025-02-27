@@ -12,12 +12,8 @@ cache_dir = "./.cache"
 path = "contracts/traits/charisma-traits-v1.clar"
 depends_on = []
 
-[contracts.token]
-path = "contracts/stackflow/token.clar"
-depends_on = []
-
-[contracts.blaze]
-path = "contracts/stackflow/blaze.clar"
+[contracts.predictions]
+path = "contracts/dexterity/predictions.clar"
 depends_on = []
 
 
