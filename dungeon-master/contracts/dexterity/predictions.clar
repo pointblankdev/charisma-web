@@ -64,7 +64,7 @@
 (define-data-var next-receipt-id uint u1)
 
 ;; Token metadata URI
-(define-data-var token-uri (string-utf8 256) u"https://charisma.rocks/predictions/receipt.json")
+(define-data-var token-uri (string-utf8 256) u"https://charisma.rocks/sip9/predictions/receipt.json")
 
 ;; --- NFT Trait Functions ---
 

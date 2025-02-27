@@ -1,7 +1,7 @@
 {
     "sip": 16,
     "name": "Receipt",
-    "image": "https://charisma.rocks/sip9/predictions/receipt.png",
+    "image": "https://charisma.rocks/predictions/receipt.png",
     "attributes": [
         {
             "trait_type": "redeemable",
