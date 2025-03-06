@@ -173,24 +173,29 @@
 
 ;; Resolve a market (determine correct outcome)
 (define-public (resolve-market (market-id uint) (winning-outcome uint))
-    (let ((market (unwrap! (map-get? markets market-id) ERR_MARKET_NOT_FOUND)))
+    (let (
+        (sender tx-sender)
+        (market (unwrap! (map-get? markets market-id) ERR_MARKET_NOT_FOUND))
+        (admin-fee (/ (* (get total-pool market) ADMIN_FEE) PRECISION))  ;; Calculate 5% fee
+    )
         ;; Only vault deployer or authorized admin can resolve
         (asserts! (or 
-            (is-eq tx-sender DEPLOYER)
-            (default-to false (map-get? authorized-admins tx-sender))) 
+            (is-eq sender DEPLOYER)
+            (default-to false (map-get? authorized-admins sender))) 
             ERR_UNAUTHORIZED)
         
         ;; Check that outcome is valid
         (asserts! (< winning-outcome (len (get outcome-names market))) ERR_INVALID_OUTCOME)
 
-        ;; Admin collects 5% fee in the form of a prediction
-        (try! (make-prediction market-id winning-outcome (/ (* (get total-pool market) ADMIN_FEE) PRECISION)))
+        ;; Pay admin fee directly to resolver
+        (try! (as-contract (stx-transfer? admin-fee CONTRACT sender)))
         
-        ;; Update market status with winning outcome and resolver
-        (map-set markets market-id (merge market { 
+        ;; Update market state
+        (map-set markets market-id (merge market {
+            is-open: false,
             is-resolved: true,
             winning-outcome: winning-outcome,
-            resolver: (some tx-sender),
+            resolver: (some sender),
             resolution-time: stacks-block-height
         }))
         
@@ -253,8 +258,8 @@
 (define-public (claim-reward (receipt-id uint))
     (let (
         (sender tx-sender)
-        (quote (unwrap-panic (quote-reward receipt-id)))
-        (total-reward (get dy quote)))
+        (reward-quote (unwrap-panic (quote-reward receipt-id)))
+        (total-reward (get dy reward-quote)))
         
         ;; Verify user owns the NFT receipt
         (asserts! (is-eq (some sender) (nft-get-owner? prediction-receipt receipt-id)) ERR_UNAUTHORIZED)
@@ -265,11 +270,11 @@
         ;; Transfer reward to user
         (try! (as-contract (stx-transfer? total-reward CONTRACT sender)))
         
-            ;; Burn the NFT receipt (marks as claimed)
+        ;; Burn the NFT receipt (marks as claimed)
         (try! (nft-burn? prediction-receipt receipt-id sender))
                 
         (ok {
-            dx: (get dx quote),
+            dx: (get dx reward-quote),
             dy: total-reward,
             dk: receipt-id
         })
@@ -312,15 +317,23 @@
                 (amount (get amount prediction))
                 (total-pot (get total-pool market))
                 (winning-outcome (get winning-outcome market))
-                (winning-pool (default-to u0 (element-at? (get outcome-pools market) winning-outcome)))
-                (total-reward (if (and (is-eq outcome-id winning-outcome) (> winning-pool u0)) 
-                               (/ (* amount total-pot) winning-pool) 
-                               u0)))
-                (ok {
-                    dx: market-id,
-                    dy: total-reward,
-                    dk: receipt-id
-                })
+                (winning-pool (default-to u0 (element-at? (get outcome-pools market) winning-outcome))))
+                
+                ;; Calculate reward with fee deduction in one step to preserve precision
+                ;; First multiply by (PRECISION - ADMIN_FEE) to apply 95% factor
+                ;; Then divide by PRECISION to normalize
+                ;; This is equivalent to: (amount * total_pot * 0.95) / winning_pool
+                (let (
+                    (net-reward (if (and (is-eq outcome-id winning-outcome) (> winning-pool u0)) 
+                                  (/ (* (* amount total-pot) (- PRECISION ADMIN_FEE)) (* winning-pool PRECISION))
+                                  u0)))
+                    
+                    (ok {
+                        dx: market-id,
+                        dy: net-reward,
+                        dk: receipt-id
+                    })
+                )
             )
             (ok {
                 dx: market-id,
