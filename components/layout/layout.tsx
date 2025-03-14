@@ -29,7 +29,6 @@ import { Breadcrumb, BreadcrumbList } from '@components/ui/breadcrumb';
 import charisma from '@public/charisma.png';
 import { useGlobal } from '@lib/hooks/global-context';
 import _ from 'lodash';
-import { SseStatus } from '@components/ui/sse-status';
 import { NotificationBell } from '@components/ui/notification-bell';
 import { NotificationPanel } from '@components/ui/notification-panel';
 import { useNotifications } from '@lib/hooks/use-notifications';
@@ -133,7 +132,6 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
             <div className={cn(styles.full, className)}>{children}</div>
           </main>
           <Footer />
-          <SseStatus />
           <NotificationPanel
             notifications={notifications}
             onMarkAsRead={markAsRead}

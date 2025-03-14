@@ -83,19 +83,19 @@ export interface GlobalState {
     prices: any;
     setPrices: (prices: any) => void;
 
-    // Blaze state
-    blazeBalances: Record<string, ExtendedBalance>;
-    setBlazeBalances: (blazeBalances: Record<string, ExtendedBalance>) => void;
+    // // Blaze state
+    // blazeBalances: Record<string, ExtendedBalance>;
+    // setBlazeBalances: (blazeBalances: Record<string, ExtendedBalance>) => void;
 
-    // Friends list state
-    friends: Friend[];
-    addFriend: (address: string) => void;
-    removeFriend: (address: string) => void;
-    updateFriendLastUsed: (address: string) => void;
+    // // Friends list state
+    // friends: Friend[];
+    // addFriend: (address: string) => void;
+    // removeFriend: (address: string) => void;
+    // updateFriendLastUsed: (address: string) => void;
 
-    // SSE connection state
-    sseStatus: 'connecting' | 'connected' | 'disconnected';
-    lastUpdateTime: Date | null;
+    // // SSE connection state
+    // sseStatus: 'connecting' | 'connected' | 'disconnected';
+    // lastUpdateTime: Date | null;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -354,136 +354,136 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     }, [toast]);
 
     // Set up SSE connection for real-time balance updates
-    useEffect(() => {
-        if (!stxAddress) return;
+    // useEffect(() => {
+    //     if (!stxAddress) return;
 
-        let eventSource: EventSource | null = null;
-        let reconnectTimeout: ReturnType<typeof setTimeout>;
-        let reconnectAttempts = 0;
-        const MAX_RECONNECT_ATTEMPTS = 5;
-        const RECONNECT_DELAY = 5000; // 5 seconds
+    //     let eventSource: EventSource | null = null;
+    //     let reconnectTimeout: ReturnType<typeof setTimeout>;
+    //     let reconnectAttempts = 0;
+    //     const MAX_RECONNECT_ATTEMPTS = 5;
+    //     const RECONNECT_DELAY = 5000; // 5 seconds
 
-        const connect = () => {
-            debug('Initializing SSE connection...');
-            setSseStatus('connecting');
+    //     const connect = () => {
+    //         debug('Initializing SSE connection...');
+    //         setSseStatus('connecting');
 
-            // Close existing connection if any
-            if (eventSource) {
-                eventSource.close();
-            }
+    //         // Close existing connection if any
+    //         if (eventSource) {
+    //             eventSource.close();
+    //         }
 
-            const subnet = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
-            eventSource = new EventSource(`/api/v0/blaze/balance-stream?address=${stxAddress}&subnet=${subnet}`);
-            let heartbeatTimeout: ReturnType<typeof setTimeout>;
+    //         const subnet = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
+    //         eventSource = new EventSource(`/api/v0/blaze/balance-stream?address=${stxAddress}&subnet=${subnet}`);
+    //         let heartbeatTimeout: ReturnType<typeof setTimeout>;
 
-            const resetHeartbeatTimer = () => {
-                if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
-                heartbeatTimeout = setTimeout(() => {
-                    debug('No heartbeat received, reconnecting...');
-                    reconnect();
-                }, 5000); // Wait 5 seconds for heartbeat
-            };
+    //         const resetHeartbeatTimer = () => {
+    //             if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
+    //             heartbeatTimeout = setTimeout(() => {
+    //                 debug('No heartbeat received, reconnecting...');
+    //                 reconnect();
+    //             }, 5000); // Wait 5 seconds for heartbeat
+    //         };
 
-            eventSource.onopen = () => {
-                debug('SSE connection established');
-                setSseStatus('connected');
-                reconnectAttempts = 0; // Reset reconnect attempts on successful connection
-                resetHeartbeatTimer();
-            };
+    //         eventSource.onopen = () => {
+    //             debug('SSE connection established');
+    //             setSseStatus('connected');
+    //             reconnectAttempts = 0; // Reset reconnect attempts on successful connection
+    //             resetHeartbeatTimer();
+    //         };
 
-            eventSource.onmessage = (event) => {
-                try {
-                    resetHeartbeatTimer();
+    //         eventSource.onmessage = (event) => {
+    //             try {
+    //                 resetHeartbeatTimer();
 
-                    // Check for heartbeat message
-                    if (event.data.trim() === 'heartbeat') {
-                        debug('Heartbeat received');
-                        return;
-                    }
+    //                 // Check for heartbeat message
+    //                 if (event.data.trim() === 'heartbeat') {
+    //                     debug('Heartbeat received');
+    //                     return;
+    //                 }
 
-                    console.log('Blaze SSE message:', event.data.trim());
-                    const update = JSON.parse(event.data);
-                    if (!update || typeof update !== 'object') {
-                        debug('Invalid update received', update);
-                        return;
-                    }
+    //                 console.log('Blaze SSE message:', event.data.trim());
+    //                 const update = JSON.parse(event.data);
+    //                 if (!update || typeof update !== 'object') {
+    //                     debug('Invalid update received', update);
+    //                     return;
+    //                 }
 
-                    debug('Balance update received', update);
-                    setLastUpdateTime(new Date());
+    //                 debug('Balance update received', update);
+    //                 setLastUpdateTime(new Date());
 
-                    // Only update if the balance is for the current user
-                    if (update.address === stxAddress) {
-                        setBlazeBalances(prev => {
-                            // If we already have a balance for this contract and the update is older, ignore it
-                            const currentBalance = prev[update.contract];
-                            if (currentBalance && currentBalance.lastUpdated > update.timestamp) {
-                                debug('Ignoring older update', update);
-                                return prev;
-                            }
+    //                 // Only update if the balance is for the current user
+    //                 if (update.address === stxAddress) {
+    //                     setBlazeBalances(prev => {
+    //                         // If we already have a balance for this contract and the update is older, ignore it
+    //                         const currentBalance = prev[update.contract];
+    //                         if (currentBalance && currentBalance.lastUpdated > update.timestamp) {
+    //                             debug('Ignoring older update', update);
+    //                             return prev;
+    //                         }
 
-                            return {
-                                ...prev,
-                                [update.contract]: {
-                                    total: update.balance,
-                                    confirmed: update.balance,
-                                    unconfirmed: 0,
-                                    lastUpdated: update.timestamp
-                                }
-                            };
-                        });
-                    }
-                } catch (error) {
-                    console.error('[Blaze SSE] Error processing message:', error);
-                }
-            };
+    //                         return {
+    //                             ...prev,
+    //                             [update.contract]: {
+    //                                 total: update.balance,
+    //                                 confirmed: update.balance,
+    //                                 unconfirmed: 0,
+    //                                 lastUpdated: update.timestamp
+    //                             }
+    //                         };
+    //                     });
+    //                 }
+    //             } catch (error) {
+    //                 console.error('[Blaze SSE] Error processing message:', error);
+    //             }
+    //         };
 
-            eventSource.onerror = (error) => {
-                console.error('[Blaze SSE] Connection error:', error);
-                if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
-                reconnect();
-            };
-        };
+    //         eventSource.onerror = (error) => {
+    //             console.error('[Blaze SSE] Connection error:', error);
+    //             if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
+    //             reconnect();
+    //         };
+    //     };
 
-        const reconnect = () => {
-            setSseStatus('disconnected');
-            if (eventSource) {
-                eventSource.close();
-                eventSource = null;
-            }
+    //     const reconnect = () => {
+    //         setSseStatus('disconnected');
+    //         if (eventSource) {
+    //             eventSource.close();
+    //             eventSource = null;
+    //         }
 
-            if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-                reconnectAttempts++;
-                debug(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
+    //         if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
+    //             reconnectAttempts++;
+    //             debug(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
 
-                // Clear any existing reconnect timeout
-                if (reconnectTimeout) clearTimeout(reconnectTimeout);
+    //             // Clear any existing reconnect timeout
+    //             if (reconnectTimeout) clearTimeout(reconnectTimeout);
 
-                // Exponential backoff: 5s, 10s, 20s, 40s, 80s
-                const delay = RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1);
-                reconnectTimeout = setTimeout(() => {
-                    connect();
-                    fetchBlazeBalances();
-                }, delay);
-            } else {
-                console.error('[Blaze SSE] Max reconnection attempts reached');
-                setSseStatus('disconnected');
-            }
-        };
+    //             // Exponential backoff: 5s, 10s, 20s, 40s, 80s
+    //             const delay = RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1);
+    //             reconnectTimeout = setTimeout(() => {
+    //                 connect();
+    //                 fetchBlazeBalances();
+    //             }, delay);
+    //         } else {
+    //             console.error('[Blaze SSE] Max reconnection attempts reached');
+    //             setSseStatus('disconnected');
+    //         }
+    //     };
 
-        // Initial connection
-        connect();
+    //     // Initial connection
+    //     connect();
 
-        // Cleanup function
-        return () => {
-            debug('Cleaning up SSE connection');
-            if (reconnectTimeout) clearTimeout(reconnectTimeout);
-            if (eventSource) {
-                eventSource.close();
-                eventSource = null;
-            }
-            setSseStatus('disconnected');
-        };
-    }, [stxAddress, fetchBlazeBalances]);
+    //     // Cleanup function
+    //     return () => {
+    //         debug('Cleaning up SSE connection');
+    //         if (reconnectTimeout) clearTimeout(reconnectTimeout);
+    //         if (eventSource) {
+    //             eventSource.close();
+    //             eventSource = null;
+    //         }
+    //         setSseStatus('disconnected');
+    //     };
+    // }, [stxAddress, fetchBlazeBalances]);
 
     // Remove the polling interval from getRealTimeData
     // const getRealTimeData = async () => {
@@ -499,32 +499,32 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setTappedAt((prev: any) => ({ ...prev, [vaultId]: block }));
     };
 
-    // Friends list functions
-    const addFriend = useCallback((address: string) => {
-        setFriends((currentFriends: Friend[]) => {
-            // Don't add if address already exists
-            if (currentFriends.some((f: Friend) => f.address === address)) {
-                return currentFriends;
-            }
-            return [...currentFriends, { address, lastUsed: Date.now() }];
-        });
-    }, [setFriends]);
+    // // Friends list functions
+    // const addFriend = useCallback((address: string) => {
+    //     setFriends((currentFriends: Friend[]) => {
+    //         // Don't add if address already exists
+    //         if (currentFriends.some((f: Friend) => f.address === address)) {
+    //             return currentFriends;
+    //         }
+    //         return [...currentFriends, { address, lastUsed: Date.now() }];
+    //     });
+    // }, [setFriends]);
 
-    const removeFriend = useCallback((address: string) => {
-        setFriends((currentFriends: Friend[]) =>
-            currentFriends.filter((f: Friend) => f.address !== address)
-        );
-    }, [setFriends]);
+    // const removeFriend = useCallback((address: string) => {
+    //     setFriends((currentFriends: Friend[]) =>
+    //         currentFriends.filter((f: Friend) => f.address !== address)
+    //     );
+    // }, [setFriends]);
 
-    const updateFriendLastUsed = useCallback((address: string) => {
-        setFriends((currentFriends: Friend[]) =>
-            currentFriends.map((f: Friend) =>
-                f.address === address
-                    ? { ...f, lastUsed: Date.now() }
-                    : f
-            )
-        );
-    }, [setFriends]);
+    // const updateFriendLastUsed = useCallback((address: string) => {
+    //     setFriends((currentFriends: Friend[]) =>
+    //         currentFriends.map((f: Friend) =>
+    //             f.address === address
+    //                 ? { ...f, lastUsed: Date.now() }
+    //                 : f
+    //         )
+    //     );
+    // }, [setFriends]);
 
     // Add SSE status to context value
     const contextValue = {
@@ -554,12 +554,12 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setSlippage,
         prices,
         setPrices,
-        blazeBalances,
-        setBlazeBalances,
-        friends,
-        addFriend,
-        removeFriend,
-        updateFriendLastUsed,
+        // blazeBalances,
+        // setBlazeBalances,
+        // friends,
+        // addFriend,
+        // removeFriend,
+        // updateFriendLastUsed,
     };
 
     return (

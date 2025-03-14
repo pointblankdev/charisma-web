@@ -6,7 +6,7 @@ import DexterityInterface from '@components/pools/dexterity-interface';
 import { ContractId, Dexterity, Vault } from 'dexterity-sdk';
 import _ from 'lodash';
 
-Dexterity.configure({ apiKeyRotation: 'loop', parallelRequests: 10 })
+Dexterity.configure({ apiKeyRotation: 'loop' as any, parallelRequests: 10 })
 
 const blacklist = [
   'SP39859AD7RQ6NYK00EJ8HN1DWE40C576FBDGHPA0.chdollar',
