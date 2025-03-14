@@ -58,8 +58,9 @@ const items = [
     },
     {
         title: "Blaze (Preview)",
-        url: "/blaze",
+        url: "https://signet-omega.vercel.app/",
         icon: Flame,
+        external: true,
     },
 ]
 
