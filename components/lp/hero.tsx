@@ -7,6 +7,7 @@ import Image from 'next/image';
 import charisma from '@public/charisma.png';
 import { SignedIn as ClerkSignedIn, SignedOut as ClerkSignedOut, SignInButton, SignUpButton } from '@clerk/nextjs';
 import { Button } from '@components/ui/button';
+import Link from 'next/link';
 
 const SignedIn = ClerkSignedIn as any
 const SignedOut = ClerkSignedOut as any
@@ -64,12 +65,12 @@ export default function Hero() {
       </SignedOut>
       <SignedIn>
         <div className={cn(styleUtils.appear, styleUtils['appear-fourth'], "flex justify-center gap-4 mt-8")}>
-          <Button className="min-w-32 justify-center" size="lg" variant="default">
+          <Link className="min-w-32 justify-center" href={'/swap'}>
             Exchange
-          </Button>
-          <Button className="min-w-32 justify-center" size="lg" variant="outline">
+          </Link>
+          <Link className="min-w-32 justify-center" href={'/vaults'}>
             Earn Rewards
-          </Button>
+          </Link>
         </div>
       </SignedIn>
     </div>
