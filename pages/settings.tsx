@@ -917,13 +917,13 @@ export default function SettingsPage() {
                           "size-2 rounded-full",
                           activeSigner
                             ? (dexteritySignerSource === 'blaze' ? "bg-cyan-500" : "bg-blue-500")
-                            : (!walletConnected && blazeState !== 'unlocked' ? "bg-yellow-500" : "bg-red-500")
+                            : (!walletConnected && blazeState !== 'unlocked' ? "bg-yellow-500/50" : "bg-red-500")
                         )}></div>
                         <h4 className={cn(
                           "text-sm font-medium",
                           activeSigner
                             ? (dexteritySignerSource === 'blaze' ? "text-cyan-600" : "text-blue-600")
-                            : (!walletConnected && blazeState !== 'unlocked' ? "text-yellow-600" : "")
+                            : (!walletConnected && blazeState !== 'unlocked' ? "text-yellow-600/90" : "")
                         )}>
                           {activeSigner ? `Active Signer: ${activeSigner}` : "No Active Signer"}
                         </h4>
@@ -956,7 +956,7 @@ export default function SettingsPage() {
                                 )}
                                 {!isBlazeSignerInstalled && (
                                   <a
-                                    href="https://github.com/Trust-Machines/signet/releases"
+                                    href="https://signet-omega.vercel.app/download.html"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="inline-flex items-center h-8 px-2 text-xs rounded border border-yellow-300 bg-yellow-100 text-primary-foreground/50 hover:bg-primary/20"
@@ -1659,7 +1659,7 @@ export default function SettingsPage() {
                           className={cn("font-normal",
                             user?.twoFactorEnabled
                               ? "bg-green-500/10 text-green-500 border-green-200"
-                              : "bg-amber-500/10 text-amber-500 border-amber-200/20 hover:bg-amber-500/20"
+                              : ""
                           )}
                         >
                           {user?.twoFactorEnabled ? "Enabled" : "Recommended"}
