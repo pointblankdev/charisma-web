@@ -1,11 +1,11 @@
-import { network } from '@components/stacks-session/connect';
+import { STACKS_MAINNET } from '@stacks/network';
 import { fetchCallReadOnlyFunction, cvToJSON, principalCV } from '@stacks/transactions';
 
 async function getTransactionsAvailable(
   senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
 ) {
   const response: any = await fetchCallReadOnlyFunction({
-    network: network,
+    network: STACKS_MAINNET,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-token',
     functionName: 'get-txs-available',
@@ -17,7 +17,7 @@ async function getTransactionsAvailable(
 
 async function getBlocksUntilUnlock(senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS') {
   const response: any = await fetchCallReadOnlyFunction({
-    network: network,
+    network: STACKS_MAINNET,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-token',
     functionName: 'get-blocks-until-unlock',
@@ -31,7 +31,7 @@ async function getBlocksPerTransaction(
   senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
 ) {
   const response: any = await fetchCallReadOnlyFunction({
-    network: network,
+    network: STACKS_MAINNET,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-token',
     functionName: 'get-blocks-per-tx',
@@ -45,7 +45,7 @@ async function getTokensPerTransaction(
   senderAddress = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS'
 ) {
   const response: any = await fetchCallReadOnlyFunction({
-    network: network,
+    network: STACKS_MAINNET,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-token',
     functionName: 'get-max-liquidity-flow',
@@ -57,7 +57,7 @@ async function getTokensPerTransaction(
 
 async function hasFreeClaim(address: string) {
   const response: any = await fetchCallReadOnlyFunction({
-    network: network,
+    network: STACKS_MAINNET,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-claims',
     functionName: 'has-free-claim',
@@ -69,7 +69,7 @@ async function hasFreeClaim(address: string) {
 
 async function hasClaimed(address: string) {
   const response: any = await fetchCallReadOnlyFunction({
-    network: network,
+    network: STACKS_MAINNET,
     contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
     contractName: 'charisma-claims',
     functionName: 'has-claimed',

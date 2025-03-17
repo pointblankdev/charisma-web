@@ -1,7 +1,6 @@
 import React, { createContext, useContext, useEffect, useCallback, useMemo, useState } from 'react';
 import { StacksApiSocketClient } from '@stacks/blockchain-api-client';
 import { useToast } from '@components/ui/use-toast';
-import { userSession } from '@components/stacks-session/connect';
 import { Dexterity, Token, Vault } from 'dexterity-sdk';
 import { SITE_URL } from '@lib/constants';
 import { hexToCV } from '@stacks/transactions';
@@ -9,9 +8,10 @@ import { SidebarInset, SidebarProvider } from '@components/ui/sidebar';
 import { AppSidebar } from '@components/sidebar/app-sidebar';
 import styles from '../../components/layout/layout.module.css';
 import { cn } from '@lib/utils';
-import _ from 'lodash';
+import _, { add } from 'lodash';
 import { usePersistedState } from './use-persisted-state';
 import { Balance } from 'blaze-sdk';
+import { connect, isConnected } from '@stacks/connect';
 
 // Extend the Balance type to include lastUpdated
 interface ExtendedBalance extends Balance {
@@ -58,6 +58,7 @@ export interface GlobalState {
 
     // Global state
     stxAddress: string;
+    setStxAddress: (stxAddress: string) => void;
     block: any;
     setBlock: (block: any) => void;
     tappedAt: any;
@@ -78,24 +79,15 @@ export interface GlobalState {
     setMaxHops: (maxHops: number) => void;
     slippage: number;
     setSlippage: (slippage: number) => void;
+    dexteritySignerSource: 'sip30' | 'blaze';
+    setDexteritySignerSource: (source: 'sip30' | 'blaze') => void;
+    dexterityConfig: any;
+    refreshDexterityConfig: () => boolean | undefined;
+    configureDexterity: (address: string) => Promise<boolean>;
 
     // Kraxel prices
     prices: any;
     setPrices: (prices: any) => void;
-
-    // // Blaze state
-    // blazeBalances: Record<string, ExtendedBalance>;
-    // setBlazeBalances: (blazeBalances: Record<string, ExtendedBalance>) => void;
-
-    // // Friends list state
-    // friends: Friend[];
-    // addFriend: (address: string) => void;
-    // removeFriend: (address: string) => void;
-    // updateFriendLastUsed: (address: string) => void;
-
-    // // SSE connection state
-    // sseStatus: 'connecting' | 'connected' | 'disconnected';
-    // lastUpdateTime: Date | null;
 }
 
 const GlobalContext = createContext<GlobalState | undefined>(undefined);
@@ -103,13 +95,6 @@ const GlobalContext = createContext<GlobalState | undefined>(undefined);
 const formatTime = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-};
-
-// Add debug logging utility
-const debug = (message: string, ...args: any[]) => {
-    if (process.env.NODE_ENV === 'development') {
-        console.log(`[Blaze SSE] ${message}`, ...args);
-    }
 };
 
 export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -122,6 +107,8 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const [tappedAt, setTappedAt] = usePersistedState('tappedAt', {} as any);
     const [vaultAnalytics, setVaultAnalytics] = usePersistedState('vaultAnalytics', {} as any);
     const [isMempoolSubscribed, setIsMempoolSubscribed] = usePersistedState('isMempoolSubscribed', false);
+    const [dexteritySignerSource, setDexteritySignerSource] = usePersistedState<'sip30' | 'blaze'>('dexterity-signer', 'sip30');
+    const [dexterityConfig, setDexterityConfig] = useState<any>(null);
     const { toast } = useToast();
 
     // Wallet balances state
@@ -134,64 +121,128 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     // Prices state
     const [prices, setPrices] = usePersistedState<any>('prices', {});
 
-    // Blaze balances state
-    const [blazeBalances, setBlazeBalances] = useState<Record<string, ExtendedBalance>>({});
+    // Track client-side rendering to prevent hydration mismatch
+    const [isClient, setIsClient] = useState(false);
 
-    // Friends list state
-    const [friends, setFriends] = usePersistedState<Friend[]>('blaze-friends', [{ address: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS', lastUsed: Date.now() }]);
-
-    // Add connection status state
-    const [sseStatus, setSseStatus] = useState<'connecting' | 'connected' | 'disconnected'>('disconnected');
-    const [lastUpdateTime, setLastUpdateTime] = useState<Date | null>(null);
-
-    // Add fetchBlazeBalances function
-    const fetchBlazeBalances = useCallback(async () => {
-        if (!stxAddress) return;
-        try {
-            const response = await fetch(`/api/v0/blaze/subnets/SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0/balances/${stxAddress}`);
-            const data = await response.json();
-            setBlazeBalances({ 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0': data });
-        } catch (error) {
-            console.error('Error fetching blaze balances:', error);
-        }
-    }, [stxAddress]);
-
-    // Load user data and configure Dexterity
+    // Set isClient to true when component mounts (client-side only)
     useEffect(() => {
-        if (userSession?.isUserSignedIn()) {
-            const userStxAddress = userSession.loadUserData().profile.stxAddress.mainnet;
-            setStxAddress(userStxAddress);
-            Dexterity.configure({
-                stxAddress: userStxAddress,
+        setIsClient(true);
+    }, []);
+
+    // Configure Dexterity in anonymous mode - only on client side
+    useEffect(() => {
+        // Skip during server-side rendering
+        if (!isClient) return;
+
+        // Configure Dexterity in anonymous mode for basic functionality
+        const initializeBasicServices = async () => {
+            try {
+                // Set up Dexterity in anonymous mode
+                await Dexterity.configure({
+                    mode: 'client',
+                    proxy: `${siteUrl}/api/v0/proxy`,
+                });
+            } catch (error) {
+                console.error('Error initializing services:', error);
+            }
+        };
+
+        initializeBasicServices();
+
+        // Note: No auto-connection to wallets
+        // Wallet connections will be handled explicitly in the settings page
+    }, [isClient]);
+
+    // Dexterity configuration functions
+    const refreshDexterityConfig = useCallback(() => {
+        // Only execute on client side
+        if (!isClient) return;
+
+        try {
+            // Get the current configuration directly from Dexterity
+            const currentConfig = Dexterity.config;
+            setDexterityConfig({
+                ...currentConfig,
+                signedBy: dexteritySignerSource
+            });
+            
+            return true;
+        } catch (error) {
+            console.error('Failed to refresh Dexterity configuration:', error);
+            return false;
+        }
+    }, [isClient, dexteritySignerSource]);
+
+    // Configure Dexterity with current STX address and signer preferences
+    const configureDexterity = useCallback(async (address: string) => {
+        // Only execute on client side
+        if (!isClient) return false;
+        
+        try {
+            await Dexterity.configure({
+                stxAddress: address,
                 mode: 'client',
                 proxy: `${siteUrl}/api/v0/proxy`,
-            }).catch(console.error);
+                maxHops,
+                defaultSlippage: slippage
+            });
+            
+            // Update the local config state after configuration
+            refreshDexterityConfig();
+            
+            console.log(`Dexterity configured with address ${address}`);
+            return true;
+        } catch (error) {
+            console.error('Failed to configure Dexterity:', error);
+            return false;
         }
-    }, [userSession, setStxAddress]);
+    }, [isClient, maxHops, slippage, refreshDexterityConfig]);
 
-    // Wallet helper functions
+    // Wallet helper functions - only execute on client-side
     const getKeyByContractAddress = useCallback((contractAddress: string) => {
+        // Return empty string during server-side rendering
+        if (!isClient) return '';
+
         if (!contractAddress) return '';
         if (contractAddress.endsWith('.wstx')) return 'STX::native';
         if (contractAddress.endsWith('.stx')) return 'STX::native';
         const tokensArray = Object.keys(balances?.fungible_tokens || {});
         return tokensArray.find((token: string) => token.includes(contractAddress)) || '';
-    }, [balances]);
+    }, [balances, isClient]);
 
     const getBalanceByKey = useCallback((key: string) => {
+        // Return zero during server-side rendering
+        if (!isClient) return 0;
+
         if (key === 'STX::native') {
             return Number(balances?.stx?.balance || 0);
         }
-        return Number(balances?.fungible_tokens?.[key]?.balance);
-    }, [balances]);
+        return Number(balances?.fungible_tokens?.[key]?.balance || 0);
+    }, [balances, isClient]);
 
-    const getBalance = useCallback((ca: string) =>
-        getBalanceByKey(getKeyByContractAddress(ca)) || 0,
-        [getBalanceByKey, getKeyByContractAddress]
-    );
+    const getBalance = useCallback((ca: string) => {
+        // Return zero during server-side rendering
+        if (!isClient) return 0;
 
-    // Calculate wallet state
+        return getBalanceByKey(getKeyByContractAddress(ca)) || 0;
+    }, [getBalanceByKey, getKeyByContractAddress, isClient]);
+
+    // Calculate wallet state - use default values during server-side rendering
     const wallet = useMemo(() => {
+        // Return default values during server-side rendering
+        if (!isClient) {
+            return {
+                energy: { amount: 0, balance: 0 },
+                experience: { amount: 0, balance: 0 },
+                governance: { amount: 0, balance: 0 },
+                charisma: { amount: 0, balance: 0 },
+                redPilled: false,
+                bluePilled: false,
+                ravens: null,
+                memobots: null
+            };
+        }
+
         const experience = getBalanceByKey(
             'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.experience::experience'
         );
@@ -213,10 +264,13 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
             ravens: balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.odins-raven::raven'],
             memobots: balances?.non_fungible_tokens?.['SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.memobots-guardians-of-the-gigaverse::memobots-guardians-of-the-gigaverse']
         };
-    }, [balances, getBalanceByKey]);
+    }, [balances, getBalanceByKey, isClient]);
 
-    // Mempool subscription effect
+    // Mempool subscription effect - only run on client-side
     useEffect(() => {
+        // Skip mempool subscription during server-side rendering
+        if (!isClient) return;
+
         sc.subscribeMempool((tx: any) => {
             if (
                 tx?.contract_call?.function_name === 'execute'
@@ -345,197 +399,27 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
                     console.error('Error processing multihop transaction:', error);
                 }
             }
-
         });
 
         return () => {
             sc.unsubscribeMempool();
         };
-    }, [toast]);
+    }, [toast, isClient]);
 
-    // Set up SSE connection for real-time balance updates
-    // useEffect(() => {
-    //     if (!stxAddress) return;
-
-    //     let eventSource: EventSource | null = null;
-    //     let reconnectTimeout: ReturnType<typeof setTimeout>;
-    //     let reconnectAttempts = 0;
-    //     const MAX_RECONNECT_ATTEMPTS = 5;
-    //     const RECONNECT_DELAY = 5000; // 5 seconds
-
-    //     const connect = () => {
-    //         debug('Initializing SSE connection...');
-    //         setSseStatus('connecting');
-
-    //         // Close existing connection if any
-    //         if (eventSource) {
-    //             eventSource.close();
-    //         }
-
-    //         const subnet = 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.blaze-welsh-v0';
-    //         eventSource = new EventSource(`/api/v0/blaze/balance-stream?address=${stxAddress}&subnet=${subnet}`);
-    //         let heartbeatTimeout: ReturnType<typeof setTimeout>;
-
-    //         const resetHeartbeatTimer = () => {
-    //             if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
-    //             heartbeatTimeout = setTimeout(() => {
-    //                 debug('No heartbeat received, reconnecting...');
-    //                 reconnect();
-    //             }, 5000); // Wait 5 seconds for heartbeat
-    //         };
-
-    //         eventSource.onopen = () => {
-    //             debug('SSE connection established');
-    //             setSseStatus('connected');
-    //             reconnectAttempts = 0; // Reset reconnect attempts on successful connection
-    //             resetHeartbeatTimer();
-    //         };
-
-    //         eventSource.onmessage = (event) => {
-    //             try {
-    //                 resetHeartbeatTimer();
-
-    //                 // Check for heartbeat message
-    //                 if (event.data.trim() === 'heartbeat') {
-    //                     debug('Heartbeat received');
-    //                     return;
-    //                 }
-
-    //                 console.log('Blaze SSE message:', event.data.trim());
-    //                 const update = JSON.parse(event.data);
-    //                 if (!update || typeof update !== 'object') {
-    //                     debug('Invalid update received', update);
-    //                     return;
-    //                 }
-
-    //                 debug('Balance update received', update);
-    //                 setLastUpdateTime(new Date());
-
-    //                 // Only update if the balance is for the current user
-    //                 if (update.address === stxAddress) {
-    //                     setBlazeBalances(prev => {
-    //                         // If we already have a balance for this contract and the update is older, ignore it
-    //                         const currentBalance = prev[update.contract];
-    //                         if (currentBalance && currentBalance.lastUpdated > update.timestamp) {
-    //                             debug('Ignoring older update', update);
-    //                             return prev;
-    //                         }
-
-    //                         return {
-    //                             ...prev,
-    //                             [update.contract]: {
-    //                                 total: update.balance,
-    //                                 confirmed: update.balance,
-    //                                 unconfirmed: 0,
-    //                                 lastUpdated: update.timestamp
-    //                             }
-    //                         };
-    //                     });
-    //                 }
-    //             } catch (error) {
-    //                 console.error('[Blaze SSE] Error processing message:', error);
-    //             }
-    //         };
-
-    //         eventSource.onerror = (error) => {
-    //             console.error('[Blaze SSE] Connection error:', error);
-    //             if (heartbeatTimeout) clearTimeout(heartbeatTimeout);
-    //             reconnect();
-    //         };
-    //     };
-
-    //     const reconnect = () => {
-    //         setSseStatus('disconnected');
-    //         if (eventSource) {
-    //             eventSource.close();
-    //             eventSource = null;
-    //         }
-
-    //         if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-    //             reconnectAttempts++;
-    //             debug(`Attempting to reconnect (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})...`);
-
-    //             // Clear any existing reconnect timeout
-    //             if (reconnectTimeout) clearTimeout(reconnectTimeout);
-
-    //             // Exponential backoff: 5s, 10s, 20s, 40s, 80s
-    //             const delay = RECONNECT_DELAY * Math.pow(2, reconnectAttempts - 1);
-    //             reconnectTimeout = setTimeout(() => {
-    //                 connect();
-    //                 fetchBlazeBalances();
-    //             }, delay);
-    //         } else {
-    //             console.error('[Blaze SSE] Max reconnection attempts reached');
-    //             setSseStatus('disconnected');
-    //         }
-    //     };
-
-    //     // Initial connection
-    //     connect();
-
-    //     // Cleanup function
-    //     return () => {
-    //         debug('Cleaning up SSE connection');
-    //         if (reconnectTimeout) clearTimeout(reconnectTimeout);
-    //         if (eventSource) {
-    //             eventSource.close();
-    //             eventSource = null;
-    //         }
-    //         setSseStatus('disconnected');
-    //     };
-    // }, [stxAddress, fetchBlazeBalances]);
-
-    // Remove the polling interval from getRealTimeData
-    // const getRealTimeData = async () => {
-    //     try {
-    //         await fetchBlazeBalances();
-    //     } catch (error) {
-    //         console.error('Error fetching latest data:', error);
-    //     }
-    // };
 
     // function to update record of tapped at
     const tapTokens = (vaultId: string) => {
         setTappedAt((prev: any) => ({ ...prev, [vaultId]: block }));
     };
 
-    // // Friends list functions
-    // const addFriend = useCallback((address: string) => {
-    //     setFriends((currentFriends: Friend[]) => {
-    //         // Don't add if address already exists
-    //         if (currentFriends.some((f: Friend) => f.address === address)) {
-    //             return currentFriends;
-    //         }
-    //         return [...currentFriends, { address, lastUsed: Date.now() }];
-    //     });
-    // }, [setFriends]);
-
-    // const removeFriend = useCallback((address: string) => {
-    //     setFriends((currentFriends: Friend[]) =>
-    //         currentFriends.filter((f: Friend) => f.address !== address)
-    //     );
-    // }, [setFriends]);
-
-    // const updateFriendLastUsed = useCallback((address: string) => {
-    //     setFriends((currentFriends: Friend[]) =>
-    //         currentFriends.map((f: Friend) =>
-    //             f.address === address
-    //                 ? { ...f, lastUsed: Date.now() }
-    //                 : f
-    //         )
-    //     );
-    // }, [setFriends]);
-
-    // Add SSE status to context value
     const contextValue = {
-        sseStatus,
-        lastUpdateTime,
         balances,
         wallet,
         getKeyByContractAddress,
         getBalanceByKey,
         getBalance,
         stxAddress,
+        setStxAddress,
         block,
         setBlock,
         tappedAt,
@@ -552,14 +436,13 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setMaxHops,
         slippage,
         setSlippage,
+        dexteritySignerSource,
+        setDexteritySignerSource,
+        dexterityConfig,
+        refreshDexterityConfig,
+        configureDexterity,
         prices,
         setPrices,
-        // blazeBalances,
-        // setBlazeBalances,
-        // friends,
-        // addFriend,
-        // removeFriend,
-        // updateFriendLastUsed,
     };
 
     return (

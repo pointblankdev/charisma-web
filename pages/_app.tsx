@@ -12,6 +12,9 @@ import { cn } from '@lib/utils';
 import { Toaster } from "@components/ui/toaster"
 import { SpeedInsights } from "@vercel/speed-insights/next"
 import { GlobalProvider } from '@lib/hooks/global-context';
+import { ClerkProvider } from '@clerk/nextjs'
+
+const AuthProvider = ClerkProvider as any
 
 // If loading a variable font, you don't need to specify the font weight
 const font = Ysabeau_Infant({ subsets: ['latin'] })
@@ -24,16 +27,18 @@ export default function App({ Component, pageProps }: AppProps) {
 
   return (
     <OverlayProvider>
-      <GlobalProvider>
-        <main className={cn(font.className)}>
-          <Component {...pageProps} />
-        </main>
-        <Toaster />
-        <ResizeHandler />
-        <NProgress />
-        <Analytics />
-        <SpeedInsights />
-      </GlobalProvider>
+      <AuthProvider>
+        <GlobalProvider>
+          <main className={cn(font.className)}>
+            <Component {...pageProps} />
+          </main>
+          <Toaster />
+          <ResizeHandler />
+          <NProgress />
+          <Analytics />
+          <SpeedInsights />
+        </GlobalProvider>
+      </AuthProvider>
     </OverlayProvider>
   );
 }

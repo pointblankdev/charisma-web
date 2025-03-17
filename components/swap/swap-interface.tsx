@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback } from 'react';
 import Image from 'next/image';
-import { ChevronDown, ArrowUpDown, Coins, TrendingUp, X, Check } from 'lucide-react';
+import { ChevronDown, ArrowUpDown, Coins, TrendingUp, X, Check, WalletIcon, Flame, Zap } from 'lucide-react';
 import { Button } from '@components/ui/button';
 import { cn } from '@lib/utils';
 import dynamic from 'next/dynamic';
@@ -9,6 +9,9 @@ import { Vault } from 'dexterity-sdk/dist/core/vault';
 import { SwapGraphVisualizer } from './swap-graph-visualizer';
 import _ from 'lodash';
 import { useGlobal } from '@lib/hooks/global-context';
+import { connect } from '@stacks/connect';
+import { Badge } from '@components/ui/badge';
+import { useToast } from '@components/ui/use-toast';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -244,6 +247,54 @@ const SwapDetails = ({ swapPath, minimumReceived, toToken }: SwapDetailsProps) =
   )
 };
 
+// Create a loading placeholder component for the swap interface
+const SwapInterfaceSkeleton = () => (
+  <div className="max-w-screen-sm sm:mx-auto sm:px-4 mt-0">
+    <div className="mb-4 rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
+      <div className="p-3 flex justify-center items-center">
+        <div className="h-8 w-32 bg-gray-700/50 rounded animate-pulse"></div>
+      </div>
+    </div>
+    <div className="relative px-6 pb-4 pt-4 sm:rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
+      <h1 className="text-2xl font-bold text-white/95 mb-4">Swap</h1>
+      <div className="mb-2 space-y-4">
+        {/* From Section Skeleton */}
+        <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
+          <div className="flex justify-between mb-4">
+            <div className="h-5 w-12 bg-gray-700/50 rounded animate-pulse"></div>
+            <div className="h-8 w-24 bg-gray-700/50 rounded-full animate-pulse"></div>
+          </div>
+          <div className="h-8 w-24 bg-gray-700/50 rounded animate-pulse mb-2"></div>
+          <div className="h-5 w-32 bg-gray-700/30 rounded animate-pulse"></div>
+        </div>
+
+        {/* Direction Button */}
+        <div className="flex justify-center">
+          <div className="p-2 rounded-full bg-[var(--sidebar)]">
+            <div className="h-6 w-6 bg-gray-700/50 rounded-full animate-pulse"></div>
+          </div>
+        </div>
+
+        {/* To Section Skeleton */}
+        <div className="p-4 rounded-lg shadow-xl shadow-primary/10 border border-t-0 border-x-0 border-b-[var(--accents-7)]">
+          <div className="flex justify-between mb-4">
+            <div className="h-5 w-12 bg-gray-700/50 rounded animate-pulse"></div>
+            <div className="h-8 w-24 bg-gray-700/50 rounded-full animate-pulse"></div>
+          </div>
+          <div className="h-8 w-24 bg-gray-700/50 rounded animate-pulse mb-2"></div>
+          <div className="h-5 w-32 bg-gray-700/30 rounded animate-pulse"></div>
+        </div>
+
+        {/* Details Section */}
+        <div className="h-5 w-64 bg-gray-700/30 rounded animate-pulse"></div>
+
+        {/* Swap Button */}
+        <div className="h-12 w-full bg-gray-700/50 rounded-lg animate-pulse mt-4"></div>
+      </div>
+    </div>
+  </div>
+);
+
 export const SwapInterface = ({
   prices,
   tokens,
@@ -253,13 +304,34 @@ export const SwapInterface = ({
   tokens: Token[];
   pools: LPToken[];
 }) => {
+  // Track client-side rendering with loading state
+  const [isClient, setIsClient] = useState(false);
+
   const [fromAmount, setFromAmount] = useState('1');
   const [showFromTokens, setShowFromTokens] = useState(false);
   const [showToTokens, setShowToTokens] = useState(false);
   const [estimatedAmountOut, setEstimatedAmountOut] = useState('0');
   const [isCalculating, setIsCalculating] = useState(false);
   const [swapPath, setSwapPath] = useState<Token[]>([]);
-  const { getBalance, wallet, stxAddress, maxHops, setMaxHops, fromToken, setFromToken, toToken, setToToken, slippage, setSlippage } = useGlobal();
+  const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const { toast } = useToast();
+  const {
+    getBalance,
+    wallet,
+    stxAddress,
+    maxHops,
+    setMaxHops,
+    fromToken,
+    setFromToken,
+    toToken,
+    setToToken,
+    slippage,
+    setSlippage,
+    dexteritySignerSource,
+    dexterityConfig,
+    refreshDexterityConfig
+  } = useGlobal();
+
   const estimateTimer = useRef<any>();
   const [exploringPaths, setExploringPaths] = useState(0);
   const [showGraph, setShowGraph] = useState(false);
@@ -269,16 +341,42 @@ export const SwapInterface = ({
   const [showPostConditionsModal, setShowPostConditionsModal] = useState(false);
   const [isSponsored, setIsSponsored] = useState(false);
 
+  // Set isClient to true after mount to prevent hydration mismatch
+  useEffect(() => {
+    setIsClient(true);
+
+    // Sync the global maxHops with Dexterity configuration if needed
+    if (isClient && dexterityConfig?.maxHops !== maxHops) {
+      // Update Dexterity configuration to match global state
+      Dexterity.configure({ maxHops }).catch(console.error);
+      refreshDexterityConfig();
+    }
+  }, [isClient, dexterityConfig, maxHops, refreshDexterityConfig]);
+
   useEffect(() => {
     const initializeRouter = async () => {
       try {
         if (maxHops && pools.length > 0 && stxAddress) {
-          await Dexterity.configure({ maxHops, sponsored: isSponsored, sponsor: `${HOST}/api/v0/sponsor` });
+          // Configure Dexterity with the current settings, including signer source
+          await Dexterity.configure({
+            maxHops,
+            sponsored: isSponsored,
+            sponsor: `${HOST}/api/v0/sponsor`,
+            stxAddress, // Set the current address
+            mode: 'client', // Using client mode
+            proxy: `${window.location.origin}/api/v0/proxy`,
+            defaultSlippage: slippage
+          });
+
           const vaults = pools.map(pool => new Vault(pool));
           Dexterity.router.loadVaults(vaults);
           console.log('Router initialized:', Dexterity.router.getGraphStats());
           console.log('Vaults:', Dexterity.getVaults());
+          console.log('Using signer source:', dexteritySignerSource);
           handleEstimateAmount(fromAmount);
+
+          // Update the dexterity config in global state for consistency
+          refreshDexterityConfig();
         }
       } catch (error) {
         console.error('Error initializing router:', error);
@@ -286,12 +384,36 @@ export const SwapInterface = ({
     };
 
     initializeRouter();
-  }, [pools, stxAddress, maxHops, isSponsored]);
+  }, [pools, stxAddress, maxHops, isSponsored, dexteritySignerSource, slippage]);
 
   const fromDropdownRef = useRef<HTMLDivElement>(null);
   const toDropdownRef = useRef<HTMLDivElement>(null);
 
+  // Experience and wallet-related values are only available client-side
   const hasHighExperience = wallet.experience.balance >= 0;
+
+  // Check wallet connection status
+  useEffect(() => {
+    const checkWalletConnection = () => {
+      // If we have an STX address, there's a wallet connected
+      setIsWalletConnected(!!stxAddress);
+    };
+
+    checkWalletConnection();
+  }, [stxAddress]);
+
+  // Handle wallet connection
+  const handleConnectWallet = async () => {
+    try {
+      const response = await connect();
+      if (response && response.addresses && response.addresses.length > 0) {
+        // Success - the wallet connection handler in global-context will update the STX address
+        console.log('Wallet connected successfully');
+      }
+    } catch (error) {
+      console.error('Error connecting wallet:', error);
+    }
+  };
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
@@ -310,8 +432,13 @@ export const SwapInterface = ({
   const handleSlippageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = Number(e.target.value);
     const newSlippage = _.clamp(value / 100, 0, 0.99);
+
+    // Update both Dexterity SDK and global state
     Dexterity.configure({ defaultSlippage: newSlippage }).catch(console.error);
     setSlippage(newSlippage);
+
+    // Refresh global state
+    setTimeout(() => refreshDexterityConfig(), 100);
   };
 
   const handleEstimateAmount = useCallback(
@@ -325,26 +452,43 @@ export const SwapInterface = ({
         setEstimatedAmountOut('0');
         return;
       }
+
+      // Capture current values to use in the timeout closure
+      const currentAmount = amount;
+      const currentFromToken = fromToken;
+      const currentToToken = toToken;
+      const currentMaxHops = maxHops;
+
       // Set new timer
       estimateTimer.current = setTimeout(() => {
         setIsCalculating(true);
-        setExploringPaths(Dexterity.router.findAllPaths(fromToken.contractId, toToken.contractId).length);
+
+        // Ensure Dexterity config is synchronized with global maxHops
+        if (Dexterity.config.maxHops !== currentMaxHops) {
+          console.info(`Syncing Dexterity maxHops (${Dexterity.config.maxHops}) with global maxHops (${currentMaxHops})`);
+          Dexterity.configure({ maxHops: currentMaxHops }).catch(console.error);
+        }
+
+        // Get all paths with current maxHops setting
+        setExploringPaths(Dexterity.router.findAllPaths(currentFromToken.contractId, currentToToken.contractId).length);
+
         fetch('/api/v0/proxy/quote', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json'
           },
           body: JSON.stringify({
-            tokenIn: fromToken.contractId,
-            tokenOut: toToken.contractId,
-            amount: Number(amount) * 10 ** fromToken.decimals
+            tokenIn: currentFromToken.contractId,
+            tokenOut: currentToToken.contractId,
+            amount: Number(currentAmount) * 10 ** currentFromToken.decimals,
+            maxHops: currentMaxHops // Pass maxHops explicitly to the API
           })
         })
           .then(response => response.json())
           .then(quote => {
             setSwapPath(quote.route?.path || []);
             setLastQuote(quote);
-            setEstimatedAmountOut((quote.amountOut / 10 ** toToken.decimals).toFixed(toToken.decimals));
+            setEstimatedAmountOut((quote.amountOut / 10 ** currentToToken.decimals).toFixed(currentToToken.decimals));
           })
           .catch(error => {
             console.error('Error estimating amount:', error);
@@ -356,7 +500,7 @@ export const SwapInterface = ({
           });
       }, 200); // Reduced to 200ms for better responsiveness
     },
-    [fromToken, toToken, Dexterity.config.maxHops]
+    [fromToken, toToken, maxHops] // Dependencies are still needed for useCallback
   );
 
   useEffect(() => {
@@ -371,7 +515,10 @@ export const SwapInterface = ({
     const value = e.target.value;
     if (/^[0-9]*\.?[0-9]*$/.test(value) || value === '') {
       setFromAmount(value);
-      handleEstimateAmount(value);
+      // Use setTimeout with 0 delay to ensure state is updated before estimation
+      setTimeout(() => {
+        handleEstimateAmount(value);
+      }, 0);
     }
   };
 
@@ -379,7 +526,10 @@ export const SwapInterface = ({
     const maxBalance = getBalance(fromToken.contractId);
     const formattedBalance = formatBalance(maxBalance, fromToken.decimals);
     setFromAmount(formattedBalance);
-    handleEstimateAmount(formattedBalance);
+    // Use setTimeout with 0 delay to ensure state is updated before estimation
+    setTimeout(() => {
+      handleEstimateAmount(formattedBalance);
+    }, 0);
   };
 
   const handlePostConditionsToggle = () => {
@@ -408,10 +558,56 @@ export const SwapInterface = ({
         hops.push({ ...hop, vault, opcode });
       }
       lastQuote.route.hops = hops;
-      Dexterity.config.sponsored = isSponsored;
-      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
+
+      // Use the appropriate signer based on the global configuration
+      if (dexteritySignerSource === 'sip30') {
+        // Use Dexterity SDK directly with SIP30 wallet
+        Dexterity.config.sponsored = isSponsored;
+        await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
+      } else if (dexteritySignerSource === 'blaze') {
+        // Use Signet SDK to execute the swap
+        try {
+          // Import the executeDexSwap function from signet-sdk
+          const signetSdk = await import('signet-sdk');
+
+          // Call the Signet SDK function with the same parameters
+          const result = await signetSdk.executeDexSwap({
+            route: lastQuote.route,
+            amount,
+            options: {
+              disablePostConditions,
+              sponsored: isSponsored
+            }
+          });
+
+          console.log(result)
+
+          if (!result.success) {
+            throw new Error(result.error || 'Failed to execute swap via Signet');
+          }
+
+          toast({
+            title: "Swap executed",
+            description: result.txId ? `Transaction ID: ${result.txId.substring(0, 8)}...` : "Transaction submitted",
+            variant: "default"
+          });
+        } catch (signetError) {
+          console.error("Signet swap failed:", signetError);
+          toast({
+            title: "Signet swap failed",
+            description: signetError instanceof Error ? signetError.message : "Unknown error with Signet extension",
+            variant: "destructive"
+          });
+          throw signetError;
+        }
+      }
     } catch (error) {
       console.error('Swap failed:', error);
+      toast({
+        title: "Swap failed",
+        description: error instanceof Error ? error.message : "Unknown error occurred",
+        variant: "destructive"
+      });
     } finally {
       setIsSwapping(false);
     }
@@ -425,11 +621,20 @@ export const SwapInterface = ({
   };
 
 
-  const handleMaxHopsChange = (value: string) => {
+  const handleMaxHopsChange = async (value: string) => {
     const newMaxHops = _.clamp(Number(value), 0, 4);
-    Dexterity.configure({ maxHops: newMaxHops }).catch(console.error);
+
+    // Update global state
     setMaxHops(newMaxHops);
-    if (fromAmount) handleEstimateAmount(fromAmount)
+
+    // Update Dexterity SDK configuration
+    await Dexterity.configure({ maxHops: newMaxHops }).catch(console.error);
+
+    // Immediately refresh estimate with new maxHops value
+    if (fromAmount) handleEstimateAmount(fromAmount);
+
+    // Update global state to reflect the changes
+    refreshDexterityConfig();
   }
 
   const isArbitrageTrade = fromToken?.contractId === toToken?.contractId &&
@@ -437,76 +642,230 @@ export const SwapInterface = ({
 
   const minimumAmountOut = Number(estimatedAmountOut) * (1 - slippage / 100);
 
+  // Return the skeleton loader if we're not on the client
+  if (!isClient) {
+    return <SwapInterfaceSkeleton />;
+  }
+
+  // Return the full component only after client-side rendering
   return (
     <div className="max-w-screen-sm sm:mx-auto sm:px-4 mt-0">
-      <div className="flex flex-wrap gap-2 mb-4 justify-around">
-        {/* <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[5.5rem] border-[var(--accents-7)]">
-          <button
-            className="flex items-center gap-2 text-white text-sm"
-            onClick={() => setShowGraph(!showGraph)}
-          >
-            <Network className="w-4 h-4" />
-            <span className="text-sm text-gray-400">{showGraph ? 'Hide' : 'Show'}</span>
-          </button>
-        </div> */}
+      {/* Unified Control Bar - Reworked for better mobile usability */}
+      <div className="mb-4 rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)] overflow-hidden">
+        {/* Mobile View */}
+        <div className="sm:hidden">
+          <div className="grid grid-cols-5 w-full">
+            <div className="col-span-5 px-4 py-3 border-b border-[var(--accents-7)] flex items-center justify-between">
+              {/* Signer Source - More prominent in mobile */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">Signer:</span>
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    dexteritySignerSource === 'blaze'
+                      ? "bg-cyan-500/10 text-cyan-500 border-cyan-200/10"
+                      : "bg-blue-500/10 text-blue-500 border-blue-200/10"
+                  )}
+                >
+                  {dexteritySignerSource === 'blaze' ? (
+                    <div className="flex items-center gap-1">
+                      <Zap className="size-3" />
+                      <span>Signet</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <WalletIcon className="size-3" />
+                      <span>SIP30</span>
+                    </div>
+                  )}
+                </Badge>
+              </div>
 
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border border-[var(--accents-7)]">
-          <span className="text-sm text-gray-400">Depth:</span>
-          <div className="flex items-center">
-            <input
-              type="text"
-              className="w-3.5 text-sm text-white bg-transparent outline-none"
-              value={Dexterity.config.maxHops}
-              disabled
-            />
-            <div className="flex flex-col ml-1">
-              <button
-                className="text-gray-400 hover:text-white"
-                onClick={() => handleMaxHopsChange((Dexterity.config.maxHops + 1).toString())}
-              >
-                <ChevronDown className="w-3 h-3 rotate-180" />
-              </button>
-              <button
-                className="text-gray-400 hover:text-white"
-                onClick={() => handleMaxHopsChange((Dexterity.config.maxHops - 1).toString())}
-              >
-                <ChevronDown className="w-3 h-3" />
-              </button>
+              {/* Depth Control */}
+              <div className="flex items-center gap-2">
+                <span className="text-xs text-gray-400">Depth:</span>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    className="w-5 text-sm text-center text-white bg-transparent outline-none"
+                    value={maxHops}
+                    disabled
+                  />
+                  <div className="flex flex-col ml-1">
+                    <button
+                      className="text-gray-400 hover:text-white"
+                      onClick={() => handleMaxHopsChange((maxHops + 1).toString())}
+                    >
+                      <ChevronDown className="w-3 h-3 rotate-180" />
+                    </button>
+                    <button
+                      className="text-gray-400 hover:text-white"
+                      onClick={() => handleMaxHopsChange((maxHops - 1).toString())}
+                    >
+                      <ChevronDown className="w-3 h-3" />
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Lower Controls Row */}
+            <div className="col-span-5 grid grid-cols-3 divide-x divide-[var(--accents-7)]">
+              {/* Slippage */}
+              <div className="flex items-center justify-center py-2.5 px-2">
+                <span className="text-xs text-gray-400 mr-1.5">Slip:</span>
+                <div className="flex items-center">
+                  <input
+                    type="text"
+                    className="w-6 text-sm text-center text-white bg-transparent outline-none"
+                    value={slippage * 100}
+                    onChange={handleSlippageChange}
+                    placeholder="0"
+                  />
+                  <span className="text-xs text-white">%</span>
+                </div>
+              </div>
+
+              {/* Post Conditions Toggle */}
+              <div className="flex items-center justify-center gap-1.5 py-2.5">
+                <span className="text-xs text-gray-400">Conditions:</span>
+                <button
+                  className={cn(
+                    "w-5 h-5 flex items-center justify-center rounded-full",
+                    disablePostConditions
+                      ? 'bg-red-500/20 text-red-500 border border-red-300/10'
+                      : 'bg-green-500/20 text-green-500 border border-green-300/10'
+                  )}
+                  onClick={handlePostConditionsToggle}
+                >
+                  {disablePostConditions ? <X className="w-3 h-3" /> : <Check className="w-3 h-3" />}
+                </button>
+              </div>
+
+              {/* Sponsored Toggle */}
+              <div className="flex items-center justify-center gap-1.5 py-2.5">
+                <span className="text-xs text-gray-400">Sponsored:</span>
+                <button
+                  className={cn(
+                    "w-5 h-5 flex items-center justify-center rounded-full",
+                    !isSponsored
+                      ? 'bg-red-500/20 text-red-500 border border-red-300/10'
+                      : 'bg-green-500/20 text-green-500 border border-green-300/10'
+                  )}
+                  onClick={() => setIsSponsored(!isSponsored)}
+                >
+                  {!isSponsored ? <X className="w-3 h-3" /> : <Check className="w-3 h-3" />}
+                </button>
+              </div>
             </div>
           </div>
         </div>
 
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
-          <span className="text-sm text-gray-400">Max Slippage:</span>
-          <input
-            type="text"
-            className="w-3.5 text-sm text-white bg-transparent outline-none"
-            value={slippage * 100}
-            onChange={handleSlippageChange}
-            placeholder="0"
-          />
-          <span className="text-sm text-gray-400">%</span>
-        </div>
+        {/* Desktop View */}
+        <div className="hidden sm:block">
+          <div className="grid grid-cols-5 w-full divide-x divide-[var(--accents-7)]">
+            {/* Signer Source Indicator */}
+            <div className="flex items-center justify-center gap-1.5 px-3 py-2.5 text-center">
+              <div className="flex flex-col items-center">
+                <Badge
+                  variant="outline"
+                  className={cn(
+                    "mb-1",
+                    dexteritySignerSource === 'blaze'
+                      ? "bg-cyan-500/10 text-cyan-500 border-cyan-200/10"
+                      : "bg-blue-500/10 text-blue-500 border-blue-200/10"
+                  )}
+                >
+                  {dexteritySignerSource === 'blaze' ? (
+                    <div className="flex items-center gap-1">
+                      <Zap className="size-3" />
+                      <span>Signet</span>
+                    </div>
+                  ) : (
+                    <div className="flex items-center gap-1">
+                      <WalletIcon className="size-3" />
+                      <span>SIP30</span>
+                    </div>
+                  )}
+                </Badge>
+                <span className="text-xs text-gray-400">Signer</span>
+              </div>
+            </div>
 
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
-          <span className="text-sm text-gray-400">Post Conditions:</span>
-          <button
-            className={`px-2 py-1 text-sm rounded ${disablePostConditions ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'
-              }`}
-            onClick={handlePostConditionsToggle}
-          >
-            {disablePostConditions ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
-          </button>
-        </div>
+            {/* Routing Depth */}
+            <div className="flex flex-col items-center justify-center px-3 py-2.5">
+              <div className="flex items-center justify-center gap-1.5 mb-1">
+                <input
+                  type="text"
+                  className="w-5 text-sm text-center text-white bg-transparent outline-none"
+                  value={maxHops}
+                  disabled
+                />
+                <div className="flex flex-col">
+                  <button
+                    className="text-gray-400 hover:text-white"
+                    onClick={() => handleMaxHopsChange((maxHops + 1).toString())}
+                  >
+                    <ChevronDown className="w-3 h-3 rotate-180" />
+                  </button>
+                  <button
+                    className="text-gray-400 hover:text-white"
+                    onClick={() => handleMaxHopsChange((maxHops - 1).toString())}
+                  >
+                    <ChevronDown className="w-3 h-3" />
+                  </button>
+                </div>
+              </div>
+              <span className="text-xs text-gray-400">Depth</span>
+            </div>
 
-        <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-[var(--sidebar)] border min-w-[8rem] border-[var(--accents-7)]">
-          <span className="text-sm text-gray-400">Sponsored:</span>
-          <button
-            className={`px-2 py-1 text-sm rounded ${!isSponsored ? 'bg-red-500/20 text-red-500' : 'bg-green-500/20 text-green-500'}`}
-            onClick={() => setIsSponsored(!isSponsored)}
-          >
-            {!isSponsored ? <X className="w-4 h-4" /> : <Check className="w-4 h-4" />}
-          </button>
+            {/* Slippage */}
+            <div className="flex flex-col items-center justify-center px-3 py-2.5">
+              <div className="flex items-center justify-center gap-1 mb-1">
+                <input
+                  type="text"
+                  className="w-8 text-sm text-center text-white bg-transparent outline-none"
+                  value={slippage * 100}
+                  onChange={handleSlippageChange}
+                  placeholder="0"
+                />
+                <span className="text-xs text-white">%</span>
+              </div>
+              <span className="text-xs text-gray-400">Slippage</span>
+            </div>
+
+            {/* Post Conditions Toggle */}
+            <div className="flex flex-col items-center justify-center px-3 py-2.5">
+              <button
+                className={cn(
+                  "w-6 h-6 flex items-center justify-center rounded-full mb-1",
+                  disablePostConditions
+                    ? 'bg-red-500/20 text-red-500 border border-red-300/10'
+                    : 'bg-green-500/20 text-green-500 border border-green-300/10'
+                )}
+                onClick={handlePostConditionsToggle}
+              >
+                {disablePostConditions ? <X className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
+              </button>
+              <span className="text-xs text-gray-400">Conditions</span>
+            </div>
+
+            {/* Sponsored Toggle */}
+            <div className="flex flex-col items-center justify-center px-3 py-2.5">
+              <button
+                className={cn(
+                  "w-6 h-6 flex items-center justify-center rounded-full mb-1",
+                  !isSponsored
+                    ? 'bg-red-500/20 text-red-500 border border-red-300/10'
+                    : 'bg-green-500/20 text-green-500 border border-green-300/10'
+                )}
+                onClick={() => setIsSponsored(!isSponsored)}
+              >
+                {!isSponsored ? <X className="w-3.5 h-3.5" /> : <Check className="w-3.5 h-3.5" />}
+              </button>
+              <span className="text-xs text-gray-400">Sponsored</span>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -613,31 +972,41 @@ export const SwapInterface = ({
             toToken={toToken}
           />
 
-          <Button
-            className="w-full px-4 py-3 mt-4 font-bold rounded-lg"
-            onClick={handleSwap}
-            disabled={isCalculating || estimatedAmountOut === '0' || !fromAmount || isSwapping || !swapPath}
-          >
-            {isCalculating ? <div className="flex items-center justify-center gap-2">
-              <span className="animate-pulse">Finding the best rate</span>
-              <span className="inline-block">
-                <span className="animate-[bounce_1.4s_infinite] inline-block">.</span>
-                <span className="animate-[bounce_1.4s_0.2s_infinite] inline-block">.</span>
-                <span className="animate-[bounce_1.4s_0.4s_infinite] inline-block">.</span>
-              </span>
-            </div> : isSwapping ? (
-              <div className="flex items-center justify-center gap-2">
-                <span className="animate-pulse">Building transaction</span>
+          {isWalletConnected ? (
+            <Button
+              className="w-full px-4 py-3 mt-4 font-bold rounded-lg"
+              onClick={handleSwap}
+              disabled={isCalculating || estimatedAmountOut === '0' || !fromAmount || isSwapping || !swapPath}
+            >
+              {isCalculating ? <div className="flex items-center justify-center gap-2">
+                <span className="animate-pulse">Finding the best rate</span>
                 <span className="inline-block">
                   <span className="animate-[bounce_1.4s_infinite] inline-block">.</span>
                   <span className="animate-[bounce_1.4s_0.2s_infinite] inline-block">.</span>
                   <span className="animate-[bounce_1.4s_0.4s_infinite] inline-block">.</span>
                 </span>
-              </div>
-            ) : (
-              'Confirm Swap'
-            )}
-          </Button>
+              </div> : isSwapping ? (
+                <div className="flex items-center justify-center gap-2">
+                  <span className="animate-pulse">Building transaction</span>
+                  <span className="inline-block">
+                    <span className="animate-[bounce_1.4s_infinite] inline-block">.</span>
+                    <span className="animate-[bounce_1.4s_0.2s_infinite] inline-block">.</span>
+                    <span className="animate-[bounce_1.4s_0.4s_infinite] inline-block">.</span>
+                  </span>
+                </div>
+              ) : (
+                'Confirm Swap'
+              )}
+            </Button>
+          ) : (
+            <Button
+              className="w-full px-4 py-3 mt-4 font-bold rounded-lg"
+              onClick={handleConnectWallet}
+            >
+              <WalletIcon className="mr-2 size-4" />
+              Connect Wallet to Swap
+            </Button>
+          )}
         </div>
       </div>
 

@@ -6,9 +6,9 @@ import Image from 'next/image';
 import { uintCV, contractPrincipalCV, PostConditionMode, Pc } from '@stacks/transactions';
 import stxLogo from '@public/stx-logo.png';
 import chaLogo from '@public/new-charisma-logo-2.png';
-import { network } from '@components/stacks-session/connect';
 import { useGlobal } from '@lib/hooks/global-context';
 import { showContractCall } from '@stacks/connect';
+import { STACKS_MAINNET } from '@stacks/network';
 
 const OnboardingSwapInterface = ({ data }: any) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -47,7 +47,7 @@ const OnboardingSwapInterface = ({ data }: any) => {
     const minChaAmount = BigInt(Math.floor(estimatedChaOutput * 0.99 * 10 ** 6));
 
     const transaction = {
-      network: network,
+      network: STACKS_MAINNET,
       contractAddress: 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS',
       contractName: 'univ2-path2',
       functionName: 'do-swap',

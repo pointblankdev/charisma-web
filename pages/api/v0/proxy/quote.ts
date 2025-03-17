@@ -18,8 +18,15 @@ export default async function callReadOnly(
         if (req.method === 'POST') {
             const body = req.body;
 
-            await Dexterity.configure({ apiKeyRotation: 'loop' });
+            // Configure Dexterity with client-provided maxHops if specified
+            await Dexterity.configure({ 
+                apiKeyRotation: 'loop',
+                maxHops: body.maxHops || 3 // Use provided maxHops or default to 3
+            });
+            
             await Dexterity.discover({ reserves: false });
+            
+            console.log(`Getting quote with maxHops: ${Dexterity.config.maxHops}`);
             const quote = await Dexterity.getQuote(body.tokenIn, body.tokenOut, body.amount);
             response = quote;
         } else {

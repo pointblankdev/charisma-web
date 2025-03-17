@@ -1,103 +1,36 @@
-import React, { useEffect, useState } from 'react';
-import type { AppConfig, UserSession } from '@stacks/connect';
-import { cn } from '@lib/utils';
+import React from 'react';
 import { Button } from '@components/ui/button';
-import * as Sentry from '@sentry/browser';
-import { STACKS_MAINNET } from '@stacks/network';
-import { useGlobal } from '@lib/hooks/global-context';
-export let appConfig: AppConfig;
-export let userSession: UserSession;
+import { SignedIn as ClerkSignedIn, SignedOut as ClerkSignedOut, SignInButton, UserButton } from "@clerk/nextjs"
 
-const initializeStacks = async () => {
-  const { AppConfig, UserSession } = await import('@stacks/connect');
-  appConfig = new AppConfig(['store_write', 'publish_data']);
-  userSession = new UserSession({ appConfig });
-};
+const SignedIn = ClerkSignedIn as any
+const SignedOut = ClerkSignedOut as any
 
-export const appDetails = {
-  name: 'Charisma',
-  icon: 'https://charisma.rocks/dmg-logo.gif'
-};
+// Store stacks connection functionality but don't expose it in main UI
+// This import will only be used in the settings page
+export const { connect, disconnect, isConnected } = await import('@stacks/connect');
 
-export const network = STACKS_MAINNET;
-
-export async function authenticate() {
-  const { showConnect } = await import('@stacks/connect');
-  showConnect({
-    appDetails,
-    onFinish: async e => {
-      window.location.pathname = '/vaults';
-      try {
-        const userData = e.userSession.loadUserData();
-        const address = userData.profile.stxAddress.mainnet;
-        const user = {
-          id: address,
-          ip_address: '{{auto}}',
-          email: userData.email
-        };
-        Sentry.setUser(user);
-      } catch (error) {
-        console.error(error);
-      }
-    },
-    userSession
-  });
-}
-
-export function disconnect() {
-  userSession.signUserOut('/');
-  Sentry.setUser(null);
-}
-
+// This function is maintained for use in the settings page
 export function toggleSession() {
-  if (userSession.isUserSignedIn()) {
+  if (isConnected()) {
     disconnect();
-    // disconnectWallet();
   } else {
-    authenticate();
-    // connectWallet();
+    connect();
   }
 }
 
+// Component is simplified to only show Clerk auth UI
 const ConnectWallet = () => {
-  const [mounted, setMounted] = useState(false);
-  const { stxAddress } = useGlobal();
-  const [isHovered, setIsHovered] = useState(false);
-
-  const shortAddress = `${stxAddress.slice(0, 4)}...${stxAddress.slice(-4)}`;
-
-  useEffect(() => {
-    try {
-      initializeStacks().then(() => {
-        setMounted(true);
-        if (userSession.isUserSignedIn()) {
-          userSession.loadUserData();
-        }
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }, []);
-
   return (
-    <Button
-      variant={'ghost'}
-      onClick={toggleSession}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
-      className={cn('whitespace-nowrap', 'w-32', 'bg-transparent', 'hover:bg-transparent', 'hover:text-white', 'text-center', 'relative')}
-    >
-      <div className={cn('transition-all duration-300 absolute top-2 opacity-0', {
-        'opacity-100': isHovered
-      })}>
-        {mounted && userSession.isUserSignedIn() ? 'Disconnect' : 'Connect Wallet'}
-      </div>
-      <div className={cn('transition-all duration-300 absolute top-2 opacity-100', {
-        'opacity-0': isHovered
-      })}>
-        {mounted && userSession.isUserSignedIn() ? shortAddress : 'Connect Wallet'}
-      </div>
-    </Button>
+    <div className="flex items-center">
+      <SignedOut>
+        <Button variant="outline" size="sm" className="rounded-full px-4">
+          <SignInButton />
+        </Button>
+      </SignedOut>
+      <SignedIn>
+        <UserButton afterSignOutUrl="/" />
+      </SignedIn>
+    </div>
   );
 };
 

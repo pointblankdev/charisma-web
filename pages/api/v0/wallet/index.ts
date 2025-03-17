@@ -9,7 +9,7 @@ import {
 } from '@stacks/wallet-sdk';
 import { z } from 'zod';
 import { encryptSeedPhrase, decryptSeedPhrase } from '@lib/wallets/wallets.service';
-import { network } from '@components/stacks-session/connect';
+import { STACKS_MAINNET } from '@stacks/network';
 
 // Define schema for Wallet data
 const WalletSchema = z.object({
@@ -50,7 +50,7 @@ async function getOrCreateWallet(ownerAddress: string) {
         const restoredWallet = await restoreWalletAccounts({
             wallet: baseWallet,
             gaiaHubUrl: 'https://hub.blockstack.org',
-            network: network
+            network: STACKS_MAINNET
         });
 
         return restoredWallet;
@@ -101,7 +101,7 @@ async function handleCreateAccount(req: NextApiRequest, res: NextApiResponse) {
 
         const accountAddress = getStxAddress({
             account: newAccount.accounts[1],
-            network: network
+            network: STACKS_MAINNET
         });
 
         res.status(201).json({
@@ -152,7 +152,7 @@ async function handleGetAccounts(req: NextApiRequest, res: NextApiResponse) {
         const restoredWallet = await restoreWalletAccounts({
             wallet: regeneratedWallet,
             gaiaHubUrl: 'https://hub.blockstack.org',
-            network: network
+            network: STACKS_MAINNET
         });
 
         // Map wallet accounts to account data
@@ -160,7 +160,7 @@ async function handleGetAccounts(req: NextApiRequest, res: NextApiResponse) {
             return {
                 accountAddress: getStxAddress({
                     account: restoredWallet.accounts[account.index],
-                    network: network
+                    network: STACKS_MAINNET
                 }),
                 ...wallet.accounts[account.index]
             };

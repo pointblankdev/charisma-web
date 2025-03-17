@@ -30,8 +30,9 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@components/ui/sidebar"
-import { authenticate, disconnect, userSession } from "@components/stacks-session/connect"
+import { connect, disconnect } from "@components/stacks-session/connect"
 import { Ysabeau_Infant } from "next/font/google"
+import { isConnected } from "@stacks/connect"
 
 
 const font = Ysabeau_Infant({ subsets: ['latin'] });
@@ -93,10 +94,10 @@ export function NavUser({
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator /> */}
-                        {userSession && userSession.isUserSignedIn() ? <DropdownMenuItem onClick={disconnect} className="cursor-pointer">
+                        {isConnected() ? <DropdownMenuItem onClick={disconnect} className="cursor-pointer">
                             <LogOut className="size-4 " />
                             Disconnect
-                        </DropdownMenuItem> : <DropdownMenuItem onClick={authenticate} className="cursor-pointer">
+                        </DropdownMenuItem> : <DropdownMenuItem onClick={() => connect()} className="cursor-pointer">
                             <LogIn className="size-4 " />
                             Connect Wallet
                         </DropdownMenuItem>}

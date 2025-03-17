@@ -9,7 +9,8 @@ import { useDialog } from '@react-aria/dialog';
 import { FocusScope } from '@react-aria/focus';
 import { useButton } from '@react-aria/button';
 import styles from './mobile-menu.module.css';
-import { toggleSession, userSession } from './stacks-session/connect';
+import { toggleSession } from './stacks-session/connect';
+import { isConnected } from '@stacks/connect';
 
 const mobileNav = [...NAVIGATION];
 
@@ -46,7 +47,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
             </svg>
           </button>
 
-          {userSession.isUserSignedIn() &&
+          {isConnected() &&
             mobileNav.map(({ name, route }) => (
               <Link
                 key={name}
@@ -58,7 +59,7 @@ function ModalDialog(props: Parameters<typeof useOverlay>[0] & Parameters<typeof
                 {name}
               </Link>
             ))}
-          {userSession.isUserSignedIn() ? (
+          {isConnected() ? (
             <Link href="/" className={cn(styles['nav-item'])} onClick={toggleSession}>
               Sign out
             </Link>

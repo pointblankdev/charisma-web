@@ -1,4 +1,4 @@
-import { userSession } from '@components/stacks-session/connect';
+import { isConnected } from '@stacks/connect';
 import { STACKS_MAINNET } from '@stacks/network';
 
 export const HOST =
@@ -15,7 +15,7 @@ export async function getContractMetadata(ca: string) {
 
 export async function setContractMetadata(ca: string, metadata: any) {
   // Get user data from session
-  if (!userSession.isUserSignedIn()) {
+  if (!isConnected()) {
     throw new Error('User must be signed in');
   }
 

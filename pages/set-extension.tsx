@@ -7,8 +7,6 @@ import { boolCV, contractPrincipalCV, PostConditionMode } from '@stacks/transact
 import { Button } from '@components/ui/button';
 import { Input } from '@components/ui/input';
 import Layout from '@components/layout/layout';
-// import { openContractCall } from '@stacks/connect';
-import { network } from '@components/stacks-session/connect';
 
 export default function SetExtensionPage() {
   const meta = {
