@@ -2,7 +2,7 @@
 description: >-
   Welcome to the Liquidity Pools & Tokens API documentation. This API powers our
   decentralized finance (DeFi) data layer on the Stacks blockchain, aggregating
-  detailed information about liquidity vaults
+  detailed information about liquidity pools
 ---
 
 # Introduction
@@ -10,7 +10,7 @@ description: >-
 ### What This API Does
 
 * **Aggregates Liquidity Pool Data:**\
-  Retrieve comprehensive details about liquidity vaults—including reserves, fees, supply, and more—across various trading pairs.
+  Retrieve comprehensive details about liquidity pools—including reserves, fees, supply, and more—across various trading pairs.
 * **Provides Token Metadata:**\
   Access up-to-date metadata for tokens used across the ecosystem. This includes names, symbols, decimals, images, and descriptions.
 * **Optimized for Performance:**\

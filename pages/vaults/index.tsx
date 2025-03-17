@@ -84,8 +84,8 @@ export const getStaticProps: GetStaticProps<any> = async () => {
 
 export default function DexterityPoolsPage({ data }: any) {
   const meta = {
-    title: 'Charisma | Liquidity Vaults',
-    description: 'View and manage self-listed liquidity vaults on the Charisma DEX',
+    title: 'Charisma | Liquidity Pools',
+    description: 'View and manage self-listed liquidity pools on the Charisma DEX',
     image: 'https://charisma.rocks/pools-screenshot.png'
   };
 

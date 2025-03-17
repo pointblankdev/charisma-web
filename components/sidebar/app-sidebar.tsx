@@ -34,7 +34,7 @@ const items = [
         icon: BsCurrencyExchange,
     },
     {
-        title: "Earn Rewards",
+        title: "Invest",
         url: "/vaults",
         icon: TrendingUp,
     },

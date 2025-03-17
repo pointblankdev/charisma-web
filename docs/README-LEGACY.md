@@ -1,6 +1,6 @@
 ---
 description: >-
-  This endpoint provides detailed information on liquidity vaults (pools) and
+  This endpoint provides detailed information on liquidity pools and
   tokens.
 ---
 

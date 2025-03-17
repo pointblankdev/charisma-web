@@ -529,7 +529,7 @@ const APYDisplay = ({ pool, prices }: { pool: any; prices: Record<string, number
                   </div>
                   <div className="space-y-4 text-sm text-primary-foreground/90">
                     <p className="leading-snug">
-                      Hold-to-earn is an additional yield incentive that can be enabled for liquidity vaults. When active, liquidity providers earn extra rewards in the form of energy tokens.
+                      Hold-to-earn is an additional yield incentive that can be enabled for liquidity pools. When active, liquidity providers earn extra rewards in the form of energy tokens.
                     </p>
                     <p className="leading-snug">
                       This vault currently does not have hold-to-earn enabled. Check other vaults for earning opportunities.
@@ -794,7 +794,7 @@ const DexterityInterface = ({ data }: any) => {
                     <Tooltip>
                       <TooltipTrigger>
                         <h1 className="text-2xl font-bold text-white/95">
-                          Liquidity Vaults
+                          Liquidity Pools
                         </h1>
                       </TooltipTrigger>
                       <TooltipContent
@@ -804,10 +804,10 @@ const DexterityInterface = ({ data }: any) => {
                         <div className="space-y-4 leading-snug">
                           <div className="flex items-center space-x-2">
                             <Lock className="w-5 h-5 text-blue-400" />
-                            <p className="text-lg font-semibold">Liquidity Vaults</p>
+                            <p className="text-lg font-semibold">Liquidity Pools</p>
                           </div>
                           <p className="text-white/80">
-                            Liquidity vaults are smart contracts that manage token pairs for
+                            Liquidity pools are smart contracts that manage token pairs for
                             trading. They are secure, decentralized, and simple enough that anyone
                             can create one.
                           </p>
@@ -851,7 +851,7 @@ const DexterityInterface = ({ data }: any) => {
                   </Link>
                 </div>
                 <div className="flex mt-1 items-center text-xs sm:text-sm text-muted-foreground">
-                  Liquidity vaults are a more secure and decentralized form of liquidity pools.
+                  Liquidity pools on Charisma use the Dexterity protocol, which is the most secure pool design on Stacks.
                 </div>
               </div >
               <div className="text-right space-x-4 flex w-full justify-end">
