@@ -1,4 +1,4 @@
-import { BookOpen, ChartLine, Coins, ExternalLink, Flame, LogOut, MessageCircle, Network, Settings, ShieldAlert, SlidersHorizontal, TrendingUp, Zap } from "lucide-react"
+import { BookOpen, ChartLine, Coins, ExternalLink, Flame, LogOut, MessageCircle, Network, Scale, Settings, ShieldAlert, SlidersHorizontal, TrendingUp, Zap } from "lucide-react"
 import {
     Sidebar,
     SidebarContent,
@@ -52,6 +52,11 @@ const items = [
         title: "Community",
         url: "/rulebook",
         icon: BookOpen,
+    },
+    {
+        title: "Liquidity Pool Deployer",
+        url: "/deployer",
+        icon: Scale,
     },
     {
         title: "Subnet Deployer",
