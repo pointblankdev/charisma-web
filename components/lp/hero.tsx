@@ -5,8 +5,11 @@ import styles from './hero.module.css';
 import { BRAND_NAME, FUNNY_QUOTE, META_DESCRIPTION } from '@lib/constants';
 import Image from 'next/image';
 import charisma from '@public/charisma.png';
-import { SignInButton, SignUpButton } from '@clerk/nextjs';
+import { SignedIn as ClerkSignedIn, SignedOut as ClerkSignedOut, SignInButton, SignUpButton } from '@clerk/nextjs';
 import { Button } from '@components/ui/button';
+
+const SignedIn = ClerkSignedIn as any
+const SignedOut = ClerkSignedOut as any
 
 export default function Hero() {
   return (
@@ -45,18 +48,30 @@ export default function Hero() {
       </div>
 
       {/* Authentication buttons */}
-      <div className={cn(styleUtils.appear, styleUtils['appear-fourth'], "flex justify-center gap-4 mt-8")}>
-        <SignUpButton mode="modal" fallbackRedirectUrl="/swap">
+      <SignedOut>
+        <div className={cn(styleUtils.appear, styleUtils['appear-fourth'], "flex justify-center gap-4 mt-8")}>
+          <SignUpButton mode="modal" fallbackRedirectUrl="/swap">
+            <Button className="min-w-32 justify-center" size="lg" variant="default">
+              Sign Up
+            </Button>
+          </SignUpButton>
+          <SignInButton mode="modal" fallbackRedirectUrl="/swap">
+            <Button className="min-w-32 justify-center" size="lg" variant="outline">
+              Sign In
+            </Button>
+          </SignInButton>
+        </div>
+      </SignedOut>
+      <SignedIn>
+        <div className={cn(styleUtils.appear, styleUtils['appear-fourth'], "flex justify-center gap-4 mt-8")}>
           <Button className="min-w-32 justify-center" size="lg" variant="default">
-            Sign Up
+            Exchange
           </Button>
-        </SignUpButton>
-        <SignInButton mode="modal" fallbackRedirectUrl="/swap">
           <Button className="min-w-32 justify-center" size="lg" variant="outline">
-            Sign In
+            Earn Rewards
           </Button>
-        </SignInButton>
-      </div>
+        </div>
+      </SignedIn>
     </div>
   );
 }

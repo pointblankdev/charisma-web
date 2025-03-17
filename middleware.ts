@@ -9,7 +9,9 @@ const publicRoutes = [
   "/vaults",
   "/meme-tools",
   "/rulebook",
-  "/api(.*)"
+  '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+  '/(api|trpc)(.*)',
+  '/(.*)'
 ];
 
 // Create a route matcher for public routes
@@ -28,12 +30,3 @@ export default clerkMiddleware(async (auth, req) => {
   // Continue for public routes or authenticated users
   return NextResponse.next();
 });
-
-export const config = {
-  matcher: [
-    // Skip Next.js internals and all static files, unless found in search params
-    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
-    // Always run for API routes
-    '/(api|trpc)(.*)',
-  ],
-};
