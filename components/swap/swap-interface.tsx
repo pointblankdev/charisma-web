@@ -329,7 +329,9 @@ export const SwapInterface = ({
     setSlippage,
     dexteritySignerSource,
     dexterityConfig,
-    refreshDexterityConfig
+    refreshDexterityConfig,
+    syncBlazeBalances,
+    refreshBalances
   } = useGlobal();
 
   const estimateTimer = useRef<any>();
@@ -392,15 +394,18 @@ export const SwapInterface = ({
   // Experience and wallet-related values are only available client-side
   const hasHighExperience = wallet.experience.balance >= 0;
 
-  // Check wallet connection status
+  // Check wallet connection status and refresh balances when signer changes
   useEffect(() => {
     const checkWalletConnection = () => {
       // If we have an STX address, there's a wallet connected
       setIsWalletConnected(!!stxAddress);
+      
+      // Refresh balances when the wallet or signer source changes
+      refreshBalances();
     };
 
     checkWalletConnection();
-  }, [stxAddress]);
+  }, [stxAddress, dexteritySignerSource, refreshBalances]);
 
   // Handle wallet connection
   const handleConnectWallet = async () => {
@@ -564,6 +569,11 @@ export const SwapInterface = ({
         // Use Dexterity SDK directly with SIP30 wallet
         Dexterity.config.sponsored = isSponsored;
         await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
+        
+        // Refresh on-chain balances after swap
+        setTimeout(() => {
+          refreshBalances();
+        }, 2000); // Give the blockchain a moment to process
       } else if (dexteritySignerSource === 'blaze') {
         // Use Signet SDK to execute the swap
         try {
@@ -585,6 +595,10 @@ export const SwapInterface = ({
           if (!result.success) {
             throw new Error(result.error || 'Failed to execute swap via Signet');
           }
+
+          // Refresh balances immediately after successful swap
+          // For now, this will refresh on-chain balances
+          refreshBalances();
 
           toast({
             title: "Swap executed",

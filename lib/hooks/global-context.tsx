@@ -56,14 +56,18 @@ export interface GlobalState {
     getBalanceByKey: (key: string) => number;
     getBalance: (contractAddress: string) => number;
 
-    // Blaze/Signet balances
-    blazeBalances: Record<string, number>;
-    setBlazeBalances: (balances: Record<string, number>) => void;
+    // Placeholder for future Blaze balance support
     syncBlazeBalances: () => Promise<void>;
+
+    // On-chain balance related
+    fetchOnChainBalances: () => Promise<any>;
+    isFetchingBalances: boolean;
+    refreshBalances: () => Promise<any>;
 
     // Global state
     stxAddress: string;
     setStxAddress: (stxAddress: string) => void;
+    getActiveWalletAddress: () => Promise<string | null>;
     block: any;
     setBlock: (block: any) => void;
     tappedAt: any;
@@ -117,68 +121,111 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const { toast } = useToast();
 
     // Wallet balances state
-    const [balances] = usePersistedState<any>('balances', {
+    const [balances, setBalances] = usePersistedState<any>('balances', {
         stx: {},
         fungible_tokens: {},
         non_fungible_tokens: {},
     });
 
-    // Blaze/Signet balances state - cached separately
-    const [blazeBalances, setBlazeBalances] = usePersistedState<Record<string, number>>('blaze-balances', {});
+    // Note: Not managing Blaze balances directly anymore
 
     // Prices state
     const [prices, setPrices] = usePersistedState<any>('prices', {});
 
     // Track client-side rendering to prevent hydration mismatch
     const [isClient, setIsClient] = useState(false);
+    // Track when on-chain balances are being fetched
+    const [isFetchingBalances, setIsFetchingBalances] = useState(false);
 
     // Set isClient to true when component mounts (client-side only)
     useEffect(() => {
         setIsClient(true);
     }, []);
 
-    // Function to sync blaze balances from Signet extension
-    const syncBlazeBalances = useCallback(async () => {
+    // Get the current active wallet address based on signer source
+    const getActiveWalletAddress = useCallback(async () => {
+        if (!isClient) return null;
+
+        try {
+            if (dexteritySignerSource === 'blaze') {
+                // For Blaze/Signet, import and use getSignetStatus
+                const { getSignetStatus } = await import('signet-sdk');
+                const signetStatus = await getSignetStatus();
+
+                // this is quite hacky, we should add some primitive messages like getSignerAddress
+                for (const key in signetStatus) {
+                    return signetStatus[key].signer
+                }
+            }
+
+            // Default to SIP30 address
+            return stxAddress;
+        } catch (error) {
+            console.error('Error getting active wallet address:', error);
+            return stxAddress;
+        }
+    }, [isClient, dexteritySignerSource, stxAddress]);
+
+    // Function to fetch on-chain balances from our API endpoint
+    const fetchOnChainBalances = useCallback(async () => {
         // Skip during server-side rendering
         if (!isClient) return;
 
         try {
-            // Import getSignetStatus dynamically (client-side only)
-            const { getSignetStatus, getBalances } = await import('signet-sdk');
+            setIsFetchingBalances(true);
 
-            // First check if Signet is available
-            const signetStatus = await getSignetStatus();
-            if (!signetStatus || Object.keys(signetStatus).length === 0) {
-                console.log('No active Signet subnets found for balance sync');
+            // Get the active wallet address based on current signer source
+            const activeAddress = await getActiveWalletAddress();
+
+            if (!activeAddress) {
+                console.log('No active wallet address found');
                 return;
             }
 
-            // Fetch all balances from all subnets
-            const allBalances = await getBalances();
+            console.log(`Fetching balances for active address: ${activeAddress}`);
 
-            // Process and normalize balances format
-            const normalizedBalances: Record<string, number> = {};
+            // Call our API endpoint to get the balances
+            const response = await fetch(`/api/v0/balances/${activeAddress}`);
 
-            // For each subnet, process the balances
-            Object.entries(allBalances).forEach(([subnetId, tokenBalances]) => {
-                // For each token in this subnet, add to our record
-                Object.entries(tokenBalances).forEach(([tokenId, balance]) => {
-                    // Create a combined key for the token that includes the subnet
-                    const normalizedKey = `${subnetId}::${tokenId}`;
-                    normalizedBalances[normalizedKey] = Number(balance);
+            if (!response.ok) {
+                throw new Error(`Failed to fetch balances: ${response.status}`);
+            }
 
-                    // Also store by contract ID for easier lookup
-                    normalizedBalances[tokenId] = Number(balance);
-                });
-            });
+            const balanceData = await response.json();
 
-            // Update the balances in state
-            setBlazeBalances(normalizedBalances);
-            console.log('Signet balances synchronized', normalizedBalances);
+            // Update balances in state
+            setBalances(balanceData);
+            console.log('On-chain balances fetched for address', activeAddress, balanceData);
+
+            return balanceData;
         } catch (error) {
-            console.error('Failed to sync Signet balances:', error);
+            console.error('Error fetching on-chain balances:', error);
+        } finally {
+            setIsFetchingBalances(false);
         }
-    }, [isClient, setBlazeBalances]);
+    }, [isClient, getActiveWalletAddress, setBalances, setIsFetchingBalances]);
+
+    // Placeholder for future direct Signet balance fetching
+    const syncBlazeBalances = useCallback(async () => {
+        // This function is temporarily disabled as we're not using Blaze balances directly
+        console.log('Note: syncBlazeBalances is disabled - not using Blaze balances directly');
+        return;
+    }, []);
+
+    // Update stxAddress when the wallet type changes
+    useEffect(() => {
+        if (!isClient) return;
+
+        const updateActiveAddress = async () => {
+            const activeAddress = await getActiveWalletAddress();
+            if (activeAddress && activeAddress !== stxAddress) {
+                console.log(`Updating active address from ${stxAddress} to ${activeAddress}`);
+                setStxAddress(activeAddress as string);
+            }
+        };
+
+        updateActiveAddress();
+    }, [isClient, dexteritySignerSource, getActiveWalletAddress, stxAddress, setStxAddress]);
 
     // Configure Dexterity in anonymous mode - only on client side
     useEffect(() => {
@@ -275,22 +322,10 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         // Return zero during server-side rendering
         if (!isClient) return 0;
 
-        // Check which signer source is active and return the appropriate balance
-        if (dexteritySignerSource === 'blaze') {
-            // First check if we have this token in blazeBalances
-            const blazeBalance = blazeBalances[ca];
-            if (blazeBalance !== undefined) {
-                return blazeBalance;
-            }
-
-            // If we don't have a blaze balance, check if we have a key for it
-            // This is a fallback in case the token exists in SIP30 but not Blaze
-            return getBalanceByKey(getKeyByContractAddress(ca)) || 0;
-        } else {
-            // Default to SIP30 balances
-            return getBalanceByKey(getKeyByContractAddress(ca)) || 0;
-        }
-    }, [getBalanceByKey, getKeyByContractAddress, isClient, dexteritySignerSource, blazeBalances]);
+        // Always return SIP30 balances for now
+        // In the future, we'll implement direct Signet balance querying when dexteritySignerSource is 'blaze'
+        return getBalanceByKey(getKeyByContractAddress(ca)) || 0;
+    }, [getBalanceByKey, getKeyByContractAddress, isClient]);
 
     // Calculate wallet state - use default values during server-side rendering
     const wallet = useMemo(() => {
@@ -477,23 +512,37 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         setTappedAt((prev: any) => ({ ...prev, [vaultId]: block }));
     };
 
+    // Fetch on-chain balances when address changes
+    useEffect(() => {
+        if (stxAddress && isClient) {
+            // Fetch initial balances
+            fetchOnChainBalances();
+        }
+    }, [stxAddress, isClient, fetchOnChainBalances]);
+
     // Sync Blaze balances when component mounts or signer changes
     useEffect(() => {
         // Skip during server-side rendering
         if (!isClient) return;
 
-        // Sync balances on initial load
-        syncBlazeBalances();
-
-        // Set up periodic refresh every 60 seconds
+        // Set up periodic refresh every 30 seconds
         const intervalId = setInterval(() => {
-            if (dexteritySignerSource === 'blaze') {
-                syncBlazeBalances();
-            }
-        }, 600000);
+            // This will now fetch balances using the current active wallet address
+            // regardless of which wallet is selected
+            fetchOnChainBalances();
+        }, 30000);
 
         return () => clearInterval(intervalId);
-    }, [isClient, syncBlazeBalances, dexteritySignerSource]);
+    }, [isClient, fetchOnChainBalances]);
+
+    // Function to refresh balances based on current signer type
+    const refreshBalances = useCallback(async () => {
+        // For now, only fetch on-chain balances
+        // In the future, we'll handle Blaze balances differently
+        if (stxAddress) {
+            return fetchOnChainBalances();
+        }
+    }, [fetchOnChainBalances, stxAddress]);
 
     const contextValue = {
         balances,
@@ -501,13 +550,16 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         getKeyByContractAddress,
         getBalanceByKey,
         getBalance,
-        // Blaze balance related
-        blazeBalances,
-        setBlazeBalances,
+        // Note: Direct Blaze balance support is removed temporarily
         syncBlazeBalances,
+        // On-chain balance related
+        fetchOnChainBalances,
+        isFetchingBalances,
+        refreshBalances,
         // Global state
         stxAddress,
         setStxAddress,
+        getActiveWalletAddress,
         block,
         setBlock,
         tappedAt,
