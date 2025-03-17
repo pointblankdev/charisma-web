@@ -1027,14 +1027,14 @@ const SubnetConfiguration = ({ selectedToken, prices, onBack }: SubnetConfigurat
 
 // Define the featured tokens that will appear in the horizontal carousel
 const getFeaturedTokens = (tokens: Token[]): Token[] => {
-  const featuredSymbols = ['STX', 'sBTC', 'CHA', 'DMG', 'USDA', 'MIA'];
+  const featuredSymbols = ['STX', 'sBTC', 'CHA', 'DMG', 'WELSH'];
   return tokens.filter(token => featuredSymbols.includes(token.symbol));
 };
 
 // Define the recent tokens - this would normally be stored in user preferences
 const getRecentTokens = (tokens: Token[]): Token[] => {
   // In a real app, this would be fetched from user's history
-  const recentSymbols = ['STX', 'CHA', 'USDA'];
+  const recentSymbols = ['STX', 'CHA', 'WELSH', 'HOOT'];
   return tokens.filter(token => recentSymbols.includes(token.symbol)).slice(0, 5);
 };
 
