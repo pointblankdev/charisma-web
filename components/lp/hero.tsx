@@ -66,10 +66,10 @@ export default function Hero() {
       <SignedIn>
         <div className={cn(styleUtils.appear, styleUtils['appear-fourth'], "flex justify-center gap-4 mt-8")}>
           <Link className="min-w-32 justify-center" href={'/swap'}>
-            Exchange
+            Trade
           </Link>
           <Link className="min-w-32 justify-center" href={'/vaults'}>
-            Earn Rewards
+            Invest
           </Link>
         </div>
       </SignedIn>
