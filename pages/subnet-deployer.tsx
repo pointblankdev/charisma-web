@@ -1027,14 +1027,14 @@ const SubnetConfiguration = ({ selectedToken, prices, onBack }: SubnetConfigurat
 
 // Define the featured tokens that will appear in the horizontal carousel
 const getFeaturedTokens = (tokens: Token[]): Token[] => {
-  const featuredSymbols = ['STX', 'sBTC', 'CHA', 'DMG', 'WELSH'];
+  const featuredSymbols = ['sBTC', 'SKULL', 'DMG', 'NOT'];
   return tokens.filter(token => featuredSymbols.includes(token.symbol));
 };
 
 // Define the recent tokens - this would normally be stored in user preferences
 const getRecentTokens = (tokens: Token[]): Token[] => {
   // In a real app, this would be fetched from user's history
-  const recentSymbols = ['STX', 'CHA', 'WELSH', 'HOOT'];
+  const recentSymbols = ['CHA', 'WELSH', 'HOOT'];
   return tokens.filter(token => recentSymbols.includes(token.symbol)).slice(0, 5);
 };
 
@@ -1052,14 +1052,16 @@ export const getStaticProps: GetStaticProps = async () => {
     await Dexterity.discover({ serialize: true, blacklist });
 
     // Get all tokens
-    const tokens: Token[] = Dexterity.getTokens();
+    const allTokens: Token[] = Dexterity.getTokens();
+
+    const tokens = allTokens.filter(token => token.contractId !== '.stx');
 
     // Enhance tokens with categories for filtering
     const enhancedTokens = tokens.map(token => {
       const categories: string[] = [];
 
       // Assign categories based on token attributes
-      if (['STX', 'sBTC', 'CHA', 'DMG', 'WELSH'].includes(token.symbol)) {
+      if (['sBTC', 'CHA', 'DMG', 'WELSH'].includes(token.symbol)) {
         categories.push('popular');
       }
 
@@ -1136,13 +1138,13 @@ export default function SubnetDeployerPage({ tokens, prices }: { tokens: Token[]
         </div>
 
         {/* Featured/Popular Tokens Carousel */}
-        <div className="relative bg-[var(--sidebar)] rounded-xl border border-accent/10 overflow-hidden">
+        <div className="relative bg-[var(--sidebar)] rounded-xl border border-accent/10 overflow-hidden h-64">
           <div className="absolute inset-0 bg-gradient-to-b from-background/10 to-background/0" />
           <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_var(--accent)_0%,_transparent_50%)] opacity-20" />
           <div className="relative py-6 px-4">
             <h2 className="text-xl font-semibold mb-4 flex items-center">
               <Sparkles className="h-5 w-5 mr-2 text-yellow-500" />
-              Featured Tokens
+              Suggested Tokens
             </h2>
 
             <div className="flex py-4 pb-2 px-2 -mx-2 scrollbar-hide">
@@ -1177,7 +1179,7 @@ export default function SubnetDeployerPage({ tokens, prices }: { tokens: Token[]
         </div>
 
         {/* Recently Used Tokens */}
-        <div className="relative overflow-hidden bg-[var(--sidebar)] rounded-xl border border-accent/10">
+        {/* <div className="relative overflow-hidden bg-[var(--sidebar)] rounded-xl border border-accent/10">
           <div className="absolute inset-0 bg-gradient-to-b from-background/10 to-background/0" />
           <div className="absolute inset-0 bg-[radial-gradient(at_top_right,_var(--accent)_0%,_transparent_50%)] opacity-10" />
           <div className="relative py-6 px-4">
@@ -1214,7 +1216,7 @@ export default function SubnetDeployerPage({ tokens, prices }: { tokens: Token[]
               })}
             </div>
           </div>
-        </div>
+        </div> */}
 
         {/* Main Token Selector */}
         <div className="relative overflow-hidden bg-[var(--sidebar)] rounded-xl border border-accent/10">
