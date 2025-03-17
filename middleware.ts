@@ -9,9 +9,12 @@ const publicRoutes = [
   "/vaults",
   "/meme-tools",
   "/rulebook",
-  '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+  "/privacy-policy",
+  "/set-extension",
+  // Static files pattern - ensure all file types in public directory are accessible
+  '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|GIF|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|pdf|mp4|mp3|json)).*)',
+  // API routes
   '/(api|trpc)(.*)',
-  '/(.*)'
 ];
 
 // Create a route matcher for public routes
