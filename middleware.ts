@@ -1,3 +1,18 @@
+/*
+ * Authentication Middleware Configuration
+ * --------------------------------------
+ * This file controls which routes require authentication and which are public.
+ * 
+ * Development Options:
+ * 1. Uncomment the '/(.*)', line in the publicRoutes array to allow all routes without authentication
+ * 2. Set NEXT_PUBLIC_DISABLE_AUTH=true in your .env to add all routes to public routes
+ * 3. Set NEXT_PUBLIC_BYPASS_AUTH=true in your .env to completely bypass auth checks
+ * 
+ * To add new public routes:
+ * - Add the route path to the publicRoutes array
+ * - For file extensions, add them to the static files pattern regex
+ */
+
 import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 import { NextResponse } from "next/server";
 
@@ -17,11 +32,21 @@ const publicRoutes = [
   '/(api|trpc)(.*)',
 ];
 
+// If NEXT_PUBLIC_DISABLE_AUTH is set to "true", add a wildcard route to allow all routes
+if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
+  publicRoutes.push('/(.*)')
+}
+
 // Create a route matcher for public routes
 const isPublicRoute = createRouteMatcher(publicRoutes);
 
 // Create middleware with auth handling
 export default clerkMiddleware(async (auth, req) => {
+  // For development environment, you can bypass auth completely
+  if (process.env.NEXT_PUBLIC_BYPASS_AUTH === "true") {
+    return NextResponse.next();
+  }
+
   // Check if the route is public or if the user is authenticated
   if (!isPublicRoute(req) && !(await auth()).userId) {
     // Redirect to sign-in for protected routes when not authenticated
