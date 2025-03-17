@@ -55,7 +55,12 @@ export interface GlobalState {
     getKeyByContractAddress: (contractAddress: string) => string;
     getBalanceByKey: (key: string) => number;
     getBalance: (contractAddress: string) => number;
-
+    
+    // Blaze/Signet balances
+    blazeBalances: Record<string, number>;
+    setBlazeBalances: (balances: Record<string, number>) => void;
+    syncBlazeBalances: () => Promise<void>;
+    
     // Global state
     stxAddress: string;
     setStxAddress: (stxAddress: string) => void;
@@ -117,6 +122,9 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         fungible_tokens: {},
         non_fungible_tokens: {},
     });
+    
+    // Blaze/Signet balances state - cached separately
+    const [blazeBalances, setBlazeBalances] = usePersistedState<Record<string, number>>('blaze-balances', {});
 
     // Prices state
     const [prices, setPrices] = usePersistedState<any>('prices', {});
@@ -128,6 +136,49 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     useEffect(() => {
         setIsClient(true);
     }, []);
+    
+    // Function to sync blaze balances from Signet extension
+    const syncBlazeBalances = useCallback(async () => {
+        // Skip during server-side rendering
+        if (!isClient) return;
+        
+        try {
+            // Import getSignetStatus dynamically (client-side only)
+            const { getSignetStatus, getBalances } = await import('signet-sdk');
+            
+            // First check if Signet is available
+            const signetStatus = await getSignetStatus();
+            if (!signetStatus || Object.keys(signetStatus).length === 0) {
+                console.log('No active Signet subnets found for balance sync');
+                return;
+            }
+            
+            // Fetch all balances from all subnets
+            const allBalances = await getBalances();
+            
+            // Process and normalize balances format
+            const normalizedBalances: Record<string, number> = {};
+            
+            // For each subnet, process the balances
+            Object.entries(allBalances).forEach(([subnetId, tokenBalances]) => {
+                // For each token in this subnet, add to our record
+                Object.entries(tokenBalances).forEach(([tokenId, balance]) => {
+                    // Create a combined key for the token that includes the subnet
+                    const normalizedKey = `${subnetId}::${tokenId}`;
+                    normalizedBalances[normalizedKey] = Number(balance);
+                    
+                    // Also store by contract ID for easier lookup
+                    normalizedBalances[tokenId] = Number(balance);
+                });
+            });
+            
+            // Update the balances in state
+            setBlazeBalances(normalizedBalances);
+            console.log('Signet balances synchronized', normalizedBalances);
+        } catch (error) {
+            console.error('Failed to sync Signet balances:', error);
+        }
+    }, [isClient, setBlazeBalances]);
 
     // Configure Dexterity in anonymous mode - only on client side
     useEffect(() => {
@@ -223,9 +274,23 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const getBalance = useCallback((ca: string) => {
         // Return zero during server-side rendering
         if (!isClient) return 0;
-
-        return getBalanceByKey(getKeyByContractAddress(ca)) || 0;
-    }, [getBalanceByKey, getKeyByContractAddress, isClient]);
+        
+        // Check which signer source is active and return the appropriate balance
+        if (dexteritySignerSource === 'blaze') {
+            // First check if we have this token in blazeBalances
+            const blazeBalance = blazeBalances[ca];
+            if (blazeBalance !== undefined) {
+                return blazeBalance;
+            }
+            
+            // If we don't have a blaze balance, check if we have a key for it
+            // This is a fallback in case the token exists in SIP30 but not Blaze
+            return getBalanceByKey(getKeyByContractAddress(ca)) || 0;
+        } else {
+            // Default to SIP30 balances
+            return getBalanceByKey(getKeyByContractAddress(ca)) || 0;
+        }
+    }, [getBalanceByKey, getKeyByContractAddress, isClient, dexteritySignerSource, blazeBalances]);
 
     // Calculate wallet state - use default values during server-side rendering
     const wallet = useMemo(() => {
@@ -411,6 +476,24 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const tapTokens = (vaultId: string) => {
         setTappedAt((prev: any) => ({ ...prev, [vaultId]: block }));
     };
+    
+    // Sync Blaze balances when component mounts or signer changes
+    useEffect(() => {
+        // Skip during server-side rendering
+        if (!isClient) return;
+        
+        // Sync balances on initial load
+        syncBlazeBalances();
+        
+        // Set up periodic refresh every 60 seconds
+        const intervalId = setInterval(() => {
+            if (dexteritySignerSource === 'blaze') {
+                syncBlazeBalances();
+            }
+        }, 60000);
+        
+        return () => clearInterval(intervalId);
+    }, [isClient, syncBlazeBalances, dexteritySignerSource]);
 
     const contextValue = {
         balances,
@@ -418,6 +501,11 @@ export const GlobalProvider: React.FC<{ children: React.ReactNode }> = ({ childr
         getKeyByContractAddress,
         getBalanceByKey,
         getBalance,
+        // Blaze balance related
+        blazeBalances,
+        setBlazeBalances,
+        syncBlazeBalances,
+        // Global state
         stxAddress,
         setStxAddress,
         block,

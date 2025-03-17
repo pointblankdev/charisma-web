@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css';
 const ParticlesConfig = {
   particles: {
     number: {
-      value: 20,
+      value: 2,
       density: {
         enable: true,
         value_area: 800
@@ -129,7 +129,7 @@ const ParticleBackground = () => {
     await null;
   }, []);
   return (
-    <div id="particle-background" className='-z-10 relative'>
+    <div id="particle-background" className='z-0 relative'>
       <ParticlesFix
         id="tsparticles"
         init={particlesInit}

@@ -152,21 +152,21 @@ export function AppSidebar() {
                                     href="/settings"
                                     className="flex items-center justify-center gap-1 text-xs py-1.5 border border-border rounded-l-md bg-card hover:bg-muted transition-colors font-medium"
                                 >
-                                    <Settings className="size-3 mr-1" />
+                                    <Settings className="size-3 mr-0.5" />
                                     Account
                                 </Link>
                                 <Link
                                     href="/settings?tab=advanced"
                                     className="flex items-center justify-center gap-1 text-xs py-1.5 border-t border-b border-border bg-card hover:bg-muted transition-colors font-medium"
                                 >
-                                    <SlidersHorizontal className="size-3 mr-1" />
+                                    <SlidersHorizontal className="size-3 mr-0.5" />
                                     Advanced
                                 </Link>
                                 <Link
                                     href="/settings?tab=security"
                                     className="flex items-center justify-center gap-1 text-xs py-1.5 border border-border rounded-r-md bg-card hover:bg-muted transition-colors font-medium"
                                 >
-                                    <ShieldAlert className="size-3 mr-1" />
+                                    <ShieldAlert className="size-3 mr-0.5" />
                                     Security
                                 </Link>
                             </div>
@@ -177,7 +177,7 @@ export function AppSidebar() {
 
             <SignedOut>
                 <SidebarFooter>
-                    <SidebarMenuButton asChild className="group/auth">
+                    <SidebarMenuButton asChild className="group/auth h-24 border-0">
                         <div className="flex flex-col items-center justify-center gap-2 p-3 bg-card/30 hover:bg-card/50 rounded-lg transition-colors border border-border/40">
                             <p className="text-sm text-muted-foreground">Sign in to access more features</p>
                             <SignInButton mode="modal">

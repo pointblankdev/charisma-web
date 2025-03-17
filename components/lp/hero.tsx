@@ -4,11 +4,13 @@ import styleUtils from '@components/utils.module.css';
 import styles from './hero.module.css';
 import { BRAND_NAME, FUNNY_QUOTE, META_DESCRIPTION } from '@lib/constants';
 import Image from 'next/image';
-import charisma from '@public/charisma.png'
+import charisma from '@public/charisma.png';
+import { SignInButton, SignUpButton } from '@clerk/nextjs';
+import { Button } from '@components/ui/button';
 
 export default function Hero() {
   return (
-    <div className={styles.wrapper}>
+    <div className={cn(styles.wrapper, 'z-10 relative')}>
       <h2
         className={cn(
           styleUtils.appear,
@@ -40,6 +42,20 @@ export default function Hero() {
       </h2>
       <div className={cn(styleUtils.appear, styleUtils['appear-eighth'], styles.about)}>
         <em>{FUNNY_QUOTE}</em>
+      </div>
+
+      {/* Authentication buttons */}
+      <div className={cn(styleUtils.appear, styleUtils['appear-fourth'], "flex justify-center gap-4 mt-8")}>
+        <SignUpButton mode="modal" fallbackRedirectUrl="/swap">
+          <Button className="min-w-32 justify-center" size="lg" variant="default">
+            Sign Up
+          </Button>
+        </SignUpButton>
+        <SignInButton mode="modal" fallbackRedirectUrl="/swap">
+          <Button className="min-w-32 justify-center" size="lg" variant="outline">
+            Sign In
+          </Button>
+        </SignInButton>
       </div>
     </div>
   );

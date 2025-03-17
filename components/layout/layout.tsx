@@ -80,7 +80,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
     <>
       <div className={styles.background}>
         <div className={cn(styles.page)}>
-          <header className="justify-between flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
+          <header className="justify-between flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12 z-10">
             <div className="flex items-center gap-2 px-4">
               {activeRoute !== '/' ? <SidebarTrigger className="-ml-1" /> : <Link href="/swap">Launch App</Link>}
               {activeRoute !== '/' && <Separator orientation="vertical" className="mr-2 h-4" />}
@@ -91,7 +91,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                     // Remove query params from the route before splitting
                     const routePath = activeRoute.split('?')[0];
                     const segments = routePath.split('/').filter(Boolean);
-                    
+
                     return (
                       <>
                         {segments[0] && (
@@ -101,7 +101,7 @@ export default function Layout({ children, className, hideNav, layoutStyles }: P
                             </BreadcrumbLink>
                           </BreadcrumbItem>
                         )}
-                        
+
                         {segments.length > 1 && (
                           <>
                             <BreadcrumbSeparator className="hidden md:block" />
