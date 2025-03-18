@@ -31,7 +31,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         await Dexterity.configure({
             apiKeyRotation: 'loop',
             parallelRequests: 10,
-            maxHops: 3
+            maxHops: 4
         })
 
         const prices = await Kraxel.getAllTokenPrices();
