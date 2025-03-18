@@ -46,8 +46,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             console.log('Buying CHA with STX')
             // Buy CHA with STX
             const cha = tokens.find(token => token.contractId === 'SP2ZNGJ85ENDY6QRHQ5P2D4FXKGZWCKTB2T0Z55KS.charisma-token')!
-            const amount = Math.floor(10 ** cha.decimals / prices[cha.contractId] / 5)
-            txs.push(await Dexterity.executeSwap('.stx', cha.contractId, amount, { fee }))
+            const amount = Math.floor(((10 ** cha.decimals) / prices[cha.contractId]) / 5)
+            txs.push(await Dexterity.executeSwap('.stx', cha.contractId, amount, { fee, disablePostConditions: true }))
         } catch (error) {
             console.error('Error buying CHA:', error);
         }
