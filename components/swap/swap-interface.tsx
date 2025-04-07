@@ -399,7 +399,7 @@ export const SwapInterface = ({
     const checkWalletConnection = () => {
       // If we have an STX address, there's a wallet connected
       setIsWalletConnected(!!stxAddress);
-      
+
       // Refresh balances when the wallet or signer source changes
       refreshBalances();
     };
@@ -563,58 +563,10 @@ export const SwapInterface = ({
         hops.push({ ...hop, vault, opcode });
       }
       lastQuote.route.hops = hops;
+      // Use Dexterity SDK directly with SIP30 wallet
+      Dexterity.config.sponsored = isSponsored;
+      await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
 
-      // Use the appropriate signer based on the global configuration
-      if (dexteritySignerSource === 'sip30') {
-        // Use Dexterity SDK directly with SIP30 wallet
-        Dexterity.config.sponsored = isSponsored;
-        await Dexterity.router.executeSwap(lastQuote.route, amount, { disablePostConditions });
-        
-        // Refresh on-chain balances after swap
-        setTimeout(() => {
-          refreshBalances();
-        }, 2000); // Give the blockchain a moment to process
-      } else if (dexteritySignerSource === 'blaze') {
-        // Use Signet SDK to execute the swap
-        try {
-          // Import the executeDexSwap function from signet-sdk
-          const signetSdk = await import('signet-sdk');
-
-          // Call the Signet SDK function with the same parameters
-          const result = await signetSdk.executeDexSwap({
-            route: lastQuote.route,
-            amount,
-            options: {
-              disablePostConditions,
-              sponsored: isSponsored
-            }
-          });
-
-          console.log(result)
-
-          if (!result.success) {
-            throw new Error(result.error || 'Failed to execute swap via Signet');
-          }
-
-          // Refresh balances immediately after successful swap
-          // For now, this will refresh on-chain balances
-          refreshBalances();
-
-          toast({
-            title: "Swap executed",
-            description: result.txId ? `Transaction ID: ${result.txId.substring(0, 8)}...` : "Transaction submitted",
-            variant: "default"
-          });
-        } catch (signetError) {
-          console.error("Signet swap failed:", signetError);
-          toast({
-            title: "Signet swap failed",
-            description: signetError instanceof Error ? signetError.message : "Unknown error with Signet extension",
-            variant: "destructive"
-          });
-          throw signetError;
-        }
-      }
     } catch (error) {
       console.error('Swap failed:', error);
       toast({
@@ -654,7 +606,7 @@ export const SwapInterface = ({
   const isArbitrageTrade = fromToken?.contractId === toToken?.contractId &&
     Number(estimatedAmountOut) > Number(fromAmount);
 
-  const minimumAmountOut = Number(estimatedAmountOut) * (1 - slippage / 100);
+  const minimumAmountOut = Number(estimatedAmountOut) * (1 - slippage);
 
   // Return the skeleton loader if we're not on the client
   if (!isClient) {

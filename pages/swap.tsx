@@ -28,7 +28,7 @@ export const getStaticProps: GetStaticProps<any> = async () => {
 
     // patch missing images
     tokens.forEach((token) => {
-      if (!token?.image && token?.contractId) {
+      if ((!token?.image || token.image === '') && token?.contractId) {
         token.image = tokenImages[token.contractId];
       }
     });

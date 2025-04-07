@@ -323,6 +323,7 @@ export default function SettingsPage() {
 
     const updateDexterityConfig = async () => {
       let signerAddress;
+      console.log(dexteritySignerSource, blazeState, walletConnected, stxAddress);
 
       if (dexteritySignerSource === 'blaze' && blazeState === 'unlocked') {
         signerAddress = (Object.values(blazeSignerStatus).find((subnet: any) => subnet.signer) as any)?.signer;
@@ -401,7 +402,7 @@ export default function SettingsPage() {
                       </div>
 
                       {/* Signet - Primary/Recommended */}
-                      <div className="p-4 bg-cyan-800/10 rounded-lg border-2 border-cyan-900/20 relative mb-4">
+                      {/* <div className="p-4 bg-cyan-800/10 rounded-lg border-2 border-cyan-900/20 relative mb-4">
                         <div className="absolute -top-2.5 right-20 bg-cyan-500/40 rounded-full px-2 py-0 text-xs text-white font-medium">
                           Recommended
                         </div>
@@ -452,7 +453,6 @@ export default function SettingsPage() {
                           </div>
                         </div>
 
-                        {/* Status details when installed but not unlocked */}
                         {isBlazeSignerInstalled && blazeState !== 'unlocked' && (
                           <div className={`p-3 rounded-lg ${blazeState === 'locked' ? "bg-yellow-500/10" :
                             blazeState === 'no-subnets' ? "bg-blue-500/10" : "bg-muted/50"
@@ -475,7 +475,6 @@ export default function SettingsPage() {
                           </div>
                         )}
 
-                        {/* Capability list - visible even when not installed */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-2 text-xs mt-3">
                           <div className="flex items-center gap-1.5">
                             <div className={`size-2 rounded-full ${blazeState === 'unlocked' ? "bg-green-500" : "bg-gray-300"}`}></div>
@@ -495,15 +494,12 @@ export default function SettingsPage() {
                           </div>
                         </div>
 
-                        {/* Unlocked Details - Only show when fully active */}
                         {clientSideRendered && blazeState === 'unlocked' && (
                           <div className="mt-4 border-t border-muted pt-4 space-y-4">
-                            {/* Addresses */}
                             {Object.values(blazeSignerStatus).some((subnet: any) => subnet.signer) && (
                               <div>
                                 <div className="text-sm font-medium mb-2">Addresses</div>
                                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                                  {/* Stacks STX Address */}
                                   <div className="p-3 bg-muted/50 rounded-md">
                                     <div className="flex items-center justify-between">
                                       <div className="flex items-center gap-2">
@@ -526,7 +522,6 @@ export default function SettingsPage() {
                                     <p className="text-xs text-muted-foreground mt-2">Used for standard Stacks blockchain operations</p>
                                   </div>
 
-                                  {/* Signet STX Address */}
                                   <div className="p-3 bg-muted/50 rounded-md">
                                     <div className="flex items-center justify-between">
                                       <div className="flex items-center gap-2">
@@ -546,7 +541,6 @@ export default function SettingsPage() {
                               </div>
                             )}
 
-                            {/* Connected Subnets */}
                             {Object.keys(blazeSignerStatus).length > 0 && (
                               <div className="mt-4">
                                 <div className="flex items-center justify-between mb-2">
@@ -571,7 +565,6 @@ export default function SettingsPage() {
                               </div>
                             )}
 
-                            {/* Capabilities */}
                             <div className="mt-4">
                               <div className="text-sm font-medium mb-2">Enabled Capabilities</div>
                               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -624,7 +617,6 @@ export default function SettingsPage() {
                           </div>
                         )}
 
-                        {/* Conditional state renders */}
                         {clientSideRendered && isBlazeSignerInstalled && blazeState === 'no-subnets' && (
                           <div className="rounded-lg border bg-card p-4 mt-2">
                             <div className="text-sm font-medium text-blue-500">No Active Subnets</div>
@@ -680,7 +672,7 @@ export default function SettingsPage() {
                             </a>
                           </div>
                         )}
-                      </div>
+                      </div> */}
 
                       {/* SIP30 Wallet - Traditional */}
                       <div className="p-4 bg-muted/20 rounded-lg border border-muted mt-4">
@@ -871,199 +863,6 @@ export default function SettingsPage() {
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-6">
-                  {/* Signer Source Selector */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div>
-                        <Label htmlFor="signerSource" className="font-medium">Signer Source</Label>
-                        <p className="text-sm text-muted-foreground mt-1">
-                          Choose which connected wallet provides the signing capability for transactions
-                        </p>
-                      </div>
-                      <Select
-                        value={dexteritySignerSource}
-                        onValueChange={(value: 'sip30' | 'blaze') => setDexteritySignerSource(value)}
-                        disabled={!walletConnected && blazeState !== 'unlocked'}
-                      >
-                        <SelectTrigger className="w-[180px]">
-                          <SelectValue placeholder="Select source" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="sip30" disabled={!walletConnected}>
-                            <div className="flex items-center gap-2">
-                              <WalletIcon className="size-4" />
-                              <span>SIP30 Wallet</span>
-                            </div>
-                          </SelectItem>
-                          <SelectItem value="blaze" disabled={blazeState !== 'unlocked'}>
-                            <div className="flex items-center gap-2">
-                              <Zap className="size-4" />
-                              <span>Signet</span>
-                            </div>
-                          </SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {/* Current Signer Status */}
-                    <div className={cn(
-                      "rounded-md p-3 mt-3",
-                      activeSigner
-                        ? (dexteritySignerSource === 'blaze' ? "bg-cyan-500/5 border border-cyan-100/10" : "bg-blue-500/5 border border-blue-100/10")
-                        : (!walletConnected && blazeState !== 'unlocked' ? "bg-yellow-500/5 border border-yellow-100" : "bg-muted/30")
-                    )}>
-                      <div className="flex items-center gap-2 mb-2">
-                        <div className={cn(
-                          "size-2 rounded-full",
-                          activeSigner
-                            ? (dexteritySignerSource === 'blaze' ? "bg-cyan-500" : "bg-blue-500")
-                            : (!walletConnected && blazeState !== 'unlocked' ? "bg-yellow-500/50" : "bg-red-500")
-                        )}></div>
-                        <h4 className={cn(
-                          "text-sm font-medium",
-                          activeSigner
-                            ? (dexteritySignerSource === 'blaze' ? "text-cyan-600" : "text-blue-600")
-                            : (!walletConnected && blazeState !== 'unlocked' ? "text-yellow-600/90" : "")
-                        )}>
-                          {activeSigner ? `Active Signer: ${activeSigner}` : "No Active Signer"}
-                        </h4>
-                      </div>
-                      <p className="text-xs text-muted-foreground">
-                        {getSignerStatusMessage()}
-                      </p>
-
-                      {/* No signers available message */}
-                      {!walletConnected && blazeState !== 'unlocked' && (
-                        <div className="mt-3 rounded-md bg-primary/10 p-3 border border-primary/20">
-                          <div className="flex items-start gap-2">
-                            <AlertCircle className="size-4 text-yellow-500 mt-0.5 flex-shrink-0" />
-                            <div>
-                              <h5 className="text-sm font-medium text-primary-foreground/50 mb-1">No Signing Source Available</h5>
-                              <p className="text-xs text-yellow-700">
-                                You need at least one active signing source to perform transactions.
-                                Please connect a SIP30 wallet or unlock Signet to proceed.
-                              </p>
-                              <div className="flex flex-wrap gap-2 mt-3">
-                                {!walletConnected && (
-                                  <Button size="sm" onClick={handleStandardWalletConnection} variant="outline" className="h-8 text-xs border-yellow-300 bg-yellow-100 text-primary-foreground/50 hover:bg-primary/20">
-                                    <WalletIcon className="size-3 mr-1.5" /> Connect SIP30 Wallet
-                                  </Button>
-                                )}
-                                {isBlazeSignerInstalled && (
-                                  <Button size="sm" onClick={handleBlazeStatusCheck} variant="outline" className="h-8 text-xs border-yellow-300 bg-yellow-100 text-primary-foreground/50 hover:bg-primary/20">
-                                    <Zap className="size-3 mr-1.5" /> Check Blaze Status
-                                  </Button>
-                                )}
-                                {!isBlazeSignerInstalled && (
-                                  <a
-                                    href="https://signet-omega.vercel.app/download.html"
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="inline-flex items-center h-8 px-2 text-xs rounded border border-yellow-300 bg-yellow-100 text-primary-foreground/50 hover:bg-primary/20"
-                                  >
-                                    <Zap className="size-3 mr-1.5" /> Install Signet
-                                  </a>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Signer capabilities comparison - only show when both are available */}
-                      {walletConnected && blazeState === 'unlocked' && (
-                        <div className="mt-3 pt-3 border-t border-dashed border-muted">
-                          <h5 className="text-xs font-medium mb-2">Signer Capabilities Comparison</h5>
-                          <div className="grid grid-cols-3 gap-2 text-xs">
-                            <div></div>
-                            <div className="text-center font-medium">SIP30 Wallet</div>
-                            <div className="text-center font-medium">Signet</div>
-
-                            <div>STX Transactions</div>
-                            <div className="text-center text-green-500">✓</div>
-                            <div className="text-center text-green-500">✓</div>
-
-                            <div>Bitcoin Transactions</div>
-                            <div className="text-center text-green-500">✓</div>
-                            <div className="text-center text-red-500">✗</div>
-
-                            <div>Subnet Integration</div>
-                            <div className="text-center text-red-500">✗</div>
-                            <div className="text-center text-green-500">✓</div>
-
-                            <div>Gas-Free Transactions</div>
-                            <div className="text-center text-red-500">✗</div>
-                            <div className="text-center text-green-500">✓</div>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Partial configuration - if only one signer type is available */}
-                      {((walletConnected && blazeState !== 'unlocked') || (!walletConnected && blazeState === 'unlocked')) && (
-                        <div className="mt-3 pt-3 border-t border-dashed border-muted">
-                          <h5 className="text-xs font-medium mb-2">
-                            {walletConnected ? "SIP30 Wallet Active" : "Signet Active"}
-                          </h5>
-                          <p className="text-xs text-muted-foreground mb-3">
-                            {walletConnected ?
-                              "You're using a SIP30 wallet for signing. For subnet capabilities, install and unlock Signet." :
-                              "You're using Signet for signing. For Bitcoin operations, connect a SIP30 wallet."}
-                          </p>
-
-                          {walletConnected && !isBlazeSignerInstalled && (
-                            <a
-                              href="https://github.com/Trust-Machines/signet/releases"
-                              target="_blank"
-                              rel="noopener noreferrer"
-                              className="text-primary hover:underline text-xs flex items-center"
-                            >
-                              <PlusIcon className="size-3 mr-1" /> Install Signet for enhanced features
-                            </a>
-                          )}
-
-                          {!walletConnected && blazeState === 'unlocked' && (
-                            <Button
-                              variant="outline"
-                              size="sm"
-                              onClick={handleStandardWalletConnection}
-                              className="h-8 text-xs"
-                            >
-                              <WalletIcon className="size-3 mr-1.5" /> Connect SIP30 Wallet
-                            </Button>
-                          )}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Connection Requirements */}
-                  <div className="rounded-md border p-3 mb-2">
-                    <h4 className="text-sm font-medium mb-2">Connection Requirements</h4>
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-                      <div className="flex items-center gap-2">
-                        <div className={cn(
-                          "size-3 rounded-full",
-                          walletConnected ? "bg-green-500" : "bg-gray-300",
-                          dexteritySignerSource === 'sip30' && walletConnected && "ring-2 ring-offset-1 ring-green-300"
-                        )}></div>
-                        <span className={cn(
-                          "text-xs",
-                          dexteritySignerSource === 'sip30' && walletConnected && "font-medium"
-                        )}>SIP30 Wallet Connection</span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <div className={cn(
-                          "size-3 rounded-full",
-                          blazeState === 'unlocked' ? "bg-green-500" : "bg-gray-300",
-                          dexteritySignerSource === 'blaze' && blazeState === 'unlocked' && "ring-2 ring-offset-1 ring-green-300"
-                        )}></div>
-                        <span className={cn(
-                          "text-xs",
-                          dexteritySignerSource === 'blaze' && blazeState === 'unlocked' && "font-medium"
-                        )}>Signet (Unlocked)</span>
-                      </div>
-                    </div>
-                  </div>
 
                   {/* Current Configuration */}
                   <div className="space-y-3">
@@ -1287,331 +1086,6 @@ export default function SettingsPage() {
                   </div>
                 </CardFooter>
               </Card>
-
-              {/* Performance Settings Card */}
-              <Card>
-                <CardHeader>
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Gauge className="size-5" />
-                        Performance Settings
-                      </CardTitle>
-                      <CardDescription>
-                        Optimize application performance and data loading
-                      </CardDescription>
-                    </div>
-                    {!PERFORMANCE_FEATURES_SUPPORTED && (
-                      <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 font-normal">
-                        <AlertCircle className="size-3 mr-1" />
-                        Coming Soon
-                      </Badge>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent className="space-y-4">
-                  {/* Cache Duration */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-2 items-center">
-                        <Label htmlFor="cacheTime" className="font-medium">Price Quote Cache Duration</Label>
-                        <HoverCard>
-                          <HoverCardTrigger>
-                            <InfoIcon className="size-3.5 text-muted-foreground cursor-pointer" />
-                          </HoverCardTrigger>
-                          <HoverCardContent className="w-80">
-                            <h4 className="font-medium mb-2">About Cache Duration</h4>
-                            <p className="text-sm">
-                              Controls how long price quotes are cached before requesting fresh data.
-                              Lower values provide more accurate prices but increase API usage.
-                            </p>
-                            {!PERFORMANCE_FEATURES_SUPPORTED && (
-                              <div className="mt-2 p-2 rounded bg-yellow-500/10 text-xs text-yellow-700">
-                                <span className="font-medium">Feature coming soon:</span> This setting will be enabled
-                                in a future SDK update. Currently, a default cache of 30 seconds is used.
-                              </div>
-                            )}
-                          </HoverCardContent>
-                        </HoverCard>
-                      </div>
-                      <Select
-                        value={cacheTime.toString()}
-                        onValueChange={(value) => setCacheTime(Number(value))}
-                        disabled={!PERFORMANCE_FEATURES_SUPPORTED}
-                      >
-                        <SelectTrigger className={cn("w-[140px]", !PERFORMANCE_FEATURES_SUPPORTED && "opacity-60")}>
-                          <SelectValue placeholder="Select duration" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="0">No Cache</SelectItem>
-                          <SelectItem value="10000">10 seconds</SelectItem>
-                          <SelectItem value="30000">30 seconds</SelectItem>
-                          <SelectItem value="60000">1 minute</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <p className={cn("text-xs text-muted-foreground", !PERFORMANCE_FEATURES_SUPPORTED && "opacity-60")}>
-                      {cacheTime === 0
-                        ? "Always fetch fresh prices (lowest latency, highest accuracy)"
-                        : `Cache price quotes for ${cacheTime / 1000} seconds (reduces API calls)`}
-                    </p>
-                  </div>
-
-                  <Separator />
-
-                  {/* Data Prefetching */}
-                  <div className="space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-2 items-center">
-                        <div>
-                          <Label className="font-medium">Data Prefetching</Label>
-                          <p className="text-sm text-muted-foreground mt-1">
-                            Preload data for faster response times
-                          </p>
-                        </div>
-                        <HoverCard>
-                          <HoverCardTrigger>
-                            <InfoIcon className="size-3.5 text-muted-foreground cursor-pointer" />
-                          </HoverCardTrigger>
-                          <HoverCardContent className="w-80">
-                            <h4 className="font-medium mb-2">About Data Prefetching</h4>
-                            <p className="text-sm">
-                              When enabled, the app will proactively load token data and price information before you need it,
-                              resulting in a more responsive interface but higher network usage.
-                            </p>
-                            {!PERFORMANCE_FEATURES_SUPPORTED && (
-                              <div className="mt-2 p-2 rounded bg-yellow-500/10 text-xs text-yellow-700">
-                                <span className="font-medium">Feature coming soon:</span> This setting will be enabled
-                                in a future SDK update. Currently, data is loaded on demand only.
-                              </div>
-                            )}
-                          </HoverCardContent>
-                        </HoverCard>
-                      </div>
-                      <Switch
-                        checked={dataPrefetch}
-                        onCheckedChange={setDataPrefetch}
-                        disabled={!PERFORMANCE_FEATURES_SUPPORTED}
-                      />
-                    </div>
-
-                    <div className={cn("grid grid-cols-2 gap-2 text-xs text-muted-foreground mt-2", !PERFORMANCE_FEATURES_SUPPORTED && "opacity-60")}>
-                      <div className="flex items-start gap-1.5">
-                        <PlusIcon className="size-3 mt-0.5 text-green-500" />
-                        <span>Faster UI response</span>
-                      </div>
-                      <div className="flex items-start gap-1.5">
-                        <MinusIcon className="size-3 mt-0.5 text-red-500" />
-                        <span>Increased data usage</span>
-                      </div>
-                      <div className="flex items-start gap-1.5">
-                        <PlusIcon className="size-3 mt-0.5 text-green-500" />
-                        <span>Better swap experience</span>
-                      </div>
-                      <div className="flex items-start gap-1.5">
-                        <MinusIcon className="size-3 mt-0.5 text-red-500" />
-                        <span>Higher initial load time</span>
-                      </div>
-                    </div>
-                  </div>
-
-                  {!PERFORMANCE_FEATURES_SUPPORTED && (
-                    <div className="rounded-lg border border-primary/20 bg-primary/10 p-3 text-primary-foreground/50 text-sm flex items-center gap-2 mt-2">
-                      <AlertCircle className="size-4 flex-shrink-0" />
-                      <div>
-                        <p className="font-medium">Performance settings are not supported in current SDK version</p>
-                        <p className="text-xs mt-1">These options will be enabled in an upcoming release. For now, default values are being used.</p>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-
-              {/* Developer Tools Card (Expandable) */}
-              <Collapsible className="w-full">
-                <CollapsibleTrigger asChild>
-                  <Button variant="outline" className="flex w-full justify-between">
-                    <div className="flex items-center gap-2">
-                      <Terminal className="size-4" />
-                      <span>Developer Tools</span>
-                      {!DEVELOPER_FEATURES_SUPPORTED && (
-                        <Badge variant="outline" className="bg-yellow-500/10 text-yellow-500 text-xs font-normal">
-                          <AlertCircle className="size-3 mr-1" />
-                          Coming Soon
-                        </Badge>
-                      )}
-                    </div>
-                    <ChevronDown className="size-4" />
-                  </Button>
-                </CollapsibleTrigger>
-                <CollapsibleContent>
-                  <Card className="mt-2 border-dashed">
-                    <CardContent className="pt-6 space-y-4">
-                      {/* Warning Banner */}
-                      {!DEVELOPER_FEATURES_SUPPORTED && (
-                        <div className="rounded-lg border border-primary/20 bg-primary/10 p-3 text-primary-foreground/50 text-sm flex items-center gap-2 mb-4">
-                          <AlertCircle className="size-4 flex-shrink-0" />
-                          <div>
-                            <p className="font-medium">Developer settings are not supported in current SDK version</p>
-                            <p className="text-xs mt-1">These options will be enabled in an upcoming release. Your preferences will be saved for when they become available.</p>
-                          </div>
-                        </div>
-                      )}
-
-                      {/* Transaction Mode */}
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <div className="flex gap-2 items-center">
-                            <Label htmlFor="transactionMode" className="font-medium">Transaction Mode</Label>
-                            <HoverCard>
-                              <HoverCardTrigger>
-                                <InfoIcon className="size-3.5 text-muted-foreground cursor-pointer" />
-                              </HoverCardTrigger>
-                              <HoverCardContent className="w-80">
-                                <h4 className="font-medium mb-2">About Transaction Modes</h4>
-                                <p className="text-sm">
-                                  Choose how transactions are processed:
-                                </p>
-                                <ul className="text-xs mt-2 space-y-1.5">
-                                  <li><span className="font-medium">Standard:</span> Normal on-chain transactions with default behavior</li>
-                                  <li><span className="font-medium">Sponsored:</span> Transactions without requiring the user to pay fees</li>
-                                  <li><span className="font-medium">Optimistic:</span> UI updates immediately before blockchain confirmation</li>
-                                </ul>
-                                {!DEVELOPER_FEATURES_SUPPORTED && (
-                                  <div className="mt-2 p-2 rounded bg-yellow-500/10 text-xs text-yellow-700">
-                                    <span className="font-medium">Feature coming soon:</span> Additional transaction modes will be enabled
-                                    in a future SDK update. Currently, only standard transactions are supported.
-                                  </div>
-                                )}
-                              </HoverCardContent>
-                            </HoverCard>
-                          </div>
-                          <Select
-                            value={transactionMode}
-                            onValueChange={setTransactionMode}
-                            disabled={!DEVELOPER_FEATURES_SUPPORTED}
-                          >
-                            <SelectTrigger className={cn("w-[160px]", !DEVELOPER_FEATURES_SUPPORTED && "opacity-60")}>
-                              <SelectValue placeholder="Select mode" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="standard">Standard</SelectItem>
-                              <SelectItem value="sponsored">Sponsored (Fee-Free)</SelectItem>
-                              <SelectItem value="optimistic">Optimistic Execution</SelectItem>
-                            </SelectContent>
-                          </Select>
-                        </div>
-                        <p className={cn("text-xs text-muted-foreground", !DEVELOPER_FEATURES_SUPPORTED && "opacity-60")}>
-                          {getTransactionModeDescription()}
-                        </p>
-                      </div>
-
-                      <Separator />
-
-                      {/* Debug Mode */}
-                      <div className="space-y-2">
-                        <div className="flex justify-between items-center">
-                          <div className="flex gap-2 items-center">
-                            <div>
-                              <Label className="font-medium">Debug Mode</Label>
-                              <p className={cn("text-sm text-muted-foreground mt-1", !DEVELOPER_FEATURES_SUPPORTED && "opacity-80")}>
-                                Show detailed transaction logs in console
-                              </p>
-                            </div>
-                            <HoverCard>
-                              <HoverCardTrigger>
-                                <InfoIcon className="size-3.5 text-muted-foreground cursor-pointer" />
-                              </HoverCardTrigger>
-                              <HoverCardContent className="w-80">
-                                <h4 className="font-medium mb-2">About Debug Mode</h4>
-                                <p className="text-sm">
-                                  When enabled, detailed transaction logs and SDK operations will be printed to the browser console.
-                                  This is useful for developers troubleshooting issues.
-                                </p>
-                                {!DEVELOPER_FEATURES_SUPPORTED && (
-                                  <div className="mt-2 p-2 rounded bg-yellow-500/10 text-xs text-yellow-700">
-                                    <span className="font-medium">Feature coming soon:</span> Debug mode will be enabled
-                                    in a future SDK update. Currently, only standard logging is available.
-                                  </div>
-                                )}
-                              </HoverCardContent>
-                            </HoverCard>
-                          </div>
-                          <Switch
-                            checked={debugMode}
-                            onCheckedChange={setDebugMode}
-                            disabled={!DEVELOPER_FEATURES_SUPPORTED}
-                          />
-                        </div>
-                      </div>
-
-                      <Separator />
-
-                      {/* API URL Override */}
-                      <div className="space-y-2">
-                        <div className="flex gap-2 items-center">
-                          <Label htmlFor="apiOverride" className="font-medium">API Endpoint Override</Label>
-                          <HoverCard>
-                            <HoverCardTrigger>
-                              <InfoIcon className="size-3.5 text-muted-foreground cursor-pointer" />
-                            </HoverCardTrigger>
-                            <HoverCardContent className="w-80">
-                              <h4 className="font-medium mb-2">About API Override</h4>
-                              <p className="text-sm">
-                                Allows you to specify a custom API endpoint for Dexterity operations.
-                                This should only be modified if instructed by the development team.
-                              </p>
-                              {!DEVELOPER_FEATURES_SUPPORTED && (
-                                <div className="mt-2 p-2 rounded bg-yellow-500/10 text-xs text-yellow-700">
-                                  <span className="font-medium">Feature coming soon:</span> API endpoint override will be enabled
-                                  in a future SDK update. Currently, only the default endpoint is used.
-                                </div>
-                              )}
-                            </HoverCardContent>
-                          </HoverCard>
-                        </div>
-                        <div className="flex gap-2">
-                          <Input
-                            id="apiOverride"
-                            value={apiOverride}
-                            onChange={(e) => setApiOverride(e.target.value)}
-                            placeholder="https://api.example.com"
-                            className={cn("font-mono text-xs", !DEVELOPER_FEATURES_SUPPORTED && "opacity-60")}
-                            disabled={!DEVELOPER_FEATURES_SUPPORTED}
-                          />
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => setApiOverride('')}
-                            disabled={!apiOverride || !DEVELOPER_FEATURES_SUPPORTED}
-                          >
-                            Reset
-                          </Button>
-                        </div>
-                        <p className={cn("text-xs text-muted-foreground", !DEVELOPER_FEATURES_SUPPORTED && "opacity-60")}>
-                          Only modify if instructed by development team
-                        </p>
-                      </div>
-                    </CardContent>
-                    <CardFooter className="border-t pt-4 flex justify-between">
-                      <div className="flex items-center gap-2">
-                        <ShieldAlert className="size-3.5 text-yellow-600" />
-                        <p className="text-xs text-yellow-600">
-                          Developer settings may cause unexpected behavior
-                        </p>
-                      </div>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={resetAllDeveloperSettings}
-                        disabled={!DEVELOPER_FEATURES_SUPPORTED}
-                      >
-                        Reset All
-                      </Button>
-                    </CardFooter>
-                  </Card>
-                </CollapsibleContent>
-              </Collapsible>
             </div>
           </TabsContent>
 

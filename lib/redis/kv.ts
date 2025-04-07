@@ -75,17 +75,6 @@ export async function setContractMetadata(ca: string, data: any): Promise<void> 
   if (symbol) {
     newMetadata.symbol = symbol;
   }
-  const response = await fetch('https://explore.charisma.rocks/api/v0/audit', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({ contractId: ca })
-  });
-  await kv.set(`contract-audit:${ca}`, {
-    ...(await response.json()),
-    timestamp: Date.now()
-  });
   await kv.set(`ca:${ca}`, newMetadata);
   await kv.set(`metadata:${ca}`, newMetadata);
 }
