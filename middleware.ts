@@ -40,8 +40,22 @@ if (process.env.NEXT_PUBLIC_DISABLE_AUTH === "true") {
 // Create a route matcher for public routes
 const isPublicRoute = createRouteMatcher(publicRoutes);
 
+// Maintenance mode redirect
+const maintenanceMatcher = createRouteMatcher([
+  // Match any route that is NOT API, _next, static file, or maintenance page
+  '/((?!_next|api|maintenance|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest|pdf|mp4|mp3|json)).*)'
+]);
+
 // Create middleware with auth handling
 export default clerkMiddleware(async (auth, req) => {
+  const { pathname } = req.nextUrl;
+
+  // If the request matches maintenanceMatcher, redirect to /maintenance
+  if (maintenanceMatcher(req)) {
+    const maintenanceUrl = new URL('/maintenance', req.url);
+    return NextResponse.rewrite(maintenanceUrl);
+  }
+
   // For development environment, you can bypass auth completely
   if (process.env.NEXT_PUBLIC_BYPASS_AUTH === "true") {
     return NextResponse.next();
