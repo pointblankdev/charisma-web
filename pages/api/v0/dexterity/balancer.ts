@@ -52,7 +52,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 console.log('Processing token:', token.symbol, `${index + 1}/${tokens.length}`)
 
-                const DOLLAR_AMOUNT = 10.00
+                const DOLLAR_AMOUNT = 5.00
                 const amount = Math.floor(DOLLAR_AMOUNT * (10 ** token.decimals) / prices[token.contractId])
                 const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
 
