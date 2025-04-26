@@ -52,16 +52,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             try {
                 console.log('Processing token:', token.symbol, `${index + 1}/${tokens.length}`)
 
-                const DOLLAR_AMOUNT = 50.00
+                const DOLLAR_AMOUNT = 10.00
                 const amount = Math.floor(DOLLAR_AMOUNT * (10 ** token.decimals) / prices[token.contractId])
                 const quote = await Dexterity.getQuote(token.contractId, token.contractId, amount)
 
                 // Check if the quote is profitable including the fee in uSTX with prices
-                const feeInUSD = fee / 10 ** token.decimals * prices['.stx']
-                const grossProfit = quote.amountOut / 10 ** token.decimals * prices[token.contractId] - feeInUSD
+                const feeInUSD = fee / (10 ** token.decimals) * prices['.stx']
+                const grossProfit = quote.amountOut / (10 ** token.decimals) * prices[token.contractId] - feeInUSD
                 const errorMargin = Dexterity.config.defaultSlippage
                 const grossProfitWithMargin = grossProfit * (1 - errorMargin)
-                const netProfit = grossProfitWithMargin - quote.amountIn / 10 ** token.decimals * prices[token.contractId]
+                const netProfit = grossProfitWithMargin - quote.amountIn / (10 ** token.decimals) * prices[token.contractId]
 
                 if (netProfit < 0) {
                     return { token: token.symbol, msg: "not profitable", grossProfit, netProfit }
