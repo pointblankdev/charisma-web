@@ -24,8 +24,7 @@ async function getAllTokenPrices() {
       }
 
       const data = await response.json();
-      data['.stx'] = data['STX']
-      // data.prices['SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token'] = 0.967;
+      data['.stx'] = data['stx'] || 0.85
 
       return data;
     } catch (error) {
