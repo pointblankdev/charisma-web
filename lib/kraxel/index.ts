@@ -11,7 +11,7 @@ async function getAllTokenPrices() {
 
   while (attempts < MAX_RETRIES) {
     try {
-      const response = await fetch('https://kraxel.io/api/v2/token-prices', {
+      const response = await fetch('https://kraxel.io/api/prices', {
         method: 'GET',
         headers: {
           'X-Api-Key': process.env.KRAXEL_API_KEY || '',
@@ -23,11 +23,11 @@ async function getAllTokenPrices() {
         throw new Error(`API request failed: ${response.statusText}`);
       }
 
-      const { data } = await response.json();
-      data.prices['.stx'] = data.prices['STX']
+      const data = await response.json();
+      data['.stx'] = data['STX']
       // data.prices['SP2C2YFP12AJZB4MABJBAJ55XECVS7E4PMMZ89YZR.usda-token'] = 0.967;
 
-      return data.prices;
+      return data;
     } catch (error) {
       attempts++;
       console.error(`Error fetching all prices (attempt ${attempts}):`, error);
