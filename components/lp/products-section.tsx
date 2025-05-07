@@ -40,7 +40,7 @@ const getAppIcon = (app: AppInfo) => {
 
 export default function ProductsSection() {
     return (
-        <section id="product-suite" className="py-20 bg-card/10 backdrop-blur-sm">
+        <section id="product-suite" className="py-20 bg-background/10 backdrop-blur-sm">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-12">
                     <h2 className="text-3xl font-bold mb-4">Explore Apps</h2>
