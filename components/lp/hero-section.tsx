@@ -27,7 +27,7 @@ export default function HeroSection() {
 
                         <p className={cn("text-xl text-muted-foreground max-w-lg", styleUtils.appear, styleUtils['appear-third'])}>
                             The next generation of decentralized finance tools and services
-                            for bitcoin developers and users.
+                            for bitcoin builders and users.
                         </p>
 
                         <div className={cn("flex flex-wrap gap-4 pt-2", styleUtils.appear, styleUtils['appear-fourth'])}>
