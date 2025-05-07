@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useEffect, useState, useRef } from 'react';
 import { loadFull } from 'tsparticles';
 import Particles from 'react-tsparticles';
 import styles from '../styles/Home.module.css';
@@ -6,7 +6,7 @@ import styles from '../styles/Home.module.css';
 const ParticlesConfig = {
   particles: {
     number: {
-      value: 2,
+      value: 20,
       density: {
         enable: true,
         value_area: 800
@@ -31,7 +31,7 @@ const ParticlesConfig = {
       }
     },
     opacity: {
-      value: 0.5,
+      value: 0.7,
       random: false,
       anim: {
         enable: false,
@@ -41,7 +41,7 @@ const ParticlesConfig = {
       }
     },
     size: {
-      value: 3,
+      value: 2,
       random: true,
       anim: {
         enable: false,
@@ -54,7 +54,7 @@ const ParticlesConfig = {
       enable: true,
       distance: 150,
       color: '#ffffff',
-      opacity: 0.4,
+      opacity: 0.5,
       width: 1
     },
     move: {
@@ -117,6 +117,15 @@ const ParticlesConfig = {
 const ParticlesFix = Particles as any;
 
 const ParticleBackground = () => {
+  const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 });
+  const [windowSize, setWindowSize] = useState({
+    width: typeof window !== 'undefined' ? window.innerWidth : 0,
+    height: typeof window !== 'undefined' ? window.innerHeight : 0
+  });
+
+  const throttleRef = useRef<number | null>(null);
+
+  // Initialize the particles
   const particlesInit = useCallback(async (engine: any) => {
     // you can initiate the tsParticles instance (engine) here, adding custom shapes or presets
     // this loads the tsparticles package bundle, it's the easiest method for getting everything ready
@@ -128,13 +137,60 @@ const ParticleBackground = () => {
     // eslint-disable-next-line @typescript-eslint/await-thenable
     await null;
   }, []);
+
+  // Handle mouse movement for parallax effect with throttling
+  useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (throttleRef.current !== null) return;
+
+      throttleRef.current = window.setTimeout(() => {
+        setMousePosition({
+          x: e.clientX,
+          y: e.clientY
+        });
+        throttleRef.current = null;
+      }, 20); // 20ms throttle for smoother performance
+    };
+
+    const handleResize = () => {
+      setWindowSize({
+        width: window.innerWidth,
+        height: window.innerHeight
+      });
+    };
+
+    window.addEventListener('mousemove', handleMouseMove);
+    window.addEventListener('resize', handleResize);
+
+    return () => {
+      window.removeEventListener('mousemove', handleMouseMove);
+      window.removeEventListener('resize', handleResize);
+
+      if (throttleRef.current !== null) {
+        clearTimeout(throttleRef.current);
+      }
+    };
+  }, []);
+
+  // Calculate parallax offset (subtle movement)
+  const offsetX = (mousePosition.x / windowSize.width - 0.5) * 8; // 8px max movement
+  const offsetY = (mousePosition.y / windowSize.height - 0.5) * 6; // 6px max movement, less vertical movement
+
   return (
-    <div id="particle-background" className='z-0 relative'>
+    <div
+      id="particle-background"
+      className="fixed inset-0 z-[-1] pointer-events-none"
+      style={{
+        transform: `translate(${offsetX}px, ${offsetY}px)`,
+        transition: 'transform 0.8s cubic-bezier(0.215, 0.61, 0.355, 1)'
+      }}
+    >
       <ParticlesFix
         id="tsparticles"
         init={particlesInit}
         loaded={particlesLoaded}
         options={ParticlesConfig}
+        className="!absolute inset-0"
         height="100vh"
         width="100vw"
       ></ParticlesFix>

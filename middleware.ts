@@ -51,10 +51,10 @@ export default clerkMiddleware(async (auth, req) => {
   const { pathname } = req.nextUrl;
 
   // If the request matches maintenanceMatcher, redirect to /maintenance
-  if (maintenanceMatcher(req)) {
-    const maintenanceUrl = new URL('/maintenance', req.url);
-    return NextResponse.rewrite(maintenanceUrl);
-  }
+  // if (maintenanceMatcher(req)) {
+  //   const maintenanceUrl = new URL('/maintenance', req.url);
+  //   return NextResponse.rewrite(maintenanceUrl);
+  // }
 
   // For development environment, you can bypass auth completely
   if (process.env.NEXT_PUBLIC_BYPASS_AUTH === "true") {

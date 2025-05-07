@@ -11,9 +11,11 @@ export default function IndexPage() {
   };
 
   return (
-    <Page meta={meta} fullViewport>
+    <>
+      {/* <Page meta={meta} fullViewport> */}
       <SkipNavContent />
       <LandingPage />
-    </Page>
+      {/* </Page> */}
+    </>
   );
 }
