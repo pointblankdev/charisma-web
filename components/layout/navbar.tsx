@@ -38,7 +38,7 @@ export default function Navbar() {
                                                     target="_blank"
                                                     rel="noopener noreferrer"
                                                     className={cn(
-                                                        'block rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground',
+                                                        'block rounded-md px-2 py-1.5 text-sm hover:bg-accent/5 hover:text-foreground',
                                                     )}
                                                 >
                                                     {app.title}
@@ -57,28 +57,28 @@ export default function Navbar() {
                                 <ul className="grid gap-1 p-4 rounded-lg border border-muted-foreground/10 w-72 animate-in fade-in-50 data-[motion=from-start]:slide-in-from-left-52 data-[motion=from-end]:slide-in-from-right-52 data-[motion=to-start]:slide-out-to-left-52 data-[motion=to-end]:slide-out-to-right-52 origin-top">
                                     <li>
                                         <NavigationMenuLink asChild>
-                                            <a href="https://blaze.charisma.rocks" className="block rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground">
+                                            <a href="https://blaze.charisma.rocks" className="block rounded-md px-2 py-1.5 text-sm hover:bg-accent/5 hover:text-foreground">
                                                 Blaze Protocol
                                             </a>
                                         </NavigationMenuLink>
                                     </li>
                                     <li>
                                         <NavigationMenuLink asChild>
-                                            <a href="https://tokens.charisma.rocks" className="block rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground">
+                                            <a href="https://tokens.charisma.rocks" className="block rounded-md px-2 py-1.5 text-sm hover:bg-accent/5 hover:text-foreground">
                                                 Token Data API
                                             </a>
                                         </NavigationMenuLink>
                                     </li>
                                     <li>
                                         <NavigationMenuLink asChild>
-                                            <a href="https://metadata.charisma.rocks" className="block rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground">
+                                            <a href="https://metadata.charisma.rocks" className="block rounded-md px-2 py-1.5 text-sm hover:bg-accent/5 hover:text-foreground">
                                                 Metadata Hosting
                                             </a>
                                         </NavigationMenuLink>
                                     </li>
                                     <li>
                                         <NavigationMenuLink asChild>
-                                            <a href='https://charisma-contract-search.vercel.app/' className="block rounded-md px-2 py-1.5 text-sm hover:bg-accent hover:text-accent-foreground">
+                                            <a href='https://charisma-contract-search.vercel.app/' className="block rounded-md px-2 py-1.5 text-sm hover:bg-accent/5 hover:text-foreground">
                                                 Contract Search
                                             </a>
                                         </NavigationMenuLink>
