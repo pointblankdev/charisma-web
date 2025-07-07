@@ -24,6 +24,8 @@ export default async function getMetadata(
       if (ca.endsWith('.json')) {
         ca = ca.slice(0, -5);
       }
+      // Set cache headers for 1 week
+      res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
       response = await getContractMetadata(ca);
     } else {
       code = 501;

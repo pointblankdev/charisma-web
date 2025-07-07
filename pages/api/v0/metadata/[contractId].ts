@@ -56,6 +56,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // GET request
+        // Set cache headers for 1 week
+        res.setHeader('Cache-Control', 'public, max-age=604800, stale-while-revalidate=86400');
         const metadata = await MetadataService.get(contractId as string);
         return res.status(200).json({
             ...metadata,
